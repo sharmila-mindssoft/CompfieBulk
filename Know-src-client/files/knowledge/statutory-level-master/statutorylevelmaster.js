@@ -52,6 +52,12 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     var current_id = id_element[0].id;
     if(current_id == 'country'){
       $('#domainval').focus();
+      $('#domainval').val('');
+      $('#domain').val('');
+      for (var k = 1; k <= 10; k++) {
+        $('#level' + k).val('');
+        $('#levelid' + k).val('');
+      }
       //loadstatutoryLevelsList();
     }
     else if(current_id == 'domain'){

@@ -89,7 +89,9 @@ def process_knowledge_transaction_request(request, db):
 
     return result
 
-
+##############################################################################
+# To return the statutory master list under user id
+##############################################################################
 def process_get_statutory_master(db, user_id):
     return statutories_master(db, user_id)
 

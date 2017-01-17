@@ -6266,10 +6266,20 @@ DELIMITER //
 CREATE PROCEDURE `sp_legalentity_closure_save`(
 in _u_id int(11), _le_id int(11), _is_cl tinyint(1), _cl_on timestamp, _rem varchar(500))
 BEGIN
-    update tbl_legal_entities
-    set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
-    closed_remarks = _rem where
-    legal_entity_id = _le_id;
+    if _is_cl = 1 then
+        if((select @val_days = DATEDIFF(NOW(), closed_on) from tbl_legal_entities
+        where legal_entity_id = _le_id) < 90)then
+            update tbl_legal_entities
+            set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
+            closed_remarks = _rem where
+            legal_entity_id = _le_id;
+        end if;
+    else
+        update tbl_legal_entities
+        set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
+        closed_remarks = _rem where
+        legal_entity_id = _le_id;
+    end if;
 
     if _is_cl = 0 then
         INSERT INTO tbl_messages
@@ -6613,7 +6623,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_check_level_in_geographies`(
     in levelId int(11))
 BEGIN
-    select count(*) from tbl_geographies where
+    select count(*) as cnt from tbl_geographies where
     level_id = levelId;
 
 END //
@@ -7312,7 +7322,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_statutory_level_count`(
 in levelId int(11))
 BEGIN
-    select count(*) from tbl_statutories where
+    select count(*) as cnt from tbl_statutories where
     level_id = levelId;
 END //
 
@@ -8076,7 +8086,7 @@ DELIMITER ;
 -- -------------------
 -- database server info
 -- -------------------
-DROP PROCEDURE IF EXISTS `sp_tbl_database_server_byid`;
+DROP PROCEDURE IF EXISTS `sp_get_environment_byid`;
 
 DELIMITER //
 
@@ -8142,7 +8152,6 @@ END //
 
 DELIMITER ;
 
-
 DROP PROCEDURE IF EXISTS `sp_get_country_domain_name`;
 
 DELIMITER //
@@ -8157,6 +8166,39 @@ END //
 
 DELIMITER ;
 
+-- -------------------
+-- Forgot Password
+-- -------------------
+DROP PROCEDURE IF EXISTS `sp_forgot_password`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_forgot_password`(
+    IN username_ varchar(50)
+)
+BEGIN
+    SELECT @_user_id := user_id as user_id, 
+           @_user_category_id := user_category_id as user_category_id
+    FROM tbl_user_login_details 
+    where username = username_;
+    
+    IF @_user_id != '' and @_user_category_id = 1 THEN 
+        select u.user_id, u.email_id, 'Compfie Admin' as employee_name
+        FROM tbl_user_login_details u
+        where u.user_id = @_user_id;
+    ELSEIF @_user_id != '' and @_user_category_id = 2 THEN
+        select u.user_id, u.email_id, 'Console Admin' as employee_name
+        FROM tbl_user_login_details u
+        where u.user_id = @_user_id;
+    ELSEIF @_user_id != '' and @_user_category_id > 2 THEN
+        select u.user_id, u.email_id, us.employee_name
+        FROM tbl_user_login_details u
+        inner join  tbl_users us on u.user_id = us.user_id
+        where u.user_id = @_user_id;
+    END IF;    
+END //
+
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_country_domain`;
@@ -8170,7 +8212,6 @@ BEGIN
     inner join tbl_countries as t2 on t1.country_id = t2.country_id
     inner join tbl_domains as t3 on t1.domain_id = t3.domain_id
     where t1.statutory_mapping_id = m_id;
-
 END //
 
 DELIMITER ;

@@ -709,8 +709,6 @@ class Database(object):
 
     def save_activity(self, user_id, form_id, action):
         created_on = get_date_time()
-        print user_id
-
         q = "select user_category_id from tbl_user_login_details where user_id = %s"
         row = self.select_one(q, [user_id])
         user_cat_id = row.get("user_category_id")
@@ -847,9 +845,9 @@ class Database(object):
             for c in cursor.stored_results():
                 cols = c.description
                 # print cols
-                if cols :
+                if cols:
                     cols = [x[0] for x in cols]
-                else :
+                else:
                     cols = []
                 r = convert_to_dict(c.fetchall(), cols)
                 rows.append(r)
@@ -882,11 +880,23 @@ class Database(object):
             user_cat_id, message_head, message_text, link, user_id, created_on]
         )
 
-        if msg_id is False or msg_id == 0 :
+        if msg_id is False or msg_id == 0:
             raise fetch_error()
         return msg_id
 
     def save_messages_users(self, msg_id, user_ids):
         m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
-        for u in user_ids :
-            self.execute(m2 , [msg_id, u])
+        for u in user_ids:
+            self.execute(m2, [msg_id, u])
+
+    ########################################################
+    # To Check Forgot Password
+    ########################################################
+    def verify_username(db, username):
+        result = db.call_proc_with_multiresult_set(
+           "sp_forgot_password", (username,), 2
+        )
+        if result[1]:
+            return result[1]
+        else:
+            return 0

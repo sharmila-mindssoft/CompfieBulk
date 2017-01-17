@@ -48,9 +48,12 @@ function clearForm(){
     $("#edit-legal-entity").hide();
 }
 
+//Finds the mode of page and gets the records from DB through api
 function initialize(type_of_form){
     showPage(type_of_form);
     clearMessage();
+
+    // Initial Page of all the unassigned units total grouped by domain wise
     if(type_of_form == "list"){
         clearForm();
         function onSuccess_list(data) {
@@ -84,6 +87,7 @@ function initialize(type_of_form){
         function onFailure_assign(error) {
             displayMessage(error);
         }
+        //Arguments passed to get the units yet to be assigned
         mirror.getAssignUnitFormData(
             DOMAIN_ID, CLIENT_ID, LEGAL_ENTITY_ID, function (error, response) {
             console.log("assigned:"+response)
@@ -101,6 +105,7 @@ function initialize(type_of_form){
         function onFailure_view(error) {
             displayMessage(error);
         }
+        //Arguments passed to get the units assigned to corresponding executive
         mirror.getAssignedUnitsList(
             DOMAIN_ID, CLIENT_ID, LEGAL_ENTITY_ID, function (error, response) {
             if (error == null) {
@@ -117,6 +122,7 @@ function initialize(type_of_form){
         function onFailure_details(error) {
             displayMessage(error);
         }
+        //Arguments passed to get the corresponding executives addigned units list and details
         mirror.getAssignedUnitDetails(
             LEGAL_ENTITY_ID, DOMAIN_MANAGER_ID, CLIENT_ID, DOMAIN_ID, function (error, response) {
             if (error == null) {
@@ -128,6 +134,7 @@ function initialize(type_of_form){
     }
 }
 
+//Get the type of form and loads the corresponding page
 function showPage(type_of_form){
     if(type_of_form == "list"){
         $("#unassigned_units").show();
@@ -154,18 +161,22 @@ function showPage(type_of_form){
     }
 }
 
+// To cancel an page - view unit details page
 $(".cancel-view-details").click(function(){
     initialize("view");
 });
 
+// To go back to the main list page
 $(".btn-back").click(function(){
     initialize("list");
 });
 
+//To cancel the assigned unit page and view the main list
 $(".cancel-assign-unit").click(function(){
     initialize("list");
 });
 
+// Binds the main list page - domain wise units with total and not assigned units
 function loadUnAssignedUnitsList(){
     $(".unassign-list").empty();
     $(".category_title").text(USER_CAREGORY);
@@ -212,6 +223,7 @@ function loadUnAssignedUnitsList(){
     });
 }
 
+// To navigate to the assign units page
 function viewAssignUnitsForm(domain_id, client_id, domain_name, group_name, business_group_name, legal_entity_name, legal_entity_id){
     DOMAIN_ID = domain_id;
     CLIENT_ID = client_id;
@@ -223,6 +235,7 @@ function viewAssignUnitsForm(domain_id, client_id, domain_name, group_name, busi
     initialize("assign");
 }
 
+// To view the executives assigned with the no. of units
 function viewDomainManagers(domain_id, client_id, domain_name, group_name, legal_entity_id){
     DOMAIN_ID = domain_id;
     CLIENT_ID = client_id;
@@ -232,6 +245,7 @@ function viewDomainManagers(domain_id, client_id, domain_name, group_name, legal
     initialize("view");
 }
 
+// Binds the records from DB - corresponding executives with the no of units assigned
 function loadAssignedUnitsList(){
     $(".assigned-list").empty();
     var row = $("#templates .assigned-row tr");
@@ -257,6 +271,7 @@ function loadAssignedUnitsList(){
     });
 }
 
+// To view the Assigned units list and details under a corresponding executive
 function viewAssignedUnitDetails(
     business_group_name, legal_entity_name,
     legal_entity_id, user_id, client_id, domain_id
@@ -270,6 +285,7 @@ function viewAssignedUnitDetails(
     initialize("view-details")
 }
 
+// Bind the records from DB - Units list and details to be assigned
 function loadAssignedUnitsDetailsList(){
     $(".view-grop-name").text(GROUP_NAME);
     $(".view-bg-name").text(BUSINESS_GROUP_NAME);
@@ -360,6 +376,7 @@ function loadAssignedUnitsDetailsList(){
     });
 }
 
+// To return hyphen if any value with null
 function returnHyphenIfNull(value){
     if(value == null || value == "null" || value == "---"){
         return " - "
@@ -440,6 +457,7 @@ $('#assinee').keyup(function (e) {
   });
 });
 
+// To load the units assigned list
 function loadAssignUnitForm(){
     $(".edit-group-name").text(GROUP_NAME);
     $(".edit-domain-name").text(DOMAIN_NAME);
@@ -448,6 +466,7 @@ function loadAssignUnitForm(){
     loadEditAssignedUnitsDetailsList();
 }
 
+// Not in usage
 $(".show-units").click(function(){
     LEGAL_ENTITY_NAME = $("#legalentityval").val();
     LEGAL_ENTITY_ID = $('#legalentityid').val();
@@ -462,6 +481,7 @@ $(".show-units").click(function(){
     }
 });
 
+// Loads the units to be assigned
 function loadEditAssignedUnitsDetailsList(){
     ORGANIZED_DETAILS_LIST = {}
     $.each(ASSIGNED_UNIT_DETAILS_LIST, function(key, value){
@@ -590,6 +610,7 @@ function loadEditAssignedUnitsDetailsList(){
     });
 }
 
+// To return comma separated domain names and organization names
 function getCommaSeparated(type, value){
     var returnString = null;
     if(type == "domain"){
@@ -618,6 +639,8 @@ function getCommaSeparated(type, value){
     }
     return returnString;
 }
+
+// To get the values in a string format
 function getArrayvalues(arr_values){
     var returnString = "";
     for(var i=0;i<arr_values.length;i++){
@@ -632,6 +655,7 @@ function getArrayvalues(arr_values){
     return returnString;
 }
 
+// To activate the all check box and stores in an array
 function activateDeactivateAllUnits(e, legal_entity_name, division_name, category_name){
     if (e.checked) {
         var unit_ids = LEGAL_ENTITY_UNIT_MAP[legal_entity_name][division_name][category_name];
@@ -649,6 +673,7 @@ function activateDeactivateAllUnits(e, legal_entity_name, division_name, categor
     //updatedSelectedNoOfUnits();
 }
 
+// To activate particular check box checked and stores in an array
 function activateDeactivateUnit(unit_id, le_id){
     unit_status = $(".unit-"+unit_id).prop("checked");
 
@@ -659,10 +684,9 @@ function activateDeactivateUnit(unit_id, le_id){
         $('.le-'+le_id).prop('checked',false);
         updateUnitsToArray(unit_id, "pull");
     }
-
-    //updatedSelectedNoOfUnits();
 }
 
+// To update the checkbox units selected and stores/ removes from array
 function updateUnitsToArray(unit_id, type){
     if(type == "push"){
         for(var i = ASSIGN_UNIT_SAVE_DETAILS.length - 1; i >= 0; i--) {
@@ -682,6 +706,7 @@ function updateUnitsToArray(unit_id, type){
         $(".selected_checkbox_count").text(ASSIGN_UNIT_SAVE_DETAILS.length);
     }
 }
+// To store the checkbox unit selected
 function updatedSelectedNoOfUnits(){
     var count = 0;
     $.each(ASSIGN_UNIT_SAVE_DETAILS, function(key, unit_value){
@@ -694,6 +719,7 @@ function updatedSelectedNoOfUnits(){
     $(".selected_checkbox_count").text(count);
 }
 
+// To get the units selected to be assigned and forms a dict
 function getActiveUnitDict(unit_id, domain_name){
     var legal_entity_id = null;
 
@@ -713,6 +739,7 @@ function getActiveUnitDict(unit_id, domain_name){
     }
 }
 
+// Save the assigned units
 $(".save-assign-unit").click(function(){
     domain_manager_id = $("#userid").val();
     var true_count = ASSIGN_UNIT_SAVE_DETAILS.length;
@@ -749,6 +776,7 @@ $(".save-assign-unit").click(function(){
     }
 });
 
+// Invokes the api for saving the assigned units
 function callSaveAssignUnitAPI(domain_manager_id, unit_ids){
     function onSuccess(data) {
         displaySuccessMessage(message.assign_success);
@@ -768,10 +796,12 @@ function callSaveAssignUnitAPI(domain_manager_id, unit_ids){
     );
 }
 
+// Form Initialization
 $(function(){
 	initialize("list");
 });
 
+// JS-Filterable for filtering the records
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
 });
