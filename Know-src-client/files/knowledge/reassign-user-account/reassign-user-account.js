@@ -83,7 +83,7 @@ var DESubmit = $(".btn-submit-4");
 var DERemarks = $("#de_remarks");
 
 
-var ReplaceManagerShow = $(".replace-manager-show-btn");
+var ReplaceManagerShow = $("#category");
 var ReplaceManagerSubmit = $(".btn-submit-5");
 var ReplaceManagerRemarks = $("#replace_manager_remarks");
 var ManagerCategory = '';
@@ -299,8 +299,26 @@ function loadDMList(){
             $('.tbody-dm-view').append(clone);
         });
 
+        $('.tm-group-checkbox').on('click', function(e) {
+            var tm_view = '.tm-ac-' + $(this).val();
+            var te_view = '.te-ac-' + $(this).val();
+            if($(this).prop("checked")){
+                $(tm_view).show();
+                $(te_view).show();
+            }else{
+                $(tm_view).hide();
+                $(te_view).hide();
+            }
+        });
+
         $(".dm-group-checkbox-main").change(function() {
             $(".tbody-dm-view .dm-group-checkbox").prop('checked', $(this).prop("checked"));
+            if($(this).prop("checked")){
+                $(".de-ac-view").show();
+            }else{
+                $(".de-ac-view").hide();
+            }
+
         });
 
         $('.dm-group-checkbox').on('click', function(e) {
@@ -629,7 +647,7 @@ function pageControls(){
         }
     });
 
-    ReplaceManagerShow.click(function(){
+    ReplaceManagerShow.change(function(){
         clearData();
         var category = $('#category').val();
 
@@ -905,7 +923,7 @@ function pageControls(){
                 function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.reassign_users_account_success);
-                    ReplaceManagerShow.trigger( "click" );
+                    ReplaceManagerShow.trigger( "change" );
                 } else {
                     displayMessage(error);
                 }

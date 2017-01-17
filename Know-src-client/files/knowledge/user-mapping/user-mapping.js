@@ -21,9 +21,19 @@ var Country = $('#country');
 var DomainVal = $('#domainval');
 var Domain = $('#domain');
 var cTab = 'know-mgr-exec-tab';
+var uCategory = '4';
 $(".user-tab li").click(function() {
     activateTab($(this).attr('value'));
     cTab = $(this).attr('value');
+    if(cTab == 'know-mgr-exec-tab'){
+        uCategory = '4';
+    }else if(cTab == 'tech-mgr-exec-tab'){
+        uCategory = '6';
+    }else if(cTab == 'tech-mgr-mgr-tab'){
+        uCategory = '7';
+    }else{
+        uCategory = '8';
+    }
 });
 
 $(".btn-cancel").click(function(){
@@ -326,7 +336,7 @@ function saveUserMapping(){
             custom_alert(error);
         }
         mirror.saveUserMappings(selected_country, selected_domain,
-            ACTIVE_PARENT_USER, ACTIVE_CHILD_USERS,
+            ACTIVE_PARENT_USER, ACTIVE_CHILD_USERS, parseInt(uCategory), 
             function (error, response) {
                 if (error == null) {
                     onSuccess(response);

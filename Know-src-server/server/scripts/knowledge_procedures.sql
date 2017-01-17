@@ -8068,7 +8068,7 @@ DELIMITER ;
 -- -------------------
 -- database server info
 -- -------------------
-DROP PROCEDURE IF EXISTS `sp_tbl_database_server_byid`;
+DROP PROCEDURE IF EXISTS `sp_get_environment_byid`;
 
 DELIMITER //
 

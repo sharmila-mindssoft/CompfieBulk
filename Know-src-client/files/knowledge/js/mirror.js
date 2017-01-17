@@ -2051,14 +2051,15 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function saveUserMappings(country_id, domain_id, parent_user_id, child_users, callback) {
+    function saveUserMappings(country_id, domain_id, parent_user_id, child_users, user_category_id, callback) {
         callerName = "admin";
         var request = [
             "SaveUserMappings", {
                 "country_id": country_id,
                 "domain_id": domain_id,
                 "parent_user_id": parent_user_id,
-                "child_users": child_users
+                "child_users": child_users,
+                "user_category_id": user_category_id
             }
         ];
         apiRequest(callerName, request, callback);

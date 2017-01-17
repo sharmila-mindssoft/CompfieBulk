@@ -1051,6 +1051,7 @@ def save_user_mappings(db, request, session_user):
     domain_id = request.domain_id
     parent_user_id = request.parent_user_id
     child_users = request.child_users
+    user_cat_id = request.user_category_id
     insert_columns = [
         "user_category_id", "country_id", "domain_id", "parent_user_id",
         "child_user_id", "created_by", "created_on"
@@ -1071,9 +1072,26 @@ def save_user_mappings(db, request, session_user):
         name_rows = db.call_proc("sp_empname_by_id", (parent_user_id,))
         action = "Users mapped for - \"%s\"" % name_rows[0]["empname"]
         db.save_activity(session_user, frmUserMapping, action)
+
+        parent_user_ids = []
+        parent_user_ids.append(parent_user_id)
+        message_heading = 'User Mapping'
+        message_text = '\"%s\" has been mapped with user(s)' % name_rows[0]["empname"]
+        save_messages(db, user_category_id, message_heading, message_text, session_user, parent_user_ids)
+
+        child_message_text = 'User has been mapped under \"%s\"' % name_rows[0]["empname"]
+        save_messages(db, user_cat_id, message_heading, child_message_text, session_user, child_users)
+
     else:
         raise process_error("E079")
 
+
+def save_messages(db, user_cat_id, message_head, message_text, created_by, child_users):
+    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, None, created_by, get_date_time())
+    msg_user_id = child_users
+
+    if msg_user_id is not None :
+        db.save_messages_users(msg_id, msg_user_id)
 
 def get_legal_entities_for_user(db, user_id):
     result = db.call_proc(
