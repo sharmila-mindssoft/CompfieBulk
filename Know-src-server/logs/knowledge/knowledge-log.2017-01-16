@@ -1,6 +1,6 @@
-2017-01-17 11:10:53,643 - knowledge_logger - main.py-parse-request : null is not allowed 
+2017-01-16 10:50:02,009 - knowledge_logger - main.py-parse-request : null is not allowed 
 
-2017-01-17 11:10:53,645 - knowledge_logger - main.py : Traceback (most recent call last):
+2017-01-16 10:50:02,011 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 164, in _parse_request
     data
   File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/admin.py", line 1472, in parse_structure
@@ -16,9 +16,9 @@
 ValueError: null is not allowed
  
 
-2017-01-17 11:10:53,646 - knowledge_logger - main.py-handle-api- : null is not allowed 
+2017-01-16 10:50:02,011 - knowledge_logger - main.py-handle-api- : null is not allowed 
 
-2017-01-17 11:10:53,646 - knowledge_logger - main.py : Traceback (most recent call last):
+2017-01-16 10:50:02,011 - knowledge_logger - main.py : Traceback (most recent call last):
   File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 205, in handle_api_request
     raise ValueError(request_data)
 ValueError: null is not allowed
