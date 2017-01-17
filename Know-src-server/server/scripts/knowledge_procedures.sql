@@ -4048,26 +4048,26 @@ CREATE PROCEDURE `sp_statutory_notification_details`(
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50),
 IN fromcount_ INT(11), IN pagecount_ INT(11))
 BEGIN
-        SELECT
-    ts.statutory_name,
-    tc.compliance_task,
-    tc.compliance_description as description,
-    tsnl.notification_text,
-    tsnl.created_on
-FROM
-    tbl_statutory_notifications tsnl
-        INNER JOIN
-    tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
-        INNER JOIN
-    tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
-        INNER JOIN
-    tbl_statutories ts ON ts.statutory_id = tms.statutory_id
-WHERE
-    tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
-    IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
-    IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
-    IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
-limit fromcount_, pagecount_;
+    SELECT
+        IF(ts.parent_names = '', ts.statutory_name, SUBSTRING_INDEX(ts.parent_names, '>>', 1)) as statutory_name,
+        tc.compliance_task,
+        tc.compliance_description as description,
+        tsnl.notification_text,
+        tsnl.created_on
+    FROM
+        tbl_statutory_notifications tsnl
+            INNER JOIN
+        tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
+            INNER JOIN
+        tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
+            INNER JOIN
+        tbl_statutories ts ON ts.statutory_id = tms.statutory_id
+    WHERE
+        tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
+        IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
+        IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
+        IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
+    limit fromcount_, pagecount_;
 END //
 
 DELIMITER ;
