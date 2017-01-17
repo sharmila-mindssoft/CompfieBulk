@@ -679,6 +679,25 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_reassign_client_groups_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_reassign_client_groups_list`(
+in userId INT(11)
+)
+BEGIN
+
+    SELECT
+    tcg.client_id,
+    tcg.group_name
+    FROM
+        tbl_client_groups as tcg
+    ORDER BY tcg.group_name;
+
+END //
+
+DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To Fetch Active Countries List
 -- --------------------------------------------------------------------------------
@@ -8177,12 +8196,12 @@ CREATE PROCEDURE `sp_forgot_password`(
     IN username_ varchar(50)
 )
 BEGIN
-    SELECT @_user_id := user_id as user_id, 
+    SELECT @_user_id := user_id as user_id,
            @_user_category_id := user_category_id as user_category_id
-    FROM tbl_user_login_details 
+    FROM tbl_user_login_details
     where username = username_;
-    
-    IF @_user_id != '' and @_user_category_id = 1 THEN 
+
+    IF @_user_id != '' and @_user_category_id = 1 THEN
         select u.user_id, u.email_id, 'Compfie Admin' as employee_name
         FROM tbl_user_login_details u
         where u.user_id = @_user_id;
@@ -8195,7 +8214,7 @@ BEGIN
         FROM tbl_user_login_details u
         inner join  tbl_users us on u.user_id = us.user_id
         where u.user_id = @_user_id;
-    END IF;    
+    END IF;
 END //
 
 DELIMITER ;

@@ -41,7 +41,7 @@ __all__ = [
     "get_domain_user_data",
     "save_reassign_techno_manager", "save_reassign_techno_executive",
     "save_reassign_domain_manager", "save_reassign_domain_executive",
-    "save_user_replacement", "is_user_idle"
+    "save_user_replacement", "is_user_idle", "get_reassign_client_groups"
 ]
 
 
@@ -1254,6 +1254,15 @@ def get_categories_for_user(db, user_id):
         data.append(core.UserCategory(r["user_category_id"], r["user_category_name"]))
 
     return data
+
+def get_reassign_client_groups(db, user_id):
+    result = db.call_proc("sp_reassign_client_groups_list", [user_id])
+    groups = []
+    for r in result :
+        groups.append(core.ReassignClientGroup(
+            r["client_id"], r["group_name"]
+        ))
+    return groups
 
 def get_reassign_user_filters(db):
     techno_manag = db.call_proc_with_multiresult_set("sp_tbl_users_techno_managers", None, 2)
