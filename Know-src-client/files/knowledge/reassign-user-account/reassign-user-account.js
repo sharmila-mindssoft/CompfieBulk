@@ -434,8 +434,8 @@ function pageControls(){
 
     DMGroupName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_closed", "group_id"];
-        var condition_values = [false, DM_GROUPS[DomainManagerId.val()]];
+        var condition_fields = ["group_id"];
+        var condition_values = [DM_GROUPS[DomainManagerId.val()]];
         commonAutoComplete(
             e, DMACGroup, DMGroupId, text_val,
             GROUPS, "group_name", "group_id", function (val) {
@@ -519,8 +519,8 @@ function pageControls(){
 
     DEGroupName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_closed", "group_id"];
-        var condition_values = [false, DE_GROUPS[DomainExecutiveId.val()]];
+        var condition_fields = ["group_id"];
+        var condition_values = [DE_GROUPS[DomainExecutiveId.val()]];
         commonAutoComplete(
             e, DEACGroup, DEGroupId, text_val,
             GROUPS, "group_name", "group_id", function (val) {
@@ -1046,7 +1046,7 @@ function getFormData(){
         TECHNO_USERS = data.t_e_reassign;
         DOMAIN_MANAGERS = data.d_m_reassign;
         DOMAIN_USERS = data.d_e_reassign;
-        GROUPS = data.groups;
+        GROUPS = data.re_assign_groups;
         BUSINESS_GROUPS = data.business_groups;
         LEGAL_ENTITIES = data.admin_legal_entity;
         DOMAINS = data.domains;
