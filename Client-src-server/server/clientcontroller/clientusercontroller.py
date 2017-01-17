@@ -1,5 +1,5 @@
 import time
-from protocol import (clientuser, login)
+from clientprotocol import (clientuser, clientlogin)
 from server import logger
 from server.constants import (
     RECORD_DISPLAY_COUNT, FILE_MAX_LIMIT
@@ -30,7 +30,7 @@ def process_client_user_request(request, db):
     client_id = int(client_info[0])
     session_user = db.validate_session_token(session_token)
     if session_user is None:
-        return login.InvalidSessionToken()
+        return clientlogin.InvalidSessionToken()
 
     if type(request) is clientuser.GetCurrentComplianceDetail:
         logger.logClientApi("GetCurrentComplianceDetail", "process begin")

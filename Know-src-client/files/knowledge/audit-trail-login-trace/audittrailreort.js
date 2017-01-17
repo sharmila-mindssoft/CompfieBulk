@@ -78,7 +78,6 @@ Auditpage.prototype.getValue = function(field_name, f_id){
     if (field_name == "category") {
         cg_id = Category.val();
         if (cg_id == '') {
-        console.log("cg_id:"+cg_id)
             return null;
         }
         return parseInt(cg_id);
@@ -133,10 +132,8 @@ Auditpage.prototype.getValue = function(field_name, f_id){
         }
         else {
             category_name = null
-            console.log("c len:"+f_id)
             $.each(this._categoryList, function(k, v) {
                 if (v.user_category_id == f_id) {
-                    console.log("1:"+v.user_category_name)
                     category_name = v.user_category_name;
                     return category_name;
                 }
@@ -200,7 +197,6 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
             }
             $('.snumber', rowClone).text(parseInt(a_page._sno));
             $('.username', rowClone).text(a_page.getValue('username', v.user_id));
-            console.log("categ:"+a_page.getValue('usercategory', v.user_category_id))
             $('.usertype', rowClone).text(a_page.getValue('usercategory', v.user_category_id));
            //$('.usertype', rowClone).text("categoryName");
             $('.formname', rowClone).text(f_name);
@@ -219,7 +215,7 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
 };
 
 Auditpage.prototype.fetchData = function() {
-    this.displayLoader();
+    //this.displayLoader();
     var t_this = this;
     _from_date = this.getValue("fromdate", null);
     _to_date = this.getValue("todate", null);
@@ -238,12 +234,12 @@ Auditpage.prototype.fetchData = function() {
     mirror.getAuditTrail(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, _sno, _page_limit,
         function(error, response) {
             if (error != null) {
-                this.displayMessage(error);
+                t_this.displayMessage(error);
             }
             else {
+                //t_this.hideLoader();
                 t_this._sno  = _sno;
                 t_this._auditData = response.audit_trail_details;
-                console.log("a:"+response.audit_trail_details)
                 if (response.total_records == 0) {
                     t_this.hidePageView();
                     a_page.hidePagePan();
@@ -263,7 +259,6 @@ Auditpage.prototype.fetchData = function() {
 };
 
 Auditpage.prototype.fetchFiltersData = function() {
-    console.log("fetchFiltersData")
     var t_this = this;
     mirror.getAuditTrailFilter(
         function(error, response) {
@@ -288,7 +283,6 @@ Auditpage.prototype.setControlValues = function(e) {
         var newUserList = [];
         if(Category.val() != '')
         {
-            console.log(Category.val())
             var textval = $(this).val();
             if(Category.val() > 2){
                for(var i=0;i<a_page._userList.length;i++)
@@ -328,31 +322,47 @@ Auditpage.prototype.setControlValues = function(e) {
 
     Form.keyup(function(e) {
         var textval = $(this).val();
+        var form_list = [];
         if(Category.val() != '')
         {
             var userId = User_id.val();
-            var form_list = [];
+            console.log("user:"+userId, Category.val())
             if(Category.val() > 2){
                 for(var i=0;i<a_page._auditData.length;i++)
                 {
                     frm_user_id = a_page._auditData[i].user_id;
                     if(userId > 0){
                         if((a_page._auditData[i].user_category_id == Category.val()) &&
-                            (a_page._auditData[i].user_category_id == frm_user_id)){
-                            form_list = a_page.pushForms("user", a_page._auditData[i].form_id);
+                            (userId == frm_user_id)){
+                            console.log("1:"+form_list.length)
+                            form_list = a_page.pushForms("user", a_page._auditData[i].form_id, form_list);
+                            console.log("2:"+form_list.length)
                         }
                     }
                     else
                     {
                         if((a_page._auditData[i].user_category_id == Category.val())){
-                            form_list = a_page.pushForms("user", a_page._auditData[i].form_id);
+                            form_list = a_page.pushForms("user", a_page._auditData[i].form_id, form_list);
                         }
                     }
                 }
             }
             else
             {
-                form_list = a_page.pushForms("admin", 0);
+                for(var i=0;i<a_page._auditData.length;i++)
+                {
+                    if(userId > 0){
+                        if((a_page._auditData[i].user_id == userId)){
+                            console.log("1:"+form_list.length)
+                            form_list = a_page.pushForms("admin", a_page._auditData[i].form_id, form_list);
+                            console.log("2:"+form_list.length)
+                        }
+                    }
+                    else
+                    {
+                        form_list = a_page.pushForms("admin", a_page._auditData[i].form_id, form_list);
+                    }
+                }
             }
             commonAutoComplete(
                 e, ACForm, Form_id, textval,
@@ -373,17 +383,13 @@ Auditpage.prototype.setControlValues = function(e) {
         var textval = $(this).val();
         if(Category.val() != '')
         {
-            console.log("inside category not empty")
             var userId = User_id.val();
             var ctry_list = [];
             if(Category.val() > 2){
-                console.log("categ:"+Category.val())
                 for(var i=0;i<a_page._userList.length;i++)
                 {
-                    console.log("0")
                     db_user_id = a_page._userList[i].user_id;
                     if(userId > 0){
-                        console.log("1")
                         if((a_page._userList[i].user_category_id == Category.val()) &&
                         (db_user_id == userId)){
                             ctry_list = a_page.pushCountries("user",db_user_id);
@@ -391,9 +397,7 @@ Auditpage.prototype.setControlValues = function(e) {
                     }
                     else
                     {
-                        console.log("2")
                         if(a_page._userList[i].user_category_id == Category.val()){
-                            console.log("3")
                             ctry_list = a_page.pushCountries("user",db_user_id);
                         }
                     }
@@ -402,7 +406,6 @@ Auditpage.prototype.setControlValues = function(e) {
             else{
                 ctry_list = a_page.pushCountries("admin",0);
             }
-            console.log("4:"+ctry_list.length)
             commonAutoComplete(
                 e, ACCountry, Country, textval,
                 ctry_list, "country_name", "country_id", function (val) {
@@ -413,8 +416,6 @@ Auditpage.prototype.setControlValues = function(e) {
 }
 
 Auditpage.prototype.pushCountries = function(u_type, user_id){
-    console.log("u_type:"+u_type);
-    console.log("user_id:"+user_id);
     var a_page = this;
     var userCheck = false;
     var ctry_list = [];
@@ -426,7 +427,6 @@ Auditpage.prototype.pushCountries = function(u_type, user_id){
         else if(u_type == "admin"){
             userCheck = true;
         }
-        console.log("userCheck:"+userCheck);
         if(userCheck == true){
             if(ctry_list.length > 0)
             {
@@ -439,7 +439,6 @@ Auditpage.prototype.pushCountries = function(u_type, user_id){
                 }, []);
 
 
-                console.log("indx:"+arr_country.length)
                 if(arr_country.length == 0){
                     ctry_list.push({
                         "country_id": a_page._countryList[j].country_id,
@@ -456,54 +455,77 @@ Auditpage.prototype.pushCountries = function(u_type, user_id){
             }
         }
     }
-    console.log("length:"+ctry_list.length);
     return ctry_list;
 };
 
-Auditpage.prototype.pushForms = function(u_type, form_id){
-    console.log("u_type:"+form_id);
+Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
     var a_page = this;
     var userCheck = false;
-    var form_list = [];
-    for(var j=0;j<a_page._formList.length;j++)
-    {
-        if(u_type == "user"){
-            userCheck = form_id>0?(form_id == a_page._formList[j].form_id):false;
-        }
-        else if(u_type == "admin"){
+    //var form_list = [];
+
+    if(u_type == "user"){
+        var arr_form_id = [];
+        element = form_id;
+        arr_form_id = a_page._formList.reduce(function(arr, e, i) {
+            if (e.form_id === element)
+                arr.push(i);
+            return arr;
+        }, []);
+
+        if(arr_form_id.length > 0){
             userCheck = true;
         }
-        console.log("userCheck:"+userCheck);
-        if(userCheck == true){
-            if(form_list.length > 0)
+    }
+
+    if(u_type == "admin"){
+        userCheck = true;
+    }
+
+    console.log("check:"+userCheck)
+    if(userCheck == true){
+        form_name = null;
+        console.log("id:"+form_id)
+        if(form_id > 0){
+            for(var j=0;j<a_page._formList.length;j++)
             {
-                var arr_form = [];
-                element = a_page._formList[j].form_id;
-                arr_form = form_list.reduce(function(arr, e, i) {
-                    if (e.form_id === element)
-                        arr.push(i);
-                    return arr;
-                }, []);
-
-
-                console.log("indx:"+arr_form.length)
-                if(arr_form.length == 0){
-                    form_list.push({
-                        "form_id": a_page._formList[j].form_id,
-                        "form_name": a_page._formList[j].form_name
-                    });
+                if(form_id == a_page._formList[j].form_id){
+                    form_name = a_page._formList[j].form_name;
+                    break;
                 }
             }
-            else
-            {
+        }
+        else{
+            form_name = "Login"
+        }
+        console.log("name:"+form_name);
+        if(form_list.length > 0)
+        {
+            var arr_form = [];
+            element = form_id;
+            arr_form = form_list.reduce(function(arr, e, i) {
+                if (e.form_id === element)
+                    arr.push(i);
+                return arr;
+            }, []);
+
+
+            if(arr_form.length == 0){
                 form_list.push({
-                    "form_id": a_page._formList[j].form_id,
-                    "form_name": a_page._formList[j].form_name
+                    "form_id": form_id,
+                    "form_name": form_name
                 });
             }
         }
+        else
+        {
+            console.log("name:"+form_name);
+            form_list.push({
+                "form_id": form_id,
+                "form_name": form_name
+            });
+        }
     }
-    console.log("length:"+form_list.length);
+    console.log(form_list.length)
     return form_list;
 };
 
@@ -567,7 +589,6 @@ initializeControlEvents = function(a_page){
     Show_btn.click(function(e) {
         //a_page.resetFields();
         is_valid = a_page.validateMandatory();
-        console.log(is_valid)
         if (is_valid == true) {
             a_page._on_current_page = 1;
             a_page._total_record = 0;

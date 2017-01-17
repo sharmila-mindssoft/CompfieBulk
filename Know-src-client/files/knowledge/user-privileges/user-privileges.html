@@ -17,12 +17,12 @@
         <div class="col-sm-8">
             <div class="card-box table-responsive">
                 <div class="col-sm-12 no-padding">
-                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight js-filtertable m-b-0" cellspacing="0" width="100%" >
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight js-filtertable m-b-0 js-sorting-table" cellspacing="0" width="100%" >
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>User Group Name</th>
-                                <th>Category Name</th>
+                                <th>User Group Name <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                                <th>Category Name <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
                                 <th class="text-center">Edit</th>
                                 <th class="text-center" width="15%">Status</th>
                             </tr>
@@ -188,5 +188,6 @@
     </div>
 </div>
 <script type="text/javascript" src="/script/user-privileges/userprivileges.js"></script>
+<script src="/js/js-sorting.js"></script>
 {% endblock %}
 

@@ -186,6 +186,7 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
 
     data_list = []
     for r in assigned_new_compliance :
+
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
         level_1, level_1_name, map_text = status_list(map_id)
@@ -199,6 +200,9 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
 
             ))
         else :
+            # print r["is_approved"]
+            # if r["is_approved"] == 5 :
+            #     continue
             data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
                 level_1, level_1_name, map_text,
                 r["statutory_provision"], r["compliance_id"], r["document_name"],
@@ -348,6 +352,9 @@ def get_assigned_compliance_by_id(db, request, user_id):
                     None, None, None, 0, unit_id
                 ))
         else :
+            # print r["is_approved"]
+            # if r["is_approved"] == 5 :
+            #     continue
             # before save rest of the field will be null before save in assignstatutorycompliance
             data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
                 level_1, level_1_s_name, map_text,

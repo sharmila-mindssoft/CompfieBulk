@@ -95,15 +95,14 @@ function initClientMirror() {
     }
 
     function getSessionToken() {
-        // var info = getUserInfo();
-        // return info.session_token;
-        return "1-6026dd780194411fbcac2ce5decc5141";
+        var info = getUserInfo();
+        return info.session_token;
     }
 
     function getUserMenu() {
         var info = getUserInfo();
         if (info != null) {
-            return info.menu.menus;
+            return info.menu;
         } else {
             login_url = '/login/' + window.localStorage.recent_short_name;
             window.location.href = login_url;
@@ -149,7 +148,7 @@ function initClientMirror() {
 
     function redirect_login() {
         var short_name = getClientShortName();
-        login_url = '/login/' + short_name;
+        login_url = '/login';
         window.localStorage.recent_short_name = short_name;
         clearSession();
         window.location.href = login_url;
@@ -158,7 +157,7 @@ function initClientMirror() {
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
-            'session_token': "1-6026dd780194411fbcac2ce5decc5141",
+            'session_token': sessionToken,
             'request': request
         };
         var body = [
@@ -782,7 +781,9 @@ function initClientMirror() {
     function getReassignedHistoryReportFilters(callback) {
         var request = [
             'GetReassignedHistoryReportFilters',
-            {}
+            {
+                'le_id' : 1
+            }
         ];
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
@@ -1026,13 +1027,6 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    /*function getSaveClientUserGroupDict(ugName, fIds) {
-        return {
-            'ug_name': ugName,
-            'f_ids': fIds
-        };
-    }*/
-
     function saveClientUserGroup(u_g_name, f_cat_id, f_ids, callback) {
         callerName = 'client_masters';
         var request = [
@@ -1044,14 +1038,6 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-
-    /*function getUpdateClientUserGroupDict(ugId, ugName, fIds) {
-        return {
-            'ug_id': ugId,
-            'ug_name': ugName,
-            'f_ids': fIds
-        };
-    }*/
 
     function updateClientUserGroup(u_g_id, u_g_name, f_cat_id, f_ids, callback) {
         callerName = 'client_masters';
@@ -1520,7 +1506,7 @@ function initClientMirror() {
         }
     }
     /* Compliance Approal */
-    function getComplianceApprovalList(start_count, callback) {
+    function getComplianceApprovalList(start_count, callback) { 
         var request = [
             'GetComplianceApprovalList',
             { 'start_count': start_count }
@@ -1751,34 +1737,7 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-    /* Reassigned History Report */
-    function getReassignedHistoryReportFilters(callback) {
-        var request = [
-            'GetReassignedHistoryReportFilters',
-            {}
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
-        var request = [
-            'GetReassignedHistoryReport', {
-                'country_id': country_id,
-                'domain_id': domain_id,
-                'unit_id': unit_id,
-                'level_1_statutory_id': level_1_statutory_id,
-                'compliance_id': compliance_id,
-                'user_id': user_id,
-                'from_date': from_date,
-                'to_date': to_date,
-                'csv': csv,
-                'record_count': record_count
-            }
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
+    
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -1887,6 +1846,42 @@ function initClientMirror() {
         } else {
             $('#escalation_count').text('0');
         }
+    }
+
+    function getUnitClosureData(callback){
+        var request = [
+            'GetUnitClosureData',
+            {}
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUnitClosureUnitList(le_id, callback){
+        var request = [
+            'GetUnitClosureUnitData',
+            {
+                "legal_entity_id": le_id
+            }
+        ];
+        callerName = 'client_masters';
+        console.log(request)
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function saveUnitClosureData(password, remarks, unit_id, action_mode, callback)
+    {
+        callerName = 'client_masters';
+        var request = [
+          'SaveUnitClosureData',
+          {
+            "password": password,
+            "closed_remarks": remarks,
+            "unit_id": unit_id,
+            "grp_mode": action_mode
+          }
+        ];
+        clientApiRequest(callerName, request, callback);
     }
 
     function uploadFormatFile(formdata, callback) {
@@ -2032,7 +2027,10 @@ function initClientMirror() {
         updateUserProfile: updateUserProfile,
         updateUserInfo: updateUserInfo,
         getContractExpireAndNotificationCount: getContractExpireAndNotificationCount,
-        uploadFormatFile: uploadFormatFile
+        uploadFormatFile: uploadFormatFile,
+        getUnitClosureData: getUnitClosureData,
+        getUnitClosureUnitList: getUnitClosureUnitList,
+        saveUnitClosureData: saveUnitClosureData
     };
 }
 var client_mirror = initClientMirror();

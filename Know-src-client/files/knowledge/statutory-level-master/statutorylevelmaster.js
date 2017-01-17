@@ -11,13 +11,19 @@ var domain_val = $('#domain');
 var domain_ac = $("#domainval");
 var AcDomain = $('#ac-domain')
 $('.btn-statutorylevel-cancel').click(function () {
-  $('.input-sm').val('');
-  $('.hiddenvalue').val('');
+  resetFields();
+});
+
+function resetFields(){
+  console.log("1")
   $('#countryval').val('');
   $('#country').val('');
+  console.log($('#country').val());
   $('#domainval').val('');
   $('#domain').val('');
-});
+  $('.input-sm').val('');
+  $('.hiddenvalue').val('');
+}
 //get statutory level master data from api
 function GetStatutoryLevels() {
   function onSuccess(data) {
@@ -50,6 +56,10 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     }
     else if(current_id == 'domain'){
       $('#level1').focus();
+      for (var k = 1; k <= 10; k++) {
+        $('#level' + k).val('');
+        $('#levelid' + k).val('');
+      }
       loadstatutoryLevelsList();
     }
 }
@@ -129,6 +139,7 @@ function loadstatutoryLevelsList() {
 }
 //validation
 function validate() {
+  console.log($('#country').val())
   var checkLength = statutoryLevelValidate();
   if (checkLength) {
     if ($('#country').val().trim().length == 0) {
@@ -169,6 +180,7 @@ $('#submit').click(function () {
           if ($('#level' + k).val().trim() == '') {
             isRemove = true;
           }
+          console.log(('level' + k),$('#level' + k).val())
           passlevellist.push({
             'l_position': k,
             'l_name': $('#level' + k).val().trim(),
@@ -194,12 +206,17 @@ $('#submit').click(function () {
           displaySuccessMessage(message.record_updated);
         }
         GetStatutoryLevels();
-        jQuery('.btn-statutorylevel-cancel').focus().click();
+        resetFields();
         $('#countryval').focus();
       }
-      function onFailure(error) {
+      function onFailure(error, response) {
+        console.log("e:"+error, response)
         if (error == 'DuplicateStatutoryLevelsExists') {
           displayMessage(message.statutorylevel_exists);
+        }else if (error == 'LevelShouldNotbeEmpty') {
+          var levelValue = response.level_id;
+          var msg = 'Level ' + levelValue + ' cannot be deleted, hence name';
+          displayMessage(msg + message.shouldnot_empty);
         } else {
           displayMessage(error);
         }
@@ -210,7 +227,7 @@ $('#submit').click(function () {
           $('.hiddenvalue').val('');
           onSuccess(response);
         } else {
-          onFailure(error);
+          onFailure(error, response);
         }
       });
     } else {

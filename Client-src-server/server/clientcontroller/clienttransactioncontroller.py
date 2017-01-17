@@ -1,6 +1,4 @@
-import time
-from protocol import (clienttransactions, clientmasters, login, core)
-from server import logger
+from clientprotocol import (clienttransactions, clientmasters, clientcore)
 from server.constants import RECORD_DISPLAY_COUNT
 
 from server.clientdatabase.clienttransaction import *
@@ -24,162 +22,75 @@ __all__ = [
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_transaction_requests(request, db):
-    client_info = request.session_token.split("-")
-    session_token = request.session_token
+def process_client_transaction_requests(request, db, session_user, client_id):
     request = request.request
-    client_id = int(client_info[0])
-    session_user = db.validate_session_token(session_token)
-    if session_user is None:
-        return login.InvalidSessionToken()
 
     if type(request) is clienttransactions.GetStatutorySettings:
-        logger.logClientApi(
-            "GetStatutorySettings - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
-        result = process_get_statutory_settings(db, session_user)
-        logger.logClientApi("GetStatutorySettings", "process end")
-        logger.logClientApi("------", str(time.time()))
+        result = process_get_statutory_settings(db, request, session_user)
 
     elif type(request) is clienttransactions.GetSettingsCompliances:
-        logger.logClientApi(
-            "GetSettingsCompliances  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_statutory_compliance(db, session_user, request)
-        logger.logClientApi("GetSettingsCompliances", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.UpdateStatutorySettings:
-        logger.logClientApi(
-            "UpdateStatutorySettings  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_update_statutory_settings(
             db, request, session_user
         )
-        logger.logClientApi("UpdateStatutorySettings", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetAssignCompliancesFormData:
-        logger.logClientApi(
-            "GetAssignCompliancesFormData  - " + str(client_id),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_assign_compliance_form_data(
             db, session_user
         )
-        logger.logClientApi("GetAssignCompliancesFormData", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetComplianceForUnits:
-        logger.logClientApi(
-            "GetComplianceForUnits  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_compliance_for_units(
             db, request, session_user
         )
-        logger.logClientApi("GetComplianceForUnits", "process end")
-        logger.logClientApi("------", str(time.time()))
-
     elif type(request) is clienttransactions.SaveAssignedCompliance:
-        logger.logClientApi(
-            "SaveAssignedCompliance  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_save_assigned_compliance(
             db, request, session_user
         )
-        logger.logClientApi("SaveAssignedCompliance", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetUserwiseCompliances:
-        logger.logClientApi(
-            "GetUserwiseCompliances  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_user_wise_compliances(
             db, session_user
         )
-        logger.logClientApi("GetUserwiseCompliances", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetAssigneeCompliances:
-        logger.logClientApi(
-            "GetAssigneeCompliances  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_assignee_compliances(db, request, session_user)
-        logger.logClientApi("GetAssigneeCompliances", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.ReassignCompliance:
         result = process_reassign_compliance(
             db, request, session_user
         )
     elif type(request) is clienttransactions.GetPastRecordsFormData:
-        logger.logClientApi(
-            "GetPastRecordsFormData  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_past_records_form_data(
             db, request, session_user
         )
-        logger.logClientApi("GetPastRecordsFormData", "process end")
-        logger.logClientApi("------", str(time.time()))
-
     elif type(request) is clienttransactions.GetStatutoriesByUnit:
-        logger.logClientApi(
-            "GetStatutoriesByUnit  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_statutories_by_unit(
             db, request, session_user
         )
-        logger.logClientApi("GetStatutoriesByUnit", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.SavePastRecords:
-        logger.logClientApi(
-            "SavePastRecords  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_save_past_records(
             db, request, session_user, client_id
         )
-        logger.logClientApi("SavePastRecords", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.GetComplianceApprovalList:
-        logger.logClientApi(
-            "GetComplianceApprovalList  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_compliance_approval_list(
             db, request, session_user, client_id
         )
-        logger.logClientApi("GetComplianceApprovalList", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clienttransactions.ApproveCompliance:
-        logger.logClientApi(
-            "ApproveCompliance  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_approve_compliance(
             db, request, session_user
         )
-        logger.logClientApi("ApproveCompliance", "process end")
-        logger.logClientApi("------", str(time.time()))
-
     return result
 
 
-def process_get_statutory_settings(db, session_user):
-    return get_statutory_settings(db, session_user)
+def process_get_statutory_settings(db, request, session_user):
+    le_id = request.legal_entity_id
+    return get_statutory_settings(db, le_id, session_user)
 
 
 def process_get_statutory_compliance(db, session_user, request):
@@ -364,10 +275,10 @@ def process_get_compliance_approval_list(db, request, session_user, client_id):
     )
     total_count = get_compliance_approval_count(db, session_user)
     approval_status = [
-        core.COMPLIANCE_APPROVAL_STATUS("Concur"),
-        core.COMPLIANCE_APPROVAL_STATUS("Reject Concurrence"),
-        core.COMPLIANCE_APPROVAL_STATUS("Approve"),
-        core.COMPLIANCE_APPROVAL_STATUS("Reject Approval")
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Concur"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Concurrence"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Approve"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Approval")
     ]
     return clienttransactions.GetComplianceApprovalListSuccess(
         approval_list=compliance_approval_list,

@@ -3,8 +3,6 @@
 #
 # In this module "db" is an object of "KnowledgeDatabase"
 ###############################################################################
-import time
-from server import logger
 from protocol import login, clientcoordinationmaster
 from server.database.clientcoordinationmaster import *
 from server.database.technomaster import get_user_countries
@@ -43,29 +41,18 @@ def process_client_coordination_master_request(request, db):
             request_frame
         ) is clientcoordinationmaster.GetClientUnitApprovalList
     ):
-        logger.logKnowledgeApi("GetClientUnitApprovalList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_client_unit_approval_list(db, session_user)
-        logger.logKnowledgeApi("GetClientUnitApprovalList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is clientcoordinationmaster.GetEntityApprovalList:
-        logger.logKnowledgeApi("GetEntityApprovalList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_entity_unit_approval_list(
             db, request_frame, session_user
         )
-        logger.logKnowledgeApi("GetEntityApprovalList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is clientcoordinationmaster.ApproveUnit:
-        logger.logKnowledgeApi("ApproveUnit", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_approve_unit(
             db, request_frame, session_user
         )
-        logger.logKnowledgeApi("ApproveUnit", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+
     elif(
         type(request_frame) is clientcoordinationmaster.GetClientGroupApprovalList
     ):

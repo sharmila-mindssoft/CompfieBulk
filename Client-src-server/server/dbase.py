@@ -16,7 +16,7 @@ class BaseDatabase(object):
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
         # self._mysql = MySQL()
-        print self._mysql
+        # print self._mysql
 
     def dbConfig(self, app):
         app.config['MYSQL_DATABASE_USER'] = self._mysqlUser
@@ -56,7 +56,6 @@ class Database(object):
         self._connection = mysqlConnection
         self._cursor = None
         self._for_client = False
-        print "\n\n"
 
     # Used to get first three letters of month by the month's integer value
     string_months = {
@@ -153,9 +152,6 @@ class Database(object):
     # To begin a database transaction
     ########################################################
     def begin(self):
-        print self._connection
-        print self._cursor
-        print "cursor " * 10
         assert self._connection is not None
         assert self._cursor is None
         self._cursor = self._connection.cursor(dictionary=True, buffered=True)
@@ -705,30 +701,46 @@ class Database(object):
             new_id = int(row["maxid"]) + 1
         return new_id
 
-    def save_activity(self, user_id, form_id, action):
+    def save_activity(
+        self, user_id, form_id, action, legal_entity_id=None, unit_id=None,
+    ):
         created_on = get_date_time()
-        activityId = self.get_new_id("activity_log_id", "tbl_activity_log")
+        # if legal_entity_id is None :
+        #     legal_entity_id = ''
+        # if unit_id is None :
+        #     unit_id = ''
+        tblUsers = "tbl_users"
+        column = ["user_category_id, client_id"]
+        condition_val = "user_id= %s" % user_id
+        rows = self.get_data(tblUsers, column, condition_val)
+        client_id = rows[0]["client_id"]
+        category_id = rows[0]["user_category_id"]
         query = " INSERT INTO tbl_activity_log " + \
-            " (activity_log_id, user_id, form_id, action, created_on) " + \
-            " VALUES (%s, %s, %s, %s, %s) "
+            " (client_id, legal_entity_id, unit_id, user_category_id, " + \
+            " user_id, form_id, action, created_on) " + \
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
         self.execute(query, (
-                activityId, user_id, form_id, action, created_on
+                client_id, legal_entity_id, unit_id, category_id,
+                user_id, form_id, action, created_on
         ))
         return True
 
     def validate_session_token(self, session_token):
         query = "SELECT t01.user_id FROM tbl_user_sessions t01 " + \
-            " LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id " + \
+            " LEFT JOIN tbl_user_login_details t02 ON t01.user_id = t02.user_id " + \
             " and is_active = 1 " + \
             " WHERE  session_token=%s"
+        print query
+        print session_token
         param = [session_token]
         row = self.select_one(query, param)
+        print row
         user_id = None
         if row:
             user_id = row["user_id"]
             self.update_session_time(session_token)
         return user_id
-
+        
     def update_session_time(self, session_token):
         q = '''
             update tbl_user_sessions set last_accessed_time = now()

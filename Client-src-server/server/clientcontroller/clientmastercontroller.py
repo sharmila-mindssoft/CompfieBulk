@@ -1,7 +1,5 @@
 import collections
-import time
-from protocol import (clientmasters, core, login)
-from server import logger
+from clientprotocol import (clientmasters, clientcore)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
 from server.clientdatabase.general import (
@@ -21,175 +19,104 @@ __all__ = [
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_master_requests(request, db):
-    session_token = request.session_token
-    client_info = session_token.split("-")
+def process_client_master_requests(request, db, session_user, client_id):
     request = request.request
-    client_id = int(client_info[0])
-    session_user = db.validate_session_token(session_token)
-    if session_user is None:
-        return login.InvalidSessionToken()
 
     if type(request) is clientmasters.GetServiceProviders:
-        logger.logClientApi(
-            "GetServiceProviders - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time())) 
         result = process_get_service_providers(
             db, request, session_user
         )
-        logger.logClientApi("GetServiceProviders", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveServiceProvider:
-        logger.logClientApi(
-            "SaveServiceProvider - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_save_service_provider(
             db, request, session_user
         )
-        logger.logClientApi("SaveServiceProvider", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.UpdateServiceProvider:
-        logger.logClientApi(
-            "UpdateServiceProvider - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_update_service_provider(
             db, request, session_user
         )
-        logger.logClientApi("UpdateServiceProvider", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeServiceProviderStatus:
-        logger.logClientApi(
-            "ChangeServiceProviderStatus - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_change_service_provider_status(
             db, request, session_user
         )
-        logger.logClientApi("ChangeServiceProviderStatus", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetUserPrivileges:
-        logger.logClientApi(
-            "GetUserPrivileges - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_user_privileges(
             db, request, session_user
         )
-        logger.logClientApi("GetUserPrivileges", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveUserPrivileges:
-        logger.logClientApi(
-            "SaveUserPrivileges - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_save_user_privileges(
             db, request, session_user
         )
-        logger.logClientApi("SaveUserPrivileges", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.UpdateUserPrivileges:
-        logger.logClientApi(
-            "UpdateUserPrivileges - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_update_user_privileges(
             db, request, session_user
         )
-        logger.logClientApi("UpdateUserPrivileges", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeUserPrivilegeStatus:
-        logger.logClientApi(
-            "ChangeUserPrivilegeStatus - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_change_user_privilege_status(
             db, request, session_user
         )
-        logger.logClientApi("ChangeUserPrivilegeStatus", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetClientUsers:
-        logger.logClientApi(
-            "GetClientUsers - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_client_users(db, request, session_user)
-        logger.logClientApi("GetClientUsers", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveClientUser:
-        logger.logClientApi(
-            "SaveClientUser - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_save_client_user(db, request, session_user, client_id)
-        logger.logClientApi("SaveClientUser", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.UpdateClientUser:
-        logger.logClientApi(
-            "UpdateClientUser - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_update_client_user(
             db, request, session_user, client_id
         )
-        logger.logClientApi("UpdateClientUser", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeClientUserStatus:
-        logger.logClientApi(
-            "ChangeClientUserStatus - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_change_client_user_status(
             db, request, session_user, client_id
         )
-        logger.logClientApi("ChangeClientUserStatus", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.ChangeAdminStatus:
-        logger.logClientApi(
-            "ChangeAdminStatus - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_change_admin_status(
             db, request, session_user
         )
-        logger.logClientApi("ChangeAdminStatus", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetUnits:
-        logger.logClientApi("GetUnits - " + str(client_id), "process begin")
-        logger.logClientApi("------", str(time.time()))
         result = process_get_units(db, request, session_user)
-        logger.logClientApi("GetUnits", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.CloseUnit:
-        logger.logClientApi("CloseUnit - " + str(client_id), "process begin")
-        logger.logClientApi("------", str(time.time()))
         result = process_close_unit(db, request, session_user)
-        logger.logClientApi("CloseUnit", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetAuditTrails:
+        result = process_get_audit_trails(db, request, session_user)
+
+    elif type(request) is clientmasters.GetUnitClosureData:
         logger.logClientApi(
-            "GetAuditTrails - " + str(client_id), "process begin"
+            "GetUnitClosureData - " + str(client_id), "process begin"
         )
         logger.logClientApi("------", str(time.time()))
-        result = process_get_audit_trails(db, request, session_user)
-        logger.logClientApi("GetAuditTrails", "process end")
+        result = process_get_unit_closure_data(db, request, session_user)
+        logger.logClientApi("GetUnitClosureData", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientmasters.GetUnitClosureUnitData:
+        logger.logClientApi(
+            "GetUnitClosureUnitData - " + str(client_id), "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = process_get_unit_closure_unit_data(db, request, session_user)
+        logger.logClientApi("GetUnitClosureUnitData", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientmasters.SaveUnitClosureData:
+        logger.logClientApi(
+            "SaveUnitClosureData - " + str(client_id), "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = process_save_unit_closure_unit_data(db, request, session_user)
+        logger.logClientApi("SaveUnitClosureData", "process end")
         logger.logClientApi("------", str(time.time()))
 
     return result
@@ -279,7 +206,7 @@ def process_get_forms(db, cat_id):
     for row in result_rows:
         parent_menu = None if (
             row["parent_menu"] == None) else row["parent_menu"]
-        form = core.Form(
+        form = clientcore.Form(
             form_id=row["form_id"],
             form_name=row["form_name"],
             form_url=row["form_url"],
@@ -300,7 +227,7 @@ def process_get_user_category(db):
         user_category_id = int(row["user_category_id"])
         user_category_name = row["user_category_name"]
         user_category_list.append(
-            core.ClientUsercategory(user_category_id, user_category_name)
+            clientcore.ClientUsercategory(user_category_id, user_category_name)
         )
     return user_category_list
 
@@ -310,7 +237,7 @@ def process_get_user_category(db):
 ########################################################
 def process_get_user_privilege_details_list(db):
     user_group_list = get_user_privilege_details_list(db)
-    
+
     #print user_group_list
     return user_group_list
 
@@ -332,7 +259,7 @@ def process_get_user_privileges(db, request, session_user):
     return clientmasters.GetUserPrivilegesSuccess(
         forms=form_category,
         user_groups=user_group_list,
-        user_category = user_category 
+        user_category=user_category
     )
 
 
@@ -596,7 +523,7 @@ def process_user_menus(form_list):
         menus[form_type] = _forms
     menus = reorder_menu(menus)
     # print menus
-    return core.Menu(menus)
+    return clientcore.Menu(menus)
     # return menus
 
 
@@ -615,3 +542,42 @@ def reorder_menu(menus):
     if "My Accounts" in menus:
         new_menu["My Accounts"] = menus["My Accounts"]
     return new_menu
+
+
+########################################################
+# To get unit closure legal entity list under client id
+########################################################
+def process_get_unit_closure_data(db, request, session_user):
+    print "user"
+    print session_user
+    unit_closure_legal_entities = get_unit_closure_legal_entities(db, session_user)
+    print "controller"
+    print unit_closure_legal_entities
+    return clientmasters.GetUnitClosureDataSuccess(unit_closure_legal_entities)
+
+########################################################
+# To get unit closure units list under legal entity id
+########################################################
+def process_get_unit_closure_unit_data(db, request, session_user):
+    unit_closure_units = get_unit_closure_units_list(db, request)
+    return clientmasters.GetUnitClosureUnitDataSuccess(unit_closure_units)
+
+########################################################
+# To save unit closure units data under unit id
+########################################################
+def process_save_unit_closure_unit_data(db, request, session_user):
+    session_user = int(session_user)
+    unit_id = request.unit_id
+    action_mode = request.grp_mode
+    password = request.password
+    remarks = request.closed_remarks
+
+    if not is_invalid_id(db, "unit_id", unit_id):
+        return clientmasters.InvalidUnitId()
+    else:
+        if verify_password(db, password, session_user):
+            result = save_unit_closure_data(db, session_user, password, unit_id, remarks, action_mode)
+            if result is True:
+                return clientmasters.SaveUnitClosureSuccess()
+        else:
+            return clientmasters.InvalidPassword()

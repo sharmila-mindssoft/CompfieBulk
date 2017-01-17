@@ -1,8 +1,6 @@
-import time
 from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import login, technoreports, knowledgereport, core
 from generalcontroller import validate_user_session, validate_user_forms
-from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
 from server.database.admin import (
     get_countries_for_user, get_domains_for_user,
@@ -12,12 +10,9 @@ from server.database.general import (
     get_compliance_frequency
 )
 from server.database.technomaster import (
-    get_group_companies_for_user,
     get_business_groups_for_user,
     get_legal_entities_for_user,
-    get_divisions_for_user,
     get_active_industries,
-    get_units, get_groups,
     get_client_groups_for_user
 )
 from server.database.knowledgemaster import (
@@ -26,7 +21,6 @@ from server.database.knowledgemaster import (
     get_geographies,
 )
 from server.database.technoreport import (
-    get_assigned_statutories_report,
     get_statutory_notifications_report_data,
     get_statutory_notifications_report_count,
     get_client_details_report,
@@ -79,178 +73,86 @@ def process_techno_report_request(request, db):
         return login.InvalidSessionToken()
 
     if type(request_frame) is technoreports.GetAssignedStatutoryReportFilters:
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryReportFilters", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutory_report_filters(db, user_id)
-        logger.logKnowledgeApi(
-            "GetAssignedStatutoryReportFilters", "process end"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetAssignedStatutoryReport:
-        logger.logKnowledgeApi("GetAssignedStatutoryReport", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_assigned_statutory_report_data(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetAssignedStatutoryReport", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetClientDetailsReportFilters:
-        logger.logKnowledgeApi(
-            "GetClientDetailsReportFilters", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_client_details_report_filters(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetClientDetailsReportFilters", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetClientDetailsReportData:
-        logger.logKnowledgeApi("GetClientDetailsReportData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_client_details_report_data(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetClientDetailsReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetStatutoryNotificationsFilters:
-        logger.logKnowledgeApi(
-            "GetStatutoryNotificationsFilters", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_notifications_filters(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi(
-            "GetStatutoryNotificationsFilters", "process end"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif (
         type(
             request_frame
         ) is technoreports.GetStatutoryNotificationsReportData
     ):
-        logger.logKnowledgeApi(
-            "GetStatutoryNotificationsReportData", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_statutory_notifications_report_data(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi(
-            "GetStatutoryNotificationsReportData", "process end"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetComplianceTaskFilter:
-        logger.logKnowledgeApi("GetComplianceTaskFilter", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_compliance_task_filter(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetComplianceTaskFilter", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetComplianceTaskReport:
-        logger.logKnowledgeApi("GetComplianceTaskReport", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_compliance_task_report(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetComplianceTaskFilter", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+
     elif type(request_frame) is technoreports.GetUserMappingReportFilters:
-        logger.logKnowledgeApi("GetUserMappingReportFilters", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_user_mapping_reports_filter(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetUserMappingReportFilters", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+
     elif type(request_frame) is technoreports.GetUserMappingDetailsReportData:
-        logger.logKnowledgeApi("GetUserMappingDetailsReportData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_user_mapping_details_reports_data(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetUserMappingDetailsReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetClientAgreementReportFilters:
-        logger.logKnowledgeApi(
-            "GetClientAgreementReportFilters", "process begin"
-        )
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_client_agreement_report_filters(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetClientAgreementReportFilters", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetClientAgreementReportData:
-        logger.logKnowledgeApi("GetClientAgreementReportData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_client_agreement_report_data(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetClientAgreementReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetDomainwiseAgreementReportData:
-        logger.logKnowledgeApi("GetDomainwiseAgreementReportData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_domainwise_agreement_report_data(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetDomainwiseAgreementReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetOrganizationWiseUnitCount:
-        logger.logKnowledgeApi("GetOrganizationWiseUnitCount", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_organizationwise_unit_count(
             db, request_frame, user_id
         )
-        logger.logKnowledgeApi("GetDomainwiseAgreementReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetGroupAdminReportData:
-        logger.logKnowledgeApi("GetGroupAdminReportData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_GroupAdminReportData(db, user_id)
-        logger.logKnowledgeApi("GetGroupAdminReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetAssignedUserClientGroups:
-        logger.logKnowledgeApi("GetAssignedUserClientGroups", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_AssignedUserClientGroups(db, user_id)
-        logger.logKnowledgeApi("GetAssignedUserClientGroups", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetReassignUserReportData:
-        logger.logKnowledgeApi("GetReassignUserReportData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_ReassignUserReportData(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetReassignUserReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+
     elif type(request_frame) is technoreports.GetReassignUserDomainReportData:
-        logger.logKnowledgeApi("GetReassignUserDomainReportData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_ReassignUserDomainReportData(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetReassignUserDomainReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
+
     elif type(request_frame) is technoreports.GetAssignedStatutoriesList:
-        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_AssignedStatutoriesList(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetAssignedStatutoriesList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     elif type(request_frame) is technoreports.GetComplianceStatutoriesList:
-        logger.logKnowledgeApi("GetComplianceStatutoriesList", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_get_ComplianceStatutoriesList(db, request_frame, user_id)
-        logger.logKnowledgeApi("GetComplianceStatutoriesList", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 
@@ -570,8 +472,8 @@ def process_get_AssignedUserClientGroups(db, user_id):
 
     for d_list in result[3]:
         domain_user_list.append(technoreports.ReassignUserDomainList(
-            int(d_list.get("user_id")), int(d_list.get("client_id")), int(d_list.get("legal_entity_id")),
-            d_list.get("legal_entity_name"), int(d_list.get("business_group_id")),
+            int(d_list.get("user_id")), int(d_list.get("client_id")),
+            d_list.get("legal_entity_id"), d_list.get("legal_entity_name"), d_list.get("business_group_id"),
             d_list.get("business_group_name"), int(d_list.get("domain_id")), d_list.get("domain_name")
         ))
 

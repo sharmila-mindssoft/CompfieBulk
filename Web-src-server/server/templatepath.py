@@ -47,13 +47,13 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/unit-closure",
-        "files/client/unit-closure/unitclosure.html",
+        "files/client/unit-closure/unit_closure.html",
         None, {}
     ),
     # transactions ---------------------------------------------------------------------
     (
         "/statutory-settings",
-        "files/client/statutory-settings/statutorysettings.html",
+        "files/client/statutory-settings/statutory_settings.html",
         None, {}
     ),
     (
@@ -144,12 +144,12 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/statutory-settings-unit-wise-report",
-        "files/client/statutory-settings-unit-wise-report/statutory-settings-unit-wise-report.html",
+        "files/client/statutory-settings-unit-wise/statutory_settings_unit_wise.html",
         None, {}
     ),
     (
         "/reassigned-history-report",
-        "files/client/reassigned-history-report/reassigned-history-report.html",
+        "files/client/reassigned-history/reassign_history.html",
         None, {}
     ),
     (

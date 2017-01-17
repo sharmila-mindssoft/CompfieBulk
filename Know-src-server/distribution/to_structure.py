@@ -52,3 +52,5 @@ def to_structure_RecordType_protocol_Response_CompanyServerDetails(data):
     from distribution import protocol
     return protocol.Response.to_structure(data)
 
+def to_structure_Bool(data):
+    return parse_bool(data)

@@ -1,3 +1,4 @@
+import base64
 import time
 from tornado.httpclient import HTTPRequest
 import json
@@ -38,14 +39,17 @@ class CompanyManager(object) :
         print self._poll_url
         # print self._poll_url
         body = json.dumps(
-            GetCompanyServerDetails().to_structure()
+            GetCompanyServerDetails().to_structure(), indent=2
         )
+        print body
+
+        body = body.encode('base64')
         request = HTTPRequest(
             self._poll_url, method="POST", body=body,
-            # headers={
-            #     "Content-Type": "application/json",
-            #     "X-Xsrftoken": self._token
-            # },
+            headers={
+                "Content-Type": "application/json",
+                # "X-Xsrftoken": self._token
+            },
             request_timeout=10
         )
         self._request_body = request
@@ -99,8 +103,11 @@ class CompanyManager(object) :
         if not response.error :
             r = None
             try:
+                data = response.body
+                data = base64.decodestring(data + b'=' * 10)
+                print data
                 r = Response.parse_structure(
-                    json.loads(response.body)
+                    json.loads(data)
                 )
             except Exception, e:
                 print err, e

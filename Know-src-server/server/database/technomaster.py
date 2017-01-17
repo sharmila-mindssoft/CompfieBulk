@@ -2091,22 +2091,41 @@ def get_unassigned_units_list(db, session_user):
 #  Return Type : Returns List of object of UnassignedUnit
 ###############################################################################
 def return_unassigned_units(data):
-    fn = technomasters.UnassignedUnit
-    result = [
-        fn(
-            domain_name=datum["domain_name"],
-            group_name=datum["client_name"],
-            legal_entity_name = datum["legal_entity_name"],
-            business_group_name = datum["business_group_name"],
-            unassigned_units="%s / %s" % (
-                datum["total_units"] - datum["assigned_units"],
-                datum["total_units"]
-            ),
-            domain_id=datum["domain_id"],
-            client_id=datum["client_id"],
-            legal_entity_id = datum["legal_entity_id"]
-        ) for datum in data
-    ]
+    print "inside"
+    assigned_total = 0
+    result = []
+    for datum in data:
+        if (datum["assigned_units"] > 0 or datum["total_units"] > 0 or datum["unassigned_units"] > 0):
+            print "units"
+            print datum["assigned_units"]
+            if datum["total_units"] == 0:
+                if datum["unassigned_units"] == 0:
+                    assigned_total = "%s / %s" % (
+                        datum["unassigned_units"] + datum["assigned_units"],
+                        datum["assigned_units"]
+                    )
+                else:
+                    assigned_total = "%s / %s" % (
+                        datum["unassigned_units"] - datum["assigned_units"],
+                        datum["unassigned_units"]
+                    )
+            else:
+                assigned_total = "%s / %s" % (
+                    datum["total_units"] - datum["assigned_units"],
+                    datum["total_units"]
+                )
+
+            result.append(technomasters.UnassignedUnit(
+                domain_name=datum["domain_name"],
+                group_name=datum["client_name"],
+                legal_entity_name=datum["legal_entity_name"],
+                business_group_name=datum["business_group_name"],
+                unassigned_units=assigned_total,
+                domain_id=datum["domain_id"],
+                client_id=datum["client_id"],
+                legal_entity_id=datum["legal_entity_id"]
+            ))
+
     return result
 
 
@@ -2143,7 +2162,8 @@ def return_assigned_units(data):
             legal_entity_id=datum["legal_entity_id"],
             legal_entity_name=datum["legal_entity_name"],
             unit_count=datum["no_of_units"],
-            user_category_id = datum["user_category_id"]
+            user_category_id=datum["user_category_id"],
+            client_id=datum["client_id"], domain_id=datum["domain_id"]
         ) for datum in data
     ]
     return result
@@ -2157,12 +2177,16 @@ def return_assigned_units(data):
 def get_assigned_unit_details_list(db, request):
     legal_entity_id = request.legal_entity_id
     user_id = request.user_id
+    client_id = request.client_id
+    domain_id = request.domain_id
+    print "args"
+    print legal_entity_id, user_id
     #
     # To get details of assigned units under a domain manager and legal entity
     #  Parameters - Domain manager id, legal entity id
     #
     units, industry_details = db.call_proc_with_multiresult_set(
-        "sp_userunits_assigned_details_list", (user_id, legal_entity_id), 2
+        "sp_userunits_assigned_details_list", (user_id, legal_entity_id, client_id, domain_id), 2
     )
     unit_industry_name_map = generate_unit_domain_industry_map(
         industry_details)
@@ -2254,6 +2278,8 @@ def get_domain_managers_for_user(db, client_id, domain_id, session_user):
     # users = db.call_proc_with_multiresult_set(
     #     "sp_users_domain_managers", [session_user], 2
 
+    print "params"
+    print session_user, domain_id, client_id
     users = db.call_proc_with_multiresult_set(
         "sp_users_domain_managers", [session_user, domain_id, client_id], 3)
     print "users"

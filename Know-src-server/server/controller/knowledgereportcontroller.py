@@ -1,10 +1,8 @@
-import time
 from protocol import login, knowledgereport
 from generalcontroller import (
     validate_user_session, validate_user_forms,
     process_get_domains, process_get_countries
 )
-from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
 from server.database.admin import (
     get_countries_for_user, get_domains_for_user
@@ -85,7 +83,7 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
     level_1_id = request_frame.level_1_statutory_id
     frequency_id = request_frame.frequency_id
     from_count = request_frame.record_count
-    to_count = RECORD_DISPLAY_COUNT
+    to_count = request_frame.page_count
     report_data, total_record = get_statutory_mapping_report(
         db, country_id, domain_id, industry_id,
         nature_id, geography_id, level_1_id, frequency_id, user_id,

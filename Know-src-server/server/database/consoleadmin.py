@@ -1,8 +1,10 @@
-from server.exceptionmessage import process_error
+from server.exceptionmessage import process_error, fetch_error, fetch_run_error
 from protocol import consoleadmin
 from forms import *
 from tables import *
 from server.common import get_date_time
+from server.database.validateEnvironment import ServerValidation
+from server.database.createclientdatabase import ClientGroupDBCreate, ClientLEDBCreate
 
 __all__ = [
     "get_db_server_list",
@@ -24,6 +26,9 @@ __all__ = [
     "get_group_ip_details_form_data",
     "save_ip_setting_details",
     "delete_ip_setting_details",
+    "get_ip_settings_report_filter",
+    "ip_setting_report_data",
+    "get_allocated_server_form_data"
 ]
 
 
@@ -221,20 +226,18 @@ def get_client_database_form_data(db):
     #   Legal entities, Client servers and Database servers
     #
     data = db.call_proc_with_multiresult_set(
-        "sp_clientdatabase_list", None, 5)
+        "sp_clientdatabase_list", None, 4)
+    print data
     client_dbs = data[0]
-    groups = data[1]
-    les = data[2]
-    machines = data[3]
-    db_servers = data[4]
+    machines = data[1]
+    db_servers = data[2]
+    file_servers = data[3]
     client_dbs_list = return_client_dbs(client_dbs)
-    groups_list = return_client_groups(groups)
-    les_list = return_legal_entites(les)
     machines_list = return_machines(machines)
     db_servers_list = return_db_servers(db_servers)
+    file_servers_list = return_File_servers_List(file_servers)
     return (
-        client_dbs_list, groups_list, les_list,
-        machines_list, db_servers_list
+        client_dbs_list, machines_list, db_servers_list, file_servers_list
     )
 
 
@@ -247,10 +250,20 @@ def return_client_dbs(data):
     fn = consoleadmin.ClientDatabase
     client_dbs = [
         fn(
+            client_database_id=datum["client_database_id"],
             client_id=datum["client_id"],
+            group_name=datum["group_name"],
             legal_entity_id=datum["legal_entity_id"],
+            legal_entity_name=datum["legal_entity_name"],
             machine_id=datum["machine_id"],
-            database_server_ip=datum["database_ip"]
+            machine_name=datum["machine_name"],
+            client_db_server_id=datum["client_database_server_id"],
+            client_db_server_name=datum["client_database_server_name"],
+            db_server_id=datum["database_server_id"],
+            db_server_name=datum["database_server_name"],
+            file_server_id=datum["file_server_id"],
+            file_server_name=datum["file_server_name"],
+            is_created=bool(datum["is_created"])
         ) for datum in data
     ]
     return client_dbs
@@ -299,7 +312,10 @@ def return_machines(data):
     client_server_name_and_id = [
         fn(
             machine_id=datum["machine_id"],
-            machine_name=datum["machine_name"]
+            machine_name=datum["machine_name"],
+            ip=datum["ip"],
+            port=datum["port"],
+            console_cl_ids=datum["client_ids"]
         ) for datum in data
     ]
     return client_server_name_and_id
@@ -314,10 +330,28 @@ def return_db_servers(data):
     fn = consoleadmin.DBServerNameAndID
     db_servers_name_and_id = [
         fn(
-            db_server_name=datum["db_server_name"], ip=datum["ip"]
+           db_server_id=datum["database_server_id"], db_server_name=datum["database_server_name"],
+           database_server_ip=datum["database_ip"], port=datum["database_port"],
+           console_le_ids=datum["legal_entity_ids"]
         ) for datum in data
     ]
     return db_servers_name_and_id
+
+
+###############################################################################
+# Convert data fetched from database into List of object of FileServerNameAndID
+# parameter : Data fetched from database (Tuple of tuples)
+# return type : Returns List of object of FileServerNameAndID
+###############################################################################
+def return_File_servers_List(data):
+    fn = consoleadmin.AllocateFileServerList
+    file_servers_name_and_id = [
+        fn(
+           file_server_id=datum["file_server_id"], file_server_name=datum["file_server_name"],
+           ip=datum["ip"], port=datum["port"], console_le_ids=datum["legal_entity_ids"]
+        ) for datum in data
+    ]
+    return file_servers_name_and_id
 
 
 ###############################################################################
@@ -325,21 +359,127 @@ def return_db_servers(data):
 # parameter : Object of database, Save Allocated database environment request
 # return type : Raises process error if save fails otherwise returns None
 ###############################################################################
+def validated_env_before_save(db, request):
+    db_server_id = request.db_server_id
+    machine_id = request.machine_id
+    file_server_id = request.file_server_id
+    vobj = ServerValidation(db, machine_id, db_server_id, file_server_id)
+    is_valid = vobj.perform_validation()
+    print is_valid
+    if is_valid[0] is not True :
+        return is_valid[0]
+    elif is_valid[1] is not True :
+        return is_valid[1]
+    elif is_valid[2] is not True :
+        return is_valid[2]
+    else :
+        return True
+
+def create_db_process(db, client_database_id, client_id, legal_entity_id, db_server_id, le_db_server_id):
+
+    def save_db_name(db_name, db_user, db_password, is_group):
+        dbowner = client_id
+        if is_group is False :
+            dbowner = legal_entity_id
+        db.call_insert_proc("sp_clientdatabase_dbname_info_save", [client_database_id, db_user, db_password, dbowner, db_name, int(is_group)])
+
+    def _create_db(_db_info, short_name, email_id, is_group):
+        if is_group :
+            create_db = ClientGroupDBCreate(
+                db, client_id, short_name, email_id,
+                _db_info.get("database_ip"),
+                _db_info.get("database_port"),
+                _db_info.get("database_username"),
+                _db_info.get("database_password")
+            )
+            is_db_created = create_db.begin_process()
+            if is_db_created[0] is True :
+                save_db_name(is_db_created[1], is_db_created[2], is_db_created[3], True)
+        else :
+            create_db = ClientLEDBCreate(
+                db, client_id, short_name, email_id,
+                _db_info.get("database_ip"),
+                _db_info.get("database_port"),
+                _db_info.get("database_username"),
+                _db_info.get("database_password")
+            )
+            is_db_created = create_db.begin_process()
+            if is_db_created[0] is True :
+                save_db_name(is_db_created[1], is_db_created[2], is_db_created[3], False)
+
+    # db information for both client and legal entity
+    client_db_info = db.call_proc_with_multiresult_set("sp_tbl_client_groups_createdb_info", [client_id, db_server_id, le_db_server_id], 2)
+    c_info = client_db_info[0][0]
+    db_info = client_db_info[1]
+    print client_db_info
+    print [client_id, db_server_id, le_db_server_id]
+    print c_info
+    count = c_info.get("cnt")
+
+    _db_group_info = None
+    _db_le_info = None
+
+    for r in db_info :
+        if r["database_server_id"] == db_server_id :
+            _db_group_info = r
+        if r["database_server_id"] == le_db_server_id :
+            _db_le_info = r
+
+    # create group db
+    print count
+    if count == 1 :
+        if _db_group_info :
+            is_done = _create_db(_db_group_info, c_info.get("short_name"), c_info.get("email_id"), True)
+            print is_done
+
+    # create le db
+
+    if _db_le_info :
+        is_done = _create_db(_db_le_info, c_info.get("short_name"), c_info.get("email_id"), False)
+        print is_done
+
+    return is_done
+
 def save_allocated_db_env(db, request, session_user):
+    is_valid = validated_env_before_save(db, request)
+    if is_valid is not True:
+        raise fetch_run_error(is_valid)
+
     client_id = request.client_id
     legal_entity_id = request.legal_entity_id
-    db_server_ip = request.database_server_ip
+    client_db_id = request.client_database_id
+    print client_db_id
+    db_server_id = request.db_server_id
     machine_id = request.machine_id
+    le_db_server_id = request.le_db_server_id
+    file_server_id = request.file_server_id
+    client_ids = request.console_cl_ids
+    legal_entity_ids = request.console_le_ids
     #
     #  To save allocated database environment
     #  Parameters : client id, legal entity id, database ip, client server id
     #  Return : List of allocated database environment details
     #
     # try:
-    db.call_insert_proc(
-        "sp_clientdatabase_save",
-        (client_id, legal_entity_id, db_server_ip, machine_id)
-    )
+    if client_db_id is None:
+        try :
+            client_db_id = db.call_insert_proc(
+                "sp_clientdatabase_save",
+                (client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
+                    client_ids, legal_entity_ids, session_user, get_date_time())
+            )
+            create_db_process(db, client_db_id, client_id, legal_entity_id, db_server_id, le_db_server_id)
+
+        except Exception, e :
+            print e
+            raise Exception(e)
+
+    else:
+        db.call_insert_proc(
+            "sp_clientdatabase_update",
+            (client_db_id, client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
+                client_ids, legal_entity_ids, session_user, get_date_time())
+        )
     #
     #  To get legal entity name by it's id to save activity
     #  Parameters : legal entity id
@@ -351,6 +491,9 @@ def save_allocated_db_env(db, request, session_user):
     action = "Allocated database environment for %s " % (
         data[0]["legal_entity_name"])
     db.save_activity(session_user, frmAllocateDatabaseEnvironment, action)
+    return True
+    # perform db creation
+
     # except Exception, e:
     #     print e
     #     raise process_error("E076")
@@ -631,6 +774,7 @@ def file_server_entry_process(db, request, user_id):
         print e
         raise process_error("E078")
 
+
 def get_ip_settings_form_data(db):
     #
     #  To get data required for ip settings form
@@ -749,4 +893,67 @@ def save_ip_setting_details(db, request, session_user):
 def delete_ip_setting_details(db, request, session_user):
     client_id = request.client_id
     db.call_update_proc("sp_ip_settings_delete", (client_id,))
-    
+
+
+###############################################################################
+# To get ip setting report details
+# parameter : Object of databse, report request, session user
+# return type : Returns report data.
+###############################################################################
+def ip_setting_report_data(db, request, session_user):
+    client_id = request.client_id
+    ip = request.ip
+    f_count = request.from_count
+    t_count = request.page_count
+
+    data = db.call_proc_with_multiresult_set(
+        "sp_ip_setting_details_report", (client_id, ip, f_count, t_count), 2)
+
+    total_records = data[0][0]["total_record"]
+    ips_list = return_group_ipslist(data[1])
+    return (
+        total_records, ips_list
+    )
+
+def get_ip_settings_report_filter(db):
+    #
+    #  To get data required for ip settings form
+    #  Parameters : None
+    #  Return : Returns Client group details and
+    #   form details
+    #
+    data = db.call_proc_with_multiresult_set(
+        "sp_ip_settings_report_filter", None, 2)
+    groups = data[0]
+    forms = data[1]
+    groups_list = return_client_groups(groups)
+    forms_list = return_forms(forms)
+    return (
+        groups_list, forms_list
+    )
+
+
+###############################################################################
+# To get allocated server details
+# parameter : Object of databse
+# return type : Returns records of allocated server lost
+#   process error
+###############################################################################
+def get_allocated_server_form_data(db):
+    result = db.call_proc("sp_allocate_db_environment_report_getdata", None)
+    allocate_db_report = []
+    if(result is not None):
+        for row in result:
+            allocate_db_report.append(consoleadmin.AllocateDBList(
+                    client_id=row["client_id"], group_name=row["group_name"],
+                    legal_entity_id=row["legal_entity_id"],
+                    legal_entity_name=row["legal_entity_name"],
+                    machine_id=row["machine_id"], machine_name=row["machine_name"],
+                    client_db_server_id=row["client_database_server_id"],
+                    client_db_server_name=row["client_db_server_name"],
+                    db_server_id=row["database_server_id"], db_server_name=row["db_server_name"],
+                    file_server_id=row["file_server_id"],
+                    file_server_name=row["file_server_name"]
+                )
+            )
+        return allocate_db_report

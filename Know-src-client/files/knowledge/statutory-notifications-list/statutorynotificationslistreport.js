@@ -30,20 +30,8 @@ var sno = 0;
 var totalRecord;
 
 //Other variable declaration
-var LoaderIcon = $('.loading-indicator-spin');
 var ReportView = $('.grid-table-rpt');
 
-
-function displayLoader() {
-  LoaderIcon.show();
-}
-function hideLoader() {
-  LoaderIcon.hide();
-}
-
-function resetValues(){
-  displayMessage('');
-}
 
 function initialize(){
     //resetValues();
@@ -156,7 +144,8 @@ function loadCompliances(data){
       sno = sno + 1;
       $('.sno', clone).text(sno);
       $('.act', clone).html(value.statutory_name);
-      $('.compliancetask', clone).html(value.compliance_task);
+      var compl_ctrl = "<i class='zmdi zmdi-info address-title' data-toggle='tooltip' title='"+value.description+"'></i>&nbsp;&nbsp;"+value.compliance_task;
+      $('.compliancetask', clone).html(compl_ctrl);
       $('.c-pointer', clone);
       $('.c-pointer').hover(function(){
         showTitle(this, value.description);
@@ -176,7 +165,6 @@ function loadCompliances(data){
 }
 //Status Title
 function showTitle(e, notf_text){
-  console.log("a:"+notf_text)
   var titleText = notf_text;
     e.title = titleText;
     console.log(e.title)
@@ -229,6 +217,7 @@ function processSubmit (){
                 ReportView.show();
                 hideLoader();
               } else {
+                hideLoader();
                 if(sno==0){
                   createPageView(totalRecord);
                 }

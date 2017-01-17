@@ -22,11 +22,12 @@ var complianceTask = $("#compliance-task");
 var complianceTaskId = $("#compliance-task-id");
 var acComplianceTask = $("#ac-compliance-task");
 
+var users = $("#user");
+var usersId = $("#user-id");
+var acUsers = $("#ac-user");
+
 var complianceFrequency = $("#compliance-frequency");
 var userType = $("#user-type");
-var user = $("#user");
-var userId = $("#user-id");
-var acUser = $("#ac-user");
 var fromDate = $("#from-date");
 var toDate = $("#to-date");
 var complianceTaskStatus = $("#compliance-task-status");
@@ -133,23 +134,23 @@ function PageControls() {
         }, condition_fields, condition_values);
     });
 
-    user.keyup(function(e) {
-        var text_val = user.val().trim();
+    users.keyup(function(e) {
+        var text_val = users.val().trim();
         var userList = REPORT._users;
         var condition_fields = ["is_active"];
         var condition_values = [true];
-        commonAutoComplete(e, acUser, userId, text_val, userList, "u_name", "u_id", function(val) {
+        commonAutoComplete(e, acUsers, usersId, text_val, userList, "u_name", "u_id", function(val) {
             onUserAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
 
     showButton.click(function() {
-        if (REPORT.validate()) {
-            reportView.show();
-            showAnimation(reportView);
-            REPORT.fetchReportValues();
-            REPORT.showReportValues();
-        }
+        //if (REPORT.validate()) {
+        reportView.show();
+        showAnimation(reportView);
+        REPORT.fetchReportValues();
+        REPORT.showReportValues();
+        //}
     });
 
     exportButton.click(function() {
@@ -162,7 +163,7 @@ function PageControls() {
 }
 
 clearElement = function(arr) {
-    if(arr.length > 0) {
+    if (arr.length > 0) {
         $.each(arr, function(i, element) {
             element.val('');
         });
@@ -215,9 +216,9 @@ onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
 }
 
 onUserAutoCompleteSuccess = function(REPORT, val) {
-    user.val(val[1]);
-    userId.val(val[0]);
-    user.focus();
+    users.val(val[1]);
+    usersId.val(val[0]);
+    users.focus();
 }
 
 StatusReportConsolidated = function() {
@@ -249,8 +250,8 @@ StatusReportConsolidated.prototype.loadSearch = function() {
     complianceTaskId.val('');
     complianceFrequency.empty();
     userType.empty();
-    user.val('');
-    userId.val('');
+    users.val('');
+    usersId.val('');
     fromDate.val('');
     toDate.val('');
     complianceTaskStatus.empty();
@@ -399,10 +400,10 @@ StatusReportConsolidated.prototype.validate = function() {
         else if (isCommonName(complianceTask, message.complianceTask_str) == false)
             return false;
     }
-    if (user) {
-        if (isLengthMinMax(user, 0, 50, message.user_max) == false)
+    if (users) {
+        if (isLengthMinMax(users, 0, 50, message.user_max) == false)
             return false;
-        else if (isCommonName(user, message.user_str) == false)
+        else if (isCommonName(users, message.user_str) == false)
             return false;
     }
     if (fromDate) {
@@ -425,7 +426,7 @@ showAnimation = function(element) {
 
 StatusReportConsolidated.prototype.fetchReportValues = function() {
     t_this = this;
-    var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1004 - Suresh","activity_status":"Approved","activity_date":"20-Aug-2016","doc_list":[],"completion_date":"18-Aug-2016","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"18-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1004 - Suresh","activity_status":"Pending","activity_date":"","doc_list":[],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"19-Aug-2016","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1}]}';
+    var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1004 - Suresh","activity_status":"Approved","activity_date":"20-Aug-2016","doc_list":[],"completion_date":"18-Aug-2016","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"18-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Test Act","compliance_task":"FORM I - Half yearly returns Submission","frequency":"Periodical","due_date":"24-Aug-2016","task_status":"Complied","user_name":"EMP1002 - Sivakumar","activity_status":"Pending","activity_date":"20-Aug-2016","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1004 - Suresh","activity_status":"Pending","activity_date":"","doc_list":[],"completion_date":"","com_id":1,"f_id":1},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1035 - RG Chennai Unit - 23, K.K.Nagar, Chennai-600025","l_name":"PF Act","compliance_task":"FORM VIII - Notice of Opening","frequency":"One Time","due_date":"20-Aug-2016","task_status":"Inprogress","user_name":"EMP1002 - Rajkumar","activity_status":"Submitted","activity_date":"19-Aug-2016","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/status-report-consolidated"}],"completion_date":"","com_id":1,"f_id":1}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._report_data = object.data_lists;
 };
@@ -434,10 +435,10 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
     clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
-    legalEntityName.html(legalEntity.html());
-    countryName.html(country.html());
+    legalEntityName.html(legalEntity.val());
+    countryName.html(country.val());
     domainName.html(domain.val());
-    var j = 1;
+    var j = 0;
     reportTableTbody.find('tr').remove();
     var unitname = "";
     var actname = "";
@@ -459,6 +460,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
         }
 
         if (complianceTask != v.compliance_task) {
+            j = j + 1;
             var clonethree = $('#template #report-table .row-three').clone();
             $('.sno', clonethree).text(j);
             $('.compliance-task', clonethree).text(v.compliance_task);
@@ -478,13 +480,12 @@ StatusReportConsolidated.prototype.showReportValues = function() {
             } else {
                 $('.uploaded-document', clonethree).text('-');
             }
-            
+
             if (v.completion_date != "")
                 $('.completion-date', clonethree).text(v.completion_date);
             else
                 $('.completion-date', clonethree).text('-');
             reportTableTbody.append(clonethree);
-            j = j + 1;
             complianceTask = v.compliance_task;
         } else {
             var clonefour = $('#template #report-table .row-four').clone();
@@ -507,7 +508,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
             else
                 $('.completion-date-new', clonefour).text('-');
             reportTableTbody.append(clonefour);
-            j = j + 1;
+
             complianceTask = v.compliance_task;
         }
     });

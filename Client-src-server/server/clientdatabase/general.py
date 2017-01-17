@@ -5,7 +5,7 @@ import json
 from dateutil import relativedelta
 from server.clientdatabase.tables import *
 from server.constants import (CLIENT_DOCS_BASE_PATH)
-from protocol import (core, dashboard, clientreport)
+from clientprotocol import (clientcore, dashboard, clientreport)
 from server.common import (
     encrypt, convert_to_dict, get_date_time, get_date_time_in_date,
     remove_uploaded_file, convert_to_key_dict
@@ -70,22 +70,22 @@ __all__ = [
 ]
 
 
-def get_client_user_forms(db, form_ids, is_admin):
-    columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "
-    columns += "tf.form_url, tf.form_order, tf.parent_menu "
+def get_client_user_forms(db, user_id):
+    # columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "
+    # columns += "tf.form_url, tf.form_order, tf.parent_menu "
 
-    tables = [tblForms, tblFormType]
-    aliases = ["tf",  "tft"]
-    joinConditions = ["tf.form_type_id = tft.form_type_id"]
-    whereCondition, whereConditionVal = db.generate_tuple_condition(
-        "form_id", [int(x) for x in form_ids.split(",")]
-    )
-    order = " order by tf.form_order "
-    joinType = "left join"
-    rows = db.get_data_from_multiple_tables(
-        columns, tables, aliases, joinType,
-        joinConditions, whereCondition + order, [whereConditionVal]
-    )
+    # tables = [tblForms, tblFormType]
+    # aliases = ["tf",  "tft"]
+    # joinConditions = ["tf.form_type_id = tft.form_type_id"]
+    # whereCondition, whereConditionVal = db.generate_tuple_condition(
+    #     "form_id", [int(x) for x in form_ids.split(",")]
+    # )
+    # order = " order by tf.form_order "
+    # joinType = "left join"
+    # rows = db.get_data_from_multiple_tables(
+    #     columns, tables, aliases, joinType,
+    #     joinConditions, whereCondition + order, [whereConditionVal]
+    # )
     return rows
 
 
@@ -97,24 +97,30 @@ def get_admin_id(db):
 
 
 def get_countries_for_user(db, user_id):
-    admin_id = get_admin_id(db)
-    query = "SELECT distinct t1.country_id, t1.country_name, " + \
-        " t1.is_active FROM tbl_countries t1 "
-    if user_id != admin_id:
-        query = query + " INNER JOIN tbl_user_countries t2 " + \
-            " ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
-        rows = db.select_all(query, [user_id])
-    else:
-        rows = db.select_all(query)
-    columns = ["country_id", "country_name", "is_active"]
-    result = convert_to_dict(rows, columns)
-    return return_countries(result)
-
+    # admin_id = get_admin_id(db)
+    # query = "SELECT distinct t1.country_id, t1.country_name, " + \
+    #     " t1.is_active FROM tbl_countries t1 "
+    # if user_id != admin_id:
+    #     query = query + " INNER JOIN tbl_user_countries t2 " + \
+    #         " ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
+    #     rows = db.select_all(query, [user_id])
+    # else:
+    #     rows = db.select_all(query)
+    # columns = ["country_id", "country_name", "is_active"]
+    # result = convert_to_dict(rows, columns)
+    # return return_countries(result)
+    query = "SELECT t4.country_id, t4.country_name, t4.is_active FROM tbl_users AS t1 , " + \
+        " INNER JOIN tbl_user_units AS t2 ON t2.user_id = t1.user_id , " + \
+        " INNER JOIN tbl_legal_entities AS t3 ON t3.legal_entity_id = t2.legal_entity_id, " + \
+        " INNER JOIN tbl_countries AS t4 ON t4.country_id = t3.country_id , " + \
+        " WHERE t1.user_id = %s GROUP BY t4.country_id "
+    rows = db.select_all(query, [user_id])
+    return return_countries(rows)
 
 def return_countries(data):
     results = []
     for d in data:
-        results.append(core.Country(
+        results.append(clientcore.Country(
             d["country_id"], d["country_name"], bool(d["is_active"])
         ))
     return results
@@ -138,7 +144,7 @@ def get_domains_for_user(db, user_id):
 def return_domains(data):
     results = []
     for d in data:
-        results.append(core.Domain(
+        results.append(clientcore.Domain(
             d["domain_id"], d["domain_name"], bool(d["is_active"])
         ))
     return results
@@ -161,7 +167,7 @@ def get_business_groups_for_user(db, business_group_ids):
 def return_business_groups(business_groups):
     results = []
     for business_group in business_groups:
-        results.append(core.ClientBusinessGroup(
+        results.append(clientcore.ClientBusinessGroup(
             business_group["business_group_id"],
             business_group["business_group_name"]
         ))
@@ -188,7 +194,7 @@ def return_legal_entities(legal_entities):
         b_group_id = None
         if legal_entity["business_group_id"] > 0:
             b_group_id = int(legal_entity["business_group_id"])
-        results.append(core.ClientLegalEntity(
+        results.append(clientcore.ClientLegalEntity(
             legal_entity["legal_entity_id"],
             legal_entity["legal_entity_name"],
             b_group_id
@@ -213,7 +219,7 @@ def get_divisions_for_user(db, division_ids):
 def return_divisions(divisions):
     results = []
     for division in divisions:
-        division_obj = core.ClientDivision(
+        division_obj = clientcore.ClientDivision(
             division["division_id"], division["division_name"],
             division["legal_entity_id"], division["business_group_id"]
         )
@@ -296,7 +302,7 @@ def return_units(units):
                 division_id = unit["division_id"]
             if unit["business_group_id"] > 0:
                 b_group_id = unit["business_group_id"]
-            results.append(core.ClientUnit(
+            results.append(clientcore.ClientUnit(
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["address"], bool(unit["is_active"]),
@@ -334,7 +340,7 @@ def return_units_assign(units):
                 division_id = unit["division_id"]
             if unit["business_group_id"] > 0:
                 b_group_id = unit["business_group_id"]
-            results.append(core.ClientUnit(
+            results.append(clientcore.ClientUnit(
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["address"], bool(unit["is_active"]),
@@ -427,11 +433,11 @@ def is_in_contract(db):
 
 
 def verify_username(db, username):
-    columns = "count(*) as result, user_id"
-    condition = "email_id=%s and is_active = 1"
+    columns = "count(0) as result, user_id"
+    condition = "username=%s and is_active = 1"
     condition_val = [username]
     rows = db.get_data(
-        tblUsers, columns, condition, condition_val
+        tblUserLoginDetails, columns, condition, condition_val
     )
     count = rows[0]["result"]
     if count == 1:
@@ -439,16 +445,65 @@ def verify_username(db, username):
     else:
         return None
 
+def get_forms_by_category(db, category_id):
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
+        "t2.user_category_id , t3.form_type " + \
+        "FROM tbl_forms as t1 " + \
+        "inner join tbl_form_category as t2 on t1.form_id = t2.form_id " + \
+        "inner join tbl_form_type as t3 on t1.form_type_id = t3.form_type_id " + \
+        "where user_category_id = %s order by t1.form_order"
+    rows = db.select_all(q, [category_id])
+    return rows
+
+def get_user_forms(db, user_id):
+    # except group admin forms
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
+        "FROM tbl_forms as t1 " + \
+        "INNER JOIN tbl_user_group_forms as t2 on t1.form_id = t2.form_id " + \
+        "INNER JOIN tbl_users as t3 on t2.user_group_id = t3.user_group_id " + \
+        " WHERE t3.user_id = %s and t3.is_active = 1 and t3.is_disable = 0 " + \
+        " ORDER BY t1.form_order "
+
+    rows = db.select_all(q, [user_id])
+    return rows
+
+
+def get_legal_entity_info(db, user_id, user_category_id):
+    if user_category_id == 1 :
+        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, t1.client_id, " + \
+            "t1.business_group_id, " + \
+            " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
+            "FROM tbl_legal_entities as t1 " + \
+            "WHERE contract_to > now() and is_closed = 0"
+        rows = db.select_all(q)
+    else :
+        q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
+            "t1.client_id, t1.business_group_id, " + \
+            " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
+            "from tbl_legal_entities as t1 " + \
+            "inner join tbl_user_domains as t2 on " + \
+            "t1.legal_entity_id = t1.legal_entity_id " + \
+            "where contract_to > now() and is_closed = 0 and t2.user_id= %s"
+        rows = db.select_all(q, [user_id])
+
+    le_list = []
+    for r in rows :
+        le_list.append(clientcore.LegalEntityInfo(
+            r["legal_entity_id"], r["legal_entity_name"],
+            r["business_group_id"], r["business_group_name"]
+        ))
+    return le_list
+
 
 def verify_password(db, password, user_id):
-    columns = "count(*) as result"
+    columns = "count(0) as result"
     encrypted_password = encrypt(password)
     condition = "1"
     rows = None
     condition = "password=%s and user_id=%s"
     condition_val = [encrypted_password, user_id]
     rows = db.get_data(
-        tblUsers, columns, condition, condition_val
+        tblUserLoginDetails, columns, condition, condition_val
     )
 
     if(int(rows[0]["result"]) <= 0):
@@ -522,6 +577,13 @@ def is_seating_unit(db, unit_id):
     else:
         return False
 
+def get_user_category(db, user_id):
+    q = "select user_category_id from tbl_users where user_id = %s"
+    row = db.select_one(q, [user_id])
+    if row :
+        return row["user-category_id"]
+    else :
+        return None
 
 def is_admin(db, user_id):
     if user_id == 0:
@@ -635,7 +697,7 @@ def get_service_providers(db):
 def return_service_providers(service_providers):
     results = []
     for service_provider in service_providers:
-        service_provider_obj = core.ServiceProvider(
+        service_provider_obj = clientcore.ServiceProvider(
             service_provider["service_provider_id"],
             service_provider["service_provider_name"],
             bool(service_provider["is_active"]))
@@ -658,7 +720,7 @@ def return_client_compliances(data):
         compliance_name = d["compliance_name"]
         if d["document_name"] not in ["None", None, ""]:
             compliance_name = "%s - %s" % (d["document_name"], compliance_name)
-        results.append(core.ComplianceFilter(
+        results.append(clientcore.ComplianceFilter(
             d["compliance_id"], compliance_name
         ))
     return results
@@ -672,7 +734,7 @@ def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
     current_year = now.year
     current_month = now.month
     for date in statutory_dates:
-            s_date = core.StatutoryDate(
+            s_date = clientcore.StatutoryDate(
                 date["statutory_date"],
                 date["statutory_month"],
                 date["trigger_before_days"],
@@ -971,9 +1033,9 @@ def get_compliance_frequency(db, condition="1"):
     compliance_frequency = []
     for row in rows:
         compliance_frequency.append(
-            core.ComplianceFrequency(
+            clientcore.ComplianceFrequency(
                 row["frequency_id"],
-                core.COMPLIANCE_FREQUENCY(row["frequency"])
+                clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
                 )
             )
     return compliance_frequency
@@ -1062,7 +1124,7 @@ def return_users(users):
             )
         else:
             employee_name = "Administrator"
-        results.append(core.User(
+        results.append(clientcore.User(
             user["user_id"], employee_name, bool(user["is_active"])
         ))
     return results

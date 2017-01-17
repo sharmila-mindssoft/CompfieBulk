@@ -17,15 +17,16 @@ _captcha = null;
 IS_VALID = false;
 
 function call_api(request, callback) {
-    console.log(JSON.stringify(request, null, ''));
+    
     $.ajax({
         url: '/knowledge/api/login',
         type: 'POST',
         contentType: 'application/json',
         headers: { 'X-CSRFToken': csrf_token },
-        data: JSON.stringify(request, null, ''),
+        data: btoa(JSON.stringify(request, null, '')),
         success: function(data, textStatus, jqXHR) {
-
+            data = atob(data);
+            data = JSON.parse(data);
             var status = data[0];
             var response = data[1];
             matchString = 'success';
@@ -37,10 +38,9 @@ function call_api(request, callback) {
             }
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR.responseText)
-            console.log(errorThrown);
-            console.log(textStatus);
-            callback(jqXHR.responseText, null);
+            rdata = JSON.parse(jqXHR.responseText);
+            rdata = atob(rdata);    
+           callback(rdata, null);
         }
     });
 }

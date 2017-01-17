@@ -1,11 +1,13 @@
 import threading
 from server.emailcontroller import EmailHandler
 from server import logger
-from protocol import (core, general)
+from clientprotocol import (clientcore, general)
 from server.common import (
     datetime_to_string, get_date_time,
     string_to_datetime, generate_and_return_password, datetime_to_string_time
 )
+from clientprotocol import clientmasters
+
 from server.clientdatabase.tables import *
 from server.clientdatabase.general import (
     is_primary_admin, is_admin, get_user_unit_ids,
@@ -45,7 +47,11 @@ __all__ = [
     "get_units_closure_for_user",
     "close_unit",
     "get_audit_trails",
-    "is_duplicate_employee_name"
+    "is_duplicate_employee_name",
+    "get_unit_closure_legal_entities",
+    "get_unit_closure_units_list",
+    "save_unit_closure_data",
+    "is_invalid_id"
 ]
 
 ############################################################################
@@ -77,7 +83,7 @@ def get_service_provider_details_list(db):
 def return_service_provider_details(service_providers):
     results = []
     for service_provider in service_providers:
-        service_provider_obj = core.ServiceProviderDetails(
+        service_provider_obj = clientcore.ServiceProviderDetails(
             service_provider["service_provider_id"],
             service_provider["service_provider_name"],
             service_provider["address"],
@@ -300,7 +306,6 @@ def update_service_provider_status(
 
     return result
 
-
 ##############################################################################
 # To Get list of all forms
 # Parameter(s) - Object of database
@@ -376,7 +381,7 @@ def get_user_privilege_details_list(db):
     # return groups, group_forms
     return return_user_privilage_list(groups, group_forms)
 
-    
+
 
 def return_user_privilage_list(groups, group_forms):
     user_group_list = []
@@ -388,7 +393,7 @@ def return_user_privilage_list(groups, group_forms):
         category_form_ids = row["form_ids"]
         is_active = bool(row["is_active"])
         user_group_list.append(
-            core.ClientUserGroup(
+            clientcore.ClientUserGroup(
                 user_group_id, user_group_name, user_category_id, user_category_name, [int(x) for x in category_form_ids.split(",")],  is_active
             )
         )
@@ -416,7 +421,7 @@ def get_user_privileges(db):
 def return_user_privileges(user_privileges):
     results = []
     for user_privilege in user_privileges:
-        results.append(core.UserGroup(
+        results.append(clientcore.UserGroup(
             user_privilege["user_group_id"],
             user_privilege["user_group_name"],
             bool(user_privilege["is_active"])
@@ -440,7 +445,7 @@ def save_user_privilege(
     ]
     values_list = [
         user_privilege.user_category_id,
-        user_privilege.user_group_name, 1, get_date_time(), 
+        user_privilege.user_group_name, 1, get_date_time(),
         session_user, get_date_time(), session_user
     ]
     result = db.insert(tblUserGroups, columns, values_list)
@@ -620,7 +625,7 @@ def return_user_details(
             user_domain_mapping[user_id] = get_user_domains(db, user_id)
             user_unit_mapping[user_id] = get_user_unit_ids(db, user_id)
         results.append(
-            core.ClientUser(
+            clientcore.ClientUser(
                 user["user_id"], user["email_id"],
                 user["user_group_id"], user["employee_name"],
                 user["employee_code"], user["contact_no"],
@@ -660,7 +665,7 @@ def get_service_providers(db):
 def return_service_providers(service_providers):
     results = []
     for service_provider in service_providers:
-        service_provider_obj = core.ServiceProvider(
+        service_provider_obj = clientcore.ServiceProvider(
             service_provider["service_provider_id"],
             service_provider["service_provider_name"],
             bool(service_provider["is_active"]))
@@ -1020,7 +1025,7 @@ def return_units(units):
         if unit["business_group_id"] > 0:
             b_group_id = unit["business_group_id"]
         results.append(
-            core.ClientUnit(
+            clientcore.ClientUnit(
                 unit["unit_id"], division_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["address"], bool(unit["is_active"]),
@@ -1190,3 +1195,105 @@ def notify_user(
     except Exception, e:
         logger.logClient("error", "clientdatabase.py-notify-user", e)
         print "Error while sending email: %s" % e
+
+
+############################################################################
+# parameters: db object, requests, user id passed - to get legal entity list
+############################################################################
+def get_unit_closure_legal_entities(db, user_id):
+    le_list = []
+    columns = "user_category_id, client_id"
+    condition = "user_id = %s"
+    condition_val = [user_id]
+    l_id = None
+    recordSet = None
+    user_category = db.get_data(tblUsers, columns, condition, condition_val)
+    for row in user_category:
+        print row["user_category_id"]
+        if row["user_category_id"] == 1:
+            print "jfhdsjk"
+            columns = "legal_entity_id, legal_entity_name"
+            condition = "DATEDIFF(contract_to, NOW()) > 0 and is_closed = 0 and client_id = %s"
+            condition_val = [row["client_id"]]
+            order = " ORDER BY legal_entity_name"
+            recordSet = db.get_data(tblLegalEntities, columns, condition, condition_val, order)
+        else:
+            if row["user_category_id"] == 3:
+                columns = "distinct(legal_entity_id)"
+                condition = "user_id = %s"
+                condition_val = [user_id]
+                le_ids = db.get_data(tblUserDomains, columns, condition, condition_val)
+                if le_ids is not None:
+                    for le_id in le_ids:
+                        if l_id is None:
+                            l_id = str(le_id["legal_entity_id"])
+                        else:
+
+                            l_id = l_id + "," + str(le_id["legal_entity_id"])
+
+                print l_id
+                columns = "legal_entity_id, legal_entity_name"
+                le_condition, c_val = db.generate_tuple_condition(
+                        "legal_entity_id", [int(x) for x in l_id.split(",")]
+                    )
+                print le_condition
+                condition = "DATEDIFF(contract_to, NOW()) > 0 and is_closed = 0 and %s" % le_condition
+                condition_val = [c_val]
+                order = "ORDER BY legal_entity_name"
+                recordSet = db.get_data(tblLegalEntities, columns, condition, condition_val, order)
+    print recordSet
+    for row in recordSet:
+        le_list.append(clientcore.UnitClosureLegalEntity(
+            legal_entity_id=row["legal_entity_id"],
+            legal_entity_name=row["legal_entity_name"]
+            )
+        )
+    return le_list
+
+############################################################################
+# parameters: db object, requests, user id passed - to get units
+# list under legal entity id
+############################################################################
+def get_unit_closure_units_list(db, request):
+    le_id = request.legal_entity_id
+    result = db.call_proc("sp_unit_closure_units_list_by_le_id", (le_id,))
+    units_list = []
+    for row in result:
+        units_list.append(clientcore.UnitClosure_Units(
+            row["unit_id"], row["unit_code"], row["unit_name"], row["address"],
+            row["postal_code"], row["legal_entity_id"], row["legal_entity_name"],
+            row["business_group_name"], row["division_name"], row["category_name"],
+            bool(row["is_active"]), str(row["closed_on"]), row["validity_days"]
+            )
+        )
+    return units_list
+
+def is_invalid_id(db, check_mode, val):
+    print "inside valid checking"
+    print check_mode
+
+    if check_mode == "unit_id":
+        params = [val, ]
+        rows = db.call_proc("sp_tbl_units_check_unitId", params)
+        for d in rows:
+            if(int(d["unit_id_cnt"]) > 0):
+                return True
+            else:
+                return False
+
+
+def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode):
+    current_time_stamp = get_date_time()
+    print action_mode
+    if action_mode == "close":
+        print "save"
+        result = db.call_update_proc("sp_unit_closure_save", (
+            user_id, unit_id, 0, current_time_stamp, remarks
+        ))
+    elif action_mode == "reactive":
+        result = db.call_update_proc("sp_unit_closure_save", (
+            user_id, unit_id, 1, current_time_stamp, remarks
+        ))
+
+    print result
+    return result
