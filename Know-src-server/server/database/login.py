@@ -15,7 +15,7 @@ __all__ = [
     "delete_used_token", "remove_session",
     "save_login_failure", "delete_login_failure_history",
     "get_login_attempt_and_time", "save_login_details",
-    "validate_email_token", "check_username_duplicate"
+    "validate_email_token", "check_username_duplicate",
 ]
 
 
@@ -35,16 +35,16 @@ def verify_login(db, username, password):
     '''
     user_info = forms = response = {}
 
-    if len(result[1]) == 0 and len(result[0]) > 0 :
+    if len(result[1]) == 0 and len(result[0]) > 0:
         user_id = result[0][0].get("user_id")
         username = result[0][0].get("username")
         is_login = False
 
-    elif len(result[1]) == 0 and len(result[0]) == 0 :
+    elif len(result[1]) == 0 and len(result[0]) == 0:
         user_id = None
         username = None
         is_login = False
-    else :
+    else:
         is_login = True
         user_id = result[1][0].get("user_id")
         user_category_id = result[1][0].get('user_category_id')
@@ -60,6 +60,7 @@ def verify_login(db, username, password):
             user_info = result[2]
             forms = result[3]
     return (is_login, user_id, username, response, user_info, forms)
+
 
 ########################################################
 # To clear user session

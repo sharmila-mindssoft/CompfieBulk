@@ -131,6 +131,7 @@ def mobile_user_login_respone(db, login_type, ip, data, forms):
         session_token
     )
 
+
 def user_login_response(db, ip, data, forms):
     data = data[0]
     user_name = data["user_name"]
@@ -160,6 +161,7 @@ def user_login_response(db, ip, data, forms):
         designation, None, bool(1), user_name, mobile_no
     )
 
+
 def admin_login_response(db, ip, result, forms):
     user_id = result.get('user_id')
     user_category_id = result.get('user_category_id')
@@ -177,19 +179,21 @@ def admin_login_response(db, ip, result, forms):
         employee_name, None
     )
 
+
 def process_forgot_password(db, request):
     login_type = request.login_type.lower()
-    if login_type != "web" :
+    if login_type != "web":
         is_mobile = True
-    else :
+    else:
         is_mobile = False
-    user_id = db.verify_username(request.username, is_mobile)
-
-    if user_id is not None:
-        send_reset_link(db, user_id, request.username)
+    rows = db.verify_username(request.username)
+    print "-------------------", rows
+    if rows[0]['user_id'] is not 0:
+        send_reset_link(db, rows[0]['user_id'], rows[0]['email_id'], rows[0]['employee_name'])
         return login.ForgotPasswordSuccess()
     else:
         return login.InvalidUserName()
+
 
 def send_reset_link(db, user_id, email_id, employee_name):
     reset_token = new_uuid()
@@ -208,6 +212,7 @@ def send_reset_link(db, user_id, email_id, employee_name):
         return True
     else:
         print "Send email failed"
+
 
 def process_reset_token(db, request):
     user_id = validate_reset_token(db, request.reset_token)

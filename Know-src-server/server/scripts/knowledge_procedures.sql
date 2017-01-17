@@ -8144,7 +8144,6 @@ END //
 
 DELIMITER ;
 
-
 DROP PROCEDURE IF EXISTS `sp_get_country_domain_name`;
 
 DELIMITER //
@@ -8159,6 +8158,39 @@ END //
 
 DELIMITER ;
 
+-- -------------------
+-- Forgot Password
+-- -------------------
+DROP PROCEDURE IF EXISTS `sp_forgot_password`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_forgot_password`(
+    IN username_ varchar(50)
+)
+BEGIN
+    SELECT @_user_id := user_id as user_id, 
+           @_user_category_id := user_category_id as user_category_id
+    FROM tbl_user_login_details 
+    where username = username_;
+    
+    IF @_user_id != '' and @_user_category_id = 1 THEN 
+        select u.user_id, u.email_id, 'Compfie Admin' as employee_name
+        FROM tbl_user_login_details u
+        where u.user_id = @_user_id;
+    ELSEIF @_user_id != '' and @_user_category_id = 2 THEN
+        select u.user_id, u.email_id, 'Console Admin' as employee_name
+        FROM tbl_user_login_details u
+        where u.user_id = @_user_id;
+    ELSEIF @_user_id != '' and @_user_category_id > 2 THEN
+        select u.user_id, u.email_id, us.employee_name
+        FROM tbl_user_login_details u
+        inner join  tbl_users us on u.user_id = us.user_id
+        where u.user_id = @_user_id;
+    END IF;    
+END //
+
+DELIMITER ;
 
 
 DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_country_domain`;
@@ -8172,8 +8204,8 @@ BEGIN
     inner join tbl_countries as t2 on t1.country_id = t2.country_id
     inner join tbl_domains as t3 on t1.domain_id = t3.domain_id
     where t1.statutory_mapping_id = m_id;
-
 END //
 
 DELIMITER ;
+
 

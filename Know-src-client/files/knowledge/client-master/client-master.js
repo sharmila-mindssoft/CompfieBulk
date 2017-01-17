@@ -407,7 +407,7 @@ function saveOrganization() {
             }            
         }
     }
-    console.log("save organization_details:"+organization_details.toSource());
+    console.log("save organization_details:"+JSON.stringify(organization_details));
 }
 
 $('.numeric').keypress(function(e) {
@@ -571,11 +571,11 @@ function saveClient() {
                         displayMessage(message.activationdate_required+ " for " + le_name);
                         break;
                     } else if (!(i in organization_details)) {
-                        console.log(i + "-> i not in " + organization_details.toSource());
+                        console.log(i + "-> i not in " + JSON.stringify(organization_details));
                         displayMessage(message.organization_required + " for " + le_name);
                         break;
                     } else if (!(j in organization_details[i])) {
-                        console.log(j + "->j not in " + organization_details[i].toSource());
+                        console.log(j + "->j not in " + JSON.stringify(organization_details[i]));
                         displayMessage(message.organization_required + " for " + le_name);
                         break;
                     } else if (Object.keys(organization_details[i][j]).length <= 0) {
@@ -1361,9 +1361,9 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
     $(".domain", clone).addClass(domain_class)
     $(".domain", clone).change(function() {        
         //console.log("before load domains organization_details--"+organization_details.toSource());
-        organization_details[le_count][domain_count] = {};
+        //organization_details[le_count][domain_count] = {};
         // saveOrganization();
-        // //loadOrganization_details(le_count, domain_count);                
+        //loadOrganization_details(le_count, domain_count);                
         //console.log("load domains organization_details--"+organization_details.toSource());
 
         generateDateConfigurationList();
@@ -1740,7 +1740,7 @@ function changeClientStatus() {
 
 $(document).ready(function() {
     initialize("list");
-     $('div[data-toggle="tooltip"]').tooltip();
+    $('div[data-toggle="tooltip"]').tooltip();
 });
 
 $('#shortname').on('input', function (e) {

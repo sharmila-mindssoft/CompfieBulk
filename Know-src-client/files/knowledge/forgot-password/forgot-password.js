@@ -1,3 +1,4 @@
+var csrf_token = $('meta[name=csrf-token]').attr('content')
 function clearMessage() {
   $('.error-message').hide();
   $('.error-message').text('');
@@ -37,7 +38,7 @@ function validateEmail($email) {
   return emailReg.test($email);
 }
 function processForgotpassword(username, shortName, callback) {
-  if (shortName == null) {
+    displayLoader();
     var request = [
       'ForgotPassword',
       {
@@ -46,22 +47,54 @@ function processForgotpassword(username, shortName, callback) {
         'login_type': 'Web'
       }
     ];
-    var requestFrame = request;
-    BASE_URL = '/knowledge/api/';
-  }
-  jQuery.post(BASE_URL + 'login', JSON.stringify(requestFrame, null, ' '), function (data) {
-    var data = JSON.parse(data);
-    if (typeof data != 'string') {
-      var status = data[0];
-      var response = data[1];
+    if (shortName == null) {
+      var requestFrame = request;
+      BASE_URL = '/knowledge/api/';
     } else {
-      status = data;
+      var requestFrame = [
+        shortName,
+        request
+      ];
+      BASE_URL = '/api/';
     }
-    matchString = 'success';
-    if (status.toLowerCase().indexOf(matchString) != -1) {
-      callback(null, response);
-    } else {
-      callback(status, null);
+  
+  // jQuery.post(BASE_URL + 'login', JSON.stringify(requestFrame, null, ' '), function (data) {
+  //   var data = JSON.parse(data);
+  //   if (typeof data != 'string') {
+  //     var status = data[0];
+  //     var response = data[1];
+  //   } else {
+  //     status = data;
+  //   }
+  //   matchString = 'success';
+  //   if (status.toLowerCase().indexOf(matchString) != -1) {
+  //     callback(null, response);
+  //   } else {
+  //     callback(status, null);
+  //   }
+  // });
+  actula_data = JSON.stringify(requestFrame, null, ' ');
+  console.log(actula_data);
+  $.ajax({
+    url: BASE_URL + 'login',
+    headers: { 'X-CSRFToken': csrf_token },
+    type: 'POST',
+    contentType: 'application/json',
+    data: btoa(actula_data),
+    success: function (data, textStatus, jqXHR) {
+      console.log(data);
+      //data = atob(data);
+      //data = parseJSON(data);
+      matchString = 'success';
+      if (status.toLowerCase().indexOf(matchString) != -1) {
+        callback(null, response);
+      } else {
+        callback(data, null);
+      }
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      displayMessage(errorThrown);
+      callback(rdata, errorThrown);
     }
   });
 }
