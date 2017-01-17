@@ -6837,3 +6837,8 @@ button.close {
     }
 }
 /*# sourceMappingURL=bootstrap.min.css.map */
+.reset-password-error-message{
+    text-align: center;
+    padding:10px; 
+    margin-bottom: 10px;
+}

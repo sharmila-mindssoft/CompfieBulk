@@ -156,7 +156,11 @@ def process_techno_report_request(request, db):
 
     return result
 
-
+######################################################################################
+# To process statutory setting report filter data for assigned statutories
+# Parameter(s) : Object of the database, user id
+# Return Type : Return lists of data
+######################################################################################
 def process_get_assigned_statutory_report_filters(db, user_id):
     countries = get_countries_for_user(db, user_id)
     domains = get_domains_for_user(db, user_id)
@@ -169,7 +173,11 @@ def process_get_assigned_statutory_report_filters(db, user_id):
         business_groups, unit_list, compliance_statutories
     )
 
-
+######################################################################################
+# To get the assigned statutory report data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of assigned statutories
+######################################################################################
 def process_get_assigned_statutory_report_data(db, request_frame, user_id):
     result = get_assigned_statutories_report_data(db, request_frame, user_id)
     unit_groups = result[0]
@@ -177,7 +185,11 @@ def process_get_assigned_statutory_report_data(db, request_frame, user_id):
     compliance_statutories_list = result[2]
     return technoreports.GetAssignedStatutoryReportSuccess(unit_groups, act_groups, compliance_statutories_list)
 
-
+######################################################################################
+# To get the statutory notifications list filters data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of countries, domains and statutories
+######################################################################################
 def process_get_statutory_notifications_filters(db, request_frame, user_id):
     countries = get_countries_for_user_filter(db, user_id)
     domains = get_domains_for_user(db, user_id)
@@ -188,7 +200,11 @@ def process_get_statutory_notifications_filters(db, request_frame, user_id):
         domains=domains,
         level_one_statutories=level_one_statutories
     )
-
+######################################################################################
+# To get the statutory notofication list report data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of statutory notofications
+######################################################################################
 def process_get_statutory_notifications_report_data(db, request, user_id):
     result = get_statutory_notifications_report_data(db, request)
     print "stat not list"
@@ -199,7 +215,11 @@ def process_get_statutory_notifications_report_data(db, request, user_id):
     return technoreports.GetStatutoryNotificationsReportDataSuccess(
         statutory_notifictions_list=result, total_count=total_count
     )
-
+##################################################################################################################
+# To get the client details report filters data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of countries, domains,client groups, units, business groups,industries
+##################################################################################################################
 def process_get_client_details_report_filters(db, request_frame, session_user):
     countries = get_countries_for_user(db, session_user)
     domains = get_domains_for_user(db, session_user)
@@ -216,7 +236,11 @@ def process_get_client_details_report_filters(db, request_frame, session_user):
         industry_name_id=industries
     )
 
-
+##################################################################################################################
+# To get the client details report data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of units matched under the parameters
+##################################################################################################################
 def process_get_client_details_report_data(db, request, session_user):
     to_count = RECORD_DISPLAY_COUNT
     units = get_client_details_report(
@@ -267,7 +291,11 @@ def process_get_compliance_task_report(db, request_frame, user_id):
     return knowledgereport.GetStatutoryMappingReportDataSuccess(
         country_id, domain_id, report_data, total_count
     )
-
+##################################################################################################################
+# To get the client agreement report filters data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of countries, domains,client groups, business groups,units legal entities
+##################################################################################################################
 def process_get_client_agreement_report_filters(db, request_frame, session_user):
     countries = get_countries_for_user_filter(db, session_user)
     domains = get_domains_for_user(db, session_user)
@@ -282,7 +310,11 @@ def process_get_client_agreement_report_filters(db, request_frame, session_user)
         business_groups=business_groups,
         unit_legal_entity=unit_legal_entity
     )
-
+##################################################################################################################
+# To get the client agreement report filters data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of client agreement report data
+##################################################################################################################
 def process_get_client_agreement_report_data(db, request, session_user):
     if request.csv:
         converter = ConvertJsonToCSV(
@@ -305,6 +337,11 @@ def process_get_client_agreement_report_data(db, request, session_user):
             client_agreement_list=client_agreement_list, total_count=total_count
         )
 
+##################################################################################################################
+# To get the domain wise agreement report filters data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of domain wise agreement report data
+##################################################################################################################
 def process_get_domainwise_agreement_report_data(db, request, session_user):
     if request.csv:
         converter = ConvertJsonToCSV(
@@ -327,6 +364,11 @@ def process_get_domainwise_agreement_report_data(db, request, session_user):
             domainwise_agreement_list=client_agreement_list, total_count=total_count
         )
 
+##################################################################################################################
+# To get the organization units count under the legal entity id
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of units count
+##################################################################################################################
 def process_get_organizationwise_unit_count(db, request, session_user):
     unit_count_list = get_organizationwise_unit_count(
         db, request.legal_entity_id, request.domain_id
@@ -335,7 +377,11 @@ def process_get_organizationwise_unit_count(db, request, session_user):
     return technoreports.GetOrganizationWiseUnitCountSuccess(
         organizationwise_unit_count_list=unit_count_list
     )
-
+##################################################################################################################
+# To get the user mapping report filter data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of countries,client groups,business groups,legal entities and units list
+##################################################################################################################
 def process_get_user_mapping_reports_filter(db, request_frame, session_user):
     print "inside user mapping report controller"
     user_category_details = get_user_category_details(db, session_user)
@@ -354,7 +400,11 @@ def process_get_user_mapping_reports_filter(db, request_frame, session_user):
             usermapping_legal_entities=usermapping_legal_entities,
             usermapping_unit=usermapping_unit
         )
-
+##################################################################################################################
+# To get the user mapping reports data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of mapped user list
+##################################################################################################################
 def process_get_user_mapping_details_reports_data(db, request_frame, session_user):
     print "inside user mapping report details"
     country_id = request_frame.country_id
@@ -415,7 +465,11 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
             unit_domains=unit_domains,
             usermapping_domain=domains
         )
-
+##################################################################################################################
+# To get the group admin registration email report data
+# Parameter(s) : Object of the database, user id
+# Return Type : Return list of group admin registered list
+##################################################################################################################
 def process_get_GroupAdminReportData(db, user_id):
     result = get_GroupAdminReportData(db, user_id)
     groupList = []
@@ -444,7 +498,11 @@ def process_get_GroupAdminReportData(db, user_id):
         group_admin_countries=countriesList,
         group_admin_list=group_admin_data
     )
-
+##################################################################################################################
+# To get the assigned client groups filter data and user categories
+# Parameter(s) : Object of the database, user id
+# Return Type : Return list of user details, client groups, legal entities, domains
+##################################################################################################################
 def process_get_AssignedUserClientGroups(db, user_id):
     result = get_AssignedUserClientGroupsDetails(db, user_id)
     user_category = []
@@ -483,7 +541,11 @@ def process_get_AssignedUserClientGroups(db, user_id):
         clients=client_list,
         reassign_domains=domain_user_list
     )
-
+##################################################################################################################
+# To get the Reassigned user report data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of reassigned user data under the parameters
+##################################################################################################################
 def process_get_ReassignUserReportData(db, request_frame, user_id):
     print "inside controller"
     user_category_id = request_frame.user_category_id
@@ -493,6 +555,11 @@ def process_get_ReassignUserReportData(db, request_frame, user_id):
     result = get_ReassignUserReportData(db, user_category_id, user_id, group_id)
     return technoreports.ReassignUserReportDataSuccess(result)
 
+##################################################################################################################
+# To get the Reassigned domain user report data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of reassigned domain user data under the parameters
+##################################################################################################################
 def process_get_ReassignUserDomainReportData(db, request_frame, user_id):
     result = get_ReassignUserDomainReportData(db, request_frame)
     print "from controller"

@@ -52,7 +52,8 @@ log.setLevel(logging.ERROR)
 
 csrf = CsrfProtect()
 app.secret_key = "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
-app.config["WTF_CSRF_TIME_LIMIT"] = 500
+app.config["WTF_CSRF_TIME_LIMIT"] = 5000
+app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 # app.config["CSRF_COOKIE_NAME"] = "_csrf_token"
 csrf.init_app(app)
 
@@ -147,10 +148,10 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        print s
+        # print s
         s = base64.b64encode(s)
         s = json.dumps(s)
-        print s
+        # print s
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -159,14 +160,14 @@ class API(object):
     ):
         request_data = None
         try:
-            print request
-            print request.data
+            # print request
+            # print request.data
 
             if not request.data:
                 raise ValueError("Request data is Null")
-            print "-" * 10
+            # print "-" * 10
             data = request.data.decode('base64')
-            print data
+            # print data
             data = json.loads(data)
             request_data = request_data_type.parse_structure(
                 data
@@ -190,6 +191,7 @@ class API(object):
         self, unbound_method, request_data_type
     ):
         self._ip_addess = request.remote_addr
+        print self._ip_addess
         # print request.environ['REMOTE_ADDR']
 
         def respond(response_data):
@@ -199,8 +201,7 @@ class API(object):
 
         try:
             if request_data_type == "knowledgeformat":
-                # request_data = request
-                pass
+                request_data = request
             else:
                 request_data = self._parse_request(
                     request_data_type
@@ -218,7 +219,7 @@ class API(object):
             response_data = unbound_method(self, request_data, _db)
 
             if response_data is None or type(response_data) is bool:
-                # print response_data
+                print response_data
                 _db.rollback()
                 raise fetch_error()
             elif type(response_data) != technomasters.ClientCreationFailed:
@@ -312,7 +313,7 @@ class API(object):
     @csrf.exempt
     @api_request(login.Request)
     def handle_mobile_login_request(self, request, db):
-        return controller.process_mobile_request(request, db, self._ip_addess)
+        return controller.process_mobile_login_request(request, db, self._ip_addess)
 
     @csrf.exempt
     @api_request(mobile.RequestFormat)
@@ -379,21 +380,18 @@ class API(object):
 
     @api_request("knowledgeformat")
     def handle_format_file(self, request, db):
-        def validate_session_from_body(content):
-            content_list = content.split("\r\n\r\n")
-            session = content_list[-1].split("\r\n")[0]
-            user_id = db.validate_session_token(str(session))
-            if user_id is None:
-                return False
-            else:
-                return True
+        # def validate_session_from_body(content):
+        #     content_list = content.split("\r\n\r\n")
+        #     session = content_list[-1].split("\r\n")[0]
+        #     user_id = db.validate_session_token(str(session))
+        #     if user_id is None:
+        #         return False
+        #     else:
+        #         return True
 
-        if (validate_session_from_body(request.body())):
-            info = request.files()
-            response_data = controller.process_uploaded_file(info, "knowledge")
-            return response_data
-        else:
-            return login.InvalidSessionToken()
+        info = request.files
+        response_data = controller.process_uploaded_file(info, "knowledge")
+        return response_data
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Know-src-client")
@@ -408,7 +406,7 @@ CSS_PATH = os.path.join(COMMON_PATH, "css")
 IMG_PATH = os.path.join(COMMON_PATH, "images")
 FONT_PATH = os.path.join(COMMON_PATH, "fonts")
 SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
-LOGO_PATH = os.path.join(ROOT_PATH, "Src-server", "server", "clientlogo")
+LOGO_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "clientlogo")
 
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),

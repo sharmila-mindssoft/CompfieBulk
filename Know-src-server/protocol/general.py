@@ -922,6 +922,9 @@ class AuditTrail(object):
             "date": self.date
         }
 
+#
+# Audit Trail -  Countries
+#
 class AuditTrailCountries(object):
     def __init__(self, user_id, user_category_id, country_id, country_name):
         self.user_id = user_id

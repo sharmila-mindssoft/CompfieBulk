@@ -299,21 +299,24 @@ class ChangeUserStatus(Request):
         }
 
 class ChangeDisableStatus(Request):
-    def __init__(self, user_id, is_active):
+    def __init__(self, user_id, is_active, remarks):
         self.user_id = user_id
         self.is_active = is_active
+        self.remarks = remarks
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "is_disable"])
+        data = parse_dictionary(data, ["user_id", "is_disable", "remarks"])
         user_id = data.get("user_id")
         is_active = data.get("is_disable")
-        return ChangeDisableStatus(user_id, is_active)
+        remarks = data.get("remarks")
+        return ChangeDisableStatus(user_id, is_active, remarks)
 
     def to_inner_structure(self):
         return {
             "user_id": self.user_id,
             "is_disable": self.is_active,
+            "remarks": self.remarks
         }
 
 class GetValidityDateList(Request):
@@ -361,24 +364,26 @@ class GetUserMappings(Request):
 
 
 class SaveUserMappings(Request):
-    def __init__(self, country_id, domain_id, parent_user_id, child_users):
+    def __init__(self, country_id, domain_id, parent_user_id, child_users, user_category_id):
         self.country_id = country_id
         self.domain_id = domain_id
         self.parent_user_id = parent_user_id
         self.child_users = child_users
+        self.user_category_id = user_category_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "country_id", "domain_id", "parent_user_id", "child_users"
+                "country_id", "domain_id", "parent_user_id", "child_users", "user_category_id"
             ])
         country_id = data.get("country_id")
         domain_id = data.get("domain_id")
         parent_user_id = data.get("parent_user_id")
         child_users = data.get("child_users")
+        user_category_id = data.get("user_category_id")
         return SaveUserMappings(
-            country_id, domain_id, parent_user_id, child_users
+            country_id, domain_id, parent_user_id, child_users, user_category_id
         )
 
     def to_inner_structure(self):
@@ -386,7 +391,8 @@ class SaveUserMappings(Request):
             "country_id": self.country_id,
             "domain_id": self.domain_id,
             "parent_user_id": self.parent_user_id,
-            "child_users": self.child_users
+            "child_users": self.child_users,
+            "user_category_id": self.user_category_id
         }
 
 
@@ -986,6 +992,19 @@ class CannotDeactivateUserExists(Response):
         return {
         }
 
+class CannotDisableUserTransactionExists(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return CannotDisableUserTransactionExists()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 class UpdateUserSuccess(Response):
     def __init__(self):
@@ -1354,14 +1373,14 @@ class GetReassignUserAccountFormdataSuccess(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "t_m_reassign", "t_e_reassign", "d_m_reassign",
-            "d_e_reassign", "groups", "business_groups",
+            "d_e_reassign", "re_assign_groups", "business_groups",
             "admin_legal_entity", "domains", "user_categories"
         ])
         techno_managers = data.get("t_m_reassign")
         techno_users = data.get("t_e_reassign")
         domain_managers = data.get("d_m_reassign")
         domain_users = data.get("d_e_reassign")
-        groups = data.get("groups")
+        groups = data.get("re_assign_groups")
         business_groups = data.get("business_groups")
         legal_entities = data.get("admin_legal_entity")
         domains = data.get("domains")
@@ -1378,7 +1397,7 @@ class GetReassignUserAccountFormdataSuccess(Request):
             "t_e_reassign": self.techno_users,
             "d_m_reassign": self.domain_managers,
             "d_e_reassign": self.domain_users,
-            "groups": self.groups,
+            "re_assign_groups": self.groups,
             "business_groups": self.business_groups,
             "admin_legal_entity": self.legal_entities,
             "domains": self.domains,
@@ -1455,7 +1474,7 @@ def _init_Response_class_map():
         SaveUserMappingsSuccess, SaveReassignUserAccountSuccess,
         SendRegistraionSuccess,
         GetTechnoUserDataSuccess, GetDomainUserDataSuccess,
-        UserReplacementSuccess
+        UserReplacementSuccess, CannotDisableUserTransactionExists
     ]
     class_map = {}
     for c in classes:

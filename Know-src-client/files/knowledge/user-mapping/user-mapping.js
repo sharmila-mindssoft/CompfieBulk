@@ -20,10 +20,20 @@ var CountryVal = $('#countryval');
 var Country = $('#country');
 var DomainVal = $('#domainval');
 var Domain = $('#domain');
-var cTab = '';
+var cTab = 'know-mgr-exec-tab';
+var uCategory = '4';
 $(".user-tab li").click(function() {
     activateTab($(this).attr('value'));
     cTab = $(this).attr('value');
+    if(cTab == 'know-mgr-exec-tab'){
+        uCategory = '4';
+    }else if(cTab == 'tech-mgr-exec-tab'){
+        uCategory = '6';
+    }else if(cTab == 'tech-mgr-mgr-tab'){
+        uCategory = '7';
+    }else{
+        uCategory = '8';
+    }
 });
 
 $(".btn-cancel").click(function(){
@@ -48,7 +58,8 @@ $("#save").click(function(){
 function initialize(){
     clearFields();
     clearMessage();
-    //activateTab("know-mgr-exec-tab");
+    
+    
     function onSuccess(data) {
         COUNTRIES = data.countries;
         DOMAINS = data.domains;
@@ -59,8 +70,9 @@ function initialize(){
         DOMAIN_MANAGERS = data.domain_managers;
         DOMAIN_EXECUTIVES = data.domain_users;
         USER_MAPPINGS = data.user_mappings;
-        PARENT_USERS = KNOWLEDGE_MANAGERS;
-        CHILD_USERS = KNOWLEDGE_EXECUTIVES;
+        //PARENT_USERS = KNOWLEDGE_MANAGERS;
+        //CHILD_USERS = KNOWLEDGE_EXECUTIVES;
+        activateTab(cTab);
     }
     function onFailure(error) {
         custom_alert(error);
@@ -85,7 +97,7 @@ function clearFields(){
     ACTIVE_CHILD_USERS = [];
     selected_country = '';
     selected_domain = '';
-    cTab = '';
+    //cTab = '';
 }
 
 function activateTab(active_class){
@@ -288,11 +300,12 @@ function activateChildUser(element, user_id){
     if (chkstatus == 'active'){
         $(element).removeClass('active');
         $(element).find('i').removeClass('fa fa-check pull-right');
+        index = ACTIVE_CHILD_USERS.indexOf(user_id);
         ACTIVE_CHILD_USERS.splice(index, 1);
     }else{
         $(element).addClass('active');
         $(element).find('i').addClass('fa fa-check pull-right');
-        index = ACTIVE_CHILD_USERS.indexOf(user_id)
+        //index = ACTIVE_CHILD_USERS.indexOf(user_id)
         ACTIVE_CHILD_USERS.push(user_id);
     }
 }
@@ -323,7 +336,7 @@ function saveUserMapping(){
             custom_alert(error);
         }
         mirror.saveUserMappings(selected_country, selected_domain,
-            ACTIVE_PARENT_USER, ACTIVE_CHILD_USERS,
+            ACTIVE_PARENT_USER, ACTIVE_CHILD_USERS, parseInt(uCategory), 
             function (error, response) {
                 if (error == null) {
                     onSuccess(response);

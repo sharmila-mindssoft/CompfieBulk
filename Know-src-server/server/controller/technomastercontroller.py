@@ -72,6 +72,8 @@ def process_save_client_group(db, request, session_user):
     session_user = int(session_user)
     if is_duplicate_group_name(db, request.group_name):
         return technomasters.GroupNameAlreadyExists()
+    elif is_duplicate_group_short_name(db, request.short_name):
+        return technomasters.GroupShortNameAlreadyExists()
     else:
         group_id = save_client_group(
             db, request.group_name, request.email_id,
@@ -209,7 +211,10 @@ def validate_duplicate_data(db, request, session_user):
             return technomasters.InvalidLegalEntityId()
     return True
 
-
+########################################################################
+# To Validate unit data and merge the divisions, categories for each unit
+# Divisions, categories and Units received in the request
+########################################################################
 def validate_unit_data(db, request, div_ids, category_ids, client_id, session_user):
     units = request.units
     divisions = request.division_units
@@ -271,7 +276,10 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
 
     return [True, new_unit_list, old_unit_list]
 
-
+##############################################################################
+# To validate/check duplicate data of division, category and save the data
+# Divisions, categories and Units received in the request
+##############################################################################
 def save_client(db, request, session_user):
     client_id = request.client_id
     business_group_id = request.business_group_id
@@ -451,7 +459,10 @@ def get_clients(db, request, session_user):
     else:
         return technomasters.UserIsNotResponsibleForAnyClient()
 
-
+##############################################################################
+# To get client groups with max unit id to generate unit code
+# Divisions, categories and Units received in the request
+##############################################################################
 def get_clients_edit(db, request, session_user):
     group_company_list = get_group_companies_for_user_with_max_unit_count(
         db, session_user
