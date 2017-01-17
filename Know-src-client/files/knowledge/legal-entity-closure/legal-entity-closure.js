@@ -43,7 +43,7 @@ function LegalEntityClosureData(data) {
         $('.legal-entity', clone).text(val.legal_entity_name);
         $('.le_id', clone).text(val.legal_entity_id);
 
-        if (val.is_active == false) {
+        if (val.is_active == false && val.validity_days < checkValidityDays()) {
             $('#close', clone).css("display", "block");
             $('#close', clone).addClass('-' + val.legal_entity_id)
             $('#close', clone).on('click', function() {
@@ -63,7 +63,7 @@ function LegalEntityClosureData(data) {
             $('.status', clone).text('Active');
             //break;
         } else {
-            if (parseInt(val.validity_days) > 90) { //isclose=0=close
+            if (val.validity_days > checkValidityDays()) { //isclose=0=close
                 $('#close', clone).hide();
                 $('#reactive', clone).hide();
                 $('.closed', clone).css("display", "block");;
@@ -293,13 +293,14 @@ function processFilterSearch()
         }
         console.log("active:"+data.is_active)
 		le_name = data.legal_entity_name.toLowerCase();
-        if((data.validity_days < 90 && data.validity_days > 0) && (data.is_active == true)){
+        if((data.validity_days < checkValidityDays() && data.validity_days > 0) && (data.is_active == true)){
             console.log("1:"+data.validity_days)
             data_is_active = false;
             data_closure = 2;
         }
 
-        if(data.validity_days > 90){
+        if(data.validity_days > checkValidityDays()){
+            console.log(data.validity_days)
             data_closure = 1;
             data_is_active = false;
         }

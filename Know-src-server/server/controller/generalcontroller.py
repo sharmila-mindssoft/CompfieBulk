@@ -429,4 +429,3 @@ def process_update_statutory_notification_status(db, request, session_user):
         return general.UpdateStatutoryNotificationStatusSuccess()
     else:
         raise process_error("E029")
-

@@ -279,6 +279,11 @@ def process_save_statutory_level(db, request_frame, user_id):
     )
 
 # geography level
+########################################################
+# To Handle get geography level
+    # request_frame args are user id
+    # returns countries and geography level list
+########################################################
 def process_get_geography_level(db, user_id):
     countries = get_countries_for_user(db, user_id)
     geography_levels = get_geography_levels(db)
@@ -287,7 +292,14 @@ def process_get_geography_level(db, user_id):
         countries, geography_levels
     )
 
-
+########################################################
+# To Handle save geography level request
+    # request_frame args are country_id, user id and levels
+    # with position and name.
+    # possible returns
+    # DuplicategeographyLevelsExists
+    # SavegeographyLevelSuccess
+########################################################
 def process_save_geography_level(db, request_frame, user_id):
     country_id = request_frame.country_id
     levels = request_frame.levels
@@ -310,7 +322,12 @@ def process_save_geography_level(db, request_frame, user_id):
     )
 
 
-# geography
+###############################################################################
+# To Handle get geography list request
+    # request_frame args are user id
+    # possible returns of countries, geography levels list and geographies list
+    # GetGeographiesSuccess
+################################################################################
 def process_get_geographies(db, user_id):
     countries = get_countries_for_user(db, user_id)
     geography_levels = get_geography_levels(db)
@@ -321,7 +338,13 @@ def process_get_geographies(db, user_id):
         geographies
     )
 
-
+###############################################################################
+# To Handle Save geography request
+    # request_frame args are user id, country id, geography level id, grography
+    #  name,parent ids, parent names
+    # geographynamealready exists
+    # SaveGeographySuccess
+################################################################################
 def process_save_geography(db, request_frame, user_id):
     geography_level_id = request_frame.geography_level_id
     geography_name = request_frame.geography_name
@@ -344,7 +367,14 @@ def process_save_geography(db, request_frame, user_id):
         )
         return knowledgemaster.SaveGeographySuccess()
 
-
+###############################################################################
+# To Handle Update geography request
+    # request_frame args are user id, country id, geography level id, grography
+    #  name,parent ids, parent names
+    # geographynamealready exists
+    # UpdateGeographySuccess
+    # InvalidGeographyId
+################################################################################
 def process_update_geography(db, request_frame, user_id):
     geography_id = request_frame.geography_id
     # geography_level_id = request_frame.geography_level_id
@@ -369,7 +399,12 @@ def process_update_geography(db, request_frame, user_id):
         else:
             return knowledgemaster.InvalidGeographyId()
 
-
+###############################################################################
+# To Handle Update geography status request
+    # request_frame args are user id, geography id, status
+    # ChangeGeographyStatusSuccess
+    # InvalidGeographyId
+################################################################################
 def process_change_geography_status(db, request_frame, user_id):
     geography_id = request_frame.geography_id
     is_active = request_frame.is_active
