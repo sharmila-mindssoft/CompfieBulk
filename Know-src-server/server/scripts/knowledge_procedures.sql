@@ -3172,7 +3172,7 @@ BEGIN
             and tuu.user_category_id = 7
         ) as unassigned_units
         from tbl_units_organizations as t1
-        inner join tbl_units as t2 on t1.unit_id = t2.unit_id
+        inner join tbl_units as t2 on t1.unit_id = t2.unit_id and t2.is_approved = 1
         left join tbl_user_clients uc ON uc.user_id = userid_ and uc.client_id= t2.client_id
         inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
         inner join tbl_legal_entities as tle on tle.legal_entity_id = t2.legal_entity_id and
@@ -3199,7 +3199,7 @@ BEGIN
             and tuu.user_category_id = 7 -- and user_id=userid_
         ) as unassigned_units
         from tbl_units_organizations as t1
-        inner join tbl_units as t2 on t1.unit_id = t2.unit_id
+        inner join tbl_units as t2 on t1.unit_id = t2.unit_id and t2.is_approved=1
         left join tbl_user_units uc ON uc.user_id = userid_ and uc.client_id= t2.client_id and
         uc.legal_entity_id=t2.legal_entity_id and uc.domain_id=t1.domain_id and user_category_id=7
         inner join tbl_client_groups tcg on tcg.client_id=t2.client_id
@@ -3373,7 +3373,7 @@ BEGIN
             WHERE tg.geography_id = tu.geography_id
         ) as geography_name
         FROM tbl_units tu
-        INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
+        INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id and tu.is_approved=1
         left join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
         WHERE tu.client_id=clientid and tu.legal_entity_id = LegalEntityID
         and tui.domain_id=domainid and
@@ -3387,7 +3387,7 @@ BEGIN
             as domain_name, (SELECT organisation_name FROM tbl_organisation ti
             WHERE ti.organisation_id = tui.organisation_id) as organisation_name
         FROM tbl_units tu
-        INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id
+        INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id and tu.is_approved=1
         left join tbl_user_clients uc ON uc.user_id = userid and uc.client_id= tu.client_id
         WHERE tu.client_id=clientid and tu.legal_entity_id = LegalEntityID and tui.domain_id=domainid and
         tu.unit_id not in (
@@ -3414,7 +3414,7 @@ BEGIN
         right join tbl_units as tu
         on tuu.unit_id = tu.unit_id and
         tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
-        and user_category_id=8)
+        and user_category_id=8) and tu.is_approved=1
         where
         -- tuu.user_id = userid and
         tuu.client_id=clientid and tuu.domain_id=domainid
@@ -3433,6 +3433,7 @@ BEGIN
         right join tbl_units_organizations as t1
         on tuu.unit_id = t1.unit_id and
         tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid and user_category_id=8)
+
         where
         -- tuu.user_id = userid and
         tuu.client_id=clientid and tuu.domain_id=domainid
@@ -5094,38 +5095,58 @@ BEGIN
     if(userCatgId = 1)then
         select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
         tle.business_group_id
-        from tbl_legal_entities as tle,
-        tbl_client_groups as tcg
+        from
+        tbl_client_groups as tcg,
+        tbl_legal_entities as tle
         where
-        tcg.client_id = tle.client_id and
+        tle.is_closed != 1 and
+        tle.client_id = tcg.client_id and
+        tcg.is_active = 1;
         -- tcg.is_approved = 1 and
-        tcg.is_active = 1 and
-        tle.is_closed != 1;
+
     end if;
-    if(userCatgId = 5 or userCatgId = 6)then
+    if(userCatgId = 5)then
         select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
         tle.business_group_id
-        from tbl_legal_entities as tle,
-        tbl_client_groups as tcg
+        from
+        tbl_user_clients as tuc,
+        tbl_client_groups as tcg,
+        tbl_legal_entities as tle
         where
-        tcg.client_id = tle.client_id and
-        tcg.is_approved = 1 and
+        tle.is_closed != 1 and
+        tle.client_id = tcg.client_id and
+        -- tcg.is_approved = 1 and
         tcg.is_active = 1 and
-        tle.created_by = userId and
-        tle.is_closed != 1;
+        tcg.client_id = tuc.client_id and
+        tuc.user_id = userId and tuc.user_category_id = userCatgId;
+    end if;
+    if(userCatgId = 6)then
+        select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
+        tle.business_group_id
+        from
+        tbl_user_legalentity as tul,
+        tbl_client_groups as tcg,
+        tbl_legal_entities as tle
+        where
+        tle.is_closed != 1 and
+        tle.client_id = tcg.client_id and
+        -- tcg.is_approved = 1 and
+        tcg.is_active = 1 and
+        tcg.client_id = tul.client_id and
+        tul.user_id = userId;
     end if;
     if(userCatgId = 7 or userCatgId = 8)then
         select tcg.client_id, tcg.group_name as client_name, tle.legal_entity_id, tle.country_id,
         tle.business_group_id
         from
-        tbl_legal_entities as tle,
-        tbl_client_groups as tcg
+        tbl_client_groups as tcg,
+        tbl_legal_entities as tle
         where
-        tcg.client_id = tle.client_id and
+        tle.is_closed != 1 and
+        tle.client_id = tcg.client_id and
         -- tcg.is_approved = 1 and
         tcg.is_active = 1 and
-        tle.is_closed != 1 and
-        tle.client_id in (select distinct(client_id) from tbl_user_units
+        tcg.client_id in (select distinct(client_id) from tbl_user_units
         where user_id = userId);
     end if;
 
