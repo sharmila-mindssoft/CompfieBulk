@@ -841,16 +841,18 @@ class GetComplianceActivityReport(Request):
         }
 
 class GetReassignedHistoryReportFilters(Request):
-    def __init__(self):
-        pass
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetReassignedHistoryReportFilters()
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetReassignedHistoryReportFilters(legal_entity_id)
 
     def to_inner_structure(self):
         return {
+            "le_id": self.legal_entity_id
         }
 
 class GetReassignedHistoryReport(Request):
