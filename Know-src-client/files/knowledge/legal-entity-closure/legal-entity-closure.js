@@ -9,6 +9,13 @@ var Search_status_1 = $('#search-status-1');
 var Search_status_ul_1 = $('.search-status-list-1');
 var Search_status_li_1 = $('.search-status-li-1');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function loadLegalEntityClosureList() {
     console.log("inside getGroupAdmin_Group")
 
@@ -20,11 +27,14 @@ function loadLegalEntityClosureList() {
     function onFailure(error) {
         displayMessage(error);
     }
+    displayLoader();
     mirror.getLegalEntityClosureData(function(error, response) {
         if (error == null) {
             onSuccess(response);
+            hideLoader();
         } else {
             onFailure(error);
+            hideLoader();
         }
     });
 }
@@ -241,6 +251,7 @@ $('#update_status').click(function() {
                 displayMessage(error);
             }
         }
+        displayLoader();
         mirror.saveLegalEntityClosureData(txtpwd, txtRemarks, parseInt(le_id), action_mode, function(error, response) {
             if (error == null) {
                 Custombox.close();
@@ -251,8 +262,10 @@ $('#update_status').click(function() {
                 else if (action_mode == "reactive")
                     displayMessage(message.legal_entity_reactivated);
                 onSuccess(response);
+                hideLoader();
             } else {
                 onFailure(error);
+                hideLoader();
             }
         });
     } else {
