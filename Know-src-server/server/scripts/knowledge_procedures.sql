@@ -6249,8 +6249,9 @@ CREATE PROCEDURE `sp_legalentity_closure_save`(
 in _u_id int(11), _le_id int(11), _is_cl tinyint(1), _cl_on timestamp, _rem varchar(500))
 BEGIN
     if _is_cl = 1 then
-        if((select @val_days = DATEDIFF(NOW(), closed_on) from tbl_legal_entities
+        if((select DATEDIFF(NOW(), closed_on) from tbl_legal_entities
         where legal_entity_id = _le_id) < 90)then
+
             update tbl_legal_entities
             set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
             closed_remarks = _rem where
@@ -6269,7 +6270,7 @@ BEGIN
         user_category_id = (select user_category_id from tbl_users
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
-        message_text = (select concat(legal_entity_name,' ','has been closed')
+        message_text = (select concat(legal_entity_name,' ','has been reactivated')
         from tbl_legal_entities where legal_entity_id = _le_id),
         link = 'knowledge/legal-entity-closure', created_by = _u_id, created_on = _cl_on;
     else
@@ -6278,7 +6279,7 @@ BEGIN
         user_category_id = (select user_category_id from tbl_users
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
-        message_text = (select concat(legal_entity_name,' ','has been reactivated')
+        message_text = (select concat(legal_entity_name,' ','has been closed')
         from tbl_legal_entities where legal_entity_id = _le_id),
         link = 'knowledge/legal-entity-closure', created_by = _u_id, created_on = _cl_on;
     end if;
