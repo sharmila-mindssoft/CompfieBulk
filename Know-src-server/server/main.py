@@ -148,7 +148,7 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        print s
+        # print s
         s = base64.b64encode(s)
         s = json.dumps(s)
         # print s
@@ -380,32 +380,18 @@ class API(object):
 
     @api_request("knowledgeformat")
     def handle_format_file(self, request, db):
-        def validate_session_from_body(content):
-            content_list = content.split("\r\n\r\n")
-            session = content_list[-1].split("\r\n")[0]
-            user_id = db.validate_session_token(str(session))
-            if user_id is None:
-                return False
-            else:
-                return True
+        # def validate_session_from_body(content):
+        #     content_list = content.split("\r\n\r\n")
+        #     session = content_list[-1].split("\r\n")[0]
+        #     user_id = db.validate_session_token(str(session))
+        #     if user_id is None:
+        #         return False
+        #     else:
+        #         return True
 
-        # print request
-
-        # print request.data
-        # print request.files
-        # print len(request.files)
-        # print request.files['file32']
-        # print type(request.files['file32'])
-        # f = request.files.keys()
-        # print f
-
-        # print "knowledge format"
-        # if (validate_session_from_body(request.data)):
         info = request.files
         response_data = controller.process_uploaded_file(info, "knowledge")
         return response_data
-        # else:
-        #     return login.InvalidSessionToken()
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Know-src-client")

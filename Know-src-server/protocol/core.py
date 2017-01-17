@@ -3361,6 +3361,31 @@ class ClientGroup(object):
             "remarks": self.reason
         }
 
+class ReassignClientGroup(object):
+    def __init__(
+        self, group_id, group_name,
+    ):
+        self.group_id = group_id
+        self.group_name = group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "group_id", "group_name",
+            ]
+        )
+        group_id = data.get("group_id")
+        group_name = data.get("group_name")
+        return ReassignClientGroup(
+            group_id, group_name,
+        )
+
+    def to_structure(self):
+        return {
+            "group_id": self.group_id,
+            "group_name": self.group_name,
+        }
 
 
 #

@@ -1373,14 +1373,14 @@ class GetReassignUserAccountFormdataSuccess(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "t_m_reassign", "t_e_reassign", "d_m_reassign",
-            "d_e_reassign", "groups", "business_groups",
+            "d_e_reassign", "re_assign_groups", "business_groups",
             "admin_legal_entity", "domains", "user_categories"
         ])
         techno_managers = data.get("t_m_reassign")
         techno_users = data.get("t_e_reassign")
         domain_managers = data.get("d_m_reassign")
         domain_users = data.get("d_e_reassign")
-        groups = data.get("groups")
+        groups = data.get("re_assign_groups")
         business_groups = data.get("business_groups")
         legal_entities = data.get("admin_legal_entity")
         domains = data.get("domains")
@@ -1397,7 +1397,7 @@ class GetReassignUserAccountFormdataSuccess(Request):
             "t_e_reassign": self.techno_users,
             "d_m_reassign": self.domain_managers,
             "d_e_reassign": self.domain_users,
-            "groups": self.groups,
+            "re_assign_groups": self.groups,
             "business_groups": self.business_groups,
             "admin_legal_entity": self.legal_entities,
             "domains": self.domains,

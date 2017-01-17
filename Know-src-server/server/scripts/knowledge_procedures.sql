@@ -679,6 +679,25 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_reassign_client_groups_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_reassign_client_groups_list`(
+in userId INT(11)
+)
+BEGIN
+
+    SELECT
+    tcg.client_id,
+    tcg.group_name
+    FROM
+        tbl_client_groups as tcg
+    ORDER BY tcg.group_name;
+
+END //
+
+DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To Fetch Active Countries List
 -- --------------------------------------------------------------------------------
@@ -4364,10 +4383,10 @@ CREATE PROCEDURE `sp_clientstatutories_list`(
 )
 BEGIN
 
-    select t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
+    select distinct t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
     (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
-    (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
+    (select group_name from tbl_client_groups where client_id = t.client_id) as group_name,
     (select business_group_name from tbl_business_groups where business_group_id = t2.business_group_id) as business_group_name,
     (select legal_entity_name from tbl_legal_entities where legal_entity_id = t2.legal_entity_id) as legal_entity_name,
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
@@ -4376,14 +4395,15 @@ BEGIN
     t.status, t.reason,
     (select count(compliance_id) from tbl_client_compliances where
      (is_approved < 5 or IFNULL(compliance_applicable_status,0) = 3 )
-     and client_statutory_id = t1.client_statutory_id)
+     and client_statutory_id = t1.client_statutory_id and unit_id = t1.unit_id)
     as is_edit
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
+    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = 11
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-    inner join tbl_user_units as t3 on t3.unit_id = t1.unit_id
-    where t3.user_id = uid
+    where t3.user_id = 11
     group by t.unit_id, t1.domain_id;
+
 
 END //
 
@@ -4542,7 +4562,8 @@ BEGIN
     inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
     where t4.geography_id IN
     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-    (select parent_ids from tbl_geographies where geography_id = @gid)));
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by t3.statutory_mapping;
     -- mapped organistaion
     select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
     from tbl_mapped_industries as t1 inner join tbl_organisation as t2
@@ -4551,7 +4572,8 @@ BEGIN
     inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
     where t4.geography_id IN
     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-    (select parent_ids from tbl_geographies where geography_id = @gid)));
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by t3.statutory_mapping;
 
     -- new and assigned compliance
     select distinct t1.statutory_mapping_id, t1.compliance_id,
@@ -8177,12 +8199,12 @@ CREATE PROCEDURE `sp_forgot_password`(
     IN username_ varchar(50)
 )
 BEGIN
-    SELECT @_user_id := user_id as user_id, 
+    SELECT @_user_id := user_id as user_id,
            @_user_category_id := user_category_id as user_category_id
-    FROM tbl_user_login_details 
+    FROM tbl_user_login_details
     where username = username_;
-    
-    IF @_user_id != '' and @_user_category_id = 1 THEN 
+
+    IF @_user_id != '' and @_user_category_id = 1 THEN
         select u.user_id, u.email_id, 'Compfie Admin' as employee_name
         FROM tbl_user_login_details u
         where u.user_id = @_user_id;
@@ -8195,7 +8217,7 @@ BEGIN
         FROM tbl_user_login_details u
         inner join  tbl_users us on u.user_id = us.user_id
         where u.user_id = @_user_id;
-    END IF;    
+    END IF;
 END //
 
 DELIMITER ;

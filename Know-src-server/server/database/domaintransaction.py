@@ -144,7 +144,7 @@ def get_compliances_to_assign(db, request, user_id):
         results.extend(data)
         totals.append(total)
 
-    results.sort(key=lambda x : (x.level_one_id, x.compliance_id))
+    results.sort(key=lambda x : (x.level_one_name, x.compliance_id))
     return results, max(totals)
 
 def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, show_count):
