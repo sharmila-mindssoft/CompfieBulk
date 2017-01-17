@@ -458,10 +458,8 @@ def process_getvaliditydate_request(db, request, session_user):
 # To save validity date settings
 ################################################################
 def process_save_validity_date_settings(db, request, session_user):
-    save_validity_date_settings(
+    return save_validity_date_settings(
         db, request.validity_date_settings, session_user)
-    return admin.SaveValidityDateSettingsSuccess()
-
 
 def process_get_user_mappings(db, session_user):
     (
