@@ -895,87 +895,87 @@ list-style-type:none; line-height:25px;
     padding-left: 2em;
     vertical-align: center;
     cursor: pointer;
-    background: url(/knowedge/images/tick_1_inactive.png) no-repeat left 5px center;
+    background: url(/knowledge/images/tick_1_inactive.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.auto-selected {
-    background: #EAE8E8 url(/knowedge/images/tick_1_inactive.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1_inactive.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.auto-selected.active {
-    background: #EAE8E8 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.auto-selected.active_selectbox {
-    background: #EAE8E8 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.auto-selected.active_selectbox_country {
-    background: #EAE8E8 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.auto-selected.active_selectbox_bgroups {
-    background: #EAE8E8 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.auto-selected.active_selectbox_legal_entities {
-    background: #EAE8E8 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.auto-selected.active_selectbox_division {
-    background: #EAE8E8 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.auto-selected.active_selectbox_domains {
-    background: #EAE8E8 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.auto-selected.active_selectbox_users {
-    background: #EAE8E8 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active {
-    background: url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active:hover {
-    background: #f1e9f6 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #f1e9f6 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li:hover {
-    background: #EAE8E8 url(/knowedge/images/tick_1_inactive.png) no-repeat left 5px center;
+    background: #EAE8E8 url(/knowledge/images/tick_1_inactive.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox {
-    background: url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox:hover {
-    background: #f1e9f6 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #f1e9f6 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox_country {
-    background: url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox_bgroups {
-    background: url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox_legal_entities {
-    background: url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox_division {
-    background: url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox_domains {
-    background: url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .ac-selectbox ul li.active_selectbox_users {
-    background: #f1e9f6 url(/knowedge/images/tick_1.png) no-repeat left 5px center;
+    background: #f1e9f6 url(/knowledge/images/tick_1.png) no-repeat left 5px center;
 }
 
 .auto-selected {
@@ -1129,7 +1129,6 @@ a{
 text-align: center;
 margin: 0 auto;
 }
-<<<<<<< HEAD
 .statlvl{
 padding: 8px;
 border-right: 1px solid #e8e8e8;
@@ -1151,18 +1150,18 @@ display: none !important;
 display: none !important;
 }
 .gt input[type="radio"]+label {
-background: url('images/tick1boldinactive.png') no-repeat;
+background: url('/knowledge/images/tick1boldinactive.png') no-repeat;
 height:17px;
 padding-left: 18px;
 cursor: pointer;
 }
 .gt input[type="radio"]:checked + label {
-background: url('images/tick1bold.png') no-repeat;
+background: url('/knowledge/images/tick1bold.png') no-repeat;
 height:17px;
 cursor: pointer;
 }
 .gt_blue input[type="radio"] + label {
-    background: url('images/tick1bold.png') no-repeat;
+    background: url('/knowledge/images/tick1bold.png') no-repeat;
     height:17px;
     cursor: pointer;
 }
@@ -1170,13 +1169,13 @@ cursor: pointer;
 display: none !important;
 }
 .gt-cross input[type="radio"]+label {
-background: url('images/deleteboldinactive.png') no-repeat;
+background: url('/knowledge/images/deleteboldinactive.png') no-repeat;
 height:17px;
 padding-left: 18px;
 cursor: pointer;
 }
 .gt-cross input[type="radio"]:checked + label {
-background: url('images/deletebold.png') no-repeat;
+background: url('/knowledge/images/deletebold.png') no-repeat;
 height:17px;
 cursor: pointer;
 }
@@ -1184,13 +1183,13 @@ cursor: pointer;
 display: none !important;
 }
 .gt-minus input[type="radio"]+label {
-background: url('images/iconminusinactive.png') no-repeat;
+background: url('/knowledge/images/iconminusinactive.png') no-repeat;
 height:17px;
 padding-left: 18px;
 cursor: pointer;
 }
 .gt-minus input[type="radio"]:checked + label {
-background: url('images/iconminusactive.png') no-repeat;
+background: url('/knowledge/images/iconminusactive.png') no-repeat;
 height:17px;
 cursor: pointer;
 }
@@ -1198,13 +1197,13 @@ cursor: pointer;
 display: none !important;
 }
 .gt-one input[type="checkbox"]+label {
-    background: url('images/deletebold.png') no-repeat;
+    background: url('/knowledge/images/deletebold.png') no-repeat;
     height:17px;
     padding-left: 18px;
     cursor: pointer;
 }
 .gt-one input[type="checkbox"]:checked + label {
-    background: url('images/tick1boldinactive.png') no-repeat;
+    background: url('/knowledge/images/tick1boldinactive.png') no-repeat;
     height:17px;
     cursor: pointer;
 

@@ -148,7 +148,7 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        print s
+        # print s
         s = base64.b64encode(s)
         s = json.dumps(s)
         # print s
