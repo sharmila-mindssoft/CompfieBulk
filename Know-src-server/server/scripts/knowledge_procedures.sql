@@ -6118,8 +6118,12 @@ BEGIN
     if _u_cg_id = 5 then
         select t1.client_id, t2.group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
-        (select concat(employee_code,'-',employee_name)
-        from tbl_users where user_id = t3.assigned_by) as emp_code_name,
+         (case when ((select user_category_id from tbl_user_login_details
+                    where user_id = _u_id) = 1) then
+            'Compfie Admin'
+        else
+            (select concat(employee_code,'-',employee_name)
+                from tbl_users where user_id = _u_id) end) as emp_code_name,
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count
         from
@@ -6131,20 +6135,24 @@ BEGIN
 
         t3.reassigned_data = t1.client_id and
         t2.client_id = t1.client_id and
-        (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
-        t1.user_id = _u_id;
+        COALESCE(t1.client_id,'') LIKE _g_id and
+        t1.user_id = _u_id order by t3.assigned_on desc;
 
         select t2.client_id, t3.country_id, t3.country_name
         from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
         where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
-        COALESCE(t1.client_id,'') LIKE _g_id and
-        t1.user_id = _u_id;
+
+        t1.user_id = _u_id;-- group by t3.country_id;
     end if;
     if _u_cg_id =  6 then
         select t1.client_id, t2.group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
-        (select concat(employee_code,'-',employee_name)
-        from tbl_users where user_id = t3.assigned_by) as emp_code_name,
+        (case when ((select user_category_id from tbl_user_login_details
+                    where user_id = _u_id) = 1) then
+            'Compfie Admin'
+        else
+            (select concat(employee_code,'-',employee_name)
+                from tbl_users where user_id = _u_id) end) as emp_code_name,
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count
         from
@@ -6168,8 +6176,12 @@ BEGIN
     if _u_cg_id = 7 or _u_cg_id = 8 then
         select t1.client_id, t2.group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
-        (select concat(employee_code,'-',employee_name)
-        from tbl_users where user_id = t3.assigned_by) as emp_code_name,
+        (case when ((select user_category_id from tbl_user_login_details
+                    where user_id = _u_id) = 1) then
+            'Compfie Admin'
+        else
+            (select concat(employee_code,'-',employee_name)
+                from tbl_users where user_id = _u_id) end) as emp_code_name,
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count
         from
@@ -7751,6 +7763,9 @@ DELIMITER //
 CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
 in _u_id int(11), _link text, _le_name varchar(50), _created_on timestamp)
 BEGIN
+    select @_client_id:=client_id from tbl_legal_entities where
+    legal_entity_name = _le_name;
+
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
@@ -7758,9 +7773,6 @@ BEGIN
     message_heading = 'Client Unit Approval',
     message_text = concat('Client unit(s) has been approved for',' ',_le_name),
     link = _link, created_by = _u_id, created_on = _created_on;
-
-    select @_client_id:=client_id from tbl_legal_entities where
-    legal_entity_name = _le_name;
 
     INSERT INTO tbl_message_users
     SET
