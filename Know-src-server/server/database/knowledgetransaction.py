@@ -6,7 +6,7 @@ from server.database.tables import *
 from server.database.forms import *
 from protocol import (core, knowledgetransaction)
 from server.constants import (
-    KNOWLEDGE_FORMAT_DOWNLOAD_URL
+    KNOWLEDGE_FORMAT_DOWNLOAD_URL, KNOWLEDGE_FORMAT_PATH
 )
 from server.common import (
     convert_to_dict, get_date_time, datetime_to_string_time, make_summary
@@ -146,7 +146,7 @@ def return_compliance(data):
             date_list, d["repeats_type_id"],
             d["repeats_every"], d["duration_type_id"],
             d["duration"], bool(d["is_active"]),
-            d["frequency"], summary
+            d["frequency"], summary, False
         )
         compalinaces.append(compliance)
     return [compliance_names, compalinaces]
@@ -342,9 +342,6 @@ def check_duplicate_compliance_name(db, request_frame):
                 row = db.select_one(q, val)
             else:
                 row = db.select_one(q, val)
-            print q
-            print val
-            print row
             if row["compliance_cnt"] > 0:
                 compliance_names.append(compliance_name)
     if len(compliance_names) > 0:
@@ -367,8 +364,6 @@ def save_statutory_mapping(db, data, created_by):
     nature_id = data.statutory_nature_id
     compliances = data.compliances
     statutory_mapping = json.dumps(data.mappings)
-    print "statutory mapping"
-    print statutory_mapping
     created_on = get_date_time()
     is_active = 1
     if data.tr_type == 0 :
@@ -409,14 +404,12 @@ def save_statutory_mapping(db, data, created_by):
         text = "New statutory mapping has been created %s - %s - %s for the following compliances %s" % (
                 c_name, d_name, str(statutory_mapping), names
             )
-        print text
 
         link = "/knowledge/approve-statutory-mapping"
         save_messages(db, 3, "Statutory Mapping", text, link, created_by)
 
         action = "New statutory mappings added"
         db.save_activity(created_by, frmStatutoryMapping, action)
-        print action
         return True
 
 
@@ -425,6 +418,7 @@ def save_compliance(
 ):
     compliance_ids = []
     compliance_names = []
+    file_path = KNOWLEDGE_FORMAT_PATH
     for data in datas:
 
         created_on = get_date_time()
@@ -443,6 +437,16 @@ def save_compliance(
             file_list = file_list[0]
             file_name = file_list.file_name
             file_size = file_list.file_size
+
+        print file_name, file_size
+        print file_list
+        if data.is_file_removed :
+            # remove uploaded file
+            print file_name, file_size
+            remove_uploaded_file(file_path + "/" + file_name)
+            print " remove process"
+            file_name = ""
+            file_size = 0
 
         penal_consequences = data.penal_consequences
         compliance_frequency = data.frequency_id
@@ -489,7 +493,6 @@ def save_compliance(
                 columns.extend(["repeats_every", "repeats_type_id"])
                 values.extend([repeats_every, repeats_type])
 
-        print values
         compliance_id = db.insert(table_name, columns, values)
         if compliance_id is False:
             raise process_error("E019")
@@ -727,7 +730,7 @@ def remove_uploaded_file(file_path):
 def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, is_approve):
     compliance_ids = []
     compliance_names = []
-    # file_path = KNOWLEDGE_FORMAT_PATH
+    file_path = KNOWLEDGE_FORMAT_PATH
     for data in datas:
         compliance_id = data.compliance_id
 
@@ -744,8 +747,29 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
         compliance_task = data.compliance_task
         description = data.description
         document_name = data.document_name
-        file_name = ''
+
+        file_list = data.format_file_list
+        file_name = ""
         file_size = 0
+        if file_list == []:
+            file_list = None
+
+        if file_list is not None:
+            file_list = file_list[0]
+            file_name = file_list.file_name
+            file_size = file_list.file_size
+
+        print file_name, file_size
+        print file_list
+        if data.is_file_removed :
+            # remove uploaded file
+            print file_name, file_size
+            print " remove process"
+            remove_uploaded_file(file_path + "/" + file_name)
+            file_name = ""
+            file_size = 0
+
+
         # file_list = data.format_file_list
         # file_name = ""
         # file_size = 0
@@ -925,7 +949,6 @@ def change_statutory_mapping_status(db, data, updated_by):
     text = "%s - %s - %s statutory mapping has been %s" % (
             c_name, d_name, str(mapping), status
         )
-    print text
 
     action = "Statutory Mapping has been %s" % status
     link = "/knowledge/approve-statutory-mapping"
@@ -1279,14 +1302,12 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         statutory = []
 
         for s in statutory_info :
-            print s["statutory_mapping_id"], mapping_id
             if s["statutory_mapping_id"] == mapping_id :
                 if s["parent_names"] != '' and s["parent_names"] is not None:
                     statutory.append("%s >> %s" % (s["parent_names"], s["statutory_name"]))
                 else :
                     statutory.append(s["statutory_name"])
 
-        print statutory
         return statutory
 
     fromcount = rcount
@@ -1295,7 +1316,6 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 6
     )
-    print [user_id, approve_status, fromcount, tocount]
     if len(result) == 0 :
         raise fetch_error()
     mapping = result[0]
@@ -1489,9 +1509,7 @@ def save_approve_notify(db, text, user_id, comppliance_id):
 def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :
         comp_id = '%'
-    print comp_id, map_id
     result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 4)
-    print result
     if len(result) == 0 :
         raise process_error("E087")
 
@@ -1535,6 +1553,12 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
         else :
             date_list = None
         summary, dates = make_summary(date_list, c["frequency_id"], c)
+        f_list = []
+        if int(c["format_file_size"]) > 0 :
+            f_list.append(core.FileList(
+                int(c["format_file_size"]), c["format_file"], None
+            ))
+
         compliance_list.append(knowledgetransaction.ComplianceList(
             c["compliance_id"], c["statutory_provision"],
             c["compliance_task"], c["document_name"],
@@ -1542,8 +1566,8 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
             bool(c["is_active"]),
             c["frequency_id"], date_list, c["repeats_type_id"],
             c["repeats_every"], c["duration_type_id"],
-            c["duration"], c["format_file"], [],
-            summary, c["reference_link"], c["freq_name"]
+            c["duration"], c["format_file"], f_list,
+            summary, c["reference_link"],  c["freq_name"], False
         ))
 
     data = knowledgetransaction.GetComplianceEditSuccess(

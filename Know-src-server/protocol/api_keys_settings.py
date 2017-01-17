@@ -167,8 +167,8 @@ api_params = {
     "statutory_levels": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', "class_name": "Level"},
     "statutories": {'type': 'MAP_TYPE', 'validation_method': is_numeric, 'module_name': 'core', 'class_name': 'Statutory'},
 
-    'file_size': {'type': 'INT', 'length': 52949672950, 'validation_method': None, 'is_optional': False},
-    'file_name': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': False},
+    'file_size': {'type': 'INT', 'length': 52949672950, 'validation_method': None, 'is_optional': True},
+    'file_name': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     'file_content': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
 
     'validity_days_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -680,4 +680,4 @@ api_params["rcount"] = api_params.get("total_records")
 api_params["count"] = api_params.get("total_records")
 api_params["days_left"] = api_params.get("total_records")
 api_params["allow_enable"] = api_params.get("is_active")
-
+api_params["is_file_removed"] = api_params.get("is_active")

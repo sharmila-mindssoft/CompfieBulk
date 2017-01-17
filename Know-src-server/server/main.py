@@ -53,6 +53,7 @@ log.setLevel(logging.ERROR)
 csrf = CsrfProtect()
 app.secret_key = "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
 app.config["WTF_CSRF_TIME_LIMIT"] = 5000
+app.config['ALLOWED_EXTENSIONS'] = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 # app.config["CSRF_COOKIE_NAME"] = "_csrf_token"
 csrf.init_app(app)
 
@@ -147,7 +148,7 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        # print s
+        print s
         s = base64.b64encode(s)
         s = json.dumps(s)
         # print s
@@ -190,6 +191,7 @@ class API(object):
         self, unbound_method, request_data_type
     ):
         self._ip_addess = request.remote_addr
+        print self._ip_addess
         # print request.environ['REMOTE_ADDR']
 
         def respond(response_data):
@@ -199,8 +201,7 @@ class API(object):
 
         try:
             if request_data_type == "knowledgeformat":
-                # request_data = request
-                pass
+                request_data = request
             else:
                 request_data = self._parse_request(
                     request_data_type
@@ -388,12 +389,23 @@ class API(object):
             else:
                 return True
 
-        if (validate_session_from_body(request.body())):
-            info = request.files()
-            response_data = controller.process_uploaded_file(info, "knowledge")
-            return response_data
-        else:
-            return login.InvalidSessionToken()
+        print request
+
+        print request.data
+        print request.files
+        print len(request.files)
+        print request.files['file32']
+        print type(request.files['file32'])
+        f = request.files.keys()
+        print f
+
+        print "knowledge format"
+        # if (validate_session_from_body(request.data)):
+        info = request.files
+        response_data = controller.process_uploaded_file(info, "knowledge")
+        return response_data
+        # else:
+        #     return login.InvalidSessionToken()
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Know-src-client")
