@@ -103,7 +103,7 @@ def add_session(
 
     action = "Log In by - \"%s\" from \"%s\"" % (employee, ip)
     # action = "Log In by - \"%s\" " % (employee)
-    db.save_activity(user_category_id, user_id, 0, action, client_id, None, None)
+    db.save_activity(user_id, 0, action)
 
     return session_id
 

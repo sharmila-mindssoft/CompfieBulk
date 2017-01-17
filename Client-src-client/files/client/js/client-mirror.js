@@ -148,7 +148,6 @@ function initClientMirror() {
 
     function redirect_login() {
         var short_name = getClientShortName();
-        //login_url = '/login/' + short_name;
         login_url = '/login';
         window.localStorage.recent_short_name = short_name;
         clearSession();
@@ -1038,14 +1037,6 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    /*function getUpdateClientUserGroupDict(ugId, ugName, fIds) {
-        return {
-            'ug_id': ugId,
-            'ug_name': ugName,
-            'f_ids': fIds
-        };
-    }*/
-
     function updateClientUserGroup(u_g_id, u_g_name, f_cat_id, f_ids, callback) {
         callerName = 'client_masters';
         var request = [
@@ -1513,7 +1504,7 @@ function initClientMirror() {
         }
     }
     /* Compliance Approal */
-    function getComplianceApprovalList(start_count, callback) {
+    function getComplianceApprovalList(start_count, callback) { 
         var request = [
             'GetComplianceApprovalList',
             { 'start_count': start_count }
@@ -1744,36 +1735,7 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-    /* Reassigned History Report */
-    function getReassignedHistoryReportFilters(callback) {
-        var request = [
-            'GetReassignedHistoryReportFilters',
-            {
-                'le_id': le_id,
-            }
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
     
-    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
-        var request = [
-            'GetReassignedHistoryReport', {
-                'country_id': country_id,
-                'domain_id': domain_id,
-                'unit_id': unit_id,
-                'level_1_statutory_id': level_1_statutory_id,
-                'compliance_id': compliance_id,
-                'user_id': user_id,
-                'from_date': from_date,
-                'to_date': to_date,
-                'csv': csv,
-                'record_count': record_count
-            }
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [

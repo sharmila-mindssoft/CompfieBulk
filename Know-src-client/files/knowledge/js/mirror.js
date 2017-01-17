@@ -12,9 +12,7 @@ function initMirror() {
             console.log.apply(console, arguments);
         }
     }
-    // if (window.sessionStorage["my_ip"] == null){
-    //     get_ip();
-    // }
+
     function toJSON(data) {
         return JSON.stringify(data, null, ' ');
     }
@@ -92,8 +90,483 @@ function initMirror() {
         if (info !== null)
             return info.session_token;
         else
+        //<<<<<<< HEAD
             return null;
     }
+    //=======
+    //         callback(status, response);
+    //     },
+    //     error: function (jqXHR, textStatus, errorThrown) {
+    //     }
+    //   });
+    // }
+    function getClientUnitApprovalList(callback) {
+        callerName = 'client_coordination_master';
+        var request = [
+            'GetClientUnitApprovalList',
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    
+    function getEntityApprovalList(legal_entity_id, callback) {
+        callerName = 'client_coordination_master';
+        var request = [
+            'GetEntityApprovalList', {
+                "legal_entity_id": legal_entity_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    
+    function approveUnit(unit_approval_details, callback) {
+        callerName = 'client_coordination_master';
+        var request = [
+            'ApproveUnit', {
+                "unit_approval_details": unit_approval_details
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    
+    function getClientGroupApprovalList(callback) {
+        callerName = 'client_coordination_master';
+        var request = [
+            'GetClientGroupApprovalList',
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getLegalEntity(entity_id, callback) {
+        callerName = 'client_coordination_master';
+        var request = [
+            'GetLegalEntityInfo', {
+                "le_id": entity_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function approveClientGroupList(client_id, entity_id, entity_name, approval_status, reason) {
+        return {
+            "ct_id": client_id,
+            "le_id": entity_id,
+            "le_name": entity_name,
+            "approval_status": approval_status,
+            "reason": reason,
+        }
+
+    }
+
+    function approveClientGroup(group_approval_details, callback) {
+        callerName = 'client_coordination_master';
+        var request = [
+            'ApproveClientGroup', {
+                "client_group_approval_details": group_approval_details
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getDatabaseServerList(callback) {
+        callerName = 'console_admin';
+        var request = [
+            'GetDatabaseServerList', {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function saveDBServer(
+        db_server_id, db_server_name, ip, port, username, password, callback
+    ) {
+        callerName = "console_admin"
+        var request = [
+            "SaveDBServer", {
+                "db_server_id": db_server_id,
+                "db_server_name": db_server_name,
+                "ip": ip,
+                "port": port,
+                "username": username,
+                "password": password
+            }
+        ];
+        apiRequest(callerName, request, callback)
+    }
+
+    function getClientServerList(callback) {
+        callerName = 'console_admin';
+        var request = [
+            'GetClientServerList', {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function saveClientServer(
+        client_server_id, client_server_name, ip, port, callback
+    ) {
+        callerName = "console_admin";
+        var request = [
+            "SaveClientServer", {
+                "client_server_id": client_server_id,
+                "client_server_name": client_server_name,
+                "ip": ip,
+                "port": port
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getFileServerList(callback) {
+        callerName = 'console_admin';
+        var request = [
+            'GetFileServerList', {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function fileServerEntry(
+        file_server_id, file_server_name, ip, port, callback
+    ) {
+        callerName = "console_admin";
+        var request = [
+            "SaveFileServer", {
+                "file_server_id": file_server_id,
+                "file_server_name": file_server_name,
+                "ip": ip,
+                "port": port
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getAllocatedDBEnv(callback) {
+        callerName = "console_admin";
+        var request = [
+            "GetAllocatedDBEnv",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function saveDBEnv(client_db_id, client_id, le_id, machine_id, db_server_id, le_db_server_id, file_server_id, cl_ids, le_ids, callback) {
+        callerName = "console_admin";
+        var request = [
+            "SaveAllocatedDBEnv", {
+                "client_database_id": client_db_id,
+                "client_id": client_id,
+                "legal_entity_id": le_id,
+                "machine_id": machine_id,
+                "db_server_id": db_server_id,
+                "le_db_server_id": le_db_server_id,
+                "file_server_id": file_server_id,
+                "console_cl_ids": cl_ids,
+                "console_le_ids": le_ids
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getFileStorage(callback) {
+        callerName = "console_admin";
+        var request = [
+            "GetFileStorage",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function saveFileStorage(client_id, le_id, machine_id, callback) {
+        callerName = "console_admin";
+        var request = [
+            "SaveFileStorage", {
+                "client_id": client_id,
+                "legal_entity_id": le_id,
+                "machine_id": machine_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getAutoDeletionList(callback) {
+        callerName = "console_admin";
+        var request = [
+            "GetAutoDeletionList",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getDeletionDetails(client_id, entity_id, unit_id, deletion_period) {
+        return {
+            "client_id": client_id,
+            "legal_entity_id": entity_id,
+            "unit_id": unit_id,
+            "deletion_period": deletion_period,
+        }
+    }
+
+    function saveAutoDeletion(auto_deletion_details, callback) {
+        callerName = "console_admin";
+        var request = [
+            "SaveAutoDeletion", {
+                "auto_deletion_details": auto_deletion_details
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getUserMappings(callback) {
+        callerName = "admin";
+        var request = [
+            "GetUserMappings",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function saveUserMappings(country_id, domain_id, parent_user_id, child_users, callback) {
+        callerName = "admin";
+        var request = [
+            "SaveUserMappings", {
+                "country_id": country_id,
+                "domain_id": domain_id,
+                "parent_user_id": parent_user_id,
+                "child_users": child_users
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getUnassignedUnitsList(callback) {
+        callerName = "techno";
+        var request = [
+            "GetUnassignedUnits",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getAssignedUnitsList(domain_id, client_id, legal_entity_id, callback) {
+        callerName = "techno";
+        var request = [
+            "GetAssignedUnits", {
+                "domain_id": domain_id,
+                "client_id": client_id,
+                "legal_entity_id": legal_entity_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getAssignedUnitDetails(legal_entity_id, domain_manager_id, client_id, domain_id, callback) {
+        callerName = "techno";
+        var request = [
+            "GetAssignedUnitDetails", {
+                "legal_entity_id": legal_entity_id,
+                "user_id": domain_manager_id,
+                "client_id": client_id,
+                "domain_id": domain_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getAssignUnitFormData(domain_id, client_id, legal_entity_id, callback) {
+        callerName = "techno";
+        var request = [
+            "GetAssignUnitFormData", {
+                "domain_id": domain_id,
+                "client_id": client_id,
+                "legal_entity_id": legal_entity_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function saveAssignedUnits(client_id, user_id, active_units, callback) {
+        callerName = "techno";
+        var request = [
+            "SaveAsssignedUnits", {
+                "user_id": user_id,
+                "active_units": active_units,
+                "client_id": client_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getReassignUserAccountFormdata(callback) {
+        callerName = "admin";
+        var request = [
+            "GetReassignUserAccountFormdata",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getTechnoUSerInfo(techno_user_id, callback) {
+        callerName = "admin";
+        var request = [
+            "GetTechnoUserData", {
+                "techno_id": techno_user_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getDomainUserInfo(domain_user_id, group_id, entity_id, domain_id, callback) {
+        callerName = "admin";
+        var request = [
+            "GetDomainUserData", {
+                "d_u_id": domain_user_id,
+                "gt_id": group_id,
+                "le_id": entity_id,
+                "d_id": domain_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function technoManagerInfo(reassign_to, client_id, entity_id, techno_executive, old_techno_executive) {
+        var userInfo = {};
+        userInfo.reassign_to = reassign_to;
+        userInfo.gt_id = client_id;
+        userInfo.le_id = entity_id;
+        userInfo.t_e_id = techno_executive;
+        userInfo.old_t_e_id = old_techno_executive;
+        return userInfo;
+    }
+
+    function ReassignTechnoManager(user_from, data, remarks, callback) {
+        callerName = "admin";
+        var request = [
+            "SaveReassignTechnoManager", {
+                "reassign_from": user_from,
+                "t_manager_info": data,
+                "remarks": remarks
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function technoExecutiveInfo(client_id, entity_id) {
+        var userInfo = {};
+        userInfo.gt_id = client_id;
+        userInfo.le_id = entity_id;
+        return userInfo;
+    }
+
+    function ReassignTechnoExecutive(user_from, user_to, data, remarks, callback) {
+        callerName = "admin";
+        var request = [
+            "SaveReassignTechnoExecutive", {
+                "reassign_from": user_from,
+                "reassign_to": user_to,
+                "t_executive_info": data,
+                "remarks": remarks
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function domainManagerInfo(unit_id, domain_executive, old_domain_executive) {
+        var userInfo = {};
+        userInfo.u_id = unit_id;
+        userInfo.d_e_id = domain_executive;
+        userInfo.old_d_e_id = old_domain_executive;
+        return userInfo;
+    }
+
+    function ReassignDomainManager(
+        user_from, user_to, client_id, entity_id, domain_id, data,
+        remarks, callback
+    ) {
+        callerName = "admin";
+        var request = [
+            "SaveReassignDomainManager", {
+                "reassign_from": user_from,
+                "reassign_to": user_to,
+                "gt_id": client_id,
+                "le_id": entity_id,
+                "d_id": domain_id,
+                "d_manager_info": data,
+                "remarks": remarks
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function ReassignDomainExecutive(
+        user_from, user_to, client_id, entity_id, domain_id, unit_ids,
+        remarks, callback
+    ) {
+        callerName = "admin";
+        var request = [
+            "SaveReassignDomainExecutive", {
+                "reassign_from": user_from,
+                "reassign_to": user_to,
+                "gt_id": client_id,
+                "le_id": entity_id,
+                "d_id": domain_id,
+                "unit_ids": unit_ids,
+                "remarks": remarks
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function SaveUserReplacement(user_type, user_from, user_to, remarks, callback) {
+        callerName = "admin";
+        var request = [
+            "UserReplacement", {
+                "user_type": user_type,
+                "old_user_id": user_from,
+                "new_user_id": user_to,
+                "remarks": remarks
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getAssignStatutoryWizardOneData(callback) {
+        callerName = 'domain_transaction';
+        var request = [
+            "GetAssignedStatutoryWizardOneData",
+            {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getAssignStatutoryWizardOneDataUnits(clientid, bgid, leid, divid, catid, domainid, callback) {
+        callerName = 'domain_transaction';
+        var request = [
+            "GetAssignedStatutoryWizardOneUnits", {
+                "ct_id": clientid,
+                "bg_id": bgid,
+                "le_id": leid,
+                "dv_id": divid,
+                "cat_id": catid,
+                "d_id": domainid
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getAssignStatutoryWizardTwoData(
+        domain_id, unit_ids, rcount, callback
+    ) {
+        callerName = 'domain_transaction';
+        var request = [
+            "GetAssignedStatutoryWizardTwoData", {
+                "d_id": domain_id,
+                "unit_ids": unit_ids,
+                "rcount": rcount
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+    //>>>>>>> mangesh/phase2
 
     function getUserMenu() {
         var info = getUserInfo();
