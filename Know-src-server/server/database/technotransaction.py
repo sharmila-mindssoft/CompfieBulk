@@ -642,12 +642,12 @@ def save_legalentity_closure_data(db, user_id, password, legal_entity_id, remark
         print "save"
         return_result = "Unable to Close the Legal Entity"
         result = db.call_update_proc("sp_legalentity_closure_save", (
-            user_id, legal_entity_id, 0, current_time_stamp, remarks
+            user_id, legal_entity_id, 1, current_time_stamp, remarks
         ))
     elif action_mode == "reactive":
         return_result = "Unable to Reactivate the Legal Entity"
         result = db.call_update_proc("sp_legalentity_closure_save", (
-            user_id, legal_entity_id, 1, current_time_stamp, remarks
+            user_id, legal_entity_id, 0, current_time_stamp, remarks
         ))
 
     if result:
