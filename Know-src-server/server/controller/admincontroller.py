@@ -560,7 +560,7 @@ def process_reassign_domain_executive(db, request, session_user):
     user_from = request.reassign_from
     user_to = request.reassign_to
     domain_id = request.domain_id
-    unit_ids = request.domain_ids
+    unit_ids = request.unit_ids
     remarks = request.remarks
     result = save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, remarks, session_user)
     if result :

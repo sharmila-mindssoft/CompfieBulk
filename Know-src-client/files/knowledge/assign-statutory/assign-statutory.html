@@ -140,7 +140,7 @@
                                               <div class="col-sm-6 has-feedback">
                                                   <input class="form-control input-sm" type="text" value="" id="group_name">
                                                   <i class="form-control-feedback fa fa-search"></i>
-                                                  <input type="hidden" id="group_id" value="54">
+                                                  <input type="hidden" id="group_id" value="">
                                                   <div id="ac-group" class="ac-textbox default-display-none">
                                                       <ul class="width85Percent"></ul>
                                                   </div>
@@ -151,7 +151,7 @@
                                               <div class="col-sm-6 has-feedback">
                                                   <input class="form-control input-sm" type="text" value="" id="legal_entity_name">
                                                   <i class="form-control-feedback fa fa-search"></i>
-                                                  <input type="hidden" id="legal_entity_id" value="158">
+                                                  <input type="hidden" id="legal_entity_id" value="">
                                                   <div id="ac-entity" class="ac-textbox default-display-none">
                                                       <ul class="width85Percent"></ul>
                                                   </div>
@@ -184,7 +184,7 @@
                                           <div class="form-group clearfix m-b-10 has-feedback">
                                               <label class="col-sm-4 control-label">Division</label>
                                               <div class="col-sm-6 has-feedback">
-                                                  <input class="form-control input-sm" type="text" value="" id="division_name">
+                                                  <input class="form-control input-sm" type="text" value="" id="division_name"> 
                                                   <i class="form-control-feedback fa fa-search"></i>
                                                   <input type="hidden" id="division_id">
                                                   <div id="ac-division" class="ac-textbox default-display-none">
@@ -197,7 +197,7 @@
                                               <div class="col-sm-6 has-feedback">
                                                   <input class="form-control input-sm" type="text" value="" id="domain_name">
                                                   <i class="form-control-feedback fa fa-search"></i>
-                                                  <input type="hidden" id="domain_id" value="3">
+                                                  <input type="hidden" id="domain_id" value="">
                                                   <div id="ac-domain" class="ac-textbox default-display-none">
                                                       <ul class="width85Percent"></ul>
                                                   </div>
@@ -212,9 +212,9 @@
                                           <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
                                       </div>
                                   </center>
-
+                                  
                                   <div class="col-sm-12 scroll_box box-height-170 no-padding">
-
+                                    
                                       <table id="datatable-fixed-header" class="table table-striped dt-responsive table-list letable" width="100%" cellspacing="0">
                                           <thead>
                                               <th>Unit<span class="mandatory">*</span></th>
@@ -222,24 +222,24 @@
 
                                           <tbody>
                                           <tr>
-                                            <td>
-                                                <div class="form-group has-feedback col-sm-6 m-b-0 no-padding">
-                                                    <input class="form-control input-sm" placeholder="Enter Unit" type="text" id="unit-search">
-                                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                </div>
-                                                <div class="form-group col-sm-6 m-b-0 no-padding">
-                                                    <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                                        <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all">
-                                                        <label></label>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                          </tr>
+                                                  <td>
+                                                      <div class="form-group has-feedback col-sm-6 m-b-0 no-padding">
+                                                          <input class="form-control input-sm" placeholder="Enter Unit" type="text" id="unit-search">
+                                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                      </div>
+                                                      <div class="form-group col-sm-6 m-b-0 no-padding">
+                                                          <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+                                                              <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all">
+                                                              <label></label>
+                                                          </div>
+                                                      </div>
+                                                  </td>
+                                              </tr>
 
                                           <tr>
                                               <td>
                                                   <ul class="list-unstyled p-t-0 unit-list" height="100%">
-
+                                                     
                                                   </ul>
                                               </td>
                                           </tr>
@@ -260,7 +260,7 @@
                                             </div>
 
                                             <div class="panel-group col-lg-12 no-padding tbody-assignstatutory" id="accordion" role="tablist" aria-multiselectable="true">
-
+                                              
                                             </div>
                                         </div>
                                       </div>
@@ -269,7 +269,7 @@
                               </div>
 
                               <div class="total_count_view default-display-none">
-                                <br> <span class="total_count"></span>
+                                <br> Total Records: <span class="total_count"></span>
                               </div>
 
                               <ul class="pager wizard m-b-0 m-t-10">
@@ -288,14 +288,6 @@
 </div>
 
 <div id="templates">
-
-  <table class="demo">
-    <tr class="table-row">
-          <td class="tbl_sno" style="width:5%"></td>
-          <td class="tbl_country" style="width:95%"> This is cloned content from assign statutory form.</td>
-    </tr>
-  </table>
-
   <table class="table-assignstatutory">
       <tr class="table-row">
           <td class="tbl_sno" align="center"></td>
@@ -309,16 +301,15 @@
           <td class="tbl_unit"></td>
           <td class="tbl_domain"></td>
           <td class="tbl_status">
-
+            
           </td>
-
+          
           <td class="icon-3x text-center">
             <i class="edit-icon" data-toggle="tooltip" title="Click here to Edit"></i>
           </td>
-
+              
       </tr>
   </table>
-
   <div class="unit-row">
       <ul>
           <li></li>
@@ -330,26 +321,26 @@
         <div class="panel-heading p-10 acc-title" role="tab">
             <h4 class="m-b-0 m-t-0">
               <div class="gt" style="float:left; width:3%;">
-                <label class="change_status" for="1">
+                <label class="change_status" for="1"> 
                 <img src="images/tick1bold.png">
-                </label>
+                </label> 
               </div>
               <div class="panel-title">
                 <a role="button" data-toggle="collapse"
-                    data-parent="#accordion"
+                    data-parent="#accordion" 
                     aria-expanded="true" >
                     <span></span>
                 <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
                       <label class="col-sm-3 control-label p-t-5">Remarks:</label>
                       <div class="col-sm-9 no-padding">
-                      <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" />
+                      <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
                       </div>
 
                 </div>
-
+                
                 </a>
               </div>
-
+              
             </h4>
         </div>
         <div class="panel-collapse collapse in coll-title" role="tabpanel">
@@ -368,7 +359,7 @@
                                 <th width="1%">Saved</th>
                             </tr>
                         </thead>
-                        <tbody class="tbody-compliance-list">
+                        <tbody class="tbody-compliance-list">                               
                         </tbody>
                     </table>
                 </div>
@@ -376,7 +367,6 @@
         </div>
       </div>
   </div>
-
   <div id="statutory-value">
     <table class="table-statutory-values">
       <tr class="sub-title-row">
@@ -391,10 +381,10 @@
           <td><span class="sno"> </span></td>
           <td class="statutoryprovision"></td>
           <td>
-            <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i>
+            <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
             <span class="compliancetask"> </span>
           </td>
-          <td class="compliancedescription">
+          <td class="compliancedescription"> 
 
           </td>
           <td align="center" class="gt">
@@ -419,31 +409,32 @@
     </table>
   </div>
 
+
   <div id="multi-act-templates" class="default-display-none">
     <div class="p-head">
       <div class="panel panel-default bx-shadow-none">
         <div class="panel-heading p-10 acc-title" role="tab">
             <h4 class="m-b-0 m-t-0">
               <div class="gt" style="float:left; width:3%;">
-                <label class="change_status" for="1">
+                <label class="change_status" for="1"> 
                 <img src="images/tick1bold.png">
-                </label>
+                </label> 
               </div>
               <div class="panel-title">
                 <a role="button" data-toggle="collapse"
-                    data-parent="#accordion"
+                    data-parent="#accordion" 
                     aria-expanded="true" >
                     <span></span>
                   <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
                       <label class="col-sm-3 control-label p-t-5">Remarks:</label>
                       <div class="col-sm-9 no-padding">
-                      <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" />
+                      <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
                       </div>
 
                 </div>
                 </a>
               </div>
-
+              
             </h4>
         </div>
         <div class="panel-collapse collapse in coll-title" role="tabpanel">
@@ -460,7 +451,7 @@
                                 <th width="1%">Saved</th>
                             </tr>
                         </thead>
-                        <tbody class="tbody-compliance-list">
+                        <tbody class="tbody-compliance-list">                               
                         </tbody>
                     </table>
                 </div>
@@ -470,7 +461,7 @@
     </div>
   </div>
 
-  <div id="multi-statutory-value">
+    <div id="multi-statutory-value">
     <table class="table-statutory-values">
       <tr class="sub-title-row">
         <td colspan="100%">
@@ -479,24 +470,21 @@
             </div>
         </td>
       </tr>
-    </table>
-  </div>
-
-  <div id="multi-compliance-details">
-    <table class="table-compliance-details">
+      
       <tr class="compliance-details">
           <td><span class="sno"> </span></td>
           <td class="statutoryprovision"></td>
           <td>
-            <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i>
+            <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
             <span class="compliancetask"> </span>
           </td>
-          <td class="compliancedescription">
+          <td class="compliancedescription"> 
 
           </td>
-          <td colspan="3" align="center" class="applicablelocation">
+          <td colspan="3" align="center" class="applicablelocation"> 
 
           </td>
+
           <td align="center">
               <i class="fa c-pointer text-warning saved"></i>
           </td>
@@ -522,16 +510,15 @@
             <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
                 <input  class="sub-minus" value="3" type="checkbox">
                 <label></label>
+
+                <!-- <input id="singleCheckbox3" value="option2" type="checkbox">
+                <label for="singleCheckbox3"></label> -->
             </div>
         </th>
         <th width="1%"></th>
       </tr>
-    </table>
-  </div>
 
-  <div id="multi-unit-details">
-    <table class="table-unit-details">
-      <tr class="unit-row1">
+      <tr class="unit-row">
         <td align="center" width="2%">
           <input type="hidden" class="combineid-class" />
         </td>
@@ -555,9 +542,10 @@
       </tr>
 
     </table>
-  </div>
-</div>
 
+  </div>
+
+</div>
 
 <table class="table-no-record default-display-none">
     <tr>
