@@ -646,7 +646,7 @@ class SaveReassignDomainExecutive(Request):
         return SaveReassignDomainExecutive(
             data.get("reassign_from"), data.get("reassign_to"),
             data.get("client_id"), data.get("entity_id"),
-            data.get("unit_ids"),
+            data.get("domain_id"), data.get("unit_ids"),
             data.get("remarks")
         )
 

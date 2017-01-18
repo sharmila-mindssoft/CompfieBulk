@@ -420,7 +420,7 @@ api_params = {
 
     'le_ids': {'type': 'VECTOR_TYPE_INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'grp_ids': {'type': 'VECTOR_TYPE_INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
-
+    'entity_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
     "unassigned_units": {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
     "unassigned_units_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technomasters', "class_name": "UnassignedUnit"},
@@ -621,6 +621,7 @@ api_params = {
     'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'group_info': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'clientcoordinationmaster', 'class_name': 'GroupInfo'},
 
+    'old_d_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
 
 }
 api_params['domain_id'] = api_params.get('d_id')
