@@ -1047,6 +1047,24 @@ class SaveValidityDateSettingsSuccess(Response):
         return {
         }
 
+class SaveValidityDateSettingsFailure(Response):
+    def __init__(self, domain_id, country_id):
+        self.domain_id = domain_id
+        self.country_id = country_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domain_id", "country_id"])
+        domain_id = data.get("domain_id")
+        country_id = data.get("country_id")
+        return SaveValidityDateSettingsFailure(domain_id, country_id)
+
+    def to_inner_structure(self):
+        return {
+            "domain_id": self.domain_id,
+            "country_id": self.country_id
+        }
+
 
 class GetValidityDateListSuccess(Response):
     def __init__(
@@ -1474,7 +1492,8 @@ def _init_Response_class_map():
         SaveUserMappingsSuccess, SaveReassignUserAccountSuccess,
         SendRegistraionSuccess,
         GetTechnoUserDataSuccess, GetDomainUserDataSuccess,
-        UserReplacementSuccess, CannotDisableUserTransactionExists
+        UserReplacementSuccess, CannotDisableUserTransactionExists,
+        SaveValidityDateSettingsFailure
     ]
     class_map = {}
     for c in classes:

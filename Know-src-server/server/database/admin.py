@@ -933,18 +933,34 @@ def return_country_domain_mappings(data):
 #####################################################################
 def save_validity_date_settings(db, data, session_user):
     current_time_stamp = get_date_time()
+    country_id = None
+    domain_id = None
     for datum in data:
-        validity_days_id = datum.validity_days_id
-        country_id = datum.country_id
-        domain_id = datum.domain_id
-        validity_days = datum.validity_days
-        db.call_insert_proc(
-            "sp_validitydays_settings_save", (
-                validity_days_id, country_id, domain_id, validity_days,
-                session_user, current_time_stamp, session_user,
-                current_time_stamp
+        if (datum.validity_days == 0 or datum.validity_days > 366):
+            print "no entry"
+            country_id = datum.country_id
+            domain_id = datum.domain_id
+            break
+        else:
+            continue
+    return admin.SaveValidityDateSettingsFailure(domain_id, country_id)
+
+    for datum in data:
+        if (datum.validity_days > 0 and datum.validity_days <= 366):
+            validity_days_id = datum.validity_days_id
+            country_id = datum.country_id
+            domain_id = datum.domain_id
+            validity_days = datum.validity_days
+            db.call_insert_proc(
+                "sp_validitydays_settings_save", (
+                    validity_days_id, country_id, domain_id, validity_days,
+                    session_user, current_time_stamp, session_user,
+                    current_time_stamp
+                )
             )
-        )
+    return admin.SaveValidityDateSettingsSuccess()
+
+
 
 
 def get_user_mappings(db):

@@ -1161,7 +1161,7 @@ def get_AssignedUserClientGroupsDetails(db, user_id):
 def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
     c_names = []
 
-    if group_id is None:
+    if group_id is None or group_id == 0:
         args = [user_id, user_category_id, '%']
     else:
         args = [user_id, user_category_id, group_id]
@@ -1170,10 +1170,11 @@ def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
     result = db.call_proc_with_multiresult_set("sp_reassign_user_report_getdata", args, 2)
     reassign_group_list = []
     print len(result)
-    print len(result[0])
-    print result
+    print len(result[1])
+    print result[1]
     if len(result[0]) > 0:
         for cl in result[0]:
+            c_names = []
             print "inside 1 loop"
             client_id = int(cl.get("client_id"))
             print client_id
@@ -1184,11 +1185,18 @@ def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
             remarks = cl.get("remarks")
             le_count = int(cl.get("le_count"))
             for country in result[1]:
+
                 print "inside 2 loop"
                 print client_id
                 if client_id == country.get("client_id"):
+                    print "inside cl"
                     print country.get("client_id")
-                    c_names.append(country.get("country_name"))
+                    if len(c_names) == 0:
+                        c_names.append(country.get("country_name"))
+                    else:
+                        for c_n in c_names:
+                            if c_n.find(country.get("country_name")) == -1:
+                                c_names.append(country.get("country_name"))
 
             reassign_group_list.append(technoreports.ReassignedUserList(
                 client_id, group_name, le_count, c_names, assigned_on, emp_code_name, remarks

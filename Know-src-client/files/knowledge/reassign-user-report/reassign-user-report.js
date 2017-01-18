@@ -43,25 +43,33 @@ function hideLoader() {
 
 function initialize()
 {
+	var t0, t1;
 	function onSuccess(data) {
+		console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate:');
 		userCategoryList = data.user_categories;
 		userList = data.reassign_user_clients;
 		userClientGroups = data.clients;
 		userDomainList = data.reassign_domains;
 		//userGroupAssignedList = data.reassign_assignedgroups;
-		console.log(data);
-		resetAllfilter();
+		//console.log(data);
+		//resetAllfilter();
+		loadUserCategory();
 	}
 	function onFailure(error) {
 		displayMessage(error);
 	}
+	displayLoader();
+	t0 = performance.now();
 	mirror.getAssignedUserClientGroups(function (error, response) {
 		if (error == null) {
 		  onSuccess(response);
+		  hideLoader();
 		} else {
 		  onFailure(error);
+		  hideLoader();
 		}
 	});
+	t1 = performance.now();
 }
 
 $('.btn-show').click(function () {
@@ -77,7 +85,7 @@ $('.btn-show').click(function () {
   		group_id_none = 0;
   	}
   	function onSuccess(data) {
-      console.log(data);
+      //console.log(data);
       $('.details').show();
 	    $('#compliance_animation')
 	      .removeClass().addClass('bounceInLeft animated')
@@ -123,11 +131,14 @@ $('.btn-show').click(function () {
       displayMessage(error);
     }
     if(categoryName == "Techno Manager" || categoryName == "Techno Executive"){
+    	displayLoader();
     	mirror.getReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), function (error, response) {
     		if (error == null) {
 	        onSuccess(response);
+	        hideLoader();
 	      } else {
 	        onFailure(error);
+	        hideLoader();
 	      }
 	    });
 	}
@@ -140,11 +151,14 @@ $('.btn-show').click(function () {
 			{
 				bg_id_none = BusinessGroup.val();
 			}
+			displayLoader();
 			mirror.getReassignUserDomainReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), parseInt(bg_id_none), parseInt(LegalEntity.val()), parseInt(Domain.val()), function (error, response) {
 	    		if (error == null) {
 		        onSuccess(response);
+		        hideLoader();
 		      } else {
 		        onFailure(error);
+		        hideLoader();
 		      }
 		    });
 		}
@@ -164,7 +178,14 @@ $('.btn-show').click(function () {
   {
   	if(user_id == '')
   	{
-  		displayMessage(message.employeename_required);
+  		if(categoryName == "Techno Manager")
+  			displayMessage(message.techno_manager_required);
+  		else if(categoryName == "Techno Executive")
+  			displayMessage(message.techno_executive_required);
+  		else if(categoryName == "Domain Manager")
+  			displayMessage(message.domain_manager_required);
+  		else if(categoryName == "Domain Executive")
+  			displayMessage(message.domain_executive_required);
   	}
   }
 });
@@ -183,11 +204,9 @@ function getTechnoRecordLength(){
 		    return arr;
 		}, []);
 	}*/
-	console.log("1:"+userGroupAssignedList.length)
 	for(var i=0;i<userGroupAssignedList.length;i++){
 		recordCOunt = 0;
 		if(i==0){
-			console.log("cl:"+userGroupAssignedList[i].client_id)
 			arr_clients.push(userGroupAssignedList[i].client_id);
 		}
 		else{
@@ -197,12 +216,10 @@ function getTechnoRecordLength(){
 				}
 			}
 			if(recordCOunt == 0){
-				console.log("cl:"+userGroupAssignedList[i].client_id);
 				arr_clients.push(userGroupAssignedList[i].client_id);
 			}
 		}
 	}
-	console.log("2:"+arr_clients.length);
 	return arr_clients.length;
 }
 
@@ -275,15 +292,16 @@ function loaduserGroupAssignedList(tbodyClass, data)
 			        arr.push(i);
 			    return arr;
 			}, []);
-
 			if(arr_clients.length > 0)
 			{
 				for(var k=0;k<arr_clients.length;k++)
 				{
+
 					arr_indx = arr_clients[k];
 					if(client_occur_cnt == 0)
 					{
-						bindReassignedTechUserData(data[arr_indx], j, tbodyClass);
+						val = data[arr_indx];
+						bindReassignedTechUserData(data[arr_indx], j, tbodyClass, true);
 						j = j + 1;
 						client_occur_cnt = client_occur_cnt + 1;
 					}
@@ -300,9 +318,8 @@ function loaduserGroupAssignedList(tbodyClass, data)
 }
 
 function tree_open_close(e) {
-	console.log("click:"+e.className)
-	id = e.className.split("-")[3];
-	console.log("id:"+id)
+	var len = e.className.split("-").length;
+	id = e.className.split("-")[len-1];
     $('.tree' + id).toggle("slow");
 }
 
@@ -339,9 +356,9 @@ function bindReassignedTechUserData(data, j, tbodyClass, rowClass)
 function bindReassignTechSubData(data, tbodyClass)
 {
 	val = data;
-	var tableSubRow = $('#templates .tree-data');
+	var tableSubRow = $('#templates .techno-manager .tree-data');
 	var clone = tableSubRow.clone().addClass('tree' + val.client_id);
-
+	//tbodyClass.empty();
 	$('.empty', clone).text();
 	$('.assigned-date', clone).text(val.unit_email_date);
 	//$('.assigned-date', clone).text("01/06/2016");
@@ -349,6 +366,7 @@ function bindReassignTechSubData(data, tbodyClass)
 	//$('.assigned', clone).text("EMP0011 - Murali");
 	$('.remarks', clone).text(val.remarks);
 	//$('.remarks', clone).text("Sample remarks");
+	//tbody-reassignuserrpt-techno-manager-list
 	tbodyClass.append(clone);
 }
 //Techno manager end------------------------------------------------------------------
@@ -468,7 +486,12 @@ function bindReassignedTechexecData(data, j, tbodyClass, rowClass)
 	}
 	$('.bg-name', clone).text(bg_name);
 	$('.country-name', clone).text(val.c_names);
-	$('.no-of-le', clone).text(le_name);
+
+	$('.no-of-le', clone).html(le_name);
+	$('.no-of-le', clone).addClass("-"+val.client_id);
+	$('.no-of-le', clone).on('click', function() { tree_open_close(this); });
+
+	//$('.no-of-le', clone).text(le_name);
 	$('.assigned-date', clone).text(val.unit_email_date);
 	$('.assigned', clone).text(val.emp_code_name);
 	$('.remarks', clone).text(val.remarks);
@@ -479,8 +502,8 @@ function bindReassignedTechexecData(data, j, tbodyClass, rowClass)
 function bindReassignTechexecSubData(data, tbodyClass)
 {
 	val = data;
-	var tableSubRow = $('#templates .tree-data');
-	var clone = tableSubRow.clone();
+	var tableSubRow = $('#templates .techno-exec .tree-data');
+	var clone = tableSubRow.clone().addClass('tree' + val.client_id);
 	$('.empty', clone).text();
 	$('.assigned-date', clone).text(val.unit_email_date);
 	//$('.assigned-date', clone).text("01/06/2016");
@@ -559,11 +582,14 @@ function bindReassignedDomainData(data, j, tbodyClass, rowClass)
 	var clone = tableRow.clone();
 	$('.sno', clone).text(j);
 	$('.country-name', clone).text(val.unit_code);
-	//$('.zmdi-info', clone).addClass('-'+val.unit_id);
-	$('.zmdi-info').hover(function(){
-      showTitle(this, val.address, val.postal_code);
-    });
-	$('.unit-name', clone).text(val.unit_name);
+
+    var titleText = val.address+","+val.postal_code;
+	$('.u_name', clone).text(val.unit_name);
+	var unit_ctrl = '<span class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="' + titleText + '"></span>';
+	$('.u_name').parent().prepend(unit_ctrl);
+    $('[data-toggle="tooltip"]').tooltip();
+    $('.u_name', clone).addClass("-"+val.unit_id);
+	$('.u_name', clone).on('click', function() { tree_open_close(this); });
 	$('.no-of-le', clone).text(val.geography_name);
 	$('.assigned-date', clone).text(val.unit_email_date);
 	$('.assigned', clone).text(val.emp_code_name);
@@ -581,8 +607,9 @@ function showTitle(e, address, postal_code){
 function bindReassignDomainSubData(data, tbodyClass)
 {
 	val = data;
-	var tableSubRow = $('#templates .tree-data');
-	var clone = tableSubRow.clone();
+	var tableSubRow = $('#templates .domain-user .tree-data');
+	var clone = tableSubRow.clone().addClass('tree' + val.unit_id);
+	//var clone = tableSubRow.clone();
 	$('.empty', clone).text();
 	$('.assigned-date', clone).text(val.unit_email_date);
 	//$('.assigned-date', clone).text("01/06/2016");
@@ -712,6 +739,7 @@ function loadUserCategory()
 		clone.text(u_cg_name);
 		$('#usercategory').append(clone);
 	});
+	//console.timeEnd("end loading user categories");
 }
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -782,7 +810,16 @@ $('#groupsval').keyup(function (e) {
   }
   else
   {
-    displayMessage(message.employeename_required);
+    //displayMessage(message.employeename_required);
+    var categoryName = $('#usercategory option:selected').text();
+    if(categoryName == "Techno Manager")
+		displayMessage(message.techno_manager_required);
+	else if(categoryName == "Techno Executive")
+		displayMessage(message.techno_executive_required);
+	else if(categoryName == "Domain Manager")
+		displayMessage(message.domain_manager_required);
+	else if(categoryName == "Domain Executive")
+		displayMessage(message.domain_executive_required);
   }
 });
 
@@ -902,13 +939,13 @@ $('#domainval').keyup(function (e) {
 function loadSearchFilter(categoryName)
 {
 	if(categoryName == "Techno Manager"){
-		$(".mandatory").hide();
+		$(".mandatory").show();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();
 	}
 	else if(categoryName == "Techno Executive"){
-		$(".mandatory").hide();
+		$(".mandatory").show();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();
@@ -927,7 +964,6 @@ function loadSearchFilter(categoryName)
 function resetAllfilter()
 {
 	$('#usercategory').empty();
-	loadUserCategory();
 	$('#groupsval').val('');
 	$('#managerval').val('');
 	$('.tbody-reassignuserrpt-list').find('tr').remove();
