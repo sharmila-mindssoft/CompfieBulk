@@ -939,13 +939,13 @@ $('#domainval').keyup(function (e) {
 function loadSearchFilter(categoryName)
 {
 	if(categoryName == "Techno Manager"){
-		$(".mandatory").hide();
+		$(".mandatory").show();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();
 	}
 	else if(categoryName == "Techno Executive"){
-		$(".mandatory").hide();
+		$(".mandatory").show();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();

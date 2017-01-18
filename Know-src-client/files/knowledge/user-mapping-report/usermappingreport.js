@@ -934,7 +934,7 @@ $('#businessgroupsval').keyup(function (e) {
     {
       if(clientList[i].client_id == $('#group-id').val() && clientList[i].country_id == $('#country-id').val())
       {
-        for(var j=0;j<businessGroupList.length;i++)
+        for(var j=0;j<businessGroupList.length;j++)
         {
           if(businessGroupList[j].business_group_id == clientList[i].business_group_id)
           {

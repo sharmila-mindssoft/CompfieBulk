@@ -44,7 +44,7 @@ api_params = {
     'csv': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'from_count': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'page_count': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    'total_count': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'total_count': {'type': 'INT', 'length': 500000, 'validation_method': None, 'is_optional': False},
 
     'c_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
@@ -147,7 +147,7 @@ api_params = {
     "industry_names": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "i_names": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "statutory_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
-    "s_maps": {'type': 'VECTOR_TYPE_STRING', 'length': 100, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "s_maps": {'type': 'VECTOR_TYPE_STRING', 'length': 1000, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "compliances": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', 'class_name': 'Compliance'},
     "compliance_names": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', 'class_name': 'Compliance_Download'},
     "geography_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
