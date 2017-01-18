@@ -7705,6 +7705,15 @@ BEGIN
         created_by, created_on
     ) values (cat_id, u_from_id, u_to_id, remarks, sessionuser, current_ist_datetime());
 
+    IF cat_id = 5  THEN
+        update tbl_user_clients set user_id = u_to_id where user_id = u_from_id
+            and user_category_id = cat_id;
+    ELSEIF cat_id = 7 THEN
+        update tbl_user_units set user_id = u_to_id where user_id = u_from_id
+            and user_category_id = cat_id;
+    END IF;
+
+
 END //
 
 DELIMITER ;
