@@ -476,6 +476,7 @@
 
             // Keep the tab index from the select.
             var tabindex = this.$select.attr('tabindex');
+            this.$select.removeAttr('tabindex');
             if (tabindex) {
                 this.$button.attr('tabindex', tabindex);
             }

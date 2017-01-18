@@ -306,7 +306,6 @@ def update_service_provider_status(
 
     return result
 
-
 ##############################################################################
 # To Get list of all forms
 # Parameter(s) - Object of database

@@ -1,0 +1,26 @@
+2017-01-16 10:50:02,009 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2017-01-16 10:50:02,011 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 164, in _parse_request
+    data
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/admin.py", line 1472, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 381, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 282, in parse_values
+    val = parse_string(val)
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/protocol/jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2017-01-16 10:50:02,011 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2017-01-16 10:50:02,011 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/thickpadi5/Project-msft/compfie/Know-src-server/server/main.py", line 205, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+

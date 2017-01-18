@@ -365,6 +365,7 @@ def validated_env_before_save(db, request):
     file_server_id = request.file_server_id
     vobj = ServerValidation(db, machine_id, db_server_id, file_server_id)
     is_valid = vobj.perform_validation()
+    print is_valid
     if is_valid[0] is not True :
         return is_valid[0]
     elif is_valid[1] is not True :

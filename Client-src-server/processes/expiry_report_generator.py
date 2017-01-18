@@ -30,7 +30,7 @@ class ExpiryReportGenerator(object):
         else:
             date_in_string = ""
         return date_in_string
-
+        
     def convert_to_dict(self, data_list, columns):
         assert type(data_list) in (list, tuple)
         if len(data_list) > 0:
