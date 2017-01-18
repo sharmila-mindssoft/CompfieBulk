@@ -97,19 +97,25 @@ def get_admin_id(db):
 
 
 def get_countries_for_user(db, user_id):
-    admin_id = get_admin_id(db)
-    query = "SELECT distinct t1.country_id, t1.country_name, " + \
-        " t1.is_active FROM tbl_countries t1 "
-    if user_id != admin_id:
-        query = query + " INNER JOIN tbl_user_countries t2 " + \
-            " ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
-        rows = db.select_all(query, [user_id])
-    else:
-        rows = db.select_all(query)
-    columns = ["country_id", "country_name", "is_active"]
-    result = convert_to_dict(rows, columns)
-    return return_countries(result)
-
+    # admin_id = get_admin_id(db)
+    # query = "SELECT distinct t1.country_id, t1.country_name, " + \
+    #     " t1.is_active FROM tbl_countries t1 "
+    # if user_id != admin_id:
+    #     query = query + " INNER JOIN tbl_user_countries t2 " + \
+    #         " ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
+    #     rows = db.select_all(query, [user_id])
+    # else:
+    #     rows = db.select_all(query)
+    # columns = ["country_id", "country_name", "is_active"]
+    # result = convert_to_dict(rows, columns)
+    # return return_countries(result)
+    query = "SELECT t4.country_id, t4.country_name, t4.is_active FROM tbl_users AS t1 , " + \
+        " INNER JOIN tbl_user_units AS t2 ON t2.user_id = t1.user_id , " + \
+        " INNER JOIN tbl_legal_entities AS t3 ON t3.legal_entity_id = t2.legal_entity_id, " + \
+        " INNER JOIN tbl_countries AS t4 ON t4.country_id = t3.country_id , " + \
+        " WHERE t1.user_id = %s GROUP BY t4.country_id "
+    rows = db.select_all(query, [user_id])
+    return return_countries(rows)
 
 def return_countries(data):
     results = []

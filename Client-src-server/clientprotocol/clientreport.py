@@ -841,16 +841,18 @@ class GetComplianceActivityReport(Request):
         }
 
 class GetReassignedHistoryReportFilters(Request):
-    def __init__(self):
-        pass
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetReassignedHistoryReportFilters()
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetReassignedHistoryReportFilters(legal_entity_id)
 
     def to_inner_structure(self):
         return {
+            "le_id": self.legal_entity_id
         }
 
 class GetReassignedHistoryReport(Request):
@@ -1595,41 +1597,56 @@ class GetComplianceActivityReportSuccess(Response):
             "activities": to_structure_VectorType_RecordType_clientreport_Activities(self.activities),
         }
 
+# class GetReassignedHistoryReportFiltersSuccess(Response):
+#     def __init__(self, countries, domains, units, level_1_statutories, compliances, users):
+#         self.countries = countries
+#         self.domains = domains
+#         self.units = units
+#         self.level_1_statutories = level_1_statutories
+#         self.compliances = compliances
+#         self.users = users
+
+#     @staticmethod
+#     def parse_inner_structure(data):
+#         data = parse_dictionary(data, ["countries", "domains", "units", "level_1_statutories", "compliances", "users"])
+#         countries = data.get("countries")
+#         countries = parse_structure_VectorType_RecordType_core_Country(countries)
+#         domains = data.get("domains")
+#         domains = parse_structure_VectorType_RecordType_core_Domain(domains)
+#         units = data.get("units")
+#         units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
+#         level_1_statutories = data.get("level_1_statutories")
+#         level_1_statutories = parse_structure_VectorType_CustomTextType_100(level_1_statutories)
+#         compliances = data.get("compliances")
+#         compliances = parse_structure_VectorType_RecordType_core_ComplianceFilter(compliances)
+#         users = data.get("users")
+#         users = parse_structure_VectorType_RecordType_clientreport_User(users)
+
+#         return GetReassignedHistoryReportFiltersSuccess(countries, domains, units, level_1_statutories, compliances, users)
+
+#     def to_inner_structure(self):
+#         return {
+#             "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
+#             "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
+#             "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
+#             "level_1_statutories": to_structure_VectorType_CustomTextType_100(self.level_1_statutories),
+#             "compliances": to_structure_VectorType_RecordType_core_ComplianceFilter(self.compliances),
+#             "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
+#         }
+
 class GetReassignedHistoryReportFiltersSuccess(Response):
-    def __init__(self, countries, domains, units, level_1_statutories, compliances, users):
+    def __init__(self, countries):
         self.countries = countries
-        self.domains = domains
-        self.units = units
-        self.level_1_statutories = level_1_statutories
-        self.compliances = compliances
-        self.users = users
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "units", "level_1_statutories", "compliances", "users"])
+        data = parse_dictionary(data, ["countries"])
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
-        domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
-        level_1_statutories = data.get("level_1_statutories")
-        level_1_statutories = parse_structure_VectorType_CustomTextType_100(level_1_statutories)
-        compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_core_ComplianceFilter(compliances)
-        users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clientreport_User(users)
-
-        return GetReassignedHistoryReportFiltersSuccess(countries, domains, units, level_1_statutories, compliances, users)
+        return GetReassignedHistoryReportFiltersSuccess(countries)
 
     def to_inner_structure(self):
         return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
-            "level_1_statutories": to_structure_VectorType_CustomTextType_100(self.level_1_statutories),
-            "compliances": to_structure_VectorType_RecordType_core_ComplianceFilter(self.compliances),
-            "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
+            "countries": self.countries,
         }
 
 class GetReassignedHistoryReportSuccess(Response):

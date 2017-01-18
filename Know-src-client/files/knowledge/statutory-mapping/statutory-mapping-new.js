@@ -1070,7 +1070,7 @@ function RenderInput() {
     };
     this.clearGeosSubLevel = function(l_position) {
         for (var i=l_position+1; i<11; i++) {
-            $('.levelvalue #gnl'+i).empty();
+            $('.tbody-geography-level #gnl'+i).empty();
         }
     };
     this.unloadGeosNames = function(l_position, p_id) {
@@ -1087,13 +1087,37 @@ function RenderInput() {
         }
     };
     this.loadGeosNames = function(data, l_position, parent_name) {
+        // select all functionality
+        function geo_select_all(g_l_position) {
+            saved_geos = $('.items', '#gnl'+ g_l_position);
+            // add as a first element
+            if (saved_geos.length == 0) {
+                liObject = $('#templates #list-template li').clone();
+                liObject.attr('id', 'gidall'+g_l_position);
+                $('.name-holder', liObject).text('Select all');
+                $('.tbody-geography-level #gnl'+g_l_position).append(liObject)
+                liObject.on('click', function(){
+                   if ($('#gidall'+g_l_position).hasClass('active')) {
+                        $('#gidall'+g_l_position).removeClass('active');
+                        $('#gidall'+g_l_position+' i').removeClass('fa-check');
+                        // _renderinput.clearGeosSubLevel(g_l_position);
+                    }else {
+                        $('#gidall'+g_l_position).addClass('active');
+                        $('#gidall'+g_l_position+' i').addClass('fa-check');
+                        // _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+                    }
+                });
+            }
+        }
 
-
-        this.clearSubLevel(l_position);
+        // this.clearGeosSubLevel(l_position);
         $.each(data, function(k,v) {
             if (v.is_active == false) {
                 return;
             }
+            // select all
+            geo_select_all(v.l_position);
+
             liObject = $('#templates #list-template li').clone();
             liObject.attr('id', 'gid'+v.g_id);
             // liObject.addClass('glp'+v.l_position);
