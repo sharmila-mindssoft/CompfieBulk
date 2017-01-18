@@ -16,6 +16,7 @@ var STATU_MAPPINGS;
 var STATU_TOTALS;
 var isAuthenticate;
 
+
 var CURRENT_TAB = 1;
 IS_EDIT = false;
 IS_SAVE = false;
