@@ -693,7 +693,7 @@ function RenderInput() {
             }
 
             slObject = $('#templates .statutory_levelvalue').clone();
-            slObject.width("400px");
+            slObject.width(wid);
 
             $('.filter-text-box', slObject).attr(
                 'id', 'sf'+ v.l_position
@@ -995,6 +995,7 @@ function RenderInput() {
         MultiselectDate.attr('checked', false);
         this.hideFrequencyAll();
         $('#uploaded_fileview').hide();
+        _renderinput.f_f_list = [];
     };
     this.renderComplianceGrid = function() {
 
@@ -1674,8 +1675,13 @@ function pageControls() {
         if (_renderinput.uploaded_files.length > 0) {
             f_list = {};
             var file_data = _renderinput.uploaded_files[0];
-            var f_Name = _renderinput.uploaded_files[0].name;
-            _renderinput.form_data.append('file' + fCId, file_data);
+            var fullname = _renderinput.uploaded_files[0].name;
+            var fN = fullname.substring(0, fullname.indexOf('.'));
+            var fE = fullname.substring(fullname.lastIndexOf('.') + 1);
+            var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+            f_Name = fN + '-' + uniqueId + '.' + fE;
+
+            _renderinput.form_data.append('file' + fCId, file_data, f_Name);
             // _renderinput.form_data.append('session_token', mirror.getSessionToken());
             _renderinput.uploaded_files_fcids[fCId] = true;
             f_list['file_size'] = file_data.size;
@@ -1871,9 +1877,6 @@ function pageControls() {
         console.log(tFN);
         var fN = tFN.substring(0, tFN.indexOf('.'));
         var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
-        console.log(fN, fE);
-        var uniqueId = Math.floor(Math.random() * 90000) + 10000;
-        f_Name = fN + '-' + uniqueId + '.' + fE;
         f_Size = this.files[0].size;
         var max_limit = 1024 * 1024 * 50;
         if (tFN.indexOf('.') !== -1) {
