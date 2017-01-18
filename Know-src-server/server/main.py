@@ -3,6 +3,8 @@ import json
 import traceback
 import jinja2
 import base64
+import random
+import string
 import mysql.connector.pooling
 from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
@@ -149,8 +151,9 @@ class API(object):
         else:
             s = response_data
         # print s
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
-        s = json.dumps(s)
+        s = json.dumps(key+s)
         # print s
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
@@ -166,8 +169,8 @@ class API(object):
             if not request.data:
                 raise ValueError("Request data is Null")
             # print "-" * 10
-            data = request.data.decode('base64')
-            # print data
+            data = request.data[5:]
+            data = data.decode('base64')
             data = json.loads(data)
             request_data = request_data_type.parse_structure(
                 data
