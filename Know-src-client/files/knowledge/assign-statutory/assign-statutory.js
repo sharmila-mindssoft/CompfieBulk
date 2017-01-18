@@ -407,7 +407,7 @@ function pageControls() {
             });
             SelectedUnitCount.text(ACTIVE_UNITS.length);
         }
-
+        
     });
 
     UnitSearch.keyup(function(){
@@ -416,7 +416,7 @@ function pageControls() {
             var currentLiText = $(this).text().toLowerCase();
                 showCurrentLi = currentLiText.indexOf(searchText) !== -1;
             $(this).toggle(showCurrentLi);
-        });
+        });     
     });
 }
 
@@ -536,7 +536,7 @@ function loadUnits() {
         });
     }
 
-
+    
 }
 
 function activateUnit(element) {

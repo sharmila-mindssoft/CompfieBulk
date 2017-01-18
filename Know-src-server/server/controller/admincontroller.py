@@ -467,10 +467,8 @@ def process_getvaliditydate_request(db, request, session_user):
 # To save validity date settings
 ################################################################
 def process_save_validity_date_settings(db, request, session_user):
-    save_validity_date_settings(
+    return save_validity_date_settings(
         db, request.validity_date_settings, session_user)
-    return admin.SaveValidityDateSettingsSuccess()
-
 
 def process_get_user_mappings(db, session_user):
     (
@@ -562,7 +560,7 @@ def process_reassign_domain_executive(db, request, session_user):
     user_from = request.reassign_from
     user_to = request.reassign_to
     domain_id = request.domain_id
-    unit_ids = request.domain_ids
+    unit_ids = request.unit_ids
     remarks = request.remarks
     result = save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, remarks, session_user)
     if result :

@@ -36,6 +36,7 @@ var Category = $('#categoryid');
 
 var SubmitButton = $('#show-button');
 var ExportButton = $('#export');
+var csv = false;
 
 //Pagination variable declaration
 var ItemsPerPage = $('#items_per_page');
@@ -443,6 +444,14 @@ function resetfilter(evt)
   }
 }
 
+ExportButton.click(function() {
+  alert("x");
+    csv = true;
+    var requestHeaders = [];
+    var requestData = [];
+
+    loadusermappingdetails();
+});
 $('#show-button').click(function () {
   sno = 0;
   lastBG = '';
@@ -630,9 +639,6 @@ function loadUserMappingDetailsList(data)
   var divi_name = $('#divisionval').val();
   var category_name = $('#categoryval').val();
 
-
-
-
   //load search details
   $('.countryval').text(country_name);
   $('.groupsval').text(client_name);
@@ -763,6 +769,37 @@ function loadUserMappingDetailsList(data)
     }
   });
 
+  //Export function if required
+  if(csv == true){
+    var ExportTableRow = $('#datatable-responsive .tr-heading .header-bg');
+    var ExportTableData = $('#datatable-responsive .table-row');
+    console.log("after show:"+ExportTableData.length)
+    if(ExportTableData.length > 0){
+        csv = true;
+        if (on_current_page == 1) {
+            sno = 0
+        } else {
+            sno = (on_current_page - 1) * _page_limit;
+        }
+
+        for(var i=0;i<ExportTableRow.length;i++){
+          if(ExportTableRow.eq(i).text() != "#")
+            requestHeaders.push(ExportTableRow[i].innerText())
+        }
+
+        for(var i=0;i<ExportTableData.length;i++){
+          var currentRow = ExportTableData.eq(i);
+          for(var j=0;j<currentRow.length;j++){
+            var currentRowClass = currentRow.find('td').eq(j).attr('class');
+            if(currentRowClass == "unit-name")
+              //"u"
+          }
+        }
+    }
+    else{
+      displayMessage(message.export_empty);
+    }
+  }
 }
 
 function getDomainAssigned(domain_header, unit_id, data)
@@ -934,7 +971,7 @@ $('#businessgroupsval').keyup(function (e) {
     {
       if(clientList[i].client_id == $('#group-id').val() && clientList[i].country_id == $('#country-id').val())
       {
-        for(var j=0;j<businessGroupList.length;i++)
+        for(var j=0;j<businessGroupList.length;j++)
         {
           if(businessGroupList[j].business_group_id == clientList[i].business_group_id)
           {

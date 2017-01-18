@@ -287,7 +287,7 @@ function loadDMList(){
                 
                 var text_val = $(this).val();
                 selected_textbox = $(this);
-                selected_textid = $("#domain_executive_id_"+value.le_id);
+                selected_textid = $("#domain_executive_id_"+value.u_id);
 
                 commonAutoComplete1(
                     e, $("#ac-domain-executive-"+value.u_id), $("#domain_executive_id_"+value.u_id), text_val,
@@ -434,8 +434,8 @@ function pageControls(){
 
     DMGroupName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_closed", "group_id"];
-        var condition_values = [false, DM_GROUPS[DomainManagerId.val()]];
+        var condition_fields = ["group_id"];
+        var condition_values = [DM_GROUPS[DomainManagerId.val()]];
         commonAutoComplete(
             e, DMACGroup, DMGroupId, text_val,
             GROUPS, "group_name", "group_id", function (val) {
@@ -519,8 +519,8 @@ function pageControls(){
 
     DEGroupName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_closed", "group_id"];
-        var condition_values = [false, DE_GROUPS[DomainExecutiveId.val()]];
+        var condition_fields = ["group_id"];
+        var condition_values = [DE_GROUPS[DomainExecutiveId.val()]];
         commonAutoComplete(
             e, DEACGroup, DEGroupId, text_val,
             GROUPS, "group_name", "group_id", function (val) {
@@ -812,8 +812,6 @@ function pageControls(){
             displayMessage(message.legalentity_required);
         }else if(domain_id == ''){
             displayMessage(message.domain_required);
-        }else if(dm_remarks == ''){
-            displayMessage(message.remarks_required);
         }else{
             if($('.dm-group-checkbox:checkbox:checked').length > 0){
                 var reassign_to = $('#domain_manager_id_'+le_id).val();
@@ -828,6 +826,9 @@ function pageControls(){
 
                         if(de_id == ''){
                             displayMessage(message.reassign_to_de_required);
+                            return false;
+                        }else if(dm_remarks == ''){
+                            displayMessage(message.remarks_required);
                             return false;
                         }else{
                             reassignDetailsData = mirror.domainManagerInfo(parseInt(u_id), parseInt(de_id), parseInt(old_executive_id));
@@ -877,22 +878,20 @@ function pageControls(){
             displayMessage(message.legalentity_required);
         }else if(domain_id == ''){
             displayMessage(message.domain_required);
-        }else if(reassign_to == ''){
-            displayMessage(message.reassign_to_required);
-        }else if(de_remarks == ''){
-            displayMessage(message.remarks_required);
         }else{
             if($('.de-group-checkbox:checkbox:checked').length > 0){
-                var u_ids = [];
-                $('.de-group-checkbox:checkbox:checked').each(function (index, el) {
-                    var u_id = $(this).val();
-                    u_ids.push(parseInt(u_id))
-                });
-                
-                if(reassign_from == reassign_to){
-                    displayMessage(message.reassign_from_reassign_to_both_are_same);
-                    return false;
+
+                if(reassign_to == ''){
+                    displayMessage(message.reassign_to_required);
+                }else if(de_remarks == ''){
+                    displayMessage(message.remarks_required);
                 }else{
+                    var u_ids = [];
+                    $('.de-group-checkbox:checkbox:checked').each(function (index, el) {
+                        var u_id = $(this).val();
+                        u_ids.push(parseInt(u_id))
+                    });
+                
                     mirror.ReassignDomainExecutive(parseInt(reassign_from), parseInt(reassign_to), parseInt(group_id),
                         parseInt(le_id), parseInt(domain_id), u_ids, de_remarks, function(error, response) {
                         if (error == null) {
@@ -902,8 +901,7 @@ function pageControls(){
                             displayMessage(error);
                         }
                     });
-                }
-                
+                }  
             }else{
                 displayMessage(message.no_records_selected_for_reassign);
             }
@@ -1046,7 +1044,7 @@ function getFormData(){
         TECHNO_USERS = data.t_e_reassign;
         DOMAIN_MANAGERS = data.d_m_reassign;
         DOMAIN_USERS = data.d_e_reassign;
-        GROUPS = data.groups;
+        GROUPS = data.re_assign_groups;
         BUSINESS_GROUPS = data.business_groups;
         LEGAL_ENTITIES = data.admin_legal_entity;
         DOMAINS = data.domains;
