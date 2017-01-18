@@ -343,6 +343,7 @@ var message = {
   "save_ip_setting_success": "IP Settings Saved Successfully",
   "delete_ip_setting_success": "IP Settings Deleted Successfully",
   "atleast_one_form_have_ip_address": "Atleast one form should have IP address",
+  "export_empty": "No Data(s) to Export."
 }
 
 function clearMessage() {
