@@ -1143,6 +1143,11 @@ def update_division(db, client_id, division_id, division_name, session_user):
         raise process_error("E055")
 
 
+######################################################################################
+# To check duplication of unit code
+# Parameter(s) : Object of database, unit code, unit id, client id
+# Return Type : Return count of unit code
+######################################################################################
 def is_duplicate_unit_code(db, unit_id, unit_code, client_id):
     params = [unit_id, unit_code, None, client_id]
     print "unit code params"
@@ -1154,7 +1159,11 @@ def is_duplicate_unit_code(db, unit_id, unit_code, client_id):
         else:
             return False
 
-
+######################################################################################
+# To check duplicate unit name
+# Parameter(s) : Object of database, unit id, unit name, client id
+# Return Type : Return count if unit name
+######################################################################################
 def is_duplicate_unit_name(db, unit_id, unit_name, client_id):
     params = [unit_id, None, unit_name, client_id]
     rows = db.call_proc("sp_tbl_units_checkduplication", params)
@@ -1163,7 +1172,11 @@ def is_duplicate_unit_name(db, unit_id, unit_name, client_id):
             return True
         else:
             return False
-
+######################################################################################
+# To check invalid id
+# Parameter(s) : Object of database, mode of table/ column, column value
+# Return Type : Return count of the column
+######################################################################################
 def is_invalid_id(db, check_mode, val):
     print "inside valid checking"
     print check_mode
@@ -1200,6 +1213,11 @@ def is_invalid_id(db, check_mode, val):
                     return True
                 else:
                     return False
+######################################################################################
+# To check invalid name
+# Parameter(s) : Object of database, column value
+# Return Type : Return count of the column
+######################################################################################
 def is_invalid_name(db, check_mode, val):
     params = [check_mode, val]
     rows = db.call_proc("sp_tbl_units_check_unitgroupname", params)
@@ -1215,7 +1233,11 @@ def is_invalid_name(db, check_mode, val):
             else:
                 return False
 
-
+######################################################################################
+# To save division
+# Parameter(s) : Object of database, client id, business group id, legal entity id, user id
+# Return Type : Return value of the saved division
+######################################################################################
 def save_division(
     db, client_id, div_name, business_group_id, legal_entity_id, session_user
 ):
@@ -1227,7 +1249,11 @@ def save_division(
     div_id = db.call_insert_proc("sp_tbl_units_save_division", values)
     return div_id
 
-
+##########################################################################################################
+# To save category
+# Parameter(s) : Object of database, client id, business group id, legal entity id, category name, user id
+# Return Type : Return list of statutory nature
+##########################################################################################################
 def save_category(
     db, client_id, div_id, business_group_id, legal_entity_id,
     category_name, session_user
@@ -1241,7 +1267,11 @@ def save_category(
     catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
     return catg_id
 
-
+########################################################################################################
+# To Save client Unit
+# Parameter(s) : Object of database, client id, business group id, legal entity id, country id, user id
+# Return Type : Return value of the saved units
+########################################################################################################
 def save_unit(
     db, client_id, units, business_group_id, legal_entity_id,
     country_id, session_user
@@ -1342,7 +1372,11 @@ def save_unit(
     else:
         print "unit is not created"
 
-
+######################################################################################
+# To update client unit
+# Parameter(s) : Object of database, client id, units list, user id
+# Return Type : Return value of the updated units
+######################################################################################
 def update_unit(db, client_id, units, session_user):
     print "inside update db"
     print units
@@ -1462,6 +1496,11 @@ def update_unit_old(db, client_id,  units, session_user):
 #
 # get_clients
 #
+######################################################################################
+# To Get client ids under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of client ids
+######################################################################################
 def get_user_clients(db, user_id):
     rows = db.call_proc("sp_tbl_unit_getuserclients", [int(user_id)])
     client_ids = [
@@ -1469,7 +1508,11 @@ def get_user_clients(db, user_id):
     ]
     return client_ids
 
-
+######################################################################################
+# To Get clients under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of client list
+######################################################################################
 def get_clients_by_user(db, user_id):
     data = db.call_proc("sp_tbl_unit_getuserclients", [int(user_id)])
     fn = core.Client
@@ -1481,7 +1524,11 @@ def get_clients_by_user(db, user_id):
     ]
     return result
 
-
+######################################################################################
+# To Get countries under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of countries under legal entity
+######################################################################################
 def get_countries_for_unit(db, user_id):
     rows = db.call_proc("sp_countries_for_unit", (user_id,))
 
@@ -1493,7 +1540,11 @@ def get_countries_for_unit(db, user_id):
     ]
     return results
 
-
+######################################################################################
+# To Get domain and organization
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of domains and organization list
+######################################################################################
 def get_domains_for_unit(db, user_id):
     rows = db.call_proc("sp_domains_for_user", (user_id,))
 
@@ -1506,12 +1557,20 @@ def get_domains_for_unit(db, user_id):
     ]
     return results
 
-
+######################################################################################
+# To Get business groups under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of business groups
+######################################################################################
 def get_business_groups_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientbusinessgroup", (user_id,))
     return return_business_groups(result)
 
-
+######################################################################################
+# To Get legal entities under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of legal entities
+######################################################################################
 def get_legal_entities_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientlegalentity", (user_id,))
     print "unit legal entity"
@@ -1532,7 +1591,11 @@ def return_legal_entities_for_unit(legal_entities):
         results.append(legal_entity_obj)
     return results
 
-
+######################################################################################
+# To Get divisions under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of divisions
+######################################################################################
 def get_divisions_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientdivision", (user_id,))
     return return_divisions(result)
@@ -1557,15 +1620,15 @@ def return_unit_geography_levels(data):
         level = core.UnitGeographyLevel(
             d["level_id"], d["level_position"], d["level_name"], d["country_id"]
         )
-        #_list = geography_levels.get(country_id)
-        # if _list is None:
-        #     _list = []
-        #_list.append(level)
-        # geography_levels[country_id] = _list
+
         geography_levels.append(level)
     return geography_levels
 
-
+######################################################################################
+# To Get geography levels under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of geography levels
+######################################################################################
 def get_unit_geograhpy_levels_for_user(db, user_id):
     assert user_id is not None
     condition_val = [user_id]
@@ -1575,7 +1638,11 @@ def get_unit_geograhpy_levels_for_user(db, user_id):
     )
     return return_unit_geography_levels(result)
 
-
+######################################################################################
+# To Get geographies under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of geographies
+######################################################################################
 def get_geographies_for_unit(db, user_id):
 
     where_condition_val = [user_id]
@@ -1594,16 +1661,14 @@ def get_geographies_for_unit(db, user_id):
                 d["country_id"],
                 bool(d["is_active"])
             )
-            # country_id = d["country_id"]
-            #_list = geographies.get(country_id)
-            # if _list is None:
-            #    _list = []
-            #_list.append(geography)
-            # geographies[country_id] = _list
             geographies.append(geography)
     return geographies
 
-
+######################################################################################
+# To Get domains, organization under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of domains, organizations
+######################################################################################
 def get_client_industries(db, user_id,):
     columns = [
         "country_id", "country_name",
@@ -1674,13 +1739,21 @@ def return_units_assign(units):
         ))
     return results
 
-
+######################################################################################
+# To Get units under user
+# Parameter(s) : Object of database, user id, request
+# Return Type : Return list of units
+######################################################################################
 def get_unit_details_for_user(db, user_id, request):
     where_condition_val = [user_id]
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
     return return_unit_details(result)
 
-
+######################################################################################
+# To Get units under user
+# Parameter(s) : Object of database, user id, request
+# Return Type : Return list of units
+######################################################################################
 def get_unit_details_for_user_edit(db, user_id, request):
     print request.to_structure()
     if(request.business_group_id is None):
@@ -1731,12 +1804,20 @@ def return_unit_details(result):
     print unitdetails
     return unitdetails
 
-
+######################################################################################
+# To Get groups list under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of groups
+######################################################################################
 def get_group_companies_for_user_with_max_unit_count(db, user_id):
     result = db.call_proc("sp_tbl_unit_getuserclients", (user_id,))
     return return_group_companies_with_max_unit_count(db, result, user_id)
 
-
+######################################################################################
+# To return groups under user
+# Parameter(s) : Object of database, user id, client list
+# Return Type : Return clients list
+######################################################################################
 def return_group_companies_with_max_unit_count(db, group_companies, user_id):
     results = []
     for group_company in group_companies:
@@ -1752,7 +1833,11 @@ def return_group_companies_with_max_unit_count(db, group_companies, user_id):
         ))
     return results
 
-
+######################################################################################
+# To Get countries under user and client
+# Parameter(s) : Object of database, user id, client id
+# Return Type : Return list of countries
+######################################################################################
 def get_client_countries_for_unit(db, client_id, user_id):
     rows = db.call_proc(
         "sp_tbl_units_getCountries", (client_id, user_id)
@@ -1760,7 +1845,11 @@ def get_client_countries_for_unit(db, client_id, user_id):
     country_ids = [int(r["country_id"]) for r in rows]
     return country_ids
 
-
+######################################################################################
+# To Get next auto generated no. for unit under client
+# Parameter(s) : Object of database, group name, client id
+# Return Type : Return auttogenerated value
+######################################################################################
 def get_next_auto_gen_number(db, group_name=None, client_id=None):
     if group_name is None:
         condition_val = [client_id]
@@ -2306,7 +2395,11 @@ def return_domain_managers(data):
     print domain_user_list
     return result, domain_user_list
 
-
+######################################################################################
+# To Get units under user,client, domain and legal entity
+# Parameter(s) : Object of database, user id, client id, domain id, legal entity id
+# Return Type : Return list of units
+######################################################################################
 def get_units_of_client(db, client_id, domain_id, legal_entity_id, session_user):
     #
     # To get list of units under a client and domain
@@ -2334,11 +2427,20 @@ def generate_unit_domain_industry_map(industry_details):
         detail_map[unit_id][domain_name].append(industry_name)
     return detail_map
 
-
+######################################################################################
+# To Get user category id by user id
+# Parameter(s) : Object of database, user id
+# Return Type : Return user category id
+######################################################################################
 def get_user_category_id(db, session_user):
     result = db.call_proc("sp_get_user_category_id_by_userid", (int(session_user),))
     return result[0]["user_category_id"]
 
+######################################################################################
+# To save assigned units
+# Parameter(s) : Object of database, user id, requests
+# Return Type : Return value of the assigned units
+######################################################################################
 def save_assigned_units(db, request, session_user):
     domain_manager_id = request.user_id
     client_id = request.client_id

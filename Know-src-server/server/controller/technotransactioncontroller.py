@@ -109,7 +109,11 @@ def process_get_assigned_statutories_by_id(db, request, session_user):
         statutories_for_assigning=assigned_statutories
     )
 
-
+######################################################################################
+# Process to get group admin registered email units and groups list
+# Parameter(s) : Object of the database, user id
+# Return Type : Return lists of group admin registered email units and groups list
+######################################################################################
 def process_get_groupadmingroup_unit_list(db, session_user):
     print "inside controller"
     groupadmin_groupsList = get_groupadmin_registration_grouplist(db, session_user)
@@ -121,7 +125,11 @@ def process_get_groupadmingroup_unit_list(db, session_user):
         groupadmin_unitList=groupadmin_unitsList
     )
 
-
+######################################################################################
+# Process to resend group admin registered email list
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return the value of the email process
+######################################################################################
 def resend_user_registration_mail(db, request, session_user):
     res = resave_registraion_token(db, request.user_id, request.email_id)
     if res:
@@ -129,7 +137,11 @@ def resend_user_registration_mail(db, request, session_user):
     else:
         print "send email failed"
 
-
+######################################################################################
+# Process to send group admin registered email list
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return the process message
+######################################################################################
 def process_Send_GroupAdminRegn_Mail(db, request_frame, session_user):
     print "inside group admin controller"
     result = send_groupadmin_registration_mail(db, request_frame, session_user)
@@ -140,13 +152,22 @@ def process_Send_GroupAdminRegn_Mail(db, request_frame, session_user):
 #
 # To get the legal entity list under the techno manager for closure prrocess
 #
+######################################################################################
+# To get legal entity closure form data
+# Parameter(s) : Object of the database, user id
+# Return Type : Return list of legal entity list with its status
+######################################################################################
 def process_get_LegalEntityClosureReportData(db, session_user):
     result = get_LegalEntityClosureReportData(db, session_user)
     return technotransactions.LegalEntityClosureReportDataSuccess(
         legalentity_closure=result
     )
 
-
+######################################################################################
+# To save Legal entity closure data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return value of the save process
+######################################################################################
 def process_Save_LegalEntityClosureData(db, request_frame, session_user):
     session_user = int(session_user)
     legal_entity_id = request_frame.legal_entity_id
@@ -164,5 +185,7 @@ def process_Save_LegalEntityClosureData(db, request_frame, session_user):
             print result
             if result is True:
                 return technotransactions.SaveLegalEntityClosureSuccess()
+            else:
+                return technotransactions.SaveLegalEntityClosureFailure()
         else:
             return technomasters.InvalidPassword()

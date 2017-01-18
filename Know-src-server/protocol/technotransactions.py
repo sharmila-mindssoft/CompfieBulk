@@ -268,12 +268,26 @@ class SaveLegalEntityClosureSuccess(Response):
         return {
         }
 
+class SaveLegalEntityClosureFailure(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveLegalEntityClosureFailure()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         SaveGroupAdminRegnSuccess,
         ResendRegistraionSuccess,
         LegalEntityClosureReportDataSuccess,
-        SaveLegalEntityClosureSuccess
+        SaveLegalEntityClosureSuccess,
+        SaveLegalEntityClosureFailure
     ]
     class_map = {}
     for c in classes:
