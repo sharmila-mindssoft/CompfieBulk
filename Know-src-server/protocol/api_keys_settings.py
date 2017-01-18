@@ -44,7 +44,7 @@ api_params = {
     'csv': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     'from_count': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'page_count': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
-    'total_count': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
+    'total_count': {'type': 'INT', 'length': 500000, 'validation_method': None, 'is_optional': False},
 
     'c_id': {'type': 'INT', 'length': 500, 'validation_method': None, 'is_optional': False},
     'c_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alphabet, 'is_optional': False},
