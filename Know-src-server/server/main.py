@@ -10,7 +10,7 @@ from functools import wraps
 import logging
 from lxml import etree
 from protocol import (
-    admin, consoleadmin, clientadminsettings,
+    admin, consoleadmin,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions,
     clientcoordinationmaster, mobile, domaintransactionprotocol
@@ -332,10 +332,6 @@ class API(object):
     def handle_techno(self, request, db):
         return controller.process_techno_request(request, db)
 
-    @api_request(clientadminsettings.Request)
-    def handle_client_admin_settings(self, request, db):
-        pass
-
     @api_request(general.RequestFormat)
     def handle_general(self, request, db):
         return controller.process_general_request(request, db)
@@ -485,7 +481,7 @@ def run_server(port):
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/console_admin", api.handle_console_admin),
             ("/knowledge/api/techno", api.handle_techno),
-            ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
+            # ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
             ("/knowledge/api/general", api.handle_general),
             ("/knowledge/api/knowledge_master", api.handle_knowledge_master),
             ("/knowledge/api/knowledge_transaction", api.handle_knowledge_transaction),
