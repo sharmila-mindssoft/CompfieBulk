@@ -4109,26 +4109,26 @@ CREATE PROCEDURE `sp_statutory_notification_details`(
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50),
 IN fromcount_ INT(11), IN pagecount_ INT(11))
 BEGIN
-        SELECT
-    ts.statutory_name,
-    tc.compliance_task,
-    tc.compliance_description as description,
-    tsnl.notification_text,
-    tsnl.created_on
-FROM
-    tbl_statutory_notifications tsnl
-        INNER JOIN
-    tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
-        INNER JOIN
-    tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
-        INNER JOIN
-    tbl_statutories ts ON ts.statutory_id = tms.statutory_id
-WHERE
-    tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
-    IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
-    IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
-    IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
-limit fromcount_, pagecount_;
+    SELECT
+        IF(ts.parent_names = '', ts.statutory_name, SUBSTRING_INDEX(ts.parent_names, '>>', 1)) as statutory_name,
+        tc.compliance_task,
+        tc.compliance_description as description,
+        tsnl.notification_text,
+        tsnl.created_on
+    FROM
+        tbl_statutory_notifications tsnl
+            INNER JOIN
+        tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
+            INNER JOIN
+        tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
+            INNER JOIN
+        tbl_statutories ts ON ts.statutory_id = tms.statutory_id
+    WHERE
+        tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
+        IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
+        IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
+        IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
+    limit fromcount_, pagecount_;
 END //
 
 DELIMITER ;
@@ -7862,6 +7862,9 @@ DELIMITER //
 CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
 in _u_id int(11), _link text, _le_name varchar(50), _created_on timestamp)
 BEGIN
+    select @_client_id:=client_id from tbl_legal_entities where
+    legal_entity_name = _le_name;
+
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
@@ -7869,9 +7872,6 @@ BEGIN
     message_heading = 'Client Unit Approval',
     message_text = concat('Client unit(s) has been approved for',' ',_le_name),
     link = _link, created_by = _u_id, created_on = _created_on;
-
-    select @_client_id:=client_id from tbl_legal_entities where
-    legal_entity_name = _le_name;
 
     INSERT INTO tbl_message_users
     SET
