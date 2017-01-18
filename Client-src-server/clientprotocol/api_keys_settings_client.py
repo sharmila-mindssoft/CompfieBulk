@@ -83,6 +83,7 @@ api_params = {
 
     'form_ids': make_int_field(),
 
+    "country_info": make_vector_type_field(module="clientcore", klass_name="Country"),
     "entity_info": make_vector_type_field(module="clientcore", klass_name="LegalEntityInfo"),
     "ct_id": make_int_field(),
     "le_id": make_int_field(),
@@ -110,7 +111,6 @@ api_params = {
     "u_name": make_string_field(),
     "c_name": make_string_field(),
     "c_id": make_int_field(),
-    "c_name": make_string_field(),
     "c_ids": make_vector_type_int(),
     "c_names": make_vector_type_string(),
     "d_id": make_int_field(),

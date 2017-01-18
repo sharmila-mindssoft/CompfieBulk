@@ -924,3 +924,107 @@
             update tbl_user_sessions set last_accessed_time = now()
             where session_token = f56587d8333e490f9f84abee3a84ca15 
 
+2017-01-17 12:44:44,453 - know_query_log - execute: DELETE from tbl_user_login_history WHERE  user_id=1 
+
+2017-01-17 12:44:44,569 - know_query_log - execute: DELETE FROM tbl_user_sessions  WHERE user_id=1 and session_type_id=1 OR  last_accessed_time < DATE_SUB(NOW(),INTERVAL 15 MINUTE)  
+
+2017-01-17 12:44:44,663 - know_query_log - execute:  INSERT INTO tbl_user_sessions  (session_token, user_id, session_type_id,  last_accessed_time) VALUES (df035de70908406a872abc14c7f8815c, 1, 1, 2017-01-17 12:44:44.662000); 
+
+2017-01-17 12:44:45,233 - know_query_log - execute:  INSERT INTO tbl_activity_log  (activity_log_id, user_id, form_id, action, created_on)  VALUES (2, 1, 0, Log In by - "Compfie Admin" , 2017-01-17 12:44:44.774000)  
+
+2017-01-17 12:45:04,861 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'df035de70908406a872abc14c7f8815c'] 
+
+2017-01-17 12:45:04,882 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = df035de70908406a872abc14c7f8815c 
+
+2017-01-17 13:23:05,045 - know_query_log - execute: DELETE from tbl_user_login_history WHERE  user_id=1 
+
+2017-01-17 13:23:05,256 - know_query_log - execute: DELETE FROM tbl_user_sessions  WHERE user_id=1 and session_type_id=1 OR  last_accessed_time < DATE_SUB(NOW(),INTERVAL 15 MINUTE)  
+
+2017-01-17 13:23:05,391 - know_query_log - execute:  INSERT INTO tbl_user_sessions  (session_token, user_id, session_type_id,  last_accessed_time) VALUES (16d5cd067f2c4bbb921d6ef19ab7c391, 1, 1, 2017-01-17 13:23:05.379000); 
+
+2017-01-17 13:23:05,582 - know_query_log - execute:  INSERT INTO tbl_activity_log  (activity_log_id, user_id, form_id, action, created_on)  VALUES (2, 1, 0, Log In by - "Compfie Admin" , 2017-01-17 13:23:05.455000)  
+
+2017-01-17 13:23:12,720 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'16d5cd067f2c4bbb921d6ef19ab7c391'] 
+
+2017-01-17 13:23:12,838 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 16d5cd067f2c4bbb921d6ef19ab7c391 
+
+2017-01-17 13:45:07,265 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'16d5cd067f2c4bbb921d6ef19ab7c391'] 
+
+2017-01-17 13:45:07,309 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 16d5cd067f2c4bbb921d6ef19ab7c391 
+
+2017-01-18 12:32:26,632 - know_query_log - execute: DELETE from tbl_user_login_history WHERE  user_id=7 
+
+2017-01-18 12:32:26,726 - know_query_log - execute: DELETE FROM tbl_user_sessions  WHERE user_id=7 and session_type_id=1 OR  last_accessed_time < DATE_SUB(NOW(),INTERVAL 15 MINUTE)  
+
+2017-01-18 12:32:26,835 - know_query_log - execute:  INSERT INTO tbl_user_sessions  (session_token, user_id, session_type_id,  last_accessed_time) VALUES (3ced03c2993d49858544e336d806b962, 7, 1, 2017-01-18 12:32:26.836000); 
+
+2017-01-18 12:32:27,124 - know_query_log - execute:  INSERT INTO tbl_activity_log  (activity_log_id, user_id, form_id, action, created_on)  VALUES (1232, 7, 0, Log In by - "TE01 - Kathir" , 2017-01-18 12:32:26.873000)  
+
+2017-01-18 12:32:32,726 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'3ced03c2993d49858544e336d806b962'] 
+
+2017-01-18 12:32:32,730 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 3ced03c2993d49858544e336d806b962 
+
+2017-01-18 12:38:10,038 - know_query_log - execute: DELETE from tbl_user_sessions WHERE session_token=3ced03c2993d49858544e336d806b962 
+
+2017-01-18 12:38:23,348 - know_query_log - execute: DELETE from tbl_user_login_history WHERE  user_id=1 
+
+2017-01-18 12:38:23,351 - know_query_log - execute: DELETE FROM tbl_user_sessions  WHERE user_id=1 and session_type_id=1 OR  last_accessed_time < DATE_SUB(NOW(),INTERVAL 15 MINUTE)  
+
+2017-01-18 12:38:23,354 - know_query_log - execute:  INSERT INTO tbl_user_sessions  (session_token, user_id, session_type_id,  last_accessed_time) VALUES (73bf946769324c89874491b0f144efb9, 1, 1, 2017-01-18 12:38:23.354000); 
+
+2017-01-18 12:38:23,526 - know_query_log - execute:  INSERT INTO tbl_activity_log  (activity_log_id, user_id, form_id, action, created_on)  VALUES (1232, 1, 0, Log In by - "Compfie Admin" , 2017-01-18 12:38:23.365000)  
+
+2017-01-18 12:38:29,516 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'73bf946769324c89874491b0f144efb9'] 
+
+2017-01-18 12:38:29,522 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 73bf946769324c89874491b0f144efb9 
+
+2017-01-18 12:43:18,354 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'73bf946769324c89874491b0f144efb9'] 
+
+2017-01-18 12:43:18,410 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 73bf946769324c89874491b0f144efb9 
+
+2017-01-18 12:43:53,703 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'73bf946769324c89874491b0f144efb9'] 
+
+2017-01-18 12:43:53,740 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 73bf946769324c89874491b0f144efb9 
+
+2017-01-18 12:45:07,338 - know_query_log - execute: DELETE from tbl_user_sessions WHERE session_token=73bf946769324c89874491b0f144efb9 
+
+2017-01-18 12:45:38,930 - know_query_log - execute: DELETE from tbl_user_login_history WHERE  user_id=7 
+
+2017-01-18 12:45:38,936 - know_query_log - execute: DELETE FROM tbl_user_sessions  WHERE user_id=7 and session_type_id=1 OR  last_accessed_time < DATE_SUB(NOW(),INTERVAL 15 MINUTE)  
+
+2017-01-18 12:45:38,938 - know_query_log - execute:  INSERT INTO tbl_user_sessions  (session_token, user_id, session_type_id,  last_accessed_time) VALUES (6e40378c1dca41f1b122acc7571b39e7, 7, 1, 2017-01-18 12:45:38.939000); 
+
+2017-01-18 12:45:39,131 - know_query_log - execute:  INSERT INTO tbl_activity_log  (activity_log_id, user_id, form_id, action, created_on)  VALUES (1232, 7, 0, Log In by - "TE01 - Kathir" , 2017-01-18 12:45:38.951000)  
+
+2017-01-18 12:45:44,484 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'6e40378c1dca41f1b122acc7571b39e7'] 
+
+2017-01-18 12:45:44,490 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 6e40378c1dca41f1b122acc7571b39e7 
+
+2017-01-18 12:45:47,937 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'6e40378c1dca41f1b122acc7571b39e7'] 
+
+2017-01-18 12:45:47,944 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 6e40378c1dca41f1b122acc7571b39e7 
+
+2017-01-18 12:46:10,375 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'6e40378c1dca41f1b122acc7571b39e7'] 
+
+2017-01-18 12:46:10,382 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 6e40378c1dca41f1b122acc7571b39e7 
+

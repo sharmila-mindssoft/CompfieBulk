@@ -77,7 +77,7 @@ UserPrivilegesPage.prototype.renderList = function(u_g_data) {
     $.each(u_g_data, function(k, v) {
         var cloneRow = $('#template .table-user-privileges .table-row').clone();
         $('.sno', cloneRow).text(j);
-
+        
         $('.user-group-name', cloneRow).text(v.u_g_name);
         $('.category-name', cloneRow).text(v.u_c_name);
 

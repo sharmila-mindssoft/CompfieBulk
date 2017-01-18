@@ -635,12 +635,11 @@ class Country(object):
         return Country(country_id, country_name, is_active)
 
     def to_structure(self):
-        data = {
+        return {
             "c_id": self.country_id,
             "c_name": self.country_name,
             "is_active": self.is_active
         }
-        return to_structure_dictionary_values(data)
 
 #
 # Domain
@@ -3980,17 +3979,18 @@ class UnitClosure_Units(object):
         }
 
 class LegalEntityInfo(object):
-    def __init__(self, legal_entity_id, legal_entity_name, business_group_id, business_group_name):
+    def __init__(self, legal_entity_id, legal_entity_name, country_id, business_group_id, business_group_name):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
+        self.country_id = country_id
         self.business_group_id = business_group_id
         self.business_group_name = business_group_name
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["le_id", "le_name", "bg_id", "bg_name"])
+        data = parse_dictionary(data, ["le_id", "le_name", "country_id", "bg_id", "bg_name"])
         return LegalEntityInfo(
-            data.get("le_id"), data.get("le_name"),
+            data.get("le_id"), data.get("le_name"), data.get("country_id"),
             data.get("bg_id"), data.get("bg_name")
         )
 
@@ -3998,6 +3998,7 @@ class LegalEntityInfo(object):
         return {
             "le_id": self.legal_entity_id,
             "le_name": self.legal_entity_name,
+            "c_id": self.country_id,
             "bg_id": self.business_group_id,
             "bg_name": self.business_group_name
         }

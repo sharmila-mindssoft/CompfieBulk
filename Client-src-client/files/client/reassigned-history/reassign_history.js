@@ -241,19 +241,18 @@ ReassignHistory.prototype.loadSearch = function() {
 
 ReassignHistory.prototype.fetchSearchList = function() {
     t_this = this;
+    t_this._countries = client_mirror.getUserCountry();
+    t_this._entities = client_mirror.getUserLegalEntity();
+    
     //var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"c_id":1,"le_name":"RG Legal Entity","is_active":true},{"le_id":2,"c_id":1,"le_name":"ABC Legal Entity","is_active":true}],"users":[{"u_id":1,"u_name":"Siva ","is_active":true},{"u_id":2,"u_name":"Hari","is_active":true}]}';
     //var object = jQuery.parseJSON(jsondata);
-    client_mirror.getReassignedHistoryReportFilters(function(error, response) {
+    /*client_mirror.getReassignedHistoryReportFilters(function(error, response) {
         if (error == null) {
-            alert(t_this._countries.toSource());
-            t_this._countries = object.countries;
-            //t_this._entities = object.entities;
-            //t_this._users = object.users;
+            t_this._countries = response.countries;
         } else {
             t_this.possibleFailures(error);
         }
-    });
-    
+    });*/
 };
 
 ReassignHistory.prototype.fetchDomainList = function(le_id) {

@@ -21,10 +21,10 @@ __all__ = [
 
 
 def process_client_report_requests(request, db, session_user, client_id):
-    session_token = request.session_token
-    client_info = request.session_token.split("-")
+    # session_token = request.session_token
+    # client_info = request.session_token.split("-")
     request = request.request
-    client_id = int(client_info[0])
+    # client_id = int(client_info[0])
     # session_user = db.validate_session_token(session_token)
     # if session_user is None:
     #     return clientlogin.InvalidSessionToken()
@@ -508,6 +508,8 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
     #user_company_info = get_user_company_details(db, session_user)
     #unit_ids = user_company_info[0]
     country_list = get_countries_for_user(db, session_user)
+    #legal_entities_list = get_legal_entities_for_user(db, request.legal_entity_id)
+    
     #domain_list = get_domains_for_user(db, session_user)
     #unit_list = get_units_for_user(db, unit_ids)
     #level_1_statutories_list = get_client_level_1_statutoy(db, session_user)

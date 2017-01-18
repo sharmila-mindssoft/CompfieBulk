@@ -101,7 +101,7 @@
             $table.trigger("aftertablesort", { column: th_index, direction: sort_dir });
             $table.css("display");
         }, 10);
-
+        alert($this_th);
         return $this_th;
     };
 
@@ -116,6 +116,7 @@
             $this_td.attr('data-sort-value', new_sort_val);
         }
         $this_td.data("sort-value", new_sort_val);
+        
         return $this_td;
     };
 

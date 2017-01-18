@@ -247,6 +247,7 @@ class API(object):
     ):
         if type(response_data) is not str :
             data = response_data.to_structure()
+            print data
             s = json.dumps(data, indent=2)
         else:
             s = response_data
