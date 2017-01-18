@@ -256,7 +256,7 @@ def parse_values(field_name, param, val, type="To"):
     _length = param.get('length')
     _is_optional = param.get('is_optional')
     _validation_method = param.get('validation_method')
-    print field_name, param, val
+    # print field_name, param, val
     # if param is None:
     #     val = parse_vector_type_record_type(val)
     #     continue
