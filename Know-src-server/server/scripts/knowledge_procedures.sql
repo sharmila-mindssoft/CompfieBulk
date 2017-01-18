@@ -532,10 +532,11 @@ BEGIN
         date(t1.created_on) >= _from_date
         AND date(t1.created_on) <= _to_date
         AND COALESCE(t1.form_id,'') LIKE _form_id
-        AND t1.user_category_id = _category_id
+        AND t1.user_id LIKE _user_id
         -- AND t2.user_id LIKE _user_id
         -- AND t2.user_category_id in (1,2,3,4,5,6,7,8)
-        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        -- ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        ORDER BY t1.created_on DESC
         limit _from_limit, _to_limit;
 
         SELECT count(0) as total FROM tbl_activity_log
@@ -557,7 +558,8 @@ BEGIN
         -- AND t3.user_id = t2.user_id
         -- AND t2.user_id LIKE _user_id
         -- AND t2.user_category_id LIKE _category_id
-        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        -- ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        ORDER BY t1.created_on DESC
         limit _from_limit, _to_limit;
 
         SELECT count(0) as total FROM tbl_activity_log
