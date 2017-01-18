@@ -140,7 +140,7 @@
                                               <div class="col-sm-6 has-feedback">
                                                   <input class="form-control input-sm" type="text" value="" id="group_name">
                                                   <i class="form-control-feedback fa fa-search"></i>
-                                                  <input type="hidden" id="group_id" value="">
+                                                  <input type="hidden" id="group_id" value="54">
                                                   <div id="ac-group" class="ac-textbox default-display-none">
                                                       <ul class="width85Percent"></ul>
                                                   </div>
@@ -151,7 +151,7 @@
                                               <div class="col-sm-6 has-feedback">
                                                   <input class="form-control input-sm" type="text" value="" id="legal_entity_name">
                                                   <i class="form-control-feedback fa fa-search"></i>
-                                                  <input type="hidden" id="legal_entity_id" value="">
+                                                  <input type="hidden" id="legal_entity_id" value="158">
                                                   <div id="ac-entity" class="ac-textbox default-display-none">
                                                       <ul class="width85Percent"></ul>
                                                   </div>
@@ -197,7 +197,7 @@
                                               <div class="col-sm-6 has-feedback">
                                                   <input class="form-control input-sm" type="text" value="" id="domain_name">
                                                   <i class="form-control-feedback fa fa-search"></i>
-                                                  <input type="hidden" id="domain_id" value="">
+                                                  <input type="hidden" id="domain_id" value="3">
                                                   <div id="ac-domain" class="ac-textbox default-display-none">
                                                       <ul class="width85Percent"></ul>
                                                   </div>
@@ -222,19 +222,19 @@
 
                                           <tbody>
                                           <tr>
-                                                  <td>
-                                                      <div class="form-group has-feedback col-sm-6 m-b-0 no-padding">
-                                                          <input class="form-control input-sm" placeholder="Enter Unit" type="text" id="unit-search">
-                                                          <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                      </div>
-                                                      <div class="form-group col-sm-6 m-b-0 no-padding">
-                                                          <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
-                                                              <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all">
-                                                              <label></label>
-                                                          </div>
-                                                      </div>
-                                                  </td>
-                                              </tr>
+                                            <td>
+                                                <div class="form-group has-feedback col-sm-6 m-b-0 no-padding">
+                                                    <input class="form-control input-sm" placeholder="Enter Unit" type="text" id="unit-search">
+                                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                </div>
+                                                <div class="form-group col-sm-6 m-b-0 no-padding">
+                                                    <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+                                                        <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all">
+                                                        <label></label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                          </tr>
 
                                           <tr>
                                               <td>
@@ -288,6 +288,14 @@
 </div>
 
 <div id="templates">
+
+  <table class="demo">
+    <tr class="table-row">
+          <td class="tbl_sno" style="width:5%"></td>
+          <td class="tbl_country" style="width:95%"> This is cloned content from assign statutory form.</td>
+    </tr>
+  </table>
+
   <table class="table-assignstatutory">
       <tr class="table-row">
           <td class="tbl_sno" align="center"></td>
@@ -310,6 +318,7 @@
 
       </tr>
   </table>
+
   <div class="unit-row">
       <ul>
           <li></li>
@@ -367,6 +376,7 @@
         </div>
       </div>
   </div>
+
   <div id="statutory-value">
     <table class="table-statutory-values">
       <tr class="sub-title-row">
@@ -408,7 +418,6 @@
       </tr>
     </table>
   </div>
-
 
   <div id="multi-act-templates" class="default-display-none">
     <div class="p-head">
@@ -461,7 +470,7 @@
     </div>
   </div>
 
-    <div id="multi-statutory-value">
+  <div id="multi-statutory-value">
     <table class="table-statutory-values">
       <tr class="sub-title-row">
         <td colspan="100%">
@@ -470,7 +479,11 @@
             </div>
         </td>
       </tr>
+    </table>
+  </div>
 
+  <div id="multi-compliance-details">
+    <table class="table-compliance-details">
       <tr class="compliance-details">
           <td><span class="sno"> </span></td>
           <td class="statutoryprovision"></td>
@@ -484,7 +497,6 @@
           <td colspan="3" align="center" class="applicablelocation">
 
           </td>
-
           <td align="center">
               <i class="fa c-pointer text-warning saved"></i>
           </td>
@@ -510,15 +522,16 @@
             <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
                 <input  class="sub-minus" value="3" type="checkbox">
                 <label></label>
-
-                <!-- <input id="singleCheckbox3" value="option2" type="checkbox">
-                <label for="singleCheckbox3"></label> -->
             </div>
         </th>
         <th width="1%"></th>
       </tr>
+    </table>
+  </div>
 
-      <tr class="unit-row">
+  <div id="multi-unit-details">
+    <table class="table-unit-details">
+      <tr class="unit-row1">
         <td align="center" width="2%">
           <input type="hidden" class="combineid-class" />
         </td>
@@ -542,10 +555,9 @@
       </tr>
 
     </table>
-
   </div>
-
 </div>
+
 
 <table class="table-no-record default-display-none">
     <tr>

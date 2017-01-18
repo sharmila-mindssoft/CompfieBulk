@@ -2187,9 +2187,9 @@ function initMirror() {
             "SaveReassignDomainExecutive", {
                 "reassign_from": user_from,
                 "reassign_to": user_to,
-                "gt_id": client_id,
-                "le_id": entity_id,
-                "d_id": domain_id,
+                "client_id": client_id,
+                "entity_id": entity_id,
+                "domain_id": domain_id,
                 "unit_ids": unit_ids,
                 "remarks": remarks
             }
