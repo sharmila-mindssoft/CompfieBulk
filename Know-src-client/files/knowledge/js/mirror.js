@@ -224,7 +224,7 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-    
+
     function saveAutoDeletion(auto_deletion_details, callback){
         callerName = "console_admin";
         var request = [
@@ -235,8 +235,8 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-    
-    
+
+
     function getUnassignedUnitsList(callback){
       callerName = "techno";
       var request = [
@@ -294,7 +294,7 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-    
+
     function getUserMenu() {
         var info = getUserInfo();
         if (info != null) {
@@ -1876,14 +1876,23 @@ function initMirror() {
             contentType: false,
             success: function(data, textStatus, jqXHR) {
                 // var data = parseJSON(data);
+                data = atob(data);
+                data = parseJSON(data);
+
                 var status = data[0];
                 var response = data[1];
-                if (Object.keys(response).length == 0)
-                    callback(status, null);
+                matchString = 'success';
+                if (status.toLowerCase().indexOf(matchString) != -1) {
+                    callback(null, response);
+                }
                 else
                     callback(status, response);
             },
-            error: function(jqXHR, textStatus, errorThrown) {}
+            error: function(jqXHR, textStatus, errorThrown) {
+                rdata = parseJSON(jqXHR.responseText);
+                rdata = atob(rdata);
+                callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
+            }
         });
     }
 
@@ -1956,7 +1965,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    
+
     function saveDBServer(
         db_server_id, db_server_name, ip, port, username, password, callback
     ) {
@@ -2051,14 +2060,15 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function saveUserMappings(country_id, domain_id, parent_user_id, child_users, callback) {
+    function saveUserMappings(country_id, domain_id, parent_user_id, child_users, user_category_id, callback) {
         callerName = "admin";
         var request = [
             "SaveUserMappings", {
                 "country_id": country_id,
                 "domain_id": domain_id,
                 "parent_user_id": parent_user_id,
-                "child_users": child_users
+                "child_users": child_users,
+                "user_category_id": user_category_id
             }
         ];
         apiRequest(callerName, request, callback);

@@ -679,6 +679,25 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_reassign_client_groups_list`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_reassign_client_groups_list`(
+in userId INT(11)
+)
+BEGIN
+
+    SELECT
+    tcg.client_id,
+    tcg.group_name
+    FROM
+        tbl_client_groups as tcg
+    ORDER BY tcg.group_name;
+
+END //
+
+DELIMITER ;
 -- --------------------------------------------------------------------------------
 -- To Fetch Active Countries List
 -- --------------------------------------------------------------------------------
@@ -1779,6 +1798,13 @@ CREATE PROCEDURE `sp_client_groups_approval_list`(
     IN session_user INT(11)
 )
 BEGIN
+    select distinct t1.client_id, t1.group_name, t1.short_name
+    from tbl_client_groups as t1
+    inner join tbl_legal_entities as t2 on t1.client_id = t2.client_id
+    where t2.is_approved = 0;
+
+    select distinct country_id, client_id from tbl_legal_entities
+    where is_approved = 0;
 
     SELECT t1.client_id, t1.group_name, t1.short_name, t1.email_id,
         t2.legal_entity_id, t2.legal_entity_name, t3.country_name
@@ -2297,7 +2323,8 @@ BEGIN
     T1.employee_name, T1.employee_code, T1.email_id,
     T1.user_group_id,
     T1.contact_no, T1.mobile_no, T1.address, T1.designation, T1.is_active, T1.is_disable,
-    T2.username
+    T2.username, IFNULL(DATEDIFF(current_ist_datetime(), T1.disabled_on), 0) as days_left,
+    T1.disable_reason
     FROM tbl_users T1
     LEFT JOIN tbl_user_login_details T2 ON T1.user_id = T2.user_id
     WHERE T1.user_category_id > 2
@@ -2474,11 +2501,12 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_disable_status`(
     IN userid INT(11), isdisable TINYINT(4), session_user INT(11),
-    updated_time TIMESTAMP
+    updated_time TIMESTAMP, remarks varchar(500)
 )
 BEGIN
     UPDATE tbl_users set is_disable = isdisable,
-        updated_by =  session_user and disabled_on = updated_time
+        updated_by =  session_user, disabled_on = updated_time,
+        disable_reason = remarks
         WHERE user_id = userid;
     SELECT @_isactive:= is_active from tbl_users WHERE user_id = userid;
     IF @_isactive = 1 and isdisable = 0 THEN
@@ -4039,26 +4067,26 @@ CREATE PROCEDURE `sp_statutory_notification_details`(
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50),
 IN fromcount_ INT(11), IN pagecount_ INT(11))
 BEGIN
-        SELECT
-    ts.statutory_name,
-    tc.compliance_task,
-    tc.compliance_description as description,
-    tsnl.notification_text,
-    tsnl.created_on
-FROM
-    tbl_statutory_notifications tsnl
-        INNER JOIN
-    tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
-        INNER JOIN
-    tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
-        INNER JOIN
-    tbl_statutories ts ON ts.statutory_id = tms.statutory_id
-WHERE
-    tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
-    IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
-    IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
-    IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
-limit fromcount_, pagecount_;
+    SELECT
+        IF(ts.parent_names = '', ts.statutory_name, SUBSTRING_INDEX(ts.parent_names, '>>', 1)) as statutory_name,
+        tc.compliance_task,
+        tc.compliance_description as description,
+        tsnl.notification_text,
+        tsnl.created_on
+    FROM
+        tbl_statutory_notifications tsnl
+            INNER JOIN
+        tbl_compliances tc ON tc.compliance_id = tsnl.compliance_id
+            INNER JOIN
+        tbl_mapped_statutories tms ON tms.statutory_mapping_id = tc.statutory_mapping_id
+            INNER JOIN
+        tbl_statutories ts ON ts.statutory_id = tms.statutory_id
+    WHERE
+        tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
+        IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
+        IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
+        IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
+    limit fromcount_, pagecount_;
 END //
 
 DELIMITER ;
@@ -4355,10 +4383,10 @@ CREATE PROCEDURE `sp_clientstatutories_list`(
 )
 BEGIN
 
-    select t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
+    select distinct t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
     (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
-    (select group_name from tbl_client_groups where client_id = t1.client_id) as group_name,
+    (select group_name from tbl_client_groups where client_id = t.client_id) as group_name,
     (select business_group_name from tbl_business_groups where business_group_id = t2.business_group_id) as business_group_name,
     (select legal_entity_name from tbl_legal_entities where legal_entity_id = t2.legal_entity_id) as legal_entity_name,
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
@@ -4367,14 +4395,15 @@ BEGIN
     t.status, t.reason,
     (select count(compliance_id) from tbl_client_compliances where
      (is_approved < 5 or IFNULL(compliance_applicable_status,0) = 3 )
-     and client_statutory_id = t1.client_statutory_id)
+     and client_statutory_id = t1.client_statutory_id and unit_id = t1.unit_id)
     as is_edit
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
+    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = 11
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-    inner join tbl_user_units as t3 on t3.unit_id = t1.unit_id
-    where t3.user_id = uid
+    where t3.user_id = 11
     group by t.unit_id, t1.domain_id;
+
 
 END //
 
@@ -4533,7 +4562,8 @@ BEGIN
     inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
     where t4.geography_id IN
     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-    (select parent_ids from tbl_geographies where geography_id = @gid)));
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by t3.statutory_mapping;
     -- mapped organistaion
     select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
     from tbl_mapped_industries as t1 inner join tbl_organisation as t2
@@ -4542,7 +4572,8 @@ BEGIN
     inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
     where t4.geography_id IN
     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-    (select parent_ids from tbl_geographies where geography_id = @gid)));
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by t3.statutory_mapping;
 
     -- new and assigned compliance
     select distinct t1.statutory_mapping_id, t1.compliance_id,
@@ -4826,11 +4857,11 @@ BEGIN
     and t2.user_id = userid order by country_name;
     -- 1
 
-    select t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
+    select distinct t1.domain_id, t1.country_id, t3.domain_name, t3.is_active from
     tbl_domain_countries as t1
     inner join tbl_domains as t3 on t3.domain_id = t1.domain_id
     inner join tbl_statutory_levels as t4 on t3.domain_id = t4.domain_id
-    and t3.country_id = t4.country_id
+    and t1.country_id = t4.country_id
     inner join tbl_user_domains as t2 on t2.domain_id = t1.domain_id
     and t2.country_id = t1.country_id
     and t2.user_id = userid
@@ -6139,8 +6170,12 @@ BEGIN
     if _u_cg_id = 5 then
         select t1.client_id, t2.group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
-        (select concat(employee_code,'-',employee_name)
-        from tbl_users where user_id = t3.assigned_by) as emp_code_name,
+         (case when ((select user_category_id from tbl_user_login_details
+                    where user_id = _u_id) = 1) then
+            'Compfie Admin'
+        else
+            (select concat(employee_code,'-',employee_name)
+                from tbl_users where user_id = _u_id) end) as emp_code_name,
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count
         from
@@ -6152,20 +6187,24 @@ BEGIN
 
         t3.reassigned_data = t1.client_id and
         t2.client_id = t1.client_id and
-        (case when _g_id <> 0 then t1.client_id = _g_id else t1.client_id = t1.client_id end) and
-        t1.user_id = _u_id;
+        COALESCE(t1.client_id,'') LIKE _g_id and
+        t1.user_id = _u_id order by t3.assigned_on desc;
 
         select t2.client_id, t3.country_id, t3.country_name
         from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
         where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
-        COALESCE(t1.client_id,'') LIKE _g_id and
-        t1.user_id = _u_id;
+
+        t1.user_id = _u_id;-- group by t3.country_id;
     end if;
     if _u_cg_id =  6 then
         select t1.client_id, t2.group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
-        (select concat(employee_code,'-',employee_name)
-        from tbl_users where user_id = t3.assigned_by) as emp_code_name,
+        (case when ((select user_category_id from tbl_user_login_details
+                    where user_id = _u_id) = 1) then
+            'Compfie Admin'
+        else
+            (select concat(employee_code,'-',employee_name)
+                from tbl_users where user_id = _u_id) end) as emp_code_name,
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count
         from
@@ -6189,8 +6228,12 @@ BEGIN
     if _u_cg_id = 7 or _u_cg_id = 8 then
         select t1.client_id, t2.group_name,
         date_format(t3.assigned_on, '%d-%b-%y') as assigned_on,
-        (select concat(employee_code,'-',employee_name)
-        from tbl_users where user_id = t3.assigned_by) as emp_code_name,
+        (case when ((select user_category_id from tbl_user_login_details
+                    where user_id = _u_id) = 1) then
+            'Compfie Admin'
+        else
+            (select concat(employee_code,'-',employee_name)
+                from tbl_users where user_id = _u_id) end) as emp_code_name,
         t3.remarks, (select count(*) from tbl_legal_entities where
         client_id = t1.client_id) as le_count
         from
@@ -6257,10 +6300,21 @@ DELIMITER //
 CREATE PROCEDURE `sp_legalentity_closure_save`(
 in _u_id int(11), _le_id int(11), _is_cl tinyint(1), _cl_on timestamp, _rem varchar(500))
 BEGIN
-    update tbl_legal_entities
-    set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
-    closed_remarks = _rem where
-    legal_entity_id = _le_id;
+    if _is_cl = 1 then
+        if((select DATEDIFF(NOW(), closed_on) from tbl_legal_entities
+        where legal_entity_id = _le_id) < 90)then
+
+            update tbl_legal_entities
+            set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
+            closed_remarks = _rem where
+            legal_entity_id = _le_id;
+        end if;
+    else
+        update tbl_legal_entities
+        set is_closed = _is_cl, closed_on = _cl_on, closed_by = _u_id,
+        closed_remarks = _rem where
+        legal_entity_id = _le_id;
+    end if;
 
     if _is_cl = 0 then
         INSERT INTO tbl_messages
@@ -6268,7 +6322,7 @@ BEGIN
         user_category_id = (select user_category_id from tbl_users
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
-        message_text = (select concat(legal_entity_name,' ','has been closed')
+        message_text = (select concat(legal_entity_name,' ','has been reactivated')
         from tbl_legal_entities where legal_entity_id = _le_id),
         link = 'knowledge/legal-entity-closure', created_by = _u_id, created_on = _cl_on;
     else
@@ -6277,7 +6331,7 @@ BEGIN
         user_category_id = (select user_category_id from tbl_users
         where user_id = _u_id),
         message_heading = 'Legal Entity Closure',
-        message_text = (select concat(legal_entity_name,' ','has been reactivated')
+        message_text = (select concat(legal_entity_name,' ','has been closed')
         from tbl_legal_entities where legal_entity_id = _le_id),
         link = 'knowledge/legal-entity-closure', created_by = _u_id, created_on = _cl_on;
     end if;
@@ -6434,7 +6488,7 @@ BEGIN
         order by created_on DESC limit pagecount_;
     end if;
 
-    
+
 
 END //
 
@@ -6604,7 +6658,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_check_level_in_geographies`(
     in levelId int(11))
 BEGIN
-    select count(*) from tbl_geographies where
+    select count(*) as cnt from tbl_geographies where
     level_id = levelId;
 
 END //
@@ -7303,7 +7357,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_statutory_level_count`(
 in levelId int(11))
 BEGIN
-    select count(*) from tbl_statutories where
+    select count(*) as cnt from tbl_statutories where
     level_id = levelId;
 END //
 
@@ -7779,6 +7833,9 @@ DELIMITER //
 CREATE PROCEDURE `sp_client_unit_apprival_messages_save`(
 in _u_id int(11), _link text, _le_name varchar(50), _created_on timestamp)
 BEGIN
+    select @_client_id:=client_id from tbl_legal_entities where
+    legal_entity_name = _le_name;
+
     INSERT INTO tbl_messages
     SET
     user_category_id = (select user_category_id from tbl_user_login_details
@@ -7786,9 +7843,6 @@ BEGIN
     message_heading = 'Client Unit Approval',
     message_text = concat('Client unit(s) has been approved for',' ',_le_name),
     link = _link, created_by = _u_id, created_on = _created_on;
-
-    select @_client_id:=client_id from tbl_legal_entities where
-    legal_entity_name = _le_name;
 
     INSERT INTO tbl_message_users
     SET
@@ -7824,8 +7878,8 @@ BEGIN
     tbl_client_database as t1;
 END //
 
-DELIMITER;
-=======
+DELIMITER ;
+
 -- --------------------------------------------------------------------------------
 -- To Get data for IP Settings form
 -- --------------------------------------------------------------------------------
@@ -8067,7 +8121,7 @@ DELIMITER ;
 -- -------------------
 -- database server info
 -- -------------------
-DROP PROCEDURE IF EXISTS `sp_tbl_database_server_byid`;
+DROP PROCEDURE IF EXISTS `sp_get_environment_byid`;
 
 DELIMITER //
 
@@ -8086,8 +8140,6 @@ BEGIN
 END //
 
 DELIMITER ;
-
-=======
 
 DROP PROCEDURE IF EXISTS `sp_tbl_client_groups_createdb_info`;
 
@@ -8135,6 +8187,20 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_get_country_domain_name`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_country_domain_name`(in
+    c_id int(11), d_id int(11))
+BEGIN
+    select country_name from tbl_countries where country_id = c_id;
+    select domain_name from tbl_domains where domain_id = d_id;
+
+END //
+
+DELIMITER ;
+
 -- -------------------
 -- Forgot Password
 -- -------------------
@@ -8142,17 +8208,16 @@ DROP PROCEDURE IF EXISTS `sp_forgot_password`;
 
 DELIMITER //
 
-
 CREATE PROCEDURE `sp_forgot_password`(
     IN username_ varchar(50)
 )
 BEGIN
-    SELECT @_user_id := user_id as user_id, 
+    SELECT @_user_id := user_id as user_id,
            @_user_category_id := user_category_id as user_category_id
-    FROM tbl_user_login_details 
+    FROM tbl_user_login_details
     where username = username_;
-    
-    IF @_user_id != '' and @_user_category_id = 1 THEN 
+
+    IF @_user_id != '' and @_user_category_id = 1 THEN
         select u.user_id, u.email_id, 'Compfie Admin' as employee_name
         FROM tbl_user_login_details u
         where u.user_id = @_user_id;
@@ -8165,8 +8230,40 @@ BEGIN
         FROM tbl_user_login_details u
         inner join  tbl_users us on u.user_id = us.user_id
         where u.user_id = @_user_id;
-    END IF;    
-    
+    END IF;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mappings_country_domain`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_tbl_statutory_mappings_country_domain`(in
+    m_id int(11))
+BEGIN
+    select country_name, domain_name, statutory_mapping from tbl_statutory_mappings as t1
+    inner join tbl_countries as t2 on t1.country_id = t2.country_id
+    inner join tbl_domains as t3 on t1.domain_id = t3.domain_id
+    where t1.statutory_mapping_id = m_id;
+END //
+
+DELIMITER ;
+
+-- -------------
+-- get user mapped id
+-- --------------
+DROP PROCEDURE IF EXISTS `sp_get_user_mapped_data`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_user_mapped_data`(in
+    u_id int(11))
+BEGIN
+    select count(user_mapping_id) as cnt from tbl_user_mapping where parent_user_id = u_id
+    OR child_user_id = u_id;
+
 END //
 
 DELIMITER ;

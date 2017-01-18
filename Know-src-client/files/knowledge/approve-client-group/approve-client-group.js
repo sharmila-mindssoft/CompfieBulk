@@ -1,5 +1,6 @@
 var COUNTRIES = '';
 var GROUPS = '';
+var GROUPINFO = '';
 var ORGANIZATIONS = '';
 var ACCountry = $('#ac-country');
 var ACGroup = $('#ac-group');
@@ -17,6 +18,7 @@ function initialize(){
     function onSuccess(data) {
         COUNTRIES = data.countries;
         GROUPS = data.group_approval_list;
+        GROUPINFO = data.group_info;
     }
     function onFailure(error) {
         custom_alert(error);
@@ -28,7 +30,6 @@ function initialize(){
             onFailure(error);
         }
     });
-    
 }
 
 function updateComplianceStatus(selectbox_id, reason_id){
@@ -201,6 +202,7 @@ function submitApprovalForm(){
                 function onSuccess(data) {
                     COUNTRIES = data.countries;
                     GROUPS = data.group_approval_list;
+                    GROUPINFO = data.group_info;
                     ShowBtn.trigger( "click" );
                 }
                 function onFailure(error) {
@@ -326,13 +328,13 @@ function pageControls() {
           var condition_fields = [];
           var condition_values = [];
 
-          condition_fields.push("c_name");
-          condition_values.push(CountryVal.val());
+          condition_fields.push("c_ids");
+          condition_values.push(Country.val());
 
           var text_val = $(this).val();
           commonAutoComplete(
             e, ACGroup, Group, text_val, 
-            GROUPS, "group_name", "gt_id", function (val) {
+            GROUPINFO, "ct_name", "ct_id", function (val) {
                 onAutoCompleteSuccess(GroupVal, Group, val);
             }, condition_fields, condition_values);
         }

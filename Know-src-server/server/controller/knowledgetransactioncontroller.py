@@ -57,6 +57,7 @@ def process_knowledge_transaction_request(request, db):
         result = process_check_statutory_mapping(db, request_frame)
 
     elif type(request_frame) is knowledgetransaction.SaveStatutoryMapping:
+        print request_frame
         result = process_save_statutory_mapping(db, request_frame, user_id)
 
     elif type(request_frame) is knowledgetransaction.UpdateStatutoryMapping:
@@ -88,7 +89,9 @@ def process_knowledge_transaction_request(request, db):
 
     return result
 
-
+##############################################################################
+# To return the statutory master list under user id
+##############################################################################
 def process_get_statutory_master(db, user_id):
     return statutories_master(db, user_id)
 

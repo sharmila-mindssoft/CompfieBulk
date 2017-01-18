@@ -43,6 +43,12 @@ var viewTable = $('.tbody-organization-list');
 var AddSCreen = $('#organization-add');
 var viewScreen = $('#organization-view');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 // get industries list from api
 function getIndustries() {
@@ -56,11 +62,14 @@ function getIndustries() {
 	function onFailure(error) {
 		displayMessage(error);
 	}
+  displayLoader();
 	mirror.getIndustryList(function (error, response) {
 		if (error == null) {
 		  onSuccess(response);
+      hideLoader();
 		} else {
 		  onFailure(error);
+      hideLoader();
 		}
 	});
 }

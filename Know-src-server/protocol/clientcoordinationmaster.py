@@ -376,25 +376,54 @@ class ClientGroupApproval(object):
         }
 
 
-class GetClientGroupApprovalListSuccess(Response):
+class GroupInfo(object):
     def __init__(
-        self, countries, group_approval_list
+        self, client_id, client_name, short_name, country_ids
     ):
-        self.countries = countries
-        self.group_approval_list = group_approval_list
+        self.client_id = client_id
+        self.client_name = client_name
+        self.short_name = short_name
+        self.country_ids = country_ids
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["countries", "group_approval_list"])
+        data = parse_dictionary(data, ["ct_id", "ct_name", "short_name", "c_ids"])
+
+        return GroupInfo(
+            data.get("ct_id"), data.get("ct_name"), data.get("short_name"),
+            data.get("c_ids")
+        )
+
+    def to_structure(self):
+        return {
+            "ct_id": self.client_id,
+            "ct_name": self.client_name,
+            "short_name": self.short_name,
+            "c_ids": self.country_ids
+        }
+
+class GetClientGroupApprovalListSuccess(Response):
+    def __init__(
+        self, countries, groups, group_approval_list
+    ):
+        self.countries = countries
+        self.groups = groups
+        self.group_approval_list = group_approval_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["countries", "group_info" "group_approval_list"])
         countries = data.get("countries")
         group_approval_list = data.get("group_approval_list")
         return GetClientGroupApprovalListSuccess(
-            countries, group_approval_list
+            countries, data.get("group_info"),
+            group_approval_list
         )
 
     def to_inner_structure(self):
         return {
             "countries": self.countries,
+            "group_info": self.groups,
             "group_approval_list": self.group_approval_list
         }
 

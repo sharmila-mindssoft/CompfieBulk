@@ -16,13 +16,14 @@ from server.database.knowledgetransaction import (
 from generalcontroller import (validate_user_session, validate_user_forms)
 
 __all__ = [
-    "process_mobile_request",
+    "process_mobile_request", "process_mobile_login_request",
     "process_mobile_login", "process_mforgot_password",
     "process_mobile_logout"
 ]
 
 
-def process_mobile_request(request, db, session_user_ip):
+def process_mobile_login_request(request, db, session_user_ip):
+    print type(request)
     if type(request) is login.Login:
         result = process_mobile_login(db, request, session_user_ip)
 
@@ -34,7 +35,9 @@ def process_mobile_request(request, db, session_user_ip):
 
     else :
         result = None
+    return result
 
+def process_mobile_request(request, db, session_user_ip):
     if type(request) is mobile.RequestFormat :
         forms = None
         session_token = request.session_token
@@ -61,23 +64,27 @@ def process_mobile_login(db, request, session_user_ip):
     username = request.username
     password = request.password
     encrypt_password = encrypt(password)
-    response = verify_login(db, username, encrypt_password)
-    is_success = response[0]
-    username = response[2]
-
-    verified_login = response[3]
-    user_info = response[4]
-    forms = response[5]
-
-    user_category_id = verified_login.get('user_category_id')
-    if is_success is False and username is None:
-        return login.InvalidCredentials(None)
-    if is_success  :
-        if user_category_id == 3 :
-                return mobile_user_login_respone(db, login_type, session_user_ip, user_info, forms)
-        else :
+    try :
+        response = verify_login(db, username, encrypt_password)
+        is_success = response[0]
+        if is_success is False :
             return login.InvalidCredentials(None)
 
+        username = response[2]
+        verified_login = response[3]
+        user_info = response[4]
+        forms = response[5]
+
+        user_category_id = verified_login.get('user_category_id')
+        if is_success is False and username is None:
+            return login.InvalidCredentials(None)
+        if is_success  :
+            if user_category_id == 3 :
+                    return mobile_user_login_respone(db, login_type, session_user_ip, user_info, forms)
+            else :
+                return login.InvalidCredentials(None)
+    except Exception, e :
+        print e
 
 def mobile_user_login_respone(db, login_type, ip, data, forms):
     data = data[0]

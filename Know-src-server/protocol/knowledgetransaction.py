@@ -1152,7 +1152,7 @@ class ComplianceList(object):
         frequency_id, statutory_dates, repeats_type_id,
         repeats_every, duration_type_id, duration,
         format_file, file_list,
-        summary, reference, frequency
+        summary, reference, frequency, is_file_removed
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
@@ -1172,6 +1172,7 @@ class ComplianceList(object):
         self.summary = summary
         self.reference = reference
         self.frequency = frequency
+        self.is_file_removed = is_file_removed
 
     @staticmethod
     def parse_structure(data):
@@ -1181,7 +1182,7 @@ class ComplianceList(object):
             "p_consequences", "is_active",
             "f_id", "statu_dates", "r_type_id", "r_every",
             "d_type_id", "duration", "file_name",
-            "summary", "reference", "f_f_list", "frequency"
+            "summary", "reference", "f_f_list", "frequency", "is_file_removed"
         ])
         compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_provision")
@@ -1199,8 +1200,9 @@ class ComplianceList(object):
         file_name = data.get("file_name")
         summary = data.get("summary")
         reference = data.get("reference")
-        file_list = data.get("f_f_lift")
+        file_list = data.get("f_f_list")
         frequency = data.get("frequency")
+        is_file_removed = data.get("is_file_removed")
 
         return GetComplianceInfoSuccess(
             compliance_id, statutory_provision,
@@ -1209,7 +1211,7 @@ class ComplianceList(object):
             frequency, statu_dates, repeats_type_id,
             repeats_every, duration_type_id, duration,
             file_name, file_list,
-            summary, reference, frequency
+            summary, reference, frequency, is_file_removed
         )
 
     def to_structure(self):
@@ -1231,5 +1233,6 @@ class ComplianceList(object):
             "summary": self.summary,
             "reference": self.reference,
             "f_f_list": self.file_list,
-            "frequency": self.frequency
+            "frequency": self.frequency,
+            "is_file_removed": self.is_file_removed
         }

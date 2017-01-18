@@ -19,6 +19,7 @@ var DE_PARANTS = {};
 var DM_PARANTS = {};
 var DE_GROUPS = {};
 var DM_GROUPS = {};
+var LE_COUNTRIES = {};
 
 var TechnoManagerName = $("#techno_manager_name");
 var TechnoManagerId = $("#techno_manager_id");
@@ -82,7 +83,7 @@ var DESubmit = $(".btn-submit-4");
 var DERemarks = $("#de_remarks");
 
 
-var ReplaceManagerShow = $(".replace-manager-show-btn");
+var ReplaceManagerShow = $("#category");
 var ReplaceManagerSubmit = $(".btn-submit-5");
 var ReplaceManagerRemarks = $("#replace_manager_remarks");
 var ManagerCategory = '';
@@ -298,8 +299,26 @@ function loadDMList(){
             $('.tbody-dm-view').append(clone);
         });
 
+        $('.tm-group-checkbox').on('click', function(e) {
+            var tm_view = '.tm-ac-' + $(this).val();
+            var te_view = '.te-ac-' + $(this).val();
+            if($(this).prop("checked")){
+                $(tm_view).show();
+                $(te_view).show();
+            }else{
+                $(tm_view).hide();
+                $(te_view).hide();
+            }
+        });
+
         $(".dm-group-checkbox-main").change(function() {
             $(".tbody-dm-view .dm-group-checkbox").prop('checked', $(this).prop("checked"));
+            if($(this).prop("checked")){
+                $(".de-ac-view").show();
+            }else{
+                $(".de-ac-view").hide();
+            }
+
         });
 
         $('.dm-group-checkbox').on('click', function(e) {
@@ -415,8 +434,8 @@ function pageControls(){
 
     DMGroupName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_closed", "group_id"];
-        var condition_values = [false, DM_GROUPS[DomainManagerId.val()]];
+        var condition_fields = ["group_id"];
+        var condition_values = [DM_GROUPS[DomainManagerId.val()]];
         commonAutoComplete(
             e, DMACGroup, DMGroupId, text_val,
             GROUPS, "group_name", "group_id", function (val) {
@@ -461,14 +480,14 @@ function pageControls(){
                     onAutoCompleteSuccess(DMLegalEntityName, DMLegalEntityId, val)
                 }, condition_fields, condition_values);
         }
-        
-        
     })
 
     DMDomainName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+        var cn_id = LE_COUNTRIES[DMLegalEntityId.val()];
+        var condition_fields = ["is_active", "country_ids"];
+        var condition_values = [true, cn_id];
+
         commonAutoComplete(
             e, DMACDomain, DMDomainId, text_val,
             DOMAINS, "domain_name", "domain_id",
@@ -500,8 +519,8 @@ function pageControls(){
 
     DEGroupName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_closed", "group_id"];
-        var condition_values = [false, DE_GROUPS[DomainExecutiveId.val()]];
+        var condition_fields = ["group_id"];
+        var condition_values = [DE_GROUPS[DomainExecutiveId.val()]];
         commonAutoComplete(
             e, DEACGroup, DEGroupId, text_val,
             GROUPS, "group_name", "group_id", function (val) {
@@ -541,7 +560,6 @@ function pageControls(){
         if(DEGroupId.val() != ''){
             condition_fields.push("client_id");
             condition_values.push(DEGroupId.val());
-
             commonAutoComplete(
                 e, DEACLegalEntity, DELegalEntityId, text_val,
                 LEGAL_ENTITIES, "legal_entity_name", "legal_entity_id",
@@ -549,14 +567,14 @@ function pageControls(){
                     onAutoCompleteSuccess(DELegalEntityName, DELegalEntityId, val)
                 }, condition_fields, condition_values);
         }
-        
-        
     })
 
     DEDomainName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+        var cn_id = LE_COUNTRIES[DELegalEntityId.val()];
+        var condition_fields = ["is_active", "country_ids"];
+        var condition_values = [true, cn_id];
+    
         commonAutoComplete(
             e, DEACDomain, DEDomainId, text_val,
             DOMAINS, "domain_name", "domain_id",
@@ -629,7 +647,7 @@ function pageControls(){
         }
     });
 
-    ReplaceManagerShow.click(function(){
+    ReplaceManagerShow.change(function(){
         clearData();
         var category = $('#category').val();
 
@@ -905,7 +923,7 @@ function pageControls(){
                 function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.reassign_users_account_success);
-                    ReplaceManagerShow.trigger( "click" );
+                    ReplaceManagerShow.trigger( "change" );
                 } else {
                     displayMessage(error);
                 }
@@ -1000,6 +1018,7 @@ function generateMap(){
     DM_PARANTS = {};
     DE_GROUPS = {};
     DM_GROUPS = {};
+    LE_COUNTRIES = {};
 
     $.each(TECHNO_USERS, function(key, value) {
         TE_PARANTS[value.user_id] = value.p_user_ids;
@@ -1015,6 +1034,10 @@ function generateMap(){
         DM_GROUPS[value.user_id] = value.grp_ids;
     });
 
+    $.each(LEGAL_ENTITIES, function(key, value) {
+        LE_COUNTRIES[value.legal_entity_id] = value.country_id;
+    });
+
 }
 
 function getFormData(){
@@ -1023,7 +1046,7 @@ function getFormData(){
         TECHNO_USERS = data.t_e_reassign;
         DOMAIN_MANAGERS = data.d_m_reassign;
         DOMAIN_USERS = data.d_e_reassign;
-        GROUPS = data.groups;
+        GROUPS = data.re_assign_groups;
         BUSINESS_GROUPS = data.business_groups;
         LEGAL_ENTITIES = data.admin_legal_entity;
         DOMAINS = data.domains;
