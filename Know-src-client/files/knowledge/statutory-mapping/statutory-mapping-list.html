@@ -117,7 +117,7 @@
               <div class="clearfix"></div>
           </div>
           <div id="bg-primary1" class="panel-collapse collapse in">
-            <div class="portlet-body">
+            <div class="portlet-body p-b-0">
                 <form>
                     <div id="basicwizard" >
                         <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab m-b-0">
@@ -132,7 +132,7 @@
                                     <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader m-b-0 statutory_mapping_table_one" width="100%" cellspacing="0" style="height: 380px;">
                                         <tbody>
                                             <tr>
-                                                <td>
+                                                <td style="width: 1%;">
                                                     <h6 class="m-t-0">Country</h6>
                                                     <div class="form-group has-feedback m-b-0">
                                                         <input id = "ct-search" class="form-control input-sm" placeholder="Country" type="text">
@@ -142,7 +142,7 @@
 
                                                     </ul>
                                                 </td>
-                                                <td>
+                                                <td style="width: 1%;">
                                                     <h6 class="m-t-0">Domain</h6>
                                                     <div class="form-group has-feedback m-b-0">
 
@@ -153,7 +153,7 @@
                                                     <ul id="domain" class="list-unstyled box-height-250">
                                                     </ul>
                                                 </td>
-                                                <td>
+                                                <td style="width: 1%;">
                                                     <h6 class="m-t-0">Organization</h6>
                                                     <div class="form-group has-feedback m-b-0">
 
@@ -163,7 +163,7 @@
                                                     <ul id="industry" class="list-unstyled box-height-250">
                                                     </ul>
                                                 </td>
-                                                <td>
+                                                <td style="width: 1%;">
                                                     <h6 class="m-t-0">Statutory Nature</h6>
                                                     <div class="form-group has-feedback m-b-0">
 
@@ -243,6 +243,9 @@
                                             <label class="col-sm-5 control-label">Format</label>
                                             <div class="col-sm-7">
                                                 <input  id="upload_file" class="form-control input-sm no-padding-top" type="file">
+                                            </div>
+                                            <div class="" id="uploaded_fileview" style="display:none">
+                                                <p id="uploaded_filename" style="width:60%;font-size:0.8em; color:gray; float:right; "> </p>
                                             </div>
                                         </div>
                                         <div class="form-group clearfix m-b-10">
@@ -371,9 +374,24 @@
                                     </div>
                                     </div>
                                     <div class="col-sm-12">
-                                        <div class="scroll_box box-height-80">
-                                            <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0">
+                                     <!-- <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0">
                                                 <thead>
+                                                    <tr class="sub_title_td">
+                                                        <th align="center">#</th>
+                                                        <th>Statutory Provision</th>
+                                                        <th>Task</th>
+                                                        <th>Description</th>
+                                                        <th>Frequency</th>
+                                                        <th>Repeats</th>
+                                                        <th class="text-center">Edit</th>
+                                                        <th class="text-center">Status</th>
+                                                    </tr>
+                                                </thead>
+
+                                            </table> -->
+                                        <div class="scroll_box box-height-150">
+                                            <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0">
+                                                     <thead>
                                                     <tr class="sub_title_td">
                                                         <th align="center">#</th>
                                                         <th>Statutory Provision</th>
@@ -408,7 +426,7 @@
 
                                 <div class="clearfix"></div>
                             </div>
-                            <ul class="pager wizard  m-b-0 m-t-40">
+                            <ul class="pager wizard  m-b-0">
                                 <li id="btn-previous" class="previous"><a  class="btn btn-custom waves-effect waves-light">Previous</a></li>
                                 <li id="btn-next" class="next"><a  class="btn btn-primary waves-effect waves-light">Next</a></li>
                                 <li id="btn-submit" class="finish pull-right"><a class="btn btn-primary waves-effect waves-light">Submit</a></li>
@@ -472,8 +490,8 @@
     </table>
   </div>
 
-    <div style="overflow: hidden; float:left" class="statutory_levelvalue">
-        <h6 class="m-t-0 statutory_title">Primary Legislation</h6>
+    <div style="overflow: hidden; float:left" class="statutory_levelvalue statlvl">
+        <h6 class="m-t-2 statutory_title">Primary Legislation</h6>
         <div class="form-group has-feedback m-b-0">
             <input class="form-control input-sm filter-text-box" placeholder="" id="statutoryfilter1" type="text">
             <i class="fa fa-filter form-control-feedback l-h-34"></i>
@@ -529,7 +547,7 @@
   <div style="float:left;width:33.3%" id="geography-level-templates">
     <table style="width:100%;">
       <tr>
-        <td>
+        <td class="statlvl">
             <h6 class="m-t-0 title">Region</h6>
             <div class="form-group has-feedback m-b-0">
                 <input class="form-control input-sm geo-name-filter" placeholder="Region" type="text">
@@ -585,8 +603,7 @@
     </div>
 </div>
 
-<script type="text/javascript" src="/js/wizard/jquery.bootstrap.wizard.js"></script>
-
+<script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-common.js"></script>
 <script type="text/javascript" src="/script/statutory-mapping/statutory-mapping-new.js"></script>
 
 <script type="text/javascript">

@@ -1028,3 +1028,433 @@
             update tbl_user_sessions set last_accessed_time = now()
             where session_token = 6e40378c1dca41f1b122acc7571b39e7 
 
+2017-01-18 13:41:48,551 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'011bf7fd3bd94c22b1813f390ee1383a'] 
+
+2017-01-18 13:41:48,553 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 011bf7fd3bd94c22b1813f390ee1383a 
+
+2017-01-18 13:42:15,194 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'011bf7fd3bd94c22b1813f390ee1383a'] 
+
+2017-01-18 13:42:15,214 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 011bf7fd3bd94c22b1813f390ee1383a 
+
+2017-01-18 13:48:02,365 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'011bf7fd3bd94c22b1813f390ee1383a'] 
+
+2017-01-18 13:48:02,368 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = 011bf7fd3bd94c22b1813f390ee1383a 
+
+2017-01-18 15:20:01,311 - know_query_log - execute: DELETE from tbl_user_login_history WHERE  user_id=1 
+
+2017-01-18 15:20:01,361 - know_query_log - execute: DELETE FROM tbl_user_sessions  WHERE user_id=1 and session_type_id=1 OR  last_accessed_time < DATE_SUB(NOW(),INTERVAL 15 MINUTE)  
+
+2017-01-18 15:20:01,548 - know_query_log - execute:  INSERT INTO tbl_user_sessions  (session_token, user_id, session_type_id,  last_accessed_time) VALUES (ea039ddcb5a54e68886097c8772e1ada, 1, 1, 2017-01-18 15:20:01.548000); 
+
+2017-01-18 15:20:01,696 - know_query_log - select_one: select user_category_id from tbl_user_login_details where user_id = [1] 
+
+2017-01-18 15:20:01,697 - know_query_log - execute:  INSERT INTO tbl_activity_log  (user_category_id, user_id, form_id, action, created_on)  VALUES (1, 1, 0, Log In by - "Compfie Admin" , 2017-01-18 15:20:01.696000)  
+
+2017-01-18 15:29:39,801 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:29:39,954 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:30:40,055 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:30:40,187 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:33:35,483 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:33:35,579 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:36:51,447 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:36:51,670 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:37:35,568 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:37:35,657 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:38:06,624 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:38:06,736 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:40:54,007 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:40:54,134 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:42:04,875 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:42:04,953 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:43:11,108 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:43:11,177 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:49:07,750 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:49:07,805 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:50:59,339 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:50:59,390 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:51:39,243 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:51:39,256 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:51:51,852 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:51:51,858 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:52:54,091 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:52:54,092 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:53:35,665 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:53:35,670 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:54:31,608 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:54:31,611 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:55:12,617 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:55:12,618 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:56:01,301 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:56:01,302 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:57:07,088 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:57:07,089 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:57:33,732 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:57:33,733 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:57:50,234 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:57:50,236 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:57:57,869 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:57:57,871 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:58:56,198 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:58:56,200 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 15:59:16,805 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 15:59:16,884 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:02:04,292 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:02:04,513 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:07:17,892 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:07:17,960 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:15:03,999 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:15:04,105 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:15:53,160 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:15:53,204 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:16:15,941 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:16:15,976 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:16:29,289 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:16:29,290 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:16:50,473 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:16:50,476 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:16:58,183 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:16:58,184 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:17:09,834 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:17:09,835 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:17:34,301 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:17:34,303 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:18:29,888 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:18:29,888 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:29:57,206 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:29:57,207 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:30:20,375 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:30:20,381 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:30:31,441 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:30:31,444 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:30:41,638 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:30:41,640 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:31:57,545 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:31:57,555 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:37:35,805 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:37:35,808 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:37:57,671 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:37:57,673 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:38:55,507 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:38:55,509 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:39:25,928 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:39:25,931 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:39:54,279 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:39:54,282 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 16:59:47,746 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 16:59:47,747 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:00:09,621 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:00:09,624 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:00:17,328 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:00:17,331 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:01:04,885 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:01:04,888 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:01:36,023 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:01:36,053 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:02:21,941 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:02:21,944 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:04:51,645 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:04:51,663 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:05:29,375 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:05:29,387 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:05:38,789 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:05:38,789 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:06:18,677 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:06:18,704 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:06:41,043 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:06:41,052 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:07:10,480 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:07:10,532 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:08:28,990 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:08:28,993 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:08:51,706 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:08:51,744 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:11:58,914 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:11:58,917 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:13:27,252 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:13:27,253 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:14:36,135 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:14:36,138 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:15:05,630 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:15:05,631 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:15:17,796 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:15:17,798 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:15:45,190 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:15:45,204 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:17:37,647 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:17:37,680 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+
+2017-01-18 17:19:13,602 - know_query_log - select_one: SELECT t01.user_id FROM tbl_user_sessions t01  LEFT JOIN tbl_users t02 ON t01.user_id = t02.user_id  and is_active = 1  WHERE  session_token=[u'ea039ddcb5a54e68886097c8772e1ada'] 
+
+2017-01-18 17:19:13,612 - know_query_log - execute: 
+            update tbl_user_sessions set last_accessed_time = now()
+            where session_token = ea039ddcb5a54e68886097c8772e1ada 
+

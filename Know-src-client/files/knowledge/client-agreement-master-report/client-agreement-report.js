@@ -231,7 +231,7 @@ function loadCompliances(data) {
             var clone = tableRow.clone();
             sno = sno + 1;
             var status = 'Active';
-            if (value.is_active == false) {
+            if (value.is_closed == true) {
                 status = 'Closed';
             }
             $('.sno', clone).text(sno);

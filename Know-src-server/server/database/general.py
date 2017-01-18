@@ -31,7 +31,8 @@ __all__ = [
     "get_audit_trails",
     "update_profile", "return_compliance_duration",
     "return_compliance_repeat", "return_compliance_frequency",
-    "return_approval_status"
+    "return_approval_status",
+    "update_statutory_notification_status"
 ]
 
 

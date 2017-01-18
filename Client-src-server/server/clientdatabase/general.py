@@ -133,20 +133,25 @@ def return_countries(data):
     return results
 
 
+# def get_domains_for_user(db, user_id):
+#     admin_id = get_admin_id(db)
+#     query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
+#         " t1.is_active FROM tbl_domains t1 "
+#     if user_id != admin_id:
+#         query = query + " INNER JOIN tbl_user_domains t2 ON " + \
+#             " t1.domain_id = t2.domain_id WHERE t2.user_id = %s"
+#         rows = db.select_all(query, [user_id])
+#     else:
+#         rows = db.select_all(query)
+#     columns = ["domain_id", "domain_name", "is_active"]
+#     result = convert_to_dict(rows, columns)
+#     return return_domains(result)
 def get_domains_for_user(db, user_id):
     admin_id = get_admin_id(db)
     query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
         " t1.is_active FROM tbl_domains t1 "
-    if user_id != admin_id:
-        query = query + " INNER JOIN tbl_user_domains t2 ON " + \
-            " t1.domain_id = t2.domain_id WHERE t2.user_id = %s"
-        rows = db.select_all(query, [user_id])
-    else:
-        rows = db.select_all(query)
-    columns = ["domain_id", "domain_name", "is_active"]
-    result = convert_to_dict(rows, columns)
+    rows = db.select_all(query)
     return return_domains(result)
-
 
 def return_domains(data):
     results = []
@@ -201,11 +206,6 @@ def get_legal_entities(db, user_id):
         " INNER JOIN tbl_countries AS t4 ON t4.country_id = t3.country_id " + \
         " WHERE t1.user_id = %s GROUP BY t4.country_id "
     rows = db.select_all(query, [user_id])
-    print "////////////////////"
-    print query
-    print [user_id]
-    print rows
-    print "////////////////////"
     return return_countries(rows)
 
 

@@ -41,7 +41,7 @@ __all__ = [
     "get_domain_user_data",
     "save_reassign_techno_manager", "save_reassign_techno_executive",
     "save_reassign_domain_manager", "save_reassign_domain_executive",
-    "save_user_replacement"
+    "save_user_replacement", "is_user_idle", "get_reassign_client_groups"
 ]
 
 
@@ -522,7 +522,7 @@ def save_user_group(
     if ug_id:
         if user_group_forms(db, ug_id, form_ids) is True :
             action = "Created User Group \"%s\"" % user_group_name
-            db.save_activity(0, 3, action)
+            db.save_activity(session_user, 3, action)
             return True
         else:
             return False
@@ -551,7 +551,7 @@ def update_user_group(
     if result:
         if user_group_forms(db, user_group_id, form_ids) is True :
             action = "Updated User Group \"%s\"" % user_group_name
-            db.save_activity(0, 3, action)
+            db.save_activity(session_user, 3, action)
             return True
         else:
             return False
@@ -578,7 +578,7 @@ def update_user_group_status(db, user_group_id, ug_name, is_active, session_user
         "Deactivated" if is_active == 0 else "Activated",
         ug_name
     )
-    db.save_activity(0, 3, action)
+    db.save_activity(session_user, 3, action)
     return result
 
 
@@ -680,7 +680,7 @@ def save_user(
     save_user_countries(db, country_ids, user_id, session_user)
     save_user_domains(db, domain_ids, user_id, session_user)
     action = "Created User \"%s - %s\"" % (employee_code, employee_name)
-    db.save_activity(0, 4, action)
+    db.save_activity(session_user, 4, action)
     name = "%s - %s" % (employee_code, employee_name)
     save_registraion_token(db, user_id, name, email_id)
 
@@ -769,7 +769,7 @@ def update_user(
     save_user_countries(db, country_ids, user_id, session_user)
     save_user_domains(db, domain_ids, user_id, session_user)
     action = "Updated User \"%s - %s\"" % (employee_code, employee_name)
-    db.save_activity(0, 4, action)
+    db.save_activity(session_user, 4, action)
     return True
 
 
@@ -806,7 +806,7 @@ def update_user_status(db, user_id, is_active, session_user):
         action = "Activated User \"%s\"" % employee_name
     else:
         action = "Dectivated User \"%s\"" % employee_name
-    db.save_activity(0, 4, action)
+    db.save_activity(session_user, 4, action)
     return result
 
 
@@ -816,10 +816,10 @@ def update_user_status(db, user_id, is_active, session_user):
 # Return Type : Returns True on Successfull update, Other wise raises process
 #               error
 ###############################################################################
-def update_disable_status(db, user_id, is_disable, session_user):
+def update_disable_status(db, user_id, is_disable, remarks, session_user):
     result = db.call_update_proc(
         "sp_users_disable_status",
-        (user_id, is_disable, session_user, get_date_time())
+        (user_id, is_disable, session_user, get_date_time(), remarks)
     )
     if result is False:
         raise process_error("E039")
@@ -831,8 +831,16 @@ def update_disable_status(db, user_id, is_disable, session_user):
         action = "Disabled User \"%s\"" % employee_name
     else:
         action = "Enabled User \"%s\"" % employee_name
-    db.save_activity(0, 4, action)
+    db.save_activity(session_user, 4, action)
     return result
+
+def is_user_idle(db, user_id):
+    rows = db.call_proc("sp_get_user_mapped_data", [user_id], 1)
+    if rows :
+        if rows[0].get('cnt') > 0 :
+            return False
+    else :
+        return True
 
 #####################################################################
 # To Fetch Countries which are mapped to Domains
@@ -1067,6 +1075,7 @@ def save_user_mappings(db, request, session_user):
     domain_id = request.domain_id
     parent_user_id = request.parent_user_id
     child_users = request.child_users
+    user_cat_id = request.user_category_id
     insert_columns = [
         "user_category_id", "country_id", "domain_id", "parent_user_id",
         "child_user_id", "created_by", "created_on"
@@ -1087,9 +1096,26 @@ def save_user_mappings(db, request, session_user):
         name_rows = db.call_proc("sp_empname_by_id", (parent_user_id,))
         action = "Users mapped for - \"%s\"" % name_rows[0]["empname"]
         db.save_activity(session_user, frmUserMapping, action)
+
+        parent_user_ids = []
+        parent_user_ids.append(parent_user_id)
+        message_heading = 'User Mapping'
+        message_text = '\"%s\" has been mapped with user(s)' % name_rows[0]["empname"]
+        save_messages(db, user_category_id, message_heading, message_text, session_user, parent_user_ids)
+
+        child_message_text = 'User has been mapped under \"%s\"' % name_rows[0]["empname"]
+        save_messages(db, user_cat_id, message_heading, child_message_text, session_user, child_users)
+
     else:
         raise process_error("E079")
 
+
+def save_messages(db, user_cat_id, message_head, message_text, created_by, child_users):
+    msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, None, created_by, get_date_time())
+    msg_user_id = child_users
+
+    if msg_user_id is not None :
+        db.save_messages_users(msg_id, msg_user_id)
 
 def get_legal_entities_for_user(db, user_id):
     result = db.call_proc(
@@ -1244,6 +1270,15 @@ def get_categories_for_user(db, user_id):
         data.append(core.UserCategory(r["user_category_id"], r["user_category_name"]))
 
     return data
+
+def get_reassign_client_groups(db, user_id):
+    result = db.call_proc("sp_reassign_client_groups_list", [user_id])
+    groups = []
+    for r in result :
+        groups.append(core.ReassignClientGroup(
+            r["client_id"], r["group_name"]
+        ))
+    return groups
 
 def get_reassign_user_filters(db):
     techno_manag = db.call_proc_with_multiresult_set("sp_tbl_users_techno_managers", None, 2)
@@ -1412,7 +1447,7 @@ def save_reassign_techno_manager(db, user_from, data, remarks, session_user):
 
         # techno executive update
         q1 = "UPDATE tbl_user_legalentity SET user_id = %s, " + \
-            " assigned_by = %s, assigne_on = %s " + \
+            " assigned_by = %s, assigned_on = %s " + \
             " WHERE client_id = %s and legal_entity_id = %s"
 
         db.execute(q1, [d.techno_executive, session_user, get_date_time(), d.client_id, d.entity_id])
@@ -1430,7 +1465,7 @@ def save_reassign_techno_executive(db, user_from, user_to, data, remarks, sessio
         " assigned_on ) values (%s, %s, %s, %s, %s, %s, %s)"
 
     for d in data :
-        q1 = " UPDATE tbl_user_legal_entity SET user_id = %s, assigned_by = %s " + \
+        q1 = " UPDATE tbl_user_legalentity SET user_id = %s, assigned_by = %s, " + \
             " assigned_on = %s where client_id = %s and legal_entity_id = %s"
         db.execute(q1, [user_to, session_user, get_date_time(), d.client_id, d.entity_id])
 

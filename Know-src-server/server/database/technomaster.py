@@ -232,7 +232,7 @@ def update_legal_entities(db, request, group_id, session_user):
     columns = [
         "country_id", "business_group_id",
         "legal_entity_name", "contract_from", "contract_to", "logo",
-        "file_space_limit", "total_licence", 'updated_by', "updated_on"
+        "file_space_limit", "total_licence", 'updated_by', "updated_on", "is_approved"
     ]
     insert_columns = [
         "client_id", "country_id", "business_group_id",
@@ -250,7 +250,7 @@ def update_legal_entities(db, request, group_id, session_user):
             if is_logo_in_image_format(entity.new_logo):
                 file_name = save_client_logo(entity.new_logo)
                 file_size = entity.new_logo.file_size
-                columns.append("logo_size")
+                # columns.append("logo_size")
                 insert_columns.append("logo_size")
             else:
                 raise process_error("E067")
@@ -280,10 +280,10 @@ def update_legal_entities(db, request, group_id, session_user):
                 string_to_datetime(entity.contract_from),
                 string_to_datetime(entity.contract_to),
                 file_name, entity.file_space, entity.no_of_licence,
-                session_user, current_time_stamp
+                session_user, current_time_stamp, 0
             ]
-            if(entity.new_logo is not None):
-               value_list.append(file_size)
+            # if(entity.new_logo is not None):
+            #     value_list.append(file_size)
 
             values.append(tuple(value_list))
 
@@ -456,9 +456,6 @@ def save_organization(
     db, group_id, request, legal_entity_name_id_map, session_user
 ):
     current_time_stamp = get_date_time()
-    db.call_update_proc(
-        "sp_le_domain_industry_delete", (group_id, )
-    )
     columns = [
         "legal_entity_id", "domain_id", "organisation_id",
         "activation_date", "count", "created_by", "created_on"
@@ -471,6 +468,9 @@ def save_organization(
     for entity in entity_details:
         legal_entity_name = entity.legal_entity_name
         domain_details = entity.domain_details
+        db.call_update_proc(
+            "sp_le_domain_industry_delete", (legal_entity_name_id_map[legal_entity_name], )
+        )
         for domain in domain_details:
             domain_id = domain.domain_id
             organization = domain.organization
@@ -499,6 +499,23 @@ def is_duplicate_group_name(db, group_name, client_id=None):
     count_rows = db.call_proc(
         "sp_client_group_is_duplicate_groupname",
         (group_name, client_id)
+    )
+    if count_rows[0]["count"] > 0:
+        return True
+    else:
+        return False
+
+
+##########################################################################
+#  To Check whether the group name already exists
+#  Parameters : Object of database, group name, client id (Optional)
+#  Return Type : Boolean - Returns true if group name already exists
+#   returns False if there is no duplicates
+##########################################################################
+def is_duplicate_group_short_name(db, group_short_name, client_id=None):
+    count_rows = db.call_proc(
+        "sp_client_group_is_duplicate_groupshortname",
+        (group_short_name, client_id)
     )
     if count_rows[0]["count"] > 0:
         return True
@@ -650,7 +667,8 @@ def return_legal_entities(legal_entities, domains):
                     legal_entity["contract_from"]),
                 contract_to=datetime_to_string(legal_entity["contract_to"]),
                 domain_details=domains[legal_entity["legal_entity_id"]],
-                is_closed=bool(legal_entity["is_closed"])
+                is_closed=bool(legal_entity["is_closed"]),
+                is_approved=int(legal_entity["is_approved"])
             )
         )
     return results
@@ -663,6 +681,7 @@ def return_legal_entities(legal_entities, domains):
 #  Return Type : Dictionary
 ##########################################################################
 def return_organization_by_legalentity_domain(organizations):
+
     organization_map = {}
     domain_map = {}
     for row in organizations:
@@ -683,7 +702,7 @@ def return_organization_by_legalentity_domain(organizations):
         organization_map[
             legal_entity_id][domain_id][str(industry_id)] = no_of_units
 
-        if domain_id in [x.domain_id for x in domain_map[legal_entity_id]] :
+        if domain_id in [x.domain_id for x in domain_map[legal_entity_id]]:
             continue
         domain_map[legal_entity_id].append(
             core.EntityDomainDetails(
