@@ -317,7 +317,7 @@ class API(object):
             _group_db.commit()
             _group_db_cons.close()
             if session_user is None :
-                return False
+                return False, False
             else :
                 return session_user, client_id
         except Exception, e :
@@ -334,7 +334,7 @@ class API(object):
             return self._send_response(
                 response_data, 200
             )
-
+            
         ip_address = request.remote_addr
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
@@ -382,7 +382,7 @@ class API(object):
                 )
             else :
                 response_data = unbound_method(
-                    self, request_data, _db, session_user, client_id
+                    self, request_data, _db, session_user, client_id, company_id
                 )
             _db.commit()
             _db_con.close()
@@ -417,8 +417,8 @@ class API(object):
         return controller.process_client_transaction_requests(request, db, session_user, client_id)
 
     @api_request(clientreport.RequestFormat)
-    def handle_client_reports(self, request, db, session_user, client_id):
-        return controller.process_client_report_requests(request, db)
+    def handle_client_reports(self, request, db, session_user, client_id, le_id):
+        return controller.process_client_report_requests(request, db, session_user, client_id)
 
     @api_request(dashboard.RequestFormat)
     def handle_client_dashboard(self, request, db, session_user, client_id):

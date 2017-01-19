@@ -1,200 +1,211 @@
-{% extends "files/client/common/html/container.html" %}
-{% block content %}
+{% extends "files/client/common/html/container.html" %} {% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/jquery-ui.css">
 <div class="content-page">
-<div class="content">
-<div class="container">
-    <div class="row" id="animationSandbox">
-        <div class="col-sm-12">
-            <div class="portlet">
-                <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Reassigned History Report</h3>
-                    <div class="portlet-widgets">
-                        <!-- <a href="#" onclick="location.href='/service-provider/list'">
-                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
-                        </a> -->
-                    </div>
-                    <div class="clearfix"></div>
-                </div>
-                <!-- <h4 class="page-title">Reassigned History Report</h4> -->
-               <!--  <hr class="no-top-margin"> -->
-               <div id="bg-primary1" class="panel-collapse collapse in">
-                    <div class="portlet-body">
-                <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country:</label>
-                            <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">India</p>
-                            </div>
+    <div class="content">
+        <div class="container">
+            <div class="row" id="animationSandbox">
+                <div class="col-sm-12">
+                    <div class="portlet">
+                        <div class="portlet-heading bg-info">
+                            <h3 class="portlet-title">Reassigned History Report</h3>
+                            <div class="portlet-widgets"></div>
+                            <div class="clearfix"></div>
                         </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity:</label>
-                            <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">RG Legal Entity</p>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Unit: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Unit" value="RG0003 - RG Madurai Unit">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Act">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Compliance Task">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter User">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYY" value="01-Jan-2016">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
-                            </div>
-                        </div>
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYY" value="31-Dec-2016">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12">
-                        <center>
-                            <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
-                            </div>
-                        </center>
-                    </div>
-                    <div class="clear"></div>
-                </form>
-                </div>
-                </div>
-                <script type="text/javascript">
-                    function show_div() {
-                        $('.details').show();
-                        $('#compliance_animation')
-                          .removeClass().addClass('bounceInLeft animated')
-                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                          $(this).removeClass();
-                        });
-                    }
-                </script>
-                </div>
-                <div id="compliance_animation">
-                <div class="card-box details" style="display: none;">
-                <div class="table-responsive">
-                    <div class="col-sm-12">
-                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
-                        <div class="col-sm-12 text-center"><h4>Reassigned History Report</h4></div>
-                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
-                        <div class="col-sm-4 text-center"><h6>Country : India</h6></div>
-                        <div class="col-sm-4 text-center"><h6>Domain : Labour Law</h6></div>
-                    </div>
-                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th width="01%">#</th>
-                                <th width="15%">Compliance Task</th>
-                                <th width="08%">Due Date</th>
-                                <th width="08%">Assigned Date</th>
-                                <th width="27%">Assigned</th>
-                                <th width="10%">Reason</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="bg-lightdark">
-                              <td colspan="100%">
-                                <div class="col-sm-6"><span class="pull-left">Unit: RG0003 - RG Madurai Unit - No 14, 80 feet road, Anna nagar,Madurai</span></div>
-                                <div class="col-sm-6"></div>
-                              </td>
-                            </tr>
-                            <tr>
-                                <td colspan="100%" >
-                                    <div class="col-sm-2 no-padding">
-                                        <!-- <input type="text" class="form-control input-sm text-center" value="Batteries Act" readonly="true" /> -->
-                                        <mark class="p-l-10 p-r-10">Batteries Act</mark>
+                        <div id="bg-primary1" class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <form class="form-horizontal group-border-dashed">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="country-id" value="">
+                                                <div id="ac-country" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="legal-entity-id" value="">
+                                                <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain Name" tabindex="5">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="domain-id" value="">
+                                                <div id="ac-domain" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Unit:</label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" id="unit" class="form-control input-sm" placeholder="Enter Unit">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="unit-id" value="">
+                                                <div id="ac-unit" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="act-id" value="">
+                                                <div id="ac-act" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Form A - Registration</td>
-                                <td>28-Aug-2016</td>
-                                <td>01-Aug-2016</td>
-                                <td>EMP0016 - Rajkumar / EMP0013 - Suresh / EMP0014 - Praveen</td>
-                                <td>Role Changed</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3">&nbsp;</td>
-                                <td colspan="100%">
-                                    <ul class="tree">
-                                        <li>
-                                            <table width="100%">
-                                                <tbody>
-                                                    <tr class="smallfont">
-                                                       <td width="10%">01-Jun-2016</td>
-                                                       <td width="37%">EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen</td>
-                                                       <td width="12%">Assignee Re-deployed</td>
-                                                    </tr>
-                                                    <tr class="smallfont">
-                                                       <td>01-Jan-2016</td>
-                                                       <td>EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen</td>
-                                                       <td>-</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Form B - Annual Returns Submission</td>
-                                <td>01-Sep-2016</td>
-                                <td>20-Aug-2016</td>
-                                <td>EMP0016 -Rajkumar / EMP0013 - Suresh / EMP0014 -Praveen</td>
-                                <td>Role Changed</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <p class="rpt-count m-b-0">Total : 2 record(s)</p>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" id="compliance-task" class="form-control input-sm" placeholder="Enter Compliance Task">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="compliance-task-id" value="">
+                                                <div id="ac-compliance-task" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
+                                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="user-id" value="">
+                                                <div id="ac-user" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group has-feedback">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control input-sm from-date" id="from-date" placeholder="DD-MM-YYYY">
+                                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
+                                            </div>
+                                        </div>
+                                        <div class="form-group has-feedback">
+                                            <label class=" col-sm-offset-1 col-sm-3 control-label ">To Date: <span class="mandatory">*</span></label>
+                                            <div class="col-sm-6">
+                                                <input type="text" class="form-control input-sm to-date" id="to-date" placeholder="DD-MM-YYYY">
+                                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <center>
+                                            <div class="form-group m-b-0">
+                                                <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button"> Show </button>
+                                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button"> Export </button>
+                                            </div>
+                                        </center>
+                                    </div>
+                                    <div class="clear"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="compliance_animation">
+                        <div id="report-view" style="display: none;">
+                            <div class="card-box">
+                                <div class="table-responsive">
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-12 text-center"><img class="rpt-logo" id="client-logo"></div>
+                                        <div class="col-sm-12 text-center">
+                                            <h4>Reassigned History Report</h4></div>
+                                        <div class="col-sm-4 text-center">
+                                            <h6>Legal Entity : <span id="legal-entity-name"></span></h6></div>
+                                        <div class="col-sm-4 text-center">
+                                            <h6>Country : <span id="country-name" ></span></h6></div>
+                                        <div class="col-sm-4 text-center">
+                                            <h6>Domain : <span id="domain-name" ></span></h6></div>
+                                    </div>
+                                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th width="01%">#</th>
+                                                <th width="15%">Compliance Task</th>
+                                                <th width="08%">Due Date</th>
+                                                <th width="08%">Assigned Date</th>
+                                                <th width="27%">Assigned</th>
+                                                <th width="10%">Reason</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="report-table-tbody">
+                                        </tbody>
+                                    </table>
+                                    <p class="rpt-count m-b-0">Total : <span id="total-record"></span> record(s)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <!-- end col -->
             </div>
         </div>
-        <!-- end col -->
     </div>
 </div>
+<div id="template">
+    <table id="report-table">
+        <tr class="bg-lightdark row-one">
+            <td colspan="100%">
+                <div class="col-sm-12">Unit: <span class="unit-name"></span></div>
+            </td>
+        </tr>
+        <tr class="row-two">
+            <td colspan="100%">
+                <div class="col-sm-2 no-padding">
+                    <mark class="p-l-10 p-r-10 act-name">Test Act</mark>
+                </div>
+            </td>
+        </tr>
+        <tr class="row-three">
+            <td class="sno"></td>
+            <td class="compliance-task">FORM I - Half yearly returns Submission</td>
+            <td class="due-date"></td>
+            <td class="assigned-date"></td>
+            <td class="assigned"></td>
+            <td class="reason"></td>
+        </tr>
+        <tr class="row-four">
+            <td colspan="3">&nbsp;</td>
+            <td colspan="100%">
+                <ul class="tree">
+                    <li>
+                        <table width="100%">
+                            <tbody>
+                                <tr class="smallfont">
+                                    <td width="10%" class="assigned-date-new"></td>
+                                    <td width="37%" class="assigned-new"></td>
+                                    <td width="12%" class="reason-new"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
 </div>
-</div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/reassigned-history/reassign_history.js"></script>
+<script src="js/jquery-ui.js"></script>
 {% endblock %}

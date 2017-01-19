@@ -17,7 +17,7 @@ KNOWLEDGE_FORMAT_DOWNLOAD_URL = "compliance_format"
 LOGO_URL = "knowledge/clientlogo"
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
-
+CSV_DOWNLOAD_URL = "exported_reports"
 #
 # Log flag
 #
@@ -48,6 +48,7 @@ KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
 KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_updated"
+
 
 URL = "http://localhost:8082/"
 CLIENT_URL = URL

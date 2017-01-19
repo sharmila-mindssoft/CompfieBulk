@@ -7,6 +7,13 @@ country_names = {}
 domain_names = {}
 values_to_save = []
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function initialize(){
   function onSuccess(data) {
     COUNTRIES = data["countries"];
@@ -19,11 +26,14 @@ function initialize(){
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getValidityDateList(function (error, response) {
     if (error == null) {
       onSuccess(response);
+      hideLoader();
     } else {
       onFailure(error);
+      hideLoader();
     }
   });
 }
@@ -43,6 +53,7 @@ function initialize_maps(){
 
 function loadValidityDatesList(){
   var count = 0;
+  $('.tbody-validity-config-list').empty();
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     ++ count;
     if(domain_list.length > 0){
@@ -93,16 +104,40 @@ function save_validity_date_settings() {
   if(result != false && values_to_save.length > 0){
     function onSuccess(data) {
       displaySuccessMessage(message.settings_save_success);
+      initialize();
     }
-    function onFailure(error) {
-      displayMessage(error);
+    function onFailure(error, response) {
+      if(error == "SaveValidityDateSettingsFailure")
+      {
+        console.log("a,"+response.country_id);
+        var msgText = '';
+        for(var i=0;i<COUNTRIES.length;i++){
+          if(COUNTRIES[i].country_id == response.country_id){
+            msgText = COUNTRIES[i].country_name;
+            break;
+          }
+        }
+        for(var i=0;i<DOMAINS.length;i++){
+          if(DOMAINS[i].domain_id == response.domain_id){
+            msgText =  DOMAINS[i].domain_name+" under "+msgText+" is invalid";
+            break;
+          }
+        }
+        displayMessage(msgText);
+      }else{
+        displayMessage(error);
+      }
     }
+    displayLoader();
     mirror.saveValidityDateSettings(
       values_to_save, function (error, response) {
+        console.log(error,response)
       if (error == null) {
         onSuccess(response);
+        hideLoader();
       } else {
-        onFailure(error);
+        onFailure(error, response);
+        hideLoader();
       }
     });
   }
@@ -110,21 +145,24 @@ function save_validity_date_settings() {
 
 function collect_and_validate_values(){
   values_to_save = []
+  var returnVal = true;
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     for (var dcount = 0; dcount < domain_list.length; dcount++) {
       domain_id = parseInt(domain_list[dcount])
       validity_days = $(".val-"+country_id+"-"+domain_id).val()
+      console.log("1:"+validity_days)
       validity_days_id = $(".id-"+country_id+"-"+domain_id).val()
       if(
           validity_days != "" &&
           validity_days != "undefined" &&
           validity_days != null
       ){
-        if ((parseInt(validity_days) > 366)){
+        /*if ((parseInt(validity_days) > 366)){
           displayMessage(message.invalid_validity_days);
           return false;
           break;
-        }
+        }*/
+
         if(validity_days_id){
           validity_days_id = parseInt(validity_days_id)
         }
@@ -133,6 +171,7 @@ function collect_and_validate_values(){
           parseInt(validity_days)
         )
         values_to_save.push(value)
+
       }else{
         displayMessage(message.validity_date_required);
         return false;

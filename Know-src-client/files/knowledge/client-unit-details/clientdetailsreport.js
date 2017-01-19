@@ -426,7 +426,7 @@ function loadClientDetailsList(data) {
         {
           for(var j=0;j<domainsNames.split(',').length;j++)
           {
-            domain_org += domainsNames[j] + '-'+orgnames.split(',')[j] +'\n';
+            domain_org += domainsNames[j] + '-'+orgnames.split(',')[j] +'<br>';
           }
         }
         else
@@ -437,11 +437,11 @@ function loadClientDetailsList(data) {
             if(orgnames.split(',')[j] == "" || orgnames.split(',')[j] == null || orgnames.split(',')[j] == undefined)
             {
               console.log("undefined")
-              domain_org += domainsNames.split(',')[j] + '-'+'Nil'+'\n';
+              domain_org += domainsNames.split(',')[j] + '-'+'Nil'+'<br>';
             }
             else
             {
-              domain_org += domainsNames.split(',')[j] + '-'+orgnames.split(',')[j] +'\n';
+              domain_org += domainsNames.split(',')[j] + '-'+orgnames.split(',')[j] +'<br>';
             }
           }
         }
@@ -474,17 +474,20 @@ function loadClientDetailsList(data) {
       $('.unit-address', clone).text(val.address + ', ' + val.postal_code);
       $('.createdby', clone).text(val.emp_code_name);
       $('.createdon', clone).html(val.check_date);
-      if(val.is_active == 1)
+      if(val.is_active == 0)
       {
         $('.status', clone).html("Active");
       }
-      else if(val.is_active == 0)
+      else if(val.is_active == 1)
       {
-        $('.status', clone).html("Closed <br>"+val.closed_on);
+          if (val.closed_on == "null")
+            $('.status', clone).html("Closed"+'<br>'+'-Nil-');
+          else
+            $('.status', clone).html("Closed"+'<br>'+val.closed_on);
       }
       else
       {
-        $('.status', clone).html("--")
+        $('.status', clone).html("-Nil-")
       }
       $('.tbody-clientdetails-list').append(clone);
       row_no = row_no + 1;
@@ -494,6 +497,7 @@ function loadClientDetailsList(data) {
   {
     for(var i=0;i<data.length;i++)
     {
+      console.log(i, data[i].is_active)
       if(status.indexOf(data[i].is_active) >= 0)
       {
         var domainsNames = '';
@@ -508,54 +512,97 @@ function loadClientDetailsList(data) {
         $('.division', clone).text(val.division_name);
         $('.category', clone).text(val.category_name);
         arr = val.d_ids;
+        var d_names= [];
         $.each(domainsList, function (key, value) {
           var domianid = value.domain_id;
           var domainname = value.domain_name;
           if (jQuery.inArray(domianid, arr) > -1) {
-            domainsNames += domainname + ', ';
+            d_names.push(domainname);
           }
         });
+        domainsNames = d_names.join(', ');
         console.log("domains:"+domainsNames)
         //$('.domain', clone).html(domainsNames);
         arr = val.i_ids;
+        var o_names = [];
         $.each(industriesList, function (key, value) {
           var orgid = value.industry_id;
           var orgname = value.industry_name;
           if (jQuery.inArray(orgid, arr) > -1) {
-            orgnames += orgnames + ', ';
+            o_names.push(orgname);
           }
         });
+        orgnames = o_names.join(', ');
         console.log("orgs:"+orgnames)
-        var domain_org = null;
-        if(domainsNames != '' && domainsNames.indexOf(",") > 0)
+        var domain_org = '';
+        if(domainsNames != '' && domainsNames.indexOf(",") >= 0)
         {
           if(domainsNames.length == orgnames.length)
           {
             for(var j=0;j<domainsNames.split(',').length;j++)
             {
-              domain_org += domainsNames[j] + '-'+orgnames.split(',')[j] +'\n';
+              domain_org += domainsNames[j] + '-'+orgnames.split(',')[j] +'<br>';
+            }
+          }
+          else
+          {
+            for(var j=0;j<domainsNames.split(',').length;j++)
+            {
+              console.log("orgbbbb:"+orgnames.split(',')[j])
+              if(orgnames.split(',')[j] == "" || orgnames.split(',')[j] == null || orgnames.split(',')[j] == undefined)
+              {
+                console.log("undefined")
+                domain_org += domainsNames.split(',')[j] + '-'+'Nil'+'<br>';
+              }
+              else
+              {
+                domain_org += domainsNames.split(',')[j] + '-'+orgnames.split(',')[j] +'<br>';
+              }
             }
           }
         }
         else if(domainsNames != '' && domainsNames.indexOf(",") < 0)
         {
-          domain_org = domainsNames + ' - '+orgnames;
+          domain_org = domainsNames;
+          if(orgnames != '' && orgnames.indexOf(",")<0)
+          {
+            domain_org = domainsNames + ' - '+orgnames;
+          }
+          else
+          {
+            domain_org = domainsNames + ' - '+'Nil';
+          }
+        }
+        else
+        {
+          domainsNames = "Nil";
+          if(orgnames != '' && orgnames.indexOf(",")<0)
+          {
+            domain_org = domainsNames + ' - '+orgnames;
+          }
+          else
+          {
+            domain_org = domainsNames + ' - '+'Nil';
+          }
         }
         $('.domain', clone).html(domain_org);
         $('.unit-address', clone).text(val.address + ', ' + val.postal_code);
         $('.createdby', clone).text(val.emp_code_name);
         $('.createdon', clone).html(val.check_date);
-        if(val.is_active == 1)
+        if(val.is_active == 0)
         {
           $('.status', clone).html("Active");
         }
-        else if(val.is_active == 0)
+        else if(val.is_active == 1)
         {
-          $('.status', clone).html("Closed"+'\n'+val.closed_on);
+          if (val.closed_on == "null" || val.closed_on == null)
+            $('.status', clone).html("Closed"+'<br>'+'-Nil-');
+          else
+            $('.status', clone).html("Closed"+'<br>'+val.closed_on);
         }
         else
         {
-          $('.status', clone).html("--")
+          $('.status', clone).html("-Nil-")
         }
         $('.tbody-clientdetails-list').append(clone);
         row_no = row_no + 1;

@@ -16,6 +16,7 @@ var STATU_MAPPINGS;
 var STATU_TOTALS;
 var isAuthenticate;
 
+
 var CURRENT_TAB = 1;
 IS_EDIT = false;
 IS_SAVE = false;
@@ -85,7 +86,7 @@ ViewScreen = $('#statutorymapping-add');
 listTemplate = $("#templates #list-template .items");
 var file_type = [
     "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
-    "rar", "tar", "gz", "ppt",
+    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf"
 ]
 var msg = message;
 var fetch = mirror;
@@ -693,7 +694,7 @@ function RenderInput() {
             }
 
             slObject = $('#templates .statutory_levelvalue').clone();
-            slObject.width("400px");
+            slObject.width(wid);
 
             $('.filter-text-box', slObject).attr(
                 'id', 'sf'+ v.l_position
@@ -995,6 +996,7 @@ function RenderInput() {
         MultiselectDate.attr('checked', false);
         this.hideFrequencyAll();
         $('#uploaded_fileview').hide();
+        _renderinput.f_f_list = [];
     };
     this.renderComplianceGrid = function() {
 
@@ -1068,7 +1070,7 @@ function RenderInput() {
     };
     this.clearGeosSubLevel = function(l_position) {
         for (var i=l_position+1; i<11; i++) {
-            $('.levelvalue #gnl'+i).empty();
+            $('.tbody-geography-level #gnl'+i).empty();
         }
     };
     this.unloadGeosNames = function(l_position, p_id) {
@@ -1085,13 +1087,37 @@ function RenderInput() {
         }
     };
     this.loadGeosNames = function(data, l_position, parent_name) {
+        // select all functionality
+        function geo_select_all(g_l_position) {
+            saved_geos = $('.items', '#gnl'+ g_l_position);
+            // add as a first element
+            if (saved_geos.length == 0) {
+                liObject = $('#templates #list-template li').clone();
+                liObject.attr('id', 'gidall'+g_l_position);
+                $('.name-holder', liObject).text('Select all');
+                $('.tbody-geography-level #gnl'+g_l_position).append(liObject)
+                liObject.on('click', function(){
+                   if ($('#gidall'+g_l_position).hasClass('active')) {
+                        $('#gidall'+g_l_position).removeClass('active');
+                        $('#gidall'+g_l_position+' i').removeClass('fa-check');
+                        // _renderinput.clearGeosSubLevel(g_l_position);
+                    }else {
+                        $('#gidall'+g_l_position).addClass('active');
+                        $('#gidall'+g_l_position+' i').addClass('fa-check');
+                        // _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+                    }
+                });
+            }
+        }
 
-
-        this.clearSubLevel(l_position);
+        // this.clearGeosSubLevel(l_position);
         $.each(data, function(k,v) {
             if (v.is_active == false) {
                 return;
             }
+            // select all
+            geo_select_all(v.l_position);
+
             liObject = $('#templates #list-template li').clone();
             liObject.attr('id', 'gid'+v.g_id);
             // liObject.addClass('glp'+v.l_position);
@@ -1241,6 +1267,7 @@ function RenderInput() {
 
             }
             else {
+                $('.recurr-summary').text('');
                 RecurringPan.show();
                 if (freq_val == 2){
                     txt = "Periodical";
@@ -1673,8 +1700,13 @@ function pageControls() {
         if (_renderinput.uploaded_files.length > 0) {
             f_list = {};
             var file_data = _renderinput.uploaded_files[0];
-            var f_Name = _renderinput.uploaded_files[0].name;
-            _renderinput.form_data.append('file' + fCId, file_data);
+            var fullname = _renderinput.uploaded_files[0].name;
+            var fN = fullname.substring(0, fullname.indexOf('.'));
+            var fE = fullname.substring(fullname.lastIndexOf('.') + 1);
+            var uniqueId = Math.floor(Math.random() * 90000) + 10000;
+            f_Name = fN + '-' + uniqueId + '.' + fE;
+
+            _renderinput.form_data.append('file' + fCId, file_data, f_Name);
             // _renderinput.form_data.append('session_token', mirror.getSessionToken());
             _renderinput.uploaded_files_fcids[fCId] = true;
             f_list['file_size'] = file_data.size;
@@ -1870,9 +1902,6 @@ function pageControls() {
         console.log(tFN);
         var fN = tFN.substring(0, tFN.indexOf('.'));
         var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
-        console.log(fN, fE);
-        var uniqueId = Math.floor(Math.random() * 90000) + 10000;
-        f_Name = fN + '-' + uniqueId + '.' + fE;
         f_Size = this.files[0].size;
         var max_limit = 1024 * 1024 * 50;
         if (tFN.indexOf('.') !== -1) {

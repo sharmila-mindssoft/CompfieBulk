@@ -144,12 +144,12 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/statutory-settings-unit-wise-report",
-        "files/client/statutory-settings-unit-wise-report/statutory-settings-unit-wise-report.html",
+        "files/client/statutory-settings-unit-wise/statutory_settings_unit_wise.html",
         None, {}
     ),
     (
         "/reassigned-history-report",
-        "files/client/reassigned-history-report/reassigned-history-report.html",
+        "files/client/reassigned-history/reassign_history.html",
         None, {}
     ),
     (

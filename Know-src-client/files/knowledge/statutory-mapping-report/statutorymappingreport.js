@@ -134,10 +134,10 @@ function loadCountwiseResult(filterList) {
       var clone = tableRow.clone();
       $('.actname', clone).text(actname);
       $('.tbody-compliance').append(clone);
-      
+
       lastOccuranceid = 0;
       count++;
-      
+
     }
     var occurance = '';
     var occuranceid;
@@ -233,7 +233,7 @@ function loadCountwiseResult(filterList) {
     lastActName = actname;
     lastOccuranceid = frequency_id;
   }
-  
+
   if (is_null == true) {
     hidePagePan();
   }
@@ -404,13 +404,16 @@ function pageControls() {
     if(Country.val() != ''){
       condition_fields.push("country_ids");
       condition_values.push(Country.val());
+
+      var text_val = $(this).val();
+      commonAutoComplete(
+        e, ACDomain, Domain, text_val,
+        domainsList, "domain_name", "domain_id", function (val) {
+            onAutoCompleteSuccess(DomainVal, Domain, val);
+        }, condition_fields, condition_values);
+
     }
-    var text_val = $(this).val();
-    commonAutoComplete(
-      e, ACDomain, Domain, text_val,
-      domainsList, "domain_name", "domain_id", function (val) {
-          onAutoCompleteSuccess(DomainVal, Domain, val);
-      }, condition_fields, condition_values);
+
   });
 
   ItemsPerPage.on('change', function (e) {

@@ -30,8 +30,6 @@ class HandleRequest(object):
             code = response.code
             body = response.body
             print body
-            print code
-            print self._company_id
             if code == 200:
                 callback(None, body)
             else:
@@ -86,9 +84,11 @@ class HandleRequest(object):
             self._respond_error(code, response_data)
 
     def forward_request(self):
+        print "====="
         company = self._company_manager.locate_company_server(
             self._security_token
         )
+        print company
         if company is None:
             self._respond_not_found()
             return
@@ -97,6 +97,8 @@ class HandleRequest(object):
         ip = company_server_ip.ip_address
         port = company_server_ip.port
         url = self._url_template % (ip, port, self._relative_url)
+        print url
+        print "---------"
         self._api_request(
             url, self._body, self._forward_request_callback
         )

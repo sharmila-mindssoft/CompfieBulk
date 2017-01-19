@@ -104,7 +104,7 @@ function PageControls() {
         if (divisionList.length == 0 && text_val != '')
             displayMessage(message.domainname_required);
         var condition_fields = ["is_active", "le_id"];
-        var condition_values = [true, 1];
+        var condition_values = [true, legalEntity.val()];
         commonAutoComplete(e, acDivision, divisionId, text_val, divisionList, "div_name", "div_id", function(val) {
             onDivisionAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -116,7 +116,7 @@ function PageControls() {
         if (categoryList.length == 0)
             displayMessage(message.category_required);
         var condition_fields = ["is_active", "le_id", "div_id"];
-        var condition_values = [true, 1, divisionId.val()];
+        var condition_values = [true, legalEntity.val(), divisionId.val()];
         commonAutoComplete(e, acCategory, categoryId, text_val, categoryList, "c_name", "c_id", function(val) {
             onCategoryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -125,7 +125,7 @@ function PageControls() {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
         var condition_fields = ["is_active", "le_id", "div_id", "c_id"];
-        var condition_values = [true, 1, divisionId.val(), categoryId.val()];
+        var condition_values = [true, legalEntity.val(), divisionId.val(), categoryId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
             onDomainAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
