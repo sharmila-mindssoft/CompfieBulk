@@ -188,11 +188,12 @@ def process_forgot_password(db, request):
         is_mobile = False
     rows = db.verify_username(request.username)
     print "-------------------", rows
-    if rows[0]['user_id'] is not 0:
+    if rows is 0:
+        return login.InvalidUserName()
+    else:
+        print rows
         send_reset_link(db, rows[0]['user_id'], rows[0]['email_id'], rows[0]['employee_name'])
         return login.ForgotPasswordSuccess()
-    else:
-        return login.InvalidUserName()
 
 
 def send_reset_link(db, user_id, email_id, employee_name):
