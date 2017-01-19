@@ -176,13 +176,13 @@ def process_change_domain_status(db, request, user_id):
     is_active = request.is_active
     domain_id = int(request.domain_id)
     if is_active is False:
-        if is_transaction_exists_for_domain(db, domain_id):
-            if (update_domain_status(db, domain_id, is_active, user_id)):
-                return general.ChangeDomainStatusSuccess()
-            else:
-                return general.InvalidDomainId()
+        # if is_transaction_exists_for_domain(db, domain_id):
+        if (update_domain_status(db, domain_id, is_active, user_id)):
+            return general.ChangeDomainStatusSuccess()
         else:
-            return general.TransactionExists()
+            return general.InvalidDomainId()
+        # else:
+        #     return general.TransactionExists()
     else:
         if (update_domain_status(db, domain_id, is_active, user_id)):
             return general.ChangeDomainStatusSuccess()

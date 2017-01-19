@@ -364,6 +364,15 @@ function initMirror() {
         var r = document.cookie.match('\\b' + name + '=([^;]*)\\b');
         return r ? r[1] : undefined;
     }
+    function makekey()
+    {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for( var i=0; i < 5; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+    }
 
     function apiRequest(callerName, request, callback) {
         login_url = '/knowledge/login';
@@ -373,21 +382,18 @@ function initMirror() {
             'request': request
         };
         actula_data = toJSON(requestFrame);
-
         $.ajax({
             url: BASE_URL + callerName,
             headers: { 'X-CSRFToken': csrf_token },
             type: 'POST',
             contentType: 'application/json',
-            data: btoa(actula_data),
+            data: makekey() + btoa(actula_data),
             success: function(data) {
-                data = atob(data);
+                data = atob(data.substring(5));
                 data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
 
-                console.log(status);
-                console.log(response);
 
                 matchString = 'success';
                 if (status.toLowerCase().indexOf(matchString) != -1) {
@@ -408,7 +414,7 @@ function initMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
-                rdata = atob(rdata);
+                rdata = atob(rdata.substring(5));
                 console.log(textStatus, errorThrown);
                 // alert(jqXHR.responseText.toLowerCase().indexOf("csrf"));
                 if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
@@ -432,9 +438,9 @@ function initMirror() {
             headers: { 'X-CSRFToken': csrf_token },
             type: 'POST',
             contentType: 'application/json',
-            data: btoa(toJSON(request)),
+            data: makekey() + btoa(toJSON(request)),
             success: function(data) {
-                data = atob(data);
+                data = atob(data.substring(5));
                 data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -448,7 +454,7 @@ function initMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
-                rdata = atob(rdata);
+                rdata = atob(rdata.substring(5));
                 callback(rdata, null);
             }
         });
@@ -474,9 +480,9 @@ function initMirror() {
             // headers: {'X-Xsrftoken' : getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
-            data: btoa(toJSON(request)),
+            data: makekey() + btoa(toJSON(request)),
             success: function(data) {
-                data = atob(data);
+                data = atob(data.substring(5));
                 data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -490,7 +496,7 @@ function initMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
-                rdata = atob(rdata);
+                rdata = atob(rdata.substring(5));
                 callback(rdata.responseText);
             }
         });
