@@ -717,15 +717,17 @@ function RenderInput() {
             $('.bottomfield .snamepid', slObject).attr(
                 'id', 'dvpid' + v.l_position
             );
+
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
                 if (event.keyCode == 13) {
-                    if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
-                        displayMessage(msg.statutory_selection_required);
-                        return false;
-                    }
                     new_value = $('#dv'+ v.l_position).val();
                     if (new_value.length == 0) {
+                        displayMessage(msg.statutory_required);
+                        return false;
+                    }
+                    if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
+                        displayMessage(msg.statutory_selection_required);
                         return false;
                     }
                     _sid = $('#dvid'+v.l_position).val();
@@ -740,11 +742,6 @@ function RenderInput() {
                             parseInt(_sid), new_value, v.l_position
                         );
                     }
-                    // if (v.l_position == 1){
-                    //     _renderinput.renderStatuNames(
-                    //         0, v.l_position
-                    //     );
-                    // }
 
                     $('#dv'+ v.l_position).val('');
                     $('#dvid'+ v.l_position).val('');
@@ -753,31 +750,31 @@ function RenderInput() {
 
             $('.bottomfield .statut-add', slObject).on(
                 'click', function(){
-                if (_renderinput.l_one_id == null) {
+
+                new_value = $('#dv'+ v.l_position).val();
+                if (new_value.length == 0) {
+                    displayMessage(msg.statutory_required);
+                    return false;
+                }
+                if ((v.l_position > 1) && (_renderinput.l_one_id == null)) {
                     displayMessage(msg.statutory_selection_required);
                     return false;
                 }
-                new_value = $('#dv'+ v.l_position).val();
-                if (new_value.length == 0) {
-                    return false;
-                }
                 _sid = $('#dvid'+v.l_position).val();
-                if (_sid == '') {
+
+                if(_sid == '') {
                     _fetchback.saveStautory(
                         v.l_id, new_value, v.l_position
                     );
                 }
                 else {
                     _fetchback.updateStatutory(
-                        _sid, new_value, v.l_position
+                        parseInt(_sid), new_value, v.l_position
                     );
                 }
 
-                // if (v.l_position == 1){
-                //     _renderinput.renderStatuNames(
-                //         0, v.l_position
-                //     );
-                // }
+                $('#dv'+ v.l_position).val('');
+                $('#dvid'+ v.l_position).val('');
             });
 
             $('#sf'+v.l_position, slObject).keyup(function(){
@@ -1096,6 +1093,7 @@ function RenderInput() {
             // add as a first element
             if (saved_geos.length == 0) {
                 liObject = $('#templates #list-template li').clone();
+                liObject.addClass('select-all');
                 liObject.attr('id', 'gidall'+g_l_position);
                 $('.name-holder', liObject).text('Select all');
                 $('.tbody-geography-level #gnl'+g_l_position).append(liObject)
@@ -1118,7 +1116,7 @@ function RenderInput() {
                             $(this).find('i').addClass('fa-check');
                         });
 
-                        _renderinput.clearGeosSubLevel(g_l_position);
+                        // _renderinput.clearGeosSubLevel(g_l_position);
                         _renderinput.renderAllGeoNames(g_l_position);
                     }
                 });

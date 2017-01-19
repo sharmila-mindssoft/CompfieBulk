@@ -15,7 +15,6 @@ function FetchBack() {
                 STATUTORY_LEVEL_INFO = response.statutory_levels;
                 GEOGRAPHY_LEVEL_INFO = response.geography_level_info;
                 GEOGRAPHY_INFO = response.geography_info;
-                console.log(GEOGRAPHY_INFO);
                 FREQUENCY_INFO = response.compliance_frequency;
                 REPEATSTYPE_INFO = response.compliance_repeat_type;
                 APPROVALSTATUS_INFO = response.compliance_approval_status;
@@ -608,6 +607,9 @@ function ViewPage() {
         _renderinput.selected_geos_parent = [];
         for (var i=1; i<11; i++) {
             $('#gnl'+i).children().each(function(){
+                if ($(this).hasClass('select-all')) {
+                    return;
+                }
                 if ($(this).hasClass('active')) {
                     _renderinput.selected_geos.push($(this).val());
                     _renderinput.selected_geos_parent.push($(this).attr('name'));

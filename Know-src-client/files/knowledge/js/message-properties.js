@@ -72,6 +72,7 @@ var message = {
   'removechild_first': 'Remove Child First',
   'industry_required': 'Organization Required',
   'statutorynature_required': 'Statutory Nature Required',
+  'statutory_required': 'Statutory Name Required',
   'statutory_selection_required': 'Atleast one Statute should be selected',
   'statutory_selection_exceed': 'Maximum three statutes can be selected',
   'compliance_selection_required': 'Atleast one Compliance should be added',
