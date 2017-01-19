@@ -15,17 +15,25 @@ register_page = null;
 _rtoken = null;
 _captcha = null;
 IS_VALID = false;
+function makekey()
+{
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+  for( var i=0; i < 5; i++ )
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  return text;
+}
 function call_api(request, callback) {
-    
+
     $.ajax({
         url: '/knowledge/api/login',
         type: 'POST',
         contentType: 'application/json',
         headers: { 'X-CSRFToken': csrf_token },
-        data: btoa(JSON.stringify(request, null, '')),
+        data: makekey() + btoa(JSON.stringify(request, null, '')),
         success: function(data, textStatus, jqXHR) {
-            data = atob(data);
+            data = atob(data.substring(5));
             data = JSON.parse(data);
             var status = data[0];
             var response = data[1];
@@ -39,7 +47,7 @@ function call_api(request, callback) {
         },
         error: function(jqXHR, textStatus, errorThrown) {
             rdata = JSON.parse(jqXHR.responseText);
-            rdata = atob(rdata);    
+            rdata = atob(rdata.substring(5));
            callback(rdata, null);
         }
     });

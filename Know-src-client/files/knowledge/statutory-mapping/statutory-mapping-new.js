@@ -1084,6 +1084,9 @@ function RenderInput() {
                 }
 
             });
+            if ($('#gnl'+i).length == 1) {
+                $('gidall'+i).remove();
+            }
         }
     };
     this.loadGeosNames = function(data, l_position, parent_name) {
@@ -1100,11 +1103,23 @@ function RenderInput() {
                    if ($('#gidall'+g_l_position).hasClass('active')) {
                         $('#gidall'+g_l_position).removeClass('active');
                         $('#gidall'+g_l_position+' i').removeClass('fa-check');
-                        // _renderinput.clearGeosSubLevel(g_l_position);
+                        _renderinput.clearGeosSubLevel(g_l_position);
+                        $.each($('#gnl'+g_l_position+' li'), function(k, v){
+                            $(this).removeClass('active');
+                            $(this).find('i').removeClass('fa-check');
+                        });
+
                     }else {
                         $('#gidall'+g_l_position).addClass('active');
                         $('#gidall'+g_l_position+' i').addClass('fa-check');
-                        // _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+
+                        $.each($('#gnl'+g_l_position+' li'), function(k, v){
+                            $(this).addClass('active');
+                            $(this).find('i').addClass('fa-check');
+                        });
+
+                        _renderinput.clearGeosSubLevel(g_l_position);
+                        _renderinput.renderAllGeoNames(g_l_position);
                     }
                 });
             }
@@ -1129,6 +1144,8 @@ function RenderInput() {
                 if ($('#gid'+v.g_id).hasClass('active')) {
                     $('#gid'+v.g_id).removeClass('active');
                     $('#gid'+v.g_id+' i').removeClass('fa-check');
+                    $('#gidall'+v.l_position).removeClass('active');
+                    $('#gidall'+v,l_position+' i').removeClass('fa-check');
                     _renderinput.unloadGeosNames(v.l_position, v.g_id);
                 }else {
                     $('#gid'+v.g_id).addClass('active');
@@ -1156,6 +1173,7 @@ function RenderInput() {
     };
     this.renderGeosNames = function(p_id, l_position, parent_name) {
         var data = []
+
         $.each(GEOGRAPHY_INFO, function(k, v) {
             if (v.c_id == _renderinput.countryId)
             {
@@ -1212,6 +1230,18 @@ function RenderInput() {
 
         });
     };
+
+    this.renderAllGeoNames = function(l_position) {
+        $.each(GEOGRAPHY_INFO, function(k, v) {
+            if (v.c_id == _renderinput.countryId)
+            {
+                if (v.l_position == l_position) {
+                    _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+                }
+            }
+        });
+    }
+
 
     this.hideFrequencyAll = function() {
         Onetimepan.hide();

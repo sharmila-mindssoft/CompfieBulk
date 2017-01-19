@@ -4935,7 +4935,7 @@ BEGIN
     from tbl_geographies as t1 inner join tbl_geography_levels as t2
     on t1.level_id = t2.level_id inner join tbl_user_countries t3 on
     t3.country_id = t2.country_id where t3.user_id = userid
-    order by geography_name;
+    order by t2.level_position, geography_name;
     -- 5
     select t1.level_id, t1.level_position, t1.level_name,
     t1.country_id from tbl_geography_levels as t1
