@@ -181,6 +181,7 @@ function processLogin(username, password, shortName, callback) {
   });
 }
 function performLogin(e_button, e_email, e_password, e_captcha) {
+  displayLoginMessage('');
   if (!isLoginValidated(e_email, e_password, e_captcha))
     return;
   displayLoginLoader();

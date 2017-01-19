@@ -15,6 +15,7 @@ function FetchBack() {
                 STATUTORY_LEVEL_INFO = response.statutory_levels;
                 GEOGRAPHY_LEVEL_INFO = response.geography_level_info;
                 GEOGRAPHY_INFO = response.geography_info;
+                console.log(GEOGRAPHY_INFO);
                 FREQUENCY_INFO = response.compliance_frequency;
                 REPEATSTYPE_INFO = response.compliance_repeat_type;
                 APPROVALSTATUS_INFO = response.compliance_approval_status;
