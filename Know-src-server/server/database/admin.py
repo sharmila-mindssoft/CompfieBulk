@@ -41,7 +41,8 @@ __all__ = [
     "get_domain_user_data",
     "save_reassign_techno_manager", "save_reassign_techno_executive",
     "save_reassign_domain_manager", "save_reassign_domain_executive",
-    "save_user_replacement", "is_user_idle", "get_reassign_client_groups"
+    "save_user_replacement", "is_user_idle", "get_reassign_client_groups",
+    "check_user_mappings"
 ]
 
 
@@ -1068,6 +1069,19 @@ def get_user_mapping_form_data(db, session_user):
         user_mappings
     )
 
+def check_user_mappings(db, request, session_user):
+    country_id = request.country_id
+    domain_id = request.domain_id
+    parent_user_id = request.parent_user_id
+    child_user_id = request.child_user_id
+    user_cat_id = request.user_category_id
+
+    rows = db.call_proc("sp_check_user_mapping", [country_id, domain_id, parent_user_id, child_user_id, user_cat_id], 1)
+    if rows :
+        if rows[0].get('cnt') > 0 :
+            return False
+    else :
+        return True
 
 def save_user_mappings(db, request, session_user):
     current_time_stamp = get_date_time()

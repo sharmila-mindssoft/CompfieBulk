@@ -8329,3 +8329,35 @@ END //
 
 DELIMITER ;
 
+-- -------------
+-- get user mapped id
+-- --------------
+DROP PROCEDURE IF EXISTS `sp_check_user_mapping`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_user_mapping`(in
+    country_id_ int(11), domain_id_ int(11), p_user_id_ int(11), c_user_id_ int(11), u_cat_id_ int(11))
+BEGIN
+
+    if u_cat_id_ = 6  THEN
+        select count(user_id) as cnt from tbl_user_legalentity as t1, tbl_legal_entities as t2
+        where t1.legal_entity_id = t2.legal_entity_id and
+        t1.user_id = c_user_id_  and t2.country_id = country_id_;
+    end if;
+
+    if u_cat_id_ = 7  THEN
+        select count(user_id) as cnt from tbl_user_units as t1, tbl_units as t2
+        where t1.unit_id = t2.unit_id and t1.domain_id = domain_id_ and 
+        t1.user_id = c_user_id_  and t2.country_id = country_id_ and 
+        t1.client_id in (select client_id from tbl_user_clients where user_id = p_user_id_;
+    end if;
+
+    if u_cat_id_ = 8 THEN
+        select count(user_id) as cnt from tbl_user_units as t1, tbl_units as t2
+        where t1.unit_id = t2.unit_id and t1.domain_id = domain_id_ and
+        t1.user_id = c_user_id_  and t2.country_id = country_id_;
+    end if;
+END //
+
+DELIMITER ;

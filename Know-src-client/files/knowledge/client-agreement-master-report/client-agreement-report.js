@@ -313,6 +313,7 @@ function processSubmit(csv) {
             _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit,
             function(error, response) {
                 if (error != null) {
+                    hideLoader();
                     displayMessage(error);
                 } else {
                     $('.details').show();
@@ -322,6 +323,7 @@ function processSubmit(csv) {
                             $(this).removeClass();
                         });
                     if (csv) {
+                        hideLoader();
                         var download_url = response.link;
                         window.open(download_url, '_blank');
                     } else {
@@ -361,7 +363,6 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
-
     var current_id = id_element[0].id;
     if (current_id == 'country') {
         GroupVal.val('');
