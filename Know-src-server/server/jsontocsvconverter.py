@@ -22,8 +22,8 @@ class ConvertJsonToCSV(object):
         s = str(uuid.uuid4())
         file_name = "%s.csv" % s.replace("-", "")
         self.FILE_DOWNLOAD_PATH = "%s/%s" % (
-            FILE_DOWNLOAD_BASE_PATH, file_name)
-        self.FILE_PATH = "%s/%s" % (CSV_DOWNLOAD_URL, file_name)
+            CSV_DOWNLOAD_URL, file_name)
+        self.FILE_PATH = "%s/%s" % (CSV_PATH, file_name)
         self.documents_list = []
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
