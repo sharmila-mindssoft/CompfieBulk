@@ -247,6 +247,7 @@ class API(object):
     ):
         if type(response_data) is not str :
             data = response_data.to_structure()
+            #print data
             s = json.dumps(data, indent=2)
         else:
             s = response_data
@@ -418,7 +419,7 @@ class API(object):
 
     @api_request(clientreport.RequestFormat)
     def handle_client_reports(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_report_requests(request, db, session_user, client_id)
+        return controller.process_client_report_requests(request, db, session_user, client_id, le_id)
 
     @api_request(dashboard.RequestFormat)
     def handle_client_dashboard(self, request, db, session_user, client_id):

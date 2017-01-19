@@ -17,7 +17,6 @@
             <div class="panel panel-default panel-info">
                 <div class="panel-body">
                     <div class="panel-group col-lg-12 no-padding tbody-clientgroup-list m-b-0" id="accordion" role="tablist" aria-multiselectable="true">
-
                     </div>
                 </div>
             </div>
@@ -25,11 +24,10 @@
     </div>
 </div>
 <div id="templates">
-
-<div id="act-templates" class="default-display-none">
-      <div class="panel panel-default bx-shadow-none p-head">
-        <div class="panel-heading p-5 acc-title" role="tab">
-            <h4 class="panel-title">
+    <div id="act-templates" class="default-display-none">
+        <div class="panel panel-default bx-shadow-none p-head">
+            <div class="panel-heading p-5 acc-title" role="tab">
+                <h4 class="panel-title">
               <div class="act-status" style="float:left; width:3%;">
                  
               </div>
@@ -47,37 +45,36 @@
                 </a>
               </div>
             </h4>
-        </div>
-        <div class="panel-collapse collapse coll-title" role="tabpanel">
-            <div class="panel-body no-padding">
-                <div class="dataTable_wrapper">
-                    <table  class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
-                        <thead>
-                            <tr>
-                                <th align="center" width="2%">#</th>
-                                <th width="30%">Country</th>
-                                <th width="30%">Legal Entity Name</th>
-                                <th width="15%" class="text-center">Status</th>
-                                <th width="20%">Approval Status</th>
-                            </tr>
-
-                            <tr>
-                                <td align="center"></td>
-                                <td>
-                                    <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
-                                        <input class="form-control input-sm filter-text-box js-filter" placeholder="Country" type="text" id="search-country">
-                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
-                                        <input class="form-control input-sm filter-text-box js-filter" placeholder="Legal Entity Name" type="text" id="search-legalentity">
-                                        <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                    </div>
-                                </td>
-                                <td class="text-center"></td>
-                                <td>
-                                   <!--  <div class="btn-group">
+            </div>
+            <div class="panel-collapse collapse coll-title" role="tabpanel">
+                <div class="panel-body no-padding">
+                    <div class="dataTable_wrapper">
+                        <table class="table table-striped dt-responsive nowrap js-filtertable" cellspacing="0" width="100%">
+                            <thead>
+                                <tr>
+                                    <th align="center" width="2%">#</th>
+                                    <th width="30%">Country</th>
+                                    <th width="30%">Legal Entity Name</th>
+                                    <th width="15%" class="text-center">Status</th>
+                                    <th width="20%">Approval Status</th>
+                                </tr>
+                                <tr>
+                                    <td align="center"></td>
+                                    <td>
+                                        <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
+                                            <input class="form-control input-sm filter-text-box js-filter" placeholder="Country" type="text" id="search-country">
+                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
+                                            <input class="form-control input-sm filter-text-box js-filter" placeholder="Legal Entity Name" type="text" id="search-legalentity">
+                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                        </div>
+                                    </td>
+                                    <td class="text-center"></td>
+                                    <td>
+                                        <!--  <div class="btn-group">
                                         <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
                                             All
                                             <span class="caret"></span>
@@ -89,41 +86,38 @@
                                             <li><a>Rejected</a></li>
                                         </ul>
                                     </div> -->
-                                     <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10 ">
-                                        <select class="form-control input-sm js-filter width-100px">
-                                            <option value="">All</option>
-                                            <option value="Pending">Pending</option>
-                                            <option value="Approved">Approved</option>
-                                            <option value="Rejected">Rejected</option>
-                                            <option value="Closed">Closed</option>
-                                        </select>
-                                        
-                                    </div>
-                                    
-                                </td>
-                            </tr>
-                        </thead>
-                        <tbody class="tbody-le-list">                               
-                        </tbody>
-                    </table>
+                                        <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10 ">
+                                            <select class="form-control input-sm js-filter width-100px">
+                                                <option value="">All</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Approved">Approved</option>
+                                                <option value="Rejected">Rejected</option>
+                                                <option value="Closed">Closed</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody class="tbody-le-list">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-      </div>
-  </div>
-  <div id="le-value">
-    <table class="table-le-values">
-      <tr class="le-details">
-          <td><span class="sno"> </span></td>
-          <td class="countryname"></td>
-          <td class="legalentityname"></td>
-          <td align="center" class="status"></td>
-          <td class="approvalstatus"></td>
-      </tr>
-    </table>
-  </div>
+    </div>
+    <div id="le-value">
+        <table class="table-le-values">
+            <tr class="le-details">
+                <td><span class="sno"> </span></td>
+                <td class="countryname"></td>
+                <td class="legalentityname"></td>
+                <td align="center" class="status"></td>
+                <td class="approvalstatus"></td>
+            </tr>
+        </table>
+    </div>
 </div>
-
 <!-- Client Master Add Start -->
 <div class="container default-display-none" id="clientgroup-add">
     <div class="row" id="animationSandbox">
@@ -158,16 +152,16 @@
                                 </div>
                             </div>
                             <div class="cm-header col-sm-6 action-div">
-                                 <div class="form-group ">
-                                        <label class="col-sm-5 control-label">Action:</label>
-                                        <div class="col-sm-6 actions">
-                                            <select class="form-control input-sm">
-                                                <option value="1">Edit</option>
-                                                <option value="2">Renewal</option>
-                                                <option value="3">Amendment</option>
-                                            </select>
-                                        </div>
+                                <div class="form-group ">
+                                    <label class="col-sm-5 control-label">Action:</label>
+                                    <div class="col-sm-6 actions">
+                                        <select class="form-control input-sm">
+                                            <option value="1">Edit</option>
+                                            <option value="2">Renewal</option>
+                                            <option value="3">Amendment</option>
+                                        </select>
                                     </div>
+                                </div>
                             </div>
                             <div class="cm-header col-sm-6">
                                 <div class="form-group">
@@ -186,11 +180,11 @@
                                         </abbr>
                                     </div>
                                     <div class="icon-3x col-sm-2 p-t-7 email-edit-icon default-display-none">
-                                        <i class="fa fa-pencil text-primary c-pointer" ></i><!--  onclick="chenge_edit(1)" -->
+                                        <i class="fa fa-pencil text-primary c-pointer"></i>
+                                        <!--  onclick="chenge_edit(1)" -->
                                     </div>
-                                </div> 
+                                </div>
                             </div>
-                           
                             <div class=" cm-header col-sm-6 remarks-div">
                                 <div class="form-group remarks_text ">
                                     <label class="col-sm-5 control-label">Remarks:</label>
@@ -199,7 +193,7 @@
                                     </label>
                                 </div>
                             </div>
-                           <!--  <div class="col-sm-12">
+                            <!--  <div class="col-sm-12">
                                 <div class="col-sm-6">
                                    
                                 </div>
@@ -224,16 +218,16 @@
                                 <h4 class="page-title">Date Configuration</h4>
                             </div>
                             <div class="table-responsive">
-                            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th width="35%">Domain</th>
-                                        <th width="65%" colspan="2" class="text-center">Timeline</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="tbody-dateconfiguration-list">
-                                </tbody>
-                            </table>
+                                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th width="35%">Domain</th>
+                                            <th width="65%" colspan="2" class="text-center">Timeline</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="tbody-dateconfiguration-list">
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="form-group text-center m-b-0 p-t-7">
                                 <button class="btn btn-primary waves-effect waves-light save" type="button"> Submit </button>
@@ -326,7 +320,7 @@
                             </select>
                         </div>
                         <div class="col-sm-2 p-t-7">
-                            <a class="waves-effect waves-light c-pointer add-business-group" type="button" onclick="addOrSelectBusinessGroup('add', this, 0)" > <i class="fa fa-plus-circle text-primary addbg"></i> </a>
+                            <a class="waves-effect waves-light c-pointer add-business-group" type="button" onclick="addOrSelectBusinessGroup('add', this, 0)"> <i class="fa fa-plus-circle text-primary addbg"></i> </a>
                             <!-- onclick="addOrSelectBusinessGroup('add', this)" -->
                         </div>
                     </div>
@@ -360,7 +354,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">Contract To<span class="mandatory">*</span></label>
@@ -388,33 +381,33 @@
                     </div>
                 </div>
             </div>
-          
             <div class="col-sm-4">
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">File Space<span class="mandatory">*</span></label>
                     <div class="col-sm-3 no-padding-right" id="file-space-div">
-                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex=""><abbr class="l-h-30"> GB</abbr>
+                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex="">
+                        <abbr class="l-h-30"> GB</abbr>
                     </div>
                     <div class="col-sm-4 pull-left"></div>
                 </div>
             </div>
-           
-         <div class="card-box table-responsive">
-            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap domain-table" width="100%" cellspacing="0">
-                <thead>
-                    <tr>
-                        <th width="30%">Domain <span class="mandatory">*</span></th>
-                        <th width="30%">Activation Date <span class="mandatory">*</span></th>
-                        <th width="30%">Organization <span class="mandatory">*</span></th>
-                        <th width="10%" class="text-center"><abbr class="remove-domain-heading">Remove</abbr></th>
-                    </tr>
-                </thead>
-                <input type="hidden" class="domain-count" value='0' />
-                <tbody class="domain-list">
-                </tbody>
-            </table>
+            <div class="card-box table-responsive">
+                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap domain-table" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th width="30%">Domain <span class="mandatory">*</span></th>
+                            <th width="30%">Activation Date <span class="mandatory">*</span></th>
+                            <th width="30%">Organization <span class="mandatory">*</span></th>
+                            <th width="10%" class="text-center">
+                                <abbr class="remove-domain-heading">Remove</abbr>
+                            </th>
+                        </tr>
+                    </thead>
+                    <input type="hidden" class="domain-count" value='0' />
+                    <tbody class="domain-list">
+                    </tbody>
+                </table>
             </div>
-
             <!-- <button type="button" class="btn btn-info btn-sm waves-effect waves-light pull-right m-t-5">
             <span><i class="fa fa-plus"></i></span> 
           </button> -->
@@ -442,16 +435,17 @@
                 </div>
             </td>
             <td>
-                    <a class="c-pointer addOrganizationType" ><!--  href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" -->
-                        <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title=""></i> Add Organization
-                    </a>
-                </div>
-            </td>
-            <td class="icon-3x text-center">
-                <i class="fa fa-trash text-primary c-pointer remove-domain"></i>
-            </td>
-        </tr>
-    </table>
+                <a class="c-pointer addOrganizationType">
+                    <!--  href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" -->
+                    <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title=""></i> Add Organization
+                </a>
+</div>
+</td>
+<td class="icon-3x text-center">
+    <i class="fa fa-trash text-primary c-pointer remove-domain"></i>
+</td>
+</tr>
+</table>
 </div>
 <div class="dconfig-templates default-display-none">
     <table class="table-dconfig-list">
@@ -505,7 +499,6 @@
             </td>
         </tr>
     </table>
-
 </div>
 <div class="user-list-drop-down default-display-none">
     <li></li>
@@ -519,16 +512,15 @@
     </span>
 </div>
 <div class="tooltip-templates default-display-none">
-    <div class="text-with-tooltip"  data-toggle="tooltip" data-original-title="">
+    <div class="text-with-tooltip" data-toggle="tooltip" data-original-title="">
         <abbr title=""></abbr>
     </div>
 </div>
-
 <div class="select-option default-display-none">
     <select>
         <option></option>
     </select>
 </div>
 <script type="text/javascript" src="/script/client-master/client-master.js"></script>
-                <div class="form-group col-sm-6 m-b-0 add-org">
-{% endblock %}
+<div class="form-group col-sm-6 m-b-0 add-org">
+    {% endblock %}

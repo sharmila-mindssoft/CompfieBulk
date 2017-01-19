@@ -82,8 +82,8 @@ function PageControls() {
         var legalEntityList = REPORT._entities;
         if (legalEntityList.length == 0 && text_val != '')
             displayMessage(message.domainname_required);
-        var condition_fields = ["is_active", "c_id"];
-        var condition_values = [true, countryId.val()];
+        var condition_fields = ["c_id"];
+        var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -241,19 +241,18 @@ ReassignHistory.prototype.loadSearch = function() {
 
 ReassignHistory.prototype.fetchSearchList = function() {
     t_this = this;
+    t_this._countries = client_mirror.getUserCountry();
+    t_this._entities = client_mirror.getUserLegalEntity();
+    
     //var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"c_id":1,"le_name":"RG Legal Entity","is_active":true},{"le_id":2,"c_id":1,"le_name":"ABC Legal Entity","is_active":true}],"users":[{"u_id":1,"u_name":"Siva ","is_active":true},{"u_id":2,"u_name":"Hari","is_active":true}]}';
     //var object = jQuery.parseJSON(jsondata);
     client_mirror.getReassignedHistoryReportFilters(function(error, response) {
         if (error == null) {
-            alert(t_this._countries.toSource());
-            t_this._countries = object.countries;
-            //t_this._entities = object.entities;
-            //t_this._users = object.users;
+            t_this._countries = response.countries;
         } else {
             t_this.possibleFailures(error);
         }
     });
-    
 };
 
 ReassignHistory.prototype.fetchDomainList = function(le_id) {
