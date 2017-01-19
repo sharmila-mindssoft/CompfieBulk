@@ -413,20 +413,13 @@ function initMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                rdata = parseJSON(jqXHR.responseText);
-                rdata = atob(rdata.substring(5));
-                console.log(textStatus, errorThrown);
-                // alert(jqXHR.responseText.toLowerCase().indexOf("csrf"));
                 if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
                     clearSession();
                     window.location.href = login_url;
                 }
-
-                // console.log(jqXHR.responseText)
+                rdata = parseJSON(jqXHR.responseText);
+                rdata = atob(rdata.substring(5));
                 callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
-                // alert("textStatus:"+textStatus);
-                // alert("errorThrown:"+errorThrown);
-                // callback(error, null);
             }
         });
     }
@@ -453,6 +446,10 @@ function initMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
+                    clearSession();
+                    window.location.href = login_url;
+                }
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
                 callback(rdata, null);
@@ -495,6 +492,10 @@ function initMirror() {
                 window.location.href = login_url;
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
+                    clearSession();
+                    window.location.href = login_url;
+                }
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
                 callback(rdata.responseText);
@@ -1895,6 +1896,10 @@ function initMirror() {
                     callback(status, response);
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
+                    clearSession();
+                    window.location.href = login_url;
+                }
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata);
                 callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
