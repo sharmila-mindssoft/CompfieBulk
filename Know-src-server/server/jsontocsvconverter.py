@@ -5,7 +5,7 @@ import uuid
 import shutil
 import zipfile
 import datetime
-
+from server.constants import CSV_DOWNLOAD_URL
 from server.common import (
     string_to_datetime, datetime_to_string
 )
@@ -23,7 +23,7 @@ class ConvertJsonToCSV(object):
         file_name = "%s.csv" % s.replace("-", "")
         self.FILE_DOWNLOAD_PATH = "%s/%s" % (
             FILE_DOWNLOAD_BASE_PATH, file_name)
-        self.FILE_PATH = "%s/%s" % (CSV_PATH, file_name)
+        self.FILE_PATH = "%s/%s" % (CSV_DOWNLOAD_URL, file_name)
         self.documents_list = []
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
@@ -154,7 +154,7 @@ class ConvertJsonToCSV(object):
         contract_from = request.contract_from
         contract_to = request.contract_to
         from_count = 0
-        page_count = 10
+        page_count = 10000
 
         if contract_from is not None:
             contract_from = string_to_datetime(contract_from).date()
@@ -228,7 +228,7 @@ class ConvertJsonToCSV(object):
         contract_from = request.contract_from
         contract_to = request.contract_to
         from_count = 0
-        page_count = 10
+        page_count = 10000
 
         if contract_from is not None:
             contract_from = string_to_datetime(contract_from).date()
