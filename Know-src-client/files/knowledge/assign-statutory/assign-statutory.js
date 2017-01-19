@@ -168,7 +168,7 @@ function callAPI(api_type) {
     }
 
     else if (api_type == SAVE_API || api_type == SUBMIT_API){
-        displayLoader();
+        //displayLoader();
         var submission_status;
         if(api_type == SAVE_API){
             submission_status = 1;
@@ -378,11 +378,17 @@ function pageControls() {
     });
 
     SubmitButton.click(function(){
-        callAPI(SUBMIT_API);
+        displayLoader();
+        setTimeout(function(){
+          callAPI(SUBMIT_API)
+        }, 500);
     });
 
     SaveButton.click(function(){
-        callAPI(SAVE_API);
+        displayLoader();
+        setTimeout(function(){
+          callAPI(SAVE_API)
+        }, 500);
     });
 
     SelectAll.click(function() {
@@ -757,7 +763,7 @@ function loadSingleUnitCompliances() {
     }else{
         SubmitButton.show();
         SaveButton.show();
-        $(".total_count").text(totalRecord);
+        $(".total_count").text('Showing 1 to ' + (sno-1) + ' of ' + totalRecord + ' entries');
         $(".total_count_view").show();
     }
     hideLoader();
@@ -929,7 +935,7 @@ function loadMultipleUnitCompliances() {
     }else{
         SubmitButton.show();
         SaveButton.show();
-        $(".total_count").text(totalRecord);
+        $(".total_count").text('Showing 1 to ' + (sno-1) + ' of ' + totalRecord + ' entries');
         $(".total_count_view").show();
     }
     hideLoader();

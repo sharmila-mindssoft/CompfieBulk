@@ -532,10 +532,11 @@ BEGIN
         date(t1.created_on) >= _from_date
         AND date(t1.created_on) <= _to_date
         AND COALESCE(t1.form_id,'') LIKE _form_id
-        AND t1.user_category_id = _category_id
+        AND t1.user_id LIKE _user_id
         -- AND t2.user_id LIKE _user_id
         -- AND t2.user_category_id in (1,2,3,4,5,6,7,8)
-        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        -- ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        ORDER BY t1.created_on DESC
         limit _from_limit, _to_limit;
 
         SELECT count(0) as total FROM tbl_activity_log
@@ -557,7 +558,8 @@ BEGIN
         -- AND t3.user_id = t2.user_id
         -- AND t2.user_id LIKE _user_id
         -- AND t2.user_category_id LIKE _category_id
-        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        -- ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        ORDER BY t1.created_on DESC
         limit _from_limit, _to_limit;
 
         SELECT count(0) as total FROM tbl_activity_log
@@ -6526,32 +6528,19 @@ CREATE PROCEDURE `sp_get_messages`(
 IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
+    
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
 
-    IF @u_cat_id = 1  THEN
-
-        SELECT m.message_id, m.message_heading, m.message_text, m.link,
-        'Compfie Admin' as created_by,
-        m.created_on
-        from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
-        AND mu.user_id = userid_
-        where m.user_category_id = @u_cat_id
-        order by created_on DESC limit pagecount_;
-
-    end if;
-
-    IF @u_cat_id > 2  THEN
-        SELECT m.message_id, m.message_heading, m.message_text, m.link,
-        (SELECT concat(employee_code, ' - ', employee_name)
-        from tbl_users where user_id = m.created_by) as created_by,
-        m.created_on
-        from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
-        AND mu.user_id = userid_
-        where m.user_category_id = @u_cat_id
-        order by created_on DESC limit pagecount_;
-    end if;
-
-
+    SELECT m.message_id, m.message_heading, m.message_text, m.link, m.created_by,
+    IF(uld.user_category_id <= 2, 'Compfie Admin', 
+    (SELECT concat(employee_code, ' - ', employee_name)
+    from tbl_users where user_id = m.created_by)) as created_by,
+    m.created_on
+    from tbl_messages m 
+    INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
+    INNER JOIN tbl_user_login_details uld ON uld.user_id = m.created_by
+    where m.user_category_id = @u_cat_id and mu.user_id = userid_
+    order by created_on DESC limit pagecount_;
 
 END //
 
