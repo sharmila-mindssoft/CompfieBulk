@@ -342,7 +342,6 @@ function ListPage() {
                     _listPage.displayMappingEdit(mapping_id, c.comp_id);
                 });
                 if (c.is_approved == 4) {
-                    console.log(c.remarks);
                     row.addClass('rejected_row');
                     $('.comp_approval_status', row).append(
                         '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+ c.remarks +'" data-original-title="Rejected reason goes here."></i>'

@@ -961,8 +961,13 @@ function RenderInput() {
             Temp_id.val(data.comp_id);
         }
 
+        if (Temp_id.val() == '') {
+            Temp_id.val(_renderinput.mapped_compliances.length+1);
+        }
+        console.log(data.comp_id);
+        console.log(data.temp_id);
+        console.log(Temp_id.val());
         // display file name
-        console.log(data.f_f_list);
         _renderinput.f_f_list = data.f_f_list;
         if (data.f_f_list.length > 0) {
             var tFN  = data.f_f_list[0]['file_name'];
@@ -979,7 +984,12 @@ function RenderInput() {
         Penal.val('');
         ReferenceLink.val('');
         RepeatsEvery.val('');
+        RepeatsType.val();
         Duration.val('');
+        DurationType.val('');
+        $('#otstatutory_date').val('');
+        $('#otstatutory_month').val('');
+        $('#ottriggerbefore').val('');
 
         Comp_id.val('');
         Temp_id.val('');
@@ -1013,7 +1023,6 @@ function RenderInput() {
         var j = 1;
         $.each(_renderinput.mapped_compliances, function(ke, v) {
             cObj = $('#templates #compliance-templates .table-row').clone();
-            console.log(v);
             $('.sno', cObj).text(j);
             $('.statutory-provision', cObj).text(v.s_provision);
             $('.task', cObj).text(v.c_task);
@@ -1421,7 +1430,7 @@ _viewPage = new ViewPage();
 
 function pageControls() {
     AddButton.click(function() {
-
+        _renderinput.resetField();
         showTab();
         _listPage.hide();
         _viewPage.show();
@@ -1741,14 +1750,11 @@ function pageControls() {
             f_list['file_name'] = f_Name;
             f_list['file_content'] = null;
             info['f_f_list'] = [f_list];
-            console.log(f_list);
         }
         else {
             _renderinput.uploaded_files_fcids[fCId] = false;
         }
 
-        console.log(_renderinput.form_data);
-        console.log(_renderinput.uploaded_files_fcids);
         is_duplidate = false
         if (Temp_id.val() != '') {
             $.each(_renderinput.mapped_compliances, function(k, v) {
@@ -1927,7 +1933,6 @@ function pageControls() {
 
     $('#upload_file').on('change', function(e){
         var tFN = this.files[0].name;
-        console.log(tFN);
         var fN = tFN.substring(0, tFN.indexOf('.'));
         var fE = tFN.substring(tFN.lastIndexOf('.') + 1);
         f_Size = this.files[0].size;
