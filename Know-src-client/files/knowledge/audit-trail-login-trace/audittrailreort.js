@@ -20,6 +20,7 @@ CountryVal = $('#countryval');
 Country = $('#country')
 Category = $('#categoryName');
 Show_btn = $("#show");
+Export_btn = $("#export");
 var msg = message;
 
 //Autocomplete variable declaration
@@ -32,6 +33,7 @@ var ItemsPerPage = $('#items_per_page');
 var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
+var csv = false;
 
 a_page = null;
 function Auditpage() {
@@ -44,6 +46,7 @@ function Auditpage() {
     this._on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;
+    this._csv = false;
 }
 
 /*Auditpage.prototype.displayMessage = function(message){
@@ -178,6 +181,8 @@ Auditpage.prototype.validateMandatory = function(){
     return is_valid;
 };
 
+
+
 // Binds the data from DB
 Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     $('.grid-table').show();
@@ -219,6 +224,36 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     a_page.hideLoader();
 };
 
+//To export data
+Auditpage.prototype.exportData = function() {
+    //this.displayLoader();
+    if($('.tbody-audittrail-list').find('tr').length > 0){
+        var t_this = this;
+        _from_date = this.getValue("fromdate", null);
+        _to_date = this.getValue("todate", null);
+        _user_id = this.getValue("user", null);
+        _form_id = this.getValue("form", null);
+        _country_id = this.getValue("country", null);
+        _category_id =this.getValue("category", null);
+
+        console.log(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id)
+        displayLoader
+        mirror.exportAuditTrail(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, csv,
+            function(error, response) {
+                hideLoader();
+                if(error == null){
+                    console.log(data.link)
+                    if (csv) {
+                      var download_url = data.link;
+                      window.open(download_url, '_blank');
+                    }
+                }
+            });
+    }else{
+        displayMessage(message.export_empty);
+    }
+};
+
 // To get the audit log data from DB - by passing user type, user name, form name and dates, country
 Auditpage.prototype.fetchData = function() {
     //this.displayLoader();
@@ -258,6 +293,11 @@ Auditpage.prototype.fetchData = function() {
                     t_this.createPageView(t_this, t_this._total_record);
                 }
                 t_this._total_record = response.total_records;
+                if(t_this._total_record > 0){
+                    Export_btn.show();
+                }else{
+                    Export_btn.hide();
+                }
                 t_this.renderAuditData(t_this, t_this._auditData);
             }
         }
@@ -601,17 +641,20 @@ initializeControlEvents = function(a_page){
 
     Show_btn.click(function(e) {
         //a_page.resetFields();
+        Export_btn.hide();
         is_valid = a_page.validateMandatory();
         if (is_valid == true) {
             a_page._on_current_page = 1;
             a_page._total_record = 0;
             a_page.fetchData();
             a_page.renderPageControls();
-
         }
     });
 
-
+    Export_btn.click(function(e) {
+        csv = true;
+        a_page.exportData();
+    });
     on_page_load = function() {
         a_page.resetFields();
         a_page.renderPageControls();
