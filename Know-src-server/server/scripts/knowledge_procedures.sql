@@ -4444,9 +4444,9 @@ BEGIN
     as is_edit
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
-    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = 11
+    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-    where t3.user_id = 11
+    where t3.user_id = uid
     group by t.unit_id, t1.domain_id;
 
 
@@ -6528,15 +6528,15 @@ CREATE PROCEDURE `sp_get_messages`(
 IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
-    
+
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
 
     SELECT m.message_id, m.message_heading, m.message_text, m.link, m.created_by,
-    IF(uld.user_category_id <= 2, 'Compfie Admin', 
+    IF(uld.user_category_id <= 2, 'Compfie Admin',
     (SELECT concat(employee_code, ' - ', employee_name)
     from tbl_users where user_id = m.created_by)) as created_by,
     m.created_on
-    from tbl_messages m 
+    from tbl_messages m
     INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
     INNER JOIN tbl_user_login_details uld ON uld.user_id = m.created_by
     where m.user_category_id = @u_cat_id and mu.user_id = userid_
