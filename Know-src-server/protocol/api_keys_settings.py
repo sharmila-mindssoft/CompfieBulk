@@ -562,7 +562,7 @@ api_params = {
     "emp_code_name": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     'statutory_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     'grp_mode': {'type': 'string', 'length': 50, 'validation_method': None, 'is_optional': False},
-    "u_m_none": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
+    "u_m_none": {'type': 'TEXT', 'length': 1000, 'validation_method': None, 'is_optional': True},
     "usermapping_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "UserMappingDomain"},
     "country_wise_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
     "units_report" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "ClientUnitDetailsReport"},
@@ -618,6 +618,8 @@ api_params = {
     "console_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
 
+    "export_headers": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
+    "export_data": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': None, 'is_optional': False},
 
 }
 api_params['domain_id'] = api_params.get('d_id')
