@@ -1432,6 +1432,20 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
+  function exportClientDetailsReportData(countryId, clientId, legalEntityId, csv, u_m_none, callback){
+    callerName = 'techno_report';
+    var request = [
+      'ExportClientDetailsReportData',
+      {
+        'country_id': countryId,
+        'client_id': clientId,
+        'legal_entity_id': legalEntityId,
+        'csv': csv,
+        'u_m_none': u_m_none
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
   //Statutory Notifications List
   function getStatutoryNotificationsFilters(callback) {
     callerName = 'techno_report';
@@ -1495,6 +1509,23 @@ function initMirror() {
         'category_id': categoryId,
         'record_count': recordCount,
         'page_count': pageCount
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function exportAuditTrail(fromDate, toDate, userId, formId, countryId, categoryId, csv, callback) {
+    callerName = 'general';
+    var request = [
+      'ExportAuditTrails',
+      {
+        'from_date': fromDate,
+        'to_date': toDate,
+        'user_id_search': userId,
+        'form_id_search': formId,
+        'country_id': countryId,
+        'category_id': categoryId,
+        'csv': csv
       }
     ];
     apiRequest(callerName, request, callback);
@@ -2209,7 +2240,7 @@ function initMirror() {
     apiRequest(callerName, request, callback);
   }
 
-  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, callback) {
+  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, csv, from_count, page_count, callback) {
     callerName = 'techno_report';
     var request = [
       'GetUserMappingDetailsReportData',
@@ -2218,6 +2249,9 @@ function initMirror() {
         'client_id': clientId,
         'legal_entity_id': legalEntityId,
         'u_m_none': u_m_none,
+        'csv': csv,
+        'from_count': from_count,
+        'page_count': page_count
       }
     ];
     apiRequest(callerName, request, callback);
@@ -2278,7 +2312,21 @@ function initMirror() {
     ];
     apiRequest(callerName, request, callback);
   }
-
+  function exportReassignUserReportData(cg_id, u_id, g_id, u_m_none, csv, callback)
+  {
+    callerName = 'techno_report';
+    var request = [
+      'ExportReassignUserReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id,
+        "u_m_none": u_m_none,
+        "csv": csv
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
   function getReassignUserDomainReportData(cg_id, u_id, g_id, bg_id, le_id, d_id, callback){
     callerName = 'techno_report';
     var request = [
@@ -2654,6 +2702,7 @@ function initMirror() {
     getClientProfile: getClientProfile,
     getClientDetailsReportFilters: getClientDetailsReportFilters,
     getClientDetailsReport: getClientDetailsReport,
+    exportClientDetailsReportData: exportClientDetailsReportData,
     getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
     getAssignedStatutoryReport: getAssignedStatutoryReport,
     getStatutoryNotificationsFilters: getStatutoryNotificationsFilters,
@@ -2756,6 +2805,8 @@ function initMirror() {
     getIPSettingsReportFilter: getIPSettingsReportFilter,
     getIPSettingsReport: getIPSettingsReport,
     getAllocateServerReportData: getAllocateServerReportData,
+    exportReassignUserReportData: exportReassignUserReportData,
+    exportAuditTrail: exportAuditTrail
   };
 }
 var mirror = initMirror();
