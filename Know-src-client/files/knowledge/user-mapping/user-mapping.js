@@ -292,16 +292,26 @@ function activateChildUsers(){
         });
     }   
     //}
-    
 }
 
 function activateChildUser(element, user_id){
     var chkstatus = $(element).attr('class');
     if (chkstatus == 'active'){
-        $(element).removeClass('active');
-        $(element).find('i').removeClass('fa fa-check pull-right');
-        index = ACTIVE_CHILD_USERS.indexOf(user_id);
-        ACTIVE_CHILD_USERS.splice(index, 1);
+        displayLoader();
+        mirror.checkUserMappings(selected_country, selected_domain,
+            ACTIVE_PARENT_USER, parseInt(user_id), parseInt(uCategory), 
+            function (error, response) {
+                if (error == null) {
+                    $(element).removeClass('active');
+                    $(element).find('i').removeClass('fa fa-check pull-right');
+                    index = ACTIVE_CHILD_USERS.indexOf(user_id);
+                    ACTIVE_CHILD_USERS.splice(index, 1);
+                    hideLoader();
+                } else {
+                    displayMessage(error);
+                    hideLoader();
+                }
+        });
     }else{
         $(element).addClass('active');
         $(element).find('i').addClass('fa fa-check pull-right');

@@ -1201,3 +1201,8 @@ function displayLoader() {
 function hideLoader() {
   $(".loading-indicator-spin").hide();
 }
+
+$(function() {
+    $( ":input" ).attr('autocomplete','off');
+});
+

@@ -82,6 +82,9 @@ def process_admin_request(request, db):
     elif type(request_frame) is admin.SaveUserMappings:
         result = process_save_user_mappings(db, request_frame, session_user)
 
+    elif type(request_frame) is admin.CheckUserMappings:
+        result = process_check_user_mappings(db, request_frame, session_user)
+
     elif type(request_frame) is admin.GetReassignUserAccountFormdata:
         result = get_reassign_user_account_form_data(
             db, request_frame, session_user)
@@ -489,6 +492,11 @@ def process_save_user_mappings(db, request, session_user):
     save_user_mappings(db, request, session_user)
     return admin.SaveUserMappingsSuccess()
 
+def process_check_user_mappings(db, request, session_user):
+    if check_user_mappings(db, request, session_user) is False:
+        return admin.CannotRemoveUserTransactionExists()
+    else:
+        return admin.CheckUserMappingsSuccess()
 
 def get_reassign_user_account_form_data(db, request, session_user):
 
