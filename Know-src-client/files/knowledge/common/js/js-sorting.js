@@ -71,7 +71,7 @@
             trs.each(function(index, tr) {
                 var $e = $(tr).children().eq(th_index);
                 var sort_val = $e.data("sort-value");
-                
+
                 // Store and read from the .data cache for display text only sorts
                 // instead of looking through the DOM every time
                 if (typeof(sort_val) === "undefined") {
@@ -110,7 +110,7 @@
                 });
             });
 
-            
+
         }, 10);
 
         return $this_th;
@@ -153,3 +153,5 @@
     };
 
 })(jQuery);
+=======
+!function(t){t.fn.jssorting=function(r){return this.each(function(){var n=t(this);r=r||{},r=t.extend({},t.fn.jssorting.default_sort_fns,r),n.data("sortFns",r),n.on("click.jssorting","thead th span",function(){t(this).stupidsort()})})},t.fn.stupidsort=function(r){var n=t(this),a=0,s=t.fn.jssorting.dir,o=n.closest("table"),e=n.data("sort")||null;if(null!==e){n.parents("tr").find("th span").slice(0,t(this).index()).each(function(){var r=t(this).attr("colspan")||1;a+=parseInt(r,10)});var i;if(1==arguments.length?i=r:(i=r||n.data("sort-default")||s.ASC,n.data("sort-dir")&&(i=n.data("sort-dir")===s.ASC?s.DESC:s.ASC)),n.data("sort-dir")!==i)return n.data("sort-dir",i),o.trigger("beforetablesort",{column:a,direction:i}),o.css("display"),setTimeout(function(){var r=[],d=o.data("sortFns"),u=d[e],l=o.children("tbody").children("tr");l.each(function(n,s){var o=t(s).children().eq(a),e=o.data("sort-value");if("undefined"==typeof e){var i=o.text();o.data("sort-value",i),e=i}r.push([e,s])}),r.sort(function(t,r){return u(t[0],r[0])}),i!=s.ASC&&r.reverse(),l=t.map(r,function(t){return t[1]}),o.children("tbody").append(l),o.find("th span").data("sort-dir",null).removeClass("sorting-desc sorting-asc"),n.data("sort-dir",i).addClass("sorting-"+i),o.trigger("aftertablesort",{column:a,direction:i}),o.css("display")},10),n}},t.fn.updateSortVal=function(r){var n=t(this);return n.is("[data-sort-value]")&&n.attr("data-sort-value",r),n.data("sort-value",r),n},t.fn.jssorting.dir={ASC:"asc",DESC:"desc"},t.fn.jssorting.default_sort_fns={"int":function(t,r){return parseInt(t,10)-parseInt(r,10)},"float":function(t,r){return parseFloat(t)-parseFloat(r)},string:function(t,r){return t.toString().localeCompare(r.toString())},"string-ins":function(t,r){return t=t.toString().toLocaleLowerCase(),r=r.toString().toLocaleLowerCase(),t.localeCompare(r)}}}(jQuery);

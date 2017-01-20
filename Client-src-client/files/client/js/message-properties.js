@@ -12,19 +12,42 @@ var message = {
   'usergroupname_max': 'User Group Name is maximum 50 characters Allowed',
   'usergroupname_str' : 'User Group Name Not Valid Characters',
   'usergroupname_exists': 'User Group Name Already Exists',
+
   'invalid_usergroupid': 'Invalid User Group Id',
-  'category_required' : 'Category Name Required',
   'form_name_required' : 'Select atleast one form from list',
+
+  'country_required': 'Country Required',
+  'country_max': 'Country is maximum 50 characters Allowed',
+  'country_str' : 'Country Not Valid Characters',
+
+  'businessgroup_required': 'Business Group Required',
+  'businessgroup_max': 'Business Group is maximum 50 characters Allowed',
+  'businessgroup_str' : 'Business Group Not Valid Characters',
+
+  'legalentity_required': 'Legal Entity Required',
+  'legalentity_max': 'Legal Entity is maximum 50 characters Allowed',
+  'legalentity_str' : 'Legal Entity Not Valid Characters',
+
+  'division_required': 'Division Required',
+  'division_max': 'Division is maximum 50 characters Allowed',
+  'division_str' : 'Division Not Valid Characters',
+
+  'category_required' : 'Category Name Required',
+  'category_max': 'Category is maximum 50 characters Allowed',
+  'category_str' : 'Category Not Valid Characters',
 
   'domain_required': 'Domain Required',
   'domain_max': 'Domain is maximum 50 characters Allowed',
   'domain_str' : 'Domain Not Valid Characters',
+
   'unit_required': 'Unit Required',
   'unit_max': 'Unit is maximum 50 characters Allowed',
   'unit_str' : 'Unit Not Valid Characters',
+
   'act_required': 'Act Required',
   'act_max': 'Act is maximum 50 characters Allowed',
   'act_str' : 'Act Not Valid Characters',
+
   'compliancetask_required': 'Compliance Task Required',
   'compliancetask_max': 'Compliancetask is maximum 50 characters Allowed',
   'compliancetask_str' : 'Compliancetask Not Valid Characters',
@@ -51,7 +74,7 @@ var message = {
   'emailid_required': 'Email Id Required',
   'usergroup_required': 'User Group Required',
   'invalid_emailid': 'Invalid Email ID',
-  'country_required': 'Country Required',
+  
 
   'emailid_exists': 'Email Id Already Exists',
   'contactno_exists': 'Contact Number Already Exists',
@@ -117,10 +140,10 @@ var message = {
   'mapping_update_success': 'Statutory mapping updated successfully',
   'action_selection_success': 'Selected action has been saved successfully',
   'group_required': 'Group Required',
-  'legalentity_required': 'Legal Entity Required',
+  
   'le_50': 'Legal Entity : Not Allowed More than 50 Characters.',
-  'businessgroup_required': 'Business Group Required',
-  'division_required': 'Division Required',
+  
+  
   'geographylevel_required': 'Geography Level Required',
   'location_required': 'Location Required',
   
@@ -211,7 +234,7 @@ var message = {
   'add_one_form': 'Select atleast one form from list',
   'cannot_deactivate_usergroup': 'User(s) Exists. Cannot Deactivate User group.',
   
-  'catgname_required': 'Category Name Required',
+  
   'action_required': 'Action Required',
   'validitydate_required': 'Validity Date Required',
   'nextduedate_required': 'Next Due Date Required',
@@ -342,6 +365,7 @@ var message = {
   'user_category_required': 'User Category Required',
   "resend": 'Resend Email Successfully',
   'mobile_required': 'Mobile Number Required',
+  'catgname_required': 'Category Name Required',
   
   "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",

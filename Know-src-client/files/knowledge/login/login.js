@@ -138,6 +138,15 @@ function processLogin(username, password, shortName, callback) {
     var r = document.cookie.match('\\b' + name + '=([^;]*)\\b');
     return r ? r[1] : undefined;
   }
+  function makekey()
+  {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      for( var i=0; i < 5; i++ )
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+      return text;
+  }
   // console.log(getCookie('_xsrf'));
   // url = BASE_URL + "login";
   actula_data = JSON.stringify(requestFrame, null, ' ');
@@ -147,9 +156,9 @@ function processLogin(username, password, shortName, callback) {
     headers: { 'X-CSRFToken': csrf_token },
     type: 'POST',
     contentType: 'application/json',
-    data: btoa(actula_data),
+    data: makekey() + btoa(actula_data),
     success: function (data, textStatus, jqXHR) {
-      data = atob(data);
+      data = atob(data.substring(5));
       data = parseJSON(data);
       var status = data[0];
       var response = data[1];
@@ -166,12 +175,13 @@ function processLogin(username, password, shortName, callback) {
     },
     error: function (jqXHR, textStatus, errorThrown) {
       rdata = parseJSON(jqXHR.responseText);
-      rdata = atob(rdata);
+      rdata = atob(rdata.substring(5));
       callback(rdata, errorThrown);
     }
   });
 }
 function performLogin(e_button, e_email, e_password, e_captcha) {
+  displayLoginMessage('');
   if (!isLoginValidated(e_email, e_password, e_captcha))
     return;
   displayLoginLoader();

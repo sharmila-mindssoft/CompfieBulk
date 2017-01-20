@@ -1,0 +1,422 @@
+2016-12-10 12:35:37,864 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 1)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list' 
+
+2016-12-10 12:35:37,875 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 382, in process_get_client_agreement_report_data
+    request.from_count, request.page_count, session_user
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technoreport.py", line 844, in get_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 1)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list'
+ 
+
+2016-12-10 13:39:36,462 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 13:39:36,462 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 842, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 743, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 765, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 13:43:23,221 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 13:43:23,222 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 842, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 743, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 765, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 13:44:33,892 - knowledge_logger - main.py-handle-api- : expected a alphabets, but received: Compliance Form 2 
+
+2016-12-10 13:44:33,892 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/usha/aparajitha-saas/Src-server/protocol/technoreports.py", line 647, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 512, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 464, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/api_key_validation.py", line 21, in is_alphabet
+    raise expectation_error('a alphabets', value)
+ValueError: expected a alphabets, but received: Compliance Form 2
+ 
+
+2016-12-10 13:53:44,951 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 13:53:44,952 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 842, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 743, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 765, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 14:13:11,522 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 14:13:11,522 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 844, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 743, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 765, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 14:16:13,595 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 14:16:13,596 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 845, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 744, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 766, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 14:17:55,267 - knowledge_logger - main.py-handle-api- : 'NoneType' object has no attribute '__getitem__' 
+
+2016-12-10 14:17:55,268 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 845, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 745, in get_statutory_master
+    return return_statutory_master(result)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 787, in return_statutory_master
+    mappings[1]
+TypeError: 'NoneType' object has no attribute '__getitem__'
+ 
+
+2016-12-10 14:21:14,558 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 14:21:14,559 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 845, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 744, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 766, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 15:22:35,885 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 15:22:35,885 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 847, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 744, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 768, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 15:23:47,516 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 15:23:47,517 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 848, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 744, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 769, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 15:25:30,364 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 15:25:30,365 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 850, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 744, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 771, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 15:27:36,881 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string or Unicode, NoneType found 
+
+2016-12-10 15:27:36,882 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 851, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 744, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 772, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string or Unicode, NoneType found
+ 
+
+2016-12-10 15:28:50,576 - knowledge_logger - main.py-handle-api- : sequence item 2: expected string, NoneType found 
+
+2016-12-10 15:28:50,576 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 356, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 45, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 93, in process_get_statutory_mapping_filters
+    level_1_statutories = get_country_wise_level_1_statutoy(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 853, in get_country_wise_level_1_statutoy
+    get_statutory_master(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 744, in get_statutory_master
+    frame_parent_mappings(db, result, statutory_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 774, in frame_parent_mappings
+    d["statutory_name"], ">> ".join(names), p_ids
+TypeError: sequence item 2: expected string, NoneType found
+ 
+
+2016-12-10 15:29:26,575 - knowledge_logger - main.py-handle-api- : expected a list, but received: {1: {1: [<protocol.core.Statutory object at 0xb55e678c>, <protocol.core.Statutory object at 0xb55e628c>]}} 
+
+2016-12-10 15:29:26,576 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/usha/aparajitha-saas/Src-server/protocol/knowledgereport.py", line 147, in to_structure
+    inner = self.to_inner_structure()
+  File "/home/usha/aparajitha-saas/Src-server/protocol/knowledgereport.py", line 201, in to_inner_structure
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 508, in to_VectorType
+    data = parse_list(data, 0)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 157, in parse_list
+    raise expectation_error("a list", x)
+ValueError: expected a list, but received: {1: {1: [<protocol.core.Statutory object at 0xb55e678c>, <protocol.core.Statutory object at 0xb55e628c>]}}
+ 
+
+2016-12-10 16:52:19,744 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-10 16:52:19,757 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1051, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-10 16:52:19,757 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-10 16:52:19,757 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-10 23:37:53,898 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-10 23:37:53,911 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1051, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-10 23:37:53,912 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-10 23:37:53,912 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-10 23:49:21,043 - knowledge_logger - main.py-parse-request : global name 'user_id_optional' is not defined 
+
+2016-12-10 23:49:21,044 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1051, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 338, in parse_inner_structure
+    record_count, page_count
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 316, in __init__
+    self.user_id_search = user_id_optional
+NameError: global name 'user_id_optional' is not defined
+ 
+
+2016-12-10 23:49:21,044 - knowledge_logger - main.py-handle-api- : global name 'user_id_optional' is not defined 
+
+2016-12-10 23:49:21,045 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: global name 'user_id_optional' is not defined
+ 
+
+2016-12-10 23:50:22,359 - knowledge_logger - main.py-handle-api- : 'GetAuditTrails' object has no attribute 'user_id' 
+
+2016-12-10 23:50:22,360 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 104, in process_general_request
+    result = process_get_audit_trails(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 327, in process_get_audit_trails
+    user_id = request.user_id
+AttributeError: 'GetAuditTrails' object has no attribute 'user_id'
+ 
+
+2016-12-10 23:50:32,961 - knowledge_logger - main.py-handle-api- : 'GetAuditTrails' object has no attribute 'user_id' 
+
+2016-12-10 23:50:32,961 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 104, in process_general_request
+    result = process_get_audit_trails(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 327, in process_get_audit_trails
+    user_id = request.user_id
+AttributeError: 'GetAuditTrails' object has no attribute 'user_id'
+ 
+

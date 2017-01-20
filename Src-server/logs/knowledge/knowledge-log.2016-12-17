@@ -1,0 +1,70 @@
+2016-12-17 16:20:08,415 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-17 16:20:08,416 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 27, in process_techno_request
+    session_user = validate_user_session(db, session_token)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 147, in validate_user_session
+    return db.validate_session_token(session_token)
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 724, in validate_session_token
+    row = self.select_one(query, param)
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 340, in select_one
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-17 16:20:22,975 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-17 16:20:22,976 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 293, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/logincontroller.py", line 79, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/login.py", line 38, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0 :
+IndexError: list index out of range
+ 
+
+2016-12-17 19:13:18,690 - knowledge_logger - main.py-handle-api- : unbound method to_structure() must be called with UserCategory instance as first argument (got FormCategory instance instead) 
+
+2016-12-17 19:13:18,690 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 406, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 421, in to_structure_dictionary_values
+    _module_name, _class_name, val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 513, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    data = klass.to_structure(data)
+TypeError: unbound method to_structure() must be called with UserCategory instance as first argument (got FormCategory instance instead)
+ 
+
+2016-12-17 20:13:40,878 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-17 20:13:40,879 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 104, in process_general_request
+    result = process_get_audit_trails(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 335, in process_get_audit_trails
+    country_id, category_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/general.py", line 504, in get_audit_trails
+    activity_log = result[0]
+IndexError: list index out of range
+ 
+

@@ -896,7 +896,7 @@ def return_client_agreement_report(client_agreement_list):
                 contract_to = datetime_to_string(client_agreement["contract_to"]),
                 group_name=client_agreement["group_name"],
                 group_admin_email=client_agreement["groupadmin_email"],
-                is_active=bool(client_agreement["is_closed"]),
+                is_closed=bool(client_agreement["is_closed"]),
                 domain_count=int(client_agreement["domaincount"]),
                 d_name=client_agreement["domain_name"],
                 domain_total_unit=int(client_agreement["domain_total_unit"]),

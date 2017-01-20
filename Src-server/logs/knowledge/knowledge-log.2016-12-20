@@ -1,0 +1,426 @@
+2016-12-20 15:33:04,297 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 15:33:04.178861', 1, '2016-12-20 15:33:04.178861')- 1048 (23000): Column 'days' cannot be null 
+
+2016-12-20 15:33:04,304 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 15:33:04.178861', 1, '2016-12-20 15:33:04.178861')- 1048 (23000): Column 'days' cannot be null
+ 
+
+2016-12-20 15:35:44,495 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 15:35:44.486614', 1, '2016-12-20 15:35:44.486614')- 1048 (23000): Column 'days' cannot be null 
+
+2016-12-20 15:35:44,495 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 15:35:44.486614', 1, '2016-12-20 15:35:44.486614')- 1048 (23000): Column 'days' cannot be null
+ 
+
+2016-12-20 15:39:27,890 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 15:39:27.885160', 1, '2016-12-20 15:39:27.885160')- 1048 (23000): Column 'days' cannot be null 
+
+2016-12-20 15:39:27,891 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 15:39:27.885160', 1, '2016-12-20 15:39:27.885160')- 1048 (23000): Column 'days' cannot be null
+ 
+
+2016-12-20 15:44:51,506 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 15:44:51.498187', 1, '2016-12-20 15:44:51.498187')- 1048 (23000): Column 'days' cannot be null 
+
+2016-12-20 15:44:51,506 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 15:44:51.498187', 1, '2016-12-20 15:44:51.498187')- 1048 (23000): Column 'days' cannot be null
+ 
+
+2016-12-20 16:04:48,051 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 16:04:48.043678', 1, '2016-12-20 16:04:48.043678')- 1048 (23000): Column 'days' cannot be null 
+
+2016-12-20 16:04:48,051 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 16:04:48.043678', 1, '2016-12-20 16:04:48.043678')- 1048 (23000): Column 'days' cannot be null
+ 
+
+2016-12-20 16:11:56,402 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 16:11:56.394866', 1, '2016-12-20 16:11:56.394866')- 1048 (23000): Column 'days' cannot be null 
+
+2016-12-20 16:11:56,402 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (7, 1, 2, None, 1, '2016-12-20 16:11:56.394866', 1, '2016-12-20 16:11:56.394866')- 1048 (23000): Column 'days' cannot be null
+ 
+
+2016-12-20 16:27:06,232 - knowledge_logger - main.py-handle-api- : check_duplicate_industry() takes exactly 5 arguments (3 given) 
+
+2016-12-20 16:27:06,233 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 96, in process_knowledge_master_request
+    result = process_update_industry(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 216, in process_update_industry
+    isDuplicate = check_duplicate_industry(db, industry_name, industry_id)
+TypeError: check_duplicate_industry() takes exactly 5 arguments (3 given)
+ 
+
+2016-12-20 16:59:15,704 - knowledge_logger - main.py-handle-api- : sp_get_geography_master- [37, ('4', '26', 37)]- 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '26)' at line 1 
+
+2016-12-20 16:59:15,704 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 579, in update_geography
+    result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_get_geography_master- [37, ('4', '26', 37)]- 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '26)' at line 1
+ 
+
+2016-12-20 17:00:49,370 - knowledge_logger - main.py-handle-api- : sp_get_geography_master- [31, ('4', '26', 31)]- 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '26)' at line 1 
+
+2016-12-20 17:00:49,371 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 579, in update_geography
+    result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_get_geography_master- [31, ('4', '26', 31)]- 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '26)' at line 1
+ 
+
+2016-12-20 18:53:19,763 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-20 18:53:19,764 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 575, in update_geography
+    p_ids = p_new_id[p_ids_len] + "|"
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-20 18:54:37,448 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-20 18:54:37,449 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 575, in update_geography
+    p_ids = int(p_new_id[p_ids_len]) + "|"
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-20 18:57:00,200 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-20 18:57:00,200 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 575, in update_geography
+    print p_new_id[p_ids_len]
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-20 18:59:48,067 - knowledge_logger - main.py-handle-api- : sp_get_geography_master- [29, ('4', '|', '7')]- 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '|)' at line 1 
+
+2016-12-20 18:59:48,068 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 589, in update_geography
+    result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_get_geography_master- [29, ('4', '|', '7')]- 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '|)' at line 1
+ 
+
+2016-12-20 19:01:05,600 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-20 19:01:05,601 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 600, in update_geography
+    map_name += result[int(j)]["geography_name"] + " >> "
+IndexError: list index out of range
+ 
+
+2016-12-20 19:03:10,584 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-20 19:03:10,584 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 600, in update_geography
+    map_name += result[int(j)]["geography_name"] + " >> "
+IndexError: list index out of range
+ 
+
+2016-12-20 19:08:27,634 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-20 19:08:27,634 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 604, in update_geography
+    map_name += result[int(j)]["geography_name"] + " >> "
+IndexError: list index out of range
+ 
+
+2016-12-20 19:09:42,254 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-20 19:09:42,254 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 68, in process_knowledge_master_request
+    result = process_update_geography(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 437, in process_update_geography
+    db, geography_id, geography_name, parent_ids, parent_names, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 606, in update_geography
+    map_name += result[int(j)]["geography_name"] + " >> "
+IndexError: list index out of range
+ 
+
+2016-12-20 19:48:29,174 - knowledge_logger - main.py-handle-api- : expected a string , but received: Audit Trail / Login Trace 
+
+2016-12-20 19:48:29,175 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/usha/aparajitha-saas/Src-server/protocol/login.py", line 255, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 449, in to_structure_dictionary_values
+    param.get('module_name'), param.get('class_name'), val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 495, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 437, in to_structure_dictionary_values
+    vals = to_VectorType(_module_name, _class_name, value)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 513, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    data = klass.to_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/core.py", line 535, in to_structure
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 465, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/api_key_validation.py", line 14, in allow_specialchar
+    raise expectation_error('a string ', value)
+ValueError: expected a string , but received: Audit Trail / Login Trace
+ 
+
+2016-12-20 19:49:10,823 - knowledge_logger - main.py-handle-api- : expected a string , but received: Audit Trail / Login Trace 
+
+2016-12-20 19:49:10,824 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/usha/aparajitha-saas/Src-server/protocol/login.py", line 255, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 449, in to_structure_dictionary_values
+    param.get('module_name'), param.get('class_name'), val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 495, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 437, in to_structure_dictionary_values
+    vals = to_VectorType(_module_name, _class_name, value)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 513, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    data = klass.to_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/core.py", line 535, in to_structure
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 465, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/api_key_validation.py", line 14, in allow_specialchar
+    raise expectation_error('a string ', value)
+ValueError: expected a string , but received: Audit Trail / Login Trace
+ 
+
+2016-12-20 19:52:42,658 - knowledge_logger - main.py-handle-api- : expected a string , but received: Audit Trail / Login Trace 
+
+2016-12-20 19:52:42,659 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/usha/aparajitha-saas/Src-server/protocol/login.py", line 255, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 449, in to_structure_dictionary_values
+    param.get('module_name'), param.get('class_name'), val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 495, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 437, in to_structure_dictionary_values
+    vals = to_VectorType(_module_name, _class_name, value)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 513, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    data = klass.to_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/core.py", line 535, in to_structure
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 465, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/api_key_validation.py", line 14, in allow_specialchar
+    raise expectation_error('a string ', value)
+ValueError: expected a string , but received: Audit Trail / Login Trace
+ 
+
+2016-12-20 19:53:25,401 - knowledge_logger - main.py-handle-api- : expected a string , but received: Audit Trail/ Login Trace 
+
+2016-12-20 19:53:25,402 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 180, in respond
+    response_data, 200
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 135, in _send_response
+    data = response_data.to_structure()
+  File "/home/usha/aparajitha-saas/Src-server/protocol/login.py", line 255, in to_structure
+    inner = to_structure_dictionary_values(inner)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 449, in to_structure_dictionary_values
+    param.get('module_name'), param.get('class_name'), val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 495, in to_RecordType
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 437, in to_structure_dictionary_values
+    vals = to_VectorType(_module_name, _class_name, value)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 513, in to_VectorType
+    to_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 494, in to_RecordType
+    data = klass.to_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/core.py", line 535, in to_structure
+    return to_structure_dictionary_values(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 465, in to_structure_dictionary_values
+    val = _validation_method(val)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/api_key_validation.py", line 14, in allow_specialchar
+    raise expectation_error('a string ', value)
+ValueError: expected a string , but received: Audit Trail/ Login Trace
+ 
+
+2016-12-20 22:50:01,279 - knowledge_logger - main.py-handle-api- : sp_insert_statutory_level- [1, 2, 3, u'Third Rule', 1, '2016-12-20 22:50:01.270662']- 1265 (01000): Data truncated for column '_created_on' at row 1 
+
+2016-12-20 22:50:01,280 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 335, in handle_knowledge_master
+    return controller.process_knowledge_master_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 147, in process_knowledge_master_request
+    result = process_save_statutory_level(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgemastercontroller.py", line 352, in process_save_statutory_level
+    db, country_id, domain_id, levels, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/knowledgemaster.py", line 328, in save_statutory_levels
+    new_id = db.call_insert_proc("sp_insert_statutory_level", values)
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_insert_statutory_level- [1, 2, 3, u'Third Rule', 1, '2016-12-20 22:50:01.270662']- 1265 (01000): Data truncated for column '_created_on' at row 1
+ 
+

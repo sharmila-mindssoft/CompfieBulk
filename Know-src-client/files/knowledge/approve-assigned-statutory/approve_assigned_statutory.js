@@ -189,6 +189,8 @@ function validateAuthentication() {
             Custombox.close();
         } else {
             displayMessage(error);
+            CurrentPassword.val('');
+            CurrentPassword.focus();
         }
     });
 }
@@ -213,6 +215,8 @@ function loadAssignedStatutories(){
         
         $('.view-icon', clone).on('click', function () {
             displayLoader();
+            ApprovalStatus.val('');
+            $('#reason').val('');
             LastAct='';
             LastSubAct='';
             statutoriesCount = 1;
@@ -262,6 +266,7 @@ SubmitButton.click(function(){
 	        effect: 'contentscale',
 	        complete: function() {
 	            CurrentPassword.focus();
+                CurrentPassword.val('');
 	            isAuthenticate = false;
 	        },
 	        close: function() {

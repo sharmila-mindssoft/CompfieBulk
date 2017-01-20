@@ -72,6 +72,8 @@ def process_save_client_group(db, request, session_user):
     session_user = int(session_user)
     if is_duplicate_group_name(db, request.group_name):
         return technomasters.GroupNameAlreadyExists()
+    elif is_duplicate_group_short_name(db, request.short_name):
+        return technomasters.GroupShortNameAlreadyExists()
     else:
         group_id = save_client_group(
             db, request.group_name, request.email_id,

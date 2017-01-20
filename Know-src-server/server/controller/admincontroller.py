@@ -12,6 +12,7 @@ from server.database.admin import *
 from server.database.technomaster import (
     get_groups, get_business_groups_for_user
 )
+from server.constants import USER_ENABLE_CUTOFF
 
 __all__ = [
     "process_admin_request", "get_user_groups"
@@ -80,6 +81,9 @@ def process_admin_request(request, db):
 
     elif type(request_frame) is admin.SaveUserMappings:
         result = process_save_user_mappings(db, request_frame, session_user)
+
+    elif type(request_frame) is admin.CheckUserMappings:
+        result = process_check_user_mappings(db, request_frame, session_user)
 
     elif type(request_frame) is admin.GetReassignUserAccountFormdata:
         result = get_reassign_user_account_form_data(
@@ -322,6 +326,12 @@ def get_users(db, request_frame, session_user):
         is_active = True if user_row["is_active"] == 1 else False
         is_disable = True if user_row["is_disable"] == 1 else False
         username = user_row["username"]
+        days_left = user_row["days_left"]
+
+        allow_enable = True
+        if is_disable is True and days_left > USER_ENABLE_CUTOFF :
+            allow_enable = False
+
         user_list.append(
             core.UserDetails(
                 user_id, user_cat_id,
@@ -332,7 +342,7 @@ def get_users(db, request_frame, session_user):
                 address, designation,
                 country_ids, domain_ids,
                 is_active, is_disable,
-                username
+                username, allow_enable, days_left, user_row["disable_reason"]
             )
         )
 
@@ -432,10 +442,12 @@ def change_user_status(db, request, session_user):
 def change_disable_status(db, request, session_user):
     user_id = request.user_id
     is_active = int(request.is_active)
+    remarks = request.remarks
     if db.is_invalid_id(tblUsers, "user_id", user_id):
         return admin.InvalidUserId()
-
-    elif update_disable_status(db, user_id, is_active, session_user):
+    elif is_user_idle(db, user_id) is False:
+        return admin.CannotDisableUserTransactionExists()
+    elif update_disable_status(db, user_id, is_active, remarks, session_user):
         return admin.ChangeUserStatusSuccess()
 
 ################################################################
@@ -480,11 +492,16 @@ def process_save_user_mappings(db, request, session_user):
     save_user_mappings(db, request, session_user)
     return admin.SaveUserMappingsSuccess()
 
+def process_check_user_mappings(db, request, session_user):
+    if check_user_mappings(db, request, session_user) is False:
+        return admin.CannotRemoveUserTransactionExists()
+    else:
+        return admin.CheckUserMappingsSuccess()
 
 def get_reassign_user_account_form_data(db, request, session_user):
 
     domains = get_domains_for_user(db, session_user)
-    groups = get_groups(db, session_user)
+    groups = get_reassign_client_groups(db, session_user)
     business_groups = get_business_groups_for_user(db, session_user)
     legal_entities = get_legal_entities_for_user(db, session_user)
     user_categories = get_categories_for_user(db, session_user)
@@ -551,15 +568,15 @@ def process_reassign_domain_executive(db, request, session_user):
     user_from = request.reassign_from
     user_to = request.reassign_to
     domain_id = request.domain_id
-    unit_ids = request.domain_ids
+    unit_ids = request.unit_ids
     remarks = request.remarks
     result = save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, remarks, session_user)
     if result :
         return admin.SaveReassignUserAccountSuccess()
 
 def process_user_replacement(db, request, session_user):
-    user_type = request.user_type,
-    user_from = request.user_from,
+    user_type = request.user_type
+    user_from = request.user_from
     user_to = request.user_to
     remarks = request.remarks
     result = save_user_replacement(db, user_type, user_from, user_to, remarks, session_user)

@@ -277,6 +277,7 @@ function processSubmit (csv){
     _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit,
         function(error, response) {
             if (error != null) {
+                hideLoader();
                 displayMessage(error);
             }
             else {
@@ -287,6 +288,7 @@ function processSubmit (csv){
                 $(this).removeClass();
               });
               if (csv) {
+                hideLoader();
                 var download_url = response.link;
                 window.open(download_url, '_blank');
               }else{

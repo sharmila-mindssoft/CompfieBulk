@@ -1189,7 +1189,7 @@ class Level1StatutoryList(object):
         return Level1StatutoryList(level_1_statutory_id, level_1_statutory_name, country_id, domain_id)
 
     def to_structure(self):
-        data =  {
+        data = {
             "level_1_statutory_id": self.level_1_statutory_id,
             "level_1_statutory_name": self.level_1_statutory_name,
             "country_id": self.country_id,
@@ -1253,7 +1253,7 @@ class Compliance(object):
         frequency_id, statutory_dates, repeats_type_id,
         repeats_every, duration_type_id,
         duration, is_active,
-        frequency, summary, reference
+        frequency, summary, reference, is_file_removed
     ):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
@@ -1272,6 +1272,7 @@ class Compliance(object):
         self.frequency = frequency
         self.summary = summary
         self.reference = reference
+        self.is_file_removed = is_file_removed
 
     @staticmethod
     def parse_structure(data):
@@ -1284,7 +1285,7 @@ class Compliance(object):
             "r_every", "d_type_id",
             "duration", "is_active",
             "frequency", "summary",
-            "reference"
+            "reference", "is_file_removed"
         ])
         compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_provision")
@@ -1303,6 +1304,7 @@ class Compliance(object):
         frequency = data.get("frequency")
         summary = data.get("summary")
         reference = data.get("reference")
+        is_file_removed = data.get("is_file_removed")
         return Compliance(
             compliance_id, statutory_provision,
             compliance_task, description,
@@ -1311,7 +1313,7 @@ class Compliance(object):
             statutory_dates, repeats_type_id,
             repeats_every, duration_type_id,
             duration, is_active,
-            frequency, summary, reference
+            frequency, summary, reference, is_file_removed
         )
 
     def to_structure(self):
@@ -1332,7 +1334,8 @@ class Compliance(object):
             "is_active": self.is_active,
             "frequency": self.frequency,
             "summary": self.summary,
-            "reference": self.reference
+            "reference": self.reference,
+            "is_file_removed": self.is_file_removed
         }
 
 #
@@ -2768,7 +2771,8 @@ class UserDetails(object):
         self, user_id, user_category_id, user_category_name, employee_name,
         employee_code,  email_id, user_group_id,
         contact_no, mobile_no, address, designation, country_ids,
-        domain_ids, is_active, is_disable, username
+        domain_ids, is_active, is_disable, username,
+        allow_enable, days_left, d_reason
     ):
         self.user_id = user_id
         self.user_category_id = user_category_id
@@ -2786,6 +2790,9 @@ class UserDetails(object):
         self.is_active = is_active
         self.is_disable = is_disable
         self.username = username
+        self.allow_enable = allow_enable
+        self.days_left = days_left
+        self.d_reason = d_reason
 
     @staticmethod
     def parse_structure(data):
@@ -2797,7 +2804,9 @@ class UserDetails(object):
             "contact_no", "mobile_no",
             "address", "designation",
             "country_ids", "country_wise_domain",
-            "is_active", "is_disable", "username_id"
+            "is_active", "is_disable", "username_id",
+            "allow_enable", "days_left",
+            "d_reason"
         ])
         user_id = data.get("user_id")
         user_category_id = data.get("user_category-id")
@@ -2815,6 +2824,9 @@ class UserDetails(object):
         is_active = data.get("is_active")
         is_disable = data.get("is_disable")
         username = data.get("username_id")
+        allow_enable = data.get("allow_enable")
+        days_left = data.get("days_left")
+        d_reason = data.get("d_reason")
         return UserDetails(
             user_id, user_category_id,
             user_category_name,
@@ -2822,7 +2834,8 @@ class UserDetails(object):
             email_id, user_group_id,
             contact_no, mobile_no, address, designation,
             country_ids, domain_ids,
-            is_active, is_disable, username
+            is_active, is_disable, username,
+            allow_enable, days_left, d_reason
         )
 
     def to_structure(self):
@@ -2843,6 +2856,9 @@ class UserDetails(object):
             "is_active": self.is_active,
             "is_disable": self.is_disable,
             "username_id": self.username,
+            "allow_enable": self.allow_enable,
+            "days_left": self.days_left,
+            "d_reason": self.d_reason
         }
 
 #
@@ -3345,6 +3361,31 @@ class ClientGroup(object):
             "remarks": self.reason
         }
 
+class ReassignClientGroup(object):
+    def __init__(
+        self, group_id, group_name,
+    ):
+        self.group_id = group_id
+        self.group_name = group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "group_id", "group_name",
+            ]
+        )
+        group_id = data.get("group_id")
+        group_name = data.get("group_name")
+        return ReassignClientGroup(
+            group_id, group_name,
+        )
+
+    def to_structure(self):
+        return {
+            "group_id": self.group_id,
+            "group_name": self.group_name,
+        }
 
 
 #
@@ -3464,12 +3505,13 @@ class LegalEntity(object):
             "domain_details": self.domain_details
         }
 
+
 class LegalEntityList(object):
     def __init__(
         self, country_id, business_group, legal_entity_id,
         legal_entity_name, old_logo, new_logo,
         no_of_licence, file_space, contract_from,
-        contract_to, domain_details, is_closed
+        contract_to, domain_details, is_closed, is_approved
     ):
         self.country_id = country_id
         self.business_group = business_group
@@ -3483,6 +3525,7 @@ class LegalEntityList(object):
         self.contract_to = contract_to
         self.domain_details = domain_details
         self.is_closed = is_closed
+        self.is_approved = is_approved
 
     @staticmethod
     def parse_structure(data):
@@ -3490,7 +3533,8 @@ class LegalEntityList(object):
             data, [
                 "country_id", "business_group", "legal_entity_id",
                 "legal_entity_name", "old_logo", "new_logo", "no_of_licence",
-                "file_space", "contract_from", "contract_to", "domain_details", "is_closed"
+                "file_space", "contract_from", "contract_to", "domain_details",
+                "is_closed", "is_approved"
             ]
         )
         country_id = data.get("country_id")
@@ -3506,10 +3550,11 @@ class LegalEntityList(object):
         domain_details = data.get("domain_details")
         is_closed = data.get("is_closed")
         is_closed = parse_structure_Bool(is_closed)
+        is_approved = data.get("is_approved")
         return LegalEntity(
             country_id, business_group, legal_entity_id, legal_entity_name,
             logo, new_logo, no_of_licence, file_space,
-            contract_from, contract_to, domain_details, is_closed
+            contract_from, contract_to, domain_details, is_closed, is_approved
         )
 
     def to_structure(self):
@@ -3525,8 +3570,10 @@ class LegalEntityList(object):
             "contract_from": self.contract_from,
             "contract_to": self.contract_to,
             "domain_details": self.domain_details,
-            "is_closed": self.is_closed
+            "is_closed": self.is_closed,
+            "is_approved": self.is_approved
         }
+
 
 #
 # Entity Domain Details

@@ -1,0 +1,542 @@
+2016-12-19 11:08:59,288 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 11:08:59.234287', 1, '2016-12-19 11:08:59.234287')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause' 
+
+2016-12-19 11:08:59,288 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 11:08:59.234287', 1, '2016-12-19 11:08:59.234287')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause'
+ 
+
+2016-12-19 11:13:37,418 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 11:13:37.367480', 1, '2016-12-19 11:13:37.367480')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause' 
+
+2016-12-19 11:13:37,419 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 11:13:37.367480', 1, '2016-12-19 11:13:37.367480')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause'
+ 
+
+2016-12-19 11:42:11,797 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 11:42:11.657892', 1, '2016-12-19 11:42:11.657892')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause' 
+
+2016-12-19 11:42:11,798 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 11:42:11.657892', 1, '2016-12-19 11:42:11.657892')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause'
+ 
+
+2016-12-19 11:49:16,260 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 11:49:16.256548', 1, '2016-12-19 11:49:16.256548')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause' 
+
+2016-12-19 11:49:16,261 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 11:49:16.256548', 1, '2016-12-19 11:49:16.256548')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause'
+ 
+
+2016-12-19 12:03:47,277 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 12:03:47.273816', 1, '2016-12-19 12:03:47.273816')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause' 
+
+2016-12-19 12:03:47,278 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 12:03:47.273816', 1, '2016-12-19 12:03:47.273816')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause'
+ 
+
+2016-12-19 12:06:41,209 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 12:06:41.204610', 1, '2016-12-19 12:06:41.204610')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause' 
+
+2016-12-19 12:06:41,209 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 12:06:41.204610', 1, '2016-12-19 12:06:41.204610')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause'
+ 
+
+2016-12-19 12:08:46,470 - knowledge_logger - main.py-handle-api- : sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 12:08:46.467131', 1, '2016-12-19 12:08:46.467131')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause' 
+
+2016-12-19 12:08:46,470 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 100, in process_admin_request
+    db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/admincontroller.py", line 480, in process_save_validity_date_settings
+    db, request.validity_date_settings, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 931, in save_validity_date_settings
+    current_time_stamp
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_validitydays_settings_save- (6, 1, 1, 30, 1, '2016-12-19 12:08:46.467131', 1, '2016-12-19 12:08:46.467131')- 1054 (42S22): Unknown column 'validity_days_id' in 'where clause'
+ 
+
+2016-12-19 16:37:31,091 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-19 16:37:31,091 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 109, in process_general_request
+    result = process_get_audit_trails_filter(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 344, in process_get_audit_trails_filter
+    audit_trail_filters = get_audit_trail_filters(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/general.py", line 535, in get_audit_trail_filters
+    countries = result[0]
+IndexError: list index out of range
+ 
+
+2016-12-19 20:36:25,159 - knowledge_logger - main.py-handle-api- : __init__() takes exactly 6 arguments (5 given) 
+
+2016-12-19 20:36:25,160 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 104, in process_general_request
+    result = process_get_audit_trails(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 335, in process_get_audit_trails
+    country_id, category_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/general.py", line 518, in get_audit_trails
+    general.AuditTrail(user_id, form_id, action, date)
+TypeError: __init__() takes exactly 6 arguments (5 given)
+ 
+
+2016-12-19 20:36:57,253 - knowledge_logger - main.py-handle-api- : __init__() takes exactly 6 arguments (5 given) 
+
+2016-12-19 20:36:57,253 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 104, in process_general_request
+    result = process_get_audit_trails(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 335, in process_get_audit_trails
+    country_id, category_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/general.py", line 518, in get_audit_trails
+    general.AuditTrail(user_id, form_id, action, date)
+TypeError: __init__() takes exactly 6 arguments (5 given)
+ 
+
+2016-12-19 20:39:47,944 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 20:39:47,945 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 20:39:47,945 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 20:39:47,946 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 20:41:33,236 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 20:41:33,237 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 20:41:33,237 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 20:41:33,237 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 20:41:46,437 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 20:41:46,438 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 20:41:46,438 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 20:41:46,438 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 20:43:54,574 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 20:43:54,575 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 20:43:54,575 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 20:43:54,575 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 20:44:34,191 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 20:44:34,191 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 20:44:34,191 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 20:44:34,192 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:10:42,799 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 21:10:42,800 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:10:42,800 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 21:10:42,800 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:11:41,679 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 21:11:41,680 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:11:41,681 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 21:11:41,681 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:12:09,656 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 21:12:09,660 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:12:09,661 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 21:12:09,661 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:12:21,547 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 21:12:21,547 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:12:21,548 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 21:12:21,548 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:13:39,692 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-19 21:13:39,693 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 1054, in parse_structure
+    request = parse_structure_VariantType_general_Request(request)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/parse_structure.py", line 794, in parse_structure_VariantType_general_Request
+    return general.Request.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 34, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/general.py", line 325, in parse_inner_structure
+    data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 286, in parse_values
+    val = parse_number(val, 0, _length)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 50, in parse_number
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:13:39,693 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-19 21:13:39,694 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-19 21:19:10,159 - knowledge_logger - main.py-handle-api- : __init__() takes exactly 6 arguments (5 given) 
+
+2016-12-19 21:19:10,159 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 104, in process_general_request
+    result = process_get_audit_trails(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 335, in process_get_audit_trails
+    country_id, category_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/general.py", line 518, in get_audit_trails
+    general.AuditTrail(user_id, form_id, action, date)
+TypeError: __init__() takes exactly 6 arguments (5 given)
+ 
+
+2016-12-19 21:19:56,320 - knowledge_logger - main.py-handle-api- : __init__() takes exactly 6 arguments (5 given) 
+
+2016-12-19 21:19:56,321 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 104, in process_general_request
+    result = process_get_audit_trails(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 335, in process_get_audit_trails
+    country_id, category_id
+  File "/home/usha/aparajitha-saas/Src-server/server/database/general.py", line 518, in get_audit_trails
+    general.AuditTrail(user_id, form_id, action, date)
+TypeError: __init__() takes exactly 6 arguments (5 given)
+ 
+
+2016-12-19 23:44:35,263 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-19 23:44:35,264 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 99, in process_general_request
+    result = process_change_country_status(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/generalcontroller.py", line 283, in process_change_country_status
+    if is_transaction_exists(db, country_id):
+  File "/home/usha/aparajitha-saas/Src-server/server/database/admin.py", line 383, in is_transaction_exists
+    statutory_mapped = int(result[0][0]["count"])
+IndexError: list index out of range
+ 
+

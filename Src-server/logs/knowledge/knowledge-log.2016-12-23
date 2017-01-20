@@ -1,0 +1,264 @@
+2016-12-23 13:42:54,215 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 13:42:54,222 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 207, in handle_api_request
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 20:07:48,020 - knowledge_logger - main.py-parse-request : expected a dict, but received: 3 
+
+2016-12-23 20:07:48,021 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/technomasters.py", line 2107, in parse_structure
+    request, "technomasters", "Request"
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 479, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/technomasters.py", line 118, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/technomasters.py", line 523, in parse_inner_structure
+    "cl_id", "bg_id", "le_id", "c_id", "division_units", "units"
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 336, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/technomasters.py", line 462, in parse_structure
+    "i_ids_list"
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 336, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/core.py", line 3817, in parse_structure
+    data = parse_dictionary(data, ["domain_id", "industry_id"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 181, in parse_dictionary
+    raise expectation_error("a dict", x)
+ValueError: expected a dict, but received: 3
+ 
+
+2016-12-23 20:07:48,021 - knowledge_logger - main.py-handle-api- : expected a dict, but received: 3 
+
+2016-12-23 20:07:48,021 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a dict, but received: 3
+ 
+
+2016-12-23 20:16:54,852 - knowledge_logger - main.py-parse-request : expected a dict, but received: 3 
+
+2016-12-23 20:16:54,853 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 155, in _parse_request
+    data
+  File "/home/usha/aparajitha-saas/Src-server/protocol/technomasters.py", line 2107, in parse_structure
+    request, "technomasters", "Request"
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 479, in parse_VariantType
+    return klass.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/technomasters.py", line 118, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/technomasters.py", line 523, in parse_inner_structure
+    "cl_id", "bg_id", "le_id", "c_id", "division_units", "units"
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 336, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/technomasters.py", line 462, in parse_structure
+    "i_ids_list"
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 336, in parse_dictionary_values
+    _module_name, _class_name, val
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 503, in parse_VectorType
+    parse_RecordType(module_name, class_name, item)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 489, in parse_RecordType
+    return klass.parse_structure(data)
+  File "/home/usha/aparajitha-saas/Src-server/protocol/core.py", line 3817, in parse_structure
+    data = parse_dictionary(data, ["domain_id", "industry_id"])
+  File "/home/usha/aparajitha-saas/Src-server/protocol/jsonvalidators.py", line 181, in parse_dictionary
+    raise expectation_error("a dict", x)
+ValueError: expected a dict, but received: 3
+ 
+
+2016-12-23 20:16:54,854 - knowledge_logger - main.py-handle-api- : expected a dict, but received: 3 
+
+2016-12-23 20:16:54,855 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected a dict, but received: 3
+ 
+
+2016-12-23 20:49:24,124 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 20:49:24,124 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 207, in handle_api_request
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 20:55:03,051 - knowledge_logger - main.py-handle-api- : 'SaveClient' object has no attribute 'unit_id' 
+
+2016-12-23 20:55:03,052 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 288, in save_client
+    is_valid = validate_duplicate_data(db, request, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 206, in validate_duplicate_data
+    if category_name is not None and request.unit_id is None:
+AttributeError: 'SaveClient' object has no attribute 'unit_id'
+ 
+
+2016-12-23 20:59:58,374 - knowledge_logger - main.py-handle-api- : 'SaveClient' object has no attribute 'unit_id' 
+
+2016-12-23 20:59:58,374 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 288, in save_client
+    is_valid = validate_duplicate_data(db, request, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 206, in validate_duplicate_data
+    if category_name is not None and request.unit_id is None:
+AttributeError: 'SaveClient' object has no attribute 'unit_id'
+ 
+
+2016-12-23 21:01:23,852 - knowledge_logger - main.py-handle-api- : 'SaveClient' object has no attribute 'unit_id' 
+
+2016-12-23 21:01:23,853 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 288, in save_client
+    is_valid = validate_duplicate_data(db, request, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 206, in validate_duplicate_data
+    if category_name is not None and request.unit_id is None:
+AttributeError: 'SaveClient' object has no attribute 'unit_id'
+ 
+
+2016-12-23 21:02:31,326 - knowledge_logger - main.py-handle-api- : sp_tbl_units_check_unitId- [19]- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_tbl_units_check_unitId does not exist 
+
+2016-12-23 21:02:31,327 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 333, in save_client
+    is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 257, in validate_unit_data
+    if not is_invalid_id(db, "unit_id", unit_id):
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technomaster.py", line 1152, in is_invalid_id
+    rows = db.call_proc("sp_tbl_units_check_unitId", params)
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_check_unitId- [19]- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_tbl_units_check_unitId does not exist
+ 
+
+2016-12-23 21:04:30,568 - knowledge_logger - main.py-handle-api- : sp_tbl_units_delete_unitorganizations- 19- args must be a sequence 
+
+2016-12-23 21:04:30,569 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 351, in save_client
+    res = update_unit(db, client_id, is_valid_unit[2], session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technomaster.py", line 1381, in update_unit
+    delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", i)
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_delete_unitorganizations- 19- args must be a sequence
+ 
+
+2016-12-23 22:33:17,977 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 22:33:17,977 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 207, in handle_api_request
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 23:08:53,757 - knowledge_logger - main.py-handle-api- : Transaction failed while processing data. 
+
+2016-12-23 23:08:53,757 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 207, in handle_api_request
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2016-12-23 23:17:01,217 - knowledge_logger - main.py-handle-api- : sp_statutory_mapping_report_frequency- ()- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_statutory_mapping_report_frequency does not exist 
+
+2016-12-23 23:17:01,218 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 343, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 48, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 98, in process_get_statutory_mapping_filters
+    compliance_frequency = get_compliance_frequency(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/general.py", line 420, in get_compliance_frequency
+    "sp_statutory_mapping_report_frequency", ()
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_statutory_mapping_report_frequency- ()- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_statutory_mapping_report_frequency does not exist
+ 
+
+2016-12-23 23:17:12,018 - knowledge_logger - main.py-handle-api- : sp_statutory_mapping_report_frequency- ()- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_statutory_mapping_report_frequency does not exist 
+
+2016-12-23 23:17:12,018 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 343, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 48, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 98, in process_get_statutory_mapping_filters
+    compliance_frequency = get_compliance_frequency(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/general.py", line 420, in get_compliance_frequency
+    "sp_statutory_mapping_report_frequency", ()
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_statutory_mapping_report_frequency- ()- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_statutory_mapping_report_frequency does not exist
+ 
+
+2016-12-23 23:17:41,896 - knowledge_logger - main.py-handle-api- : sp_statutory_mapping_report_frequency- ()- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_statutory_mapping_report_frequency does not exist 
+
+2016-12-23 23:17:41,896 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 343, in handle_knowledge_report
+    return controller.process_knowledge_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 48, in process_knowledge_report_request
+    db, request_frame, user_id
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/knowledgereportcontroller.py", line 98, in process_get_statutory_mapping_filters
+    compliance_frequency = get_compliance_frequency(db)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/general.py", line 420, in get_compliance_frequency
+    "sp_statutory_mapping_report_frequency", ()
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_statutory_mapping_report_frequency- ()- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_statutory_mapping_report_frequency does not exist
+ 
+

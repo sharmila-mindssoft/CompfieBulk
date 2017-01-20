@@ -367,6 +367,7 @@ def make_summary(data, data_type, c):
         trigger = []
         if len(data) > 0:
             for d in data :
+                dat_summary = ""
                 dat = d.statutory_date
                 mon = d.statutory_month
                 day = d.trigger_before_days

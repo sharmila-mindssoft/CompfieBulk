@@ -88,6 +88,9 @@ function showTitle(e){
   else if (e.className == "fa c-pointer disable fa-ban text-danger") {
     e.title = "Click Here to Enable";
   }
+  else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
+    e.title = "User disabled";
+  }
 }
 
 // User List render process
@@ -166,43 +169,56 @@ function renderUserList(response) {
             });
 
             if (v.is_disable == true) {
+                console.log(v.allow_enable);
                 disablemsg = message.enable_message;
-                // $('.disable').attr('title', 'Click Here to Disable');
                 $('.disable', rowClone).removeClass('fa-ban text-muted');
                 $('.disable', rowClone).addClass('fa-ban text-danger');
+                if (v.allow_enable == false) {
+                    $('.disable', rowClone).addClass('expired');
+                }
+
             } else {
-                disablemsg = message.disable_message;
-                // $('.disable').attr('title', 'Click Here to Enable');
                 $('.disable', rowClone).removeClass('fa-ban text-danger');
                 $('.disable', rowClone).addClass('fa-ban text-muted');
             }
             $('.disable', rowClone).hover(function() {
-                showTitle(this);
-            });
-            $('.disable', rowClone).on('click', function(e) {
-                CurrentPassword.val('');
-                Remark.val('');
-                RemarkView.show();
-                confirm_alert(disablemsg, function(isConfirm) {
-                    if (isConfirm) {
-                        Custombox.open({
-                            target: '#custom-modal',
-                            effect: 'contentscale',
-                            complete: function() {
-                                CurrentPassword.focus();
-                                isAuthenticate = false;
-                            },
-                            close: function() {
-                                if (isAuthenticate) {
-                                    changeDisable(v.user_id, v.is_disable);
-                                }
-                            },
-                        });
-                        e.preventDefault();
-                    }
-                });
-            });
 
+                e = this;
+                if (e.className == "fa c-pointer disable fa-ban text-muted") {
+                    e.title = 'Click Here to Disable';
+                }
+                else if (e.className == "fa c-pointer disable fa-ban text-danger") {
+                    e.title = "Click Here to Enable \n reason : " + v.d_reason;
+                }
+                else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
+                    e.title = "User disabled";
+                }
+            });
+            if (v.allow_enable == true){
+                $('.disable', rowClone).on('click', function(e) {
+                    CurrentPassword.val('');
+                    Remark.val('');
+                    RemarkView.show();
+                    confirm_alert(disablemsg, function(isConfirm) {
+                        if (isConfirm) {
+                            Custombox.open({
+                                target: '#custom-modal',
+                                effect: 'contentscale',
+                                complete: function() {
+                                    CurrentPassword.focus();
+                                    isAuthenticate = false;
+                                },
+                                close: function() {
+                                    if (isAuthenticate) {
+                                        changeDisable(v.user_id, v.is_disable);
+                                    }
+                                },
+                            });
+                            e.preventDefault();
+                        }
+                    });
+                });
+            }
 
             $('.tbody-user-list').append(rowClone);
             j = j + 1;
@@ -333,7 +349,10 @@ function possibleFailures(error) {
         displayMessage(msg.invalid_userid);
     } else if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
-    } else {
+    } else if (error == 'CannotDisableUserTransactionExists') {
+        displayMessage(message.user_transaction_exists);
+    }
+    else {
         displayMessage(error);
     }
 }

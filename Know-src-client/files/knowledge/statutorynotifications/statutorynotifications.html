@@ -19,6 +19,7 @@
                   </tbody>
                 </table>
               </div>
+              <div class="clearfix"></div>
             </div>
       </div>
     </div>
@@ -41,5 +42,57 @@
   </tr>
 </table>
 </div>
+
+<div id="custom-modal" class="modal-demo box-width-600">
+  <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+    <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+  </span>
+  <h4 class="custom-modal-title p-t-10 p-b-10">Compliance Details</h4>
+  <div class="custom-modal-text">
+  <div role="form">
+      <div class="table-responsive box-width-560">
+          <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
+              <tbody>
+                <tr class="text-left">
+                  <td width="40%">Statutory Provision</td>
+                  <td width="60%" class="popup-statutory"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Compliance Task</td>
+                  <td class="popup-compliancetask"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Compliance Description</td>
+                  <td class="popup-description"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Penal Consequences</td>
+                  <td class="popup-penalconse"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Compliance Frequency</td>
+                  <td class="popup-frequency"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Compliance Occurrence</td>
+                  <td class="popup-occurance"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Applicable Location</td>
+                  <td class="popup-applicablelocation"></td>
+                </tr>
+                <tr class="text-left">
+                  <td>Reference Link</td>
+                  <td class="popup-referencelink">
+                    <a target="new"> <span> </span> </a>
+                  </td>
+                </tr>
+              </tbody>
+          </table>
+      </div>
+  </div>
+  </div>
+</div>
+
 <script type="text/javascript" src="/script/statutorynotifications/statutorynotifications.js"></script>
 {% endblock %} 

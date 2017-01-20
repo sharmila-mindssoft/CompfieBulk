@@ -1,0 +1,152 @@
+2016-12-14 17:35:12,196 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-14 17:35:12,201 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 243, in process_techno_report_request
+    result = process_get_AssignedStatutoriesList(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 593, in process_get_AssignedStatutoriesList
+    result = get_assigned_statutories_list(db, request_frame)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technoreport.py", line 1168, in get_assigned_statutories_list
+    for row in result[1]:
+IndexError: list index out of range
+ 
+
+2016-12-14 17:36:05,765 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-14 17:36:05,765 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 243, in process_techno_report_request
+    result = process_get_AssignedStatutoriesList(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 595, in process_get_AssignedStatutoriesList
+    result = get_assigned_statutories_list(db, request_frame)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technoreport.py", line 1168, in get_assigned_statutories_list
+    for row in result[1]:
+IndexError: list index out of range
+ 
+
+2016-12-14 17:38:49,522 - knowledge_logger - main.py-handle-api- : get_assigned_statutories_list() takes exactly 3 arguments (2 given) 
+
+2016-12-14 17:38:49,523 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 243, in process_techno_report_request
+    result = process_get_AssignedStatutoriesList(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 595, in process_get_AssignedStatutoriesList
+    result = get_assigned_statutories_list(db, request_frame)
+TypeError: get_assigned_statutories_list() takes exactly 3 arguments (2 given)
+ 
+
+2016-12-14 18:53:25,044 - knowledge_logger - main.py-handle-api- : get_assigned_statutories_list() takes exactly 3 arguments (2 given) 
+
+2016-12-14 18:53:25,044 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 243, in process_techno_report_request
+    result = process_get_AssignedStatutoriesList(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 595, in process_get_AssignedStatutoriesList
+    result = get_assigned_statutories_list(db, request_frame)
+TypeError: get_assigned_statutories_list() takes exactly 3 arguments (2 given)
+ 
+
+2016-12-14 19:31:21,022 - knowledge_logger - main.py-handle-api- : __init__() takes exactly 11 arguments (10 given) 
+
+2016-12-14 19:31:21,023 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 243, in process_techno_report_request
+    result = process_get_AssignedStatutoriesList(db, request_frame, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technoreportcontroller.py", line 595, in process_get_AssignedStatutoriesList
+    result = get_assigned_statutories_list(db, user_id)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technoreport.py", line 1172, in get_assigned_statutories_list
+    row["unit_id"], row["unit_name"], row["statutory_id"]
+TypeError: __init__() takes exactly 11 arguments (10 given)
+ 
+
+2016-12-14 20:01:25,023 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-14 20:01:25,023 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 74, in process_techno_request
+    result = get_clients_edit(db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 456, in get_clients_edit
+    unit_list = get_unit_details_for_user_edit(db, session_user, request)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technomaster.py", line 1657, in get_unit_details_for_user_edit
+    return return_unit_details(result)
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technomaster.py", line 1662, in return_unit_details
+    for r in result[0]:
+IndexError: list index out of range
+ 
+
+2016-12-14 20:15:50,914 - knowledge_logger - main.py-handle-api- : sp_tbl_units_save_category- [1, 0, 1, 1, u'Category RG', 7, '2016-12-14 20:15:50.900237']- 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge_updated`.`tbl_categories`, CONSTRAINT `fk_tbl_categories_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`)) 
+
+2016-12-14 20:15:50,915 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 319, in save_client
+    db, client_id, div_id, business_group_id, legal_entity_id, category_name, session_user
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technomaster.py", line 1217, in save_category
+    catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 803, in call_insert_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_save_category- [1, 0, 1, 1, u'Category RG', 7, '2016-12-14 20:15:50.900237']- 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`compfie_knowledge_updated`.`tbl_categories`, CONSTRAINT `fk_tbl_categories_business_groups` FOREIGN KEY (`business_group_id`) REFERENCES `tbl_business_groups` (`business_group_id`))
+ 
+
+2016-12-14 20:16:07,219 - knowledge_logger - main.py-handle-api- : sp_tbl_units_checkduplication- [None, u'RG00007', None, 1]- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_tbl_units_checkduplication does not exist 
+
+2016-12-14 20:16:07,220 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 333, in save_client
+    is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 246, in validate_unit_data
+    if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technomaster.py", line 1126, in is_duplicate_unit_code
+    rows = db.call_proc("sp_tbl_units_checkduplication", params)
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_checkduplication- [None, u'RG00007', None, 1]- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_tbl_units_checkduplication does not exist
+ 
+
+2016-12-14 20:18:22,215 - knowledge_logger - main.py-handle-api- : sp_tbl_units_checkduplication- [None, u'RG00007', None, 1]- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_tbl_units_checkduplication does not exist 
+
+2016-12-14 20:18:22,215 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "/home/usha/aparajitha-saas/Src-server/server/main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technocontroller.py", line 81, in process_techno_request
+    result = save_client(db, request_frame, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 333, in save_client
+    is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
+  File "/home/usha/aparajitha-saas/Src-server/server/controller/technomastercontroller.py", line 246, in validate_unit_data
+    if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
+  File "/home/usha/aparajitha-saas/Src-server/server/database/technomaster.py", line 1126, in is_duplicate_unit_code
+    rows = db.call_proc("sp_tbl_units_checkduplication", params)
+  File "/home/usha/aparajitha-saas/Src-server/server/dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_tbl_units_checkduplication- [None, u'RG00007', None, 1]- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_tbl_units_checkduplication does not exist
+ 
+

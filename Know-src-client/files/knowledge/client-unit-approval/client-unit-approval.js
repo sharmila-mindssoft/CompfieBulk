@@ -248,7 +248,7 @@ function validateForm(){
         var approve_drop_down_class = "approval-drop-down-"+(key+1);
         var reason_class = "reason-"+(key+1);
         var selected_option =   $("."+approve_drop_down_class).val();
-        var reason = $("."+reason_class).val().replace(/ /g,'');
+        var reason = $("."+reason_class).val().trim();
         if(selected_option == 2){
             if(reason.length == 0){
                 displayMessage(message.reason_required);

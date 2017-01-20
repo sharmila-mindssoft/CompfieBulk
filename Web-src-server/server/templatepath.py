@@ -53,7 +53,7 @@ CLIENT_TEMPLATE_PATHS = [
     # transactions ---------------------------------------------------------------------
     (
         "/statutory-settings",
-        "files/client/statutory-settings/statutorysettings.html",
+        "files/client/statutory-settings/statutory_settings.html",
         None, {}
     ),
     (
@@ -94,17 +94,22 @@ CLIENT_TEMPLATE_PATHS = [
     # reports ---------------------------------------------------------------------
     (
         "/legal-entity-wise-report",
-        "files/client/legal-entity-wise-report/legal-entity-wise-report.html",
+        "files/client/legal-entity-wise-report/legal_entity_wise_report.html",
         None, {}
     ),
     (
         "/domain-wise-report",
-         "files/client/domain-wise-report/domain-wise-report.html",
+         "files/client/domain-wise-report/domain_wise_report.html",
         None, {}
     ),
     (
         "/unit-wise-compliance",
         "files/client/unit-wise-compliance/unitwisecompliance.html",
+        None, {}
+    ),
+    (
+        "/unit-wise-report",
+        "files/client/unit-wise-report/unit_wise_report.html",
         None, {}
     ),
     (
@@ -124,27 +129,27 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/domain-score-card",
-        "files/client/domain-score-card/domain-score-card.html",
+        "files/client/domain-score-card/domain_score_card.html",
         None, {}
     ),
     (
         "/legal-entity-wise-score-card",
-        "files/client/legal-entity-wise-score-card/legal-entity-wise-score-card.html",
+        "files/client/legal-entity-wise-score-card/legal_entity_wise_score_card.html",
         None, {}
     ),
     (
         "/work-flow-score-card",
-        "files/client/work-flow-score-card/work-flow-score-card.html",
+        "files/client/work-flow-score-card/work_flow_score_card.html",
         None, {}
     ),
     (
         "/statutory-settings-unit-wise-report",
-        "files/client/statutory-settings-unit-wise-report/statutory-settings-unit-wise-report.html",
+        "files/client/statutory-settings-unit-wise/statutory_settings_unit_wise.html",
         None, {}
     ),
     (
         "/reassigned-history-report",
-        "files/client/reassigned-history-report/reassigned-history-report.html",
+        "files/client/reassigned-history/reassign_history.html",
         None, {}
     ),
     (
