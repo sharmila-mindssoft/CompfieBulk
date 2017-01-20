@@ -90,6 +90,11 @@ def process_techno_report_request(request, db):
             db, request_frame, user_id
         )
 
+    elif type(request_frame) is technoreports.ExportClientDetailsReportData:
+        result = process_export_client_details_report_data(
+            db, request_frame, user_id
+        )
+
     elif type(request_frame) is technoreports.GetStatutoryNotificationsFilters:
         result = process_get_statutory_notifications_filters(
             db, request_frame, user_id
@@ -144,6 +149,9 @@ def process_techno_report_request(request, db):
 
     elif type(request_frame) is technoreports.GetReassignUserReportData:
         result = process_get_ReassignUserReportData(db, request_frame, user_id)
+
+    elif type(request_frame) is technoreports.ExportReassignUserReportData:
+        result = process_export_ReassignUserReportData(db, request_frame, user_id)
 
     elif type(request_frame) is technoreports.GetReassignUserDomainReportData:
         result = process_get_ReassignUserDomainReportData(db, request_frame, user_id)
@@ -257,6 +265,19 @@ def process_get_client_details_report_data(db, request, session_user):
         units=units, total_count=total_count
     )
 
+##################################################################################################################
+# To get the client details report data and export to file
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of units matched under the parameters
+##################################################################################################################
+def process_export_client_details_report_data(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "ClientUnitDetailsReport"
+        )
+        return technoreports.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
 
 def process_get_compliance_task_filter(db, request, session_user):
     countries = get_countries_for_user(db, session_user)
@@ -406,64 +427,92 @@ def process_get_user_mapping_reports_filter(db, request_frame, session_user):
 # Return Type : Return list of mapped user list
 ##################################################################################################################
 def process_get_user_mapping_details_reports_data(db, request_frame, session_user):
-    print "inside user mapping report details"
-    country_id = request_frame.country_id
-    client_id = request_frame.client_id
-    legal_entity_id = request_frame.legal_entity_id
-    user_mapping_none_values = request_frame.u_m_none
-    bgrp_id = division_id = catagory_id = unit_id = 0
-    if user_mapping_none_values.find(",") > 0:
-        bgrp_id = user_mapping_none_values.split(",")[0]
-        division_id = user_mapping_none_values.split(",")[1]
-        catagory_id = user_mapping_none_values.split(",")[2]
-        unit_id = user_mapping_none_values.split(",")[3]
-    usermapping_report_dataset = []
-    usermapping_report_dataset = get_usermapping_report_dataset(db, int(session_user), client_id, legal_entity_id, country_id, int(bgrp_id), int(division_id), int(catagory_id), int(unit_id))
-    print "length of mapping after db"
-    print usermapping_report_dataset
-    techno_details = []
-    unit_domains = []
-    domains = []
-    if(len(usermapping_report_dataset) > 0):
-        print "ds 1"
-        print usermapping_report_dataset[1]
+    if request_frame.csv:
+        converter = ConvertJsonToCSV(
+            db, request_frame, session_user, "UserMappingReport"
+        )
+        print "inside control"
+        print converter.FILE_DOWNLOAD_PATH
+        return technoreports.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        print "inside user mapping report details"
+        country_id = request_frame.country_id
+        client_id = request_frame.client_id
+        legal_entity_id = request_frame.legal_entity_id
+        user_mapping_none_values = request_frame.u_m_none
+        from_count = request_frame.from_count
+        page_count = request_frame.page_count
+        bgrp_id = division_id = catagory_id = unit_id = 0
+        if user_mapping_none_values.find(",") > 0:
+            bgrp_id = user_mapping_none_values.split(",")[0]
+            division_id = user_mapping_none_values.split(",")[1]
+            catagory_id = user_mapping_none_values.split(",")[2]
+            unit_id = user_mapping_none_values.split(",")[3]
+        usermapping_report_dataset = []
+        usermapping_report_dataset = get_usermapping_report_dataset(
+            db, int(session_user), client_id, legal_entity_id,
+            country_id, int(bgrp_id), int(division_id), int(catagory_id),
+            int(unit_id), from_count, page_count
+        )
 
-        for techno in usermapping_report_dataset[0]:
-            techno_details.append(core.UserMappingReportTechno(
-                techno["unit_id"], techno["techno_manager"], techno["techno_user"]
-            ))
-        print "techno"
-        print techno_details
+        print "length of mapping after db"
+        print usermapping_report_dataset
+        techno_details = []
+        unit_domains = []
+        domains = []
+        if(len(usermapping_report_dataset) > 0):
+            print "ds 1"
+            print usermapping_report_dataset[1]
 
-        for assign_domain in usermapping_report_dataset[1]:
-            unit_domains.append(core.UserMappingReportDomain(
-                assign_domain["unit_id"], assign_domain["employee_name"], assign_domain["user_category_name"], assign_domain["domain_id"]
-            ))
-        print "unit_domains"
-        print unit_domains
-        for domain in usermapping_report_dataset[2]:
-            domains.append(technoreports.UserMappingDomain(
-                domain["domain_id"], domain["domain_name"], bool(domain["is_active"])
-            ))
-        '''if(len(usermapping_report_dataset[0]) > 0):
-            techno_details = usermapping_report_dataset[0]
-        else:
-            techno_details = None,
+            for techno in usermapping_report_dataset[0]:
+                techno_details.append(core.UserMappingReportTechno(
+                    techno["unit_id"], techno["techno_manager"], techno["techno_user"]
+                ))
+            print "techno"
+            print techno_details
 
-        if(len(usermapping_report_dataset[1]) > 0):
-            unit_domains = usermapping_report_dataset[1]
-        else:
-            unit_domains = None,
+            for assign_domain in usermapping_report_dataset[1]:
+                unit_domains.append(core.UserMappingReportDomain(
+                    assign_domain["unit_id"], assign_domain["employee_name"], assign_domain["user_category_name"], assign_domain["domain_id"]
+                ))
+            print "unit_domains"
+            print unit_domains
+            for domain in usermapping_report_dataset[2]:
+                domains.append(technoreports.UserMappingDomain(
+                    domain["domain_id"], domain["domain_name"], bool(domain["is_active"])
+                ))
+            '''if(len(usermapping_report_dataset[0]) > 0):
+                techno_details = usermapping_report_dataset[0]
+            else:
+                techno_details = None,
 
-        if(len(usermapping_report_dataset[2]) > 0):
-            domains = usermapping_report_dataset[2]
-        else:
-            domains = None'''
+            if(len(usermapping_report_dataset[1]) > 0):
+                unit_domains = usermapping_report_dataset[1]
+            else:
+                unit_domains = None,
 
-        return technoreports.GetUserMappingReportDataSuccess(
-            techno_details=techno_details,
-            unit_domains=unit_domains,
-            usermapping_domain=domains
+            if(len(usermapping_report_dataset[2]) > 0):
+                domains = usermapping_report_dataset[2]
+            else:
+                domains = None'''
+
+            return technoreports.GetUserMappingReportDataSuccess(
+                techno_details=techno_details,
+                unit_domains=unit_domains,
+                usermapping_domain=domains
+            )
+
+def process_export_user_mapping_details_reports_data(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "UserMappingReport"
+        )
+        print "inside control"
+        print converter.FILE_DOWNLOAD_PATH
+        return technoreports.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
         )
 ##################################################################################################################
 # To get the group admin registration email report data
@@ -554,6 +603,20 @@ def process_get_ReassignUserReportData(db, request_frame, user_id):
 
     result = get_ReassignUserReportData(db, user_category_id, user_id, group_id)
     return technoreports.ReassignUserReportDataSuccess(result)
+
+##################################################################################################################
+# To get the Reassigned user report data and export to file
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return list of reassigned user data under the parameters
+##################################################################################################################
+def process_export_ReassignUserReportData(db, request, user_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, user_id, "ReassignUserReport"
+        )
+        return technoreports.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
 
 ##################################################################################################################
 # To get the Reassigned domain user report data
