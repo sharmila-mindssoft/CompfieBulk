@@ -1089,8 +1089,11 @@ def get_unit_details_for_usermapping_report(db, user_category_id, user_id):
 #                   business group id, division id, category id, unit id
 # Return Type : Return list of user mapped data
 ####################################################################################################
-def get_usermapping_report_dataset(db, user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id):
-    args = [user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id]
+def get_usermapping_report_dataset(
+        db, user_id, client_id, legal_entity_id, country_id, bgrp_id,
+        division_id, category_id, unit_id, from_count, page_count
+):
+    args = [user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id, from_count, page_count]
     expected_result = 4
     result = db.call_proc_with_multiresult_set(
        "sp_usermapping_report_details", args, expected_result
