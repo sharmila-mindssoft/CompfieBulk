@@ -89,18 +89,18 @@ function FetchBack() {
                         if (response.s_ids.indexOf(v.s_id) > -1) {
                             info = {}
                             info["s_id"] = v.s_id;
+                            info["s_names"] = [];
                             if (v.p_maps != null)
-                                info["s_names"] = v.p_maps
-                            else
-                                info["s_names"] = [];
-                            info["s_names"].push(v.s_name)
+                                $.merge(info["s_names"], v.p_maps);
+
+                            info["s_names"].push(v.s_name);
+
                             if (v.p_ids == null) {
                                 info["l_one_id"] = 0;
                             }
                             else {
                                 info["l_one_id"] = v.p_ids[0];
                             }
-                            // alert(info);
                             _renderinput.mapped_statu.push(info);
                         }
                     });
@@ -336,7 +336,7 @@ function ListPage() {
                 row = $('#templates .compliance-row').clone();
 
                 $('.comp_name', row).text(c.comp_name);
-                $('.comp_edit', row).attr('title', 'Client here to edit compliance');
+                $('.comp_edit', row).attr('title', 'Click here to edit compliance');
                 $('.comp_edit', row).addClass('fa-pencil text-primary');
                 $('.comp_edit', row).on('click', function() {
                     _listPage.displayMappingEdit(mapping_id, c.comp_id);

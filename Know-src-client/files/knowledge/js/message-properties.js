@@ -60,6 +60,7 @@ var message = {
   'duration_required': 'Duration Required',
   'invalid_duration': 'Invalid Duration Value',
   'durationtype_required': 'Duration Type Required',
+  'invalid_triggerbefore': 'Trigger days cannot be greater than repeat every days',
   'triggerbefore_exceed': 'Trigger before days should not exceed 100',
   'triggerbefore_iszero': 'Trigger before days should be within 1 to 100',
   'invalid_repeatsevery': '"Repeats every" is Invalid',

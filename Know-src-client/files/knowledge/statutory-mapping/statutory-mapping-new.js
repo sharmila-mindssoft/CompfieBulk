@@ -426,15 +426,23 @@ function RenderInput() {
                 }
                 else {
                     $('.multicheckbox', RecurringPan).hide();
+                    MultiselectDate.prop('checked', false);
                 }
             }
             else{
                 $('.multicheckbox', RecurringPan).hide();
+                MultiselectDate.prop('checked', false);
             }
+
+            r_by = $("input[name='radioSingle1']:checked").val();
 
             if (RepeatsType.val() == 1) {
                 // hide repeat by, statutoty date and statutory month
                 // show only trigger days
+
+                $('.date-list').empty();
+                date_pan =_renderinput.loadDate(0)
+                $('.date-list').append(date_pan);
                 $('.repeat-by', RecurringPan).hide();
                 $(".statu-date-label", RecurringPan).hide();
                 $(".date-list").each(function(){
@@ -447,9 +455,18 @@ function RenderInput() {
                 $('.repeat-by', RecurringPan).show();
                 $(".statu-date-label", RecurringPan).show();
                 $(".date-list").each(function(){
-                    $(".statu-date-div", this).show();
+
                     $(".month-select-div", this).hide();
-                    $(".date-select-div", this).show();
+                    if (r_by == 1) {
+                        $(".statu-date-div", this).show();
+                        $(".date-select-div", this).show();
+                    }
+                    else {
+                        $(".statu-date-label", RecurringPan).hide();
+                        $(".date-select-div", this).hide();
+                        $(".statu-date-div", this).hide();
+                    }
+
                     _renderinput.loadDays(0, 1);
                 });
             }
@@ -457,10 +474,20 @@ function RenderInput() {
                 // show month, date annd trigger days
                 $('.repeat-by', RecurringPan).show();
                 $(".statu-date-label", RecurringPan).show();
+                $('.date-list').empty();
+                date_pan =_renderinput.loadDate(0)
+                $('.date-list').append(date_pan);
+                _renderinput.loadedDateEvent(0);
                 $(".date-list").each(function(){
                     $(".statu-date-div", this).show();
-                    $(".date-select-div", this).show();
+
                     $(".month-select-div", this).show();
+                    if (r_by == 1) {
+                        $(".date-select-div", this).show();
+                    }
+                    else {
+                        $(".date-select-div", this).hide();
+                    }
                 });
             }
             if (RepeatsType.val() != '') {
@@ -478,22 +505,42 @@ function RenderInput() {
         date_pan.attr('id', 'dt'+ idx);
         $('.month-select', date_pan).empty();
         _renderinput.loadMonthAndData($('.month-select', date_pan));
+
+        $('.date-select', date_pan).empty();
+        $('.date-select', date_pan).append(_renderinput.make_option("Select", ''));
+        for (var i=1; i<=31; i++) {
+            dopt =_renderinput.make_option(i, i);
+            $('.date-select', date_pan).append(dopt);
+        }
+
+
         $('.trigger-value', date_pan).on('input', function(e) {
             this.value = isNonZeroNumbers($(this));
         });
         repeat_by = $("input[name='radioSingle1']:checked").val();
-        if ((RepeatsType.val() == 2) && (repeat_by == 2)) {
-            $('.date-select', date_pan).hide();
-            $(".statu-date-label", RecurringPan).hide();
-        }
-        else {
-            $('.date-select', date_pan).show();
-            $(".statu-date-label", RecurringPan).show();
-        }
+
         if (RepeatsType.val() == 2) {
             if (MultiselectDate.prop('checked') == false) {
-                $('.month-select', date_pan).hide();
+                $('.month-select-div', date_pan).hide();
             }
+
+            if (repeat_by == 2) {
+                $('.date-select', date_pan).hide();
+                $('.statu-date-div', date_pan).hide();
+                $(".statu-date-label", RecurringPan).hide();
+                if (MultiselectDate.prop('checked') == true) {
+                    $('.statu-date-div', date_pan).show();
+                }
+                else {
+                    $('.statu-date-div', date_pan).hide();
+                }
+            }
+            else {
+                $('.date-select', date_pan).show();
+                $('.statu-date-div', date_pan).show();
+                $(".statu-date-label", RecurringPan).show();
+            }
+
         }
         return date_pan;
     };
@@ -540,6 +587,7 @@ function RenderInput() {
 
         MultiselectDate.on('click', function(e) {
             $('.date-list').empty();
+
             if (MultiselectDate.prop('checked')) {
                 if (12 % parseInt(RepeatsEvery.val()) == 0 ) {
                     len = 12 / parseInt(RepeatsEvery.val());
@@ -548,8 +596,10 @@ function RenderInput() {
                         _renderinput.loadedDateEvent(i);
                     }
                 }
+                $(".statu-date-label", RecurringPan).show();
             }
             else {
+
                 $('.date-list').append(_renderinput.loadDate(0));
                 _renderinput.loadedDateEvent(0);
                 _renderinput.loadDays(0, 1);
@@ -814,6 +864,12 @@ function RenderInput() {
         if (freq_val == 1) {
             $('#otstatutory_month').empty();
             _renderinput.loadMonthAndData($('#otstatutory_month'));
+            $('#otstatutory_date').empty();
+            $('#otstatutory_date').append(_renderinput.make_option("Select", ''));
+            for (var i=1; i<=31; i++) {
+                dopt =_renderinput.make_option(i, i);
+                $('#otstatutory_date').append(dopt);
+            }
             $('#otstatutory_month').change(function(){
                 $('#otstatutory_date').empty();
                 $('#otstatutory_date').append(_renderinput.make_option("Select", ''));
@@ -855,6 +911,7 @@ function RenderInput() {
         Frequency.val(data.f_id);
         this.hideFrequencyAll();
         this.showFrequencyVal();
+        _renderinput.summary = data.summary;
         if (data.f_id == 1) {
             if (data.statu_dates.length > 0) {
                 $('#otstatutory_month').val(data.statu_dates[0]['statutory_month']);
@@ -887,7 +944,6 @@ function RenderInput() {
             if (data.statu_dates.length > 1) {
                 MultiselectDate.prop('checked', true);
             }
-
             if (data.r_type_id == 1) {
                 // hide repeat by, statutoty date and statutory month
                 // show only trigger days
@@ -903,6 +959,7 @@ function RenderInput() {
 
 
             $('.date-list').empty();
+            console.log(data.statu_dates.length);
             $.each(data.statu_dates, function(k, v) {
 
                 date_pan = _renderinput.loadDate(k);
@@ -927,9 +984,13 @@ function RenderInput() {
                     }
                     else {
                         $(".month-select-div", date_pan).hide();
-                        for (var i=1; i<31; i++) {
-                            opt = _renderinput.make_option(i, i);
-                            $('.date-select', date_pan).append(opt);
+                        if (v['repeat_by'] == 1) {
+                            $('.statu-date-div', date_pan).show();
+                            $(".statu-date-label", RecurringPan).show();
+                        }
+                        else {
+                            $('.statu-date-div', date_pan).hide();
+                            $(".statu-date-label", RecurringPan).hide();
                         }
                     }
                 }
@@ -937,8 +998,8 @@ function RenderInput() {
                 $('.month-select', date_pan).val(v['statutory_month']);
                 $('.trigger-value', date_pan).val(v['trigger_before_days']);
                 $.each(_renderinput.getMonthAndDataSets(), function(kk, vv) {
-                    $('.date-select', date_pan).empty();
                     if (vv.m_id == v["statutory_month"]) {
+                        $('.date-select', date_pan).empty();
                         for (var i=1; i<=vv.range; i++) {
                             opt = _renderinput.make_option(i, i);
                             $('.date-select', date_pan).append(opt);
@@ -961,12 +1022,6 @@ function RenderInput() {
             Temp_id.val(data.comp_id);
         }
 
-        if (Temp_id.val() == '') {
-            Temp_id.val(_renderinput.mapped_compliances.length+1);
-        }
-        console.log(data.comp_id);
-        console.log(data.temp_id);
-        console.log(Temp_id.val());
         // display file name
         _renderinput.f_f_list = data.f_f_list;
         if (data.f_f_list.length > 0) {
@@ -1004,6 +1059,7 @@ function RenderInput() {
         this.hideFrequencyAll();
         $('#uploaded_fileview').hide();
         _renderinput.f_f_list = [];
+        _renderinput.summary = null;
     };
     this.renderComplianceGrid = function() {
 
@@ -1029,16 +1085,28 @@ function RenderInput() {
             $('.description', cObj).text(v.description);
             $('.frequency', cObj).text(v.frequency);
             $('.summary-repeats', cObj).text(v.summary);
-            $('#edit-icon', cObj).attr('title', 'Edit');
+            $('#edit-icon', cObj).attr('title', 'Click here to edit');
             $('#edit-icon', cObj).on('click', function () {
+                if (v.comp_id == null) {
+                    v.temp_id = ke;
+                }
                 _renderinput.loadCompliance(v);
             });
+            $('#status', cObj).removeClass('remove');
+            console.log(v.comp_id);
             if (v.comp_id == null) {
                 $('#status', cObj).addClass('remove');
                 $('#status', cObj).addClass('fa-trash text-primary');
                 $('#status', cObj).attr('title', "Click here to remove compliance");
+                $('#status', cObj).on('click', function () {
+                    if ($('#status', cObj).hasClass('remove')) {
+                        _renderinput.mapped_compliances.splice(ke, 1);
+                    }
+                    _renderinput.renderComplianceGrid();
+                });
             }
             else {
+                $('#status', cObj).removeClass('remove');
                 if (v.is_active == true){
                     classValue = "active-icon";
                     $('#status', cObj).addClass(classValue);
@@ -1051,25 +1119,21 @@ function RenderInput() {
                     $('#status', cObj).addClass("fa-times text-danger");
                     $('#status', cObj).attr('title', msg.deactive_tooltip);
                 }
-            }
-            $('#status', cObj).hover(function(){
-                showTitle(this);
-            });
-            $('#status', cObj).on('click', function () {
-
-                if ($('#status', cObj).hasClass('remove')) {
-                    _renderinput.mapped_compliances.splice(ke, 1);
-                }
-                else {
+                $('#status', cObj).on('click', function () {
                     if (v.is_active == true) {
                         v.is_active = false;
                     }
                     else {
                         v.is_active = true;
                     }
-                }
-                _renderinput.renderComplianceGrid();
+                    _renderinput.renderComplianceGrid();
+                });
+            }
+
+            $('#status', cObj).hover(function(){
+                showTitle(this);
             });
+
             $('.tbody-compliance-list').append(cObj);
             j += 1;
         });
@@ -1321,7 +1385,7 @@ function RenderInput() {
                 $('.header-title', RecurringPan).html(txt);
                 _renderinput.loadRepeats();
                 $('.date-list').empty();
-                _renderinput.loadDate(0)
+                date_pan = _renderinput.loadDate(0)
                 $('.date-list').append(date_pan);
                 _renderinput.loadedDateEvent(0);
             }
@@ -1581,6 +1645,7 @@ function pageControls() {
         info['duration'] = null;
         info['r_type_id'] = null;
         info['r_every'] = null;
+        is_all_true = true;
         _renderinput.statu_dates = [];
         if (Frequency.val() == 5) {
 
@@ -1648,7 +1713,13 @@ function pageControls() {
                 }
                 mon = $(".month-select", this).val();
                 trig = $(".trigger-value", this).val();
-                   // validate same date and month
+
+                if ((RepeatsType.val() == 1) && (RepeatsEvery.val() < trig)){
+                   // validate trigger before days
+                    displayMessage(msg.invalid_triggerbefore);
+                    is_all_true = false;
+
+                }
 
                 statu['repeat_by'] = repeat_by;
                 if (dt != '') {
@@ -1658,7 +1729,7 @@ function pageControls() {
                     if (MultiselectDate.prop('checked') == true) {
                         displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
                         _renderinput.statu_dates = [];
-                        return false;
+                        is_all_true = false;
                     }
                 }
                 if (mon != '') {
@@ -1668,17 +1739,17 @@ function pageControls() {
                     if (MultiselectDate.prop('checked') == true) {
                         displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
                         _renderinput.statu_dates = [];
-                        return false;
+                        is_all_true = false;
                     }
                 }
                 if (trig != '') {
                     if (trig == 0) {
                         displayMessage(msg.triggerbefore_iszero);
-                        return false;
+                        is_all_true = false;
                     }
                     else if (trig > 100) {
                         displayMessage(msg.triggerbefore_exceed);
-                        return false;
+                        is_all_true = false;
                     }
                     statu['trigger_before_days'] = parseInt(trig)
                 }
@@ -1686,7 +1757,7 @@ function pageControls() {
                     if (MultiselectDate.prop('checked') == true) {
                         displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
                         _renderinput.statu_dates = []
-                        return false;
+                        is_all_true = false;
                     }
                 }
                 _renderinput.statu_dates.push(statu);
@@ -1722,6 +1793,9 @@ function pageControls() {
                 statu['trigger_before_days'] = parseInt(trig)
             }
             _renderinput.statu_dates.push(statu);
+        }
+        if (is_all_true == false) {
+            return false;
         }
         if ((MultiselectDate.prop('checked') == true) && (_renderinput.statu_dates.length == 0)) {
             displayMessage(msg.statutorydate_triggerdte_mandatory_multipleinputs)
@@ -1824,15 +1898,29 @@ function pageControls() {
 
     $(".radio-class").click(function() {
         selected_val = $("input[name='radioSingle1']:checked").val();
-        if (selected_val == "1") {
+        if (selected_val == 1) {
             $(".date-list").each(function(){
                 $(".date-select", this).show();
+                $(".date-select-div", this).show();
+                if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)){
+                    $(".statu-date-div", this).show();
+                }
             });
+            if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)){
+                $(".statu-date-label", RecurringPan).show();
+            }
         }
         else {
             $(".date-list").each(function(){
                 $(".date-select", this).hide();
+                $(".date-select-div", this).hide();
+                if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)){
+                    $(".statu-date-div", this).hide();
+                }
             });
+            if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)){
+                $(".statu-date-label", RecurringPan).hide();
+            }
         }
     });
 
