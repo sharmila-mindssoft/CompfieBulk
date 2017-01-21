@@ -4608,7 +4608,7 @@ BEGIN
     where t4.geography_id IN
     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
     (select parent_ids from tbl_geographies where geography_id = @gid)))
-    order by t3.statutory_mapping;
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
     -- mapped organistaion
     select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
     from tbl_mapped_industries as t1 inner join tbl_organisation as t2
@@ -4618,7 +4618,7 @@ BEGIN
     where t4.geography_id IN
     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
     (select parent_ids from tbl_geographies where geography_id = @gid)))
-    order by t3.statutory_mapping;
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
 
     -- new and assigned compliance
     select distinct t1.statutory_mapping_id, t1.compliance_id,
@@ -4642,7 +4642,7 @@ BEGIN
      and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
-    order by t.statutory_mapping, t4.unit_id
+    order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
     limit fromcount, tocount;
 
     -- total compliances
@@ -4661,7 +4661,7 @@ BEGIN
      and t3.geography_id IN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
-    order by t.statutory_mapping, t4.unit_id;
+    order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id;
 
 END //
 
@@ -7015,6 +7015,8 @@ BEGIN
         from tbl_statutories as t1
         inner join tbl_mapped_statutories as t2 on t2.statutory_id = t1.statutory_id
     where t2.statutory_mapping_id = map_id;
+
+    SELECT count(compliance_id) as is_assigned FROM tbl_client_compliances WHERE compliance_id = comp_id;
 
 END //
 

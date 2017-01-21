@@ -211,7 +211,7 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                 unit_id
             ))
 
-    data_list.sort(key=lambda x : (x.level_one_id, x.compliance_id))
+    data_list.sort(key=lambda x : (x.level_one_name, x.compliance_id))
 
     total_comp = 0
     for t in total_comp_list :
@@ -364,7 +364,7 @@ def get_assigned_compliance_by_id(db, request, user_id):
                 r["compliance_applicable_status"], r["is_approved"], unit_id
             ))
 
-    data_list.sort(key=lambda x : (x.level_one_id, x.compliance_id))
+    data_list.sort(key=lambda x : (x.level_one_name, x.compliance_id))
 
     total_comp = 0
     for t in total_comp_list :
