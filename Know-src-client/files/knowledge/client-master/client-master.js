@@ -27,7 +27,7 @@ var LEGALENTITIES = '';
 var DATECONFIGURATIONS = '';
 var IS_APPROVED = '';
 var SELECTED_ACTION = '';
-
+var temp_i = 1;
 var orgid_temp = [];
 
 var FilterBox = $('.filter-text-box');
@@ -871,6 +871,7 @@ function editClient() {
 
 
 function showNonEditableEntityDetails(le_count, value, domain_details, push_in_array) {
+    console.log("welcome to showNonEditableEntityDetails");
     var le_table = $(".le-table-" + le_count);
     showNonEditable(le_table.find(".country"), value.country_id, country_name_map[value.country_id]);
     le_table.find(".edit-right-icon").show();
@@ -913,11 +914,17 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     } else {
         logoFile.push('');
     }
-    le_table.find(".edit-right-icon").click(function() {
-        displayLoader();
-        editEntity(le_count, value, value.domain_details);
-        hideLoader();
+    le_table.find(".edit-right-icon").on("click", function(e) {
+        //displayLoader();
+        console.log("welcome to editEntity--"+temp_i);
+        temp_i++;
+        editEntity(this, le_count, value, value.domain_details);
+        //hideLoader();
+        //e.preventDefault();
+        //return false;
     });
+    //le_table.find(".edit-right-icon").attr('onClick', 'editEntity('+le_count+', '+value+', '+value.domain_details+');');
+    //le_table.find(".edit-right-icon").attr('onClick', 'editEntity('+le_count+', value, value.domain_details);');
     var domain_list_class = "domain-list-" + le_count;
     var domain_count_class = "domain-count-" + le_count;
     var domain_table_class = "domain-table-" + le_count;
@@ -966,14 +973,13 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     // le_table.find('.remove-header').text("Organization");
     // le_table.find('.remove-header').attr("width", "45%");
     le_table.find(".edit-right-icon").attr("src", "/images/icon-edit.png");
-    // le_table.find(".edit-right-icon i").removeClass("fa-pencil");
-    // le_table.find(".edit-right-icon i").addClass("fa-times");
     le_table.find(".edit-right-icon i").removeClass("fa-times");
     le_table.find(".edit-right-icon i").addClass("fa-pencil");
     if (value.is_closed == true) {
         le_table.find(".edit-right-icon").hide();
     }
-
+    console.log("End of episode");
+    return false;
 }
 
 function loadActions() {
@@ -1018,16 +1024,15 @@ $(".actions select").change(function() {
     editClient();
 });
 
-function editEntity(le_count, value, domain_details) {
+function editEntity(e, le_count, value, domain_details) {
     var le_table = $(".le-table-" + le_count);
     // image = le_table.find(".edit-right-icon i").hasClass("fa-times"); //.split("?")[0].split("/")
     // image_name = image[image.length - 1];
     // if (image) {
-    image = le_table.find(".edit-right-icon").attr("src").split("?")[0].split("/");
-    image_name = image[image.length - 1];
-
     if (image_name == "icon-edit.png") {
-        selected_action = $(".actions select").val()
+        var image = le_table.find(".edit-right-icon").attr("src").split("?")[0].split("/");
+        var image_name = image[image.length-1];
+        selected_action = $(".actions select").val();
         if (selected_action == 1) {
             showEditable(le_table.find(".contract-from"), value.contract_from);
             showEditable(le_table.find(".contract-to"), value.contract_to);
@@ -1099,17 +1104,22 @@ function editEntity(le_count, value, domain_details) {
             //le_table.find(".edit-right-icon i").addClass("fa-pencil");
             le_table.find(".edit-right-icon i").removeClass("fa-pencil");
             le_table.find(".edit-right-icon i").addClass("fa-times");
+            console.log("end of episode of icon-edit");
+
 
         }
-    } else {
+    }
+    if(image_name == "delete-icon-black.png") {
+        console.log("welcome to delete-icon-black");
+        le_table.find(".edit-right-icon").prop('onclick',null).off('click');
         showNonEditableEntityDetails(le_count, value, domain_details, false);
     }
 }
 
 $(".edit-username-viewlicence").click(function() {
     if ($(".actions select").val() == 0 || $(".actions select").val() == 2) {
-        image = $(".edit-username-viewlicence").attr("src").split("?")[0].split("/");
-        image_name = image[image.length - 1];
+        var image = $(".edit-username-viewlicence").attr("src").split("?")[0].split("/");
+        var image_name = image[image.length - 1];
         if (image_name == "icon-edit.png") {
             showEditable($("#username"), USERNAME);
             showEditable($("#view-licence-text"), VIEW_LICENCE);
@@ -1128,8 +1138,8 @@ $(".edit-username-viewlicence").click(function() {
 
 $(".edit-date-config").click(function() {
     if ($(".actions select").val() == 0 || $(".actions select").val() == 2) {
-        image = $(".edit-date-config").attr("src").split("?")[0].split("/");
-        image_name = image[image.length - 1];
+        var image = $(".edit-date-config").attr("src").split("?")[0].split("/");
+        var image_name = image[image.length - 1];
         if (image_name == "icon-edit.png") {
             $.each(DATECONFIGURATIONS, function(key, value) {
                 var country_id = value.country_id

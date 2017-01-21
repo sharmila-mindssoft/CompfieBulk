@@ -3,6 +3,8 @@ import json
 import traceback
 import jinja2
 import base64
+import random
+import string
 import mysql.connector.pooling
 from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
@@ -10,7 +12,7 @@ from functools import wraps
 import logging
 from lxml import etree
 from protocol import (
-    admin, consoleadmin, clientadminsettings,
+    admin, consoleadmin,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions,
     clientcoordinationmaster, mobile, domaintransactionprotocol
@@ -148,9 +150,10 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        # print s
+        print s
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
-        s = json.dumps(s)
+        s = json.dumps(key+s)
         # print s
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
@@ -166,9 +169,10 @@ class API(object):
             if not request.data:
                 raise ValueError("Request data is Null")
             # print "-" * 10
-            data = request.data.decode('base64')
-            # print data
+            data = request.data[5:]
+            data = data.decode('base64')
             data = json.loads(data)
+            print data
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -332,10 +336,6 @@ class API(object):
     def handle_techno(self, request, db):
         return controller.process_techno_request(request, db)
 
-    @api_request(clientadminsettings.Request)
-    def handle_client_admin_settings(self, request, db):
-        pass
-
     @api_request(general.RequestFormat)
     def handle_general(self, request, db):
         return controller.process_general_request(request, db)
@@ -408,13 +408,16 @@ FONT_PATH = os.path.join(COMMON_PATH, "fonts")
 SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
 LOGO_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "clientlogo")
 
+CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
+
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),
     ("/knowledge/js/<path:filename>", JS_PATH),
     ("/knowledge/images/<path:filename>", IMG_PATH),
     ("/knowledge/fonts/<path:filename>", FONT_PATH),
     ("/knowledge/script/<path:filename>", SCRIPT_PATH),
-    ("/knowledge/clientlogo/<path:filename>", LOGO_PATH)
+    ("/knowledge/clientlogo/<path:filename>", LOGO_PATH),
+    ("/knowledge/downloadcsv/<path:filename>", CSV_PATH)
 
 ]
 
@@ -485,7 +488,7 @@ def run_server(port):
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/console_admin", api.handle_console_admin),
             ("/knowledge/api/techno", api.handle_techno),
-            ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
+            # ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
             ("/knowledge/api/general", api.handle_general),
             ("/knowledge/api/knowledge_master", api.handle_knowledge_master),
             ("/knowledge/api/knowledge_transaction", api.handle_knowledge_transaction),
@@ -497,7 +500,7 @@ def run_server(port):
             ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master),
             ("/knowledge/api/mobile/login", api.handle_mobile_login_request),
             ("/knowledge/api/mobile", api.handle_mobile_request),
-            ("/knowledge/api/upload", api.handle_mobile_request)
+
         ]
 
         for idx, path in enumerate(TEMPLATE_PATHS):

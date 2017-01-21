@@ -532,10 +532,11 @@ BEGIN
         date(t1.created_on) >= _from_date
         AND date(t1.created_on) <= _to_date
         AND COALESCE(t1.form_id,'') LIKE _form_id
-        AND t1.user_category_id = _category_id
+        AND t1.user_id LIKE _user_id
         -- AND t2.user_id LIKE _user_id
         -- AND t2.user_category_id in (1,2,3,4,5,6,7,8)
-        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        -- ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        ORDER BY t1.created_on DESC
         limit _from_limit, _to_limit;
 
         SELECT count(0) as total FROM tbl_activity_log
@@ -557,7 +558,8 @@ BEGIN
         -- AND t3.user_id = t2.user_id
         -- AND t2.user_id LIKE _user_id
         -- AND t2.user_category_id LIKE _category_id
-        ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        -- ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        ORDER BY t1.created_on DESC
         limit _from_limit, _to_limit;
 
         SELECT count(0) as total FROM tbl_activity_log
@@ -2534,6 +2536,48 @@ BEGIN
     SELECT concat(employee_code, " - ", employee_name) as empname
     FROM tbl_users
     WHERE user_id = userid;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_groupname_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_groupname_by_id`(
+    IN ctid INT(11)
+)
+BEGIN
+    SELECT client_id, group_name FROM tbl_client_groups WHERE client_id = ctid;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_legalentityname_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_legalentityname_by_id`(
+    IN leid INT(11)
+)
+BEGIN
+    SELECT legal_entity_id, legal_entity_name FROM tbl_legal_entities WHERE
+    legal_entity_id = leid;
+END //
+
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_unitname_by_id`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_unitname_by_id`(
+    IN uid INT(11)
+)
+BEGIN
+    SELECT unit_id, unit_name FROM tbl_units WHERE
+    unit_id = uid;
 END //
 
 DELIMITER ;
@@ -4891,7 +4935,7 @@ BEGIN
     from tbl_geographies as t1 inner join tbl_geography_levels as t2
     on t1.level_id = t2.level_id inner join tbl_user_countries t3 on
     t3.country_id = t2.country_id where t3.user_id = userid
-    order by geography_name;
+    order by t2.level_position, geography_name;
     -- 5
     select t1.level_id, t1.level_position, t1.level_name,
     t1.country_id from tbl_geography_levels as t1
@@ -6484,32 +6528,19 @@ CREATE PROCEDURE `sp_get_messages`(
 IN fromcount_ INT(11), IN pagecount_ INT(11), IN userid_ INT(11)
 )
 BEGIN
+    
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = userid_;
 
-    IF @u_cat_id = 1  THEN
-
-        SELECT m.message_id, m.message_heading, m.message_text, m.link,
-        'Compfie Admin' as created_by,
-        m.created_on
-        from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
-        AND mu.user_id = userid_
-        where m.user_category_id = @u_cat_id
-        order by created_on DESC limit pagecount_;
-
-    end if;
-
-    IF @u_cat_id > 2  THEN
-        SELECT m.message_id, m.message_heading, m.message_text, m.link,
-        (SELECT concat(employee_code, ' - ', employee_name)
-        from tbl_users where user_id = m.created_by) as created_by,
-        m.created_on
-        from tbl_messages m INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
-        AND mu.user_id = userid_
-        where m.user_category_id = @u_cat_id
-        order by created_on DESC limit pagecount_;
-    end if;
-
-
+    SELECT m.message_id, m.message_heading, m.message_text, m.link, m.created_by,
+    IF(uld.user_category_id <= 2, 'Compfie Admin', 
+    (SELECT concat(employee_code, ' - ', employee_name)
+    from tbl_users where user_id = m.created_by)) as created_by,
+    m.created_on
+    from tbl_messages m 
+    INNER JOIN tbl_message_users mu ON mu.message_id = m.message_id
+    INNER JOIN tbl_user_login_details uld ON uld.user_id = m.created_by
+    where m.user_category_id = @u_cat_id and mu.user_id = userid_
+    order by created_on DESC limit pagecount_;
 
 END //
 
@@ -7663,6 +7694,15 @@ BEGIN
         created_by, created_on
     ) values (cat_id, u_from_id, u_to_id, remarks, sessionuser, current_ist_datetime());
 
+    IF cat_id = 5  THEN
+        update tbl_user_clients set user_id = u_to_id where user_id = u_from_id
+            and user_category_id = cat_id;
+    ELSEIF cat_id = 7 THEN
+        update tbl_user_units set user_id = u_to_id where user_id = u_from_id
+            and user_category_id = cat_id;
+    END IF;
+
+
 END //
 
 DELIMITER ;
@@ -8289,3 +8329,35 @@ END //
 
 DELIMITER ;
 
+-- -------------
+-- get user mapped id
+-- --------------
+DROP PROCEDURE IF EXISTS `sp_check_user_mapping`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_check_user_mapping`(in
+    country_id_ int(11), domain_id_ int(11), p_user_id_ int(11), c_user_id_ int(11), u_cat_id_ int(11))
+BEGIN
+
+    if u_cat_id_ = 6  THEN
+        select count(user_id) as cnt from tbl_user_legalentity as t1, tbl_legal_entities as t2
+        where t1.legal_entity_id = t2.legal_entity_id and
+        t1.user_id = c_user_id_  and t2.country_id = country_id_;
+    end if;
+
+    if u_cat_id_ = 7  THEN
+        select count(user_id) as cnt from tbl_user_units as t1, tbl_units as t2
+        where t1.unit_id = t2.unit_id and t1.domain_id = domain_id_ and 
+        t1.user_id = c_user_id_  and t2.country_id = country_id_ and 
+        t1.client_id in (select client_id from tbl_user_clients where user_id = p_user_id_;
+    end if;
+
+    if u_cat_id_ = 8 THEN
+        select count(user_id) as cnt from tbl_user_units as t1, tbl_units as t2
+        where t1.unit_id = t2.unit_id and t1.domain_id = domain_id_ and
+        t1.user_id = c_user_id_  and t2.country_id = country_id_;
+    end if;
+END //
+
+DELIMITER ;

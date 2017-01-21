@@ -37,7 +37,7 @@ var unit_values = '';
 var units_count = [];
 var prev_org_id = 0;
 var check_org = false;
-
+var del_row=[];
 var clientUnitAdd = $('#clientunit-add');
 var clientUnitView = $('#clientunit-view');
 
@@ -212,6 +212,7 @@ function getDivisionName(divisionId) {
 //Add Button EVent-------------------------------------------------------------------------------------------------
 $('#btn-clientunit-add').click(function() {
     isUpdate = false;
+    edit = false;
     units_count = [];
     division_cnt = 0;
     clientUnitAdd.show();
@@ -612,9 +613,12 @@ function addcountryrownew() {
         $('.division-new-' + division_cnt + '-' + 1, clone).hide();
         $('.division-existing-' + division_cnt + '-' + 1).hide();
         if(edit == false){
+            console.log("here")
             $('.domainselected-' + division_cnt + '-' + 1).multiselect('rebuild');
             $('.orgtypeselected-' + division_cnt + '-' + 1).multiselect('rebuild');
-            loadDomains(division_cnt + '-' + 1,null);
+
+            $('.domainselected-' + division_cnt + '-' + 1).parent('span').show();
+            $('.orgtypeselected-' + division_cnt + '-' + 1).parent('span').show();
         }
     }
     else
@@ -1385,6 +1389,17 @@ function onArrowKeyUnit(e, ac_item, count) {
         return false;
     }
 }
+function checkDeletedRow(delval){
+    console.log(delval, del_row)
+    for(var i=0;i<del_row.length;i++){
+        console.log(del_row)
+        if(del_row[i]==delval){
+            console.log("true")
+            return true;
+        }
+    }
+    return false;
+}
 //Submit Record -----------------------------------------------------------------------------------------
 $('#btn-clientunit-submit').click(function() {
     clearMessage();
@@ -1482,7 +1497,7 @@ $('#btn-clientunit-submit').click(function() {
                 divNameValue = divisiontextValue;
             }
             unit_cnt = $('.unitcnt-' + i + '-1').val();
-
+            console.log("save-1:"+unit_cnt)
             if ($('.category-name-' + i + '-' + 1).val() != '') {
                 category = $('.category-name-' + i + '-' + 1).val();
             } else {
@@ -1494,98 +1509,100 @@ $('#btn-clientunit-submit').click(function() {
 
             if (unit_cnt > 0) {
                 for (var j = 1; j <= unit_cnt; j++) {
-                    var unit;
-                    var unitIndustryIds = [];
-                    var unitdomains = [];
-                    unitId = null;
-                    unitCode = $('.unit-code-' + i + '-' + j).val();
+                    if(checkDeletedRow(i+"-"+j) == false){
+                        var unit;
+                        var unitIndustryIds = [];
+                        var unitdomains = [];
+                        unitId = null;
+                        unitCode = $('.unit-code-' + i + '-' + j).val();
 
-                    unitName = $('.unit-name-' + i + '-' + j).val().trim();
-                    unitAddress = $('.unit-address-' + i + '-' + j).val().trim();
-                    unitPostalCode = $('.postal-code-' + i + '-' + j).val().trim();
-                    unitGeographyId = $('.unitlocation-ids-' + i + '-' + j).val().trim();
-                    unitLocation = $('.unitlocation-' + i + '-' + j).val().trim();
+                        unitName = $('.unit-name-' + i + '-' + j).val().trim();
+                        unitAddress = $('.unit-address-' + i + '-' + j).val().trim();
+                        unitPostalCode = $('.postal-code-' + i + '-' + j).val().trim();
+                        unitGeographyId = $('.unitlocation-ids-' + i + '-' + j).val().trim();
+                        unitLocation = $('.unitlocation-' + i + '-' + j).val().trim();
 
 
-                    unitIndustryId = $('.orgtypeselected-' + i + '-' + j).val();
+                        unitIndustryId = $('.orgtypeselected-' + i + '-' + j).val();
 
-                    //unitIndustryName = $('.industry-' + i + '-' + j + ' option:selected').text();
+                        //unitIndustryName = $('.industry-' + i + '-' + j + ' option:selected').text();
 
-                    unitdomain = $('.domainselected-' + i + '-' + j).val();
+                        unitdomain = $('.domainselected-' + i + '-' + j).val();
 
-                    if (unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomains.length == 0 && unitIndustryIds.length == 0) {
-                        if (unitCountValue == 1) {
-                            displayMessage(message.add_one_unit);
+                        if (unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomains.length == 0 && unitIndustryIds.length == 0) {
+                            if (unitCountValue == 1) {
+                                displayMessage(message.add_one_unit);
+                                return;
+                            }
+                            continue;
+                        }
+                        if (unitLocation == '') {
+                            displayMessage(message.unitlocation_required);
+                            return;
+                        } else if (unitGeographyId == '') {
+                            displayMessage(message.unitlocation_invalid);
+                            return;
+                        } else if (unitCode == '') {
+                            displayMessage(message.unitcode_required);
+                            return;
+                        } else if (unitName == '') {
+                            displayMessage(message.unitname_required);
+                            return;
+                        } else if (unitAddress == '') {
+                            displayMessage(message.unitaddress_required);
+                            return;
+                        } else if (unitPostalCode == '') {
+                            displayMessage(message.unitpostal_required);
+                            return;
+                        } else if (unitdomain == '' || unitdomain == null) {
+                            displayMessage(message.domain_required);
+                            return;
+                        } else if (unitIndustryId == '' || unitIndustryId == null) {
+                            displayMessage(message.industryname_required);
                             return;
                         }
-                        continue;
-                    }
-                    if (unitLocation == '') {
-                        displayMessage(message.unitlocation_required);
-                        return;
-                    } else if (unitGeographyId == '') {
-                        displayMessage(message.unitlocation_invalid);
-                        return;
-                    } else if (unitCode == '') {
-                        displayMessage(message.unitcode_required);
-                        return;
-                    } else if (unitName == '') {
-                        displayMessage(message.unitname_required);
-                        return;
-                    } else if (unitAddress == '') {
-                        displayMessage(message.unitaddress_required);
-                        return;
-                    } else if (unitPostalCode == '') {
-                        displayMessage(message.unitpostal_required);
-                        return;
-                    } else if (unitdomain == '' || unitdomain == null) {
-                        displayMessage(message.domain_required);
-                        return;
-                    } else if (unitIndustryId == '' || unitIndustryId == null) {
-                        displayMessage(message.industryname_required);
-                        return;
-                    }
-                    else
-                    {
-                        unitarr.push(unitCode);
-                        var hash = [];
-                        for (var n = unitarr.length; n--;) {
-                            if (typeof hash[unitarr[n]] === 'undefined')
-                                hash[unitarr[n]] = [];
-                            hash[unitarr[n]].push(n);
-                        }
-                        var duplicates = [];
-                        for (var key in hash) {
-                            if (hash.hasOwnProperty(key) && hash[key].length > 1) {
-                                duplicates.push(key);
+                        else
+                        {
+                            unitarr.push(unitCode);
+                            var hash = [];
+                            for (var n = unitarr.length; n--;) {
+                                if (typeof hash[unitarr[n]] === 'undefined')
+                                    hash[unitarr[n]] = [];
+                                hash[unitarr[n]].push(n);
                             }
-                        }
-                        if (duplicates == '') {
-                            for (var ij = 0; ij < unitdomain.length; ij++) {
-                                unitdomains.push(parseInt(unitdomain[ij]));
-                            }
-                            for(var ij=0;ij<unitdomains.length;ij++){
-                                for(var jk=0;jk<unitIndustryId.length;jk++){
-                                    var list = {};
-                                    if(unitdomain.length == 1){
-                                        list['domain_id'] = parseInt(unitdomain[ij]);
-                                        list['industry_id'] = parseInt(unitIndustryId[jk]);
-                                        unitIndustryIds.push(list);
-                                    }else{
-                                        list['domain_id'] = parseInt(unitdomain[ij]);
-                                        list['industry_id'] = parseInt(unitIndustryId[jk]);
-                                        unitIndustryIds.push(list);
-                                        break;
-                                    }
+                            var duplicates = [];
+                            for (var key in hash) {
+                                if (hash.hasOwnProperty(key) && hash[key].length > 1) {
+                                    duplicates.push(key);
                                 }
                             }
+                            if (duplicates == '') {
+                                for (var ij = 0; ij < unitdomain.length; ij++) {
+                                    unitdomains.push(parseInt(unitdomain[ij]));
+                                }
+                                for(var ij=0;ij<unitdomains.length;ij++){
+                                    for(var jk=0;jk<unitIndustryId.length;jk++){
+                                        var list = {};
+                                        if(unitdomain.length == 1){
+                                            list['domain_id'] = parseInt(unitdomain[ij]);
+                                            list['industry_id'] = parseInt(unitIndustryId[jk]);
+                                            unitIndustryIds.push(list);
+                                        }else{
+                                            list['domain_id'] = parseInt(unitdomain[ij]);
+                                            list['industry_id'] = parseInt(unitIndustryId[jk]);
+                                            unitIndustryIds.push(list);
+                                            break;
+                                        }
+                                    }
+                                }
 
-                            unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds);
+                                unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds);
 
-                            units.push(unit);
-                        } else {
-                            displayMessage(duplicates + ' Unit Code Already Exits!!!');
-                            return;
+                                units.push(unit);
+                            } else {
+                                displayMessage(duplicates + ' Unit Code Already Exits!!!');
+                                return;
+                            }
                         }
                     }
                 }
@@ -1594,7 +1611,7 @@ $('#btn-clientunit-submit').click(function() {
                 return;
             }
         }
-        mirror.saveClient(parseInt(groupNameValue), parseInt(bgIdValue), leIdValue, parseInt(countryVal), division_units, units, function(error, response) {
+        /*mirror.saveClient(parseInt(groupNameValue), parseInt(bgIdValue), leIdValue, parseInt(countryVal), division_units, units, function(error, response) {
             if (error == null) {
                 displaySuccessMessage(message.record_added);
                 units_count = [];
@@ -1603,7 +1620,7 @@ $('#btn-clientunit-submit').click(function() {
             } else {
                 onFailure(error);
             }
-        });
+        });*/
         //client id null -- end
     } else if (clientunitIdValue != '') {
         clearMessage();
@@ -1684,158 +1701,160 @@ $('#btn-clientunit-submit').click(function() {
 
             if (unit_cnt > 0) {
                 for (var j = 1; j <= unit_cnt; j++) {
-                    var unit;
-                    var edit_icon = $('.edit-icon-' + i + '-' + j).attr('style').split(";")[0].trim();
-                    var unitId, unitCode, unitName, unitAddress, unitPostalCode, unitGeographyId;
-                    var unitLocation, unitIndustryId, unitdomain;
+                    if(checkDeletedRow(i+"-"+j) == false){
+                        var unit;
+                        var edit_icon = $('.edit-icon-' + i + '-' + j).attr('style').split(";")[0].trim();
+                        var unitId, unitCode, unitName, unitAddress, unitPostalCode, unitGeographyId;
+                        var unitLocation, unitIndustryId, unitdomain;
 
-                    if (($('.unit-id-' + i + '-' + j).val() != "" && (edit_icon.indexOf("display: none") >= 0))) {
-                        unitId = $('.unit-id-' + i + '-' + j).val();
+                        if (($('.unit-id-' + i + '-' + j).val() != "" && (edit_icon.indexOf("display: none") >= 0))) {
+                            unitId = $('.unit-id-' + i + '-' + j).val();
 
-                        if ($('.unit-code-' + i + '-' + j).attr('style') == "display: none;") {
-                            unitCode = $('.labelunitcode-' + i + '-' + j).text();
-                        } else {
+                            if ($('.unit-code-' + i + '-' + j).attr('style') == "display: none;") {
+                                unitCode = $('.labelunitcode-' + i + '-' + j).text();
+                            } else {
+                                unitCode = $('.unit-code-' + i + '-' + j).val();
+                            }
+
+                            if ($('.unit-name-' + i + '-' + j).attr('style') == "display: none;") {
+                                unitName = $('.labelunitname-' + i + '-' + j).text();
+                            } else {
+                                unitName = $('.unit-name-' + i + '-' + j).val();
+                            }
+
+                            if ($('.unit-address-' + i + '-' + j).attr('style') == "display: none;") {
+                                unitAddress = $('.labelunitaddress-' + i + '-' + j).text();
+                            } else {
+                                unitAddress = $('.unit-address-' + i + '-' + j).val();
+                            }
+
+                            if ($('.postal-code-' + i + '-' + j).attr('style') == "display: none;") {
+                                unitPostalCode = $('.labelpostcode-' + i + '-' + j).text();
+                            } else {
+                                unitPostalCode = $('.postal-code-' + i + '-' + j).val();
+                            }
+
+                            if ($('.unitlocation-ids-' + i + '-' + j).attr('style') == "display: none;") {
+                                unitGeographyId = $('.unitlocation-ids-' + i + '-' + j).val().trim();
+                            } else {
+                                unitGeographyId = $('.unitlocation-ids-' + i + '-' + j).val().trim();
+                            }
+
+                            if ($('.unitlocation-' + i + '-' + j).attr('style') == "display: none;") {
+                                unitLocation = $('.labelunitlocation-' + i + '-' + j).text();
+                            } else {
+                                unitLocation = $('.unitlocation-' + i + '-' + j).val().trim();
+                            }
+
+                            if ($('.orgtypeselected-' + i + '-' + j).attr('style') == "display: none;") {
+                                unitIndustryId = $('.labelorganization-' + i + '-' + j).text();
+                            } else {
+                                unitIndustryId = $('.orgtypeselected-' + i + '-' + j).val();
+                            }
+
+                            if ($('.domainselected-' + i + '-' + j).attr('style') == "display: none;") {
+                                unitdomain = $('.labeldomain-' + i + '-' + j).text();
+                            } else {
+                                unitdomain = $('.domainselected-' + i + '-' + j).val();
+                                //unitdomains = unitdomain;
+                            }
+                        } else if ($('.unit-id-' + i + '-' + j).val() == "") {
+                            unitId = null;
                             unitCode = $('.unit-code-' + i + '-' + j).val();
-                        }
 
-                        if ($('.unit-name-' + i + '-' + j).attr('style') == "display: none;") {
-                            unitName = $('.labelunitname-' + i + '-' + j).text();
-                        } else {
-                            unitName = $('.unit-name-' + i + '-' + j).val();
-                        }
-
-                        if ($('.unit-address-' + i + '-' + j).attr('style') == "display: none;") {
-                            unitAddress = $('.labelunitaddress-' + i + '-' + j).text();
-                        } else {
-                            unitAddress = $('.unit-address-' + i + '-' + j).val();
-                        }
-
-                        if ($('.postal-code-' + i + '-' + j).attr('style') == "display: none;") {
-                            unitPostalCode = $('.labelpostcode-' + i + '-' + j).text();
-                        } else {
-                            unitPostalCode = $('.postal-code-' + i + '-' + j).val();
-                        }
-
-                        if ($('.unitlocation-ids-' + i + '-' + j).attr('style') == "display: none;") {
+                            unitName = $('.unit-name-' + i + '-' + j).val().trim();
+                            unitAddress = $('.unit-address-' + i + '-' + j).val().trim();
+                            unitPostalCode = $('.postal-code-' + i + '-' + j).val().trim();
                             unitGeographyId = $('.unitlocation-ids-' + i + '-' + j).val().trim();
-                        } else {
-                            unitGeographyId = $('.unitlocation-ids-' + i + '-' + j).val().trim();
-                        }
-
-                        if ($('.unitlocation-' + i + '-' + j).attr('style') == "display: none;") {
-                            unitLocation = $('.labelunitlocation-' + i + '-' + j).text();
-                        } else {
                             unitLocation = $('.unitlocation-' + i + '-' + j).val().trim();
-                        }
 
-                        if ($('.orgtypeselected-' + i + '-' + j).attr('style') == "display: none;") {
-                            unitIndustryId = $('.labelorganization-' + i + '-' + j).text();
-                        } else {
                             unitIndustryId = $('.orgtypeselected-' + i + '-' + j).val();
-                        }
 
-                        if ($('.domainselected-' + i + '-' + j).attr('style') == "display: none;") {
-                            unitdomain = $('.labeldomain-' + i + '-' + j).text();
-                        } else {
+                            //unitIndustryName = $('.industry-' + i + '-' + j + ' option:selected').text();
                             unitdomain = $('.domainselected-' + i + '-' + j).val();
-                            //unitdomains = unitdomain;
+
                         }
-                    } else if ($('.unit-id-' + i + '-' + j).val() == "") {
-                        unitId = null;
-                        unitCode = $('.unit-code-' + i + '-' + j).val();
-
-                        unitName = $('.unit-name-' + i + '-' + j).val().trim();
-                        unitAddress = $('.unit-address-' + i + '-' + j).val().trim();
-                        unitPostalCode = $('.postal-code-' + i + '-' + j).val().trim();
-                        unitGeographyId = $('.unitlocation-ids-' + i + '-' + j).val().trim();
-                        unitLocation = $('.unitlocation-' + i + '-' + j).val().trim();
-
-                        unitIndustryId = $('.orgtypeselected-' + i + '-' + j).val();
-
-                        //unitIndustryName = $('.industry-' + i + '-' + j + ' option:selected').text();
-                        unitdomain = $('.domainselected-' + i + '-' + j).val();
-
-                    }
-                    if (($('.unit-id-' + i + '-' + j).val() != "" && (edit_icon.indexOf("display: none") >= 0)) ||
-                        ($('.unit-id-' + i + '-' + j).val() == "")) {
-                        total_units = total_units + 1;
-                        if (unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomain == '' && unitIndustryId == '') {
-                            if (unitcount == 1) {
-                                displayMessage(message.add_one_unit);
+                        if (($('.unit-id-' + i + '-' + j).val() != "" && (edit_icon.indexOf("display: none") >= 0)) ||
+                            ($('.unit-id-' + i + '-' + j).val() == "")) {
+                            total_units = total_units + 1;
+                            if (unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomain == '' && unitIndustryId == '') {
+                                if (unitcount == 1) {
+                                    displayMessage(message.add_one_unit);
+                                    return;
+                                }
+                                continue;
+                            }
+                            if (unitLocation == '') {
+                                displayMessage(message.unitlocation_required);
                                 return;
-                            }
-                            continue;
-                        }
-                        if (unitLocation == '') {
-                            displayMessage(message.unitlocation_required);
-                            return;
-                        } else if (unitGeographyId == '') {
-                            displayMessage(message.unitlocation_invalid);
-                            return;
-                        } else if (unitCode == '') {
-                            displayMessage(message.unitcode_required);
-                            return;
-                        } else if (unitName == '') {
-                            displayMessage(message.unitname_required);
-                            return;
-                        } else if (unitAddress == '') {
-                            displayMessage(message.unitaddress_required);
-                            return;
-                        } else if (unitPostalCode == '') {
-                            displayMessage(message.unitpostal_required);
-                            return;
-                        } else if (unitdomain == '' || unitdomain == null) {
-                            displayMessage(message.domain_required);
-                            return;
-                        } else if (unitIndustryId == '' || unitIndustryId == null) {
-                            displayMessage(message.industryname_required);
-                            return;
-                        }  else {
-                            unitarr.push(unitCode);
-                            var hash = [];
-                            for (var n = unitarr.length; n--;) {
-                                if (typeof hash[unitarr[n]] === 'undefined')
-                                    hash[unitarr[n]] = [];
-                                hash[unitarr[n]].push(n);
-                            }
-                            var duplicates = [];
-                            for (var key in hash) {
-                                if (hash.hasOwnProperty(key) && hash[key].length > 1) {
-                                    duplicates.push(key);
+                            } else if (unitGeographyId == '') {
+                                displayMessage(message.unitlocation_invalid);
+                                return;
+                            } else if (unitCode == '') {
+                                displayMessage(message.unitcode_required);
+                                return;
+                            } else if (unitName == '') {
+                                displayMessage(message.unitname_required);
+                                return;
+                            } else if (unitAddress == '') {
+                                displayMessage(message.unitaddress_required);
+                                return;
+                            } else if (unitPostalCode == '') {
+                                displayMessage(message.unitpostal_required);
+                                return;
+                            } else if (unitdomain == '' || unitdomain == null) {
+                                displayMessage(message.domain_required);
+                                return;
+                            } else if (unitIndustryId == '' || unitIndustryId == null) {
+                                displayMessage(message.industryname_required);
+                                return;
+                            }  else {
+                                unitarr.push(unitCode);
+                                var hash = [];
+                                for (var n = unitarr.length; n--;) {
+                                    if (typeof hash[unitarr[n]] === 'undefined')
+                                        hash[unitarr[n]] = [];
+                                    hash[unitarr[n]].push(n);
                                 }
-                            }
-
-                            if (duplicates == '') {
-                                for (var ij = 0; ij < unitdomain.length; ij++) {
-                                    unitdomains.push(parseInt(unitdomain[ij]));
-                                }
-                                for(var ij=0;ij<unitdomains.length;ij++){
-                                    for(var jk=0;jk<unitIndustryId.length;jk++){
-                                        var list = {};
-                                        if(unitdomain.length == 1){
-                                            list['domain_id'] = parseInt(unitdomain[ij]);
-                                            list['industry_id'] = parseInt(unitIndustryId[jk]);
-                                            unitIndustryIds.push(list);
-                                        }else{
-                                            list['domain_id'] = parseInt(unitdomain[ij]);
-                                            list['industry_id'] = parseInt(unitIndustryId[jk]);
-                                            unitIndustryIds.push(list);
-                                            break;
-                                        }
+                                var duplicates = [];
+                                for (var key in hash) {
+                                    if (hash.hasOwnProperty(key) && hash[key].length > 1) {
+                                        duplicates.push(key);
                                     }
                                 }
 
-                                if (total_div != i) {
-                                    total_div = total_div + 1;
-                                }
-                                div_arr = mirror.getDivisionDict(parseInt(divIdValue), divNameValue, category, total_div, parseInt(total_units));
-                                division_units.push(div_arr);
-                                unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds);
+                                if (duplicates == '') {
+                                    for (var ij = 0; ij < unitdomain.length; ij++) {
+                                        unitdomains.push(parseInt(unitdomain[ij]));
+                                    }
+                                    for(var ij=0;ij<unitdomains.length;ij++){
+                                        for(var jk=0;jk<unitIndustryId.length;jk++){
+                                            var list = {};
+                                            if(unitdomain.length == 1){
+                                                list['domain_id'] = parseInt(unitdomain[ij]);
+                                                list['industry_id'] = parseInt(unitIndustryId[jk]);
+                                                unitIndustryIds.push(list);
+                                            }else{
+                                                list['domain_id'] = parseInt(unitdomain[ij]);
+                                                list['industry_id'] = parseInt(unitIndustryId[jk]);
+                                                unitIndustryIds.push(list);
+                                                break;
+                                            }
+                                        }
+                                    }
 
-                                units.push(unit);
-                            } else {
-                                displayMessage(duplicates + ' Unit Code Already Exits!!!');
-                                return;
+                                    if (total_div != i) {
+                                        total_div = total_div + 1;
+                                    }
+                                    div_arr = mirror.getDivisionDict(parseInt(divIdValue), divNameValue, category, total_div, parseInt(total_units));
+                                    division_units.push(div_arr);
+                                    unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds);
+
+                                    units.push(unit);
+                                } else {
+                                    displayMessage(duplicates + ' Unit Code Already Exits!!!');
+                                    return;
+                                }
                             }
                         }
                     }

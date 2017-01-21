@@ -1,3 +1,4 @@
+
 // Stupid jQuery table plugin.
 
 (function($) {

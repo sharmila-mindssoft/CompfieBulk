@@ -41,6 +41,7 @@ var unit_values = '';
 var units_count = [];
 var prev_org_id = 0;
 var check_org = false;
+var del_row=[];
 
 var clientUnitAdd = $('#clientunit-add');
 var clientUnitView = $('#clientunit-view');
@@ -79,6 +80,7 @@ var countryUnitList = $('.add-country-unit-list');
 function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId) {
     isUpdate = true;
     units_count = [];
+    edit = true;
     division_cnt = 0;
     $('#clientunit-view').hide();
     $('#clientunit-add').show();
@@ -650,7 +652,7 @@ function unitrow_edit(evt, i_ids) {
 }
 // When close icon clicked in edit/ add unit row
 function unitrow_close(evt) {
-    if($('#client-unit-id').val() > 0){
+    if($('#client-unit-id').val() > 0 && edit == true){
         split_evt_spaces = evt.split(' ');
         split_evt_hyphen = split_evt_spaces[5].split('-');
         var countval = split_evt_hyphen[2] + "-" + split_evt_hyphen[3];
@@ -697,27 +699,36 @@ function unitrow_close(evt) {
         split_evt_spaces = evt.split(' ');
         split_evt_hyphen = split_evt_spaces[5].split('-');
         var countval = split_evt_hyphen[2] + "-" + split_evt_hyphen[3];
-        unitcnt_val = $('.unitcnt-'+countval).val();
-        del_row = 0;
-        del_row = parseInt(split_evt_hyphen[3]) - 1;
+        unitcnt_val = $('.unitcnt-'+split_evt_hyphen[2] +"-1").val();
+        delete_row = 0;
+        del_row.push(countval)
+        delete_row = parseInt($('.tbody-unit-' + split_evt_hyphen[2] + ' tr').length)-parseInt($('.sno-'+split_evt_hyphen[2]+'-'+split_evt_hyphen[3]).text());
+        if(delete_row < 0)
+            delete_row = 0;
+        console.log("del:"+delete_row)
 
-        $('.tbody-unit-' + split_evt_hyphen[2] + ' tr').eq(del_row).remove();
+        $('.tbody-unit-' + split_evt_hyphen[2] + ' tr').eq(delete_row).remove();
         division_cnt = division_cnt - 1;
 
         if(division_cnt == 0){
             division_cnt = 1;
         }
-        $('.divisioncnt-' +countval).val(division_cnt);
+        $('.divisioncnt-' +split_evt_hyphen[2]+"-"+1).val(division_cnt);
 
         if((parseInt(unitcnt_val)-1) == 0)
         {
-            $('.unitcnt-' + countval).val(0);
+            $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(0);
         }
         else
         {
-            $('.unitcnt-' + countval).val(parseInt(unitcnt_val)-1);
+            $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(parseInt(unitcnt_val));
         }
 
+        /*for(var i=parseInt($('.tbody-unit-' + split_evt_hyphen[2] + ' tr').length);i>=0;i--){
+            var sno_val = parseInt($('.sno-'+split_evt_hyphen[2]+'-'+i).text());
+            $('.sno-'+split_evt_hyphen[2]+'-'+i).text(sno_val - 1);
+        }*/
+        console.log("final:"+$('.unitcnt-' + split_evt_hyphen[2] +"-1").val());
         //addNewUnitRow(evt);
     }
 }
