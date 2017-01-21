@@ -132,7 +132,7 @@ function validateMandatory() {
 };
 
 function showPagePan(showFrom, showTo, total) {
-    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + total + ' entries ';
+    var showText = 'Showing ' + showFrom + ' to ' + showTo + ' of ' + totalRecord + ' entries ';
     CompliacneCount.text(showText);
     PaginationView.show();
 };

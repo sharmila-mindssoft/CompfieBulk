@@ -1,7 +1,7 @@
 var visiblePageCount = 10;
 var m_names = new Array('Jan','Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', "Dec");
 //Load count values in pagination selectbox
-var pageList = [25, 50, 100];
+var pageList = [2, 50, 100];
 var ValidityDays = 90;
 function loadItemsPerPage() {
   for(var i = 0; i < pageList.length; i++) {
@@ -1201,7 +1201,6 @@ function displayLoader() {
 function hideLoader() {
   $(".loading-indicator-spin").hide();
 }
-
 $(function() {
     $( ":input" ).attr('autocomplete','off');
 });
