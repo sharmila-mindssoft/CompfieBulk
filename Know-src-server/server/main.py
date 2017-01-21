@@ -120,13 +120,15 @@ class API(object):
                 print "IDLE SESSION CLEAR"
                 _db_clr.clear_session(SESSION_CUTOFF)
                 _db_clr.commit()
+                _db_con_clr.close()
 
-                t = threading.Timer(1080, on_session_timeout)
+                t = threading.Timer(500, on_session_timeout)
                 t.daemon = True
                 t.start()
             except Exception, e:
                 print e
-                self._db_clr.rollback()
+                _db_clr.rollback()
+                _db_con_clr.close()
 
         on_session_timeout()
 
