@@ -256,6 +256,40 @@ function callAPI(api_type) {
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
+    var current_id = id_element[0].id;
+    if (current_id == 'group_id') {
+        BusinessGroupName.val('');
+        BusinessGroupId.val('');
+        LegalEntityName.val('');
+        LegalEntityId.val('');
+        DivisionName.val('');
+        DomainId.val('');
+        CategoryName.val('');
+        CategoryId.val('');
+        DomainName.val('');
+        DomainId.val('');
+    } else if (current_id == 'business_group_id') {
+        LegalEntityName.val('');
+        LegalEntityId.val('');
+        DivisionName.val('');
+        DomainId.val('');
+        CategoryName.val('');
+        CategoryId.val('');
+        DomainName.val('');
+        DomainId.val('');
+    } else if (current_id == 'legal_entity_id') {
+        DivisionName.val('');
+        DomainId.val('');
+        CategoryName.val('');
+        CategoryId.val('');
+        DomainName.val('');
+        DomainId.val('');
+    } else if (current_id == 'division_id') {
+        CategoryName.val('');
+        CategoryId.val('');
+    }
+    UnitList.empty();
+    ACTIVE_UNITS = [];
 }
 
 function pageControls() {
@@ -315,7 +349,10 @@ function pageControls() {
         if (GroupId.val() != '') {
             var condition_fields = ["client_id"];
             var condition_values = [GroupId.val()];
-
+            if (BusinessGroupId.val() != '') {
+                condition_fields.push("business_group_id");
+                condition_values.push(BusinessGroupId.val());
+            }
             var text_val = $(this).val();
             commonAutoComplete(
                 e, ACLegalEntity, LegalEntityId, text_val,
@@ -330,7 +367,10 @@ function pageControls() {
         if (GroupId.val() != '') {
             var condition_fields = ["client_id", "legal_entity_id"];
             var condition_values = [GroupId.val(), LegalEntityId.val()];
-
+            if (BusinessGroupId.val() != '') {
+                condition_fields.push("business_group_id");
+                condition_values.push(BusinessGroupId.val());
+            }
             var text_val = $(this).val();
             commonAutoComplete(
                 e, ACDivision, DivisionId, text_val,
@@ -345,6 +385,10 @@ function pageControls() {
         if (GroupId.val() != '') {
             var condition_fields = ["client_id", "legal_entity_id"];
             var condition_values = [GroupId.val(), LegalEntityId.val()];
+            if (BusinessGroupId.val() != '') {
+                condition_fields.push("business_group_id");
+                condition_values.push(BusinessGroupId.val());
+            }
             if (DivisionId.val() != '') {
                 condition_fields.push("division_id");
                 condition_values.push(DivisionId.val());
