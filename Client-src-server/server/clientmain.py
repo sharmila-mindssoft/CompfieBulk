@@ -408,9 +408,9 @@ class API(object):
 
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
-
+        
     @api_request(clientmasters.RequestFormat, is_group=True)
-    def handle_client_masters(self, request, db, session_user, client_id):
+    def handle_client_masters(self, request, db, session_user, client_id, le_id):
         return controller.process_client_master_requests(request, db, session_user, client_id)
 
     @api_request(clienttransactions.RequestFormat)

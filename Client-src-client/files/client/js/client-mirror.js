@@ -785,11 +785,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     /* Reassigned History Report */
-    function getReassignedHistoryReportFilters(callback) {
+    function getReassignedHistoryReportFilters(le_id, callback) {
         var request = [
             'GetReassignedHistoryReportFilters',
             {
-                'le_id' : 1
+                'le_id' : le_id
             }
         ];
         callerName = 'client_reports';
