@@ -824,11 +824,19 @@ $('#groupsval').keyup(function (e) {
       	for(var j=0;j<userClientGroups.length;j++)
       	{
       		if(jQuery.inArray(userList[i].client_ids, userClientGroups[j].client_id)){
-      			group_list.push({
-		          "client_id": userClientGroups[j].client_id,
-		          "group_name": userClientGroups[j].group_name,
-		          "is_active":userClientGroups[j].is_active
-		        });
+      			var occur = -1;
+      			for(var k=0;k<group_list.length;k++){
+      				if(group_list[k].client_id == userClientGroups[j].client_id){
+      					occur = 1;
+      				}
+      			}
+      			if(occur < 0){
+	      			group_list.push({
+			          "client_id": userClientGroups[j].client_id,
+			          "group_name": userClientGroups[j].group_name,
+			          "is_active":userClientGroups[j].is_active
+			        });
+      			}
       		}
       	}
       }
@@ -864,10 +872,18 @@ $('#businessgroupsval').keyup(function (e) {
     {
       if(userDomainList[i].user_id == $('#manager-id').val() && userDomainList[i].client_id == $('#group-id').val())
       {
-        bg_grp.push({
-            "business_group_id": userDomainList[i].business_group_id,
-            "business_group_name": userDomainList[i].business_group_name
-        });
+      	var occur = -1;
+      	for(var k=0;k<bg_grp.length;k++){
+      		if(bg_grp[k].business_group_id == userDomainList[i].business_group_id){
+      			occur = 1;
+      		}
+      	}
+      	if(occur < 0){
+      		bg_grp.push({
+	            "business_group_id": userDomainList[i].business_group_id,
+	            "business_group_name": userDomainList[i].business_group_name
+	        });
+      	}
       }
     }
     commonAutoComplete(
@@ -901,10 +917,18 @@ $('#legalentityval').keyup(function (e) {
       	&& (bg_check == true || bg_check == false) &&
       	(userDomainList[i].user_id == $('#manager-id').val()))
       {
-        le_list.push({
-          "legal_entity_id": userDomainList[i].legal_entity_id,
-          "legal_entity_name": userDomainList[i].legal_entity_name
-        });
+      	var occur = -1;
+      	for(var k=0;k<le_list.length;k++){
+      		if(le_list[k].legal_entity_id == userDomainList[i].legal_entity_id){
+      			occur = 1;
+      		}
+      	}
+      	if(occur < 0){
+      		le_list.push({
+	          "legal_entity_id": userDomainList[i].legal_entity_id,
+	          "legal_entity_name": userDomainList[i].legal_entity_name
+	        });
+      	}
       }
     }
     var text_val = $(this).val();
@@ -941,11 +965,18 @@ $('#domainval').keyup(function (e) {
       if((userDomainList[i].user_id == user_id && userDomainList[i].client_id == client_id &&
         userDomainList[i].legal_entity_id == le_id) && (bg_check == true || bg_check == false))
       	{
-            domain_list.push({
-              "domain_id": userDomainList[i].domain_id,
-              "domain_name": userDomainList[i].domain_name,
-            });
-            break;
+      		var occur = -1;
+      		for(var k=;k<domain_list.length;k++){
+      			if(domain_list[k].domain_id == userDomainList[i].domain_id){
+      				occur = 1;
+      			}
+      		}
+      		if(occur < 0){
+      			domain_listdomain_list.push({
+	              "domain_id": userDomainList[i].domain_id,
+	              "domain_name": userDomainList[i].domain_name,
+	            });
+      		}
         }
 	}
     var text_val = $(this).val();
@@ -998,7 +1029,6 @@ function resetAllfilter()
 	$('#groupsval').val('');
 	$('#managerval').val('');
 	$('.tbody-reassignuserrpt-list').find('tr').remove();
-	$('.grid-table-rpt').hide();
 }
 
 function resetfilter(evt)
@@ -1071,4 +1101,5 @@ $('#usercategory').on('change', function(e){
 	$('.user_category_name').text($('#usercategory option:selected').text())
 	loadSearchFilter($('#usercategory option:selected').text());
 	resetfilter('category');
+	$('.details').hide();
 });
