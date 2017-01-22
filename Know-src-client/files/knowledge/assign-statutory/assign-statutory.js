@@ -722,7 +722,7 @@ function loadSingleUnitCompliances() {
 
         count = actCount;
         LastAct = value.level_1_s_name;
-        LastSubAct = value.level_1_s_name;
+        LastSubAct = "";
         actCount = actCount + 1;
         }
 
@@ -860,7 +860,7 @@ function loadMultipleUnitCompliances() {
             });
         count = actCount;
         LastAct = value.level_1_s_name;
-        LastSubAct = value.level_1_s_name;
+        LastSubAct = "";
         actCount = actCount + 1;
         }
 
