@@ -678,14 +678,6 @@ function initMirror() {
   }
 
   //user mapping report
-  function getUserMappingReportFilters(callback) {
-    callerName = 'techno_report';
-    var request = [
-      'GetUserMappingReportFilters',
-      {}
-    ];
-    apiRequest(callerName, request, callback);
-  }
 
   function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, csv, from_count, page_count, callback) {
     callerName = 'techno_report';
@@ -1360,7 +1352,6 @@ function initMirror() {
     exportReassignUserReportData: exportReassignUserReportData,
     exportAuditTrail: exportAuditTrail
   };
-=======
     function updateDomain(dId, dName, cIds, callback) {
         var request = [
             'UpdateDomain', {
@@ -2428,7 +2419,7 @@ function initMirror() {
         'd_ids': dIds
       };
     }old*/
-    function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds) {
+    function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds, status) {
         return {
             'unit_id': uId,
             'unit_name': uName,
@@ -2437,7 +2428,8 @@ function initMirror() {
             'postal_code': pCode,
             'geography_id': geoId,
             'd_ids': dIds,
-            'i_ids_list': iIds
+            'i_ids_list': iIds,
+            'is_approved': status
         };
     }
 
@@ -3217,19 +3209,6 @@ function initMirror() {
         var request = [
             'GetUserMappingReportFilters',
             {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, callback) {
-        callerName = 'techno_report';
-        var request = [
-            'GetUserMappingDetailsReportData', {
-                'country_id': countryId,
-                'client_id': clientId,
-                'legal_entity_id': legalEntityId,
-                'u_m_none': u_m_none,
-            }
         ];
         apiRequest(callerName, request, callback);
     }
