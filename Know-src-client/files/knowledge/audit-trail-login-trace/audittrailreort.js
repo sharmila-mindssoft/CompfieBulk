@@ -119,7 +119,7 @@ Auditpage.prototype.getValue = function(field_name, f_id){
         return t_date;
     }
     else if (field_name == "username") {
-        if (f_id == 0) {
+        if (f_id == 0 || f_id == 1) {
             return 'Administrator';
         }
         else {
@@ -191,6 +191,7 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     $('.typeval').text($('#categoryName option:selected').text());
     showFrom = a_page._sno + 1;
     var is_null = true;
+
     $.each(audit_data, function(k, v) {
         if (typeof v.action != 'undefined') {
             is_null = false;
@@ -216,7 +217,12 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
         }
     });
     if (is_null == true) {
-        a_page.hidePagePan();
+        //a_page.hidePagePan();
+        $('.tbody-audittrail-list').empty();
+        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4 = tableRow4.clone();
+        $('.no_records', clone4).text('No Records Found');
+        $('.tbody-audittrail-list').append(clone4);
     }
     else {
         a_page.showPagePan(showFrom, a_page._sno, a_page._total_record);
@@ -237,11 +243,12 @@ Auditpage.prototype.exportData = function() {
         _category_id =this.getValue("category", null);
 
         console.log(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id)
-        displayLoader
+        t_this.displayLoader();
         mirror.exportAuditTrail(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, csv,
             function(error, response) {
                 hideLoader();
                 if(error == null){
+                    t_this.hideLoader();
                     console.log(data.link)
                     if (csv) {
                       var download_url = data.link;
@@ -272,33 +279,30 @@ Auditpage.prototype.fetchData = function() {
         _sno = (this._on_current_page - 1) *  _page_limit;
     }
     console.log(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, _sno, _page_limit)
+    t_this.displayLoader();
     mirror.getAuditTrail(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, _sno, _page_limit,
         function(error, response) {
             if (error != null) {
+                t_this.hideLoader();
                 t_this.displayMessage(error);
             }
             else {
-                //t_this.hideLoader();
+                console.log(response)
+                t_this.hideLoader();
                 t_this._sno  = _sno;
                 t_this._auditData = response.audit_trail_details;
-                if (response.total_records == 0) {
+                if (response.audit_trail_details.length == 0) {
                     t_this.hidePageView();
                     a_page.hidePagePan();
-                    $('#no-record-templates').show();
-                    return;
-                }
-                if (t_this._total_record == 0) {
-                    $('#no-record-templates').hide();
-                    t_this._total_record = response.total_records;
-                    t_this.createPageView(t_this, t_this._total_record);
-                }
-                t_this._total_record = response.total_records;
-                if(t_this._total_record > 0){
-                    Export_btn.show();
-                }else{
                     Export_btn.hide();
+                    t_this.renderAuditData(t_this, t_this._auditData);
                 }
-                t_this.renderAuditData(t_this, t_this._auditData);
+                else{
+                    t_this._total_record = response.audit_trail_details.length;
+                    t_this.createPageView(t_this, t_this._total_record);
+                    Export_btn.show();
+                    t_this.renderAuditData(t_this, t_this._auditData);
+                }
             }
         }
     );
