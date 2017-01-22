@@ -5,6 +5,14 @@ var country_ac = $("#countryval");
 var AcCountry = $('#ac-country');
 
 var geographyLevelsList;
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 $('.btn-geographylevel-cancel').click(function () {
   $('.input-sm').val('');
   $('.hiddenvalue').val('');
@@ -33,10 +41,13 @@ function GetGeographyLevels() {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getGeographyLevels(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -233,13 +244,16 @@ $('#submit').click(function () {
           displayMessage(error);
         }
       }
+      displayLoader();
       mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, function (error, response) {
         if (error == null) {
+          hideLoader();
           $('.input-sm').val('');
           $('.hiddenvalue').val('');
           $('#country').val('');
           onSuccess(response);
         } else {
+          hideLoader();
           onFailure(error, response);
         }
       });
