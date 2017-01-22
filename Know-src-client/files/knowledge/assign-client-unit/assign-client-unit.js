@@ -182,45 +182,55 @@ function loadUnAssignedUnitsList(){
     $(".category_title").text(USER_CAREGORY);
     var row = $("#templates .unassign-row tr");
     var sno = 0;
-    $.each(UNASSIGNED_UNITS, function(key, value){
-        ++sno;
-        var clone = row.clone();
-        $(".sno", clone).text(sno);
-        $(".domain-name", clone).text(value.domain_name);
-        $(".group-name", clone).text(value.group_name);
-        $(".business-group-name", clone).text(returnHyphenIfNull(value.business_group_name));
-        $(".legal-entity-name", clone).text(returnHyphenIfNull(value.legal_entity_name));
-        $(".unassigned-units", clone).text(value.unassigned_units);
-        if(value.unassigned_units.split("/")[0] == 0){
-            $(".assign", clone).hide();
-        }else{
-            $(".assign", clone).show();
-            $(".assign", clone).click(function(){
-                viewAssignUnitsForm(
-                    value.domain_id, value.client_id,
-                    value.domain_name, value.group_name,
-                    value.business_group_name, value.legal_entity_name,
-                    value.legal_entity_id
-                );
-            });
-        }
-        if(value.unassigned_units.split("/")[0].trim() == value.unassigned_units.split("/")[1].trim()){
-            console.log(value.unassigned_units.split("/")[0].trim())
-            $(".view", clone).hide();
-        }
-        else{
-            $(".view", clone).show();
-            $(".view", clone).click(function(){
-                viewDomainManagers(
-                    value.domain_id, value.client_id,
-                    value.domain_name, value.group_name,
-                    value.legal_entity_id
-                );
-            });
-        }
+    if(UNASSIGNED_UNITS.length > 0){
+        $.each(UNASSIGNED_UNITS, function(key, value){
+            ++sno;
+            var clone = row.clone();
+            $(".sno", clone).text(sno);
+            $(".domain-name", clone).text(value.domain_name);
+            $(".group-name", clone).text(value.group_name);
+            $(".business-group-name", clone).text(returnHyphenIfNull(value.business_group_name));
+            $(".legal-entity-name", clone).text(returnHyphenIfNull(value.legal_entity_name));
+            $(".unassigned-units", clone).text(value.unassigned_units);
+            if(value.unassigned_units.split("/")[0] == 0){
+                $(".assign", clone).hide();
+            }else{
+                $(".assign", clone).show();
+                $(".assign", clone).click(function(){
+                    viewAssignUnitsForm(
+                        value.domain_id, value.client_id,
+                        value.domain_name, value.group_name,
+                        value.business_group_name, value.legal_entity_name,
+                        value.legal_entity_id
+                    );
+                });
+            }
+            if(value.unassigned_units.split("/")[0].trim() == value.unassigned_units.split("/")[1].trim()){
+                console.log(value.unassigned_units.split("/")[0].trim())
+                $(".view", clone).hide();
+            }
+            else{
+                $(".view", clone).show();
+                $(".view", clone).click(function(){
+                    viewDomainManagers(
+                        value.domain_id, value.client_id,
+                        value.domain_name, value.group_name,
+                        value.legal_entity_id
+                    );
+                });
+            }
 
-        $(".unassign-list").append(clone);
-    });
+            $(".unassign-list").append(clone);
+        });
+    }
+    else{
+        $('.unassign-list').empty();
+        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4 = tableRow4.clone();
+        $('.no_records', clone4).text('No Records Found');
+        $('.unassign-list').append(clone4);
+    }
+
 }
 
 // To navigate to the assign units page
@@ -423,38 +433,43 @@ $('#assinee').keyup(function (e) {
   legal_entity_id = LEGAL_ENTITY_ID;
   var domain_users = [];
 
-  for(var i=0;i<MAPPED_DOMAIN_USERS.length;i++){
-    if(MAPPED_DOMAIN_USERS[i].legal_entity_id == legal_entity_id){
-        console.log("1")
-        for(var j=0;j<DOMAIN_MANAGER_USERS.length;j++){
-            if(MAPPED_DOMAIN_USERS[i].user_id == DOMAIN_MANAGER_USERS[j].user_id){
-                console.log("2")
-                var occur = -1;
-                for(var k=0;k<domain_users.length;k++){
-                    if(domain_users[k].user_id == DOMAIN_MANAGER_USERS[j].user_id){
-                        console.log("3")
-                        occur = 1;
-                        break;
+  if(ASSIGN_UNIT_SAVE_DETAILS.length > 0){
+    for(var i=0;i<MAPPED_DOMAIN_USERS.length;i++){
+        if(MAPPED_DOMAIN_USERS[i].legal_entity_id == legal_entity_id){
+            console.log("1")
+            for(var j=0;j<DOMAIN_MANAGER_USERS.length;j++){
+                if(MAPPED_DOMAIN_USERS[i].user_id == DOMAIN_MANAGER_USERS[j].user_id){
+                    console.log("2")
+                    var occur = -1;
+                    for(var k=0;k<domain_users.length;k++){
+                        if(domain_users[k].user_id == DOMAIN_MANAGER_USERS[j].user_id){
+                            console.log("3")
+                            occur = 1;
+                            break;
+                        }
                     }
-                }
-                if(occur < 0){
-                    console.log(DOMAIN_MANAGER_USERS[j].employee_name)
-                    domain_users.push({
-                        "user_id":DOMAIN_MANAGER_USERS[j].user_id,
-                        "employee_name":DOMAIN_MANAGER_USERS[j].employee_name,
-                        "is_active":DOMAIN_MANAGER_USERS[j].is_active,
-                        "user_category_id":DOMAIN_MANAGER_USERS[j].user_category_id
-                    });
-                    occur = -1;
+                    if(occur < 0){
+                        console.log(DOMAIN_MANAGER_USERS[j].employee_name)
+                        domain_users.push({
+                            "user_id":DOMAIN_MANAGER_USERS[j].user_id,
+                            "employee_name":DOMAIN_MANAGER_USERS[j].employee_name,
+                            "is_active":DOMAIN_MANAGER_USERS[j].is_active,
+                            "user_category_id":DOMAIN_MANAGER_USERS[j].user_category_id
+                        });
+                        occur = -1;
+                    }
                 }
             }
         }
-    }
-  }
+      }
 
-  getUserAutocomplete(e, textval, domain_users, function (val) {
-    onUserSuccess(val);
-  });
+      getUserAutocomplete(e, textval, domain_users, function (val) {
+        onUserSuccess(val);
+      });
+  }
+  else{
+        displayMessage(message.atleast_one_unit_required);
+    }
 });
 
 // To load the units assigned list
@@ -741,6 +756,7 @@ function getActiveUnitDict(unit_id, domain_name){
 
 // Save the assigned units
 $(".save-assign-unit").click(function(){
+    alert("ave")
     domain_manager_id = $("#userid").val();
     var true_count = ASSIGN_UNIT_SAVE_DETAILS.length;
     console.log("true_count:"+true_count)
@@ -755,24 +771,29 @@ $(".save-assign-unit").click(function(){
             }
         });
     });*/
-    for(var i=0;i<ASSIGN_UNIT_SAVE_DETAILS.length;i++){
-        //DOMAIN_NAME
-        active_units.push(
-            getActiveUnitDict(ASSIGN_UNIT_SAVE_DETAILS[i], DOMAIN_NAME)
-        );
-        console.log("active_units:"+active_units.length);
-    }
-    if(domain_manager_id == null || domain_manager_id == ''){
-        if(USER_CAREGORY == "Domain Manager"){
-            displayMessage(message.domain_manager_required);
-        }else{
-            displayMessage(message.domain_executive_required);
+    if(true_count > 0){
+        alert("sd")
+        for(var i=0;i<ASSIGN_UNIT_SAVE_DETAILS.length;i++){
+            //DOMAIN_NAME
+            active_units.push(
+                getActiveUnitDict(ASSIGN_UNIT_SAVE_DETAILS[i], DOMAIN_NAME)
+            );
+            console.log("active_units:"+active_units.length);
         }
-        //USER_CAREGORY
-    }else if(true_count <= 0){
-        displayMessage(message.atleast_one_unit_required);
-    }else{
         callSaveAssignUnitAPI(parseInt(domain_manager_id), active_units);
+    }
+    else{
+        if(true_count <= 0){
+            displayMessage(message.atleast_one_unit_required);
+        }
+        else if(domain_manager_id == null || domain_manager_id == ''){
+            if(USER_CAREGORY == "Domain Manager"){
+                displayMessage(message.domain_manager_required);
+            }else{
+                displayMessage(message.domain_executive_required);
+            }
+            //USER_CAREGORY
+        }
     }
 });
 
