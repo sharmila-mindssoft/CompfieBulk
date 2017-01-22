@@ -21,14 +21,24 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function initialize() {
   function success(status, data) {
+    hideLoader();
     countriesList = data.countries;
     totalRecord = countriesList.length;
     processPaging();
   }
   function failure(status, data) {
+    hideLoader();
   }
+  displayLoader();
   mirror.getCountryReport(success, failure);
 }
 
