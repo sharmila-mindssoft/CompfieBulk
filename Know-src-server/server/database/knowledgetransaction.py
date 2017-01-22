@@ -1312,6 +1312,7 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
 
     fromcount = rcount
     tocount = rcount + RECORD_DISPLAY_COUNT
+    print [user_id, approve_status, fromcount, tocount]
     result = db.call_proc_with_multiresult_set(
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 6
@@ -1429,7 +1430,7 @@ def get_compliance_details(db, user_id, compliance_id):
             date_list.append(s_date)
     summary, dates = make_summary(date_list, c_info["frequency_id"], c_info)
     if dates is not None :
-        summary += dates
+        summary += ' on (%s)' % (dates)
     return (
         c_info["compliance_id"], c_info["statutory_provision"],
         c_name, c_info["compliance_description"],
@@ -1509,7 +1510,7 @@ def save_approve_notify(db, text, user_id, comppliance_id):
 def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :
         comp_id = '%'
-    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 4)
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 5)
     if len(result) == 0 :
         raise process_error("E087")
 
@@ -1517,6 +1518,10 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
     org_info = result[1]
     geo_info = result[2]
     statu_info = result[3]
+    is_assigned = result[4][0]["is_assigned"]
+    allow_edit = True
+    if is_assigned > 0 :
+        allow_edit = False
     org_list = []
     for org in org_info :
         org_list.append(org["organisation_id"])
@@ -1558,7 +1563,7 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
             f_list.append(core.FileList(
                 int(c["format_file_size"]), c["format_file"], None
             ))
-
+        is_file_removed = False
         compliance_list.append(knowledgetransaction.ComplianceList(
             c["compliance_id"], c["statutory_provision"],
             c["compliance_task"], c["document_name"],
@@ -1567,13 +1572,13 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
             c["frequency_id"], date_list, c["repeats_type_id"],
             c["repeats_every"], c["duration_type_id"],
             c["duration"], c["format_file"], f_list,
-            summary, c["reference_link"],  c["freq_name"], False
+            summary, c["reference_link"],  c["freq_name"], is_file_removed
         ))
 
     data = knowledgetransaction.GetComplianceEditSuccess(
         mapping_id, country_id, domain_id, nature_id,
         org_list, statu_list, compliance_list,
-        geo_list
+        geo_list, allow_edit
     )
 
     return data

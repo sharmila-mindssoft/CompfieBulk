@@ -70,6 +70,7 @@ var message = {
   'statutorydate_triggerdte_mandatory_multipleinputs': 'Statutory dates and trigger dates mandatory for multiple inputs',
   'statutoryprovision_duplicate': 'Statutory provision is duplicate',
   'compliancetask_duplicate': 'Compliance task is duplicate',
+  'statudate_duplicate': 'Statutory date cannot be duplicate',
   'removechild_first': 'Remove Child First',
   'industry_required': 'Organization Required',
   'statutorynature_required': 'Statutory Nature Required',

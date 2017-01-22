@@ -66,6 +66,7 @@ function FetchBack() {
                     displayMessage(status);
                 }
                 else {
+
                     _renderinput.countryId = response.c_id;
                     _renderinput.domainId = response.d_id;
                     _renderinput.natureId = response.s_n_id;
@@ -74,7 +75,7 @@ function FetchBack() {
                     _renderinput.selected_geos_parent = [];
                     _renderinput.mapped_compliances = response.comp_list;
                     _renderinput.mapping_id = response.m_id;
-
+                    _renderinput.allow_domain_edit = response.allow_domain_edit
                     $.each(GEOGRAPHY_INFO, function(k, v) {
                         if(response.g_ids.indexOf(v.g_id) > -1) {
                             $.each(v.p_ids, function(idx, pid) {

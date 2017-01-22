@@ -721,7 +721,7 @@ class GetComplianceInfoSuccess(Response):
 class GetComplianceEditSuccess(Response):
     def __init__(
         self, mapping_id, country_id, domain_id, nature_id, org_list,
-        statu_list, compliance_list, geo_list
+        statu_list, compliance_list, geo_list, allow_domain_edit
     ):
         self.mapping_id = mapping_id
         self.country_id = country_id
@@ -731,12 +731,13 @@ class GetComplianceEditSuccess(Response):
         self.statu_list = statu_list
         self.compliance_list = compliance_list
         self.geo_list = geo_list
+        self.allow_domain_edit = allow_domain_edit
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "m_id", "c_id", "d_id", "s_n_id", "i_ids",
-            "s_ids", "comp_list", "g_ids"
+            "s_ids", "comp_list", "g_ids", "allow_domain_edit"
         ])
         mapping_id = data.get("m_id")
         country_id = data.get("c_id")
@@ -746,9 +747,10 @@ class GetComplianceEditSuccess(Response):
         statu_list = data.get("s_ids")
         comp_list = data.get("comp_list")
         geo_list = data.get("g_ids")
+        allow_domain_edit = data.get("allow_domain_edit")
         return GetComplianceEditSuccess(
             mapping_id, country_id, domain_id, nature_id, org_list,
-            statu_list, comp_list, geo_list
+            statu_list, comp_list, geo_list, allow_domain_edit
         )
 
     def to_inner_structure(self):
@@ -760,7 +762,8 @@ class GetComplianceEditSuccess(Response):
             "i_ids": self.org_list,
             "s_ids": self.statu_list,
             "comp_list": self.compliance_list,
-            "g_ids": self.geo_list
+            "g_ids": self.geo_list,
+            "allow_domain_edit": self.allow_domain_edit
         }
 
 def _init_Response_class_map():
@@ -1182,7 +1185,7 @@ class ComplianceList(object):
             "p_consequences", "is_active",
             "f_id", "statu_dates", "r_type_id", "r_every",
             "d_type_id", "duration", "file_name",
-            "summary", "reference", "f_f_list", "frequency", "is_file_removed"
+            "summary", "reference", "f_f_list", "frequency", "is_file_removed",
         ])
         compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_provision")
@@ -1211,7 +1214,7 @@ class ComplianceList(object):
             frequency, statu_dates, repeats_type_id,
             repeats_every, duration_type_id, duration,
             file_name, file_list,
-            summary, reference, frequency, is_file_removed
+            summary, reference, frequency, is_file_removed,
         )
 
     def to_structure(self):

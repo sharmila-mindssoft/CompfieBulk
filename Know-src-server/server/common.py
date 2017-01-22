@@ -380,10 +380,17 @@ def make_summary(data, data_type, c):
 
                 if day is not None :
                     trigger.append(" %s days " % (day))
+            summary = "Repeats every "
+            is_none = True
+            if c["repeats_every"] is not None :
+                summary += c["repeats_every"]
+                is_none = False
 
-            summary = "Repeats every %s - %s. " % (
-                c["repeats_every"], c["repeat_type"]
-            )
+            if c["repeat_type"] is not None :
+                summary += " - " + c["repeat_type"]
+                is_none = False
+            if is_none:
+                summary = ""
             sdates = ", ".join(dates)
             if len(trigger) > 0 :
                 sdates += " Trigger : " + ", ".join(trigger)

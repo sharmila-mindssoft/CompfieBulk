@@ -380,6 +380,7 @@ class API(object):
         #         return True
 
         info = request.files
+        print info
         response_data = controller.process_uploaded_file(info, "knowledge")
         return response_data
 
@@ -397,6 +398,7 @@ IMG_PATH = os.path.join(COMMON_PATH, "images")
 FONT_PATH = os.path.join(COMMON_PATH, "fonts")
 SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
 LOGO_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "clientlogo")
+DOC_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "knowledgeformat")
 
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 
@@ -407,7 +409,8 @@ STATIC_PATHS = [
     ("/knowledge/fonts/<path:filename>", FONT_PATH),
     ("/knowledge/script/<path:filename>", SCRIPT_PATH),
     ("/knowledge/clientlogo/<path:filename>", LOGO_PATH),
-    ("/knowledge/downloadcsv/<path:filename>", CSV_PATH)
+    ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
+    ("/knowledge/compliance_format/<path:filename>", DOC_PATH)
 
 ]
 

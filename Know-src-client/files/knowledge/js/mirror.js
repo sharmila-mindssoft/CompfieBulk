@@ -1883,7 +1883,7 @@ function initMirror() {
             contentType: false,
             success: function(data, textStatus, jqXHR) {
                 // var data = parseJSON(data);
-                data = atob(data);
+                data = atob(data.substring(5));
                 data = parseJSON(data);
 
                 var status = data[0];

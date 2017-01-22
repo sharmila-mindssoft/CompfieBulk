@@ -59,9 +59,7 @@ def get_statutory_mapping_report(
     rcount = result[0][0]["count"]
     records = result[1]
     industry = result[2]
-    print industry
     georecord = result[3]
-    print georecord
     report_list = []
     for r in records:
         m_lst = json.loads(r["statutory_mapping"])
@@ -102,7 +100,7 @@ def get_statutory_mapping_report(
         g_names = []
         for g in georecord :
             if g["statutory_mapping_id"] == r["statutory_mapping_id"]:
-                g_names.append(g["parent_names"] + ' >> ' + g["geography_name"])
+                g_names.append(g["parent_names"])
 
         statutory_dates = r["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)

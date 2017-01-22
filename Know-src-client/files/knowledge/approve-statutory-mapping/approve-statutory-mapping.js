@@ -360,13 +360,16 @@ function pageControls() {
         if(Country.val() != ''){
           condition_fields.push("country_ids");
           condition_values.push(Country.val());
+
+          var text_val = $(this).val();
+            commonAutoComplete(
+                e, ACDomain, Domain, text_val,
+                DomainList, "domain_name", "domain_id", function (val) {
+                    onAutoCompleteSuccess(DomainVal, Domain, val);
+                }, condition_fields, condition_values
+            );
         }
-        var text_val = $(this).val();
-        commonAutoComplete(
-            e, ACDomain, Domain, text_val,
-            DomainList, "domain_name", "domain_id", function (val) {
-                onAutoCompleteSuccess(DomainVal, Domain, val);
-            }, condition_fields, condition_values);
+
     });
 
     //load organization list in autocomplete text box
