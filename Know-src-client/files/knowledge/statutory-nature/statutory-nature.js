@@ -47,7 +47,6 @@ function getStatutorynatures() {
 	function onSuccess(data) {
 		  countriesList = data.countries;
     	statutorynatureList = data.statutory_natures;
-		  console.log("list:"+data)
 		  loadStatNatureData(statutorynatureList);
 	}
 	function onFailure(error) {
@@ -215,7 +214,6 @@ function validateAuthentication(){
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -248,12 +246,10 @@ function submitStatutoryNature()
 	var countryId = country_val.val();
 	var countryName = country_ac.val().trim();
 	var statutorynatureId = statutory_nature_id.val();
-  console.log("id:"+statutorynatureId)
 	var statutorynatureName = statutory_nature_name.val();
 
 	//validate controls
 	var returnValidation = formValidation();
-	console.log(returnValidation)
 
 	if(returnValidation == true){
 		//save statutory nature
@@ -290,7 +286,6 @@ function submitStatutoryNature()
 		}
 		else //update organization
 		{
-      console.log("update")
 			function onSuccess(response) {
 				getStatutorynatures();
 				AddSCreen.hide();
