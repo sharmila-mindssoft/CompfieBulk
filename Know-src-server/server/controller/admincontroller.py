@@ -495,7 +495,7 @@ def get_reassign_user_account_form_data(db, request, session_user):
     domains = get_domains_for_user(db, session_user)
     groups = get_reassign_client_groups(db, session_user)
     business_groups = get_business_groups_for_user(db, session_user)
-    legal_entities = get_legal_entities_for_user(db, session_user)
+    legal_entities = get_reassign_legal_entity(db, session_user)
     user_categories = get_categories_for_user(db, session_user)
     users = get_reassign_user_filters(db)
     techno_manager = users[0]

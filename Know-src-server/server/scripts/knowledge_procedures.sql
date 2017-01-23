@@ -1484,6 +1484,50 @@ BEGIN
 END //
 
 DELIMITER ;
+-- -------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_reassign_legalentity`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_reassign_legalentity`(in userId INT(11))
+BEGIN
+    DECLARE user_category INT(11);
+    SELECT user_category_id INTO user_category
+    FROM tbl_user_login_details WHERE user_id = userid;
+    IF user_category in (1,2) then
+        select legal_entity_id, legal_entity_name, business_group_id,
+        client_id, country_id from tbl_legal_entities
+        where is_closed = 0
+        order by legal_entity_name ASC;
+    ELSEIF user_category = 5 THEN
+        select legal_entity_id, legal_entity_name, business_group_id,
+        client_id, country_id from tbl_legal_entities
+        WHERE client_id in (
+            SELECT client_id FROM tbl_user_clients WHERE user_id=userid
+        ) and is_closed = 0 order by legal_entity_name ASC;
+    ELSEIF user_category = 6 then
+        select legal_entity_id, legal_entity_name, business_group_id,
+        client_id, country_id from tbl_legal_entities
+        WHERE legal_entity_id in (
+            SELECT legal_entity_id FROM tbl_user_legalentity
+            WHERE user_id=userid
+        ) and is_closed = 0 order by legal_entity_name ASC;
+    ELSE
+        select legal_entity_id, legal_entity_name, business_group_id,
+        client_id, country_id from tbl_legal_entities
+        WHERE legal_entity_id in (
+            SELECT legal_entity_id FROM tbl_units WHERE unit_id in(
+                SELECT unit_id FROM tbl_user_units
+                WHERE user_id=userid
+            )
+        ) and is_closed = 0 order by legal_entity_name ASC;
+    END IF;
+    select distinct t1.legal_entity_id, t1.domain_id from tbl_legal_entity_domains as t1
+        inner join tbl_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id
+        and t2.is_closed = 0 order by t2.legal_entity_name;
+END //
+
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To get division details of all clients under userid - client unit
@@ -6911,7 +6955,7 @@ CREATE PROCEDURE `sp_tbl_users_to_notify`(
 )
 BEGIN
 
-    select user_id from tbl_users where
+    select user_id from tbl_user_login_details where
     is_active = 1 and is_disable = 0 and
     user_category_id in (1, 3, 4, 5, 7, 8);
 

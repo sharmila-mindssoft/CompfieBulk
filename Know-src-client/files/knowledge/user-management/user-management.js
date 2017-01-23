@@ -264,6 +264,7 @@ function resetValues() {
     loadUserCategories();
     loadCountries();
     Domains.empty();
+    Domains.multiselect('rebuild');
     // loadDomains();
     $('#search-employee-name').val('');
     $('#search-user-id').val('');
