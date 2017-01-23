@@ -119,6 +119,57 @@ function clearData(){
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
+    value_element.focus();
+    var current_id = id_element[0].id;
+    if (current_id == 'domain_manager_id') {
+        DMGroupName.val('');
+        DMGroupId.val('');
+        DMBusinessGroupName.val('');
+        DMBusinessGroupId.val('');
+        DMLegalEntityName.val('');
+        DMLegalEntityId.val('');
+        DMDomainName.val('');
+        DMDomainId.val('');
+    }else if (current_id == 'dm_group_id') {
+        DMBusinessGroupName.val('');
+        DMBusinessGroupId.val('');
+        DMLegalEntityName.val('');
+        DMLegalEntityId.val('');
+        DMDomainName.val('');
+        DMDomainId.val('');
+    } else if (current_id == 'dm_business_group_id') {
+        DMLegalEntityName.val('');
+        DMLegalEntityId.val('');
+        DMDomainName.val('');
+        DMDomainId.val('');
+    } else if (current_id == 'dm_legal_entity_id') {
+        DMDomainName.val('');
+        DMDomainId.val('');
+    }else if (current_id == 'domain_executive_id') {
+        DEGroupName.val('');
+        DEGroupId.val('');
+        DEBusinessGroupName.val('');
+        DEBusinessGroupId.val('');
+        DELegalEntityName.val('');
+        DELegalEntityId.val('');
+        DEDomainName.val('');
+        DEDomainId.val('');
+    }else if (current_id == 'de_group_id') {
+        DEBusinessGroupName.val('');
+        DEBusinessGroupId.val('');
+        DELegalEntityName.val('');
+        DELegalEntityId.val('');
+        DEDomainName.val('');
+        DEDomainId.val('');
+    } else if (current_id == 'de_business_group_id') {
+        DELegalEntityName.val('');
+        DELegalEntityId.val('');
+        DEDomainName.val('');
+        DEDomainId.val('');
+    } else if (current_id == 'de_legal_entity_id') {
+        DEDomainName.val('');
+        DEDomainId.val('');
+    }
 }
 
 function loadTMList(){
