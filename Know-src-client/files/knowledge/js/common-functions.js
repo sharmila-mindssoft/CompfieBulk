@@ -54,7 +54,7 @@ function past_days(days){
 function displayMessage(message) {
   // $('.error-message').text(message);
   // $('.error-message').show();
-  if($('.toast-error').css('display') == "block"){
+  if($('.toast').css('display') == "block"){
     $('.toast').remove();
   }
   var toastPan = import_toast();
@@ -63,7 +63,7 @@ function displayMessage(message) {
 }
 
 function displaySuccessMessage(message) {
-  if($('.toast-error').css('display') == "block"){
+  if($('.toast').css('display') == "block"){
     $('.toast').remove();
   }
   var toastPan = import_toast();
