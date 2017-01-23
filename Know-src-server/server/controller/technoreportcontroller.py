@@ -467,8 +467,10 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
             print usermapping_report_dataset[1]
 
             for techno in usermapping_report_dataset[0]:
+
                 techno_details.append(core.UserMappingReportTechno(
-                    techno["unit_id"], techno["techno_manager"], techno["techno_user"]
+                    techno["unit_id"], techno["techno_manager"], techno["techno_user"],
+                    unit_code_with_name=techno["unit_name"]
                 ))
             print "techno"
             print techno_details
