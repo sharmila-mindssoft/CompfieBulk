@@ -404,7 +404,7 @@ def save_statutory_mapping(db, data, created_by):
         text = "New statutory mapping has been created %s - %s - %s for the following compliances %s" % (
                 c_name, d_name, str(statutory_mapping), names
             )
-
+        names = json.dumps(names)
         link = "/knowledge/approve-statutory-mapping"
         save_messages(db, 3, "Statutory Mapping", text, link, created_by)
 
@@ -698,16 +698,13 @@ def update_statutory_mapping(db, data, updated_by):
         db, statutory_mapping_id, data.statutory_ids, updated_by, False
     )
 
-    text = " %s - %s - %s statutory mappings has been edited for following compliances %s" % (c_name, d_name, str(statutory_mapping), names)
+    names = json.dumps(names)
+    text = " %s - %s - %s statutory mappings has been edited for following compliances %s" % (c_name, d_name, str(statutory_mapping), str(names))
     db.save_activity(updated_by, frmStatutoryMapping, text)
 
     link = "/knowledge/approve-statutory-mapping"
     save_messages(db, 3, "Statutory Mapping", text, link, updated_by)
-    # save_notifications(
-    #     db, notification_log_text, link,
-    #     domain_id, country_id, updated_by,
-    #     user_id=None
-    # )
+    print text
     return True
 
 
@@ -731,7 +728,7 @@ def update_only_compliance(db, data, updated_by):
         db, statutory_mapping_id, country_id, domain_id, compliances, updated_by,
         is_approve
     )
-
+    names = json.dumps(names)
     text = " %s - %s - %s statutory mappings has been edited for following compliances %s" % (c_name, d_name, str(statutory_mapping), names)
     db.save_activity(updated_by, frmStatutoryMapping, text)
 
