@@ -174,6 +174,14 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     } else if (current_id == 'de_legal_entity_id') {
         DEDomainName.val('');
         DEDomainId.val('');
+    }else if (current_id == 'techno_manager_id') {
+        clearData();
+        $('.tbody-tm-view').empty();
+        callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
+    }else if (current_id == 'techno_executive_id') {
+        clearData();
+        $('.tbody-te-view').empty();
+        callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
     }
 }
 
@@ -722,30 +730,7 @@ function pageControls(){
             }, condition_fields, condition_values);
     });
 
-    TMShow.click(function(){
-        
-        if(TechnoManagerId.val() == ''){
-            displayMessage(message.reassign_from_required);
-        }else{
-            clearData();
-            $('.tbody-tm-view').empty();
-            callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
-        }
-    });
-
-    TEShow.click(function(){
-        
-        if(TechnoExecutiveId.val() == ''){
-            displayMessage(message.reassign_from_required);
-        }else{
-            clearData();
-            $('.tbody-te-view').empty();
-            callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
-        }
-    });
-
     DMShow.click(function(){
-        
         var dm_id = DomainManagerId.val();
         var group_id = DMGroupId.val();
         var le_id = DMLegalEntityId.val();
@@ -869,7 +854,9 @@ function pageControls(){
                         function(error, response) {
                         if (error == null) {
                             displaySuccessMessage(message.reassign_users_account_success);
-                            TMShow.trigger( "click" );
+                            clearData();
+                            $('.tbody-tm-view').empty();
+                            callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
                         } else {
                             displayMessage(error);
                         }
@@ -925,7 +912,9 @@ function pageControls(){
                             function(error, response) {
                             if (error == null) {
                                 displaySuccessMessage(message.reassign_users_account_success);
-                                TEShow.trigger( "click" );
+                                clearData();
+                                $('.tbody-te-view').empty();
+                                callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
                             } else {
                                 displayMessage(error);
                             }
