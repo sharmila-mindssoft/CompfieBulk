@@ -1809,7 +1809,7 @@ function initMirror() {
         apiRequest('knowledge_transaction', request, callback);
     }
 
-    function updateCompliance(mappingData, callback) {
+    function updateComplianceOnly(mappingData, callback) {
         var request = [
             'UpdateCompliance',
             mappingData
@@ -3587,7 +3587,7 @@ function initMirror() {
         checkDuplicateStatutoryMapping: checkDuplicateStatutoryMapping,
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
-        updateCompliance: updateCompliance,
+        updateComplianceOnly: updateComplianceOnly,
         getStatutoryMaster: getStatutoryMaster,
         getStatutoryMappingsMaster: getStatutoryMappingsMaster,
         getStatutoryMappings: getStatutoryMappings,

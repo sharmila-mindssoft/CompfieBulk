@@ -51,7 +51,15 @@ def get_client_business_groups(db, client_id):
     business_groups = db.call_proc(
         "sp_business_groups_list", (client_id,)
     )
-    return return_business_groups(business_groups)
+    results = []
+    for business_group in business_groups:
+        results.append(core.ClientBusinessGroupCountry(
+            business_group["business_group_id"],
+            business_group["business_group_name"],
+            business_group["client_id"],
+            business_group["country_id"]
+        ))
+    return results
 
 
 ##########################################################################
@@ -63,11 +71,10 @@ def get_client_business_groups(db, client_id):
 def return_business_groups(business_groups):
     results = []
     for business_group in business_groups:
-        results.append(core.ClientBusinessGroupCountry(
+        results.append(core.BusinessGroup(
             business_group["business_group_id"],
             business_group["business_group_name"],
-            business_group["client_id"],
-            business_group["country_id"]
+            business_group["client_id"]
         ))
     return results
 
