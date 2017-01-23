@@ -32,6 +32,7 @@ __all__ = [
     "get_mapped_domains", "get_validity_dates", "get_country_domain_mappings",
     "save_validity_date_settings", "get_user_mapping_form_data",
     "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
+    "get_reassign_legal_entity",
     # "get_assigned_legal_entities",
     "get_assigned_units", "get_assigned_clients", "save_registraion_token", "update_disable_status",
     "get_countries_for_user_filter",
@@ -944,14 +945,20 @@ def save_validity_date_settings(db, data, session_user):
             break
         else:
             continue
-    return admin.SaveValidityDateSettingsFailure(domain_id, country_id)
+        return admin.SaveValidityDateSettingsFailure(domain_id, country_id)
 
     for datum in data:
         if (datum.validity_days > 0 and datum.validity_days <= 366):
             validity_days_id = datum.validity_days_id
             country_id = datum.country_id
+            print "c id"
+            print country_id
             domain_id = datum.domain_id
+            print "d_id"
+            print domain_id
             validity_days = datum.validity_days
+            print "v days"
+            print validity_days
             db.call_insert_proc(
                 "sp_validitydays_settings_save", (
                     validity_days_id, country_id, domain_id, validity_days,
@@ -1137,20 +1144,28 @@ def save_messages(db, user_cat_id, message_head, message_text, created_by, new_c
 
 def get_legal_entities_for_user(db, user_id):
     result = db.call_proc(
-        "sp_tbl_unit_getclientlegalentity", (user_id,))
+        "sp_tbl_unit_getclientlegalentity", [user_id])
     return return_legal_entities_for_unit(result)
 
+def get_reassign_legal_entity(db, user_id):
+    result = db.call_proc_with_multiresult_set(
+        "sp_get_reassign_legalentity", [user_id], 2)
+    return return_legal_entities_for_unit(result)
 
 def return_legal_entities_for_unit(legal_entities):
     results = []
-
-    for legal_entity in legal_entities:
+    for legal_entity in legal_entities[0]:
+        d_ids = []
+        for d in legal_entities[1]:
+            if d["legal_entity_id"] == legal_entity["legal_entity_id"] :
+                d_ids.append(d["domain_id"])
         legal_entity_obj = admin.LegalEntity(
             legal_entity_id=legal_entity["legal_entity_id"],
             legal_entity_name=legal_entity["legal_entity_name"],
             business_group_id=legal_entity["business_group_id"],
             client_id=legal_entity["client_id"],
-            country_id=legal_entity["country_id"]
+            country_id=legal_entity["country_id"],
+            domain_ids=d_ids
         )
         results.append(legal_entity_obj)
     return results

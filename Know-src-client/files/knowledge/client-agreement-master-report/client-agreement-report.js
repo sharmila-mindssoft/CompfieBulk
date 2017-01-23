@@ -332,6 +332,7 @@ function processSubmit(csv) {
                         lastBusinessGroup = '';
                         lastLE = '';
                         if (totalRecord == 0) {
+                            $('.grid-table-rpt').show();
                             $('.table-client-agreement-list').empty();
                             var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
                             var clone4 = tableRow4.clone();

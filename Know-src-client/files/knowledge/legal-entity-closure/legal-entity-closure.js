@@ -271,7 +271,7 @@ $('#update_status').click(function() {
     } else {
         console.log("Welcome2");
         if (txtpwd == '') {
-            displayMessage(message.enter_password);
+            displayMessage(message.password_required);
         } else {
             displayMessage(message.reason_required);
         }
@@ -357,9 +357,11 @@ function renderSearch() {
     Search_status_li.each(function (index, el) {
       $(el).removeClass('active');
     });
+    console.log($(event.target).parent())
     $(event.target).parent().addClass('active');
 
     var currentClass = $(event.target).find('i').attr('class');
+    alert(currentClass);
     Search_status.removeClass();
     if(currentClass != undefined){
       Search_status.addClass(currentClass);

@@ -15,7 +15,6 @@ function FetchBack() {
                 STATUTORY_LEVEL_INFO = response.statutory_levels;
                 GEOGRAPHY_LEVEL_INFO = response.geography_level_info;
                 GEOGRAPHY_INFO = response.geography_info;
-                console.log(GEOGRAPHY_INFO);
                 FREQUENCY_INFO = response.compliance_frequency;
                 REPEATSTYPE_INFO = response.compliance_repeat_type;
                 APPROVALSTATUS_INFO = response.compliance_approval_status;
@@ -67,6 +66,7 @@ function FetchBack() {
                     displayMessage(status);
                 }
                 else {
+
                     _renderinput.countryId = response.c_id;
                     _renderinput.domainId = response.d_id;
                     _renderinput.natureId = response.s_n_id;
@@ -75,7 +75,7 @@ function FetchBack() {
                     _renderinput.selected_geos_parent = [];
                     _renderinput.mapped_compliances = response.comp_list;
                     _renderinput.mapping_id = response.m_id;
-
+                    _renderinput.allow_domain_edit = response.allow_domain_edit
                     $.each(GEOGRAPHY_INFO, function(k, v) {
                         if(response.g_ids.indexOf(v.g_id) > -1) {
                             $.each(v.p_ids, function(idx, pid) {
@@ -90,18 +90,18 @@ function FetchBack() {
                         if (response.s_ids.indexOf(v.s_id) > -1) {
                             info = {}
                             info["s_id"] = v.s_id;
+                            info["s_names"] = [];
                             if (v.p_maps != null)
-                                info["s_names"] = v.p_maps
-                            else
-                                info["s_names"] = [];
-                            info["s_names"].push(v.s_name)
+                                $.merge(info["s_names"], v.p_maps);
+
+                            info["s_names"].push(v.s_name);
+
                             if (v.p_ids == null) {
                                 info["l_one_id"] = 0;
                             }
                             else {
                                 info["l_one_id"] = v.p_ids[0];
                             }
-                            // alert(info);
                             _renderinput.mapped_statu.push(info);
                         }
                     });
@@ -280,6 +280,34 @@ function FetchBack() {
         });
     };
 
+
+    this.updateOnlyCompliance = function(data) {
+        displayLoader();
+        fetch.updateCompliance(data, function(status, response) {
+            if (status == null) {
+                is_upload = false;
+                $.each(_renderinput.uploaded_files_fcids, function(key, value) {
+                    if (value == true) {
+                        is_upload = true
+                    }
+                });
+                if(is_upload) {
+                    _fetchback.uploadFileProcess();
+                }
+                else {
+                    _fetchback.mapping_success_callback();
+                }
+            }
+            else {
+
+                possibleFailure(status);
+                return false;
+            }
+            hideLoader();
+        });
+    };
+
+
     this.validateAuthentication = function() {
         var password = CurrentPassword.val().trim();
         if (password.length == 0) {
@@ -337,13 +365,14 @@ function ListPage() {
                 row = $('#templates .compliance-row').clone();
 
                 $('.comp_name', row).text(c.comp_name);
-                $('.comp_edit', row).attr('title', 'Client here to edit compliance');
+                $('.comp_edit', row).attr('title', 'Click here to edit compliance');
                 $('.comp_edit', row).addClass('fa-pencil text-primary');
                 $('.comp_edit', row).on('click', function() {
+                    compliance_edit = true;
                     _listPage.displayMappingEdit(mapping_id, c.comp_id);
+                    CURRENT_TAB = 3;
                 });
                 if (c.is_approved == 4) {
-                    console.log(c.remarks);
                     row.addClass('rejected_row');
                     $('.comp_approval_status', row).append(
                         '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+ c.remarks +'" data-original-title="Rejected reason goes here."></i>'
@@ -379,6 +408,7 @@ function ListPage() {
             $('.map_edit', crow).attr('title', 'Click here to edit');
             $('.map_edit', crow).addClass('fa-pencil text-primary');
             $('.map_edit', crow).on('click', function() {
+                compliance_edit = false;
                 _listPage.displayMappingEdit(v.m_id, null);
             });
             if (v.is_active == true){
@@ -608,6 +638,9 @@ function ViewPage() {
         _renderinput.selected_geos_parent = [];
         for (var i=1; i<11; i++) {
             $('#gnl'+i).children().each(function(){
+                if ($(this).hasClass('select-all')) {
+                    return;
+                }
                 if ($(this).hasClass('active')) {
                     _renderinput.selected_geos.push($(this).val());
                     _renderinput.selected_geos_parent.push($(this).attr('name'));
@@ -631,7 +664,9 @@ function ViewPage() {
         });
     };
     this.make_data_format = function(trType){
-        _viewPage.getFourthTabValues();
+        if (compliance_edit == false) {
+            _viewPage.getFourthTabValues();
+        }
         if (_renderinput.selected_geos.length == 0)
         {
             return false;

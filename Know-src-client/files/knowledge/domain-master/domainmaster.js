@@ -271,7 +271,6 @@ DomainPage.prototype.validate = function() {
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -310,7 +309,6 @@ DomainPage.prototype.submitProcess = function() {
 
                 displaySuccessMessage(message.save_success);
                 t_this.showList();
-                t_this.fetchDomain();
             } else {
                 t_this.possibleFailures(error);
             }
@@ -320,7 +318,6 @@ DomainPage.prototype.submitProcess = function() {
             if (error == null) {
                 displaySuccessMessage(message.update_success);
                 t_this.showList();
-                t_this.fetchDomain();
             } else {
                 t_this.possibleFailures(error);
             }
@@ -544,7 +541,6 @@ $(document).ready(function() {
     });
     PageControls();
     d_page.showList();
-    d_page.fetchDomain();
     $('.js-sorting-table').jssorting(); // Sorting table
 });
 

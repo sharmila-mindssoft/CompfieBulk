@@ -35,6 +35,13 @@ var viewTable = $('.tbody-statutory-nature-list');
 var AddSCreen = $('#statutory-nature-add');
 var viewScreen = $('#statutory-nature-view');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 // get statutory nature list from api
 function getStatutorynatures() {
 	function onSuccess(data) {
@@ -46,10 +53,13 @@ function getStatutorynatures() {
 	function onFailure(error) {
 		custom_alert(error);
 	}
+  displayLoader();
 	mirror.getStatutoryNatureList(function (error, response) {
 		if (error == null) {
+      hideLoader();
 		  onSuccess(response);
 		} else {
+      hideLoader();
 		  onFailure(error);
 		}
 	});
@@ -187,12 +197,15 @@ function validateAuthentication(){
   else {
     validateMaxLength('password', password, "Password");
   }
+  displayLoader();
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
+      hideLoader();
       isAuthenticate = true;
       Custombox.close();
     }
     else {
+      hideLoader();
       if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
       }
@@ -263,11 +276,14 @@ function submitStatutoryNature()
 				parseInt(countryId)
 			];
 			statutoryNatureDetailDict = mirror.getSaveStatutoryNatureDict(statutoryNatureDetail);
+      displayLoader();
 			mirror.saveStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
+          hideLoader();
 					displaySuccessMessage(msg.statutoty_nature_save_success);
 					onSuccess(response);
 				} else {
+          hideLoader();
 					onFailure(error);
 				}
 			});
@@ -293,11 +309,14 @@ function submitStatutoryNature()
 				parseInt(countryId)
 			];
 			statutoryNatureDetailDict = mirror.getUpdateStatutoryNatureDict(statutoryNatureDetail);
+      displayLoader();
     	mirror.updateStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
+          hideLoader();
 					displaySuccessMessage(msg.statutoty_nature_update_success)
 					onSuccess(response);
 				} else {
+          hideLoader();
 					onFailure(error);
 				}
 			});
@@ -336,8 +355,10 @@ function statNature_edit(statNatureId, statNatureName, countryId) {
 
 // activate / deactivate industry master
 function statNature_active(statNatureId, isActive) {
+  displayLoader();
 	mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, function (error, response) {
     if (error == null) {
+      hideLoader();
       if (isActive) {
         displaySuccessMessage(message.statutoty_nature_status_active_success);
       }
@@ -348,6 +369,7 @@ function statNature_active(statNatureId, isActive) {
       getStatutorynatures();
       //onSuccess(response);
     } else {
+      hideLoader();
       displayMessage(error);
     }
   });

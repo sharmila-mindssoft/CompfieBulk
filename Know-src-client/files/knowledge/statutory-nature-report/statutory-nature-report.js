@@ -23,6 +23,13 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 // get statutory nature list from api
 function getStatutorynature() {
 	function onSuccess(data) {
@@ -33,10 +40,13 @@ function getStatutorynature() {
 	function onFailure(error) {
 		custom_alert(error);
 	}
+  displayLoader();
 	mirror.getStatutoryNatureList(function (error, response) {
 		if (error == null) {
+      hideLoader();
 		  onSuccess(response);
 		} else {
+      hideLoader();
 		  onFailure(error);
 		}
 	});

@@ -1,7 +1,7 @@
 var visiblePageCount = 10;
 var m_names = new Array('Jan','Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', "Dec");
 //Load count values in pagination selectbox
-var pageList = [2, 50, 100];
+var pageList = [25, 50, 100];
 var ValidityDays = 90;
 function loadItemsPerPage() {
   for(var i = 0; i < pageList.length; i++) {
@@ -54,7 +54,7 @@ function past_days(days){
 function displayMessage(message) {
   // $('.error-message').text(message);
   // $('.error-message').show();
-  if($('.toast-error').css('display') == "block"){
+  if($('.toast').css('display') == "block"){
     $('.toast').remove();
   }
   var toastPan = import_toast();
@@ -63,7 +63,7 @@ function displayMessage(message) {
 }
 
 function displaySuccessMessage(message) {
-  if($('.toast-error').css('display') == "block"){
+  if($('.toast').css('display') == "block"){
     $('.toast').remove();
   }
   var toastPan = import_toast();
@@ -985,7 +985,7 @@ function commonAutoComplete(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  
+
                   if(jQuery.type( list_val[i][value] ) == 'array'){
                     condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                   }else if(jQuery.type( condition_values[key] ) == 'array'){
@@ -1083,6 +1083,7 @@ function commonAutoComplete1(
                       var cresult = false;
                       var dresult = false;
                       for(var j=0; j<list_val[i][value].length; j++){
+
                         if($.inArray(list_val[i][value][j]["c_id"], condition_values[key][0]) >= 0){
                           cresult = true;
                         }
@@ -1115,7 +1116,7 @@ function commonAutoComplete1(
                     }else{
                       condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                     }
-                    
+
                   }else{
                     if(value == 'user_id'){
                       condition_result = (list_val[i][value] != condition_values[key]);
@@ -1204,4 +1205,3 @@ function hideLoader() {
 $(function() {
     $( ":input" ).attr('autocomplete','off');
 });
-

@@ -250,7 +250,7 @@ def save_client_statutories(db, request, user_id):
         unit_name = c.unit_name
         domain_name = c.domain_name
 
-        msg = "Assgined statutories has been approved for following unit(s) %s in %s domain " % (
+        msg = "Statutories has been assigned for following unit(s) %s in %s domain " % (
             unit_name, domain_name
         )
         save_messages(db, cat_domain_manager, "Assign Statutory", msg, "", user_id, c.unit_id)
