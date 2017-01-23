@@ -23,6 +23,15 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 var ReportData;
+var searchList = [];
+
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 // get industries list from api
 function getIndustries() {
@@ -34,10 +43,13 @@ function getIndustries() {
 	function onFailure(error) {
 		displayMessage(error);
 	}
+  displayLoader();
 	mirror.getIndustryList(function (error, response) {
 		if (error == null) {
+      hideLoader();
 		  onSuccess(response);
 		} else {
+      hideLoader();
 		  onFailure(error);
 		}
 	});
@@ -51,7 +63,6 @@ function processSearch()
 
   usr_status = $('.search-status-li.active').attr('value');
 
-  searchList = []
 
   for(var i in industriesList){
     data = industriesList[i];
@@ -71,6 +82,7 @@ function processSearch()
     }
   }
   loadIndustryList(searchList);
+  processPaging();
 }
 
 //display industry list in view page
@@ -243,19 +255,30 @@ function processPaging(){
 
 function pageData(on_current_page){
   data = [];
+  recordData = [];
   _page_limit = parseInt(ItemsPerPage.val());
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  for(i=sno;i<industriesList.length;i++)
+  if(searchList.length > 0)
+  {
+    recordData = searchList;
+  }
+  else
+  {
+    recordData = industriesList;
+  }
+  totalRecord = recordData.length;
+  for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
-    data.push(industriesList[i]);
+    data.push(recordData[i]);
     if(i == (recordLength-1))
     {
       break;
     }
   }
+  //totalRecord = data.length;
   if (is_null == true) {
     hidePagePan();
   }

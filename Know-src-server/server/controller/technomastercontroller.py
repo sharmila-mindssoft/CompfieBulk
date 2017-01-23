@@ -249,8 +249,8 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
                     get_next_auto_gen_number(db, client_id)
                 )
 
-            elif is_duplicate_unit_name(db, unit_id, unit_name, client_id):
-                return technomasters.UnitNameAlreadyExists()
+            # elif is_duplicate_unit_name(db, unit_id, unit_name, client_id):
+            #     return technomasters.UnitNameAlreadyExists()
             else:
                 pass
 
@@ -322,6 +322,7 @@ def save_client(db, request, session_user):
                         div_ids.append({"div_id": 0})
                 else:
                     div_id = division_id
+                    print "div"
                     print div_id
                     div_ids.append({"div_id": div_id})
 
@@ -435,7 +436,7 @@ def get_clients(db, request, session_user):
         db, session_user
     )
     if len(group_company_list) > 0:
-        unit_list = get_unit_details_for_user(db, session_user, request)
+        client_unit_list = get_unit_details_for_user(db, session_user, request)
         business_group_list = get_business_groups_for_user(db, session_user)
         countries_units = get_countries_for_unit(db, session_user)
         legal_entity_list = get_legal_entities_for_user(db, session_user)
@@ -446,7 +447,7 @@ def get_clients(db, request, session_user):
         # unit_industries_list = get_client_industries(db, session_user)
         # client_domains = get_user_client_domains(db, session_user)
         return technomasters.GetClientsSuccess(
-            unit_list=unit_list,
+            client_unit_list=client_unit_list,
             group_company_list=group_company_list,
             business_group_list=business_group_list,
             countries_units=countries_units,

@@ -945,14 +945,20 @@ def save_validity_date_settings(db, data, session_user):
             break
         else:
             continue
-    return admin.SaveValidityDateSettingsFailure(domain_id, country_id)
+        return admin.SaveValidityDateSettingsFailure(domain_id, country_id)
 
     for datum in data:
         if (datum.validity_days > 0 and datum.validity_days <= 366):
             validity_days_id = datum.validity_days_id
             country_id = datum.country_id
+            print "c id"
+            print country_id
             domain_id = datum.domain_id
+            print "d_id"
+            print domain_id
             validity_days = datum.validity_days
+            print "v days"
+            print validity_days
             db.call_insert_proc(
                 "sp_validitydays_settings_save", (
                     validity_days_id, country_id, domain_id, validity_days,

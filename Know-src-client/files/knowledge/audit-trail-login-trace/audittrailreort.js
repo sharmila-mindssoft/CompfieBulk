@@ -20,6 +20,7 @@ CountryVal = $('#countryval');
 Country = $('#country')
 Category = $('#categoryName');
 Show_btn = $("#show");
+Export_btn = $("#export");
 var msg = message;
 
 //Autocomplete variable declaration
@@ -32,6 +33,7 @@ var ItemsPerPage = $('#items_per_page');
 var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
+var csv = false;
 
 a_page = null;
 function Auditpage() {
@@ -44,6 +46,7 @@ function Auditpage() {
     this._on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;
+    this._csv = false;
 }
 
 /*Auditpage.prototype.displayMessage = function(message){
@@ -116,7 +119,7 @@ Auditpage.prototype.getValue = function(field_name, f_id){
         return t_date;
     }
     else if (field_name == "username") {
-        if (f_id == 0) {
+        if (f_id == 0 || f_id == 1) {
             return 'Administrator';
         }
         else {
@@ -178,6 +181,8 @@ Auditpage.prototype.validateMandatory = function(){
     return is_valid;
 };
 
+
+
 // Binds the data from DB
 Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     $('.grid-table').show();
@@ -186,6 +191,7 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     $('.typeval').text($('#categoryName option:selected').text());
     showFrom = a_page._sno + 1;
     var is_null = true;
+
     $.each(audit_data, function(k, v) {
         if (typeof v.action != 'undefined') {
             is_null = false;
@@ -211,12 +217,48 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
         }
     });
     if (is_null == true) {
-        a_page.hidePagePan();
+        //a_page.hidePagePan();
+        $('.tbody-audittrail-list').empty();
+        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4 = tableRow4.clone();
+        $('.no_records', clone4).text('No Records Found');
+        $('.tbody-audittrail-list').append(clone4);
     }
     else {
         a_page.showPagePan(showFrom, a_page._sno, a_page._total_record);
     }
     a_page.hideLoader();
+};
+
+//To export data
+Auditpage.prototype.exportData = function() {
+    //this.displayLoader();
+    if($('.tbody-audittrail-list').find('tr').length > 0){
+        var t_this = this;
+        _from_date = this.getValue("fromdate", null);
+        _to_date = this.getValue("todate", null);
+        _user_id = this.getValue("user", null);
+        _form_id = this.getValue("form", null);
+        _country_id = this.getValue("country", null);
+        _category_id =this.getValue("category", null);
+
+        console.log(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id)
+        t_this.displayLoader();
+        mirror.exportAuditTrail(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, csv,
+            function(error, response) {
+                hideLoader();
+                if(error == null){
+                    t_this.hideLoader();
+                    console.log(data.link)
+                    if (csv) {
+                      var download_url = data.link;
+                      window.open(download_url, '_blank');
+                    }
+                }
+            });
+    }else{
+        displayMessage(message.export_empty);
+    }
 };
 
 // To get the audit log data from DB - by passing user type, user name, form name and dates, country
@@ -237,28 +279,30 @@ Auditpage.prototype.fetchData = function() {
         _sno = (this._on_current_page - 1) *  _page_limit;
     }
     console.log(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, _sno, _page_limit)
+    t_this.displayLoader();
     mirror.getAuditTrail(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, _sno, _page_limit,
         function(error, response) {
             if (error != null) {
+                t_this.hideLoader();
                 t_this.displayMessage(error);
             }
             else {
-                //t_this.hideLoader();
+                console.log(response)
+                t_this.hideLoader();
                 t_this._sno  = _sno;
                 t_this._auditData = response.audit_trail_details;
-                if (response.total_records == 0) {
+                if (response.audit_trail_details.length == 0) {
                     t_this.hidePageView();
                     a_page.hidePagePan();
-                    $('#no-record-templates').show();
-                    return;
+                    Export_btn.hide();
+                    t_this.renderAuditData(t_this, t_this._auditData);
                 }
-                if (t_this._total_record == 0) {
-                    $('#no-record-templates').hide();
-                    t_this._total_record = response.total_records;
+                else{
+                    t_this._total_record = response.audit_trail_details.length;
                     t_this.createPageView(t_this, t_this._total_record);
+                    Export_btn.show();
+                    t_this.renderAuditData(t_this, t_this._auditData);
                 }
-                t_this._total_record = response.total_records;
-                t_this.renderAuditData(t_this, t_this._auditData);
             }
         }
     );
@@ -601,17 +645,20 @@ initializeControlEvents = function(a_page){
 
     Show_btn.click(function(e) {
         //a_page.resetFields();
+        Export_btn.hide();
         is_valid = a_page.validateMandatory();
         if (is_valid == true) {
             a_page._on_current_page = 1;
             a_page._total_record = 0;
             a_page.fetchData();
             a_page.renderPageControls();
-
         }
     });
 
-
+    Export_btn.click(function(e) {
+        csv = true;
+        a_page.exportData();
+    });
     on_page_load = function() {
         a_page.resetFields();
         a_page.renderPageControls();

@@ -1,5 +1,6 @@
 from werkzeug import secure_filename
 import os
+from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import core, login, general, possiblefailure
 from server.constants import (
     FILE_TYPES,
@@ -81,6 +82,9 @@ def process_general_request(request, db):
 
     elif type(request_frame) is general.GetAuditTrails:
         result = process_get_audit_trails(db, request_frame, user_id)
+
+    elif type(request_frame) is general.ExportAuditTrails:
+        result = process_export_audit_trails(db, request_frame, user_id)
 
     elif type(request_frame) is general.GetAuditTrailsFilter:
         result = process_get_audit_trails_filter(db, request_frame, user_id)
@@ -293,6 +297,17 @@ def process_get_audit_trails(db, request, session_user):
     )
     return audit_trails
 
+########################################################
+# To retrieve all the audit trails of the given User
+########################################################
+def process_export_audit_trails(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "AuditTraiReport"
+        )
+        return general.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
 
 ########################################################
 # To retrieve all the audit trails filter data - user, categories

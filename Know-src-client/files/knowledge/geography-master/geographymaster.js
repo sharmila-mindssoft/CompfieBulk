@@ -20,6 +20,13 @@ var AcCountry = $('#ac-country');
 var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 $('#btn-geography-add').click(function () {
   $('#geography-view').hide();
   $('#geography-add').show();
@@ -155,12 +162,15 @@ function validateAuthentication(){
   } else {
     validateMaxLength('password', password, "Password");
   }
+  displayLoader();
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
+      hideLoader();
       isAuthenticate = true;
       Custombox.close();
     }
     else {
+      hideLoader();
       if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
       }
@@ -189,10 +199,13 @@ function changeStatus(geographyId, isActive) {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.changeGeographyStatus(geographyId, isActive, function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -205,7 +218,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
-    loadGeographyFirstLevels(val[0]);
+    //loadGeographyFirstLevels(val[0]);
 }
 
 //Autocomplete Script ends
@@ -400,11 +413,14 @@ function saverecord1(j, e) {
         if (map_gm_id.length == 0) {
           map_gm_id.push(0);
         }
+        displayLoader();
         mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, map_gm_name, countryId, function (error, response) {
           if (error == null) {
+            hideLoader();
             onSuccess(response);
             $('.listfilter').val('');
           } else {
+            hideLoader();
             onFailure(error);
           }
         });
@@ -421,11 +437,14 @@ function reload(last_geography_id, last_level, cny) {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getGeographies(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
       $('.listfilter').val('');
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -575,11 +594,14 @@ function updaterecord(j, e) {
         if (map_gm_id.length == 0) {
           map_gm_id.push(0);
         }
+        displayLoader();
         mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, map_gm_name, parseInt($('#country').val()), function (error, response) {
           if (error == null) {
+            hideLoader();
             onSuccess(response);
             $('.listfilter').val('');
           } else {
+            hideLoader();
             onFailure(error);
           }
         });
@@ -631,11 +653,14 @@ function GetGeographies() {
   function onFailure(error) {
     custom_alert(error);
   }
+  displayLoader();
   mirror.getGeographies(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
       $('.listfilter').val('');
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -672,7 +697,6 @@ function renderControls(){
       countriesList, "country_name", "country_id", function (val) {
           onAutoCompleteSuccess(country_ac, country_val, val);
       }, condition_fields, condition_values);
-
   });
 
   Search_status.change(function() {

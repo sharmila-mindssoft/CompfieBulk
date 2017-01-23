@@ -102,6 +102,8 @@ $("#btn-submit").click(function(){
 function save_validity_date_settings() {
   var result = collect_and_validate_values()
   if(result != false && values_to_save.length > 0){
+    console.log("len:"+values_to_save.length);
+    console.log(values_to_save)
     function onSuccess(data) {
       displaySuccessMessage(message.settings_save_success);
       initialize();
@@ -149,6 +151,7 @@ function collect_and_validate_values(){
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     for (var dcount = 0; dcount < domain_list.length; dcount++) {
       domain_id = parseInt(domain_list[dcount])
+      console.log(country_id,domain_id)
       validity_days = $(".val-"+country_id+"-"+domain_id).val()
       console.log("1:"+validity_days)
       validity_days_id = $(".id-"+country_id+"-"+domain_id).val()
@@ -157,12 +160,11 @@ function collect_and_validate_values(){
           validity_days != "undefined" &&
           validity_days != null
       ){
-        /*if ((parseInt(validity_days) > 366)){
+        if ((parseInt(validity_days) > 366)){
           displayMessage(message.invalid_validity_days);
-          return false;
+          returnVal =false;
           break;
-        }*/
-
+        }
         if(validity_days_id){
           validity_days_id = parseInt(validity_days_id)
         }
@@ -170,15 +172,18 @@ function collect_and_validate_values(){
           validity_days_id, parseInt(country_id), parseInt(domain_id),
           parseInt(validity_days)
         )
+        console.log(value)
         values_to_save.push(value)
 
-      }else{
-        displayMessage(message.validity_date_required);
-        return false;
-        break;
       }
+      /*else{
+        displayMessage(message.validity_date_required);
+        returnVal = false;
+        break;
+      }*/
     }
   });
+  return returnVal;
 }
 
 //initialization

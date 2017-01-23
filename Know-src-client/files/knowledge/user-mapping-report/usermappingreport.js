@@ -45,6 +45,7 @@ var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
 var sno = 0;
+var _page_limit = 25;
 var totalRecord;
 
 function displayLoader() {
@@ -70,11 +71,14 @@ function initialize() {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getUserMappingReportFilters(function (error, response) {
     if (error == null) {
       onSuccess(response);
+      hideLoader();
     } else {
       onFailure(error);
+      hideLoader();
     }
   });
 }
@@ -397,12 +401,11 @@ function resetAllfilter()
   $('#divisionval').val('');
   $('#categoryval').val('');
   $('#unitval').val('');
+  $('.tbody-usermappingdetails-list').empty();
   $('#countryval').focus();
 }
 function resetfilter(evt)
 {
-  //alert("jhjh");'
-  console.log(evt);
   if(evt == 'countries')
   {
     $('#groupsval').val('');
@@ -442,21 +445,29 @@ function resetfilter(evt)
   {
     $('#unitval').val('');
   }
+
+  $('.tbody-usermappingdetails-list').empty();
+  $('.grid-table-rpt').hide();
 }
 
 ExportButton.click(function() {
-  alert("x");
-    csv = true;
-    var requestHeaders = [];
-    var requestData = [];
+  //alert("x");
+    if(mappedUserList.length > 0){
+      csv = true;
+      sno = 0;
+      loadusermappingdetails();
+    }
+    else{
+      displayMessage(message.export_empty);
+    }
 
-    loadusermappingdetails();
 });
 $('#show-button').click(function () {
   sno = 0;
   lastBG = '';
   lastLE = '';
   lastDv = '';
+  csv = false;
   $('.details').show();
   $('#compliance_animation')
     .removeClass().addClass('bounceInLeft animated')
@@ -515,10 +526,12 @@ function processPaging(){
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
     $('.tbody-usermappingdetails-list').append(clone4);
+    ExportButton.hide();
     PaginationView.hide();
     hideLoader();
   } else {
     if(sno==0){
+      ExportButton.show();
       createPageView(totalRecord);
     }
     PaginationView.show();
@@ -531,7 +544,6 @@ function pageData(on_current_page){
   data = [];
   _page_limit = parseInt(ItemsPerPage.val());
   recordLength = (parseInt(on_current_page) * _page_limit);
-  console.log(totalRecord,_page_limit)
   var showFrom = sno + 1;
   var is_null = true;
   for(i=sno;i<mappedUserList.length;i++)
@@ -585,28 +597,41 @@ function loadusermappingdetails() {
       unit_id = 0;
     }
     null_values = bgrp_id + "," + divi_id + "," + catg_id + "," + unit_id;
-    function onSuccess(data) {
-      console.log("success")
-      console.log(data);
-      $('.grid-table-rpt').show();
-      /*$('.countryval').text(countriesText);
-      $('.groupsval').text(groupsval);
-      totalRecord = data.total_count;*/
-      mappedUserList = data.techno_details;
-      userMappingList = data;
-      totalRecord = data.techno_details.length;
-      //loadUserMappingDetailsList(data);
 
-      processPaging();
+
+    if (on_current_page == 1) {
+        sno = 0
+    } else {
+        sno = (on_current_page - 1) * _page_limit;
+    }
+
+    function onSuccess(data) {
+      console.log(data);
+      if (csv) {
+          var download_url = data.link;
+          window.open(download_url, '_blank');
+      }else{
+        $('.grid-table-rpt').show();
+        mappedUserList = data.techno_details;
+        userMappingList = data;
+        totalRecord = data.techno_details.length;
+        //loadUserMappingDetailsList(data);
+        processPaging();
+      }
     }
     function onFailure(error) {
       displayMessage(error);
     }
-    mirror.getUsermappingDetailsReport(parseInt(country_id), parseInt(client_id), parseInt(le_id), null_values, function (error, response) {
+    displayLoader();
+    mirror.getUsermappingDetailsReport(parseInt(country_id), parseInt(client_id), parseInt(le_id), null_values,
+      csv, sno, _page_limit,
+      function (error, response) {
       if (error == null) {
         onSuccess(response);
+        hideLoader();
       } else {
         onFailure(error);
+        hideLoader();
       }
     });
   }
@@ -631,6 +656,9 @@ function loadUserMappingDetailsList(data)
 {
   var th_cnt=3;
   var sno = 0;
+  $('.tbody-usermappingdetails-list').empty();
+  $('.usermapping-header').empty();
+  //$('.#datatable-responsive').empty();
   domainsList = userMappingList.usermapping_domain;
   var country_name = $('#countryval').val();
   var client_name = $('#groupsval').val();
@@ -657,17 +685,18 @@ function loadUserMappingDetailsList(data)
   else
     $('.categoryval').text(" - ");
 
+  //$('#datatable-responsive th').remove();
 
   var tableheading = $('#templates .tr-heading');
   var cloneheading = tableheading.clone();
-  $('.tbody-usermappingdetails-list').append(cloneheading);
+  $('.usermapping-header').append(cloneheading);
 
 
   if(domainsList.length > 0)
   {
     for(var i=0;i<domainsList.length;i++)
     {
-      $('#datatable-responsive th:last-child').each(function() {
+      $('.usermapping-header th:last-child').each(function() {
         for(var j=1;j<=2;j++)
         {
           var clone = $(this).clone().html('&nbsp;');
@@ -702,8 +731,8 @@ function loadUserMappingDetailsList(data)
     sno = i + 1;
 
     $('.sno', clone1).text(sno);
-    var unit_code_name = getUnitName(technoDetails[i].unit_id);
-    $('.unit-name', clone1).text(unit_code_name);
+    //var unit_code_name = getUnitName(technoDetails[i].unit_id);
+    $('.unit-name', clone1).text(technoDetails[i].unit_code_with_name);
     $('.techno-manager', clone1).text(technoDetails[i].techno_manager);
     $('.techno-user', clone1).text(technoDetails[i].techno_user);
     $('.tbody-usermappingdetails-list').append(clone1);
@@ -769,37 +798,6 @@ function loadUserMappingDetailsList(data)
     }
   });
 
-  //Export function if required
-  if(csv == true){
-    var ExportTableRow = $('#datatable-responsive .tr-heading .header-bg');
-    var ExportTableData = $('#datatable-responsive .table-row');
-    console.log("after show:"+ExportTableData.length)
-    if(ExportTableData.length > 0){
-        csv = true;
-        if (on_current_page == 1) {
-            sno = 0
-        } else {
-            sno = (on_current_page - 1) * _page_limit;
-        }
-
-        for(var i=0;i<ExportTableRow.length;i++){
-          if(ExportTableRow.eq(i).text() != "#")
-            requestHeaders.push(ExportTableRow[i].innerText())
-        }
-
-        for(var i=0;i<ExportTableData.length;i++){
-          var currentRow = ExportTableData.eq(i);
-          for(var j=0;j<currentRow.length;j++){
-            var currentRowClass = currentRow.find('td').eq(j).attr('class');
-            if(currentRowClass == "unit-name")
-              //"u"
-          }
-        }
-    }
-    else{
-      displayMessage(message.export_empty);
-    }
-  }
 }
 
 function getDomainAssigned(domain_header, unit_id, data)
@@ -822,7 +820,6 @@ function getDomainAssigned(domain_header, unit_id, data)
 function getUnitName(unit_id)
 {
   var unit_code_name=null;
-  console.log("data:"+assignedUnitList)
   for(var i =0; i < assignedUnitList.length; i++)
   {
     if(unit_id == assignedUnitList[i].unit_id)
@@ -987,7 +984,7 @@ $('#businessgroupsval').keyup(function (e) {
     }
 
     commonAutoComplete(
-      e, ACBusinessGroup, BusinessGroupVal, textval,
+      e, ACBusinessGroup, BusinessGroup, textval,
       bg_grp, "business_group_name", "business_group_id", function (val) {
         onAutoCompleteSuccess(BusinessGroupVal, BusinessGroup, val);
     }, condition_fields, condition_values);
@@ -1088,12 +1085,21 @@ $('#divisionval').keyup(function (e) {
         && (bg_check == true || bg_check == false))
       //        (bgrp_id > 0 && divisionList[i].business_group_id == bgrp_id))
       {
-        division_list.push({
-          "client_id": divisionList[i].client_id,
-          "legal_entity_id": divisionList[i].legal_entity_id,
-          "division_id": divisionList[i].division_id,
-          "division_name": divisionList[i].division_name
-        });
+        var occur = -1;
+        for(var k=0;k<division_list.length;k++){
+          if(division_list[k].division_id==divisionList[i].division_id){
+            occur = 1;
+          }
+        }
+        if(occur < 0){
+          division_list.push({
+            "client_id": divisionList[i].client_id,
+            "legal_entity_id": divisionList[i].legal_entity_id,
+            "division_id": divisionList[i].division_id,
+            "division_name": divisionList[i].division_name
+          });
+        }
+
       }
     }
     commonAutoComplete(
@@ -1139,10 +1145,19 @@ $('#categoryval').keyup(function (e) {
         && (bg_check == true || bg_check == false) && (divi_check == true || divi_check == false))
       //        (bgrp_id > 0 && divisionList[i].business_group_id == bgrp_id))
       {
-        catg_list.push({
-          "category_id": categoryList[i].category_id,
-          "category_name": categoryList[i].category_name
-        });
+        var occur = -1;
+        for(var k=0;k<catg_list.length;k++){
+          if(catg_list[k].category_id==categoryList[i].category_id){
+            occur = 1;
+          }
+        }
+        if(occur < 0){
+          catg_list.push({
+            "category_id": categoryList[i].category_id,
+            "category_name": categoryList[i].category_name
+          });
+        }
+
       }
     }
     commonAutoComplete(

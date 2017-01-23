@@ -271,7 +271,7 @@ $('#update_status').click(function() {
     } else {
         console.log("Welcome2");
         if (txtpwd == '') {
-            displayMessage(message.enter_password);
+            displayMessage(message.password_required);
         } else {
             displayMessage(message.reason_required);
         }
@@ -359,7 +359,7 @@ function renderSearch() {
     });
     $(event.target).parent().addClass('active');
 
-    var currentClass = $(event.target).find('i').attr('class');
+    /*var currentClass = $(event.target).find('i').attr('class');
     Search_status.removeClass();
     if(currentClass != undefined){
       Search_status.addClass(currentClass);
@@ -367,7 +367,10 @@ function renderSearch() {
     }else{
       Search_status.addClass('fa');
       Search_status.text('All');
-    }
+    }*/
+    var currentClass = $(event.target).html();
+    Search_status.html(currentClass);
+
     processFilterSearch();
   });
 
@@ -377,15 +380,16 @@ function renderSearch() {
     });
     $(event.target).parent().addClass('active');
 
-    var currentClass = $(event.target).find('i').attr('class');
-    Search_status_1.removeClass();
+    var currentClass = $(event.target).html();
+    Search_status_1.html(currentClass);
+    /*Search_status_1.removeClass();
     if(currentClass != undefined){
       Search_status_1.addClass(currentClass);
       Search_status_1.text('');
     }else{
       Search_status_1.addClass('fa');
       Search_status_1.text('All');
-    }
+    }*/
     processFilterSearch();
   });
 }

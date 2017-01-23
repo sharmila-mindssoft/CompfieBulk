@@ -15,7 +15,7 @@
             <div class="panel panel-default panel-info">
                 <div class="card-box table-responsive">
                     <div class="dataTable_wrapper">
-                        <table class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                        <table class="table table-striped dt-responsive nowrap js-filtertable-view" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
                                     <th align="center" width="2%">#</th>
@@ -24,37 +24,36 @@
                                     <th width="20%">Country</th>
                                     <th width="20%">Legal Entity</th>
                                     <th width="10%" class="text-center">Edit</th>
-                                    <th width="10%" class="text-center">Status</th>
                                 </tr>
                                 <tr>
                                     <td align="center"></td>
                                     <td>
                                         <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
-                                            <input class="form-control input-sm filter-text-box js-filter" placeholder="Group" type="text" id="search-group-name">
+                                            <input class="form-control input-sm js-filter-view" placeholder="Group" type="text" id="search-group-name">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
-                                            <input class="form-control input-sm filter-text-box js-filter" placeholder="Business Group" type="text" id="search-bgroup-name">
+                                            <input class="form-control input-sm js-filter-view" placeholder="Business Group" type="text" id="search-bgroup-name">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
-                                            <input class="form-control input-sm filter-text-box js-filter" placeholder="Country" type="text" id="search-country-name">
+                                            <input class="form-control input-sm js-filter-view" placeholder="Country" type="text" id="search-country-name">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
                                     <td>
                                         <div class="form-group has-feedback col-sm-12 no-padding m-t-10 m-b-10">
-                                            <input class="form-control input-sm filter-text-box js-filter" placeholder="Legal Entity" type="text" id="search-le-name">
+                                            <input class="form-control input-sm js-filter-view" placeholder="Legal Entity" type="text" id="search-le-name">
                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                         </div>
                                     </td>
                                     <td align="center"></td>
                                     <!--td align="center"></td-->
-                                    <td align="center">
+                                    <!-- <td align="center">
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true">
                                                 <i id="search-status" class="fa">All</i>
@@ -66,7 +65,7 @@
                                                 <li value="1" class="search-status-li"><a><i class="fa fa-times text-danger"></i> Inactive</a></li>
                                             </ul>
                                         </div>
-                                    </td>
+                                    </td> -->
                                 </tr>
                             </thead>
                             <tbody class="tbody-clientunit-list"> </tbody>
@@ -87,9 +86,6 @@
             <td class="legal-entity-name"></td>
             <td class="icon-3x text-center">
                 <i class="fa c-pointer edit"></i>
-            </td>
-            <td align="center">
-                <span class="status-text"></span>
             </td>
         </tr>
     </table>
@@ -159,7 +155,7 @@
                             <div class="clear"></div>
                             <div class="col-sm-12">
                                 <div class="form-group pull-right ">
-                                    <a class="waves-effect waves-light c-pointer" type="button" id="add-country-row" onclick="addcountryrow()"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Division / Category</span> </a>
+                                    <a class="waves-effect waves-light c-pointer" type="button" id="add-country-row" onclick="addcountryrow()" tabindex="5"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Division / Category</span> </a>
                                 </div>
                             </div>
                             <div class="clear"></div>
@@ -187,22 +183,22 @@
                             <label class="col-sm-2 p-t-7">Division:</label>
                             <div class="select_business_group">
                                 <div class="col-sm-6 no-padding-right">
-                                    <Select id="division-select" class="form-control input-sm division-id" tabindex="5" width="150px" onfocus="loadDivision(this.className);">
+                                    <Select id="division-select" class="form-control input-sm division-id" width="150px" onfocus="loadDivision(this.className);" tabindex="6">
                                         <option value="">Select</option>
                                     </Select>
                                     <label class="p-t-7 labeldivision" style="display: none;"> Division: <span></span></label>
                                     <input type="hidden" class="divisionid">
                                 </div>
                                 <div class="col-sm-2 p-t-7">
-                                    <a class="waves-effect waves-light c-pointer" type="button" onclick="divisionExistingChecking('New')" id="division-new" tabindex="6" style="display: block;"> <i class="fa fa-plus-circle text-primary"></i> </a>
+                                    <a class="waves-effect waves-light c-pointer" type="button" onclick="divisionExistingChecking('New')" id="division-new" tabindex="7" style="display: block;"> <i class="fa fa-plus-circle text-primary"></i> </a>
                                 </div>
                             </div>
                             <div class="input_business_group" style="display: none;">
                                 <div class="col-sm-6 no-padding-right">
-                                    <input class="form-control input-sm division-name" placeholder="Enter Division" type="text" id="division-text" tabindex="7" maxlength="100">
+                                    <input class="form-control input-sm division-name" placeholder="Enter Division" type="text" id="division-text" tabindex="8" maxlength="100">
                                 </div>
                                 <div class="col-sm-2">
-                                    <a class="waves-effect waves-light c-pointer icon-3x" type="button" onclick="divisionExistingChecking('Cancel')" tabindex="8" id="division-existing"> <i class="fa fa-times text-primary"></i> </a>
+                                    <a class="waves-effect waves-light c-pointer icon-3x" type="button" onclick="divisionExistingChecking('Cancel')" tabindex="9" id="division-existing"> <i class="fa fa-times text-primary"></i> </a>
                                 </div>
                             </div>
                         </div>
@@ -211,7 +207,7 @@
                         <div class="form-group m-b-10">
                             <label class="col-sm-2 p-t-7">Category:</label>
                             <div class="col-sm-6 no-padding-right">
-                                <input class="form-control input-sm category-name" placeholder="Enter Category" value="" type="text" id="category-text" maxlength="100" tabindex="9">
+                                <input class="form-control input-sm category-name" placeholder="Enter Category" value="" type="text" id="category-text" maxlength="100" tabindex="10">
                                 <label class="p-t-7 labelcategory" style="display: none;"> Category: <span></span></label>
                                 <input type="hidden" class="categoryid">
                             </div>
@@ -245,7 +241,7 @@
                                 <th width="10%">Organization</th>
                                 <th width="5%" class="text-center">Status</th>
                                 <th width="8%" class="text-center">Approve</th>
-                                <th width="4%" class="text-center">Edit</th>
+                                <th width="4%" class="text-center head-status">Edit</th>
                             </tr>
                         </thead>
                         <tbody class="tbody-unit-list">
@@ -256,14 +252,14 @@
                                 <td>
                                     <div class="form-group has-feedback m-b-0 p-r-10">
                                         <input type="hidden" class="no-of-units">
-                                        <select class="form-control input-sm geography-levels glevel" onfocus="loadglevels(this.className);" onchange="changelocation(this.className);" tabindex="10">
+                                        <select class="form-control input-sm geography-levels glevel" onfocus="loadglevels(this.className);" onchange="changelocation(this.className);" tabindex="11">
                                         </select>
                                         <span class="labelgeolevels"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group has-feedback m-b-0 p-r-10">
-                                        <input class="form-control input-sm unitlocation" value="" type="text" onkeyup="loadlocation(this.value, this.className, event);" tabindex="11">
+                                        <input class="form-control input-sm unitlocation" value="" type="text" onkeyup="loadlocation(this.value, this.className, event);" tabindex="12">
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                         <input type="hidden" class="unitlocation-ids">
                                         <div class=" ac-textbox default-display-none auto-complete-unit-location" onclick="hideunitlocation(this.className);" onmouseleave="hideunitlocation(this.className);">
@@ -276,32 +272,32 @@
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <input class="form-control input-sm unit-code" value="" type="text" maxlength="20" tabindex="12">
+                                        <input class="form-control input-sm unit-code" value="" type="text" maxlength="20" tabindex="13">
                                         <input type="hidden" class="unit-id">
                                         <span class="labelunitcode"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <input class="form-control input-sm unit-name" value="" type="text" maxlength="50" tabindex="13">
+                                        <input class="form-control input-sm unit-name" value="" type="text" maxlength="50" tabindex="14">
                                         <span class="labelunitname"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <input class="form-control input-sm unit-address" value="" type="text" maxlength="250" tabindex="14">
+                                        <input class="form-control input-sm unit-address" value="" type="text" maxlength="250" tabindex="15">
                                         <span class="labelunitaddress"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <input class="form-control input-sm postal-code" value="" type="text" tabindex="15" maxlength="8">
+                                        <input class="form-control input-sm postal-code" value="" type="text" tabindex="16" maxlength="8">
                                         <span class="labelpostcode"></span>
                                     </div>
                                 </td>
                                 <td>
                                     <div class="form-group m-b-0 p-r-10">
-                                        <select class="form-control input-sm domainselected" multiple="multiple" tabindex="16">
+                                        <select class="form-control input-sm domainselected" multiple="multiple" tabindex="17">
                                         </select>
                                         <!-- <input type="hidden" class="domain"> -->
                                         <span class="labeldomain"></span>
@@ -309,7 +305,7 @@
                                 </td>
                                 <td>
                                     <div class="form-group  m-b-0 p-r-10">
-                                        <select class="form-control input-sm  orgtypeselected" multiple="multiple" tabindex="17">
+                                        <select class="form-control input-sm  orgtypeselected" multiple="multiple" tabindex="18">
                                         </select>
                                         <!-- <input type="hidden" class="orgtype"> -->
                                         <span class="labelorganization"></span>
@@ -323,8 +319,9 @@
                                     <span class="approveclass"></span>
                                 </td>
                                 <td class="icon-3x text-center">
-                                    <i class="fa fa-pencil text-primary c-pointer edit-icon"></i>
-                                    <i class="fa fa-times text-danger c-pointer delete-icon" style="display: none;"></i>
+                                    <i class="fa fa-pencil text-primary c-pointer edit-icon" tabindex="19"></i>
+                                    <i class="fa fa-times text-danger c-pointer delete-icon" tabindex="19" style="display: none;"></i>
+                                    <i class="fa fa-trash text-primary c-pointer remove-icon" tabindex="19" style="display: none;"></i>
                                     <!-- <i class="fa fa-times text-danger c-pointer"></i> -->
                                 </td>
                             </tr>
@@ -332,7 +329,7 @@
                     </table>
                     <div class="col-sm-12">
                         <div class="form-group pull-right m-b-0">
-                            <a class="waves-effect waves-light c-pointer add-unit-row" type="button" onclick="check_previous_orgn(this.className)"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Unit</span> </a>
+                            <a class="waves-effect waves-light c-pointer add-unit-row" type="button" onclick="check_previous_orgn(this.className)" tabindex="22"> <i class="fa fa-plus-circle text-primary v-align-middle"></i> <span class="v-align-middle">Add Unit</span> </a>
                         </div>
                     </div>
                     <div class="clear"></div>
@@ -420,7 +417,7 @@
             <td class="icon-3x text-center">
                 <i class="fa fa-pencil text-primary c-pointer edit-icon"></i>
                 <i class="fa fa-times text-danger c-pointer delete-icon" style="display: none;"></i>
-                <!-- <i class="fa fa-times text-danger c-pointer"></i> -->
+                <i class="fa fa-trash text-primary c-pointer remove-icon" style="display: none;"></i>
             </td>
         </tr>
     </table>
@@ -452,6 +449,13 @@
 </div>
 <div class="orgtype-list-drop-down">
     <li></li>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
 </div>
 <script type="text/javascript" src="/script/client-unit/clientunit-new.js"></script>
 <script type="text/javascript" src="/script/client-unit/clientunit-edit.js"></script>
