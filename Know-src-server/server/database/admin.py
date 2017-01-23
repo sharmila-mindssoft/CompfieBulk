@@ -1143,15 +1143,14 @@ def get_legal_entities_for_user(db, user_id):
 
 def get_reassign_legal_entity(db, user_id):
     result = db.call_proc_with_multiresult_set(
-        "sp_get_reassign_legalentity", [user_id], 3)
+        "sp_get_reassign_legalentity", [user_id], 2)
     return return_legal_entities_for_unit(result)
 
 def return_legal_entities_for_unit(legal_entities):
     results = []
-
-    for legal_entity in legal_entities[1]:
+    for legal_entity in legal_entities[0]:
         d_ids = []
-        for d in legal_entities[2]:
+        for d in legal_entities[1]:
             if d["legal_entity_id"] == legal_entity["legal_entity_id"] :
                 d_ids.append(d["domain_id"])
         legal_entity_obj = admin.LegalEntity(

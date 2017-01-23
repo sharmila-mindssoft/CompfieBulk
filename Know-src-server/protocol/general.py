@@ -300,7 +300,7 @@ class UpdateStatutoryNotificationStatus(Request):
         notification_id = data.get("notification_id")
         user_id = data.get("user_id")
         has_read = data.get("has_read")
-        return UpdateNotificationStatus(notification_id, has_read)
+        return UpdateStatutoryNotificationStatus(notification_id, has_read)
 
     def to_inner_structure(self):
         return {
