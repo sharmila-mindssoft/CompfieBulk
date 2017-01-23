@@ -24,7 +24,6 @@ from server.database.knowledgemaster import (
 )
 from server.exceptionmessage import process_error, fetch_error
 
-from server.constants import RECORD_DISPLAY_COUNT
 
 APPROVAL_STATUS = ["Yet to submit", "Pending", "Approved", "Rejected", "Approved & Notified"]
 
@@ -438,13 +437,9 @@ def save_compliance(
             file_name = file_list.file_name
             file_size = file_list.file_size
 
-        print file_name, file_size
-        print file_list
         if data.is_file_removed :
             # remove uploaded file
-            print file_name, file_size
             remove_uploaded_file(file_path + "/" + file_name)
-            print " remove process"
             file_name = ""
             file_size = 0
 
@@ -704,7 +699,6 @@ def update_statutory_mapping(db, data, updated_by):
 
     link = "/knowledge/approve-statutory-mapping"
     save_messages(db, 3, "Statutory Mapping", text, link, updated_by)
-    print text
     return True
 
 
@@ -786,12 +780,8 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
             file_name = file_list.file_name
             file_size = file_list.file_size
 
-        print file_name, file_size
-        print file_list
         if data.is_file_removed :
             # remove uploaded file
-            print file_name, file_size
-            print " remove process"
             remove_uploaded_file(file_path + "/" + file_name)
             file_name = ""
             file_size = 0
@@ -1314,8 +1304,9 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         return statutory
 
     fromcount = rcount
-    tocount = rcount + RECORD_DISPLAY_COUNT
+    tocount = 2
     print [user_id, approve_status, fromcount, tocount]
+    print "--------------"
     result = db.call_proc_with_multiresult_set(
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 6

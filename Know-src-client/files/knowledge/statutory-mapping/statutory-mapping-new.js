@@ -12,8 +12,6 @@ var STATUTORY_INFO;
 var STATUTORY_LEVEL_INFO;
 var GEOGRAPHY_INFO;
 var GEOGRAPHY_LEVEL_INFO;
-var STATU_MAPPINGS;
-var STATU_TOTALS;
 var isAuthenticate;
 var compliance_edit = false;
 
@@ -146,6 +144,7 @@ function RenderInput() {
     this.file_removed = false;
     this.f_f_list = [];
     this.allow_domain_edit = true;
+    this.show_map_count = 0;
 
 
     this.remveItemFromList = function(item, mainlist) {
@@ -2111,7 +2110,7 @@ function pageControls() {
               _renderinput.uploaded_files = e.target.files;
               _renderinput.file_removed = false;
               $('#uploaded_fileview').show();
-              $('#uploaded_filename').html(tFN + '   <img src=\'/knowledge/images/close-icon-black.png\' onclick=\'remove_temp_file()\' />');
+              $('#uploaded_filename').html(tFN + '  <img src=\'/knowledge/images/close-icon-black.png\' onclick=\'remove_temp_file()\' />');
             }
         } else {
             displayMessage(message.invalid_file_format);
@@ -2142,5 +2141,12 @@ function initialize() {
 }
 
 $(document).ready(function(){
+    $('html').offset().top;
     initialize();
+
+    $(window).scroll(function(){
+        if ($(window).scrollTop() == $(document).height() - $(window).height()){
+            _fetchback.getMoreMappedList();
+        }
+    });
 });
