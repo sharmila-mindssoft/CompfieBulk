@@ -1311,7 +1311,7 @@ def save_unit(
     columns = [
         "client_id", "geography_id", "unit_code", "unit_name",
         "address", "postal_code", "country_id", "created_by", "created_on",
-        "division_id", "category_id"
+        "is_approved", "division_id", "category_id"
     ]
     if business_group_id is not None:
         columns.append("business_group_id")
@@ -1328,7 +1328,7 @@ def save_unit(
         vals = [
             client_id, units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
             units[int_i].unit_address, units[int_i].postal_code, country_id,
-            session_user, current_time_stamp,
+            session_user, current_time_stamp, units[int_i].is_approved
         ]
         unit_names.append("\"%s - %s\"" % (
             str(units[int_i].unit_code).upper(), units[int_i].unit_name)
@@ -1415,7 +1415,7 @@ def update_unit(db, client_id, units, session_user):
     columns = [
         "geography_id", "unit_code", "unit_name",
         "address", "postal_code", "updated_by", "updated_on",
-        "division_id", "category_id"
+        "is_approved", "division_id", "category_id"
     ]
 
     values_list = []
@@ -1427,7 +1427,7 @@ def update_unit(db, client_id, units, session_user):
         vals = [
             units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
             units[int_i].unit_address, units[int_i].postal_code,
-            session_user, current_time_stamp,
+            session_user, current_time_stamp, units[int_i].is_approved
         ]
         condition = "client_id=%s and unit_id=%s" % (
                 client_id, units[int_i].unit_id)
@@ -1776,7 +1776,24 @@ def return_units_assign(units):
 def get_unit_details_for_user(db, user_id, request):
     where_condition_val = [user_id]
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
-    return return_unit_details(result)
+    return return_client_unit_list(result)
+
+def return_client_unit_list(result):
+    unitlist = []
+    for r in result[0]:
+        client_id = int(r.get("client_id"))
+        business_group_id = r.get("business_group_id")
+        legal_entity_id = int(r.get("legal_entity_id"))
+        country_id = int(r.get("country_id"))
+        country_name = r.get("country_name")
+        client_name = r.get("group_name")
+        business_group_name = r.get("b_group")
+        legal_entity_name = r.get("l_entity")
+        unitlist.append(core.UnitList(
+            client_id, business_group_id, legal_entity_id, country_id,
+            country_name, client_name, business_group_name, legal_entity_name
+        ))
+    return unitlist
 
 ######################################################################################
 # To Get units under user
@@ -2213,36 +2230,21 @@ def return_unassigned_units(data):
     assigned_total = 0
     result = []
     for datum in data:
-        if (datum["assigned_units"] > 0 or datum["total_units"] > 0 or datum["unassigned_units"] > 0):
-            print "units"
-            print datum["assigned_units"]
-            if datum["total_units"] == 0:
-                if datum["unassigned_units"] == 0:
-                    assigned_total = "%s / %s" % (
-                        datum["unassigned_units"] + datum["assigned_units"],
-                        datum["assigned_units"]
-                    )
-                else:
-                    assigned_total = "%s / %s" % (
-                        datum["unassigned_units"] - datum["assigned_units"],
-                        datum["unassigned_units"]
-                    )
-            else:
-                assigned_total = "%s / %s" % (
-                    datum["total_units"] - datum["assigned_units"],
-                    datum["total_units"]
-                )
+        assigned_total = "%s / %s" % (
+            datum["total_units"] - datum["assigned_units"],
+            datum["total_units"]
+        )
 
-            result.append(technomasters.UnassignedUnit(
-                domain_name=datum["domain_name"],
-                group_name=datum["client_name"],
-                legal_entity_name=datum["legal_entity_name"],
-                business_group_name=datum["business_group_name"],
-                unassigned_units=assigned_total,
-                domain_id=datum["domain_id"],
-                client_id=datum["client_id"],
-                legal_entity_id=datum["legal_entity_id"]
-            ))
+        result.append(technomasters.UnassignedUnit(
+            domain_name=datum["domain_name"],
+            group_name=datum["client_name"],
+            legal_entity_name=datum["legal_entity_name"],
+            business_group_name=datum["business_group_name"],
+            unassigned_units=assigned_total,
+            domain_id=datum["domain_id"],
+            client_id=datum["client_id"],
+            legal_entity_id=datum["legal_entity_id"]
+        ))
 
     return result
 

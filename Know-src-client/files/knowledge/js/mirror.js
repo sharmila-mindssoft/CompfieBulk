@@ -68,6 +68,337 @@ function initMirror() {
         info.email_id = response.email_id;
         window.sessionStorage.userInfo = toJSON(info);
     }
+  function getLegalEntityDict(leId, leName) {
+    return {
+      'le_id': leId,
+      'le_name': leName
+    };
+  }
+  function getDivisionDict(dv_id, dv_name, cg, div_cnt, unit_cnt) {
+    return {
+      'dv_id': dv_id,
+      'dv_name': dv_name,
+      'cg': cg,
+      'div_cnt': div_cnt,
+      'unit_cnt': unit_cnt
+    };
+  }
+  /*function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, uLoc, iId, iName, dIds) {
+    return {
+      'u_id': uId,
+      'u_name': uName,
+      'u_code': uCode,
+      'u_add': uAdd,
+      'p_code': pCode,
+      'geo_id': geoId,
+      'u_loc': uLoc,
+      'i_id': iId,
+      'i_name': iName,
+      'd_ids': dIds
+    };
+  }old*/
+  function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds) {
+    return {
+      'unit_id': uId,
+      'unit_name': uName,
+      'unit_code': uCode,
+      'address': uAdd,
+      'postal_code': pCode,
+      'geography_id': geoId,
+      'd_ids': dIds,
+      'i_ids_list': iIds
+    };
+  }
+  function mapUnitsToCountry(cId, units) {
+    return {
+      'c_id': cId,
+      'units': units
+    };
+  }
+  function saveClient(cId, bg_id, le_id, c_id, division_units, cw_units, callback) {
+    callerName = 'techno';
+    var request = [
+      'SaveClient',
+      {
+        'cl_id': cId,
+        'bg_id': bg_id,
+        'le_id': le_id,
+        'c_id': c_id,
+        'division_units': division_units,
+        'units': cw_units
+      }
+    ];
+    console.log("req:"+request)
+    apiRequest(callerName, request, callback);
+  }
+  function updateClient(cId, bg, le, d, cwUnits, callback) {
+    callerName = 'techno';
+    var request = [
+      'UpdateClient',
+      {
+        'c_id': cId,
+        'bg': bg,
+        'le': le,
+        'd': d,
+        'cw_units': cwUnits
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function changeClientStatus(clientId, legalEntityId, divisionId, isActive, callback) {
+    callerName = 'techno';
+    var request = [
+      'ChangeClientStatus',
+      {
+        'client_id': clientId,
+        'legal_entity_id': legalEntityId,
+        'division_id': divisionId,
+        'is_active': isActive
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function reactivateUnit(clientId, unitId, password, callback) {
+    callerName = 'techno';
+    var request = [
+      'ReactivateUnit',
+      {
+        'client_id': clientId,
+        'unit_id': unitId,
+        'password': password
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  //Client Profile
+  function getClientProfile(callback) {
+    callerName = 'techno';
+    var request = [
+      'GetClientProfile',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  // Client Details Report
+  function getClientDetailsReportFilters(callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetClientDetailsReportFilters',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getClientDetailsReport(countryId, clientId, businessGroupId, legalEntityId, divisionId, unitId, domainIds, start_count, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetClientDetailsReportData',
+      {
+        'country_id': countryId,
+        'group_id': clientId,
+        'business_group_id': businessGroupId,
+        'legal_entity_id': legalEntityId,
+        'division_id': divisionId,
+        'unit_id': unitId,
+        'domain_ids': domainIds,
+        'start_count': start_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function exportClientDetailsReportData(countryId, clientId, legalEntityId, csv, u_m_none, callback){
+    callerName = 'techno_report';
+    var request = [
+      'ExportClientDetailsReportData',
+      {
+        'country_id': countryId,
+        'client_id': clientId,
+        'legal_entity_id': legalEntityId,
+        'csv': csv,
+        'u_m_none': u_m_none
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  //Statutory Notifications List
+  function getStatutoryNotificationsFilters(callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetStatutoryNotificationsFilters',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getStatutoryNotificationsReportData(countryId, domainId, level1Id, fromDate, toDate, from_count, page_count, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetStatutoryNotificationsReportData',
+      {
+        'country_id': countryId,
+        'domain_id': domainId,
+        'statutory_id_optional': level1Id,
+        'from_date_optional': fromDate,
+        'to_date_optional': toDate,
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignedStatutoryReportFilters(callback) {
+    var request = [
+      'GetAssignedStatutoryReportFilters',
+      {}
+    ];
+    callerName = 'techno_report';
+    apiRequest(callerName, request, callback);
+  }
+  function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statId, uId, complId, callback) {
+    var request = [
+      'GetAssignedStatutoryReport',
+      {
+        'c_id': cId,
+        'domain_id_optional': dId,
+        'client_id': clientId,
+        'bg_id': bGroupId,
+        'le_id': lEntityId,
+        'statutory_id': statId,
+        'unit_id': uId,
+        'comp_id': complId
+      }
+    ];
+    callerName = 'techno_report';
+    apiRequest(callerName, request, callback);
+  }
+  function getAuditTrail(fromDate, toDate, userId, formId, countryId, categoryId, recordCount, pageCount, callback) {
+    callerName = 'general';
+    var request = [
+      'GetAuditTrails',
+      {
+        'from_date': fromDate,
+        'to_date': toDate,
+        'user_id_search': userId,
+        'form_id_search': formId,
+        'country_id': countryId,
+        'category_id': categoryId,
+        'record_count': recordCount,
+        'page_count': pageCount
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function exportAuditTrail(fromDate, toDate, userId, formId, countryId, categoryId, csv, callback) {
+    callerName = 'general';
+    var request = [
+      'ExportAuditTrails',
+      {
+        'from_date': fromDate,
+        'to_date': toDate,
+        'user_id_search': userId,
+        'form_id_search': formId,
+        'country_id': countryId,
+        'category_id': categoryId,
+        'csv': csv
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getAuditTrailFilter(callback) {
+    callerName = 'general';
+    var request = [
+      'GetAuditTrailsFilter',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function updateUserProfile(contact_no, address, mobile_no, email_id, callback) {
+    callerName = 'general';
+    var request = [
+      'UpdateUserProfile',
+      {
+        'contact_no': contact_no,
+        'address': address,
+        'mobile_no': mobile_no,
+        'email_id': email_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  /* Notifications */
+  function getNotifications(notification_type, callback) {
+    callerName = 'general';
+    var request = [
+      'GetNotifications',
+      { 'notification_type': notification_type }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function updateNotificationStatus(notification_id, has_read, callback) {
+    callerName = 'general';
+    var request = [
+      'UpdateNotificationStatus',
+      {
+        'notification_id': notification_id,
+        'has_read': has_read
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function createNewAdmin(user_id, client_id, old_admin_id, employee_name, callback) {
+    callerName = 'techno';
+    var request = [
+      'CreateNewAdmin',
+      {
+        'new_admin_id': user_id,
+        'client_id': client_id,
+        'old_admin_id': old_admin_id,
+        'username': employee_name
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getValidityDateList(callback){
+    callerName = 'admin';
+    var request = [
+      'GetValidityDateList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function get_validity_day_setting(
+    validity_days_id, country_id, domain_id, validity_days
+  ){
+      if(!validity_days_id){
+        validity_days_id = null;
+      }
+      return {
+        "validity_days_id": validity_days_id,
+        "country_id": country_id,
+        "domain_id": domain_id,
+        "validity_days": validity_days
+      }
+  }
+
+  function saveValidityDateSettings(
+    validity_date_settings, callback
+  ){
+    callerName = "admin";
+    var request = [
+      'SaveValidityDateSettings',
+      {
+        "validity_date_settings": validity_date_settings
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function progress(percent, $element) {
+    var progressBarWidth = percent * $element.width() / 100;
+    $('.upload-progress-count').html("Uploading " + percent + "% ")
+    //$element.find('div').animate({ width: progressBarWidth }, 500).html(percent + "% ");
+  }
 
     function getUserProfile() {
         var info = getUserInfo();
@@ -333,6 +664,286 @@ function initMirror() {
             return null;
     }
 
+  function getAssignedStatutoriesById(u_id, d_id, rcount, callback){
+    callerName = 'domain_transaction';
+    var request = [
+        "GetAssignedStatutoriesById",
+        {
+          "u_id": u_id,
+          "d_id": d_id,
+          "rcount": rcount
+        }
+      ];
+    apiRequest(callerName, request, callback);
+  }
+
+  //user mapping report
+
+  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, csv, from_count, page_count, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetUserMappingDetailsReportData',
+      {
+        'country_id': countryId,
+        'client_id': clientId,
+        'legal_entity_id': legalEntityId,
+        'u_m_none': u_m_none,
+        'csv': csv,
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getGroupAdminGroupList(callback)
+  {
+    console.log("mirror")
+    callerName = 'techno_transaction';
+    var request = [
+      'GetGroupAdminGroupUnitList',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function resendGroupAdminRegnmail(clientInfo, callback) {
+    var request = ['ResendGroupAdminRegnMail', clientInfo];
+    apiRequest("techno_transaction", request, callback);
+  }
+
+  function sendGroupAdminRegnmail(clientInfo, callback) {
+    var request = ['SendGroupAdminRegnMail', clientInfo];
+    apiRequest("techno_transaction", request, callback);
+  }
+
+  function getGroupAdminReportData(callback){
+    console.log("mirror")
+    callerName = 'techno_report';
+    var request = [
+      'GetGroupAdminReportData',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getAssignedUserClientGroups(callback)
+  {
+    console.log("mirror")
+    callerName = 'techno_report';
+    var request = [
+      'GetAssignedUserClientGroups',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getReassignUserReportData(cg_id, u_id, g_id, callback)
+  {
+    callerName = 'techno_report';
+    var request = [
+      'GetReassignUserReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function exportReassignUserReportData(cg_id, u_id, g_id, u_m_none, csv, callback)
+  {
+    callerName = 'techno_report';
+    var request = [
+      'ExportReassignUserReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id,
+        "u_m_none": u_m_none,
+        "csv": csv
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  function getReassignUserDomainReportData(cg_id, u_id, g_id, bg_id, le_id, d_id, callback){
+    callerName = 'techno_report';
+    var request = [
+      'GetReassignUserDomainReportData',
+      {
+        "user_category_id": cg_id,
+        "user_id": u_id,
+        "group_id_none": g_id,
+        "bg_id": bg_id,
+        "le_id": le_id,
+        "d_id": d_id
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getLegalEntityClosureData(callback){
+    callerName = 'techno_transaction';
+    var request = [
+      'GetLegalEntityClosureReportData',
+      {}
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function saveLegalEntityClosureData(password, remarks, le_id, action_mode, callback)
+  {
+    callerName = 'techno_transaction';
+    var request = [
+      'SaveLegalEntityClosureData',
+      {
+        "password": password,
+        "closed_remarks": remarks,
+        "legal_entity_id": le_id,
+        "grp_mode": action_mode
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+  //Verify Password
+  function verifyPassword(password, callback) {
+    var request = [
+      'VerifyPassword',
+      {
+        'password': password
+      }
+    ];
+    apiRequest('general', request, callback);
+  }
+
+  // Client Agreement Master Report
+  function getClientAgreementReportFilters(callback) {
+    callerName = 'techno_report';
+    var request = [
+        'GetClientAgreementReportFilters',
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+  }
+
+  function getClientAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetClientAgreementReportData',
+      {
+        'country_id': countryId,
+        'client_id': clientId,
+        'business_group_id': businessGroupId,
+        'legal_entity_id': legalEntityId,
+        'domain_id_optional': domainId,
+        'contract_from_optional': contractFrom,
+        'contract_to_optional': contractTo,
+        'csv': csv,
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getDomainwiseAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetDomainwiseAgreementReportData',
+      {
+        'country_id': countryId,
+        'client_id': clientId,
+        'business_group_id': businessGroupId,
+        'legal_entity_id': legalEntityId,
+        'domain_id': domainId,
+        'contract_from_optional': contractFrom,
+        'contract_to_optional': contractTo,
+        'csv': csv,
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getOrganizationWiseUnitCount(legalEntityId, domainId, callback) {
+    callerName = 'techno_report';
+    var request = [
+      'GetOrganizationWiseUnitCount',
+      {
+        'legal_entity_id': legalEntityId,
+        'domain_id': domainId
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  /* Messages */
+  function getMessages(from_count, page_count, callback) {
+    callerName = 'general';
+    var request = [
+      'GetMessages',
+      {
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  /* Messages */
+  function getStatutoryNotifications(from_count, page_count, callback) {
+    callerName = 'general';
+    var request = [
+      'GetStatutoryNotifications',
+      {
+        'from_count': from_count,
+        'page_count': page_count
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function updateStatutoryNotificationStatus(notification_id, user_id, has_read, callback) {
+    callerName = 'general';
+    var request = [
+      'UpdateStatutoryNotificationStatus',
+      {
+        'notification_id': notification_id,
+        'user_id': user_id,
+        'has_read': has_read
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
+
+  function getAssignedStatutoriesList(callback) {
+    var request = [
+      'GetAssignedStatutoriesList',
+      {}
+    ];
+    apiRequest('techno_report', request, callback);
+  }
+
+  function getComplianceStatutoriesList(unitId, domainId, callback){
+    var request = [
+      'GetComplianceStatutoriesList',
+      {
+        'unit_id': unitId,
+        'd_id': domainId
+      }
+    ];
+    apiRequest("techno_report", request, callback);
+  }
+
+  function getAssignedStatutoriesForApprove(callback){
+    callerName = 'domain_transaction';
+    var request = [
+        "GetAssignedStatutoriesForApprove",
+        {}
+      ];
+    apiRequest(callerName, request, callback);
+  }
     function getUserId() {
         var info = getUserInfo();
         if (info !== null)
@@ -513,6 +1124,235 @@ function initMirror() {
         apiRequest('general', request, callback);
     }
 
+  function getAllocateServerReportData(callback){
+    callerName = 'console_admin';
+    var request = [
+        "GetAllocateServerReportData",
+        {}
+      ];
+    apiRequest(callerName, request, callback);
+  }
+
+  return {
+    log: log,
+    toJSON: toJSON,
+    parseJSON: parseJSON,
+    getBaseUrl: getBaseUrl,
+    initSession: initSession,
+    clearSession: clearSession,
+    verifyLoggedIn: verifyLoggedIn,
+    logout: logout,
+    getEmployeeName: getEmployeeName,
+    getUserId: getUserId,
+    getUserInfo: getUserInfo,
+    updateUserInfo: updateUserInfo,
+    getUserProfile: getUserProfile,
+    getSessionToken: getSessionToken,
+    getUserMenu: getUserMenu,
+    getPageUrl: getPageUrl,
+    apiRequest: apiRequest,
+    LoginApiRequest: LoginApiRequest,
+    saveDomain: saveDomain,
+    updateDomain: updateDomain,
+    changeDomainStatus: changeDomainStatus,
+    getDomainList: getDomainList,
+    getDomainReport: getDomainReport,
+    saveCountry: saveCountry,
+    updateCountry: updateCountry,
+    changeCountryStatus: changeCountryStatus,
+    getCountryList: getCountryList,
+    getCountryListForUser: getCountryListForUser,
+    getCountryReport: getCountryReport,
+    getSaveIndustryDict: getSaveIndustryDict,
+    saveIndustry: saveIndustry,
+    getUpdateIndustryDict:getUpdateIndustryDict,
+    updateIndustry: updateIndustry,
+    changeIndustryStatus: changeIndustryStatus,
+    getIndustryList: getIndustryList,
+    getSaveStatutoryNatureDict: getSaveStatutoryNatureDict,
+    saveStatutoryNature: saveStatutoryNature,
+    getUpdateStatutoryNatureDict: getUpdateStatutoryNatureDict,
+    updateStatutoryNature: updateStatutoryNature,
+    changeStatutoryNatureStatus: changeStatutoryNatureStatus,
+    getStatutoryNatureList: getStatutoryNatureList,
+    levelDetails: levelDetails,
+    getGeographyLevels: getGeographyLevels,
+    saveAndUpdateGeographyLevels: saveAndUpdateGeographyLevels,
+    getStatutoryLevels: getStatutoryLevels,
+    saveAndUpdateStatutoryLevels: saveAndUpdateStatutoryLevels,
+    getGeographies: getGeographies,
+    saveGeography: saveGeography,
+    updateGeography: updateGeography,
+    changeGeographyStatus: changeGeographyStatus,
+    getGeographyReport: getGeographyReport,
+    saveStatutory: saveStatutory,
+    updateStatutory: updateStatutory,
+    statutoryDates: statutoryDates,
+    uploadFile: uploadFile,
+    uploadFileFormat: uploadFileFormat,
+    complianceDetails: complianceDetails,
+    statutoryMapping: statutoryMapping,
+    checkDuplicateStatutoryMapping: checkDuplicateStatutoryMapping,
+    saveStatutoryMapping: saveStatutoryMapping,
+    updateStatutoryMapping: updateStatutoryMapping,
+    getStatutoryMaster: getStatutoryMaster,
+    getStatutoryMappingsMaster: getStatutoryMappingsMaster,
+    getStatutoryMappings: getStatutoryMappings,
+    changeStatutoryMappingStatus: changeStatutoryMappingStatus,
+    getApproveStatutoryMapingsFilters: getApproveStatutoryMapingsFilters,
+    approveStatutoryList: approveStatutoryList,
+    approveStatutoryMapping: approveStatutoryMapping,
+    getStatutoryMappingsReportFilter: getStatutoryMappingsReportFilter,
+    filterData: filterData,
+    getStatutoryMappingsReportData: getStatutoryMappingsReportData,
+    getApproveStatutoryMapings: getApproveStatutoryMapings,
+    getComplianceInfo: getComplianceInfo,
+    getSaveAdminUserGroupDict: getSaveAdminUserGroupDict,
+    saveAdminUserGroup: saveAdminUserGroup,
+    getUpdateAdminUserGroupDict: getUpdateAdminUserGroupDict,
+    updateAdminUserGroup: updateAdminUserGroup,
+    changeAdminUserGroupStatus: changeAdminUserGroupStatus,
+    getAdminUserGroupList: getAdminUserGroupList,
+    getSaveAdminUserDict: getSaveAdminUserDict,
+    saveAdminUser: saveAdminUser,
+    sendRegistration: sendRegistration,
+    getUpdateAdminUserDict: getUpdateAdminUserDict,
+    updateAdminUser: updateAdminUser,
+    changeAdminUserStatus: changeAdminUserStatus,
+    getAdminUserList: getAdminUserList,
+    getDateConfigurations: getDateConfigurations,
+    saveClientGroup: saveClientGroup,
+    updateClientGroup: updateClientGroup,
+    getClientGroups: getClientGroups,
+    changeClientGroupStatus: changeClientGroupStatus,
+    getAssignLegalEntityList: getAssignLegalEntityList,
+    getEditAssignLegalEntity: getEditAssignLegalEntity,
+    saveAssignLegalEntity: saveAssignLegalEntity,
+    viewAssignLegalEntity: viewAssignLegalEntity,
+    changePassword: changePassword,
+    forgotPassword: forgotPassword,
+    validateResetToken: validateResetToken,
+    resetPassword: resetPassword,
+    getClients: getClients,
+    getClientsEdit: getClientsEdit,
+    getBusinessGroupDict: getBusinessGroupDict,
+    getLegalEntityDict: getLegalEntityDict,
+    getDivisionDict: getDivisionDict,
+    getUnitDict: getUnitDict,
+    mapUnitsToCountry: mapUnitsToCountry,
+    saveClient: saveClient,
+    updateClient: updateClient,
+    changeClientStatus: changeClientStatus,
+    reactivateUnit: reactivateUnit,
+    getClientProfile: getClientProfile,
+    getClientDetailsReportFilters: getClientDetailsReportFilters,
+    getClientDetailsReport: getClientDetailsReport,
+    exportClientDetailsReportData: exportClientDetailsReportData,
+    getAssignedStatutoryReportFilters: getAssignedStatutoryReportFilters,
+    getAssignedStatutoryReport: getAssignedStatutoryReport,
+    getStatutoryNotificationsFilters: getStatutoryNotificationsFilters,
+    getStatutoryNotificationsReportData: getStatutoryNotificationsReportData,
+    getComplianceTaskFilter: getComplianceTaskFilter,
+    getComplianceTaskReport: getComplianceTaskReport,
+    get_ip: get_ip,
+    getAuditTrail: getAuditTrail,
+    getAuditTrailFilter: getAuditTrailFilter,
+    updateUserProfile: updateUserProfile,
+    getNotifications: getNotifications,
+    updateNotificationStatus: updateNotificationStatus,
+    createNewAdmin: createNewAdmin,
+    getNextUnitCode: getNextUnitCode,
+    uploadFormatFile: uploadFormatFile,
+    getValidityDateList: getValidityDateList,
+    get_validity_day_setting: get_validity_day_setting,
+    saveValidityDateSettings: saveValidityDateSettings,
+    getClientGroupFormData: getClientGroupFormData,
+    getLegalEntityRow: getLegalEntityRow,
+    getDomainRow: getDomainRow,
+    getEditClientGroupFormData: getEditClientGroupFormData,
+    getLegalEntityUpdateRow: getLegalEntityUpdateRow,
+    getClientUnitApprovalList: getClientUnitApprovalList,
+    getEntityApprovalList: getEntityApprovalList,
+    approveUnit: approveUnit,
+    getClientGroupApprovalList: getClientGroupApprovalList,
+    getLegalEntity: getLegalEntity,
+    approveClientGroupList: approveClientGroupList,
+    approveClientGroup: approveClientGroup,
+    getDatabaseServerList: getDatabaseServerList,
+    saveDBServer: saveDBServer,
+    getClientServerList: getClientServerList,
+    saveClientServer: saveClientServer,
+    getAllocatedDBEnv: getAllocatedDBEnv,
+    saveDBEnv: saveDBEnv,
+    getFileStorage: getFileStorage,
+    saveFileStorage: saveFileStorage,
+    getAutoDeletionList: getAutoDeletionList,
+    getDeletionDetails: getDeletionDetails,
+    saveAutoDeletion: saveAutoDeletion,
+    getUserMappings: getUserMappings,
+    saveUserMappings: saveUserMappings,
+    getUnassignedUnitsList: getUnassignedUnitsList,
+    getAssignedUnitsList: getAssignedUnitsList,
+    getAssignedUnitDetails: getAssignedUnitDetails,
+    getAssignUnitFormData: getAssignUnitFormData,
+    saveAssignedUnits: saveAssignedUnits,
+    getReassignUserAccountFormdata: getReassignUserAccountFormdata,
+    getTechnoUSerInfo: getTechnoUSerInfo,
+    getDomainUserInfo: getDomainUserInfo,
+    ReassignTechnoManager: ReassignTechnoManager,
+    ReassignTechnoExecutive: ReassignTechnoExecutive,
+    ReassignDomainManager: ReassignDomainManager,
+    ReassignDomainExecutive: ReassignDomainExecutive,
+    SaveUserReplacement: SaveUserReplacement,
+    getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
+    getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
+    getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,
+    saveAssignedStatutory: saveAssignedStatutory,
+    //submitAssignedStatutory: submitAssignedStatutory,
+    getAssignedStatutories: getAssignedStatutories,
+    getAssignedStatutoriesById: getAssignedStatutoriesById,
+    changeAdminDisaleStatus: changeAdminDisaleStatus,
+    getUserMappingReportFilters: getUserMappingReportFilters,
+    getUsermappingDetailsReport: getUsermappingDetailsReport,
+    getGroupAdminGroupList: getGroupAdminGroupList,
+    sendGroupAdminRegnmail: sendGroupAdminRegnmail,
+    resendGroupAdminRegnmail: resendGroupAdminRegnmail,
+    getGroupAdminReportData: getGroupAdminReportData,
+    getAssignedUserClientGroups: getAssignedUserClientGroups,
+    getReassignUserReportData: getReassignUserReportData,
+    getLegalEntityClosureData: getLegalEntityClosureData,
+    saveLegalEntityClosureData: saveLegalEntityClosureData,
+    verifyPassword: verifyPassword,
+    getClientAgreementReportFilters: getClientAgreementReportFilters,
+    getClientAgreementReport: getClientAgreementReport,
+    getDomainwiseAgreementReport: getDomainwiseAgreementReport,
+    getOrganizationWiseUnitCount: getOrganizationWiseUnitCount,
+    getMessages: getMessages,
+    getStatutoryNotifications: getStatutoryNotifications,
+    updateStatutoryNotificationStatus: updateStatutoryNotificationStatus,
+    getReassignUserDomainReportData: getReassignUserDomainReportData,
+    getStatutoryMappingsEdit: getStatutoryMappingsEdit,
+    saveComplianceStatus: saveComplianceStatus,
+    getAssignedStatutoriesList: getAssignedStatutoriesList,
+    getComplianceStatutoriesList: getComplianceStatutoriesList,
+    getAssignedStatutoriesForApprove: getAssignedStatutoriesForApprove,
+    approveAssignedStatutory: approveAssignedStatutory,
+    technoManagerInfo: technoManagerInfo,
+    technoExecutiveInfo: technoExecutiveInfo,
+    getFileServerList: getFileServerList,
+    fileServerEntry: fileServerEntry,
+    domainManagerInfo: domainManagerInfo,
+    getIPSettingsList: getIPSettingsList,
+    getGroupIPDetails: getGroupIPDetails,
+    getIPSettingsDetails: getIPSettingsDetails,
+    saveIPSettings: saveIPSettings,
+    deleteIPSettings:deleteIPSettings,
+    getIPSettingsReportFilter: getIPSettingsReportFilter,
+    getIPSettingsReport: getIPSettingsReport,
+    getAllocateServerReportData: getAllocateServerReportData,
+    exportReassignUserReportData: exportReassignUserReportData,
+    exportAuditTrail: exportAuditTrail
+  };
     function updateDomain(dId, dName, cIds, callback) {
         var request = [
             'UpdateDomain', {
@@ -1589,7 +2429,7 @@ function initMirror() {
         'd_ids': dIds
       };
     }old*/
-    function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds) {
+    function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds, status) {
         return {
             'unit_id': uId,
             'unit_name': uName,
@@ -1598,7 +2438,8 @@ function initMirror() {
             'postal_code': pCode,
             'geography_id': geoId,
             'd_ids': dIds,
-            'i_ids_list': iIds
+            'i_ids_list': iIds,
+            'is_approved': status
         };
     }
 
@@ -2094,7 +2935,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function saveUserMappings(country_id, domain_id, parent_user_id, child_users, user_category_id, new_child_users, 
+    function saveUserMappings(country_id, domain_id, parent_user_id, child_users, user_category_id, new_child_users,
         new_child_user_names, callback) {
         callerName = "admin";
         var request = [
@@ -2382,19 +3223,6 @@ function initMirror() {
         var request = [
             'GetUserMappingReportFilters',
             {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, callback) {
-        callerName = 'techno_report';
-        var request = [
-            'GetUserMappingDetailsReportData', {
-                'country_id': countryId,
-                'client_id': clientId,
-                'legal_entity_id': legalEntityId,
-                'u_m_none': u_m_none,
-            }
         ];
         apiRequest(callerName, request, callback);
     }

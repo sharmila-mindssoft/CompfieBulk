@@ -9,7 +9,15 @@ var AcCountry = $('#ac-country');
 // auto complete - domain
 var domain_val = $('#domain');
 var domain_ac = $("#domainval");
-var AcDomain = $('#ac-domain')
+var AcDomain = $('#ac-domain');
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 $('.btn-statutorylevel-cancel').click(function () {
   resetFields();
 });
@@ -35,10 +43,13 @@ function GetStatutoryLevels() {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getStatutoryLevels(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -227,12 +238,15 @@ $('#submit').click(function () {
           displayMessage(error);
         }
       }
+      displayLoader();
       mirror.saveAndUpdateStatutoryLevels(parseInt(country), parseInt(domain), passlevellist, function (error, response) {
         if (error == null) {
+          hideLoader();
           $('.input-sm').val('');
           $('.hiddenvalue').val('');
           onSuccess(response);
         } else {
+          hideLoader();
           onFailure(error, response);
         }
       });

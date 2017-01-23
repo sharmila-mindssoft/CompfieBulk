@@ -1,6 +1,7 @@
 var countriesList;
 var geographiesList;
-var searchList = []
+var searchList = [];
+var geoList = [];
 
 //filter controls initialized
 var FilterBox = $('.filter-text-box');
@@ -25,6 +26,7 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 var ReportData;
+var search = false;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -43,10 +45,13 @@ function getGeography() {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getGeographyReport(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -54,39 +59,37 @@ function getGeography() {
 
 function processSearch()
 {
+  search = true;
   g_name = FilterGeography.val().toLowerCase();
 
   usr_status = $('.search-status-li.active').attr('value');
-
+  alert(usr_status)
 
   var cId = '';
   if ($('#country').val() != ''){
 
     cId = $('#country').val();
-    for(var i in geographiesList){
-      data = geographiesList[i];
-      if(cId == data.country_id)
+    for(var i in geoList){
+      data = geoList[i];
+      data_g_name = data.geography_mapping.toLowerCase();
+      data_is_active = data.is_active;
+      console.log("act:"+data_is_active)
+      if (
+      (~data_g_name.indexOf(g_name)))
       {
-        data_g_name = data.geography_mapping.toLowerCase();
-        data_is_active = data.is_active;
-
-        if (
-        (~data_g_name.indexOf(g_name)))
-        {
-          if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-            searchList.push(data);
-          }
+        if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+          searchList.push(data);
         }
       }
     }
   }
+  alert(searchList.length)
   processPaging();
   //loadGeographyList(searchList);
 }
 
 //display geography master details in view page
 function loadGeographyList(geographyList) {
-  console.log("geographyList:"+geographyList)
   var sno = 0;
   var geography = '';
   var isActive = 0;
@@ -227,7 +230,6 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  console.log("sno:"+sno)
   var geographyList = geographiesList;
 
   //totalRecord = geographyList.length;
@@ -245,8 +247,9 @@ function processPaging(){
 
     if(sno==0){
       createPageView(totalRecord);
+      PaginationView.show();
     }
-    PaginationView.show();
+
     //ReportView.show();
     loadGeographyList(ReportData);
   }
@@ -258,29 +261,32 @@ function pageData(on_current_page){
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-
+  recordData = [];
   var cId = '';
   if ($('#country').val() != '')
     cId = $('#country').val();
   var geographyList = geographiesList;
 
-  if(searchList.length > 0)
+  if(search == true)
   {
     recordData = searchList;
+    //totalRecord = searchList.length;
+    search = false;
+    is_null = false;
   }
   else
   {
-    recordData = geographyList;
+    recordData = geoList;
   }
-
   for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
-    if(cId == recordData[i].country_id){
+    /*if(cId == recordData[i].country_id){
       console.log("page:"+i)
-      data.push(recordData[i]);
-    }
-    if((data.length) == (recordLength - 1))
+    }*/
+    data.push(recordData[i]);
+
+    if((data.length) == (recordLength))
     {
       break;
     }
@@ -294,7 +300,6 @@ function pageData(on_current_page){
     else
       showPagePan(showFrom, totalRecord, totalRecord);
   }
-  console.log("data:"+data)
   return data;
 }
 
@@ -308,15 +313,18 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
   var geographyList = geographiesList;
   $('#search-geography-name').val('');
   var r_count = 0;
+  geoList = [];
   console.log("1:"+geographiesList.length);
   for(var i=0;i<geographiesList.length;i++){
     if(val[0] == geographiesList[i].country_id){
-      console.log("1-2:"+geographiesList[i].country_id, val[0], i);
-      r_count++;
+      geoList.push({
+        "geography_mapping": geographyList[i].geography_mapping,
+        "is_active": geographyList[i].is_active
+      });
     }
   }
-  console.log("2:"+r_count)
-  totalRecord = r_count;
+  console.log("2:"+geoList.length)
+  totalRecord = geoList.length;
   processPaging();
 }
 

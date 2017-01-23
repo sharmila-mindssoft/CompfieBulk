@@ -59,8 +59,10 @@ function resetValues() {
 
 function initialize() {
     //resetValues();
+    displayLoader();
     mirror.getClientAgreementReportFilters(function(error, data) {
         if (error == null) {
+            hideLoader();
           CountryList = data.countries;
           DomainList = data.domains;
           GroupList = data.client_group_master;
@@ -68,6 +70,7 @@ function initialize() {
           console.log("data:"+BusinessGroupList)
           LegalEntityList = data.unit_legal_entity;
         }else {
+            hideLoader();
           displayMessage(error);
         }
     });
@@ -273,6 +276,7 @@ function processSubmit (csv){
     else {
       sno = (on_current_page - 1) *  _page_limit;
     }
+
     mirror.getDomainwiseAgreementReport(_country, _group, _businessgroup,
     _legalentity, _domain, _from_date, _to_date, csv, sno, _page_limit,
         function(error, response) {

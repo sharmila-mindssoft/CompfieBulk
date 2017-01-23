@@ -10,6 +10,13 @@ var Search_status_li = $('.search-status-li');
 var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 $('#btn-country-add').click(function () {
   $('#ctry-view').hide();
   $('#country-add').show();
@@ -37,10 +44,13 @@ function initialize() {
   function onFailure(error) {
     custom_alert(error);
   }
+  displayLoader();
   mirror.getCountryList(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -208,11 +218,14 @@ $('#btn-submit').click(function () {
             displayMessage(error);
           }
         }
+        displayLoader();
         mirror.saveCountry(countryNameValue, function (error, response) {
           if (error == null) {
             onSuccess(response);
+            hideLoader();
           } else {
             onFailure(error);
+            hideLoader();
           }
         });
       } else {
@@ -231,10 +244,13 @@ $('#btn-submit').click(function () {
             displayMessage(error);
           }
         }
+        displayLoader();
         mirror.updateCountry(parseInt(countryIdValue), countryNameValue, function (error, response) {
           if (error == null) {
+            hideLoader();
             onSuccess(response);
           } else {
+            hideLoader();
             onFailure(error);
           }
         });
@@ -252,11 +268,14 @@ function country_edit(countryId, countryName) {
 }
 //activate/deactivate country
 function country_active(countryId, isActive) {
+  displayLoader();
   mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
     if (error == null) {
+      hideLoader();
       displaySuccessMessage(message.status_success);
       initialize();
     } else {
+      hideLoader();
       displayMessage(error);
     }
   });

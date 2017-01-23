@@ -21,15 +21,25 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function initialize() {
   function success(status, data) {
+    hideLoader();
     domainList = data.domains;
     console.log(data)
     totalRecord = domainList.length;
     processPaging();
   }
   function failure(status, data) {
+    hideLoader();
   }
+  displayLoader();
   mirror.getDomainReport(success, failure);
 }
 

@@ -206,7 +206,7 @@ def process_update_statutory_nature(db, request_frame, user_id):
     nature_name = request_frame.statutory_nature_name
     nature_id = request_frame.statutory_nature_id
     country_id = request_frame.country_id
-    isDuplicate = check_duplicate_statutory_nature(db, nature_name, nature_id)
+    isDuplicate = check_duplicate_statutory_nature(db, nature_name, nature_id, country_id)
     if isDuplicate:
         return knowledgemaster.StatutoryNatureNameAlreadyExists()
     if (update_statutory_nature(db, nature_id, nature_name, country_id, user_id)):

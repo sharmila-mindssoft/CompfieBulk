@@ -446,7 +446,7 @@ class UnitDivision(object):
 class UNIT(object):
     def __init__(
         self, unit_id, geography_id, unit_code, unit_name, unit_address,
-        postal_code, domain_ids, industry_ids
+        postal_code, domain_ids, industry_ids, is_approved
     ):
         self.unit_id = unit_id
         self.geography_id = geography_id
@@ -456,13 +456,14 @@ class UNIT(object):
         self.postal_code = postal_code
         self.domain_ids = domain_ids
         self.industry_ids = industry_ids
+        self.is_approved = is_approved
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
                 "unit_id", "geography_id", "unit_code", "unit_name",
                 "address", "postal_code",  "d_ids",
-                "i_ids_list"
+                "i_ids_list", "is_approved"
             ]
         )
         print "inside class uint after append"
@@ -474,9 +475,10 @@ class UNIT(object):
         postal_code = data.get("postal_code")
         domain_ids = data.get("d_ids")
         industry_ids = data.get("i_ids_list")
+        is_approved = data.get("is_approved")
         return UNIT(
             unit_id, geography_id, unit_code, unit_name, unit_address,
-            postal_code, domain_ids, industry_ids
+            postal_code, domain_ids, industry_ids, is_approved
         )
 
     def to_structure(self):
@@ -488,7 +490,8 @@ class UNIT(object):
             "unit_address": self.unit_address,
             "postal_code": self.postal_code,
             "domain_ids": self.domain_ids,
-            "industry_ids": self.industry_ids
+            "industry_ids": self.industry_ids,
+            "is_approved": self.is_approved
         }
 
 class COUNTRYWISEUNITS(object):
@@ -1412,10 +1415,10 @@ class GetEditClientGroupFormDataSuccess(Response):
 
 class GetClientsSuccess(Response):
     def __init__(
-        self, unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
+        self, client_unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
         domains_organization_list, divisions, unit_geography_level_list, unit_geographies_list
     ):
-        self.unit_list = unit_list
+        self.client_unit_list = client_unit_list
         self.group_company_list = group_company_list
         self.business_group_list = business_group_list
         self.countries_units = countries_units
@@ -1428,10 +1431,10 @@ class GetClientsSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "unit_list", "group_company_list", "business_group_list", "countries_units", "unit_legal_entity",
+            "client_unit_list", "group_company_list", "business_group_list", "countries_units", "unit_legal_entity",
             "domains_organization_list", "divisions", "unit_geography_level_list", "unit_geographies_list"
         ])
-        unit_list = data.get("unit_list")
+        client_unit_list = data.get("client_unit_list")
         group_company_list = data.get("group_company_list")
         business_group_list = data.get("business_group_list")
         countries_units = data.get("countries_units")
@@ -1442,13 +1445,13 @@ class GetClientsSuccess(Response):
         unit_geographies_list = data.get("unit_geographies_list")
 
         return GetClientsSuccess(
-            unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
+            client_unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
             domains_organization_list, divisions, unit_geography_level_list, unit_geographies_list
         )
 
     def to_inner_structure(self):
         data = {
-            "unit_list": self.unit_list,
+            "client_unit_list": self.client_unit_list,
             "group_company_list": self.group_company_list,
             "business_group_list": self.business_group_list,
             "countries_units": self.countries_units,

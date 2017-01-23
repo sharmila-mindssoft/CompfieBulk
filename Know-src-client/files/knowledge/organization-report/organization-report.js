@@ -24,6 +24,13 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 // get industries list from api
 function getIndustries() {
 	function onSuccess(data) {
@@ -34,10 +41,13 @@ function getIndustries() {
 	function onFailure(error) {
 		displayMessage(error);
 	}
+  displayLoader();
 	mirror.getIndustryList(function (error, response) {
 		if (error == null) {
+      hideLoader();
 		  onSuccess(response);
 		} else {
+      hideLoader();
 		  onFailure(error);
 		}
 	});
