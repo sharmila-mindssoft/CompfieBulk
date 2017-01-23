@@ -177,10 +177,9 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                     level_1_id = ids[0]
                     level_1_s_name = names[0]
                     if len(names) > 1 :
-                        map_text = " >> ".join(names[1:])
-                        map_text += " >> %s" % (s["statutory_name"])
+                        map_text = names[1]
                     else :
-                        map_text = s["statutory_name"]
+                        map_text = ''
 
         return level_1_id, level_1_s_name, map_text
 
@@ -190,6 +189,8 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
         map_id = r["statutory_mapping_id"]
         orgs = organisation_list(map_id)
         level_1, level_1_name, map_text = status_list(map_id)
+        if map_text == level_1_name :
+            map_text = ""
         if r["assigned_compid"] is None :
             # before save rest of the field will be null before save in assignstatutorycompliance
             data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
@@ -211,7 +212,7 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
                 unit_id
             ))
 
-    data_list.sort(key=lambda x : (x.level_one_id, x.compliance_id))
+    data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
 
     total_comp = 0
     for t in total_comp_list :
@@ -331,10 +332,9 @@ def get_assigned_compliance_by_id(db, request, user_id):
                     level_1_id = ids[0]
                     level_1_s_name = names[0]
                     if len(names) > 1 :
-                        map_text = " >> ".join(names[1:])
-                        map_text += " >> %s" % (s["statutory_name"])
+                        map_text = names[1]
                     else :
-                        map_text = s["statutory_name"]
+                        map_text = ''
 
         return level_1_id, level_1_s_name, map_text
 
@@ -344,6 +344,8 @@ def get_assigned_compliance_by_id(db, request, user_id):
         orgs = organisation_list(map_id)
 
         level_1, level_1_s_name, map_text = status_list(map_id)
+        if map_text == level_1_s_name :
+            map_text = ""
         if r["assigned_compid"] is None :
                 data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
                     level_1, level_1_s_name, map_text,
@@ -364,7 +366,7 @@ def get_assigned_compliance_by_id(db, request, user_id):
                 r["compliance_applicable_status"], r["is_approved"], unit_id
             ))
 
-    data_list.sort(key=lambda x : (x.level_one_id, x.compliance_id))
+    data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
 
     total_comp = 0
     for t in total_comp_list :

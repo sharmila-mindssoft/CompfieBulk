@@ -300,14 +300,11 @@ function processSubmit() {
       totalRecord = data.total_count;
       hideLoader();
 
-      $('.country').text(CountryVal.val());
-      $('.domain').text(DomainVal.val());
-
       if (totalRecord == 0) {
-        $('.ttbody-compliance').empty();
-        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+        $('.tbody-compliance').empty();
+        var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
         var clone4 = tableRow4.clone();
-        $('.no_records', clone4).text('No Records Found');
+        $('.tbl_norecords', clone4).text('No Records Found');
         $('.tbody-compliance').append(clone4);
         PaginationView.hide();
         ReportView.show();
@@ -426,6 +423,8 @@ function pageControls() {
 
   SubmitButton.click(function () {
     on_current_page = 1;
+    $('.country').text("Country: " + CountryVal.val());
+    $('.domain').text("Domain: " + DomainVal.val());
     processSubmit();
   });
 
@@ -434,7 +433,7 @@ function pageControls() {
     var condition_fields = [];
     var condition_values = [];
     if(Country.val() != '' && Domain.val() != ''){
-      condition_fields.push("country_ids");
+      condition_fields.push("country_id");
       condition_values.push(Country.val());
       condition_fields.push("domain_id");
       condition_values.push(Domain.val());
@@ -453,7 +452,7 @@ function pageControls() {
     var condition_fields = [];
     var condition_values = [];
     if(Country.val() != ''){
-      condition_fields.push("country_ids");
+      condition_fields.push("country_id");
       condition_values.push(Country.val());
     }
     commonAutoComplete(

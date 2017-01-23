@@ -34,6 +34,8 @@ SubmitButton.click(function () {
       function onFailure(error) {
         if (error == 'InvalidCurrentPassword') {
           displayMessage(message.invalid_cpassword);
+        }else if (error == 'CurrentandNewPasswordSame') {
+          displayMessage(message.current_new_password_same);
         } else {
           displayMessage(error);
         }

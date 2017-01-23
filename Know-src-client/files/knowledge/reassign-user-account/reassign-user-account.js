@@ -20,6 +20,8 @@ var DM_PARANTS = {};
 var DE_GROUPS = {};
 var DM_GROUPS = {};
 var LE_COUNTRIES = {};
+var DE_LE = {};
+var DM_LE = {};
 
 var TechnoManagerName = $("#techno_manager_name");
 var TechnoManagerId = $("#techno_manager_id");
@@ -462,13 +464,12 @@ function pageControls(){
 
     DMLegalEntityName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = [];
-        var condition_values = [];
+        var condition_fields = ["legal_entity_id"];
+        var condition_values = [DM_LE[DomainManagerId.val()]];
         if(DMBusinessGroupId.val() != ''){
             condition_fields.push("business_group_id");
             condition_values.push(DMBusinessGroupId.val());
         }
-
         if(DMGroupId.val() != ''){
             condition_fields.push("client_id");
             condition_values.push(DMGroupId.val());
@@ -549,8 +550,8 @@ function pageControls(){
 
     DELegalEntityName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = [];
-        var condition_values = [];
+        var condition_fields = ["legal_entity_id"];
+        var condition_values = [DE_LE[DomainExecutiveId.val()]];
 
         if(DEBusinessGroupId.val() != ''){
             condition_fields.push("business_group_id");
@@ -1017,6 +1018,8 @@ function generateMap(){
     DE_GROUPS = {};
     DM_GROUPS = {};
     LE_COUNTRIES = {};
+    DE_LE = {};
+    DM_LE = {};
 
     $.each(TECHNO_USERS, function(key, value) {
         TE_PARANTS[value.user_id] = value.p_user_ids;
@@ -1025,11 +1028,13 @@ function generateMap(){
     $.each(DOMAIN_USERS, function(key, value) {
         DE_PARANTS[value.user_id] = value.p_user_ids;
         DE_GROUPS[value.user_id] = value.grp_ids;
+        DE_LE[value.user_id] = value.le_ids;
     });
 
     $.each(DOMAIN_MANAGERS, function(key, value) {
         DM_PARANTS[value.user_id] = value.p_user_ids;
         DM_GROUPS[value.user_id] = value.grp_ids;
+        DM_LE[value.user_id] = value.le_ids;
     });
 
     $.each(LEGAL_ENTITIES, function(key, value) {

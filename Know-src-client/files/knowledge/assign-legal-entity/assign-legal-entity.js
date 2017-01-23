@@ -233,7 +233,7 @@ function validateMandatory() {
         displayMessage(message.no_legal_entity_selected);
         return false;
     } else if (User_id.val().length == 0) {
-        displayMessage(message.no_user_selected);
+        displayMessage(message.techno_executive_required);
         return false;
     } else {
         return true;

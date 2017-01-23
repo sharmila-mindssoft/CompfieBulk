@@ -238,8 +238,11 @@ def process_reset_password(db, request):
 def process_change_password(db, request):
     session_user = db.validate_session_token(request.session_token)
     if verify_password(db, request.current_password, session_user):
-        update_password(db, request.new_password, session_user)
-        return login.ChangePasswordSuccess()
+        if verify_new_password(db, request.new_password, session_user):
+            update_password(db, request.new_password, session_user)
+            return login.ChangePasswordSuccess()
+        else:
+            return login.CurrentandNewPasswordSame()
     else:
         return login.InvalidCurrentPassword()
 

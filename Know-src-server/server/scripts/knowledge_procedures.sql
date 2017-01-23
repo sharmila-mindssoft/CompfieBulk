@@ -3832,7 +3832,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_users_technouser_list`(session_user INT(11))
 BEGIN
-    SELECT t1.child_user_id as user_id, t2.is_active,
+    SELECT distinct t1.child_user_id as user_id, t2.is_active,
     concat(t2.employee_code," - ", t2.employee_name) as employee_name
     from tbl_user_mapping t1
     INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
@@ -4446,9 +4446,9 @@ BEGIN
     as is_edit
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
-    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = 11
+    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
-    where t3.user_id = 11
+    where t3.user_id = uid
     group by t.unit_id, t1.domain_id;
 
 
@@ -5461,38 +5461,25 @@ DELIMITER //
 CREATE PROCEDURE `sp_client_groups_for_user`( IN u_id INT(11) )
 BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = u_id;
-    IF @u_cat_id > 2 THEN
-        SELECT DISTINCT t1.client_id, t1.group_name,
-        (
-            select group_concat(country_name) from tbl_countries
-            where country_id in (
-            select country_id from tbl_legal_entities
-            where client_id=t1.client_id)
-        ) as country_names,
-        (
-            select count(legal_entity_id) from tbl_legal_entities
-            WHERE client_id=t1.client_id
-        ) as no_of_legal_entities,
-        t1.is_active, t1.is_approved, t1.remarks
-        FROM tbl_client_groups t1
-        INNER JOIN tbl_user_clients t2 on t1.client_id = t2.client_id
-        WHERE t2.user_id = u_id
-        ORDER BY t1.group_name;
-    ELSE
-        SELECT DISTINCT t1.client_id, t1.group_name,
-        (
-            select group_concat(country_name) from tbl_countries
-            where country_id in (
-            select country_id from tbl_legal_entities
-            where client_id=t1.client_id)
-        ) as country_names,
-        (
-            select count(legal_entity_id) from tbl_legal_entities
-            WHERE client_id=t1.client_id
-        ) as no_of_legal_entities,
-        t1.is_active, t1.is_approved, t1.remarks
+    IF @u_cat_id <= 2 THEN
+        SELECT t1.client_id, t1.group_name,t1.is_active, t1.is_approved
         FROM tbl_client_groups t1
         ORDER BY t1.group_name;
+    END IF;
+
+    IF @u_cat_id = 5 THEN
+        SELECT t1.client_id, t1.group_name,t1.is_active, t1.is_approved
+        FROM tbl_client_groups t1
+        inner join tbl_user_clients t2 on t1.client_id = t2.client_id and t2.user_id = u_id
+        ORDER BY t1.group_name;    
+    END IF;
+
+    IF ( @u_cat_id = 7 or @u_cat_id = 8 ) THEN
+        SELECT t1.client_id, t1.group_name,t1.is_active, t1.is_approved
+        FROM tbl_client_groups t1
+        where t1.client_id in (select distinct(client_id) from tbl_user_units
+        where user_id = u_id)
+        ORDER BY t1.group_name;    
     END IF;
 
     select DISTINCT l.country_id, l.client_id from tbl_legal_entities l;
@@ -8352,7 +8339,7 @@ BEGIN
         select count(user_id) as cnt from tbl_user_units as t1, tbl_units as t2
         where t1.unit_id = t2.unit_id and t1.domain_id = domain_id_ and 
         t1.user_id = c_user_id_  and t2.country_id = country_id_ and 
-        t1.client_id in (select client_id from tbl_user_clients where user_id = p_user_id_;
+        t1.client_id in (select client_id from tbl_user_clients where user_id = p_user_id_);
     end if;
 
     if u_cat_id_ = 8 THEN
