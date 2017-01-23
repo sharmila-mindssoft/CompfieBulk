@@ -1202,7 +1202,7 @@ function RenderInput() {
                             $(this).find('i').addClass('fa-check');
                         });
 
-                        // _renderinput.clearGeosSubLevel(g_l_position);
+                        _renderinput.clearGeosSubLevel(g_l_position);
                         _renderinput.renderAllGeoNames(g_l_position);
                     }
                 });
@@ -1320,6 +1320,7 @@ function RenderInput() {
             if (v.c_id == _renderinput.countryId)
             {
                 if (v.l_position == l_position) {
+                    // $('#gnl'+l_position).empty();
                     _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
                 }
             }

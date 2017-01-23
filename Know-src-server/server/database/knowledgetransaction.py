@@ -1369,7 +1369,7 @@ def approve_statutory_mapping_list(db, user_id, request):
 
     for m in mappings :
         map_id = m["statutory_mapping_id"]
-        if m["document_name"] is None :
+        if (m["document_name"] is None or m["document_name"] == ''):
             c_name = m["compliance_task"]
         else :
             c_name = m["document_name"] + " - " + m["compliance_task"]
@@ -1402,7 +1402,7 @@ def get_compliance_details(db, user_id, compliance_id):
     for g in geo_info:
         geo_names.append(g["parent_names"])
 
-    if c_info["document_name"] is None :
+    if c_info["document_name"] is None or c_info["document_name"] == '':
         c_name = c_info["compliance_task"]
     else :
         c_name = c_info["document_name"] + " - " + c_info["compliance_task"]
@@ -1423,7 +1423,7 @@ def get_compliance_details(db, user_id, compliance_id):
             )
             date_list.append(s_date)
     summary, dates = make_summary(date_list, c_info["frequency_id"], c_info)
-    if dates is not None :
+    if summary != '' and dates is not None or dates != '' :
         summary += ' on (%s)' % (dates)
     return (
         c_info["compliance_id"], c_info["statutory_provision"],
