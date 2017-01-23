@@ -287,13 +287,12 @@ def process_get_audit_trails(db, request, session_user):
     to_date = request.to_date
     user_id = request.user_id_search
     form_id = request.form_id_search
-    country_id = request.country_id
     category_id = request.category_id
     audit_trails = get_audit_trails(
         db,
         session_user, from_count, to_count,
         from_date, to_date, user_id, form_id,
-        country_id, category_id
+        category_id
     )
     return audit_trails
 
