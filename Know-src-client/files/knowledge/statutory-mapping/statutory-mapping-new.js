@@ -15,7 +15,7 @@ var GEOGRAPHY_LEVEL_INFO;
 var STATU_MAPPINGS;
 var STATU_TOTALS;
 var isAuthenticate;
-
+var compliance_edit = false;
 
 var CURRENT_TAB = 1;
 IS_EDIT = false;
@@ -147,6 +147,7 @@ function RenderInput() {
     this.file_removed = false;
     this.f_f_list = [];
     this.allow_domain_edit = true;
+
 
     this.remveItemFromList = function(item, mainlist) {
         if (!mainlist)
@@ -1491,8 +1492,16 @@ function showTab(){
         $('.tab-step-3').addClass('active')
         $('#tab3').addClass('active in');
         $('#tab3').show();
-        NextButton.show();
-        PreviousButton.show();
+        if (compliance_edit == true) {
+            NextButton.hide();
+            PreviousButton.hide();
+            SaveButton.show();
+            SubmitButton.show();
+        }else {
+            NextButton.show();
+            PreviousButton.show();
+        }
+
         _viewPage.showThirdTab();
     }
     else if (CURRENT_TAB == 4) {
@@ -1644,6 +1653,10 @@ function pageControls() {
 
     AddComplianceButton.click(function(){
         if (!_viewPage.validateComplianceTab()) {
+            return false;
+        }
+        if ((compliance_edit == true) && (Comp_id.val() == '')) {
+            displayMessage(msg.cannot_add_compliance_inedit);
             return false;
         }
 
@@ -1923,11 +1936,17 @@ function pageControls() {
             displayMessage(msg.location_selection_required);
             return false;
         }
-        if (IS_EDIT)
-            _fetchback.updateMapping(map_data);
-        else {
-            _fetchback.saveMapping(map_data);
+        if (compliance_edit == false) {
+            if (IS_EDIT)
+                _fetchback.updateMapping(map_data);
+            else {
+                _fetchback.saveMapping(map_data);
+            }
         }
+        else {
+            _fetchback.updateOnlyCompliance(map_data);
+        }
+
 
     });
 
@@ -1938,10 +1957,16 @@ function pageControls() {
             displayMessage(msg.location_selection_required);
             return false;
         }
-        if (IS_EDIT)
-            _fetchback.updateMapping(map_data);
+        if (compliance_edit == false) {
+
+            if (IS_EDIT)
+                _fetchback.updateMapping(map_data);
+            else {
+                _fetchback.saveMapping(map_data);
+            }
+        }
         else {
-            _fetchback.saveMapping(map_data);
+            _fetchback.updateOnlyCompliance(map_data);
         }
     });
 

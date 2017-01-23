@@ -209,6 +209,62 @@ class UpdateStatutoryMapping(Request):
             "tr_type": self.tr_type
         }
 
+class UpdateCompliance(Request):
+    def __init__(
+        self, mapping_id, country_id, domain_id, industry_ids,
+        statutory_nature_id, statutory_ids,
+        compliances, geography_ids, mappings,
+        tr_type
+    ):
+        self.mapping_id = mapping_id
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.industry_ids = industry_ids
+        self.statutory_nature_id = statutory_nature_id
+        self.statutory_ids = statutory_ids
+        self.compliances = compliances
+        self.geography_ids = geography_ids
+        self.mappings = mappings
+        self.tr_type = tr_type
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "m_id", "c_id", "d_id", "i_ids",
+            "s_n_id", "s_ids",
+            "compliances", "g_ids", "mappings", "tr_type"
+        ])
+        mapping_id = data.get("m_id")
+        country_id = data.get("c_id")
+        domain_id = data.get("d_id")
+        industry_ids = data.get("i_ids")
+        statutory_nature_id = data.get("s_n_id")
+        statutory_ids = data.get("s_ids")
+        compliances = data.get("compliances")
+        geography_ids = data.get("g_ids")
+        mappings = data.get("mappings")
+        tr_type = data.get("tr_type")
+        return UpdateCompliance(
+            mapping_id, country_id, domain_id, industry_ids,
+            statutory_nature_id, statutory_ids,
+            compliances, geography_ids, mappings, tr_type
+        )
+
+    def to_inner_structure(self):
+        return {
+            "m_id": self.mapping_id,
+            "c_id": self.country_id,
+            "d_id": self.domain_id,
+            "i_ids": self.industry_ids,
+            "s_n_id": self.statutory_nature_id,
+            "s_ids": self.statutory_ids,
+            "compliances": self.compliances,
+            "g_ids": self.geography_ids,
+            "mappings": self.mappings,
+            "tr_type": self.tr_type
+        }
+
+
 class ChangeStatutoryMappingStatus(Request):
     def __init__(self, statutory_mapping_id, is_active):
         self.statutory_mapping_id = statutory_mapping_id
@@ -336,7 +392,7 @@ def _init_Request_class_map():
         ChangeStatutoryMappingStatus, GetApproveStatutoryMappings,
         ApproveStatutoryMapping, CheckDuplicateStatutoryMapping,
         GetStatutoryMaster, GetApproveStatutoryMappingsFilters,
-        GetComplianceEdit, GetComplianceInfo
+        GetComplianceEdit, GetComplianceInfo, UpdateCompliance
     ]
     class_map = {}
     for c in classes:
@@ -551,6 +607,20 @@ class UpdateStatutoryMappingSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+
+class UpdateComplianceSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UpdateComplianceSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 class InvalidStatutoryMappingId(Response):
     def __init__(self):
@@ -779,7 +849,7 @@ def _init_Response_class_map():
         GetApproveStatutoryMappingSuccess,
         GetComplianceInfoSuccess,
         GetApproveStatutoryMappingFilterSuccess,
-        GetComplianceEditSuccess
+        GetComplianceEditSuccess, UpdateComplianceSuccess
     ]
     class_map = {}
     for c in classes:

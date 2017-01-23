@@ -711,6 +711,36 @@ def update_statutory_mapping(db, data, updated_by):
     return True
 
 
+def update_only_compliance(db, data, updated_by):
+    statutory_mapping_id = data.mapping_id
+    is_exists = get_statutory_mapping_by_id(db, statutory_mapping_id)
+    if bool(is_exists) is False:
+        raise process_error("E020")
+    domain_id = data.domain_id
+    country_id = int(is_exists["country_id"])
+    c_name, d_name = get_country_domain_name(db, country_id, domain_id)
+
+    compliances = data.compliances
+    statutory_mapping = json.dumps(data.mappings)
+    if data.tr_type == 0:
+        is_approve = 0
+    else:
+        is_approve = 1
+
+    ids, names = update_compliance(
+        db, statutory_mapping_id, country_id, domain_id, compliances, updated_by,
+        is_approve
+    )
+
+    text = " %s - %s - %s statutory mappings has been edited for following compliances %s" % (c_name, d_name, str(statutory_mapping), names)
+    db.save_activity(updated_by, frmStatutoryMapping, text)
+
+    link = "/knowledge/approve-statutory-mapping"
+    save_messages(db, 3, "Statutory Mapping", text, link, updated_by)
+
+    return True
+
+
 def get_saved_format_file(db, compliance_id):
     query = "SELECT format_file, format_file_size " + \
         " FROM tbl_compliances WHERE compliance_id = %s "
@@ -768,30 +798,6 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
             remove_uploaded_file(file_path + "/" + file_name)
             file_name = ""
             file_size = 0
-
-
-        # file_list = data.format_file_list
-        # file_name = ""
-        # file_size = 0
-        # # file_content = ""
-        # saved_file_name = saved_file[0]
-        # if len(saved_file_name) == 0:
-        #     saved_file_name = None
-        # if file_list is None:
-        #     if saved_file_name is not None:
-        #         remove_uploaded_file(file_path + "/" + saved_file_name)
-        # else:
-        #     file_list = file_list[0]
-        #     file_name = file_list.file_name
-        #     file_size = file_list.file_size
-        #     # file_content = file_list.file_content
-
-        #     if saved_file_name is not None:
-        #         if len(file_name) == 0:
-        #             file_name = None
-        #             remove_uploaded_file(file_path + "/" + saved_file_name)
-        #         elif file_name != saved_file_name:
-        #             remove_uploaded_file(file_path + "/" + saved_file_name)
 
         penal_consequences = data.penal_consequences
         compliance_frequency = data.frequency_id

@@ -969,6 +969,15 @@ function initMirror() {
         apiRequest('knowledge_transaction', request, callback);
     }
 
+    function updateCompliance(mappingData, callback) {
+        var request = [
+            'UpdateCompliance',
+            mappingData
+        ];
+        apiRequest('knowledge_transaction', request, callback);
+    }
+
+
     function getStatutoryMaster(callback) {
         var request = [
             'GetStatutoryMaster',
@@ -2736,6 +2745,7 @@ function initMirror() {
         checkDuplicateStatutoryMapping: checkDuplicateStatutoryMapping,
         saveStatutoryMapping: saveStatutoryMapping,
         updateStatutoryMapping: updateStatutoryMapping,
+        updateCompliance: updateCompliance,
         getStatutoryMaster: getStatutoryMaster,
         getStatutoryMappingsMaster: getStatutoryMappingsMaster,
         getStatutoryMappings: getStatutoryMappings,

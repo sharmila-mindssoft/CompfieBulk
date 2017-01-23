@@ -71,6 +71,7 @@ var message = {
   'statutoryprovision_duplicate': 'Statutory provision is duplicate',
   'compliancetask_duplicate': 'Compliance task is duplicate',
   'statudate_duplicate': 'Statutory date cannot be duplicate',
+  'cannot_add_compliance_inedit':'You cannot add new compliance in edit mode',
   'removechild_first': 'Remove Child First',
   'industry_required': 'Organization Required',
   'statutorynature_required': 'Statutory Nature Required',

@@ -280,6 +280,34 @@ function FetchBack() {
         });
     };
 
+
+    this.updateOnlyCompliance = function(data) {
+        displayLoader();
+        fetch.updateCompliance(data, function(status, response) {
+            if (status == null) {
+                is_upload = false;
+                $.each(_renderinput.uploaded_files_fcids, function(key, value) {
+                    if (value == true) {
+                        is_upload = true
+                    }
+                });
+                if(is_upload) {
+                    _fetchback.uploadFileProcess();
+                }
+                else {
+                    _fetchback.mapping_success_callback();
+                }
+            }
+            else {
+
+                possibleFailure(status);
+                return false;
+            }
+            hideLoader();
+        });
+    };
+
+
     this.validateAuthentication = function() {
         var password = CurrentPassword.val().trim();
         if (password.length == 0) {
@@ -340,7 +368,9 @@ function ListPage() {
                 $('.comp_edit', row).attr('title', 'Click here to edit compliance');
                 $('.comp_edit', row).addClass('fa-pencil text-primary');
                 $('.comp_edit', row).on('click', function() {
+                    compliance_edit = true;
                     _listPage.displayMappingEdit(mapping_id, c.comp_id);
+                    CURRENT_TAB = 3;
                 });
                 if (c.is_approved == 4) {
                     row.addClass('rejected_row');
@@ -378,6 +408,7 @@ function ListPage() {
             $('.map_edit', crow).attr('title', 'Click here to edit');
             $('.map_edit', crow).addClass('fa-pencil text-primary');
             $('.map_edit', crow).on('click', function() {
+                compliance_edit = false;
                 _listPage.displayMappingEdit(v.m_id, null);
             });
             if (v.is_active == true){
@@ -633,7 +664,9 @@ function ViewPage() {
         });
     };
     this.make_data_format = function(trType){
-        _viewPage.getFourthTabValues();
+        if (compliance_edit == false) {
+            _viewPage.getFourthTabValues();
+        }
         if (_renderinput.selected_geos.length == 0)
         {
             return false;
