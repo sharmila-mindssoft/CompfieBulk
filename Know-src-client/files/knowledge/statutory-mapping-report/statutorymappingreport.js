@@ -165,61 +165,7 @@ function loadCountwiseResult(filterList) {
     } else {
       $('.tbl_compliancetask', clone1).html('<a href= "' + download_url + '" target="_blank" download>' + compliance_name + '</a>');
     }
-    var sdateDesc = '';
-    var duration = filterList[entity].duration;
-    var duration_type_id = filterList[entity].d_type_id;
-    var repeats_every = filterList[entity].r_every;
-    var repeats_type_id = filterList[entity].r_type_id;
-    var statutory_date = filterList[entity].statu_dates;
-    var statutorydate = '';
-    var duration_type = '';
-    var repeats_type = '';
-    if (frequency_id == 4) {
-      if (duration_type_id == 1) {
-        duration_type = 'Day(s)';
-      } else {
-        duration_type = 'Hour(s)';
-      }
-      sdateDesc = 'To complete with in ' + duration + ' ' + duration_type;
-    } else if (frequency_id == 1) {
-      sdateDesc = '';
-    } else {
-      if (repeats_type_id == 1) {
-        repeats_type = 'Day(s)';
-      } else if (repeats_type_id == 2) {
-        repeats_type = 'Month(s)';
-      } else {
-        repeats_type = 'Year(s)';
-      }
-      sdateDesc = 'Every ' + repeats_every + ' ' + repeats_type;
-    }
-    if (frequency_id != 4) {
-      for (z = 0; z < statutory_date.length; z++) {
-        var sDay = '';
-        if (statutory_date[z].statutory_date != null)
-          sDay = statutory_date[z].statutory_date;
-        var sMonth = '';
-        if (statutory_date[z].statutory_month != null)
-          sMonth = statutory_date[z].statutory_month;
-        if (sMonth != '')
-          sMonth = getMonth_IntegertoString(sMonth);
-        statutorydate += sMonth + ' ' + sDay + ' ';
-        if (statutorydate.trim() != '')
-          statutorydate += ', ';
-      }
-      if (statutorydate.trim() != '') {
-        statutorydate = statutorydate.replace(/,\s*$/, '');
-        if (sdateDesc == '') {
-          statutorydate = statutorydate;
-        } else {
-          statutorydate = sdateDesc + ' ( ' + statutorydate + ' )';
-        }
-      } else {
-        statutorydate = sdateDesc;
-      }
-    } else {
-      statutorydate = sdateDesc;
-    }
+    var statutorydate = filterList[entity].summary;
     $('.tbl_description', clone1).text(filterList[entity].description);
     $('.tbl_penalconsequences', clone1).text(filterList[entity].p_consequences);
     $('.tbl_occurance', clone1).text(statutorydate);

@@ -8117,7 +8117,10 @@ BEGIN
         t2.document_name, t2.format_file, t2.format_file_size,
         t2.penal_consequences, t2.frequency_id,
         t2.statutory_dates, t2.repeats_every,
-        t2.repeats_type_id, t2.duration, t2.duration_type_id
+        t2.repeats_type_id, t2.duration, t2.duration_type_id,
+        (select frequency from tbl_compliance_frequency where frequency_id = t2.frequency_id) as freq_name,
+        (select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t2.repeats_type_id) as repeat_type,
+        (select duration_type from tbl_compliance_duration_type where duration_type_id = t2.duration_type_id) as duration_type
         FROM tbl_statutory_mappings t1
         INNER JOIN tbl_compliances t2
         ON t2.statutory_mapping_id = t1.statutory_mapping_id
