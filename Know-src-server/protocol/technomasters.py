@@ -1356,12 +1356,12 @@ class GetClientGroupFormDataSuccess(Response):
 
 class GetEditClientGroupFormDataSuccess(Response):
     def __init__(
-        self, countries,  business_groups, domains, industries,
+        self, countries,  business_groups_country, domains, industries,
         group_name, email_id, short_name, no_of_licence,
         legal_entities, date_configurations
     ):
         self.countries = countries
-        self.business_groups = business_groups
+        self.business_groups_country = business_groups_country
         self.domains = domains
         self.industries = industries
         self.group_name = group_name
@@ -1374,12 +1374,12 @@ class GetEditClientGroupFormDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "business_groups", "domains", "industries",
+            "countries", "business_groups_country", "domains", "industries",
             "client_details", "group_name", "email_id", "legal_entities_list",
             "date_configurations", "short_name", "no_of_licence"
         ])
         countries = data.get("countries")
-        business_groups = data.get("business_groups")
+        business_groups_country = data.get("business_groups_country")
         domains = data.get("domains")
         industries = data.get("industries")
         group_name = data.get("group_name")
@@ -1389,16 +1389,16 @@ class GetEditClientGroupFormDataSuccess(Response):
         date_configurations = data.get("date_configurations")
         no_of_licence = data.get("no_of_licence")
         return GetEditClientGroupFormDataSuccess(
-            countries,  business_groups, domains, industries,
+            countries,  business_groups_country, domains, industries,
             group_name, email_id, short_name, no_of_licence,
             legal_entities, date_configurations
         )
 
     def to_inner_structure(self):
-        #print "self.business_groups: %s" % self.business_groups
+        # print "self.business_groups_country: %s" % self.business_groups_country
         return {
             "countries": self.countries,
-            "business_groups": self.business_groups,
+            "business_groups_country": self.business_groups_country,
             "domains": self.domains,
             "industries": self.industries,
             "group_name": self.group_name,

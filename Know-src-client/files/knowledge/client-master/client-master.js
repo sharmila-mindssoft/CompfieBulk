@@ -66,6 +66,7 @@ function initialize(type_of_initialization) {
         showHideAddEditFields("add");
 
         function onSuccess(data) {
+
             COUNTRIES = data.countries;
             DOMAINS = data.domains;
             INDUSTRIES = data.industries;
@@ -73,6 +74,7 @@ function initialize(type_of_initialization) {
                 industry_id_map[value.industry_name] = parseInt(value.industry_id);
                 industry_name_map[parseInt(value.industry_id)] = value.industry_name;
             });
+            BUSSINESSGROUPS = '';
             $("#group-text").focus();
             $(".edit-date-config").hide();
             $(".email-edit-icon").hide();
@@ -104,7 +106,7 @@ function initialize(type_of_initialization) {
             COUNTRIES = data.countries;
             DOMAINS = data.domains;
             INDUSTRIES = data.industries;
-            BUSSINESSGROUPS = data.business_groups;
+            BUSSINESSGROUPS = data.business_groups_country;
             GROUPNAME = data.group_name;
             USERNAME = data.email_id;
             SHORTNAME = data.short_name;
@@ -571,8 +573,7 @@ function saveClient() {
                 var inner_is_valid = false;
                 var domain_ids = [];
                 for (var j = 1; j <= domain_count; j++) {
-                    var domain_id = $(".domain-" + i + "-" + j + " option:selected").val();
-                    console.log("domain_id:--"+domain_id);
+                    var domain_id = $(".domain-" + i + "-" + j + " option:selected").val();                    
                     if(domain_id){
                         var activationdate = $(".activationdate-" + i + "-" + j).val();
                         if (domain_ids.indexOf(domain_id) > -1) {
@@ -614,6 +615,14 @@ function saveClient() {
                                 )
                             );
                             inner_is_valid = true;
+                        }
+                    }else{
+                        if(domain_count>0){
+                            if($('.domain-list-'+i).find(".domain").length == 0){
+                                displayMessage(message.domain_required + " for " + le_name);
+                                inner_is_valid = false;
+                                return false;    
+                            }
                         }
                     }
                     
@@ -881,6 +890,8 @@ function editClient() {
         showNonEditableEntityDetails(le_count, value, value.domain_details, true)
     });
     $(".edit-date-config").show();
+    $(".edit-date-config").find("i").removeClass("fa-times");
+    $(".edit-date-config").find("i").addClass("fa-pencil");
     generateDateConfigurationList();
     $.each(DATECONFIGURATIONS, function(key, value) {
         var country_id = value.country_id;
@@ -1005,7 +1016,7 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
 function loadActions() {
     $(".actions select").empty();
     $("#remarks-text").val("");
-    actions = [];
+    // actions = [];
     actions = ["Edit", "Renewal", "Amendment"];
     // if (IS_APPROVED == 0) {
     //     actions = ["Edit", "Renewal"];
@@ -1030,6 +1041,8 @@ function loadActions() {
 
 $(".actions select").change(function() {
     SELECTED_ACTION = $(".actions select").val()
+    $(".email-edit-icon i").removeClass("fa-times");
+    $(".email-edit-icon i").addClass("fa-pencil");
     if (SELECTED_ACTION == 2) {
         $(".remarks-div").hide();
     } else {
@@ -1037,6 +1050,8 @@ $(".actions select").change(function() {
     }
     if(SELECTED_ACTION == 1){
         $(".add-le").hide();
+        $(".email-edit-icon i").removeClass("fa-times");
+        $(".email-edit-icon i").removeClass("fa-pencil");
     }
     else{
         $(".add-le").show();
@@ -1110,13 +1125,25 @@ function editEntity(e, le_count, value, domain_details) {
             $('.' + domain_list_class).empty();
             $("." + domain_count_class).val(0);
             for (var i = 1; i <= domain_details.length; i++) {
+                var orgtext = '';
                 var domain_class = "domain-" + le_count + "-" + i;
                 addDomain(domain_list_class, domain_count_class, le_count);
                 showEditable($("." + domain_class), value.domain_details[i - 1].d_id);
                 var activationdate_class = "activationdate-" + le_count + "-" + i;
                 showEditable($("." + activationdate_class), value.domain_details[i - 1].activation_date);
                 orgs = value.domain_details[i - 1].org;                
-                organization_details[le_count][i] = orgs;                
+                organization_details[le_count][i] = orgs;     
+                $.each(orgs, function(orgk, orgval){
+                    var getindname = industry_name_map[parseInt(orgk)];
+                    orgtext += getindname+":"+orgval+" Units,";
+                });
+                // console.log(Object.keys(orgs).length);
+                // var lengthobj = Object.keys(orgs).length;
+                // for(var m = 0; m<lengthobj; m++){
+                //     console.log("orgs[m]:"+orgs[m]);
+                // }
+                $(".addOrganizationType").find("i").attr("title", orgtext);
+
             }
             // le_table.find('.org-header').text("Organization");
             // le_table.find('.org-header').attr("width", "45%");
@@ -1246,6 +1273,10 @@ function addClient() {
     $(".business-group", clone).addClass(bg_class);
     //loadBusinessGroups(bg_class);
 
+
+    $('#legal_entity_text', clone).on('input', function (e) {
+        this.value = isAlphanumeric($(this));
+    });
     var contractfrom_class = "contract-from-" + le_count;
     $('.contract-from', clone).addClass(contractfrom_class);
 
@@ -1281,11 +1312,13 @@ function addClient() {
     $(".domain-table", clone).addClass(domain_table_class);
     $("." + domain_count_class).val(0);
     $("." + add_domain_class).click(function() {
-        addDomain(domain_list_class, domain_count_class, le_count);
+        //var ledomaincountname = $(this).attr('class').split(' ').pop();
+        var splitledomainid = add_domain_class.split('-')[1];
+        addDomain(domain_list_class, domain_count_class, splitledomainid);
     });
     addDomain(domain_list_class, domain_count_class, le_count);
     $('.country', clone).on("change", function(){
-        loadBusinessGroups(bg_class);
+        loadBusinessGroups(bg_class, $(this).val());
         //organization_details[le_count] = {};
         loadDomainsforcountry(parseInt($(this).val()), "domain-"+le_count, $("." +domain_count_class).val());    
     });
@@ -1310,9 +1343,10 @@ function addOrganization() {
 
     var org_class = "org-" + le_cnt + "-" + d_cnt + "-" + o_cnt;
     $(".org", clone).addClass(org_class);
-
+    
     var org_selected_class = "org-selected-" + le_cnt + "-" + d_cnt + "-" + o_cnt;
     $('#orgselected', clone).addClass(org_selected_class);
+    
 
     var ac_class = "ac-industry-" + le_cnt + "-" + d_cnt + "-" + o_cnt;
     $("#ac-industry", clone).addClass(ac_class);
@@ -1327,15 +1361,20 @@ function addOrganization() {
     $("#ulist-org", clone).addClass(org_list_class);
     $(".remove-organisation", clone).click(function(e) {
         e.preventDefault();
+        // var getiid = $(this).prev("#industry").val();
+        // orgid_temp = $.grep(orgid_temp, function(value) {
+        //     return value != getiid;
+        // });
         $(this).parent().parent().remove();
     });
 
     var domainid = $(".domain-" + le_cnt + "-" + d_cnt).val();
     
     $(".organization-list").append(clone);
-    
-    $('.' + org_selected_class).keyup(function(e) {   
+    $('.'+org_selected_class).focus();
 
+    $('.' + org_selected_class).keyup(function(e) {   
+        orgid_temp = [];
         var orgclassname = $(this).attr('class').split(' ').pop();
         var splitclass_le = orgclassname.split('-')[2];
         var countryid = $(".country-" + splitclass_le).val(); 
@@ -1358,7 +1397,6 @@ function addOrganization() {
                 }
             }    
         }
-
         var text_val = $(this).val();
         selected_textbox = $(this);
         selected_textid = $("."+val_class);
@@ -1384,6 +1422,8 @@ function addOrganization() {
         //     });
         // });
     });
+    //$(this).find('input:text')[0].focus();
+    
 }
 
 function addDomain(domain_list_class, domain_count_class, le_count) {
@@ -1505,8 +1545,7 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
 }
 
 function prepareCountryDomainMap() {
-    console.log(le_count+"--"+domain_count);
-
+    
     for (var i = 1; i <= le_count; i++) {
         var country_id = $(".country-" + i + " option:selected").val();
         if (country_id != 'undefined' && country_id != '0' && country_id != null) {
@@ -1520,10 +1559,8 @@ function prepareCountryDomainMap() {
                     "to": []
                 }
             }
-            // country_domain_id_map[country_id]["domains"]= [];
-            // country_domain_id_map[country_id]["domain_names"] = [];
-            for (var j = 1; j <= domain_count; j++) {
-                console.log("ij--"+i+"---"+j);
+            var dc = $(".domain-count-"+i).val();
+            for (var j = 1; j <= dc; j++) {
                 var domain_id = $(".domain-" + i + "-" + j + " option:selected").val();
                 if (domain_id != 'undefined' && domain_id != '0' && domain_id != null) {
                     var domain_name = $(".domain-" + i + "-" + j + " option:selected").text();
@@ -1610,12 +1647,14 @@ function loadDomainsforcountry(country_val, domain_class, countval){
     
 
 }
-function loadBusinessGroups(bg_class) {
+function loadBusinessGroups(bg_class, countryid) {
     $('.' + bg_class + " option:gt(0)").remove();
     bg_html = "<option value ='0'>(Select Business Group)</option>";
     if (BUSSINESSGROUPS.length > 0) {
         $.each(BUSSINESSGROUPS, function(key, value) {
-            bg_html += "<option value = " + parseInt(value.business_group_id) + ">" + value.business_group_name + "</option>";
+            if(countryid == value.country_id){
+                bg_html += "<option value = " + parseInt(value.business_group_id) + ">" + value.business_group_name + "</option>";    
+            }            
         });
     }
     $('.'+bg_class).html(bg_html);

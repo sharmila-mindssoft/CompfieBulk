@@ -782,9 +782,11 @@ CREATE PROCEDURE `sp_business_groups_list`(
     IN clientid INT(11)
 )
 BEGIN
-    SELECT business_group_id, business_group_name, client_id
-    FROM tbl_business_groups
-    WHERE client_id=clientid;
+    SELECT bg.business_group_id, bg.business_group_name, bg.client_id, lg.country_id
+    FROM tbl_business_groups bg
+    INNER JOIN tbl_legal_entities lg on lg.client_id= bg.client_id and lg.business_group_id= bg.business_group_id
+    WHERE bg.client_id=clientid
+    group by bg.business_group_id;
 
 END //
 
