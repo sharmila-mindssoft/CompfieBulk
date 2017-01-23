@@ -43,7 +43,7 @@ $('#submit').click(function () {
             displayMessage(error);
           }
         }
-        client_mirror.resetPassword(resetToken, newpassword, url_parameters[url_parameters.length - 2], function (error, response) {
+        mirror.resetPassword(resetToken, newpassword, url_parameters[url_parameters.length - 2], function (error, response) {
           if (error == null) {
             onSuccess(response);
           } else {
@@ -76,7 +76,7 @@ $('#submit').click(function () {
         call_api(request, function(status, data) {
             hideLoader();
             if (status == null) {
-              onSuccess(response);
+              onSuccess(data);
             } else {
               onFailure(status);
             }

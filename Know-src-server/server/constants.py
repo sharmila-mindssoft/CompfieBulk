@@ -42,6 +42,7 @@ FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
 SESSION_CUTOFF = 15   # minutes
 REGISTRATION_EXPIRY = 48  # Hours
+FORGOTPASSWORD_EXPIRY = 48  # Hours
 DOWNLOAD_EXPIRY = 48  # Hours
 USER_ENABLE_CUTOFF = 30  # days
 
@@ -49,7 +50,7 @@ KNOWLEDGE_DB_HOST = "localhost"
 KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 KNOWLEDGE_DB_PASSWORD = "123456"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_new"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_updated"
 
 URL = "http://localhost:8081/"
 CLIENT_URL = URL

@@ -349,6 +349,7 @@ class Database(object):
     ):
         assert type(columns) in (list, str)
         param = []
+        rows = []
         if type(columns) is str:
             param = columns.split(',')
             params = []
@@ -392,11 +393,11 @@ class Database(object):
                 query += order
             logger.logQuery(self._for_client, "get_data", query)
             rows = self.select_all(query)
-        result = []
+        # result = []
         # print rows
-        if rows:
-            result = convert_to_dict(rows, param)
-        return result
+        # if rows:
+        #     result = convert_to_dict(rows, param)
+        return rows
 
     def generate_tuple_condition(self, column, values_list):
         condition = " 1 "
