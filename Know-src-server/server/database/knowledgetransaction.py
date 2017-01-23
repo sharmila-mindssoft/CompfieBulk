@@ -1463,7 +1463,7 @@ def save_approve_mapping(db, user_id, data):
             if d.approval_status_id == 2 :
                 text = "%s - %s - %s - %s has been approved"
             elif d.approval_status_id == 3:
-                text = "%s - %s - %s - %s has been approv & Notified With remarks " + d.remarks
+                text = "%s - %s - %s - %s has been approved & Notified With remarks " + d.remarks
             else :
                 text = "%s - %s - %s - %s has been rejected wih reason " + d.remarks
 
