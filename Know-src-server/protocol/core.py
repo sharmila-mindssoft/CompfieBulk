@@ -1580,6 +1580,34 @@ class ClientConfiguration(object):
 # BusinessGroup
 #
 
+class ClientBusinessGroupCountry(object):
+    def __init__(self, business_group_id, business_group_name, client_id, country_id):
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+        self.client_id = client_id
+        self.country_id = country_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "business_group_id", "business_group_name", "client_id", "country_id"
+        ])
+        business_group_id = data.get("business_group_id")
+        business_group_name = data.get("business_group_name")
+        client_id = data.get("client_id")
+        country_id = data.get("country_id")
+        return ClientBusinessGroupCountry(business_group_id, business_group_name, client_id, country_id)
+
+    def to_structure(self):
+        data = {
+            "business_group_id": self.business_group_id,
+            "business_group_name": self.business_group_name,
+            "client_id": self.client_id,
+            "country_id": self.country_id,
+        }
+        return data
+
+
 class BusinessGroup(object):
     def __init__(self, business_group_id, business_group_name, client_id):
         self.business_group_id = business_group_id

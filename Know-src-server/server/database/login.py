@@ -142,8 +142,10 @@ def validate_reset_token(db, reset_token):
         tblEmailVerification, email_verification_column,
         email_verification_condition, email_verification_condition_val
     )
+    print email_verification_rows
     if email_verification_rows:
-        user_id = email_verification_rows[0]["user_id"]
+        user_id = email_verification_rows[0]['user_id']
+        print "userid-=-", user_id
         if user_id == 0:  # Returning if user is admin
             return user_id
         else:  # Checking if user is active

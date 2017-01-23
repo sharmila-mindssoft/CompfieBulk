@@ -89,7 +89,6 @@ var file_type = [
     "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf"
 ]
 var msg = message;
-var fetch = mirror;
 
 _renderinput = null;
 _fetchback = null;
@@ -1092,16 +1091,6 @@ function RenderInput() {
         }
         $('.tbody-compliance-list').empty();
         var j = 1;
-        // var sorted = _renderinput.mapped_compliances.slice(0).sort(function(a, b) {
-        //    return a.temp_id - b.temp_id;
-        // });
-
-        // var keys = [];
-        // for (var i = 0, len = sorted.length; i < len; ++i) {
-        //     keys[i] = sorted[i];
-        // }
-        // console.log(keys)
-        // _renderinput.mapped_compliances = keys;
 
         $.each(_renderinput.mapped_compliances, function(ke, v) {
             cObj = $('#templates #compliance-templates .table-row').clone();

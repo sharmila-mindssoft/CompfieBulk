@@ -214,7 +214,6 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
 
     data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
 
-
     total_comp = 0
     for t in total_comp_list :
         total_comp = t["total"]
@@ -251,7 +250,7 @@ def save_client_statutories(db, request, user_id):
         unit_name = c.unit_name
         domain_name = c.domain_name
 
-        msg = "Assgined statutories has been approved for following unit(s) %s in %s domain " % (
+        msg = "Statutories has been assigned for following unit(s) %s in %s domain " % (
             unit_name, domain_name
         )
         save_messages(db, cat_domain_manager, "Assign Statutory", msg, "", user_id, c.unit_id)
@@ -368,7 +367,6 @@ def get_assigned_compliance_by_id(db, request, user_id):
             ))
 
     data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
-
 
     total_comp = 0
     for t in total_comp_list :

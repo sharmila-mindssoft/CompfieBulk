@@ -51,7 +51,15 @@ def get_client_business_groups(db, client_id):
     business_groups = db.call_proc(
         "sp_business_groups_list", (client_id,)
     )
-    return return_business_groups(business_groups)
+    results = []
+    for business_group in business_groups:
+        results.append(core.ClientBusinessGroupCountry(
+            business_group["business_group_id"],
+            business_group["business_group_name"],
+            business_group["client_id"],
+            business_group["country_id"]
+        ))
+    return results
 
 
 ##########################################################################
@@ -144,6 +152,10 @@ def save_client_group(
         "sp_client_group_save",
         (group_name, username, short_name, no_of_view_licence, session_user)
     )
+    current_time_stamp = get_date_time()
+    message_text = '%s has been Created.' % group_name
+    msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
+    db.save_messages_users(msg_id, [1])
     return client_id
 
 
@@ -152,10 +164,15 @@ def save_client_group(
 #  Parameters : Object of database, group name and client id
 #  Return Type : None
 ##########################################################################
-def update_client_group(db, client_id, email_id, no_of_licence, remarks):
+def update_client_group(db, client_id, email_id, no_of_licence, remarks, session_user):
     db.call_update_proc(
         "sp_client_group_update", (client_id, email_id, no_of_licence, remarks)
     )
+    data = db.call_proc("sp_group_name_by_id", (client_id, ))
+    current_time_stamp = get_date_time()
+    message_text = '%s has been Updated.' % data[0]["group_name"]
+    msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
+    db.save_messages_users(msg_id, [1])
 
 
 ##########################################################################

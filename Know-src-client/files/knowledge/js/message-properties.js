@@ -357,7 +357,8 @@ var message = {
   'invalid_reset_token': 'Invalid Reset Token',
   "user_transaction_exists": "Cannot disable, user's transaction exists",
   "export_empty": "No Data(s) to Export.",
-  "current_new_password_same": "Current and new password should not be same"
+  "duplicate_businessgroup": "Duplicate Business Group are not allowed",
+  "current_new_password_same": "Current and new password should not be same",
 }
 
 function clearMessage() {

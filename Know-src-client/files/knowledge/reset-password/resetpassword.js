@@ -43,7 +43,7 @@ $('#submit').click(function () {
             displayMessage(error);
           }
         }
-        client_mirror.resetPassword(resetToken, newpassword, url_parameters[url_parameters.length - 2], function (error, response) {
+        mirror.resetPassword(resetToken, newpassword, url_parameters[url_parameters.length - 2], function (error, response) {
           if (error == null) {
             onSuccess(response);
           } else {
@@ -76,7 +76,7 @@ $('#submit').click(function () {
         call_api(request, function(status, data) {
             hideLoader();
             if (status == null) {
-              onSuccess(response);
+              onSuccess(data);
             } else {
               onFailure(status);
             }
@@ -93,17 +93,25 @@ $('#submit').click(function () {
     }
   }
 });
+function makekey()
+{
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+  for( var i=0; i < 5; i++ )
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  return text;
+}
 function call_api(request, callback) {
-    
+
     $.ajax({
         url: '/knowledge/api/login',
         type: 'POST',
         contentType: 'application/json',
         headers: { 'X-CSRFToken': csrf_token },
-        data: btoa(JSON.stringify(request, null, '')),
+        data: makekey() + btoa(JSON.stringify(request, null, '')),
         success: function(data, textStatus, jqXHR) {
-            data = atob(data);
+            data = atob(data.substring(5));
             data = JSON.parse(data);
             var status = data[0];
             var response = data[1];
@@ -117,7 +125,7 @@ function call_api(request, callback) {
         },
         error: function(jqXHR, textStatus, errorThrown) {
             rdata = JSON.parse(jqXHR.responseText);
-            rdata = atob(rdata);    
+            rdata = atob(rdata.substring(5));
            callback(rdata, null);
         }
     });
@@ -141,7 +149,7 @@ validateToken = function() {
                 IS_VALID = true;
             }
             else {
-                displayMessage("Session expired");                
+                displayMessage("Session expired");
                 IS_VALID = false;
             }
         });
@@ -195,7 +203,7 @@ $(document).ready(function () {
     //     onFailure(error);
     //   }
     // });
-  
+
 });
 $('#newpassword').focus(function () {
   $('#password-hint').css('display', 'inline-block');

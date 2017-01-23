@@ -1,6 +1,6 @@
 import json
 from protocol import (core, knowledgereport)
-from server.common import (convert_to_dict)
+from server.common import (convert_to_dict, make_summary)
 from server.constants import KNOWLEDGE_FORMAT_DOWNLOAD_URL
 from server.database.knowledgemaster import (
     GEOGRAPHY_PARENTS,
@@ -113,6 +113,7 @@ def get_statutory_mapping_report(
                 date.get("repeat_by")
             )
             date_list.append(s_date)
+        summary, sum_dates = make_summary(date_list, r["frequency_id"], r)
 
         info = knowledgereport.StatutoryMappingReport(
             r["country_name"],
@@ -134,7 +135,8 @@ def get_statutory_mapping_report(
             r["repeats_every"],
             r["duration_type_id"],
             r["duration"],
-            url
+            url,
+            summary
         )
         report_list.append(info)
     return report_list, rcount

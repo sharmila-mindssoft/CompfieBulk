@@ -110,7 +110,7 @@ def get_edit_client_group_form_data(db, request, session_user):
     ) = get_client_details(db, group_id)
     return technomasters.GetEditClientGroupFormDataSuccess(
         countries=countries, domains=domains,
-        business_groups=business_groups,
+        business_groups_country=business_groups,
         industries=industries, group_name=group_name,
         email_id=user_name, short_name=short_name,
         no_of_licence=total_view_licence,
@@ -132,7 +132,7 @@ def process_update_client_group(db, request, session_user):
         db, request.client_id, request.date_configurations, session_user
     )
     update_client_group(
-        db, request.client_id, request.email_id, request.no_of_view_licence, request.remarks
+        db, request.client_id, request.email_id, request.no_of_view_licence, request.remarks, session_user
     )
     legal_entity_names = update_legal_entities(
         db, request, request.client_id, session_user)
@@ -210,6 +210,7 @@ def validate_duplicate_data(db, request, session_user):
         if not is_invalid_id(db, "legal_entity_id", legal_entity_id):
             return technomasters.InvalidLegalEntityId()
     return True
+
 
 ########################################################################
 # To Validate unit data and merge the divisions, categories for each unit
