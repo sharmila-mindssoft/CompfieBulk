@@ -588,7 +588,7 @@ def is_duplicate_legal_entity(
 ##########################################################################
 def is_logo_in_image_format(logo):
     exten = logo.file_name.split('.')[1]
-    if exten in ["png", "jpg", "jpeg"]:
+    if exten in ["png", "jpg", "jpeg", "gif", "bmp"]:
         return True
     else:
         return False
