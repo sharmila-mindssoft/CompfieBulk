@@ -896,7 +896,7 @@ class Database(object):
         result = db.call_proc_with_multiresult_set(
            "sp_forgot_password", (username,), 2
         )
-        if result[1]:
+        if result[0]:
             return result[1]
         else:
             return 0

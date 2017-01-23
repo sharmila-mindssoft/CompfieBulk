@@ -2080,7 +2080,22 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function saveUserMappings(country_id, domain_id, parent_user_id, child_users, user_category_id, callback) {
+    function checkUserMappings(country_id, domain_id, parent_user_id, child_user_id, user_category_id, callback) {
+        callerName = "admin";
+        var request = [
+            "CheckUserMappings", {
+                "country_id": country_id,
+                "domain_id": domain_id,
+                "parent_user_id": parent_user_id,
+                "child_user_id": child_user_id,
+                "user_category_id": user_category_id
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function saveUserMappings(country_id, domain_id, parent_user_id, child_users, user_category_id, new_child_users, 
+        new_child_user_names, callback) {
         callerName = "admin";
         var request = [
             "SaveUserMappings", {
@@ -2088,14 +2103,13 @@ function initMirror() {
                 "domain_id": domain_id,
                 "parent_user_id": parent_user_id,
                 "child_users": child_users,
-                "user_category_id": user_category_id
+                "user_category_id": user_category_id,
+                "new_child_users": new_child_users,
+                "new_child_user_names": new_child_user_names
             }
         ];
         apiRequest(callerName, request, callback);
     }
-
-
-
 
     function getReassignUserAccountFormdata(callback) {
         callerName = "admin";
@@ -2841,6 +2855,7 @@ function initMirror() {
         saveAutoDeletion: saveAutoDeletion,
         getUserMappings: getUserMappings,
         saveUserMappings: saveUserMappings,
+        checkUserMappings: checkUserMappings,
         getUnassignedUnitsList: getUnassignedUnitsList,
         getAssignedUnitsList: getAssignedUnitsList,
         getAssignedUnitDetails: getAssignedUnitDetails,

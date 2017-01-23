@@ -16,6 +16,7 @@ __all__ = [
     "save_login_failure", "delete_login_failure_history",
     "get_login_attempt_and_time", "save_login_details",
     "validate_email_token", "check_username_duplicate",
+    "verify_new_password"
 ]
 
 
@@ -122,6 +123,13 @@ def verify_password(db, password, user_id):
     else:
         return True
 
+def verify_new_password(db, new_password, user_id):
+    encrypted_password = encrypt(new_password)
+    row = db.call_proc("sp_verify_password", (user_id,encrypted_password,))
+    if(int(row[0]["count"]) <= 0):
+        return True
+    else:
+        return False
 
 ########################################################
 # Check whether the given reset token is valid
