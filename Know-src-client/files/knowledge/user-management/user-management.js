@@ -178,6 +178,7 @@ function renderUserList(response) {
                 }
 
             } else {
+                disablemsg = message.disable_message;
                 $('.disable', rowClone).removeClass('fa-ban text-danger');
                 $('.disable', rowClone).addClass('fa-ban text-muted');
             }
@@ -188,7 +189,7 @@ function renderUserList(response) {
                     e.title = 'Click Here to Disable';
                 }
                 else if (e.className == "fa c-pointer disable fa-ban text-danger") {
-                    e.title = "Click Here to Enable \n reason : " + v.d_reason;
+                    e.title = "Click Here to Enable \n disabled reason : " + v.d_reason;
                 }
                 else if (e.className == "fa c-pointer disable fa-ban text-danger expired") {
                     e.title = "User disabled";
@@ -262,7 +263,13 @@ function resetValues() {
     Domain_ids = [];
     loadUserCategories();
     loadCountries();
-    loadDomains();
+    Domains.empty();
+    // loadDomains();
+    $('#search-employee-name').val('');
+    $('#search-user-id').val('');
+    $('#search-email-id').val('');
+    $('#search-category-name').val('');
+
     User_category.focus();
 }
 
@@ -528,7 +535,6 @@ function submitUserData() {
                 'country_ids': Country_ids,
                 'country_wise_domain': Domain_ids,
             };
-            console.log(userDetail);
             if (User_id.val() == '') {
                 mirror.saveAdminUser(userDetail, function(error, response) {
                     if (error == null) {

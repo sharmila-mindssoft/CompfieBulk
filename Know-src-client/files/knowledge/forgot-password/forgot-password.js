@@ -46,6 +46,10 @@ function makekey()
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
+
+function parseJSON(data) {
+    return JSON.parse(data);
+}
 function processForgotpassword(username, shortName, callback) {
     displayLoader();
     var request = [
