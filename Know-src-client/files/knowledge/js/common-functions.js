@@ -1083,10 +1083,15 @@ function commonAutoComplete1(
                       var cresult = false;
                       var dresult = false;
                       for(var j=0; j<list_val[i][value].length; j++){
+                        
                         if($.inArray(list_val[i][value][j]["c_id"], condition_values[key][0]) >= 0){
                           cresult = true;
                         }
-                        if($.inArray(list_val[i][value][j]["d_id"], condition_values[key][1]) >= 0){
+                        if(condition_values[key][1] != null){
+                          if($.inArray(list_val[i][value][j]["d_id"], condition_values[key][1]) >= 0){
+                            dresult = true;
+                          }
+                        }else{
                           dresult = true;
                         }
                       }

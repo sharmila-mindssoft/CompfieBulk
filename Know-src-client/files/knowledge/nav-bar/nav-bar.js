@@ -232,7 +232,7 @@ function initializeNavBar() {
               if(NOTIFICATIONS.length == 0){
                 var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                 $('.statu-heading', msgObject).text('No Notifications');
-                $('.statu-items-ul').append(msgObject);
+                $('.notification-items-ul').append(msgObject);
               }
 
             }
