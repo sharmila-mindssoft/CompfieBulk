@@ -1,3 +1,4 @@
+var fetch = mirror;
 //
 // callback with compfie input data
 //
@@ -283,7 +284,8 @@ function FetchBack() {
 
     this.updateOnlyCompliance = function(data) {
         displayLoader();
-        fetch.updateCompliance(data, function(status, response) {
+        console.log(fetch.updateCompliance);
+        fetch.updateComplianceOnly(data, function(status, response) {
             if (status == null) {
                 is_upload = false;
                 $.each(_renderinput.uploaded_files_fcids, function(key, value) {
@@ -299,7 +301,6 @@ function FetchBack() {
                 }
             }
             else {
-
                 possibleFailure(status);
                 return false;
             }
@@ -373,6 +374,7 @@ function ListPage() {
                     CURRENT_TAB = 3;
                 });
                 if (c.is_approved == 4) {
+                    console.log(c.remarks);
                     row.addClass('rejected_row');
                     $('.comp_approval_status', row).append(
                         '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+ c.remarks +'" data-original-title="Rejected reason goes here."></i>'

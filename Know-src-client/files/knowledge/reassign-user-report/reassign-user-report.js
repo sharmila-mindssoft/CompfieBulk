@@ -966,7 +966,7 @@ $('#domainval').keyup(function (e) {
         userDomainList[i].legal_entity_id == le_id) && (bg_check == true || bg_check == false))
       	{
       		var occur = -1;
-      		for(var k=;k<domain_list.length;k++){
+      		for(var k=0;k<domain_list.length;k++){
       			if(domain_list[k].domain_id == userDomainList[i].domain_id){
       				occur = 1;
       			}
