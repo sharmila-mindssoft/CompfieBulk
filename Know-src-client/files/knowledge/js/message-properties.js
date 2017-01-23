@@ -43,6 +43,7 @@ var message = {
   'levelselection_required': 'Level Selection Should not be Empty',
   'geographyname_exists': 'Geography Name Already Exists',
   'invalid_geographyid': 'Invalid Geography Id',
+  'geography_required': 'Geography Required',
   'statutorylevel_exists': 'Statutory Level Already Exists',
   'file_maxlimit_exceed': 'File max limit exceeded',
   'file_content_empty': 'File content is empty',
