@@ -218,7 +218,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
-    //loadGeographyFirstLevels(val[0]);
+    loadGeographyFirstLevels(val[0]);
 }
 
 //Autocomplete Script ends
