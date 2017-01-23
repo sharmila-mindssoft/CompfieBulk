@@ -106,10 +106,6 @@ var SubmitView4 = $(".submit-view4");
 
 //retrive businessgroup form autocomplete value
 function clearData(){
-    $('.tbody-tm-view').empty();
-    $('.tbody-te-view').empty();
-    $('.tbody-dm-view').empty();
-    $('.tbody-de-view').empty();
     TMRemarks.val('');
     TERemarks.val('');
     DMRemarks.val('');
@@ -732,6 +728,7 @@ function pageControls(){
             displayMessage(message.reassign_from_required);
         }else{
             clearData();
+            $('.tbody-tm-view').empty();
             callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
         }
     });
@@ -742,6 +739,7 @@ function pageControls(){
             displayMessage(message.reassign_from_required);
         }else{
             clearData();
+            $('.tbody-te-view').empty();
             callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
         }
     });
@@ -766,6 +764,7 @@ function pageControls(){
             displayMessage(message.domain_required);
         }else{
             clearData();
+            $('.tbody-dm-view').empty();
             callDomainUserInfo(parseInt(dm_id), parseInt(group_id), parseInt(le_id), parseInt(domain_id), 'DM');
         }
     });
@@ -790,6 +789,7 @@ function pageControls(){
             displayMessage(message.domain_required);
         }else{
             clearData();
+            $('.tbody-de-view').empty();
             callDomainUserInfo(parseInt(de_id), parseInt(group_id), parseInt(le_id), parseInt(domain_id), 'DE');
         }
     });
