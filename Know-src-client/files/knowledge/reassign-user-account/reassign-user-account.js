@@ -548,8 +548,9 @@ function pageControls(){
     DMDomainName.keyup(function(e){
         var text_val = $(this).val();
         var cn_id = LE_COUNTRIES[DMLegalEntityId.val()];
-        var condition_fields = ["is_active", "country_ids"];
-        var condition_values = [true, cn_id];
+        var d_ids = LE_DOMAINS[DMLegalEntityId.val()];
+        var condition_fields = ["is_active", "country_ids", "domain_id"];
+        var condition_values = [true, cn_id, d_ids];
 
         commonAutoComplete(
             e, DMACDomain, DMDomainId, text_val,
@@ -605,9 +606,7 @@ function pageControls(){
                 function (val) {
                     onAutoCompleteSuccess(DEBusinessGroupName, DEBusinessGroupId, val);
                 }, condition_fields, condition_values);
-
         }
-        
     });
 
     DELegalEntityName.keyup(function(e){
@@ -635,8 +634,9 @@ function pageControls(){
     DEDomainName.keyup(function(e){
         var text_val = $(this).val();
         var cn_id = LE_COUNTRIES[DELegalEntityId.val()];
-        var condition_fields = ["is_active", "country_ids"];
-        var condition_values = [true, cn_id];
+        var d_ids = LE_DOMAINS[DELegalEntityId.val()];
+        var condition_fields = ["is_active", "country_ids", "domain_id"];
+        var condition_values = [true, cn_id, d_ids];
     
         commonAutoComplete(
             e, DEACDomain, DEDomainId, text_val,
@@ -713,7 +713,6 @@ function pageControls(){
     ReplaceManagerShow.change(function(){
         clearData();
         var category = $('#category').val();
-
         if(category == ''){
             displayMessage(message.user_category_required);
             $(".manager-list").empty();
