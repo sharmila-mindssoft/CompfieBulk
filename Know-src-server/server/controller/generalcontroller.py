@@ -327,6 +327,7 @@ def process_update_notification_status(db, request, session_user):
 
 def process_uploaded_file(info, f_type, client_id=None):
     info_keys = info.keys()
+    print info_keys
     is_valid = True
     # Validate
     res = None
@@ -374,9 +375,10 @@ def process_uploaded_file(info, f_type, client_id=None):
                     lst.append(file_response)
                 res = general.FileUploadSuccess(lst)
 
-            return res
         except Exception, e:
             print e
+
+    return res
 
 ########################################################
 # To Handle the verify password request

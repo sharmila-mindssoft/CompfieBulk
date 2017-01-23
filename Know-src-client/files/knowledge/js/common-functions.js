@@ -985,7 +985,7 @@ function commonAutoComplete(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  
+
                   if(jQuery.type( list_val[i][value] ) == 'array'){
                     condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                   }else if(jQuery.type( condition_values[key] ) == 'array'){
@@ -1116,7 +1116,7 @@ function commonAutoComplete1(
                     }else{
                       condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                     }
-                    
+
                   }else{
                     if(value == 'user_id'){
                       condition_result = (list_val[i][value] != condition_values[key]);
@@ -1205,4 +1205,3 @@ function hideLoader() {
 $(function() {
     $( ":input" ).attr('autocomplete','off');
 });
-

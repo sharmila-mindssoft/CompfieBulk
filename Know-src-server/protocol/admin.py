@@ -1292,20 +1292,21 @@ class CheckUserMappingsSuccess(Response):
 class LegalEntity(object):
     def __init__(
         self, legal_entity_id, legal_entity_name, business_group_id,
-        client_id, country_id
+        client_id, country_id, domain_ids
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.business_group_id = business_group_id
         self.client_id = client_id
         self.country_id = country_id
+        self.domain_ids = domain_ids
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
                 "legal_entity_id", "legal_entity_name", "business_group_id",
-                "client_id", "country_id"
+                "client_id", "country_id", "domain_ids"
             ]
         )
         legal_entity_id = data.get("legal_entity_id")
@@ -1313,9 +1314,10 @@ class LegalEntity(object):
         business_group_id = data.get("business_group_id")
         client_id = data.get("client_id")
         country_id = data.get("country_id")
+        domain_ids = data.get("domain_ids")
         return LegalEntity(
             legal_entity_id, legal_entity_name, business_group_id, client_id,
-            country_id
+            country_id, domain_ids
         )
 
     def to_structure(self):
@@ -1324,7 +1326,8 @@ class LegalEntity(object):
             "legal_entity_name": self.legal_entity_name,
             "business_group_id": self.business_group_id,
             "client_id": self.client_id,
-            "country_id": self.country_id
+            "country_id": self.country_id,
+            "domain_ids": self.domain_ids
         }
 
 

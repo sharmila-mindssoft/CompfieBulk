@@ -130,7 +130,11 @@ saveData = function() {
             displaySuccessMessage("Saved Successfully");
         }
         else {
-            displayMessage(status);
+            if (status == "UsernameAlreadyExists") {
+                displayMessage("User Name Already Exists");
+            }
+            else
+                displayMessage(status);
         }
     });
 };
@@ -195,13 +199,13 @@ checkAvailability = function() {
     Status_check.addClass("load-icon");
     call_api(request, function(status, data) {
         Status_check.removeClass();
-        Status_msg.text('User name already exists');
+        Status_msg.text('User ID Already Exists');
         if (status == null) {
             Status_msg.text('')
             Status_check.addClass("tick-icon");
         }
         else {
-            Status_msg.text('User name already exists');
+            Status_msg.text('User ID Already Exists');
         }
     });
 };

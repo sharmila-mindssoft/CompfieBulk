@@ -214,6 +214,7 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
 
     data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
 
+
     total_comp = 0
     for t in total_comp_list :
         total_comp = t["total"]
@@ -367,6 +368,7 @@ def get_assigned_compliance_by_id(db, request, user_id):
             ))
 
     data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
+
 
     total_comp = 0
     for t in total_comp_list :
