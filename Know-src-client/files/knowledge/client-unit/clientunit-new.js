@@ -112,7 +112,6 @@ function initialize() {
     }
     displayLoader();
     mirror.getClients('view', function(error, response) {
-        console.log(response)
         if (error == null) {
             onSuccess(response);
             hideLoader();
@@ -681,7 +680,6 @@ function addcountryrownew() {
 function log_units_count(e,classval) {
     var domain_id = $('.domainselected-' + classval).val();
     var org_id = $('.orgtypeselected-' + classval).val();
-    console.log("1:"+units_count)
     if (units_count.length > 0) {
         for (var i = 0; i < units_count.length; i++) {
             var split_unit = units_count[i].split("-");
@@ -727,7 +725,6 @@ function log_units_count(e,classval) {
             }
         }
     }
-    console.log("pushed:"+units_count)
 }
 // Get the unit count under a domain and organization
 function getOrgCount(domain_id, org_id) {
@@ -1301,15 +1298,20 @@ function industrytype(classval, selected_arr) {
             var domains = domainList;
             var optText = "";
             for(var domain in domain_id){
+                var flag = true;
                 for (var i in domains) {
                     if (lentityId == domains[i].legal_entity_id && domain_id[domain] == domains[i].domain_id) {
+                        if (flag) {
+                            optText += '<optgroup label="' + domains[i].domain_name + '">';
+                        }
                         var orgtypeId = parseInt(domains[i].industry_id);
                         var orgtypeName = domains[i].industry_name;
                         optText = optText + '<option value="'+orgtypeId+'" >'+orgtypeName+'</option>';
+                        flag = false;
                     }
                 }
+                if (flag == false) optText += '</optgroup>'
                 $('.orgtypeselected' + countval).html(optText);
-
             }
 
         } else {
@@ -1317,6 +1319,7 @@ function industrytype(classval, selected_arr) {
             var domains = domainList;
             var optText = "";
             for(var domain in domain_id){
+                var flag = true;
                 for (var i in domains) {
                 var selectorgtypestatus = '';
                     if(editorgtypeval != null && editorgtypeval != "undefined"){
@@ -1327,12 +1330,16 @@ function industrytype(classval, selected_arr) {
                         }
                     }
                     if (lentityId == domains[i].legal_entity_id && domain_id[domain] == domains[i].domain_id) {
-
+                        if (flag) {
+                            optText += '<optgroup label="' + domains[i].domain_name + '">';
+                        }
                         var orgtypeId = parseInt(domains[i].industry_id);
                         var orgtypeName = domains[i].industry_name;
                         optText = optText + '<option value="'+orgtypeId+'" '+selectorgtypestatus+'>'+orgtypeName+'</option>';
+                        flag = false;
                     }
                 }
+                if (flag == false) optText += '</optgroup>'
                 $('.orgtypeselected' + countval).html(optText);
             }
 
@@ -1554,6 +1561,7 @@ $('#btn-clientunit-submit').click(function() {
                         var unitIndustryIds = [];
                         var unitdomains = [];
                         unitId = null;
+                        glevel_item = $('.glevel-'+i +'-'+ j).val();
                         unitCode = $('.unit-code-' + i + '-' + j).val();
 
                         unitName = $('.unit-name-' + i + '-' + j).val().trim();
@@ -1569,12 +1577,16 @@ $('#btn-clientunit-submit').click(function() {
 
                         unitdomain = $('.domainselected-' + i + '-' + j).val();
 
-                        if (unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomains.length == 0 && unitIndustryIds.length == 0) {
+                        if (glevel_item == 0 && unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomains.length == 0 && unitIndustryIds.length == 0) {
                             if (unitCountValue == 1) {
                                 displayMessage(message.add_one_unit);
                                 return;
                             }
                             continue;
+                        }
+                        if (glevel_item == 0){
+                            displayMessage(message.geographylevel_required);
+                            return;
                         }
                         if (unitLocation == '') {
                             displayMessage(message.unitlocation_required);
@@ -1633,7 +1645,6 @@ $('#btn-clientunit-submit').click(function() {
                                         }
                                     }
                                 }
-                                console.log("units:"+null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0)
                                 unit = mirror.getUnitDict(null, unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
 
                                 units.push(unit);
@@ -1882,7 +1893,6 @@ $('#btn-clientunit-submit').click(function() {
                                     if (total_div != i) {
                                         total_div = total_div + 1;
                                     }
-                                    console.log(parseInt(divIdValue), divNameValue, category, total_div, parseInt(total_units))
                                     div_arr = mirror.getDivisionDict(parseInt(divIdValue), divNameValue, category, total_div, parseInt(total_units));
                                     division_units.push(div_arr);
                                     unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
