@@ -322,7 +322,7 @@ function activateChildUser(element, user_id){
                     NEW_CHILD_USER_IDS.splice(new_index, 1);
 
                     new_name_index = NEW_CHILD_USER_NAMES.indexOf($(element).text());
-                    NEW_CHILD_USER_NAMES.splice(new_names_index, 1);
+                    NEW_CHILD_USER_NAMES.splice(new_name_index, 1);
 
                     hideLoader();
                 } else {

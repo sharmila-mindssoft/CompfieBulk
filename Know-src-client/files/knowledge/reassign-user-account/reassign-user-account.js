@@ -20,6 +20,7 @@ var DM_PARANTS = {};
 var DE_GROUPS = {};
 var DM_GROUPS = {};
 var LE_COUNTRIES = {};
+var LE_DOMAINS = {};
 var DE_LE = {};
 var DM_LE = {};
 
@@ -432,12 +433,20 @@ function getCountryId(l_Id){
 
 function getTEValidCountries(){
     TECountries = [];
+    TEDomains = [];
     $('.te-group-checkbox:checkbox:checked').each(function (index, el) {
         var combile_id = $(this).val().split('-');
         var le_id = combile_id[1];
         var cn_id = LE_COUNTRIES[le_id];
+        var d_ids = LE_DOMAINS[le_id];
         if ($.inArray(cn_id, TECountries) == -1) {
             TECountries.push(cn_id);
+        }
+
+        for(var i=0; i<d_ids; i++){
+            if ($.inArray(d_ids[i], TEDomains) == -1) {
+                TEDomains.push(d_ids[i]);
+            }
         }
     });
 }
@@ -465,7 +474,7 @@ function pageControls(){
         var text_val = $(this).val();
         
         var condition_fields = ["country_domains", "user_id", "p_user_ids", ];
-        var condition_values = [[TECountries, null], TechnoExecutiveId.val(), TE_PARANTS[TechnoExecutiveId.val()]];
+        var condition_values = [[TECountries, TEDomains], TechnoExecutiveId.val(), TE_PARANTS[TechnoExecutiveId.val()]];
         commonAutoComplete1(
             e, RACTechnoExecutive, RTechnoExecutiveId, text_val,
             TECHNO_USERS, "employee_name", "user_id", function (val) {
@@ -1092,6 +1101,7 @@ function generateMap(){
     DE_GROUPS = {};
     DM_GROUPS = {};
     LE_COUNTRIES = {};
+    LE_DOMAINS = {};
     DE_LE = {};
     DM_LE = {};
 
@@ -1113,6 +1123,7 @@ function generateMap(){
 
     $.each(LEGAL_ENTITIES, function(key, value) {
         LE_COUNTRIES[value.legal_entity_id] = value.country_id;
+        LE_DOMAINS[value.legal_entity_id] = value.domain_ids;
     });
 
 }

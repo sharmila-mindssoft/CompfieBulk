@@ -1087,11 +1087,7 @@ function commonAutoComplete1(
                         if($.inArray(list_val[i][value][j]["c_id"], condition_values[key][0]) >= 0){
                           cresult = true;
                         }
-                        if(condition_values[key][1] != null){
-                          if($.inArray(list_val[i][value][j]["d_id"], condition_values[key][1]) >= 0){
-                            dresult = true;
-                          }
-                        }else{
+                        if($.inArray(list_val[i][value][j]["d_id"], condition_values[key][1]) >= 0){
                           dresult = true;
                         }
                       }
