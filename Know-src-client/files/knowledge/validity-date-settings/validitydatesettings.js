@@ -102,8 +102,6 @@ $("#btn-submit").click(function(){
 function save_validity_date_settings() {
   var result = collect_and_validate_values()
   if(result != false && values_to_save.length > 0){
-    console.log("len:"+values_to_save.length);
-    console.log(values_to_save)
     function onSuccess(data) {
       displaySuccessMessage(message.settings_save_success);
       initialize();
@@ -111,7 +109,6 @@ function save_validity_date_settings() {
     function onFailure(error, response) {
       if(error == "SaveValidityDateSettingsFailure")
       {
-        console.log("a,"+response.country_id);
         var msgText = '';
         for(var i=0;i<COUNTRIES.length;i++){
           if(COUNTRIES[i].country_id == response.country_id){
@@ -121,7 +118,7 @@ function save_validity_date_settings() {
         }
         for(var i=0;i<DOMAINS.length;i++){
           if(DOMAINS[i].domain_id == response.domain_id){
-            msgText =  DOMAINS[i].domain_name+" under "+msgText+" is invalid";
+            msgText =  "Enter days between 1 to 366 for "+DOMAINS[i].domain_name+" under "+msgText;
             break;
           }
         }
@@ -133,7 +130,6 @@ function save_validity_date_settings() {
     displayLoader();
     mirror.saveValidityDateSettings(
       values_to_save, function (error, response) {
-        console.log(error,response)
       if (error == null) {
         onSuccess(response);
         hideLoader();
@@ -143,6 +139,10 @@ function save_validity_date_settings() {
       }
     });
   }
+  else{
+        if(values_to_save.length == 0)
+          displayMessage(message.validity_date_required);
+      }
 }
 
 function collect_and_validate_values(){
@@ -151,9 +151,7 @@ function collect_and_validate_values(){
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     for (var dcount = 0; dcount < domain_list.length; dcount++) {
       domain_id = parseInt(domain_list[dcount])
-      console.log(country_id,domain_id)
       validity_days = $(".val-"+country_id+"-"+domain_id).val()
-      console.log("1:"+validity_days)
       validity_days_id = $(".id-"+country_id+"-"+domain_id).val()
       if(
           validity_days != "" &&
@@ -161,7 +159,20 @@ function collect_and_validate_values(){
           validity_days != null
       ){
         if ((parseInt(validity_days) > 366)){
-          displayMessage(message.invalid_validity_days);
+          var msgText = '';
+          for(var i=0;i<COUNTRIES.length;i++){
+            if(COUNTRIES[i].country_id == country_id){
+              msgText = COUNTRIES[i].country_name;
+              //break;
+            }
+          }
+          for(var i=0;i<DOMAINS.length;i++){
+            if(DOMAINS[i].domain_id == domain_id){
+              msgText =  "Enter days between 1 to 366 for "+DOMAINS[i].domain_name+" under "+msgText;
+              //break;
+            }
+          }
+          displayMessage(msgText);
           returnVal =false;
           break;
         }
@@ -172,7 +183,6 @@ function collect_and_validate_values(){
           validity_days_id, parseInt(country_id), parseInt(domain_id),
           parseInt(validity_days)
         )
-        console.log(value)
         values_to_save.push(value)
 
       }
