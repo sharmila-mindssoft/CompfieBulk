@@ -241,7 +241,6 @@ DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
 
 DomainPage.prototype.changeStatus = function(d_id, status) {
     mirror.changeDomainStatus(d_id, status, function(error, response) {
-        console.log(error,response)
         if (error == null) {
             t_this.showList();
             t_this.fetchDomain();
@@ -271,7 +270,6 @@ DomainPage.prototype.validate = function() {
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -305,7 +303,6 @@ DomainPage.prototype.submitProcess = function() {
     t_this = this;
     if (Domain_id.val() == '') {
         mirror.saveDomain(name, c_ids, function(error, response) {
-            console.log(error,response)
             if (error == null) {
 
                 displaySuccessMessage(message.save_success);
