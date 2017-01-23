@@ -972,7 +972,7 @@ $('#domainval').keyup(function (e) {
       			}
       		}
       		if(occur < 0){
-      			domain_listdomain_list.push({
+      			domain_list.push({
 	              "domain_id": userDomainList[i].domain_id,
 	              "domain_name": userDomainList[i].domain_name,
 	            });
@@ -1002,12 +1002,13 @@ function loadSearchFilter(categoryName)
 {
 	if(categoryName == "Techno Manager"){
 		$(".mandatory").show();
+		$("#te").hide();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();
 	}
 	else if(categoryName == "Techno Executive"){
-		$(".mandatory").show();
+		$("#te").hide();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();

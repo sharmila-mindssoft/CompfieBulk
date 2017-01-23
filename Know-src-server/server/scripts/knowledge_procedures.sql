@@ -3316,8 +3316,7 @@ BEGIN
         on t2.client_id = t1.client_id and t2.is_closed = 0
         left join tbl_business_groups as t3 on t3.business_group_id = t2.business_group_id
         inner join tbl_units as t4 on t4.client_id = t1.client_id and t4.legal_entity_id = t2.legal_entity_id
-        and t4.business_group_id = t2.business_group_id and t4.country_id = t2.country_id and
-        t4.is_approved = 1
+        and t4.country_id = t2.country_id and t4.is_approved = 1
         inner join tbl_units_organizations as t5 on t5.unit_id = t4.unit_id
         where
         t1.user_id = userid_
@@ -3346,7 +3345,7 @@ BEGIN
         t2.is_closed = 0
         left join tbl_business_groups as t3 on t3.business_group_id = t2.business_group_id
         inner join tbl_units as t4 on t4.client_id = t1.client_id and t4.legal_entity_id = t2.legal_entity_id
-        and t4.business_group_id = t2.business_group_id and t4.country_id = t2.country_id and t4.is_approved = 1
+        and t4.country_id = t2.country_id and t4.is_approved = 1
         inner join tbl_units_organizations as t5 on t5.unit_id = t4.unit_id and t5.domain_id=t1.domain_id
         where
         t1.user_id = userid_ and user_category_id = @u_cat_id
@@ -3377,7 +3376,8 @@ BEGIN
         (
             SELECT business_group_name FROM tbl_business_groups tbg
             WHERE tbg.business_group_id=tle.business_group_id
-        ) as business_group_name, tuu.user_category_id
+        ) as business_group_name, tuu.user_category_id,
+        tuu.client_id, tuu.domain_id
         FROM tbl_user_units tuu
         INNER JOIN tbl_users tu ON tu.user_id = tuu.user_id
         INNER JOIN tbl_legal_entities tle ON tle.legal_entity_id=tuu.legal_entity_id
@@ -3391,7 +3391,8 @@ BEGIN
         (
             SELECT business_group_name FROM tbl_business_groups tbg
             WHERE tbg.business_group_id=tle.business_group_id
-        ) as business_group_name, tuu.user_category_id
+        ) as business_group_name, tuu.user_category_id,
+        tuu.client_id, tuu.domain_id
         FROM tbl_user_units tuu
         INNER JOIN tbl_users tu ON tu.user_id = tuu.user_id
         INNER JOIN tbl_legal_entities tle ON tle.legal_entity_id=tuu.legal_entity_id
@@ -6358,7 +6359,7 @@ in _u_id int(11))
 BEGIN
     select t1.client_id, t2.legal_entity_id, t2.is_closed as is_active, t2.closed_on,
     (case when t2.closed_on is not null then
-    (90-DATEDIFF(NOW(), t2.closed_on)) else 0 end) as validity_days,
+    abs(90-DATEDIFF(NOW(), t2.closed_on)) else 0 end) as validity_days,
     (select group_name from tbl_client_groups where client_id = t1.client_id) as
     group_name,
     (select business_group_name from tbl_business_groups where business_group_id =
@@ -6583,7 +6584,7 @@ BEGIN
     from tbl_users where user_id = s.created_by) as created_by,
     s.created_on, su.user_id, su.read_status
     from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
-    AND su.user_id = userid_
+    AND su.user_id = userid_ AND su.read_status = 0
     order by su.read_status DESC, s.created_on DESC limit pagecount_;
 
 END //
@@ -8707,8 +8708,8 @@ BEGIN
 
     if u_cat_id_ = 7  THEN
         select count(user_id) as cnt from tbl_user_units as t1, tbl_units as t2
-        where t1.unit_id = t2.unit_id and t1.domain_id = domain_id_ and
-        t1.user_id = c_user_id_  and t2.country_id = country_id_ and
+        where t1.unit_id = t2.unit_id and t1.domain_id = domain_id_ and 
+        t1.user_id = c_user_id_  and t2.country_id = country_id_ and 
         t1.client_id in (select client_id from tbl_user_clients where user_id = p_user_id_);
     end if;
 

@@ -731,8 +731,8 @@ function loadUserMappingDetailsList(data)
     sno = i + 1;
 
     $('.sno', clone1).text(sno);
-    var unit_code_name = getUnitName(technoDetails[i].unit_id);
-    $('.unit-name', clone1).text(unit_code_name);
+    //var unit_code_name = getUnitName(technoDetails[i].unit_id);
+    $('.unit-name', clone1).text(technoDetails[i].unit_code_with_name);
     $('.techno-manager', clone1).text(technoDetails[i].techno_manager);
     $('.techno-user', clone1).text(technoDetails[i].techno_user);
     $('.tbody-usermappingdetails-list').append(clone1);

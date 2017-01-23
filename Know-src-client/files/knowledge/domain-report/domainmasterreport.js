@@ -255,6 +255,7 @@ function pageData(on_current_page){
   {
     recordData = domainList;
   }
+  totalRecord = recordData.length;
   for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
