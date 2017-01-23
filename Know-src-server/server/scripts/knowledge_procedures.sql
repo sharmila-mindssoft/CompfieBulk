@@ -6594,7 +6594,7 @@ BEGIN
     from tbl_users where user_id = s.created_by) as created_by,
     s.created_on, su.user_id, su.read_status
     from tbl_statutory_notifications s INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id
-    AND su.user_id = userid_
+    AND su.user_id = userid_ AND su.read_status = 0
     order by su.read_status DESC, s.created_on DESC limit pagecount_;
 
 END //
