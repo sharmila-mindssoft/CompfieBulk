@@ -966,13 +966,13 @@ $('#domainval').keyup(function (e) {
         userDomainList[i].legal_entity_id == le_id) && (bg_check == true || bg_check == false))
       	{
       		var occur = -1;
-      		for(var k=;k<domain_list.length;k++){
+      		for(var k=0;k<domain_list.length;k++){
       			if(domain_list[k].domain_id == userDomainList[i].domain_id){
       				occur = 1;
       			}
       		}
       		if(occur < 0){
-      			domain_listdomain_list.push({
+      			domain_list.push({
 	              "domain_id": userDomainList[i].domain_id,
 	              "domain_name": userDomainList[i].domain_name,
 	            });
@@ -1002,12 +1002,13 @@ function loadSearchFilter(categoryName)
 {
 	if(categoryName == "Techno Manager"){
 		$(".mandatory").show();
+		$("#te").hide();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();
 	}
 	else if(categoryName == "Techno Executive"){
-		$(".mandatory").show();
+		$("#te").hide();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();
