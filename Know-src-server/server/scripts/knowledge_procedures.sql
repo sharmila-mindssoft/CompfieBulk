@@ -4606,7 +4606,7 @@ BEGIN
     from tbl_units as t1
     inner join tbl_geographies as t2 on t1.geography_id = t2.geography_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id
-    inner join (
+    left join (
         select t4.unit_id, count(distinct t1.compliance_id) as total
             from tbl_compliances as t1
             inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
