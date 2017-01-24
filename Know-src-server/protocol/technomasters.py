@@ -466,7 +466,6 @@ class UNIT(object):
                 "i_ids_list", "is_approved"
             ]
         )
-        print "inside class uint after append"
         unit_id = data.get("unit_id")
         geography_id = data.get("geography_id")
         unit_code = data.get("unit_code")
