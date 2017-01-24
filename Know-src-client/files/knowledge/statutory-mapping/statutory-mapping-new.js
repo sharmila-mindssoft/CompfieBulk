@@ -781,6 +781,9 @@ function RenderInput() {
             $('.bottomfield .snamepid', slObject).attr(
                 'id', 'dvpid' + v.l_position
             );
+            $('.bottomfield .txtsname', slObject).on('input', function(e) {
+                this.value = isCommon($(this));
+            });
 
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
