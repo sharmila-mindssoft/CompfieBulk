@@ -8708,8 +8708,8 @@ BEGIN
 
     if u_cat_id_ = 7  THEN
         select count(user_id) as cnt from tbl_user_units as t1, tbl_units as t2
-        where t1.unit_id = t2.unit_id and t1.domain_id = domain_id_ and 
-        t1.user_id = c_user_id_  and t2.country_id = country_id_ and 
+        where t1.unit_id = t2.unit_id and t1.domain_id = domain_id_ and
+        t1.user_id = c_user_id_  and t2.country_id = country_id_ and
         t1.client_id in (select client_id from tbl_user_clients where user_id = p_user_id_);
     end if;
 
