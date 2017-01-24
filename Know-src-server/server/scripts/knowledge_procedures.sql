@@ -1410,7 +1410,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
-    SELECT user_category_id INTO user_category FROM tbl_users WHERE user_id = userid;
+    SELECT user_category_id INTO user_category FROM tbl_user_login_details WHERE user_id = userid;
     IF user_category in (1,2) then
         select business_group_id, business_group_name, client_id
         from tbl_business_groups order by business_group_name ASC;
@@ -7513,12 +7513,11 @@ BEGIN
 
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         where t1.is_active = 1
         and t1.is_disable = 0
         and t1.user_category_id = 5
         group by user_id;
-
-
 END //
 
 DELIMITER ;
@@ -7540,6 +7539,7 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.is_active = 1
@@ -7572,6 +7572,7 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.user_category_id = 7 and t1.is_active = 1
@@ -7604,6 +7605,7 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.user_category_id = 8 and t1.is_active = 1

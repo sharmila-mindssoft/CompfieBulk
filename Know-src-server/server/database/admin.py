@@ -1398,6 +1398,12 @@ def get_reassign_user_filters(db):
         grp_ids = list(grp_ids)
         le_ids = set(le_ids)
         le_ids = list(le_ids)
+        if len(le_ids) == 0 :
+            le_ids = None
+        if len(grp_ids) == 0 :
+            grp_ids = None
+        if len(p_ids) == 0 :
+            p_ids = None
         domain_manag_users.append(admin.UserInfo(
             user_id, e_name, c_d_list, p_ids,
             t["user_category_id"], grp_ids, le_ids
