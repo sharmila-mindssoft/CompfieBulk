@@ -154,15 +154,16 @@ function renderControls(){
 		});
 		$(event.target).parent().addClass('active');
 
-		var currentClass = $(event.target).find('i').attr('class');
-		Search_status.removeClass();
+		var currentClass = $(event.target).html();
+    Search_status_1.html(currentClass);
+		/*Search_status.removeClass();
 		if(currentClass != undefined){
 		  Search_status.addClass(currentClass);
 		  Search_status.text('');
 		}else{
 		  Search_status.addClass('fa');
 		  Search_status.text('All');
-		}
+		}*/
 		processSearch();
 	});
 

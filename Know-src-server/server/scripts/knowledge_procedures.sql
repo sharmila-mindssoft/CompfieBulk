@@ -521,8 +521,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_get_audit_trails`(
     IN _from_date varchar(10), IN _to_date varchar(10),
     IN _user_id varchar(10), IN _form_id varchar(10),
-    IN _country_id int(11), IN _category_id int(11),
-    IN _from_limit INT, IN _to_limit INT
+    IN _category_id int(11), IN _from_limit INT, IN _to_limit INT
 )
 BEGIN
     if _category_id = 1 then
@@ -533,6 +532,7 @@ BEGIN
         AND date(t1.created_on) <= _to_date
         AND COALESCE(t1.form_id,'') LIKE _form_id
         AND t1.user_id LIKE _user_id
+        AND t1.user_category_id like _category_id
         -- AND t2.user_id LIKE _user_id
         -- AND t2.user_category_id in (1,2,3,4,5,6,7,8)
         -- ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
@@ -6388,7 +6388,8 @@ CREATE PROCEDURE `sp_legalentity_closure_save`(
 in _u_id int(11), _le_id int(11), _is_cl tinyint(1), _cl_on timestamp, _rem varchar(500))
 BEGIN
     if _is_cl = 1 then
-        if((select DATEDIFF(NOW(), closed_on) from tbl_legal_entities
+        if((select (case when closed_on is not null then
+        DATEDIFF(NOW(), closed_on) else 0 end) from tbl_legal_entities
         where legal_entity_id = _le_id) < 90)then
 
             update tbl_legal_entities
@@ -8722,3 +8723,53 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Export Audit Trails
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_export_audit_trails`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_export_audit_trails`(
+    IN _from_date varchar(10), IN _to_date varchar(10),
+    IN _user_id varchar(10), IN _form_id varchar(10),
+    IN _category_id int(11))
+BEGIN
+    if _category_id = 1 then
+        SELECT t1.user_id,
+        (select concat(employee_name,'-',employee_code) from tbl_users where
+        user_id = t1.user_id) as employee_name,
+        (Select user_category_name from tbl_user_category where
+        user_category_id = t1.user_category_id) as user_category_name,
+        t1.user_category_id, t1.form_id, t1.action, t1.created_on,
+        (select form_name from tbl_forms where form_id = t1.form_id) as
+        form_name
+        FROM tbl_activity_log as t1 -- , tbl_users as t2
+        WHERE
+        date(t1.created_on) >= _from_date
+        AND date(t1.created_on) <= _to_date
+        AND COALESCE(t1.form_id,'') LIKE _form_id
+        AND t1.user_id LIKE _user_id
+        ORDER BY t1.created_on DESC;
+    end if;
+
+    if _category_id > 2 then
+        SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on,
+        (select concat(employee_name,'-',employee_code) from tbl_users where
+        user_id = t1.user_id) as employee_name,
+        (Select user_category_name from tbl_user_category where
+        user_category_id = t1.user_category_id) as user_category_name,
+        (select form_name from tbl_forms where form_id = t1.form_id) as
+        form_name
+    FROM tbl_activity_log as t1 -- , tbl_users as t2, tbl_user_countries as t3
+    WHERE
+        date(t1.created_on) >= _from_date
+        AND date(t1.created_on) <= _to_date
+        AND COALESCE(t1.form_id,'') LIKE _form_id
+        AND t1.user_id LIKE _user_id
+        AND t1.user_category_id like _category_id
+        ORDER BY t1.created_on DESC;
+    end if;
+END

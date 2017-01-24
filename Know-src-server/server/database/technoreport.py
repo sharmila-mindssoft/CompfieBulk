@@ -1106,10 +1106,13 @@ def get_usermapping_report_dataset(
     print args
     expected_result = 4
     result = db.call_proc_with_multiresult_set(
-       "sp_usermapping_report_details", args, expected_result
+       "sp_usermapping_report_details", (
+        user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id, from_count, page_count
+       ), expected_result
     )
     print "result"
     print result
+    print len(result)
     techno_details = unit_domains = domains = {}
 
     if(len(result) > 0):
