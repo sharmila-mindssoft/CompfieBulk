@@ -336,10 +336,12 @@ function RenderInput() {
                         if (sts == true) {
                             $('.organisationlist').removeClass('active');
                             $('.organisationlist i').removeClass('fa-check');
+                            _renderinput.selected_iids = [];
                         }
                         else {
                             $('.organisationlist').addClass('active');
                             $('.organisationlist i').addClass('fa-check');
+                            _renderinput.selected_iids = [];
                             $.each(ORGANISATION_INFO, function(k, v) {
                                 if ((v.c_id == _renderinput.countryId) && (v.d_id == _renderinput.domainId)) {
                                     _renderinput.selected_iids.push(v.org_id)
@@ -1238,7 +1240,7 @@ function RenderInput() {
                     $('#gid'+v.g_id).removeClass('active');
                     $('#gid'+v.g_id+' i').removeClass('fa-check');
                     $('#gidall'+v.l_position).removeClass('active');
-                    $('#gidall'+v,l_position+' i').removeClass('fa-check');
+                    $('#gidall'+v.l_position+' i').removeClass('fa-check');
                     _renderinput.unloadGeosNames(v.l_position, v.g_id);
                 }else {
                     $('#gid'+v.g_id).addClass('active');
