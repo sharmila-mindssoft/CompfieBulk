@@ -1304,7 +1304,7 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         return statutory
 
     fromcount = rcount
-    tocount = 2
+    tocount = 10
     print [user_id, approve_status, fromcount, tocount]
     print "--------------"
     result = db.call_proc_with_multiresult_set(

@@ -6934,7 +6934,7 @@ CREATE PROCEDURE `sp_tbl_users_to_notify`(
 BEGIN
 
     select user_id from tbl_user_login_details where
-    is_active = 1 and is_disable = 0 and
+    is_active = 1 and
     user_category_id in (1, 3, 4, 5, 7, 8);
 
 END //
@@ -8771,4 +8771,6 @@ BEGIN
         AND t1.user_category_id like _category_id
         ORDER BY t1.created_on DESC;
     end if;
-END
+END //
+
+DELIMITER ;

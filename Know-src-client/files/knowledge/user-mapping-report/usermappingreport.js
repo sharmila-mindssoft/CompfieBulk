@@ -689,7 +689,6 @@ function loadUserMappingDetailsList(data)
   var cloneheading = tableheading.clone();
   $('.usermapping-header').append(cloneheading);
 
-  alert("1:"+domainsList.length)
   if(domainsList.length > 0)
   {
     for(var i=0;i<domainsList.length;i++)
@@ -720,7 +719,6 @@ function loadUserMappingDetailsList(data)
   var assignedDomainVal_1 = '';
   var getDomainVal  = '';
   var col=4;
-  alert("2:"+technoDetails.length)
   for(var i=0;i<technoDetails.length;i++)
   {
     //alert(technoDetails.length);
@@ -801,6 +799,13 @@ function loadUserMappingDetailsList(data)
 
 function getDomainAssigned(domain_header, unit_id, data)
 {
+  var d_header = null;
+  if(domain_header.indexOf("Domain User") >= 0){
+    d_header = "Domain Executive"+" "+domain_header.split(" ")[2]+" "+domain_header.split(" ")[3];
+  }
+  else{
+    d_header = domain_header;
+  }
   unit_domains = data.unit_domains;
   var assignedDomainVal = "NA";
   for(var j=0;j<unit_domains.length;j++)
@@ -808,7 +813,7 @@ function getDomainAssigned(domain_header, unit_id, data)
     if(unit_domains[j].unit_id == unit_id)
     {
       var domain_name = getDomainName(unit_domains[j].domain_id);
-      if(domain_header == (unit_domains[j].user_category_name+" "+domain_name))
+      if(d_header == (unit_domains[j].user_category_name+" "+domain_name))
       {
         assignedDomainVal = unit_domains[j].employee_name;
       }
