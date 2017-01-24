@@ -103,6 +103,9 @@ possibleFailure = function(err, extra_details) {
     else if (err == "TransactionExists") {
         displayMessage(msg.transaction_exists);
     }
+    else if (err == "InvalidPassword") {
+        displayMessage("Invalid password");
+    }
     else {
         displayMessage(err);
     }
@@ -1922,9 +1925,11 @@ function pageControls() {
     });
 
     SaveButton.click(function() {
+        displayLoader();
         IS_SAVE = true;
         map_data = _viewPage.make_data_format(0);
         if (map_data == false) {
+            hideLoader();
             displayMessage(msg.location_selection_required);
             return false;
         }
@@ -1943,14 +1948,15 @@ function pageControls() {
     });
 
     SubmitButton.click(function() {
+        displayLoader();
         IS_SAVE = false;
         map_data = _viewPage.make_data_format(1);
         if (map_data == false) {
+            hideLoader();
             displayMessage(msg.location_selection_required);
             return false;
         }
         if (compliance_edit == false) {
-
             if (IS_EDIT)
                 _fetchback.updateMapping(map_data);
             else {
