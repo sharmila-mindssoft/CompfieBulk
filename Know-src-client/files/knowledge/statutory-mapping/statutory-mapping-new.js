@@ -1994,6 +1994,9 @@ function pageControls() {
             if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)){
                 $(".statu-date-label", RecurringPan).hide();
             }
+            else if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == true)){
+                $(".statu-date-label", RecurringPan).show();
+            }
         }
     });
 
