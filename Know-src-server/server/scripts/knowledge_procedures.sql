@@ -5091,12 +5091,11 @@ BEGIN
     t4.country_id = t2.country_id
     where t4.user_id = userid;
 
-    select count(t1.statutory_mapping_id) as total
-    from tbl_statutory_mappings as t1
+    select count( distinct t1.statutory_mapping_id) as total
+    from tbl_compliances as t1
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
-    t3.country_id = t1.country_id
-    where t3.user_id = userid
-    limit fromcount, tocount;
+    t3.country_id = t1.country_id and t1.is_approved like approvestatus
+    where t3.user_id = userid;
 
 END //
 
@@ -8274,7 +8273,7 @@ BEGIN
     tbl_client_database as t1;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- To export user mapping report
@@ -8449,7 +8448,7 @@ BEGIN
     end if;
 END //
 
-DELIMITER;
+DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Export client details
@@ -8608,7 +8607,7 @@ BEGIN
 
 END //
 
-DELIMITER;
+DELIMITER ;
 
 DROP PROCEDURE IF EXISTS `sp_get_country_domain_name`;
 

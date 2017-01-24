@@ -1,4 +1,9 @@
 var fetch = mirror;
+var j = 1;
+var STATU_MAPPINGS;
+var STATU_TOTALS;
+var show_more = false;
+
 //
 // callback with compfie input data
 //
@@ -52,11 +57,37 @@ function FetchBack() {
                 else {
                     STATU_MAPPINGS = response.statu_mappings;
                     STATU_TOTALS = response.total_records;
+                    _listPage.clearList();
                     _listPage.renderList(STATU_MAPPINGS, STATU_TOTALS);
                 }
                 hideLoader();
             }
         );
+    };
+
+    this.getMoreMappedList = function() {
+
+        ap_status = $('.ap-status-li.active').attr('value');
+
+        rcount = _renderinput.show_map_count;
+        console.log(rcount);
+        if((rcount < STATU_TOTALS) && (show_more) )  {
+            show_more = false;
+            displayLoader();
+            fetch.getStatutoryMappings(ap_status, rcount,
+                function(status, response){
+                    if (status != null) {
+                        displayMessage(status);
+                    }
+                    else {
+                        $.merge(STATU_MAPPINGS, response.statu_mappings);
+                        STATU_TOTALS = response.total_records;
+                        _listPage.renderList(response.statu_mappings, STATU_TOTALS);
+                    }
+                    hideLoader();
+                }
+            );
+        }
     };
 
     this.getMapDatabyId = function(mapping_id, compliance_id) {
@@ -346,19 +377,21 @@ function FetchBack() {
 // Render List Page
 //
 function ListPage() {
-
-    this.renderList = function(data, tRecord) {
+    this.clearList = function() {
         $('.tbl-statutorymapping-list .table-no-record').remove();
         $('.tbl-statutorymapping-list .mapping-row').remove();
         $('.tbl-statutorymapping-list .compliance-row').remove();
+        _renderinput.show_map_count = 0;
+        j = 1;
+    };
+
+    this.renderList = function(data, tRecord) {
 
         if (data.length == 0) {
             norow = $('#templates .table-no-record').clone();
             $('.tbl-statutorymapping-list').append(norow);
             return;
         }
-        // $('.tbl-statutorymapping-list tr').find('mapping_row');
-        // $('.tbl-statutorymapping-list tr').find('compliance_row');
 
         function comp_row(rowObjec, cdata, mapping_id) {
             var x = 1;
@@ -396,11 +429,12 @@ function ListPage() {
           }
         }
 
-        var j = 1;
+
         $.each(data, function(k, v) {
             orgNames = v.i_names.join(' , ');
             s_names = v.s_maps.join(', ');
             crow = $('#templates .mapping-row').clone();
+            _renderinput.show_map_count = j;
             $('.sno', crow).text(j);
             $('.c_name', crow).text(v.c_name);
             $('.d_name', crow).text(v.d_name);
@@ -413,6 +447,7 @@ function ListPage() {
                 compliance_edit = false;
                 _listPage.displayMappingEdit(v.m_id, null);
             });
+
             if (v.is_active == true){
                 $('.map_status', crow).attr('title', msg.active_tooltip);
                 $('.map_status', crow).addClass("fa-check text-success");
@@ -463,6 +498,7 @@ function ListPage() {
             $('.tbl-statutorymapping-list').append(crow);
             comp_row($('.tbl-statutorymapping-list'), v.mapped_comps, v.m_id);
         });
+        show_more = true;
     };
 
     this.displayMappingEdit = function(map_id, comp_id) {
@@ -509,6 +545,7 @@ function ListPage() {
                 filteredList.push(data);
             }
         });
+        _listPage.clearList();
         _listPage.renderList(filteredList, filteredList.length);
     };
 }
@@ -629,6 +666,7 @@ function ViewPage() {
     };
     this.show = function() {
         ViewScreen.show();
+        show_more = false;
         this.showFirstTab();
     };
     this.hide = function() {

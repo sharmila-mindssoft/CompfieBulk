@@ -24,7 +24,6 @@ from server.database.knowledgemaster import (
 )
 from server.exceptionmessage import process_error, fetch_error
 
-from server.constants import RECORD_DISPLAY_COUNT
 
 APPROVAL_STATUS = ["Yet to submit", "Pending", "Approved", "Rejected", "Approved & Notified"]
 
@@ -438,13 +437,9 @@ def save_compliance(
             file_name = file_list.file_name
             file_size = file_list.file_size
 
-        print file_name, file_size
-        print file_list
         if data.is_file_removed :
             # remove uploaded file
-            print file_name, file_size
             remove_uploaded_file(file_path + "/" + file_name)
-            print " remove process"
             file_name = ""
             file_size = 0
 
@@ -704,7 +699,6 @@ def update_statutory_mapping(db, data, updated_by):
 
     link = "/knowledge/approve-statutory-mapping"
     save_messages(db, 3, "Statutory Mapping", text, link, updated_by)
-    print text
     return True
 
 
@@ -786,12 +780,8 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
             file_name = file_list.file_name
             file_size = file_list.file_size
 
-        print file_name, file_size
-        print file_list
         if data.is_file_removed :
             # remove uploaded file
-            print file_name, file_size
-            print " remove process"
             remove_uploaded_file(file_path + "/" + file_name)
             file_name = ""
             file_size = 0
@@ -1314,8 +1304,9 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         return statutory
 
     fromcount = rcount
-    tocount = rcount + RECORD_DISPLAY_COUNT
+    tocount = 2
     print [user_id, approve_status, fromcount, tocount]
+    print "--------------"
     result = db.call_proc_with_multiresult_set(
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 6
@@ -1378,7 +1369,7 @@ def approve_statutory_mapping_list(db, user_id, request):
 
     for m in mappings :
         map_id = m["statutory_mapping_id"]
-        if m["document_name"] is None :
+        if (m["document_name"] is None or m["document_name"] == ''):
             c_name = m["compliance_task"]
         else :
             c_name = m["document_name"] + " - " + m["compliance_task"]
@@ -1411,7 +1402,7 @@ def get_compliance_details(db, user_id, compliance_id):
     for g in geo_info:
         geo_names.append(g["parent_names"])
 
-    if c_info["document_name"] is None :
+    if c_info["document_name"] is None or c_info["document_name"] == '':
         c_name = c_info["compliance_task"]
     else :
         c_name = c_info["document_name"] + " - " + c_info["compliance_task"]
@@ -1432,7 +1423,7 @@ def get_compliance_details(db, user_id, compliance_id):
             )
             date_list.append(s_date)
     summary, dates = make_summary(date_list, c_info["frequency_id"], c_info)
-    if dates is not None :
+    if summary != '' and dates is not None or dates != '' :
         summary += ' on (%s)' % (dates)
     return (
         c_info["compliance_id"], c_info["statutory_provision"],

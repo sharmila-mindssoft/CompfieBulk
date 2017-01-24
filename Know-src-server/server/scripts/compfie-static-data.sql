@@ -73,7 +73,7 @@ INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-un
 -- INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
 -- INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail Login Trace', '/knowledge/audit-trail-login-trace', 43, null);
--- INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 48, NULL);
+--INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 48, NULL);
 INSERT INTO tbl_forms VALUES(49, 3, 'Reassign User Report', '/knowledge/reassign-user-report', 49, NULL);
 INSERT INTO tbl_forms VALUES(51, 3, 'Form Authorization - IP Settings Report', '/knowledge/ip-settings-report', 51, null);
 INSERT INTO tbl_forms VALUES(52, 3, 'Allocate Server Report', '/knowledge/allocate-database-environment-report', 52, NULL);
@@ -145,9 +145,6 @@ INSERT INTO tbl_form_category VALUES(44, 0, 0, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(46, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
-
-
-
 
 -- tbl_user_login_details
 -- user_id, user_category_id, username, password, is_active --- p@$$word@123
