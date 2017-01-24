@@ -207,7 +207,6 @@ function loadTMList(){
                 $('.tm-techno-manager-name', clone).keyup(function(e){
                     var condition_fields = ["country_domains", "user_id"];
                     var condition_values = [[group_countries[value.ct_id], group_domains[value.ct_id]], TechnoManagerId.val()];
-                    
                     var text_val = $(this).val();
                     selected_textbox = $(this);
                     selected_textid = $("#techno_manager_id_"+value.ct_id);
@@ -527,7 +526,7 @@ function getTEValidCountries(){
             TECountries.push(cn_id);
         }
 
-        for(var i=0; i<d_ids; i++){
+        for(var i=0; i<d_ids.length; i++){
             if ($.inArray(d_ids[i], TEDomains) == -1) {
                 TEDomains.push(d_ids[i]);
             }

@@ -1077,10 +1077,31 @@ function commonAutoComplete1(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  //alert(condition_values3);
                   if(jQuery.type( list_val[i][value] ) == 'array'){
                     if(value == 'country_domains'){
-                      var cresult = false;
+                      for(var j=0; j<condition_values[key][0].length; j++){
+                          var cresult = false;
+                          for(var k=0; k<list_val[i][value].length; k++)  {
+                              if(list_val[i][value][k]["c_id"] == condition_values[key][0][j]){
+                                  cresult = true;
+                              }
+                          }
+                      }
+                      for(var j=0; j<condition_values[key][1].length; j++){
+                          var dresult = false;
+                          for(var k=0; k<list_val[i][value].length; k++)  {
+                              if(list_val[i][value][k]["d_id"] == condition_values[key][1][j]){
+                                  dresult = true;
+                              }
+                          }
+                          
+                      }
+                      if(cresult && dresult){
+                          condition_result = true;
+                      }else{
+                          condition_result = false;
+                      } 
+                      /*var cresult = false;
                       var dresult = false;
                       for(var j=0; j<list_val[i][value].length; j++){
                         if($.inArray(list_val[i][value][j]["c_id"], condition_values[key][0]) >= 0){
@@ -1094,19 +1115,14 @@ function commonAutoComplete1(
                         condition_result = true;
                       }else{
                         condition_result = false;
-                      }
+                      }*/
                     }else if(value == 'p_user_ids' && jQuery.type( condition_values[key] ) == 'array'){
                       var common_values = [];
                       var array1 = condition_values[key];
                       var array2 = list_val[i][value];
-
                       jQuery.grep(array1, function(el) {
-                        //alert(el +' in '+ array1);
                         if (jQuery.inArray(el, array2) == 0) common_values.push(el);
                       });
-                      //alert(common_values)
-                      //alert(array1 + '==' + array2)
-                      //alert(common_values.length)
                       if(common_values.length > 0){
                         condition_result = true;
                       }else{
