@@ -370,7 +370,10 @@ function saveOrganization() {
     var org_count = $("#o-cnt").val();
     var le_cnt = $("#le-cnt").val();    
     var d_cnt = $("#d-cnt").val();
-
+    if(organization_details[le_cnt]){
+        organization_details[le_cnt][d_cnt] = {};    
+    }
+    
     for (var i = 1; i <= org_count; i++) {
         var org_selected_class = "org-selected-" + le_cnt + "-" + d_cnt + "-" + i;
         var org_id_class = "industry-" + le_cnt + "-" + d_cnt + "-" + i;
