@@ -50,7 +50,7 @@ function getStatutorynatures() {
 		  loadStatNatureData(statutorynatureList);
 	}
 	function onFailure(error) {
-		custom_alert(error);
+		displayMessage(error);
 	}
   displayLoader();
 	mirror.getStatutoryNatureList(function (error, response) {
