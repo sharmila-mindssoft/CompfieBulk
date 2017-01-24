@@ -170,7 +170,6 @@ class ConvertJsonToCSV(object):
         from_date = string_to_datetime(from_date).date()
         to_date = string_to_datetime(to_date).date()
         args = [from_date, to_date, user_id, form_id, category_id]
-        print args
         result = db.call_proc('sp_export_audit_trails', args)
         is_header = False
         if not is_header:
@@ -181,8 +180,6 @@ class ConvertJsonToCSV(object):
             self.write_csv(csv_headers, None)
             is_header = True
 
-        print "csv headers"
-        print csv_headers
         for row in result:
             u_id = row["user_id"]
             form_id = row["form_id"]
@@ -190,10 +187,7 @@ class ConvertJsonToCSV(object):
             date = row["created_on"].strftime("%d-%b-%Y %H:%M")
             user_name = row["employee_name"]
             user_category_name = row["user_category_name"]
-            print "user"
-            print u_id
             if user_name is None:
-                print "a"
                 user_name = "Administrator"
             form_name = row["form_name"]
             csv_values = [
@@ -212,8 +206,6 @@ class ConvertJsonToCSV(object):
                 args = [user_id, user_category_id, '%']
             else:
                 args = [user_id, user_category_id, group_id]
-            print "inside args"
-            print args
             result = db.call_proc_with_multiresult_set("sp_reassign_user_report_getdata", args, 2)
 
             if len(result) > 0:
@@ -226,25 +218,17 @@ class ConvertJsonToCSV(object):
                     self.write_csv(csv_headers, None)
                     is_header = True
 
-                print "csv headers"
-                print csv_headers
 
                 for cl in result[0]:
                     c_names = []
                     client_id = int(cl.get("client_id"))
-                    print client_id
                     group_name = cl.get("group_name")
-                    print group_name
                     assigned_on = cl.get("assigned_on")
                     emp_code_name = cl.get("emp_code_name")
                     remarks = cl.get("remarks")
                     le_count = int(cl.get("le_count"))
                     for country in result[1]:
-                        print "inside 2 loop"
-                        print client_id
                         if client_id == country.get("client_id"):
-                            print "inside cl"
-                            print country.get("client_id")
                             if len(c_names) == 0:
                                 c_names.append(country.get("country_name"))
                             else:
@@ -265,8 +249,6 @@ class ConvertJsonToCSV(object):
                     args = [user_id, user_category_id, int(group_id), bg_id, int(le_id), int(d_id)]
                 else:
                     args = [user_id, user_category_id, int(group_id), bg_id, int(le_id), int(d_id)]
-                print "inside args"
-                print args
                 result = db.call_proc("sp_reassign_user_report_domain_user_getdata", args)
                 if len(result[0]) > 0:
                     is_header = False
@@ -278,8 +260,6 @@ class ConvertJsonToCSV(object):
                         self.write_csv(csv_headers, None)
                         is_header = True
 
-                    print "csv headers"
-                    print csv_headers
 
                     for d in result:
                         unit_code = d["unit_code"]
@@ -309,8 +289,6 @@ class ConvertJsonToCSV(object):
             org_id = client_details_none_values.split(",")[3]
             unit_id = client_details_none_values.split(",")[1]
             from_date = client_details_none_values.split(",")[4]
-            print "from_date"
-            print from_date
             # if (from_date is not None or from_date != 'null'):
             #     print "a"
             #     from_date = string_to_datetime(from_date).date()
@@ -322,22 +300,15 @@ class ConvertJsonToCSV(object):
 
         args = [session_user, country_id, client_id, legal_entity_id, bgrp_id, domain_id, org_id,
                 unit_id, from_date, to_date, unit_status]
-        print "args"
-        print args
 
         client_details_dataset = []
         expected_result = 3
         client_details_dataset = db.call_proc_with_multiresult_set("sp_client_details_report_export_unitlist", (
             session_user, country_id, client_id, legal_entity_id, bgrp_id, domain_id, org_id,
             unit_id, from_date, to_date, unit_status), expected_result)
-        print client_details_dataset
         unit_details = unit_domains = {}
-        print "total length"
-        print len(client_details_dataset)
         if(len(client_details_dataset) > 0):
             if(len(client_details_dataset[1]) > 0):
-                print "result 1"
-                print client_details_dataset[1]
                 unit_details = client_details_dataset[1]
 
             if(len(client_details_dataset[2]) > 0):
@@ -352,8 +323,6 @@ class ConvertJsonToCSV(object):
                 self.write_csv(csv_headers, None)
                 is_header = True
 
-            print "csv headers"
-            print csv_headers
 
             for units in unit_details:
                 unit_code = units.get("unit_code")
@@ -388,7 +357,6 @@ class ConvertJsonToCSV(object):
     def generate_user_mapping_report(
         self, db, request, session_user
     ):
-        print "inside user mapping report details"
         country_id = request.country_id
         client_id = request.client_id
         legal_entity_id = request.legal_entity_id
@@ -402,8 +370,6 @@ class ConvertJsonToCSV(object):
         usermapping_report_dataset = []
 
         args = [session_user, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id]
-        print "args"
-        print args
         expected_result = 4
         usermapping_report_dataset = db.call_proc_with_multiresult_set("sp_usermapping_report_details_for_export", (
             session_user, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id),
@@ -412,8 +378,6 @@ class ConvertJsonToCSV(object):
 
         if(len(usermapping_report_dataset) > 0):
             if(len(usermapping_report_dataset[1]) > 0):
-                print "result 1"
-                print usermapping_report_dataset[1]
                 techno_details = usermapping_report_dataset[1]
 
             if(len(usermapping_report_dataset[2]) > 0):
@@ -422,21 +386,15 @@ class ConvertJsonToCSV(object):
             if(len(usermapping_report_dataset[3]) > 0):
                 domains = usermapping_report_dataset[3]
 
-            print "domain list"
-            print domains
             is_header = False
             if not is_header:
                 csv_headers = ["Unit", "Techno Manager", "Techno User"]
                 for domain in domains:
-                    print "inside domain"
-                    print domain.get("domain_name")
                     csv_headers.append("Domain Manager "+domain.get("domain_name"))
                     csv_headers.append("Domain User "+domain.get("domain_name"))
                 self.write_csv(csv_headers, None)
                 is_header = True
 
-            print "csv headers"
-            print csv_headers
 
             for techs in techno_details:
                 unitName = techs.get("unit_name")
@@ -444,18 +402,20 @@ class ConvertJsonToCSV(object):
                 tech_user = techs.get("techno_user")
                 csv_values = [unitName, tech_mgr, tech_user]
                 columnCount = int(len(csv_headers))
-                print columnCount
                 i = 3
                 while (i < columnCount):
-                    print "csv[i]"
-                    print i
-                    print csv_headers[i]
                     domain_user = "NA"
                     for unit in unit_domains:
                         if (unit.get("unit_id") == techs.get("unit_id")):
                             for domain in domains:
                                 if(domain.get("domain_id") == unit.get("domain_id")):
-                                    if(csv_headers[i] == (unit.get("user_category_name")+" "+domain.get("domain_name"))):
+                                    temp_header = None
+                                    if(csv_headers[i].find("Domain User")):
+                                        temp_header = "Domain Executive"+" "+csv_headers[i].split(" ")[2]+" "+csv_headers[i].split(" ")[2]
+                                    else:
+                                        temp_header = csv_headers[i]
+
+                                    if(temp_header == (unit.get("user_category_name")+" "+domain.get("domain_name"))):
                                         domain_user = unit.get("employee_name")
                                         break
                                     else:
