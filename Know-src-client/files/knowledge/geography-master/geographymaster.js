@@ -648,7 +648,7 @@ function GetGeographies() {
     loadGeographiesList(geographiesList);
   }
   function onFailure(error) {
-    custom_alert(error);
+    displayMessage(error);
   }
   displayLoader();
   mirror.getGeographies(function (error, response) {
