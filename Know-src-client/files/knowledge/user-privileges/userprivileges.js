@@ -62,7 +62,7 @@ function initialize() {
     loadUserGroupdata(uglist);
   }
   function onFailure(error) {
-    custom_alert(error);
+    displayMessage(error);
   }
   displayLoader();
   mirror.getAdminUserGroupList(function (error, response) {
@@ -374,7 +374,6 @@ $('#btnUserGroupSubmit').click(function () {
         initialize();
       }
       function onFailure(error) {
-        alert(error)
         if (error == 'GroupNameAlreadyExists') {
           displayMessage(message.groupname_exists);
         } else if (error == 'CannotDeactivateUserExists') {
