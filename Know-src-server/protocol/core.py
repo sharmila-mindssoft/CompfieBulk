@@ -3960,32 +3960,35 @@ class UserMappingUnitDetails(object):
 
 class UserMappingReportTechno(object):
     def __init__(
-        self, unit_id, techno_manager, techno_user
+        self, unit_id, techno_manager, techno_user, unit_code_with_name
     ):
         self.unit_id = unit_id
         self.techno_manager = techno_manager
         self.techno_user = techno_user
+        self.unit_code_with_name = unit_code_with_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "unit_id", "techno_manager", "techno_user"
+                "unit_id", "techno_manager", "techno_user", "unit_code_with_name"
             ]
         )
         unit_id = data.get("unit_id")
         techno_manager = data.get("techno_manager")
         techno_user = data.get("techno_user")
+        unit_code_with_name = data.get("unit_code_with_name")
 
         return UserMappingReportTechno(
-                unit_id, techno_manager, techno_user
+                unit_id, techno_manager, techno_user, unit_code_with_name
         )
 
     def to_structure(self):
         return {
             "unit_id": self.unit_id,
             "techno_manager": self.techno_manager,
-            "techno_user": self.techno_user
+            "techno_user": self.techno_user,
+            "unit_code_with_name": self.unit_code_with_name
         }
 
 class UserMappingReportDomain(object):

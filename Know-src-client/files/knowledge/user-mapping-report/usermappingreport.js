@@ -65,7 +65,6 @@ function initialize() {
     divisionList = data.usermapping_unit;
     categoryList = data.usermapping_unit;
     assignedUnitList = data.usermapping_unit;
-    console.log(data)
     resetAllfilter();
   }
   function onFailure(error) {
@@ -606,7 +605,6 @@ function loadusermappingdetails() {
     }
 
     function onSuccess(data) {
-      console.log(data);
       if (csv) {
           var download_url = data.link;
           window.open(download_url, '_blank');
@@ -691,7 +689,7 @@ function loadUserMappingDetailsList(data)
   var cloneheading = tableheading.clone();
   $('.usermapping-header').append(cloneheading);
 
-
+  alert("1:"+domainsList.length)
   if(domainsList.length > 0)
   {
     for(var i=0;i<domainsList.length;i++)
@@ -722,6 +720,7 @@ function loadUserMappingDetailsList(data)
   var assignedDomainVal_1 = '';
   var getDomainVal  = '';
   var col=4;
+  alert("2:"+technoDetails.length)
   for(var i=0;i<technoDetails.length;i++)
   {
     //alert(technoDetails.length);
@@ -731,8 +730,8 @@ function loadUserMappingDetailsList(data)
     sno = i + 1;
 
     $('.sno', clone1).text(sno);
-    var unit_code_name = getUnitName(technoDetails[i].unit_id);
-    $('.unit-name', clone1).text(unit_code_name);
+    //var unit_code_name = getUnitName(technoDetails[i].unit_id);
+    $('.unit-name', clone1).text(technoDetails[i].unit_code_with_name);
     $('.techno-manager', clone1).text(technoDetails[i].techno_manager);
     $('.techno-user', clone1).text(technoDetails[i].techno_user);
     $('.tbody-usermappingdetails-list').append(clone1);

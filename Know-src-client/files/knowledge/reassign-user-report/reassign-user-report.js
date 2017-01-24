@@ -48,7 +48,6 @@ function initialize()
 {
 	var t0, t1;
 	function onSuccess(data) {
-		console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate:');
 		userCategoryList = data.user_categories;
 		userList = data.reassign_user_clients;
 		userClientGroups = data.clients;
@@ -106,7 +105,6 @@ ExportButton.click(function () {
 			}
 			u_m_none = bg_id_none +","+LegalEntity.val()+","+Domain.val();
 			function onSuccess(data) {
-				console.log(data.link)
 				if (csv) {
 					var download_url = data.link;
 					window.open(download_url, '_blank');
@@ -308,7 +306,6 @@ function loaduserGroupAssignedList(tbodyClass, data)
 
 	if($('#group-id').val() > 0)
 	{
-		console.log($('#group-id').val())
 		client_occur_cnt = 0;
 		for(var i=0;i<data.length;i++)
 		{
@@ -421,7 +418,6 @@ function bindReassignTechSubData(data, tbodyClass)
 function loadtechnoexecGroupAssignedList(tbodyClass, data)
 {
 	//data = userGroupAssignedList;
-	console.log("a")
 	tbodyClass.find('tr').remove();
 	$('.categoryval').text($('#usercategory option:selected').text());
 	$('.userval').text($('#managerval').val());
@@ -432,7 +428,6 @@ function loadtechnoexecGroupAssignedList(tbodyClass, data)
 
 	if($('#group-id').val() > 0)
 	{
-		console.log("1:"+$('#group-id').val())
 		client_occur_cnt = 0;
 
 		for(var i=0;i<data.length;i++)
@@ -972,7 +967,7 @@ $('#domainval').keyup(function (e) {
       			}
       		}
       		if(occur < 0){
-      			domain_listdomain_list.push({
+      			domain_list.push({
 	              "domain_id": userDomainList[i].domain_id,
 	              "domain_name": userDomainList[i].domain_name,
 	            });
@@ -1002,12 +997,13 @@ function loadSearchFilter(categoryName)
 {
 	if(categoryName == "Techno Manager"){
 		$(".mandatory").show();
+		$("#te").hide();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();
 	}
 	else if(categoryName == "Techno Executive"){
-		$(".mandatory").show();
+		$("#te").hide();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();

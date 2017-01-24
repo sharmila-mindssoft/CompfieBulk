@@ -116,10 +116,8 @@ function GetGeographyLevels() {
 //retrive country autocomplete value
 //callback for autocomplete success
 function onAutoCompleteSuccess(value_element, id_element, val) {
-  console.log("val:"+id_element)
   value_element.val(val[1]);
   id_element.val(val[0]);
-  console.log("val:"+id_element.val())
   value_element.focus();
   for(var i=1;i<=10;i++){
     $('#level'+i).val('');
@@ -194,16 +192,13 @@ $('#submit').click(function () {
       }
     }
     if (result) {
-      console.log("1");
       var passlevellist = [];
       var isAdd = true;
       for (var k = 1; k <= 10; k++) {
         if ($('#levelid' + k).val() != '') {
           var isRemove = false;
           if ($('#level' + k).val().trim() == '') {
-            console.log("2");
             isRemove = true;
-            console.log('#level' + k);
           }
           passlevellist.push({
             'l_position': k,
@@ -233,7 +228,6 @@ $('#submit').click(function () {
         GetGeographyLevels();
       }
       function onFailure(error, response) {
-        console.log(error, response)
         if (error == 'DuplicateGeographyLevelsExists') {
           displayMessage(message.geographylevel_exists);
         } else if (error == 'LevelShouldNotbeEmpty') {
@@ -265,7 +259,6 @@ $('#submit').click(function () {
 //insert a new level in between levels
 $('#insert-record').click(function () {
   var insertlvl = parseInt($('#levelslist').val());
-  console.log(insertlvl);
   var insertvalue = $('#insertvalue').val().trim();
   var inserlevelstatus = true;
   if (insertvalue.length > 0) {

@@ -160,19 +160,16 @@ class ConvertJsonToCSV(object):
         to_date = request.to_date
         user_id = request.user_id_search
         form_id = request.form_id_search
-        country_id = request.country_id
         category_id = request.category_id
         if user_id is None:
             user_id = '%'
         if form_id is None :
             form_id = '%'
-        if country_id is None :
-            country_id = '%'
         if category_id is None :
             category_id = '%'
         from_date = string_to_datetime(from_date).date()
         to_date = string_to_datetime(to_date).date()
-        args = [from_date, to_date, user_id, form_id, country_id, category_id]
+        args = [from_date, to_date, user_id, form_id, category_id]
         print args
         result = db.call_proc('sp_export_audit_trails', args)
         is_header = False

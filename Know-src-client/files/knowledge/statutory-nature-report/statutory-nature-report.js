@@ -22,6 +22,7 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 var ReportData;
+var searchList = [];
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -54,12 +55,12 @@ function getStatutorynature() {
 
 function processSearch()
 {
+  searchList = [];
   c_name = FilterCountry.val().toLowerCase();
   s_n_name = FilterStatutorynature.val().toLowerCase();
 
   nature_status = $('.search-status-li.active').attr('value');
 
-  searchList = []
 
   for(var i in statutorynatureList){
     data = statutorynatureList[i];
@@ -75,7 +76,8 @@ function processSearch()
       }
     }
   }
-  loadStatNatureData(searchList);
+  //loadStatNatureData(searchList);
+  processPaging();
 }
 
 //display statutory nature list in view page
@@ -147,15 +149,16 @@ function renderControls(){
 		});
 		$(event.target).parent().addClass('active');
 
-		var currentClass = $(event.target).find('i').attr('class');
-		Search_status.removeClass();
+		var currentClass = $(event.target).html();
+    Search_status_1.html(currentClass);
+		/*Search_status.removeClass();
 		if(currentClass != undefined){
 		  Search_status.addClass(currentClass);
 		  Search_status.text('');
 		}else{
 		  Search_status.addClass('fa');
 		  Search_status.text('All');
-		}
+		}*/
 		processSearch();
 	});
 
@@ -251,15 +254,25 @@ function pageData(on_current_page){
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  for(i=sno;i<statutorynatureList.length;i++)
+  if(searchList.length > 0)
+  {
+    recordData = searchList;
+  }
+  else
+  {
+    recordData = statutorynatureList;
+  }
+  totalRecord = recordData.length;
+  for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
-    data.push(statutorynatureList[i]);
+    data.push(recordData[i]);
     if(i == (recordLength-1))
     {
       break;
     }
   }
+  //totalRecord = data.length;
   if (is_null == true) {
     hidePagePan();
   }

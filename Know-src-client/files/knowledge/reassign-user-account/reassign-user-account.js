@@ -95,12 +95,17 @@ var ManagerCategory = '';
 var ManagerId = '';
 var ReplaceManagerId = '';
 
+var RemarkView1 = $(".remark-view1");
+var SubmitView1 = $(".submit-view1");
+var RemarkView2 = $(".remark-view2");
+var SubmitView2 = $(".submit-view2");
+var RemarkView3 = $(".remark-view3");
+var SubmitView3 = $(".submit-view4");
+var RemarkView4 = $(".remark-view4");
+var SubmitView4 = $(".submit-view4");
+
 //retrive businessgroup form autocomplete value
 function clearData(){
-    $('.tbody-tm-view').empty();
-    $('.tbody-te-view').empty();
-    $('.tbody-dm-view').empty();
-    $('.tbody-de-view').empty();
     TMRemarks.val('');
     TERemarks.val('');
     DMRemarks.val('');
@@ -169,6 +174,14 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     } else if (current_id == 'de_legal_entity_id') {
         DEDomainName.val('');
         DEDomainId.val('');
+    }else if (current_id == 'techno_manager_id') {
+        clearData();
+        $('.tbody-tm-view').empty();
+        callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
+    }else if (current_id == 'techno_executive_id') {
+        clearData();
+        $('.tbody-te-view').empty();
+        callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
     }
 }
 
@@ -251,10 +264,15 @@ function loadTMList(){
         });
 
         if(isCount == false){
+            RemarkView1.hide();
+            SubmitView1.hide();
             var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
             var norecord_clone = norecord_row.clone();
             $('.tbl_norecords', norecord_clone).text('No Records Found');
             $('.tbody-tm-view').append(norecord_clone);
+        }else{
+            RemarkView1.show();
+            SubmitView1.show();
         }
         //console.log(group_countries)
         //console.log(group_domains)
@@ -294,10 +312,15 @@ function loadTEList(){
             getTEValidCountries();
         });
         if(isCount == false){
+            RemarkView2.hide();
+            SubmitView2.hide();
             var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
             var norecord_clone = norecord_row.clone();
             $('.tbl_norecords', norecord_clone).text('No Records Found');
             $('.tbody-te-view').append(norecord_clone);
+        }else{
+            RemarkView2.show();
+            SubmitView2.show();
         }
 
 }
@@ -408,10 +431,15 @@ function loadDMList(){
         });
 
         if(isCount == false){
+            RemarkView3.hide();
+            SubmitView3.hide();
             var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
             var norecord_clone = norecord_row.clone();
             $('.tbl_norecords', norecord_clone).text('No Records Found');
             $('.tbody-dm-view').append(norecord_clone);
+        }else{
+            RemarkView3.show();
+            SubmitView3.show();
         }
 }
 
@@ -433,10 +461,15 @@ function loadDEList(){
     });
 
     if(isCount == false){
+        RemarkView4.hide();
+        SubmitView4.hide();
         var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
         var norecord_clone = norecord_row.clone();
         $('.tbl_norecords', norecord_clone).text('No Records Found');
         $('.tbody-de-view').append(norecord_clone);
+    }else{
+        RemarkView4.show();
+        SubmitView4.show();
     }
 }
 
@@ -697,26 +730,7 @@ function pageControls(){
             }, condition_fields, condition_values);
     });
 
-    TMShow.click(function(){
-        clearData();
-        if(TechnoManagerId.val() == ''){
-            displayMessage(message.reassign_from_required)
-        }else{
-            callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
-        }
-    });
-
-    TEShow.click(function(){
-        clearData();
-        if(TechnoExecutiveId.val() == ''){
-            displayMessage(message.reassign_from_required)
-        }else{
-            callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
-        }
-    });
-
     DMShow.click(function(){
-        clearData();
         var dm_id = DomainManagerId.val();
         var group_id = DMGroupId.val();
         var le_id = DMLegalEntityId.val();
@@ -734,12 +748,14 @@ function pageControls(){
         }else if(domain_id == ''){
             displayMessage(message.domain_required);
         }else{
+            clearData();
+            $('.tbody-dm-view').empty();
             callDomainUserInfo(parseInt(dm_id), parseInt(group_id), parseInt(le_id), parseInt(domain_id), 'DM');
         }
     });
 
     DEShow.click(function(){
-        clearData();
+        
         var de_id = DomainExecutiveId.val();
         var group_id = DEGroupId.val();
         var le_id = DELegalEntityId.val();
@@ -757,6 +773,8 @@ function pageControls(){
         }else if(domain_id == ''){
             displayMessage(message.domain_required);
         }else{
+            clearData();
+            $('.tbody-de-view').empty();
             callDomainUserInfo(parseInt(de_id), parseInt(group_id), parseInt(le_id), parseInt(domain_id), 'DE');
         }
     });
@@ -836,7 +854,9 @@ function pageControls(){
                         function(error, response) {
                         if (error == null) {
                             displaySuccessMessage(message.reassign_users_account_success);
-                            TMShow.trigger( "click" );
+                            clearData();
+                            $('.tbody-tm-view').empty();
+                            callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
                         } else {
                             displayMessage(error);
                         }
@@ -892,7 +912,9 @@ function pageControls(){
                             function(error, response) {
                             if (error == null) {
                                 displaySuccessMessage(message.reassign_users_account_success);
-                                TEShow.trigger( "click" );
+                                clearData();
+                                $('.tbody-te-view').empty();
+                                callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
                             } else {
                                 displayMessage(error);
                             }

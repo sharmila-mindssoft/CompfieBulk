@@ -241,7 +241,6 @@ DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
 
 DomainPage.prototype.changeStatus = function(d_id, status) {
     mirror.changeDomainStatus(d_id, status, function(error, response) {
-        console.log(error,response)
         if (error == null) {
             t_this.showList();
             t_this.fetchDomain();
@@ -304,7 +303,6 @@ DomainPage.prototype.submitProcess = function() {
     t_this = this;
     if (Domain_id.val() == '') {
         mirror.saveDomain(name, c_ids, function(error, response) {
-            console.log(error,response)
             if (error == null) {
 
                 displaySuccessMessage(message.save_success);

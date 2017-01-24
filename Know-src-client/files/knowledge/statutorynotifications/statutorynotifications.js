@@ -36,7 +36,7 @@ function loadMessages() {
                 target: '#custom-modal',
                 effect: 'contentscale',
             });
-            //updateNotificationStatus(v.notification_id, v.user_id, true);
+            updateNotificationStatus(v.notification_id, v.user_id, true);
             e.preventDefault();
         }
         else {
