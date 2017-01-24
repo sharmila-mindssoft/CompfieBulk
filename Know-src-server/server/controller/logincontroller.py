@@ -2,7 +2,8 @@ from corecontroller import process_admin_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
 from server.constants import (
-    KNOWLEDGE_URL, CAPTCHA_LENGTH, NO_OF_FAILURE_ATTEMPTS
+    KNOWLEDGE_URL, CAPTCHA_LENGTH, NO_OF_FAILURE_ATTEMPTS,
+    FORGOTPASSWORD_EXPIRY
 )
 
 from server.common import (
@@ -11,6 +12,9 @@ from server.common import (
 from server.database.tables import *
 from server.database.login import *
 from server.database.forms import *
+from server.common import (
+    get_date_time, addHours, get_current_date
+)
 
 __all__ = [
     "process_login_request",
@@ -188,11 +192,12 @@ def process_forgot_password(db, request):
         is_mobile = False
     rows = db.verify_username(request.username)
     print "-------------------", rows
-    if rows[0]['user_id'] is not 0:
+    if rows is 0:
+        return login.InvalidUserName()
+    else:
+        print rows
         send_reset_link(db, rows[0]['user_id'], rows[0]['email_id'], rows[0]['employee_name'])
         return login.ForgotPasswordSuccess()
-    else:
-        return login.InvalidUserName()
 
 
 def send_reset_link(db, user_id, email_id, employee_name):
@@ -202,9 +207,12 @@ def send_reset_link(db, user_id, email_id, employee_name):
     )
     condition = "user_id = %s "
     condition_val = [user_id]
+    current_time_stamp = get_current_date()
+    expiredon = addHours(int(FORGOTPASSWORD_EXPIRY), current_time_stamp)
+
     db.delete(tblEmailVerification, condition, condition_val)
-    columns = ["user_id", "verification_code"]
-    values_list = [user_id, reset_token]
+    columns = ["user_id", "verification_code", "verification_type_id", "expiry_date"]
+    values_list = [user_id, reset_token, 2, expiredon]
     db.insert(tblEmailVerification, columns, values_list)
     if email().send_reset_link(
         db, user_id, email_id, reset_link, employee_name
@@ -237,8 +245,11 @@ def process_reset_password(db, request):
 def process_change_password(db, request):
     session_user = db.validate_session_token(request.session_token)
     if verify_password(db, request.current_password, session_user):
-        update_password(db, request.new_password, session_user)
-        return login.ChangePasswordSuccess()
+        if verify_new_password(db, request.new_password, session_user):
+            update_password(db, request.new_password, session_user)
+            return login.ChangePasswordSuccess()
+        else:
+            return login.CurrentandNewPasswordSame()
     else:
         return login.InvalidCurrentPassword()
 

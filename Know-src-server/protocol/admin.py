@@ -364,26 +364,30 @@ class GetUserMappings(Request):
 
 
 class SaveUserMappings(Request):
-    def __init__(self, country_id, domain_id, parent_user_id, child_users, user_category_id):
+    def __init__(self, country_id, domain_id, parent_user_id, child_users, user_category_id, new_child_users, new_child_user_names):
         self.country_id = country_id
         self.domain_id = domain_id
         self.parent_user_id = parent_user_id
         self.child_users = child_users
         self.user_category_id = user_category_id
+        self.new_child_users = new_child_users
+        self.new_child_user_names = new_child_user_names
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "country_id", "domain_id", "parent_user_id", "child_users", "user_category_id"
+                "country_id", "domain_id", "parent_user_id", "child_users", "user_category_id", "new_child_users", "new_child_user_names"
             ])
         country_id = data.get("country_id")
         domain_id = data.get("domain_id")
         parent_user_id = data.get("parent_user_id")
         child_users = data.get("child_users")
         user_category_id = data.get("user_category_id")
+        new_child_users = data.get("new_child_users")
+        new_child_user_names = data.get("new_child_user_names")
         return SaveUserMappings(
-            country_id, domain_id, parent_user_id, child_users, user_category_id
+            country_id, domain_id, parent_user_id, child_users, user_category_id, new_child_users, new_child_user_names
         )
 
     def to_inner_structure(self):
@@ -392,7 +396,9 @@ class SaveUserMappings(Request):
             "domain_id": self.domain_id,
             "parent_user_id": self.parent_user_id,
             "child_users": self.child_users,
-            "user_category_id": self.user_category_id
+            "user_category_id": self.user_category_id,
+            "new_child_users": self.new_child_users,
+            "new_child_user_names": self.new_child_user_names
         }
 
 class CheckUserMappings(Request):
@@ -1286,20 +1292,21 @@ class CheckUserMappingsSuccess(Response):
 class LegalEntity(object):
     def __init__(
         self, legal_entity_id, legal_entity_name, business_group_id,
-        client_id, country_id
+        client_id, country_id, domain_ids
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.business_group_id = business_group_id
         self.client_id = client_id
         self.country_id = country_id
+        self.domain_ids = domain_ids
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
                 "legal_entity_id", "legal_entity_name", "business_group_id",
-                "client_id", "country_id"
+                "client_id", "country_id", "domain_ids"
             ]
         )
         legal_entity_id = data.get("legal_entity_id")
@@ -1307,9 +1314,10 @@ class LegalEntity(object):
         business_group_id = data.get("business_group_id")
         client_id = data.get("client_id")
         country_id = data.get("country_id")
+        domain_ids = data.get("domain_ids")
         return LegalEntity(
             legal_entity_id, legal_entity_name, business_group_id, client_id,
-            country_id
+            country_id, domain_ids
         )
 
     def to_structure(self):
@@ -1318,7 +1326,8 @@ class LegalEntity(object):
             "legal_entity_name": self.legal_entity_name,
             "business_group_id": self.business_group_id,
             "client_id": self.client_id,
-            "country_id": self.country_id
+            "country_id": self.country_id,
+            "domain_ids": self.domain_ids
         }
 
 

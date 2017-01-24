@@ -61,6 +61,7 @@ var message = {
   'duration_required': 'Duration Required',
   'invalid_duration': 'Invalid Duration Value',
   'durationtype_required': 'Duration Type Required',
+  'invalid_triggerbefore': 'Trigger days cannot be greater than repeat every days',
   'triggerbefore_exceed': 'Trigger before days should not exceed 100',
   'triggerbefore_iszero': 'Trigger before days should be within 1 to 100',
   'invalid_repeatsevery': '"Repeats every" is Invalid',
@@ -70,9 +71,12 @@ var message = {
   'statutorydate_triggerdte_mandatory_multipleinputs': 'Statutory dates and trigger dates mandatory for multiple inputs',
   'statutoryprovision_duplicate': 'Statutory provision is duplicate',
   'compliancetask_duplicate': 'Compliance task is duplicate',
+  'statudate_duplicate': 'Statutory date cannot be duplicate',
+  'cannot_add_compliance_inedit':'You cannot add new compliance in edit mode',
   'removechild_first': 'Remove Child First',
   'industry_required': 'Organization Required',
   'statutorynature_required': 'Statutory Nature Required',
+  'statutory_required': 'Statutory Name Required',
   'statutory_selection_required': 'Atleast one Statute should be selected',
   'statutory_selection_exceed': 'Maximum three statutes can be selected',
   'compliance_selection_required': 'Atleast one Compliance should be added',
@@ -353,7 +357,9 @@ var message = {
   "duplicate_legalentity": "Duplicate Legal Entity are not allowed",
   'invalid_reset_token': 'Invalid Reset Token',
   "user_transaction_exists": "Cannot disable, user's transaction exists",
-  "export_empty": "No Data(s) to Export."
+  "export_empty": "No Data(s) to Export.",
+  "duplicate_businessgroup": "Duplicate Business Group are not allowed",
+  "current_new_password_same": "Current and new password should not be same",
 }
 
 function clearMessage() {

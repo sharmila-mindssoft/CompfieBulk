@@ -32,6 +32,7 @@ __all__ = [
     "get_mapped_domains", "get_validity_dates", "get_country_domain_mappings",
     "save_validity_date_settings", "get_user_mapping_form_data",
     "save_user_mappings", "get_all_user_types", "get_legal_entities_for_user",
+    "get_reassign_legal_entity",
     # "get_assigned_legal_entities",
     "get_assigned_units", "get_assigned_clients", "save_registraion_token", "update_disable_status",
     "get_countries_for_user_filter",
@@ -1096,6 +1097,9 @@ def save_user_mappings(db, request, session_user):
     parent_user_id = request.parent_user_id
     child_users = request.child_users
     user_cat_id = request.user_category_id
+    new_child_users = request.new_child_users
+    new_child_user_names = request.new_child_user_names
+
     insert_columns = [
         "user_category_id", "country_id", "domain_id", "parent_user_id",
         "child_user_id", "created_by", "created_on"
@@ -1117,41 +1121,51 @@ def save_user_mappings(db, request, session_user):
         action = "Users mapped for - \"%s\"" % name_rows[0]["empname"]
         db.save_activity(session_user, frmUserMapping, action)
 
-        parent_user_ids = []
-        parent_user_ids.append(parent_user_id)
-        message_heading = 'User Mapping'
-        message_text = '\"%s\" has been mapped with user(s)' % name_rows[0]["empname"]
-        save_messages(db, user_category_id, message_heading, message_text, session_user, parent_user_ids)
+        if len(new_child_users) > 0:
+            child_users_name = ','.join(new_child_user_names);
+            parent_user_ids = []
+            parent_user_ids.append(parent_user_id)
+            message_heading = 'User Mapping'
+            message_text = '\"%s\" has been mapped with \"%s\"' % (name_rows[0]["empname"], child_users_name)
+            save_messages(db, user_category_id, message_heading, message_text, session_user, parent_user_ids)
 
-        child_message_text = 'User has been mapped under \"%s\"' % name_rows[0]["empname"]
-        save_messages(db, user_cat_id, message_heading, child_message_text, session_user, child_users)
+            child_message_text = 'User has been mapped under \"%s\"' % name_rows[0]["empname"]
+            save_messages(db, user_cat_id, message_heading, child_message_text, session_user, new_child_users)
 
     else:
         raise process_error("E079")
 
 
-def save_messages(db, user_cat_id, message_head, message_text, created_by, child_users):
+def save_messages(db, user_cat_id, message_head, message_text, created_by, new_child_users):
     msg_id = db.save_toast_messages(user_cat_id, message_head, message_text, None, created_by, get_date_time())
 
-    if child_users is not None :
-        db.save_messages_users(msg_id, child_users)
+    if new_child_users is not None :
+        db.save_messages_users(msg_id, new_child_users)
 
 def get_legal_entities_for_user(db, user_id):
     result = db.call_proc(
-        "sp_tbl_unit_getclientlegalentity", (user_id,))
+        "sp_tbl_unit_getclientlegalentity", [user_id])
     return return_legal_entities_for_unit(result)
 
+def get_reassign_legal_entity(db, user_id):
+    result = db.call_proc_with_multiresult_set(
+        "sp_get_reassign_legalentity", [user_id], 2)
+    return return_legal_entities_for_unit(result)
 
 def return_legal_entities_for_unit(legal_entities):
     results = []
-
-    for legal_entity in legal_entities:
+    for legal_entity in legal_entities[0]:
+        d_ids = []
+        for d in legal_entities[1]:
+            if d["legal_entity_id"] == legal_entity["legal_entity_id"] :
+                d_ids.append(d["domain_id"])
         legal_entity_obj = admin.LegalEntity(
             legal_entity_id=legal_entity["legal_entity_id"],
             legal_entity_name=legal_entity["legal_entity_name"],
             business_group_id=legal_entity["business_group_id"],
             client_id=legal_entity["client_id"],
-            country_id=legal_entity["country_id"]
+            country_id=legal_entity["country_id"],
+            domain_ids=d_ids
         )
         results.append(legal_entity_obj)
     return results

@@ -40,9 +40,9 @@
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
-                                    <label class="col-sm-4 control-label">Organisation:</label>
+                                    <label class="col-sm-4 control-label">Organization:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="industryval" placeholder="Enter Industry" tabindex="3">
+                                        <input type="text" class="form-control input-sm" id="industryval" placeholder="Enter Organization" tabindex="3">
                                         <input type="hidden" id="industry">
                                         <div id="ac-industry" class="ac-textbox default-display-none">
                                             <ul style="width:85%;" class="hidemenu"></ul>
@@ -109,13 +109,13 @@
                     </div>
                 </div>
             </div>
-            <div class="grid-table-rpt" style="padding-bottom:0em;">
+            <div class="grid-table-rpt default-display-none" style="padding-bottom:0em;">
                 <div class="card-box">
                     <div class="table-responsive">
                         <div class="col-sm-12">
                             <div class="col-sm-12 text-center"><h4>Statutory Mapping Report</h4></div>
-                            <div class="col-sm-6 text-center"><h6>Country: India</h6></div>
-                            <div class="col-sm-6 text-center"><h6>Domain: Labour Law</h6></div>
+                            <div class="col-sm-6 text-center"><h6 class="country"></h6></div>
+                            <div class="col-sm-6 text-center"><h6 class="domain"></h6></div>
                         </div>
                         <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                             <tbody class="tbody-compliance">
@@ -160,10 +160,9 @@
 
 <div id="head-templates">
     <table class="table-compliance-frequency-list">
-
         <tr class="table-row-com-frequency">
             <td colspan="100%">
-                <div class="col-sm-1 no-padding">
+                <div class="col-sm-12 no-padding">
                     <mark class="p-l-10 p-r-10 tbl_heading"></mark>
                 </div>
             </td>
@@ -176,7 +175,7 @@
     <table width="100%" class="table-compliances-list">
         <tr align="left" class="sub-head table-row"  style="border-top:1px dotted #CCCCCC;">
             <th width="3%" align="center">#</th>
-            <th width="12%">Industry Type</th>
+            <th width="12%">Organization</th>
             <th width="12%">Statutory Nature</th>
             <th width="12%">Statutory Provision</th>
             <th width="12%">Compliance Task</th>

@@ -46,6 +46,10 @@ function makekey()
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
+
+function parseJSON(data) {
+    return JSON.parse(data);
+}
 function processForgotpassword(username, shortName, callback) {
     displayLoader();
     var request = [
@@ -93,7 +97,7 @@ function processForgotpassword(username, shortName, callback) {
     success: function (data, textStatus, jqXHR) {
       console.log(data);
       data = atob(data.substring(5));
-      data = parseJSON(data);
+      data = JSON.parse(data);
       var status = data[0];
       var response = data[1];
 
@@ -121,13 +125,13 @@ $('#submit').click(function () {
   } else {
     displayLoader();
     function onSuccess(data) {
-      displayMessage(message.forgotpassword_success);
+      displayMessage('Password reset link has been sent to your email Id');
       $('#username').val('');
       hideLoader();
     }
     function onFailure(error) {
       if (error == 'InvalidUserName') {
-        displayMessage(message.nouser_exists);
+        displayMessage("No User Exists");
       } else {
         displayMessage(error);
       }

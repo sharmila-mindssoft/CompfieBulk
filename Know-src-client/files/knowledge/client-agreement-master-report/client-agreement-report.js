@@ -64,7 +64,7 @@ function initialize() {
           sno = 0;
           on_current_page = 1;
           createPageView(totalRecord);
-          processPaging();
+          //processPaging();
       });
     mirror.getClientAgreementReportFilters(function(error, data) {
         if (error == null) {
@@ -166,7 +166,7 @@ function displayPopup(LE_ID, D_ID) {
 }
 
 function showPagePan(showFrom, showTo, total) {
-    var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
+    var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + totalRecord + ' entries ';
     CompliacneCount.text(showText);
     PaginationView.show();
 };
@@ -189,7 +189,7 @@ function createPageView(total_records) {
             cPage = parseInt(page);
             if (parseInt(on_current_page) != cPage) {
                 on_current_page = cPage;
-                processSubmit();
+                processSubmit(false);
             }
         }
     });
@@ -275,7 +275,6 @@ function loadCompliances(data) {
         $(this).next().slideToggle('fast');
         $('.accordion-content').not($(this).next()).slideUp('fast');
     });
-    totalRecord = sno;
     if (is_null == true) {
       hidePagePan();
     }
@@ -300,8 +299,7 @@ function processSubmit(csv) {
         _from_date = getValue("from_date");
         _to_date = getValue("to_date");
 
-        //_page_limit = parseInt($('#items_per_page').val());
-        _page_limit = 10;
+        _page_limit = parseInt($('#items_per_page').val());
 
         if (on_current_page == 1) {
             sno = 0
@@ -334,13 +332,13 @@ function processSubmit(csv) {
                         lastBusinessGroup = '';
                         lastLE = '';
                         if (totalRecord == 0) {
+                            $('.grid-table-rpt').show();
                             $('.table-client-agreement-list').empty();
                             var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
                             var clone4 = tableRow4.clone();
                             $('.no_records', clone4).text('No Records Found');
                             $('.table-client-agreement-list').append(clone4);
-                            //$('#pagination').hide();
-                            $('.total-records').text('');
+                            PaginationView.hide();
                             hideLoader();
                         } else {
                             hideLoader();
@@ -393,8 +391,16 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 
 function pageControls() {
 
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        sno = 0;
+        on_current_page = 1;
+        createPageView(totalRecord);
+        processSubmit(false);
+    });
 
     SubmitButton.click(function() {
+        on_current_page = 1;
         processSubmit(false);
     });
 
@@ -420,14 +426,16 @@ function pageControls() {
         if (Country.val() != '') {
             condition_fields.push("country_ids");
             condition_values.push(Country.val());
+
+            var text_val = $(this).val();
+            commonAutoComplete(
+                e, ACDomain, Domain, text_val,
+                DomainList, "domain_name", "domain_id",
+                function(val) {
+                    onAutoCompleteSuccess(DomainVal, Domain, val);
+                }, condition_fields, condition_values);
         }
-        var text_val = $(this).val();
-        commonAutoComplete(
-            e, ACDomain, Domain, text_val,
-            DomainList, "domain_name", "domain_id",
-            function(val) {
-                onAutoCompleteSuccess(DomainVal, Domain, val);
-            }, condition_fields, condition_values);
+        
     });
 
     //load group list in autocomplete text box

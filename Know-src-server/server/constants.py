@@ -42,6 +42,7 @@ FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
 SESSION_CUTOFF = 15   # minutes
 REGISTRATION_EXPIRY = 48  # Hours
+FORGOTPASSWORD_EXPIRY = 48  # Hours
 DOWNLOAD_EXPIRY = 48  # Hours
 USER_ENABLE_CUTOFF = 30  # days
 

@@ -6,8 +6,6 @@ var CLIENT_ID = 0;
 var AddScreen = $('#assign-le-add');
 var ViewScreen = $('#assign-le-view');
 var ListScreen = $('#assign-le-list');
-var ListFilterBox = $('.list-filter');
-var AddFilterBox = $('.add-filter');
 var SaveButton = $('#save');
 var CancelButton = $('.btn-cancel');
 
@@ -16,8 +14,8 @@ var User_val = $('#userval');
 var Group_Label = $('.group-label');
 var Country_Label = $('.country-label');
 
-var ListFilterCountry = $('#list-filter-country');
-var ListFilterGroup = $('#list-filter-group');
+var ListFilterBox = $('.js-filter');
+var AddFilterBox = $('.js-filter-add');
 var AddFilterCountry = $('#add-filter-country');
 var AddFilterBG = $('#add-filter-bg');
 var AddFilterLE = $('#add-filter-le');
@@ -59,7 +57,7 @@ function processSave() {
                 initialize();
             } else {
                 SaveButton.prop("disabled",false);
-                custom_alert(error);
+                displayMessage(error);
             }
         });
     }
@@ -81,7 +79,7 @@ function assignLE(cId, cName, gName) {
             $('.selected_checkbox_count').html('0');
             loadLegalEntityList(assignLegalEntitiesList);
         } else {
-            custom_alert(error);
+            displayMessage(error);
         }
     });
 }
@@ -99,7 +97,7 @@ function viewLE(cId, cName, gName) {
             assignLegalEntitiesList = data.view_assigned_legal_entities;
             loadUserList(assignLegalEntitiesList);
         } else {
-            custom_alert(error);
+            displayMessage(error);
         }
     });
 }
@@ -177,6 +175,13 @@ function loadLegalEntityList(assignLegalEntitiesList) {
             che.closest('tr').addClass('checked_row');
         });
     });
+    
+    if($('.select_all').prop('checked')){
+        $(".tbody-add-list .form_checkbox").prop('checked', true);
+        $('.selected_checkbox_count').html($('.form_checkbox:checked').length);
+    }else{
+        $('.selected_checkbox_count').html('0');
+    }
 }
 
 function loadUserList(assignLegalEntitiesList) {
@@ -233,7 +238,7 @@ function validateMandatory() {
         displayMessage(message.no_legal_entity_selected);
         return false;
     } else if (User_id.val().length == 0) {
-        displayMessage(message.no_user_selected);
+        displayMessage(message.techno_executive_required);
         return false;
     } else {
         return true;
@@ -241,7 +246,7 @@ function validateMandatory() {
 }
 
 //filter process
-function processListFilter() {
+/*function processListFilter() {
     var countryfilter = ListFilterCountry.val().toLowerCase();
     var groupfilter = ListFilterGroup.val().toLowerCase();
     var filteredList = [];
@@ -253,7 +258,7 @@ function processListFilter() {
         }
     }
     loadGroupList(filteredList);
-}
+}*/
 
 function processAddFilter() {
     var addcountryfilter = AddFilterCountry.val().toLowerCase();
@@ -302,9 +307,9 @@ function pageControls() {
         processSave();
     });
 
-    ListFilterBox.keyup(function() {
+    /*ListFilterBox.keyup(function() {
         processListFilter();
-    });
+    });*/
 
     AddFilterBox.keyup(function() {
         processAddFilter();
@@ -346,6 +351,6 @@ $(document).ready(function() {
 $(document).find('.js-filtertable').each(function() {
     $(this).filtertable().addFilter('.js-filter');
 });
-$(document).find('.js-filtertable-add').each(function() {
+/*$(document).find('.js-filtertable-add').each(function() {
     $(this).filtertable().addFilter('.js-filter-add');
-});
+});*/
