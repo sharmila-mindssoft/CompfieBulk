@@ -1075,6 +1075,7 @@ function editEntity(e, le_count, value, domain_details) {
         
         selected_action = $(".actions select").val()
         if (selected_action == 1) {
+            le_table.find(".edited").val(1);
             showEditable(le_table.find(".contract-from"), value.contract_from);
             showEditable(le_table.find(".contract-to"), value.contract_to);
             le_table.find(".edit-right-icon").attr("src", "/images/delete-icon-black.png");
