@@ -63,7 +63,6 @@ function onLoadList(data){
       counList.push(country[j]);
     });
   });
-  console.log(counList);
   loadCountriesList(counList);
 }
 //display cpuntry details in view page
@@ -179,7 +178,6 @@ function validateAuthentication(){
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);

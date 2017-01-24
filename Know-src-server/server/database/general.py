@@ -486,20 +486,18 @@ def get_user_cetegories_db(db):
 def get_audit_trails(
     db, session_user, from_count, to_count,
     from_date, to_date, user_id, form_id,
-    country_id, category_id
+    category_id
 ):
     print "inside database"
     if user_id is None:
         user_id = '%'
     if form_id is None :
         form_id = '%'
-    if country_id is None :
-        country_id = '%'
     if category_id is None :
         category_id = '%'
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
-    args = [from_date, to_date, user_id, form_id, country_id, category_id, from_count, to_count]
+    args = [from_date, to_date, user_id, form_id, category_id, from_count, to_count]
     print args
     expected_result = 2
     result = db.call_proc_with_multiresult_set('sp_get_audit_trails', args, expected_result)

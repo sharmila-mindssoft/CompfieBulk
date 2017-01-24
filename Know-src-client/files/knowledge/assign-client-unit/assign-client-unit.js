@@ -90,7 +90,6 @@ function initialize(type_of_form){
         //Arguments passed to get the units yet to be assigned
         mirror.getAssignUnitFormData(
             DOMAIN_ID, CLIENT_ID, LEGAL_ENTITY_ID, function (error, response) {
-            console.log("assigned:"+response)
             if (error == null) {
                 onSuccess_assign(response);
             } else {
@@ -206,7 +205,6 @@ function loadUnAssignedUnitsList(){
                 });
             }
             if(value.unassigned_units.split("/")[0].trim() == value.unassigned_units.split("/")[1].trim()){
-                console.log(value.unassigned_units.split("/")[0].trim())
                 $(".view", clone).hide();
             }
             else{
@@ -429,27 +427,22 @@ function onUserSuccess(val) {
 //load legalentity form list in autocomplete text box
 $('#assinee').keyup(function (e) {
   var textval = $(this).val();
-  console.log("le-id:"+LEGAL_ENTITY_ID);
   legal_entity_id = LEGAL_ENTITY_ID;
   var domain_users = [];
 
   if(ASSIGN_UNIT_SAVE_DETAILS.length > 0){
     for(var i=0;i<MAPPED_DOMAIN_USERS.length;i++){
         if(MAPPED_DOMAIN_USERS[i].legal_entity_id == legal_entity_id){
-            console.log("1")
             for(var j=0;j<DOMAIN_MANAGER_USERS.length;j++){
                 if(MAPPED_DOMAIN_USERS[i].user_id == DOMAIN_MANAGER_USERS[j].user_id){
-                    console.log("2")
                     var occur = -1;
                     for(var k=0;k<domain_users.length;k++){
                         if(domain_users[k].user_id == DOMAIN_MANAGER_USERS[j].user_id){
-                            console.log("3")
                             occur = 1;
                             break;
                         }
                     }
                     if(occur < 0){
-                        console.log(DOMAIN_MANAGER_USERS[j].employee_name)
                         domain_users.push({
                             "user_id":DOMAIN_MANAGER_USERS[j].user_id,
                             "employee_name":DOMAIN_MANAGER_USERS[j].employee_name,
@@ -759,7 +752,6 @@ $(".save-assign-unit").click(function(){
     alert("ave")
     domain_manager_id = $("#userid").val();
     var true_count = ASSIGN_UNIT_SAVE_DETAILS.length;
-    console.log("true_count:"+true_count)
     var active_units = []
     /*$.each(ASSIGN_UNIT_SAVE_DETAILS, function(unit_id, unit_value){
         $.each(unit_value, function(domain_name, value){
@@ -778,7 +770,6 @@ $(".save-assign-unit").click(function(){
             active_units.push(
                 getActiveUnitDict(ASSIGN_UNIT_SAVE_DETAILS[i], DOMAIN_NAME)
             );
-            console.log("active_units:"+active_units.length);
         }
         callSaveAssignUnitAPI(parseInt(domain_manager_id), active_units);
     }

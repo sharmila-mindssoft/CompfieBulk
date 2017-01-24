@@ -23,10 +23,8 @@ $('.btn-statutorylevel-cancel').click(function () {
 });
 
 function resetFields(){
-  console.log("1")
   $('#countryval').val('');
   $('#country').val('');
-  console.log($('#country').val());
   $('#domainval').val('');
   $('#domain').val('');
   $('.input-sm').val('');
@@ -36,7 +34,6 @@ function resetFields(){
 function GetStatutoryLevels() {
   function onSuccess(data) {
     statutoryLevelsList = data.statutory_levels;
-    console.log(statutoryLevelsList)
     countriesList = data.countries;
     domainList = data.domains;
   }
@@ -99,7 +96,6 @@ country_ac.keyup(function(e){
     var c_ids = null;
     var check_val = false;
     if(country_val.val() != ''){
-      console.log("ctry:"+country_val.val())
       for(var i=0;i<domainList.length;i++){
         c_ids = domainList[i].country_ids;
 
@@ -134,17 +130,14 @@ country_ac.keyup(function(e){
 //Autocomplete Script ends
 //load statutory level according to country & domain
 function loadstatutoryLevelsList() {
-  console.log("1:")
   $('.error-message').html('');
   //$('.input-sm').val('');
   //$('.hiddenvalue').val('');
   var countryval = $('#country').val();
   var domainval = $('#domain').val();
   var levellist;
-  console.log("data:"+countryval in statutoryLevelsList)
   if (countryval in statutoryLevelsList && domainval in statutoryLevelsList[countryval]) {
     levellist = statutoryLevelsList[countryval][domainval];
-    console.log("len:"+levellist.length)
     for (var entity in levellist) {
       var levelPosition = levellist[entity].l_position;
       var levelName = levellist[entity].l_name;
@@ -156,7 +149,6 @@ function loadstatutoryLevelsList() {
 }
 //validation
 function validate() {
-  console.log($('#country').val())
   var checkLength = statutoryLevelValidate();
   if (checkLength) {
     if ($('#country').val().trim().length == 0) {
@@ -197,7 +189,6 @@ $('#submit').click(function () {
           if ($('#level' + k).val().trim() == '') {
             isRemove = true;
           }
-          console.log(('level' + k),$('#level' + k).val())
           passlevellist.push({
             'l_position': k,
             'l_name': $('#level' + k).val().trim(),
@@ -227,7 +218,6 @@ $('#submit').click(function () {
         $('#countryval').focus();
       }
       function onFailure(error, response) {
-        console.log("e:"+error, response)
         if (error == 'DuplicateStatutoryLevelsExists') {
           displayMessage(message.statutorylevel_exists);
         }else if (error == 'LevelShouldNotbeEmpty') {

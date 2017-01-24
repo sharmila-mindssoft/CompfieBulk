@@ -102,7 +102,7 @@ INSERT INTO tbl_form_category VALUES(10, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(11, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(12, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(13, 1, 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO tbl_form_category VALUES(14, 1, 0, 0, 0, 0, 0, 0, 0);
+-- INSERT INTO tbl_form_category VALUES(14, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(15, 0, 0, 0, 1, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(16, 0, 0, 1, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(17, 0, 0, 0, 0, 1, 0, 0, 0);
@@ -132,10 +132,10 @@ INSERT INTO tbl_form_category VALUES(37, 1, 0, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(38, 1, 0, 0, 0, 1, 0, 1, 0);
 INSERT INTO tbl_form_category VALUES(39, 1, 0, 0, 0, 1, 0, 1, 1);
 INSERT INTO tbl_form_category VALUES(40, 1, 0, 0, 0, 1, 1, 1, 1);
-INSERT INTO tbl_form_category VALUES(41, 1, 0, 0, 0, 1, 0, 1, 1);
-INSERT INTO tbl_form_category VALUES(42, 1, 0, 0, 0, 1, 0, 1, 1);
+-- INSERT INTO tbl_form_category VALUES(41, 1, 0, 0, 0, 1, 0, 1, 1);
+-- INSERT INTO tbl_form_category VALUES(42, 1, 0, 0, 0, 1, 0, 1, 1);
 INSERT INTO tbl_form_category VALUES(43, 1, 0, 0, 0, 0, 0, 0, 0);
-INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 0, 0, 0, 0);
+-- INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(49, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(51, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(52, 0, 1, 0, 0, 0, 0, 0, 0);
@@ -146,13 +146,9 @@ INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(46, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
 
-
-
-
 -- tbl_user_login_details
 -- user_id, user_category_id, username, password, is_active --- p@$$word@123
 INSERT INTO tbl_user_login_details (user_id, user_category_id, email_id, username, password, is_active) VALUES(1, 1, "compfieadmin@compfie.com", "compfieadmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
-
 
 -- tbl_session_types
 INSERT INTO tbl_session_types VALUES(1, "web");

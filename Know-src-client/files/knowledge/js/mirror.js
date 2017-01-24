@@ -287,22 +287,21 @@ function initMirror() {
       apiRequest(callerName, request, callback);
     }
 
-    function exportAuditTrail(fromDate, toDate, userId, formId, countryId, categoryId, csv, callback) {
-      callerName = 'general';
-      var request = [
-        'ExportAuditTrails',
-        {
-          'from_date': fromDate,
-          'to_date': toDate,
-          'user_id_search': userId,
-          'form_id_search': formId,
-          'country_id': countryId,
-          'category_id': categoryId,
-          'csv': csv
-        }
-      ];
-      apiRequest(callerName, request, callback);
-    }
+  function exportAuditTrail(fromDate, toDate, userId, formId, categoryId, csv, callback) {
+    callerName = 'general';
+    var request = [
+      'ExportAuditTrails',
+      {
+        'from_date': fromDate,
+        'to_date': toDate,
+        'user_id_search': userId,
+        'form_id_search': formId,
+        'category_id': categoryId,
+        'csv': csv
+      }
+    ];
+    apiRequest(callerName, request, callback);
+  }
 
     function getAuditTrailFilter(callback) {
       callerName = 'general';
@@ -2371,7 +2370,7 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getAuditTrail(fromDate, toDate, userId, formId, countryId, categoryId, recordCount, pageCount, callback) {
+    function getAuditTrail(fromDate, toDate, userId, formId, categoryId, recordCount, pageCount, callback) {
         callerName = 'general';
         var request = [
             'GetAuditTrails', {
@@ -2379,7 +2378,6 @@ function initMirror() {
                 'to_date': toDate,
                 'user_id_search': userId,
                 'form_id_search': formId,
-                'country_id': countryId,
                 'category_id': categoryId,
                 'record_count': recordCount,
                 'page_count': pageCount

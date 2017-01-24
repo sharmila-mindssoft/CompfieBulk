@@ -180,7 +180,6 @@ function validateAuthentication(){
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -191,7 +190,6 @@ function validateMaxLength(key_name, value, show_name) {
 
 // activate/deactivate geographies
 function changeStatus(geographyId, isActive) {
-  console.log(isActive)
   function onSuccess(response) {
     displaySuccessMessage(message.status_success);
     GetGeographies();
@@ -218,7 +216,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
     value_element.focus();
-    //loadGeographyFirstLevels(val[0]);
+    loadGeographyFirstLevels(val[0]);
 }
 
 //Autocomplete Script ends
@@ -336,7 +334,6 @@ function processSearch(){
     var flist = [];
     var countryGeographyList = geographiesList[entity];
     for (var geography in countryGeographyList) {
-      console.log(countryGeographyList[geography])
       var cName = '';
       for (country in countriesList) {
         var cId = countriesList[country].country_id;

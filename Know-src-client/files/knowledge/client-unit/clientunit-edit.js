@@ -296,9 +296,6 @@ function load_domain_org() {
         }
     }
 
-    console.log("edit-domain:"+domain_ids)
-    console.log("edit-org:"+org_ids)
-
     for (var i = 0; i < domain_ids.length; i++) {
 
         if (i == 0) {
@@ -311,9 +308,7 @@ function load_domain_org() {
             for (var j = 0; j < units_count.length; j++) {
                 var unit_count_val = units_count[j].split("-");
                 if (unit_count_val[0] == domain_ids[i] && unit_count_val[1] == org_ids[i]) {
-                    console.log("units count:a"+unit_count_val[2])
                     units_count[j] = domain_ids[i]+'-'+org_ids[i]+'-'+ (parseInt(unit_count_val[2])+1);
-                    console.log("units count:b"+units_count)
                     match_count = true;
                     break;
                 }
@@ -326,7 +321,6 @@ function load_domain_org() {
 
 
     }
-        console.log("units count:"+units_count)
 
 }
 // Create empty row and bind the unit values
@@ -409,7 +403,6 @@ function loadUnitValues(unitval) {
     domain_names = getDomainsName(domainsListArray);
     $('.labeldomain-' + division_cnt + '-' + unit_second_cnt).show();
     $('.labeldomain-' + division_cnt + '-' + unit_second_cnt).text(domain_names);
-    console.log("4")
     loadDomains(division_cnt + '-' + unit_second_cnt,domainsListArray);
 
     var orgtypeArray = firstlist.i_ids;
@@ -574,7 +567,6 @@ function loadUnitValues_exists(unitval, start_cnt) {
     domain_names = getDomainsName(domainsListArray);
     $('.labeldomain-' + start_cnt + '-' + unit_second_cnt).show();
     $('.labeldomain-' + start_cnt + '-' + unit_second_cnt).text(domain_names);
-    console.log("5")
     loadDomains(start_cnt + '-' + unit_second_cnt,domainsListArray);
 
     var orgtypeArray = firstlist.i_ids;
@@ -683,7 +675,6 @@ function unitrow_edit(evt, i_ids) {
     $('.delete-icon-' + countval).show();
     $('.edit-icon-' + countval).hide();
 
-    console.log("6")
     //loadDomains();
     //industrytype('industry-' + countval, i_ids );
 
@@ -747,7 +738,6 @@ function unitrow_remove(evt) {
     delete_row = parseInt($('.tbody-unit-' + split_evt_hyphen[2] + ' tr').length)-parseInt($('.sno-'+split_evt_hyphen[2]+'-'+split_evt_hyphen[3]).text());
     if(delete_row < 0)
         delete_row = 0;
-    console.log("del:"+delete_row)
 
     $('.tbody-unit-' + split_evt_hyphen[2] + ' tr').eq(delete_row).remove();
     division_cnt = division_cnt - 1;
@@ -768,7 +758,6 @@ function unitrow_remove(evt) {
 }
 // Add new unit row during edit mode
 function addNewUnitRow_edit(str) {
-	console.log("edit is here")
     var countval = str.split("-")[2].trim();
 
     var unitval = parseInt($('.tbody-unit-' + countval).find('tr').length) + 1;
@@ -836,8 +825,6 @@ function addNewUnitRow_edit(str) {
     }
 
     if ($('.unitcode-checkbox-' + countval).is(':checked')) {
-        console.log("code:2-"+get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids))
-        console.log("code-cnt:"+countval)
         $('.unit-code-' + division_cnt + '-' + unitval).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
         unitcodeautogenerateids++;
     }
@@ -864,7 +851,6 @@ function addNewUnitRow_edit(str) {
     $('.domainselected-' + division_cnt + '-' + unitval).on('change', function(e) {
         industrytype('industry-' + division_cnt + '-' + unitval, []);
     });
-    console.log("7")
     //loadDomains();
     $('.orgtypeselected-' + division_cnt + '-' + 1).multiselect('rebuild');
     //industrytype('industry-' + countval + '-' + unitval, []);

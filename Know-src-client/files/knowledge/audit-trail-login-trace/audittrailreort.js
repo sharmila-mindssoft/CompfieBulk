@@ -16,15 +16,16 @@ User_id = $('#userid');
 User = $('#user');
 Form_id = $('#formid');
 Form = $('#formname');
-CountryVal = $('#countryval');
-Country = $('#country')
 Category = $('#categoryName');
 Show_btn = $("#show");
 Export_btn = $("#export");
 var msg = message;
 
+//var ACCountry = $('#ac-country');
+//CountryVal = $('#countryval');
+//Country = $('#country')
+
 //Autocomplete variable declaration
-var ACCountry = $('#ac-country');
 var ACUser = $('#ac-user');
 var ACForm = $('#ac-form');
 
@@ -41,7 +42,7 @@ function Auditpage() {
     this._userList = {};
     this._formList = {};
     this._categoryList = {};
-    this._countryList = {};
+    //this._countryList = {};
     this._auditData = {};
     this._on_current_page = 1;
     this._sno = 0;
@@ -74,7 +75,7 @@ Auditpage.prototype.resetFields = function(){
     $('.tbody-audittrail-list').find('tr').remove();
     $('.grid-table').hide();
     this._sno = 0;
-    CountryVal.val('');
+    //CountryVal.val('');
     Form.val('');
     User.val('');
     this.clearMessage();
@@ -103,13 +104,13 @@ Auditpage.prototype.getValue = function(field_name, f_id){
         }
         return parseInt(fr_id);
     }
-    else if (field_name == "country") {
+    /*else if (field_name == "country") {
         c_id = Country.val().trim();
         if (c_id == '') {
             return null;
         }
         return parseInt(c_id);
-    }
+    }*/
     else if (field_name == "fromdate") {
         f_date = From_date.val().trim();
         return f_date;
@@ -166,10 +167,10 @@ Auditpage.prototype.validateMandatory = function(){
         displayMessage(msg.catgname_required);
         is_valid = false;
     }
-    else if (this.getValue("country") == '' || this.getValue("country") == null) {
+    /*else if (this.getValue("country") == '' || this.getValue("country") == null) {
         displayMessage(msg.country_required);
         is_valid = false;
-    }
+    }*/
     else if (this.getValue("fromdate") == '' || this.getValue("fromdate") == null) {
         displayMessage(msg.fromdate_required);
         is_valid = false;
@@ -187,7 +188,7 @@ Auditpage.prototype.validateMandatory = function(){
 Auditpage.prototype.renderAuditData = function(a_page, audit_data){
     $('.grid-table').show();
     $('.tbody-audittrail-list').find('tr').remove();
-    $('.countryval').text(CountryVal.val())
+    //$('.countryval').text(CountryVal.val())
     $('.typeval').text($('#categoryName option:selected').text());
     showFrom = a_page._sno + 1;
     var is_null = true;
@@ -239,17 +240,15 @@ Auditpage.prototype.exportData = function() {
         _to_date = this.getValue("todate", null);
         _user_id = this.getValue("user", null);
         _form_id = this.getValue("form", null);
-        _country_id = this.getValue("country", null);
+        //_country_id = this.getValue("country", null);
         _category_id =this.getValue("category", null);
 
-        console.log(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id)
         t_this.displayLoader();
-        mirror.exportAuditTrail(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, csv,
+        mirror.exportAuditTrail(_from_date, _to_date, _user_id, _form_id, _category_id, csv,
             function(error, response) {
                 hideLoader();
                 if(error == null){
                     t_this.hideLoader();
-                    console.log(data.link)
                     if (csv) {
                       var download_url = data.link;
                       window.open(download_url, '_blank');
@@ -269,7 +268,7 @@ Auditpage.prototype.fetchData = function() {
     _to_date = this.getValue("todate", null);
     _user_id = this.getValue("user", null);
     _form_id = this.getValue("form", null);
-    _country_id = this.getValue("country", null);
+    //_country_id = this.getValue("country", null);
     _category_id =this.getValue("category", null);
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
@@ -278,16 +277,14 @@ Auditpage.prototype.fetchData = function() {
     else {
         _sno = (this._on_current_page - 1) *  _page_limit;
     }
-    console.log(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, _sno, _page_limit)
     t_this.displayLoader();
-    mirror.getAuditTrail(_from_date, _to_date, _user_id, _form_id, _country_id, _category_id, _sno, _page_limit,
+    mirror.getAuditTrail(_from_date, _to_date, _user_id, _form_id, _category_id, _sno, _page_limit,
         function(error, response) {
             if (error != null) {
                 t_this.hideLoader();
                 t_this.displayMessage(error);
             }
             else {
-                console.log(response)
                 t_this.hideLoader();
                 t_this._sno  = _sno;
                 t_this._auditData = response.audit_trail_details;
@@ -317,12 +314,11 @@ Auditpage.prototype.fetchFiltersData = function() {
                 this.displayMessage(error);
             }
             else {
-                console.log(response)
                 t_this._auditData = response.audit_trail_details;
                 t_this._formList = response.forms_list;
                 t_this._userList = response.users;
                 t_this._categoryList = response.user_categories;
-                t_this._countryList = response.audit_trail_countries;
+                //t_this._countryList = response.audit_trail_countries;
                 t_this.setControlValues();
             }
         }
@@ -378,7 +374,6 @@ Auditpage.prototype.setControlValues = function(e) {
         if(Category.val() != '')
         {
             var userId = User_id.val();
-            console.log("user:"+userId, Category.val())
             if(Category.val() > 2){
                 for(var i=0;i<a_page._auditData.length;i++)
                 {
@@ -386,9 +381,7 @@ Auditpage.prototype.setControlValues = function(e) {
                     if(userId > 0){
                         if((a_page._auditData[i].user_category_id == Category.val()) &&
                             (userId == frm_user_id)){
-                            console.log("1:"+form_list.length)
                             form_list = a_page.pushForms("user", a_page._auditData[i].form_id, form_list);
-                            console.log("2:"+form_list.length)
                         }
                     }
                     else
@@ -405,9 +398,7 @@ Auditpage.prototype.setControlValues = function(e) {
                 {
                     if(userId > 0){
                         if((a_page._auditData[i].user_id == userId)){
-                            console.log("1:"+form_list.length)
                             form_list = a_page.pushForms("admin", a_page._auditData[i].form_id, form_list);
-                            console.log("2:"+form_list.length)
                         }
                     }
                     else
@@ -431,85 +422,8 @@ Auditpage.prototype.setControlValues = function(e) {
         Category.append($('<option></option>').val(a_page._categoryList[key].user_category_id).html(a_page._categoryList[key].user_category_name));
     });
 
-    CountryVal.keyup(function (e) {
-        var textval = $(this).val();
-        if(Category.val() != '')
-        {
-            var userId = User_id.val();
-            var ctry_list = [];
-            if(Category.val() > 2){
-                for(var i=0;i<a_page._userList.length;i++)
-                {
-                    db_user_id = a_page._userList[i].user_id;
-                    if(userId > 0){
-                        if((a_page._userList[i].user_category_id == Category.val()) &&
-                        (db_user_id == userId)){
-                            ctry_list = a_page.pushCountries("user",db_user_id);
-                        }
-                    }
-                    else
-                    {
-                        if(a_page._userList[i].user_category_id == Category.val()){
-                            ctry_list = a_page.pushCountries("user",db_user_id);
-                        }
-                    }
-                }
-            }
-            else{
-                ctry_list = a_page.pushCountries("admin",0);
-            }
-            commonAutoComplete(
-                e, ACCountry, Country, textval,
-                ctry_list, "country_name", "country_id", function (val) {
-                onAutoCompleteSuccess(CountryVal, Country, val);
-            });
-        }
-    });
 }
 
-// To push countries in countries dlist without duplication
-Auditpage.prototype.pushCountries = function(u_type, user_id){
-    var a_page = this;
-    var userCheck = false;
-    var ctry_list = [];
-    for(var j=0;j<a_page._countryList.length;j++)
-    {
-        if(u_type == "user"){
-            userCheck = user_id>0?(user_id == a_page._countryList[j].user_id):false;
-        }
-        else if(u_type == "admin"){
-            userCheck = true;
-        }
-        if(userCheck == true){
-            if(ctry_list.length > 0)
-            {
-                var arr_country = [];
-                element = a_page._countryList[j].country_id;
-                arr_country = ctry_list.reduce(function(arr, e, i) {
-                    if (e.country_id === element)
-                        arr.push(i);
-                    return arr;
-                }, []);
-
-
-                if(arr_country.length == 0){
-                    ctry_list.push({
-                        "country_id": a_page._countryList[j].country_id,
-                        "country_name": a_page._countryList[j].country_name
-                    });
-                }
-            }
-            else
-            {
-                ctry_list.push({
-                    "country_id": a_page._countryList[j].country_id,
-                    "country_name": a_page._countryList[j].country_name
-                });
-            }
-        }
-    }
-    return ctry_list;
-};
 
 // To push forms inside form list without any duplication
 Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
@@ -535,10 +449,8 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
         userCheck = true;
     }
 
-    console.log("check:"+userCheck)
     if(userCheck == true){
         form_name = null;
-        console.log("id:"+form_id)
         if(form_id > 0){
             for(var j=0;j<a_page._formList.length;j++)
             {
@@ -551,7 +463,6 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
         else{
             form_name = "Login"
         }
-        console.log("name:"+form_name);
         if(form_list.length > 0)
         {
             var arr_form = [];
@@ -572,14 +483,12 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
         }
         else
         {
-            console.log("name:"+form_name);
             form_list.push({
                 "form_id": form_id,
                 "form_name": form_name
             });
         }
     }
-    console.log(form_list.length)
     return form_list;
 };
 
