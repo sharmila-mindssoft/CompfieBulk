@@ -127,6 +127,7 @@ function RenderInput() {
     this.s_id = null;
     this.mapped_statu = [];
     this.l_one_id = null;
+    this.l_one_name = null;
     this.level_one_name = null;
     this.mapped_compliances = [];
     this.summary = null;
@@ -661,9 +662,11 @@ function RenderInput() {
                 if (v.p_ids != null){
                     $.merge(_s_pids, v.p_ids);
                     _renderinput.l_one_id = v.p_ids[0];
+                    _renderinput.l_one_name = v.p_maps[0];
                 }
                 else {
                     _renderinput.l_one_id = v.s_id;
+                    _renderinput..l_one_name = v.s_name;
                 }
 
                 if (v.p_maps != null) {
@@ -779,7 +782,7 @@ function RenderInput() {
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
                 if (event.keyCode == 13) {
-                    new_value = $('#dv'+ v.l_position).val();
+                    new_value = $('#dv'+ v.l_position).val().trim();
                     if (new_value.length == 0) {
                         displayMessage(msg.statutory_required);
                         return false;
@@ -809,7 +812,7 @@ function RenderInput() {
             $('.bottomfield .statut-add', slObject).on(
                 'click', function(){
 
-                new_value = $('#dv'+ v.l_position).val();
+                new_value = $('#dv'+ v.l_position).val().trim();
                 if (new_value.length == 0) {
                     displayMessage(msg.statutory_required);
                     return false;
@@ -1557,7 +1560,7 @@ function pageControls() {
             }
         });
         if (differnt_level) {
-            displayMessage(msg.invalid_levelone + _renderinput.level_one_name + "should select in first level");
+            displayMessage(msg.invalid_levelone + _renderinput.l_one_name + " should be selected in first level");
         }
         else {
             if (add_new) {
