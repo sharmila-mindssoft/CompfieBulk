@@ -666,7 +666,7 @@ function RenderInput() {
                 }
                 else {
                     _renderinput.l_one_id = v.s_id;
-                    _renderinput..l_one_name = v.s_name;
+                    _renderinput.l_one_name = v.s_name;
                 }
 
                 if (v.p_maps != null) {
