@@ -56,7 +56,6 @@ function getIndustries() {
 		industriesList = data.industries;
 		domainList = data.domains;
 		countriesList = data.countries;
-		console.log("list:"+data.domains)
 		loadIndustryList(industriesList);
 	}
 	function onFailure(error) {
@@ -232,7 +231,6 @@ function validateAuthentication(){
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -243,7 +241,6 @@ function validateMaxLength(key_name, value, show_name) {
 
 // validation
 function formValidation() {
-  console.log("inside form");
   if (country_val.val().trim().length == 0) {
     displayMessage(msg.country_required);
     country_ac.focus();
@@ -279,14 +276,11 @@ function submitOrganization()
 
   //validate controls
   var returnValidation = formValidation();
-  console.log(returnValidation)
 
   if(returnValidation == true){
-    console.log("save")
     //save organization
     if(industryId == '')
     {
-      console.log("inside save")
       function onSuccess(response) {
         getIndustries();
         AddSCreen.hide();
@@ -306,7 +300,6 @@ function submitOrganization()
         parseInt(domainId),
         industryName
       ];
-      console.log("a:"+industryDetail)
       industryDetailDict = mirror.getSaveIndustryDict(industryDetail);
       mirror.saveIndustry(industryDetailDict, function (error, response) {
         if (error == null) {
@@ -504,7 +497,6 @@ function renderControls(){
     var c_ids = null;
     var check_val = false;
     if(country_val.val() != ''){
-      console.log("ctry:"+country_val.val())
       for(var i=0;i<domainList.length;i++){
         c_ids = domainList[i].country_ids;
 
