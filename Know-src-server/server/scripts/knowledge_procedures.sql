@@ -8734,4 +8734,6 @@ BEGIN
         AND t1.user_category_id like _category_id
         ORDER BY t1.created_on DESC;
     end if;
-END
+END //
+
+DELIMITER;
