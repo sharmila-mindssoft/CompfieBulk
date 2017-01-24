@@ -120,7 +120,7 @@ Auditpage.prototype.getValue = function(field_name, f_id){
         return t_date;
     }
     else if (field_name == "username") {
-        if (f_id == 0 || f_id == 1) {
+        if (f_id == 0 || f_id == "1" || f_id == "3") {
             return 'Administrator';
         }
         else {
