@@ -97,17 +97,18 @@ function initMirror() {
         'd_ids': dIds
       };
     }old*/
-    function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds) {
-      return {
-        'unit_id': uId,
-        'unit_name': uName,
-        'unit_code': uCode,
-        'address': uAdd,
-        'postal_code': pCode,
-        'geography_id': geoId,
-        'd_ids': dIds,
-        'i_ids_list': iIds
-      };
+    function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds, status) {
+        return {
+            'unit_id': uId,
+            'unit_name': uName,
+            'unit_code': uCode,
+            'address': uAdd,
+            'postal_code': pCode,
+            'geography_id': geoId,
+            'd_ids': dIds,
+            'i_ids_list': iIds,
+            'is_approved': status
+        };
     }
     function mapUnitsToCountry(cId, units) {
       return {
@@ -128,7 +129,6 @@ function initMirror() {
           'units': cw_units
         }
       ];
-      console.log("req:"+request)
       apiRequest(callerName, request, callback);
     }
     function updateClient(cId, bg, le, d, cwUnits, callback) {
