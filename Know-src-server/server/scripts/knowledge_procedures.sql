@@ -543,7 +543,8 @@ BEGIN
         WHERE
         date(created_on) >= _from_date
         AND date(created_on) <= _to_date
-        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id;
+        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id
+        AND user_category_id like _category_id;
     end if;
 
     if _category_id > 2 then
@@ -566,7 +567,8 @@ BEGIN
         WHERE
         date(created_on) >= _from_date
         AND date(created_on) <= _to_date
-        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id;
+        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id
+        AND user_category_id like _category_id;
     end if;
 END //
 
@@ -3467,14 +3469,14 @@ BEGIN
         is_active, user_category_id FROM tbl_users WHERE
         user_category_id = 7 and
         user_id in (SELECT child_user_id FROM tbl_user_mapping
-        WHERE parent_user_id=session_user) and is_active=1 and is_disable=0;
+        WHERE parent_user_id=session_user and domain_id =_d_id) and is_active=1 and is_disable=0;
     else
         SELECT user_id,
         concat(employee_code, "-", employee_name) as employee_name,
         is_active, user_category_id FROM tbl_users WHERE
         user_category_id = 8 and
         user_id in (SELECT child_user_id FROM tbl_user_mapping
-        WHERE parent_user_id=session_user) and is_active=1 and is_disable=0;
+        WHERE parent_user_id=session_user and domain_id =_d_id) and is_active=1 and is_disable=0;
     end if;
 
 
@@ -5207,30 +5209,43 @@ BEGIN
     if(userCatgId = 1)then
         select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name,tu.client_id,
         tu.business_group_id, tu.legal_entity_id,
-        tu.country_id, td.division_id, td.division_name, tc.category_id,
+        tu.country_id, tu.division_id,
+        td.division_name, tc.category_id,
         tc.category_name
         from
-        tbl_units as tu,
-        tbl_divisions as td,
-        tbl_categories as tc
+        tbl_units as tu
+        left join tbl_divisions as td on
+        td.division_id = tu.division_id
+        left join tbl_categories as tc on tc.category_id = tu.category_id
         where
-        tc.category_id = tu.category_id and
-        td.division_id = tu.division_id and
+
         tu.unit_id in (select distinct(unit_id) from tbl_user_units);
     end if;
 
-    if(userCatgId = 5 or userCatgId = 6 or userCatgId = 7 or userCatgId = 8)then
+    if(userCatgId = 5)then
         select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
         tu.business_group_id, tu.legal_entity_id,
         tu.country_id, td.division_id, td.division_name, tc.category_id,
         tc.category_name
         from
-        tbl_units as tu,
-        tbl_divisions as td,
-        tbl_categories as tc
+        tbl_units as tu
+        left join tbl_divisions as td on
+        td.division_id = tu.division_id
+        left join tbl_categories as tc on tc.category_id = tu.category_id
         where
-        tc.category_id = tu.category_id and
-        td.division_id = tu.division_id and
+        tu.unit_id in (select distinct(unit_id) from tbl_user_units);
+    end if;
+    if(userCatgId = 7 or userCatgId = 8)then
+        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
+        tu.business_group_id, tu.legal_entity_id,
+        tu.country_id, td.division_id, td.division_name, tc.category_id,
+        tc.category_name
+        from
+        tbl_units as tu
+        left join tbl_divisions as td on
+        td.division_id = tu.division_id
+        left join tbl_categories as tc on tc.category_id = tu.category_id
+        where
         tu.unit_id in (select distinct(unit_id) from tbl_user_units
         where user_id = userId and user_category_id = userCatgId);
     end if;
@@ -6262,7 +6277,7 @@ DELIMITER //
 
 
 CREATE PROCEDURE `sp_reassign_user_report_getdata`(
-in _u_id int(11), _u_cg_id int(11), _g_id int(11))
+in _u_id int(11), _u_cg_id int(11), _g_id varchar(50))
 BEGIN
     if _u_cg_id = 5 then
         select t1.client_id, t2.group_name,

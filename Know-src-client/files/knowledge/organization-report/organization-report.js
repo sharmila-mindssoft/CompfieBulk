@@ -57,28 +57,11 @@ function getIndustries() {
 
 function processSearch()
 {
-  c_name = FilterCountry.val().toLowerCase();
-  d_name = FilterDomain.val().toLowerCase();
-  o_name = FilterOrgn.val().toLowerCase();
-
   usr_status = $('.search-status-li.active').attr('value');
-
-
   for(var i in industriesList){
     data = industriesList[i];
-
-    data_c_name = data.country_name.toLowerCase();
-    data_d_name = data.domain_name.toLowerCase();
-    data_o_name = data.industry_name.toLowerCase();
-    data_is_active = data.is_active;
-
-    if (
-      (~data_c_name.indexOf(c_name)) && (~data_d_name.indexOf(d_name)) &&
-      (~data_o_name.indexOf(o_name)))
-    {
-      if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-        searchList.push(data);
-      }
+    if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+      searchList.push(data);
     }
   }
   loadIndustryList(searchList);
@@ -302,4 +285,7 @@ function initialize()
 $(document).ready(function () {
 	initialize();
   loadItemsPerPage();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

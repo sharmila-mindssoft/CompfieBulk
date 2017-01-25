@@ -17,7 +17,6 @@ function hideLoader() {
 }
 
 function loadLegalEntityClosureList() {
-
     function onSuccess(data) {
         legalEntityClosureList = data.legalentity_closure;
         LegalEntityClosureData(legalEntityClosureList);
@@ -52,7 +51,7 @@ function LegalEntityClosureData(data) {
         $('.legal-entity', clone).text(val.legal_entity_name);
         $('.le_id', clone).text(val.legal_entity_id);
 
-        if (val.is_active == false && val.validity_days < checkValidityDays()) {
+        if (val.is_active == false && val.validity_days <= checkValidityDays()) {
             $('#close', clone).css("display", "block");
             $('#close', clone).addClass('-' + val.legal_entity_id)
             $('#close', clone).on('click', function() {
@@ -302,7 +301,7 @@ function processFilterSearch()
             bg_name = data.business_group_name.toLowerCase();
         }
 		le_name = data.legal_entity_name.toLowerCase();
-        if((data.validity_days < checkValidityDays() && data.validity_days > 0) && (data.is_active == true)){
+        if((data.validity_days <= checkValidityDays() && data.validity_days > 0) && (data.is_active == true)){
             data_is_active = false;
             data_closure = 2;
         }
@@ -314,14 +313,11 @@ function processFilterSearch()
 		if (
 	      (~c_name.indexOf(ctryname_search)) && (~g_name.indexOf(grpname_search)) &&
 	      (~bg_name.indexOf(bgrpname_search)) && (~le_name.indexOf(lename_search)) &&
-            ((closure_select == 'all') || (~closure_select.indexOf(data_closure)))
+            ((closure_select == 'all') || (~closure_select.indexOf(data_closure))) &&
+            ((status_select == 'all') || (Boolean(parseInt(status_select)) == data_is_active))
 	    )
 		{
-            if ((status_select == 'all') || (Boolean(parseInt(status_select)) == data_is_active))
-            {
-                searchList.push(data);
-
-            }
+            searchList.push(data);
 		}
 	}
 	LegalEntityClosureData(searchList);

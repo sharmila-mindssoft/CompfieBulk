@@ -45,36 +45,15 @@ function initialize() {
 function processSearch()
 {
   searchList = [];
-  c_name = FilterCountry.val().toLowerCase();
-  if(c_name.length > 0){
-    usr_status = $('.search-status-li.active').attr('value');
-
+  usr_status = $('.search-status-li.active').attr('value');
   for(var i in countriesList){
-      data = countriesList[i];
+    data = countriesList[i];
+    data_is_active = data.is_active;
 
-      data_c_name = data.country_name.toLowerCase();
-      data_is_active = data.is_active;
-
-      if (
-        (~data_c_name.indexOf(c_name)))
-      {
-        if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-          searchList.push(data);
-        }
-      }
+  if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+      searchList.push(data);
     }
   }
-  else{
-    usr_status = $('.search-status-li.active').attr('value');
-    for(var i in countriesList){
-      data = countriesList[i];
-      data_is_active = data.is_active;
-
-      if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-          searchList.push(data);
-        }
-      }
-    }
   processPaging();
 }
 
@@ -276,4 +255,7 @@ function pageData(on_current_page){
 $(function () {
   renderControls();
   loadItemsPerPage();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

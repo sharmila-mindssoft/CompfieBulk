@@ -116,6 +116,13 @@ function getCategoryName(catgId) {
 function loadUserGroupdata(userGroupList) {
   $('.tbody-usergroups-list').find('tr').remove();
   var sno = 0;
+  if(userGroupList.length == 0){
+    $('.tbody-usergroups-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
+    $('.tbody-usergroups-list').append(clone4);
+  }
   $.each(userGroupList, function (key, value) {
     var catgid = value.user_category_id;
     var userGroupName = value.user_group_name;
@@ -140,10 +147,12 @@ function loadUserGroupdata(userGroupList) {
     });
 
     if (isActive == true){
+      $('.status').attr('title', 'Click Here to Deactivate');
       $('.status', clone).removeClass('fa-times text-danger');
       $('.status', clone).addClass('fa-check text-success');
     }
     else{
+      $('.status').attr('title', 'Click Here to Activate');
       $('.status', clone).removeClass('fa-check text-success');
       $('.status', clone).addClass('fa-times text-danger');
     }
@@ -526,7 +535,15 @@ function renderControls(){
 $(function () {
   renderControls();
   initialize();
-  $('.js-sorting-table').jssorting(); // Sorting table
+  //$('.js-sorting-table').jssorting(); // Sorting table
+  $(".js-sorting-table").tablesorter({
+    sortList: [[0,0]], // starting column sorting
+    headers: { // disable column sorting
+        0:{sorter: false},
+        3:{sorter: false},
+        4:{sorter: false}
+    }
+  });
 });
 /*$(document).find('.js-filtertable').each(function () {
   $(this).filtertable().addFilter('.js-filter');

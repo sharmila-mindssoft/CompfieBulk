@@ -59,27 +59,16 @@ function getGeography() {
 function processSearch()
 {
   search = true;
-  g_name = FilterGeography.val().toLowerCase();
 
   usr_status = $('.search-status-li.active').attr('value');
 
-  var cId = '';
-  if ($('#country').val() != ''){
-
-    cId = $('#country').val();
-    for(var i in geoList){
-      data = geoList[i];
-      data_g_name = data.geography_mapping.toLowerCase();
-      data_is_active = data.is_active;
-      if (
-      (~data_g_name.indexOf(g_name)))
-      {
-        if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-          searchList.push(data);
-        }
+  for(var i in geoList){
+    data = geoList[i];
+    data_is_active = data.is_active;
+      if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+        searchList.push(data);
       }
     }
-  }
   processPaging();
   //loadGeographyList(searchList);
 }
@@ -359,4 +348,7 @@ $(function () {
   renderControls();
   loadItemsPerPage();
   $('#countryval').focus();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });
