@@ -1112,7 +1112,6 @@ BEGIN
         WHERE legal_entity_name=le_name and client_id=clientid and  country_id=countryid
         and legal_entity_id != le_id;
     END IF;
-END
 END //
 
 DELIMITER ;
@@ -1411,7 +1410,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_tbl_unit_getclientbusinessgroup`(in userId INT(11))
 BEGIN
     DECLARE user_category INT(11);
-    SELECT user_category_id INTO user_category FROM tbl_users WHERE user_id = userid;
+    SELECT user_category_id INTO user_category FROM tbl_user_login_details WHERE user_id = userid;
     IF user_category in (1,2) then
         select business_group_id, business_group_name, client_id
         from tbl_business_groups order by business_group_name ASC;
@@ -4013,7 +4012,7 @@ BEGIN
     SELECT user_category_id INTO user_category
     FROM tbl_user_login_details WHERE user_id = userid_;
 
-    select count(t1.legal_entity_id) as total_record
+    select count(distinct t1.legal_entity_id) as total_record
     from tbl_legal_entities t1
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
     where
@@ -4181,9 +4180,11 @@ BEGIN
         tbl_statutories ts ON ts.statutory_id = tms.statutory_id
     WHERE
         tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
-        IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
-        IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
-        IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
+        IF(statutoryid_ IS NOT NULL, (ts.statutory_id = statutoryid_  or ts.parent_ids in (statutoryid_)), 1) AND
+        IF(fromdate_ IS NOT NULL, DATE(tsnl.created_on) >= fromdate_, 1) AND
+        IF(todate_ IS NOT NULL, DATE(tsnl.created_on) <= todate_, 1)
+    group by tc.statutory_mapping_id, tc.compliance_id
+    order by tsnl.created_on desc
     limit fromcount_, pagecount_;
 END //
 
@@ -4200,7 +4201,7 @@ CREATE PROCEDURE `sp_statutory_notification_details_count`(
  countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50))
 BEGIN
-    SELECT COUNT(tsnl.notification_id) as total_record
+    SELECT COUNT(distinct tsnl.notification_id) as total_record
 FROM
     tbl_statutory_notifications tsnl
         INNER JOIN
@@ -4211,7 +4212,7 @@ FROM
     tbl_statutories ts ON ts.statutory_id = tms.statutory_id
 WHERE
     tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
-    IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
+    IF(statutoryid_ IS NOT NULL, (ts.statutory_id = statutoryid_  or ts.parent_ids in (statutoryid_)), 1) AND
     IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
     IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1);
 END //
@@ -4603,7 +4604,7 @@ CREATE PROCEDURE `sp_clientstatutories_units`(
 BEGIN
 
     select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t2.geography_name ,
-    t4.client_statutory_id, nc.total
+    t4.client_statutory_id
     from tbl_units as t1
     inner join tbl_geographies as t2 on t1.geography_id = t2.geography_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id
@@ -4631,7 +4632,7 @@ BEGIN
             group by t4.unit_id
     ) as nc on t1.unit_id = nc.unit_id
     left join tbl_client_statutories as t4 on t1.unit_id = t4.unit_id
-    where nc.total > 0 and t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
+    where t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
     IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
     and IFNULL(t1.category_id,0) like catid and t3.domain_id = domainid
     order by t1.unit_code, t1.unit_name;
@@ -7514,12 +7515,11 @@ BEGIN
 
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         where t1.is_active = 1
         and t1.is_disable = 0
         and t1.user_category_id = 5
         group by user_id;
-
-
 END //
 
 DELIMITER ;
@@ -7541,6 +7541,7 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.is_active = 1
@@ -7570,11 +7571,9 @@ BEGIN
         and t2.user_category_id = 7 and t2.is_active = 1 and
         t2.is_disable = 0;
 
-    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
-        t3.parent_user_id
+    select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
-        inner join tbl_user_mapping as t3
-        on t1.user_id = t3.child_user_id
+
         where t1.user_category_id = 7 and t1.is_active = 1
         and t1.is_disable = 0
         group by user_id;
@@ -7605,6 +7604,7 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.user_category_id = 8 and t1.is_active = 1
@@ -8053,6 +8053,12 @@ in cid int(11), did int(11), iid int(11), snid int(11), gid int(11),
 l1sid int(11), fid int(11),  uid int(11), fcount int(11), tcount int(11)
 )
 BEGIN
+    select @ucat := user_category_id from tbl_user_login_details where user_id = uid;
+    IF @ucat = 1 THEN
+        set @uid = '%';
+    ELSE
+        set @uid = uid;
+    END IF;
     -- records count
     SELECT  count(distinct t2.compliance_id) as count
          FROM tbl_statutory_mappings t1
@@ -8066,7 +8072,7 @@ BEGIN
          on ts.statutory_mapping_id = t1.statutory_mapping_id
          INNER JOIN tbl_user_domains t5
          ON t5.domain_id = t1.domain_id and t5.country_id = t1.country_id
-         and t5.user_id = uid
+         and t5.user_id like @uid
 
          WHERE t2.is_approved in (2, 3) AND t2.is_active = 1 AND
          t1.country_id = cid
@@ -8111,7 +8117,7 @@ BEGIN
         on ts.statutory_mapping_id = t1.statutory_mapping_id
         INNER JOIN tbl_user_domains t5
         ON t5.domain_id = t1.domain_id and t5.country_id = t1.country_id
-        and t5.user_id = uid
+        and t5.user_id like @uid
         WHERE t2.is_approved in (2, 3)
         AND t2.is_active = 1 AND t1.country_id = cid
         and t1.domain_id = did
@@ -8128,7 +8134,7 @@ BEGIN
          inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
          inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
          inner join tbl_user_domains as t3 on t3.country_id = t2.country_id and t3.domain_id = t2.domain_id
-         where t2.is_approved in (2,3) and t3.user_id = uid
+         where t2.is_approved in (2,3) and t3.user_id like @uid
          and t2.country_id = cid
          and t2.domain_id = did
          and  IF(iid IS NOT NULL, t1.organisation_id = iid, 1)
@@ -8139,7 +8145,7 @@ BEGIN
             inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
             inner join tbl_compliances as t3 on t3.statutory_mapping_id = t2.statutory_mapping_id
             inner join tbl_user_domains as t5 on t5.country_id = t3.country_id and t5.domain_id = t3.domain_id
-            where t3.is_approved in(2,3) and t5.user_id = uid
+            where t3.is_approved in(2,3) and t5.user_id like @uid
             and t3.country_id = cid
             and t3.domain_id = did
             and  IF(gid IS NOT NULL, t2.geography_id = gid, 1)
@@ -8789,4 +8795,6 @@ CREATE PROCEDURE `sp_get_userid_from_admin`()
 BEGIN
     SELECT group_concat(user_id) as userids FROM tbl_user_login_details
     WHERE user_category_id = 1;
-END
+END //
+
+DELIMITER ;

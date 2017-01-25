@@ -55,7 +55,7 @@ log.setLevel(logging.ERROR)
 
 csrf = CsrfProtect()
 app.secret_key = "MGRkZjg2NTBiNGM0YzAzNmM1NTNhZTZhYTFiZjg1ZThjb21wZmllY29tcGZpZQ=="  # "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
-app.config["WTF_CSRF_TIME_LIMIT"] = 1000
+app.config["WTF_CSRF_TIME_LIMIT"] = 100000
 
 csrf.init_app(app)
 
@@ -140,7 +140,7 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        # print s
+        print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)

@@ -100,7 +100,7 @@ var SubmitView1 = $(".submit-view1");
 var RemarkView2 = $(".remark-view2");
 var SubmitView2 = $(".submit-view2");
 var RemarkView3 = $(".remark-view3");
-var SubmitView3 = $(".submit-view4");
+var SubmitView3 = $(".submit-view3");
 var RemarkView4 = $(".remark-view4");
 var SubmitView4 = $(".submit-view4");
 
@@ -207,7 +207,6 @@ function loadTMList(){
                 $('.tm-techno-manager-name', clone).keyup(function(e){
                     var condition_fields = ["country_domains", "user_id"];
                     var condition_values = [[group_countries[value.ct_id], group_domains[value.ct_id]], TechnoManagerId.val()];
-                    
                     var text_val = $(this).val();
                     selected_textbox = $(this);
                     selected_textid = $("#techno_manager_id_"+value.ct_id);
@@ -505,7 +504,7 @@ function callDomainUserInfo(userId, groupId, legalentityId, domainId, type){
 
 }
 
-function getCountryId(l_Id){
+/*function getCountryId(l_Id){
     var country_id = '';
     $.each(LEGAL_ENTITIES, function(key, value) {
         if(value.legal_entity_id == parseInt(l_Id)){
@@ -513,7 +512,7 @@ function getCountryId(l_Id){
         }
     });
     return country_id;
-}
+}*/
 
 function getTEValidCountries(){
     TECountries = [];
@@ -527,7 +526,7 @@ function getTEValidCountries(){
             TECountries.push(cn_id);
         }
 
-        for(var i=0; i<d_ids; i++){
+        for(var i=0; i<d_ids.length; i++){
             if ($.inArray(d_ids[i], TEDomains) == -1) {
                 TEDomains.push(d_ids[i]);
             }
@@ -572,6 +571,9 @@ function pageControls(){
     });
 
     DomainManagerName.keyup(function(e){
+        var condition_fields = ["p_user_ids"];
+        var condition_values = [];
+
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACDomainManager, DomainManagerId, text_val,
@@ -657,7 +659,6 @@ function pageControls(){
         var text_val = $(this).val();
         var condition_fields = ["country_domains", "user_id", "p_user_ids"];
         var condition_values = [[[c_id], [d_id]], DomainExecutiveId.val(), DE_PARANTS[DomainExecutiveId.val()]];
-
         commonAutoComplete1(
             e, RACDomainExecutive, RDomainExecutiveId, text_val,
             DOMAIN_USERS, "employee_name", "user_id", function (val) {
@@ -736,9 +737,6 @@ function pageControls(){
         var le_id = DMLegalEntityId.val();
         var domain_id = DMDomainId.val();
 
-        d_id = parseInt(domain_id);
-        c_id = getCountryId(le_id);
-
         if(dm_id == ''){
             displayMessage(message.reassign_from_required);
         }else if(group_id == ''){
@@ -750,19 +748,17 @@ function pageControls(){
         }else{
             clearData();
             $('.tbody-dm-view').empty();
+            d_id = parseInt(domain_id);
+            c_id = LE_COUNTRIES[le_id];
             callDomainUserInfo(parseInt(dm_id), parseInt(group_id), parseInt(le_id), parseInt(domain_id), 'DM');
         }
     });
 
     DEShow.click(function(){
-        
         var de_id = DomainExecutiveId.val();
         var group_id = DEGroupId.val();
         var le_id = DELegalEntityId.val();
         var domain_id = DEDomainId.val();
-
-        d_id = parseInt(domain_id);
-        c_id = getCountryId(le_id);
 
         if(de_id == ''){
             displayMessage(message.reassign_from_required);
@@ -775,6 +771,8 @@ function pageControls(){
         }else{
             clearData();
             $('.tbody-de-view').empty();
+            d_id = parseInt(domain_id);
+            c_id = LE_COUNTRIES[le_id];
             callDomainUserInfo(parseInt(de_id), parseInt(group_id), parseInt(le_id), parseInt(domain_id), 'DE');
         }
     });
@@ -1052,9 +1050,10 @@ function pageControls(){
         }else if(replace_remarks == ''){
             displayMessage(message.remarks_required);
         }else{
-            mirror.SaveUserReplacement(5, parseInt(ManagerId), parseInt(ReplaceManagerId), replace_remarks, 
+            mirror.SaveUserReplacement(parseInt(ManagerCategory), parseInt(ManagerId), parseInt(ReplaceManagerId), replace_remarks, 
                 function(error, response) {
                 if (error == null) {
+                    getFormData();
                     displaySuccessMessage(message.reassign_users_account_success);
                     ReplaceManagerShow.trigger( "change" );
                 } else {

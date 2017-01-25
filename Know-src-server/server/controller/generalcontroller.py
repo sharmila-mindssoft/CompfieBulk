@@ -280,7 +280,6 @@ def process_get_countries(db, user_id):
 # To retrieve all the audit trails of the given User
 ########################################################
 def process_get_audit_trails(db, request, session_user):
-    print "inside controller"
     from_count = request.record_count
     to_count = request.page_count
     from_date = request.from_date
@@ -341,20 +340,15 @@ def process_update_notification_status(db, request, session_user):
 
 def process_uploaded_file(info, f_type, client_id=None):
     info_keys = info.keys()
-    print info_keys
     is_valid = True
     # Validate
     res = None
     for k in info_keys:
         try:
-            print k
             file_info = info[k]
             file_name = file_info.filename
-            print file_name
             file_content = file_info.read()
-            print len(file_content)
             f_name = file_name.split('.')
-            print f_name
             if len(f_name) == 1:
                 res = possiblefailure.InvalidFile()
                 is_valid = False
@@ -374,7 +368,6 @@ def process_uploaded_file(info, f_type, client_id=None):
                 lst = []
                 if f_type == "knowledge":
                     file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
-                    print file_path
                 else:
                     client_dir = "%s/%s" % (CLIENT_DOCS_BASE_PATH, client_id)
                     file_path = "%s/%s" % (client_dir, file_name)

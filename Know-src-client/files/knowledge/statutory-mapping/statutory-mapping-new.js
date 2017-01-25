@@ -83,8 +83,8 @@ ViewScreen = $('#statutorymapping-add');
 
 listTemplate = $("#templates #list-template .items");
 var file_type = [
-    "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
-    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf"
+    "doc", "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
+    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf", "ods"
 ]
 var msg = message;
 
@@ -336,10 +336,12 @@ function RenderInput() {
                         if (sts == true) {
                             $('.organisationlist').removeClass('active');
                             $('.organisationlist i').removeClass('fa-check');
+                            _renderinput.selected_iids = [];
                         }
                         else {
                             $('.organisationlist').addClass('active');
                             $('.organisationlist i').addClass('fa-check');
+                            _renderinput.selected_iids = [];
                             $.each(ORGANISATION_INFO, function(k, v) {
                                 if ((v.c_id == _renderinput.countryId) && (v.d_id == _renderinput.domainId)) {
                                     _renderinput.selected_iids.push(v.org_id)
@@ -781,6 +783,9 @@ function RenderInput() {
             $('.bottomfield .snamepid', slObject).attr(
                 'id', 'dvpid' + v.l_position
             );
+            $('.bottomfield .txtsname', slObject).on('input', function(e) {
+                this.value = isCommon($(this));
+            });
 
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
@@ -1208,7 +1213,7 @@ function RenderInput() {
                             $(this).find('i').addClass('fa-check');
                         });
 
-                        _renderinput.clearGeosSubLevel(g_l_position);
+                        // _renderinput.clearGeosSubLevel(g_l_position);
                         _renderinput.renderAllGeoNames(g_l_position);
                     }
                 });
@@ -1235,7 +1240,7 @@ function RenderInput() {
                     $('#gid'+v.g_id).removeClass('active');
                     $('#gid'+v.g_id+' i').removeClass('fa-check');
                     $('#gidall'+v.l_position).removeClass('active');
-                    $('#gidall'+v,l_position+' i').removeClass('fa-check');
+                    $('#gidall'+v.l_position+' i').removeClass('fa-check');
                     _renderinput.unloadGeosNames(v.l_position, v.g_id);
                 }else {
                     $('#gid'+v.g_id).addClass('active');
@@ -1495,6 +1500,8 @@ function showTab(){
         }else {
             NextButton.show();
             PreviousButton.show();
+            SaveButton.hide();
+            SubmitButton.hide();
         }
 
         _viewPage.showThirdTab();
@@ -1563,12 +1570,15 @@ function pageControls() {
             }
         });
         if (differnt_level) {
-            displayMessage(msg.invalid_levelone + _renderinput.l_one_name + " should be selected in first level");
+            displayMessage(msg.invalid_levelone + _renderinput.l_one_name + " should not be selected in first level");
         }
         else {
             if (add_new) {
                 _renderinput.mapped_statu.push(info)
                 _renderinput.renderStatuGrid();
+            }
+            else {
+                displayMessage(msg.statutory_already_added);
             }
         }
     });

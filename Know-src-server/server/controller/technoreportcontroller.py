@@ -62,8 +62,6 @@ forms = [22, 23, 24, 25]
 def process_techno_report_request(request, db):
     session_token = request.session_token
     request_frame = request.request
-    print "request_frame"
-    print request_frame
     user_id = validate_user_session(db, session_token)
     if user_id is not None:
         is_valid = validate_user_forms(db, user_id, forms, request_frame)
@@ -215,8 +213,6 @@ def process_get_statutory_notifications_filters(db, request_frame, user_id):
 ######################################################################################
 def process_get_statutory_notifications_report_data(db, request, user_id):
     result = get_statutory_notifications_report_data(db, request)
-    print "stat not list"
-    print result
     total_count = get_statutory_notifications_report_count(
             db, request
         )
@@ -404,10 +400,7 @@ def process_get_organizationwise_unit_count(db, request, session_user):
 # Return Type : Return list of countries,client groups,business groups,legal entities and units list
 ##################################################################################################################
 def process_get_user_mapping_reports_filter(db, request_frame, session_user):
-    print "inside user mapping report controller"
     user_category_details = get_user_category_details(db, session_user)
-    print "user category details"
-    print user_category_details
     for row in user_category_details:
         countries = get_countries_for_usermapping_report_filter(db, int(row["user_category_id"]), int(session_user))
         usermapping_groupdetails = get_group_details_for_usermapping_report_filter(db, int(row["user_category_id"]), int(session_user))
@@ -431,13 +424,10 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
         converter = ConvertJsonToCSV(
             db, request_frame, session_user, "UserMappingReport"
         )
-        print "inside control"
-        print converter.FILE_DOWNLOAD_PATH
         return technoreports.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        print "inside user mapping report details"
         country_id = request_frame.country_id
         client_id = request_frame.client_id
         legal_entity_id = request_frame.legal_entity_id
@@ -457,14 +447,10 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
             int(unit_id), from_count, page_count
         )
 
-        print "length of mapping after db"
-        print usermapping_report_dataset
         techno_details = []
         unit_domains = []
         domains = []
         if(len(usermapping_report_dataset) > 0):
-            print "ds 1"
-            print usermapping_report_dataset[1]
 
             for techno in usermapping_report_dataset[0]:
 
@@ -472,15 +458,11 @@ def process_get_user_mapping_details_reports_data(db, request_frame, session_use
                     techno["unit_id"], techno["techno_manager"], techno["techno_user"],
                     unit_code_with_name=techno["unit_name"]
                 ))
-            print "techno"
-            print techno_details
 
             for assign_domain in usermapping_report_dataset[1]:
                 unit_domains.append(core.UserMappingReportDomain(
                     assign_domain["unit_id"], assign_domain["employee_name"], assign_domain["user_category_name"], assign_domain["domain_id"]
                 ))
-            print "unit_domains"
-            print unit_domains
             for domain in usermapping_report_dataset[2]:
                 domains.append(technoreports.UserMappingDomain(
                     domain["domain_id"], domain["domain_name"], bool(domain["is_active"])
@@ -511,8 +493,6 @@ def process_export_user_mapping_details_reports_data(db, request, session_user):
         converter = ConvertJsonToCSV(
             db, request, session_user, "UserMappingReport"
         )
-        print "inside control"
-        print converter.FILE_DOWNLOAD_PATH
         return technoreports.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
@@ -598,7 +578,6 @@ def process_get_AssignedUserClientGroups(db, user_id):
 # Return Type : Return list of reassigned user data under the parameters
 ##################################################################################################################
 def process_get_ReassignUserReportData(db, request_frame, user_id):
-    print "inside controller"
     user_category_id = request_frame.user_category_id
     user_id = request_frame.user_id
     group_id = request_frame.group_id_none
@@ -627,13 +606,9 @@ def process_export_ReassignUserReportData(db, request, user_id):
 ##################################################################################################################
 def process_get_ReassignUserDomainReportData(db, request_frame, user_id):
     result = get_ReassignUserDomainReportData(db, request_frame)
-    print "from controller"
-    print result
     return technoreports.ReassignUserDomainReportDataSuccess(result)
 
 def process_get_AssignedStatutoriesList(db, request_frame, user_id):
-    print "user_id"
-    print user_id
     result = get_assigned_statutories_list(db, user_id)
     return technoreports.ApproveAssignedStatutoriesListSuccess(result)
 

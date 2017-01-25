@@ -84,8 +84,6 @@ class Request(object):
 
     @staticmethod
     def parse_structure(data):
-        print "techno reports"
-        print data
         data = parse_static_list(data, 2)
         name, data = data
         if _Request_class_map.get(name) is None:
@@ -577,7 +575,6 @@ class GetReassignUserReportData(Request):
             "user_id": self.user_id,
             "group_id_none": self.group_id_none,
         }
-        print "inside protocol"
         return data
 
 class ExportReassignUserReportData(Request):
@@ -1214,8 +1211,6 @@ class ReassignUserDomainReportDataSuccess(Response):
         data = {
             "reassign_domains_list": self.reassign_domains_list,
         }
-        print "inside success"
-        print data
         return data
 
 class ApproveAssignedStatutoriesListSuccess(Response):
@@ -1232,8 +1227,6 @@ class ApproveAssignedStatutoriesListSuccess(Response):
         data = {
             "approve_assigned_statutories": self.approve_assigned_statutories,
         }
-        print "inside success"
-        print data
         return data
 
 def _init_Response_class_map():

@@ -268,7 +268,10 @@ function processAddFilter() {
     var filteredList = [];
     for (var entity in assignLegalEntitiesList) {
         var countryName = assignLegalEntitiesList[entity].c_name;
-        var bgName = assignLegalEntitiesList[entity].business_group_name;
+        var bgName = '-';
+        if(assignLegalEntitiesList[entity].business_group_name != null){
+            bgName = assignLegalEntitiesList[entity].business_group_name;
+        }
         var leName = assignLegalEntitiesList[entity].legal_entity_name;
         if (~countryName.toLowerCase().indexOf(addcountryfilter) && ~bgName.toLowerCase().indexOf(bgfilter) && ~leName.toLowerCase().indexOf(lefilter)) {
             filteredList.push(assignLegalEntitiesList[entity]);

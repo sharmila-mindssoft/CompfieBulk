@@ -1023,7 +1023,7 @@ function initMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
+                if ((jqXHR.responseText) && (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1)) {
                     clearSession();
                     window.location.href = login_url;
                 }
@@ -1056,7 +1056,7 @@ function initMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
+                if ((jqXHR.responseText) && (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1)) {
                     clearSession();
                     window.location.href = login_url;
                 }
@@ -1102,7 +1102,7 @@ function initMirror() {
                 window.location.href = login_url;
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
+                if ((jqXHR.responseText) && (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1)) {
                     clearSession();
                     window.location.href = login_url;
                 }
@@ -2524,7 +2524,7 @@ function initMirror() {
                     callback(status, response);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1) {
+                if ((jqXHR.responseText) && (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1)) {
                     clearSession();
                     window.location.href = login_url;
                 }

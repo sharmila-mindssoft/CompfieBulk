@@ -749,7 +749,6 @@ function getActiveUnitDict(unit_id, domain_name){
 
 // Save the assigned units
 $(".save-assign-unit").click(function(){
-    alert("ave")
     domain_manager_id = $("#userid").val();
     var true_count = ASSIGN_UNIT_SAVE_DETAILS.length;
     var active_units = []
@@ -764,7 +763,6 @@ $(".save-assign-unit").click(function(){
         });
     });*/
     if(true_count > 0){
-        alert("sd")
         for(var i=0;i<ASSIGN_UNIT_SAVE_DETAILS.length;i++){
             //DOMAIN_NAME
             active_units.push(
