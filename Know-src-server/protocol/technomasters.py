@@ -1135,11 +1135,11 @@ class GetEditAssignLegalEntitySuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "unassign_legal_entities", "techno_users"
+            "unassign_legal_entities", "mapped_techno_users"
         ])
 
         unassign_legal_entities = data.get("unnssign_legal_entities")
-        techno_users = data.get("techno_users")
+        techno_users = data.get("mapped_techno_users")
 
         return GetEditAssignLegalEntitySuccess(
             unassign_legal_entities, techno_users
@@ -1149,7 +1149,7 @@ class GetEditAssignLegalEntitySuccess(Response):
 
         return {
             "unassign_legal_entities": self.unassign_legal_entities,
-            "techno_users": self.techno_users
+            "mapped_techno_users": self.techno_users
         }
 
 class SaveAssignLegalEntitySuccess(Response):
