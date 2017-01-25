@@ -230,7 +230,7 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
             # unit_name = unit.unit_name
             if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
                 return technomasters.UnitCodeAlreadyExists(
-                    get_next_auto_gen_number(db, client_id)
+                    get_next_auto_gen_number(db, client_id=client_id)
                 )
 
             # elif is_duplicate_unit_name(db, unit_id, unit_name, client_id):
@@ -245,9 +245,6 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
                 old_unit_list.append({"div_id": div.get("div_id")})
                 old_unit_list.append({"catg_id": catg.get("catg_id")})
             else:
-                print "div"
-                print unit.unit_name
-                print div.get("div_id")
                 new_unit_list.append(unit)
                 new_unit_list.append({"div_id": div.get("div_id")})
                 new_unit_list.append({"catg_id": catg.get("catg_id")})
@@ -279,11 +276,7 @@ def save_client(db, request, session_user):
         if divisions is not None:
             for division in divisions:
                 division_id = division.division_id
-                print "1"
-                print division_id
                 division_name = division.division_name
-                print "2"
-                print division_name
                 if(division_name == "---"):
                     division_name = None
 
@@ -320,9 +313,6 @@ def save_client(db, request, session_user):
                         category_ids.append({"catg_id": category_id})
                 else:
                     category_ids.append({"catg_id": 0})
-        print "all div catg"
-        print div_ids
-        print category_ids
         is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
         if type(is_valid_unit) is not list:
             return is_valid_unit
