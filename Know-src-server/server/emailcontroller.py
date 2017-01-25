@@ -16,20 +16,14 @@ __all__ = ["EmailHandler"]
 class Email(object):
 
     def __init__(self):
-        # self.sender = "compfie.saas@gmail.com"
-        # self.password = "compfie@123"
-        # self.sender = "compfie.test@aparajitha.com"
-        # self.password = "Ctt@123"
         self.sender = "test@mindssoft.com"
         self.password = "Test$#4u"
-        # self.API_KEY = 'u5IPdlY1JAxa5_fJoJaPEw'
         self.initializeTemplates()
 
     def send_email(
         self, receiver, subject, message, cc=None, is_credential=False
     ):
         print "inside send email"
-        # server = smtplib.SMTP('smtp.gmail.com', 25, timeout=30)
         # server = smtplib.SMTP("mail.aparajitha.com", 465)
         # print server
         # server.ehlo()
