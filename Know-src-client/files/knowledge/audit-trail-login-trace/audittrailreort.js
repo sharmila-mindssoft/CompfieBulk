@@ -77,7 +77,9 @@ Auditpage.prototype.resetFields = function(){
     this._sno = 0;
     //CountryVal.val('');
     Form.val('');
+    Form_id.val('');
     User.val('');
+    User_id.val('');
     this.clearMessage();
 };
 
@@ -208,7 +210,11 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
                 f_name = a_page.getValue("formname", v.form_id);
             }
             $('.snumber', rowClone).text(parseInt(a_page._sno));
-            $('.username', rowClone).text(a_page.getValue('username', v.user_id));
+            var u_name = a_page.getValue('username', v.user_id);
+            if(u_name.indexOf("None") >= 0){
+                u_name = "Administrator";
+            }
+            $('.username', rowClone).text(u_name);
             $('.usertype', rowClone).text(a_page.getValue('usercategory', v.user_category_id));
            //$('.usertype', rowClone).text("categoryName");
             $('.formname', rowClone).text(f_name);
@@ -278,6 +284,7 @@ Auditpage.prototype.fetchData = function() {
         _sno = (this._on_current_page - 1) *  _page_limit;
     }
     t_this.displayLoader();
+    console.log(_from_date, _to_date, _user_id, _form_id, _category_id);
     mirror.getAuditTrail(_from_date, _to_date, _user_id, _form_id, _category_id, _sno, _page_limit,
         function(error, response) {
             if (error != null) {
@@ -573,9 +580,11 @@ initializeControlEvents = function(a_page){
     Category.change(function(e) {
         if(parseInt(Category.val()) > 2){
             $('.user-list').show();
+            User.val('');
         }else{
             $('.user-list').hide();
         }
+
     });
 
     on_page_load = function() {
