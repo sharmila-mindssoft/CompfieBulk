@@ -275,7 +275,6 @@ def update_legal_entities(db, request, group_id, session_user):
         else:
             file_name = entity.old_logo
 
-        print "enter ----", entity
         business_group_id = return_business_group_id(
             db, entity, group_id, session_user, current_time_stamp
         )

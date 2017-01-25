@@ -52,7 +52,7 @@ $('#submit').click(function () {
         });
       } else {
         function onSuccess(data) {
-          displayMessage("Password Reset Successfully");
+          displaySuccessMessage("Password Reset Successfully");
           $('#newpassword').val('');
           $('#confirmpassword').val('');
         }
@@ -170,6 +170,7 @@ function resetPasswordValidate() {
 }
 
 $(document).ready(function () {
+  
   $('#newpassword').keyup('input', function (event) {
     this.value = this.value.replace(/\s/g, '');
     /*
@@ -203,7 +204,8 @@ $(document).ready(function () {
     //     onFailure(error);
     //   }
     // });
-
+  $('#newpassword').focus();
+  $('#password-hint').css('display', 'none');
 });
 $('#newpassword').focus(function () {
   $('#password-hint').css('display', 'inline-block');

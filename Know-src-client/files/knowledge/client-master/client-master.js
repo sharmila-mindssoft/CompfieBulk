@@ -679,7 +679,9 @@ function saveClient() {
                     le_name_duplicate_check_temp.push(le_name);
                     if(business_group_id == null){
                         temp_businessgroup = business_group_name;
+                        business_group_id = 0;
                     }
+
                     legal_entities.push(
                         mirror.getLegalEntityUpdateRow(
                             parseInt(country_id), parseInt(business_group_id),
@@ -1118,11 +1120,11 @@ function editEntity(e, le_count, value, domain_details) {
             if (value.is_approved == 1) {
                 showNonEditable(le_table.find(".contract-from"), null, value.contract_from);
                 showNonEditable(le_table.find(".contract-to"), null, value.contract_to);
-                $(".domain-"+le_count).hide();
+                //$(".domain-"+le_count).hide();
             } else {
                 showEditable(le_table.find(".contract-from"), value.contract_from);
                 showEditable(le_table.find(".contract-to"), value.contract_to);
-                $(".domain-"+le_count).show();
+                //$(".domain-"+le_count).show();
             }
             showEditable(le_table.find("#upload-logo"), value.old_logo);
                       
