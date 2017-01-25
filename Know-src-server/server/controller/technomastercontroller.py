@@ -217,16 +217,17 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
     old_unit_list = []
     # dict_unit_list = []
     # int_div_cnt = 1
-    int_unit_cnt = 1
+    # int_unit_cnt = 1
     i = 0
+    j = 1
     # var unit
     for counts, div, catg in map(None, divisions, div_ids, category_ids):
-        div_cnt = counts.division_cnt
+        # div_cnt = counts.division_cnt
         unit_cnt = counts.unit_cnt
         while i < len(units):
             unit = units[i]
             unit_id = unit.unit_id
-            unit_name = unit.unit_name
+            # unit_name = unit.unit_name
             if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
                 return technomasters.UnitCodeAlreadyExists(
                     get_next_auto_gen_number(db, client_id)
@@ -244,11 +245,15 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
                 old_unit_list.append({"div_id": div.get("div_id")})
                 old_unit_list.append({"catg_id": catg.get("catg_id")})
             else:
+                print "div"
+                print unit.unit_name
+                print div.get("div_id")
                 new_unit_list.append(unit)
                 new_unit_list.append({"div_id": div.get("div_id")})
                 new_unit_list.append({"catg_id": catg.get("catg_id")})
-            if i == (unit_cnt - 1):
+            if j == unit_cnt:
                 i = i + 1
+                j = 1
                 break
             else:
                 i = i + 1
@@ -274,7 +279,11 @@ def save_client(db, request, session_user):
         if divisions is not None:
             for division in divisions:
                 division_id = division.division_id
+                print "1"
+                print division_id
                 division_name = division.division_name
+                print "2"
+                print division_name
                 if(division_name == "---"):
                     division_name = None
 
@@ -294,7 +303,7 @@ def save_client(db, request, session_user):
                     else:
                         div_ids.append({"div_id": 0})
                 else:
-                    div_id = division_id
+                    div_id = 0
                     div_ids.append({"div_id": div_id})
 
                 if category_name is not None:
@@ -311,7 +320,9 @@ def save_client(db, request, session_user):
                         category_ids.append({"catg_id": category_id})
                 else:
                     category_ids.append({"catg_id": 0})
-
+        print "all div catg"
+        print div_ids
+        print category_ids
         is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
         if type(is_valid_unit) is not list:
             return is_valid_unit
