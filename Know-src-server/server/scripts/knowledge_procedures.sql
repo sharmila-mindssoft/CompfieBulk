@@ -3559,11 +3559,11 @@ BEGIN
         ) as geography_name
         from tbl_user_units as tuu
         right join tbl_units as tu
-        on tuu.unit_id = tu.unit_id and
-        tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
+        on tu.unit_id = tuu.unit_id and
+        tu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
         and user_category_id=8) and tu.is_approved=1
         where
-        -- tuu.user_id = userid and
+        tuu.user_id = userid and
         tuu.client_id=clientid and tuu.domain_id=domainid
         group by tu.unit_id
         order by unit_name ASC;
@@ -3582,7 +3582,7 @@ BEGIN
         tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid and user_category_id=8)
 
         where
-        -- tuu.user_id = userid and
+        tuu.user_id = userid and
         tuu.client_id=clientid and tuu.domain_id=domainid
 
         group by tuu.unit_id;
