@@ -246,9 +246,6 @@ def process_get_statutory_level(db, user_id):
     countries = get_countries_for_user(db, user_id)
     domains = get_domains_for_user(db, user_id)
     statutory_levels = get_statutory_levels(db)
-    print countries
-    print domains
-    print statutory_levels
     return knowledgemaster.GetStatutoryLevelsSuccess(
         countries, domains, statutory_levels
     )
@@ -287,7 +284,6 @@ def process_save_statutory_level(db, request_frame, user_id):
 def process_get_geography_level(db, user_id):
     countries = get_countries_for_user(db, user_id)
     geography_levels = get_geography_levels(db)
-    print geography_levels
     return knowledgemaster.GetGeographyLevelsSuccess(
         countries, geography_levels
     )

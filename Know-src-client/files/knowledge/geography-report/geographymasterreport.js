@@ -62,7 +62,6 @@ function processSearch()
   g_name = FilterGeography.val().toLowerCase();
 
   usr_status = $('.search-status-li.active').attr('value');
-  alert(usr_status)
 
   var cId = '';
   if ($('#country').val() != ''){
@@ -81,7 +80,6 @@ function processSearch()
       }
     }
   }
-  alert(searchList.length)
   processPaging();
   //loadGeographyList(searchList);
 }

@@ -39,7 +39,7 @@ function getStatutorynature() {
     processPaging();
 	}
 	function onFailure(error) {
-		custom_alert(error);
+		displayMessage(error);
 	}
   displayLoader();
 	mirror.getStatutoryNatureList(function (error, response) {

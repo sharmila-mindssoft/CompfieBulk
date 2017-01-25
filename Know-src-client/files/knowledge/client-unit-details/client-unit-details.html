@@ -231,6 +231,17 @@
 <script type="text/javascript">
 $(function() {
   $("#from-date" ).datepicker({
+    changeMonth: true,
+    changeYear: true,
+    numberOfMonths: 1,
+    dateFormat: "dd-M-yy",
+    monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+    onClose: function( selectedDate ) {
+      $( "#to-date" ).datepicker();
+    }
+});// "option", "minDate", selectedDate
+$( "#to-date" ).datepicker({
   changeMonth: true,
   changeYear: true,
   numberOfMonths: 1,
@@ -238,20 +249,9 @@ $(function() {
   monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
   onClose: function( selectedDate ) {
-  $( "#to-date" ).datepicker( "option", "minDate", selectedDate );
+    $( "#from-date" ).datepicker();
   }
 });
-$( "#to-date" ).datepicker({
-changeMonth: true,
-changeYear: true,
-numberOfMonths: 1,
-dateFormat: "dd-M-yy",
-monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-onClose: function( selectedDate ) {
-$( "#from-date" ).datepicker( "option", "maxDate", selectedDate );
-}
-});
-});
+});// "option", "maxDate", selectedDate
 </script>
 {% endblock %}
