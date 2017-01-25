@@ -1023,7 +1023,6 @@ function initMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                console.lo(jqXHR.responseText);
                 if ((jqXHR.responseText) && (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1)) {
                     clearSession();
                     window.location.href = login_url;

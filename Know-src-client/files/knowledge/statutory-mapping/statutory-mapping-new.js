@@ -84,7 +84,7 @@ ViewScreen = $('#statutorymapping-add');
 listTemplate = $("#templates #list-template .items");
 var file_type = [
     "doc", "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
-    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf"
+    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf", "ods"
 ]
 var msg = message;
 
@@ -1500,6 +1500,8 @@ function showTab(){
         }else {
             NextButton.show();
             PreviousButton.show();
+            SaveButton.hide();
+            SubmitButton.hide();
         }
 
         _viewPage.showThirdTab();
@@ -1568,7 +1570,7 @@ function pageControls() {
             }
         });
         if (differnt_level) {
-            displayMessage(msg.invalid_levelone + _renderinput.l_one_name + " should be selected in first level");
+            displayMessage(msg.invalid_levelone + _renderinput.l_one_name + " should not be selected in first level");
         }
         else {
             if (add_new) {
