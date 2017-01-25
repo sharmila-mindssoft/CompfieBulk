@@ -762,7 +762,7 @@ $(".save-assign-unit").click(function(){
             }
         });
     });*/
-    if(true_count > 0){
+    if(true_count > 0 && (domain_manager_id != null && domain_manager_id != '')){
         for(var i=0;i<ASSIGN_UNIT_SAVE_DETAILS.length;i++){
             //DOMAIN_NAME
             active_units.push(
