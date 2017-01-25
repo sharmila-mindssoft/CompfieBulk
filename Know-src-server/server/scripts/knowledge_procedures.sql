@@ -8822,27 +8822,3 @@ END //
 
 DELIMITER ;
 
-
-DROP PROCEDURE IF EXISTS `sp_statu_parent_update`;
-
-DELIMITER //
-
-CREATE PROCEDURE `sp_statu_parent_update`(
-    in p
-)
-BEGIN
-    Update tbl_statutories as A inner join (
-        select p.statutory_id, (select
-        group_concat(p1.statutory_name SEPARATOR '>>')
-        from tbl_statutories as p1 where statutory_id in (
-            select parent_ids from tbl_statutories
-        ))
-        as names from tbl_statutories as p
-        where p.statutory_id = %s
-        ) as B on A.statutory_id = B.statutory_id
-        set A.parent_names = B.names
-        where A.statutory_id = %s
-
-END //
-
-DELIMITER ;
