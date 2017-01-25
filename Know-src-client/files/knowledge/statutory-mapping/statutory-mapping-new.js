@@ -1199,6 +1199,7 @@ function RenderInput() {
                         $('#gidall'+g_l_position).removeClass('active');
                         $('#gidall'+g_l_position+' i').removeClass('fa-check');
                         _renderinput.clearGeosSubLevel(g_l_position);
+                        _renderinput.selected_geos_parent = [];
                         $.each($('#gnl'+g_l_position+' li'), function(k, v){
                             $(this).removeClass('active');
                             $(this).find('i').removeClass('fa-check');
