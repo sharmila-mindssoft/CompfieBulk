@@ -1112,7 +1112,6 @@ BEGIN
         WHERE legal_entity_name=le_name and client_id=clientid and  country_id=countryid
         and legal_entity_id != le_id;
     END IF;
-END
 END //
 
 DELIMITER ;
@@ -8056,9 +8055,9 @@ l1sid int(11), fid int(11),  uid int(11), fcount int(11), tcount int(11)
 BEGIN
     select @ucat := user_category_id from tbl_user_login_details where user_id = uid;
     IF @ucat = 1 THEN
-        @uid = '%';
+        set @uid = '%';
     ELSE
-        @uid = uid;
+        set @uid = uid;
     END IF;
     -- records count
     SELECT  count(distinct t2.compliance_id) as count
@@ -8796,4 +8795,6 @@ CREATE PROCEDURE `sp_get_userid_from_admin`()
 BEGIN
     SELECT group_concat(user_id) as userids FROM tbl_user_login_details
     WHERE user_category_id = 1;
-END
+END //
+
+DELIMITER ;
