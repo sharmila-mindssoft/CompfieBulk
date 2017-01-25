@@ -55,7 +55,7 @@ log.setLevel(logging.ERROR)
 
 csrf = CsrfProtect()
 app.secret_key = "MGRkZjg2NTBiNGM0YzAzNmM1NTNhZTZhYTFiZjg1ZThjb21wZmllY29tcGZpZQ=="  # "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
-app.config["WTF_CSRF_TIME_LIMIT"] = 500
+app.config["WTF_CSRF_TIME_LIMIT"] = 100000
 
 csrf.init_app(app)
 

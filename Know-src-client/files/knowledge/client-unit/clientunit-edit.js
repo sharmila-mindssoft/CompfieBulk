@@ -90,6 +90,7 @@ function clientunit_edit(clientunitId, businessgroupId, legalentityId, countryId
     $('.labelcountry').show();
     $('.mandatory').hide();
     $('#add-country-row').hide();
+    $('.total_created_unit').text('');
     //$('#division-text').show();
     $('#division-select').hide();
     //$('.division-new').hide();
@@ -734,14 +735,15 @@ function unitrow_remove(evt) {
     var countval = split_evt_hyphen[2] + "-" + split_evt_hyphen[3];
     unitcnt_val = $('.unitcnt-'+split_evt_hyphen[2] +"-1").val();
     delete_row = 0;
-    del_row.push(countval)
-    delete_row = parseInt($('.tbody-unit-' + split_evt_hyphen[2] + ' tr').length)-parseInt($('.sno-'+split_evt_hyphen[2]+'-'+split_evt_hyphen[3]).text());
+    del_row.push(countval);
+    //delete_row = parseInt($('.tbody-unit-' + split_evt_hyphen[2] + ' tr').length)-parseInt(unitcnt_val);
+    delete_row = $('.remove-icon-'+countval).parent().parent().index();
     if(delete_row < 0)
         delete_row = 0;
 
     $('.tbody-unit-' + split_evt_hyphen[2] + ' tr').eq(delete_row).remove();
     division_cnt = division_cnt - 1;
-    unitcodeautogenerateids = unitcodeautogenerateids -1;
+    //unitcodeautogenerateids = unitcodeautogenerateids -1;
     if(division_cnt == 0){
         division_cnt = 1;
     }
@@ -754,6 +756,11 @@ function unitrow_remove(evt) {
     else
     {
         $('.unitcnt-' + split_evt_hyphen[2] +"-1").val(parseInt(unitcnt_val));
+    }
+    if($('.total_created_unit').text() == ""){
+        $('.total_created_unit').text("1");
+    }else{
+        $('.total_created_unit').text(parseInt($('.total_created_unit').text()) - 1);
     }
 }
 // Add new unit row during edit mode
@@ -823,7 +830,11 @@ function addNewUnitRow_edit(str) {
         $('.division-new-' + division_cnt+ '-' + unitval).show();
         $('.division-existing-' + division_cnt+ '-' + unitval).hide();
     }
-
+    if($('.total_created_unit').text() == ""){
+        $('.total_created_unit').text("1");
+    }else{
+        $('.total_created_unit').text(parseInt($('.total_created_unit').text()) + 1);
+    }
     if ($('.unitcode-checkbox-' + countval).is(':checked')) {
         $('.unit-code-' + division_cnt + '-' + unitval).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
         unitcodeautogenerateids++;

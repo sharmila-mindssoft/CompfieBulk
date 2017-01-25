@@ -54,6 +54,7 @@ function initialize_maps(){
 function loadValidityDatesList(){
   var count = 0;
   $('.tbody-validity-config-list').empty();
+
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     ++ count;
     if(domain_list.length > 0){
@@ -89,9 +90,11 @@ function loadValidityDatesList(){
   });
   if(count <= 0){
     $("#btn-submit").hide();
-    var clone = $(".no-records tr").clone();
+    $('.tbody-validity-config-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
     $('.tbody-validity-config-list').append(clone);
-
   }
 }
 

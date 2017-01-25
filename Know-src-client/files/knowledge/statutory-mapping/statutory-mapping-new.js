@@ -83,8 +83,8 @@ ViewScreen = $('#statutorymapping-add');
 
 listTemplate = $("#templates #list-template .items");
 var file_type = [
-    "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
-    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf"
+    "doc", "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
+    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf", "ods"
 ]
 var msg = message;
 
@@ -102,6 +102,9 @@ possibleFailure = function(err, extra_details) {
     }
     else if (err == "TransactionExists") {
         displayMessage(msg.transaction_exists);
+    }
+    else if (err == "InvalidPassword") {
+        displayMessage("Invalid password");
     }
     else {
         displayMessage(err);
@@ -127,6 +130,7 @@ function RenderInput() {
     this.s_id = null;
     this.mapped_statu = [];
     this.l_one_id = null;
+    this.l_one_name = null;
     this.level_one_name = null;
     this.mapped_compliances = [];
     this.summary = null;
@@ -332,10 +336,12 @@ function RenderInput() {
                         if (sts == true) {
                             $('.organisationlist').removeClass('active');
                             $('.organisationlist i').removeClass('fa-check');
+                            _renderinput.selected_iids = [];
                         }
                         else {
                             $('.organisationlist').addClass('active');
                             $('.organisationlist i').addClass('fa-check');
+                            _renderinput.selected_iids = [];
                             $.each(ORGANISATION_INFO, function(k, v) {
                                 if ((v.c_id == _renderinput.countryId) && (v.d_id == _renderinput.domainId)) {
                                     _renderinput.selected_iids.push(v.org_id)
@@ -661,9 +667,11 @@ function RenderInput() {
                 if (v.p_ids != null){
                     $.merge(_s_pids, v.p_ids);
                     _renderinput.l_one_id = v.p_ids[0];
+                    _renderinput.l_one_name = v.p_maps[0];
                 }
                 else {
                     _renderinput.l_one_id = v.s_id;
+                    _renderinput.l_one_name = v.s_name;
                 }
 
                 if (v.p_maps != null) {
@@ -775,11 +783,14 @@ function RenderInput() {
             $('.bottomfield .snamepid', slObject).attr(
                 'id', 'dvpid' + v.l_position
             );
+            $('.bottomfield .txtsname', slObject).on('input', function(e) {
+                this.value = isCommon($(this));
+            });
 
             $('.bottomfield .txtsname', slObject).on(
                 'keypress', function(event) {
                 if (event.keyCode == 13) {
-                    new_value = $('#dv'+ v.l_position).val();
+                    new_value = $('#dv'+ v.l_position).val().trim();
                     if (new_value.length == 0) {
                         displayMessage(msg.statutory_required);
                         return false;
@@ -809,7 +820,7 @@ function RenderInput() {
             $('.bottomfield .statut-add', slObject).on(
                 'click', function(){
 
-                new_value = $('#dv'+ v.l_position).val();
+                new_value = $('#dv'+ v.l_position).val().trim();
                 if (new_value.length == 0) {
                     displayMessage(msg.statutory_required);
                     return false;
@@ -1196,14 +1207,18 @@ function RenderInput() {
                     }else {
                         $('#gidall'+g_l_position).addClass('active');
                         $('#gidall'+g_l_position+' i').addClass('fa-check');
-
+                        check_gids = []
                         $.each($('#gnl'+g_l_position+' li'), function(k, v){
+                            val = $(this).val();
+                            if ($(this).hasClass('active')) {
+                                check_gids.push(val);
+                            }
                             $(this).addClass('active');
                             $(this).find('i').addClass('fa-check');
                         });
 
-                        _renderinput.clearGeosSubLevel(g_l_position);
-                        _renderinput.renderAllGeoNames(g_l_position);
+                        // _renderinput.clearGeosSubLevel(g_l_position);
+                        _renderinput.renderAllGeoNames(g_l_position, check_gids);
                     }
                 });
             }
@@ -1229,7 +1244,7 @@ function RenderInput() {
                     $('#gid'+v.g_id).removeClass('active');
                     $('#gid'+v.g_id+' i').removeClass('fa-check');
                     $('#gidall'+v.l_position).removeClass('active');
-                    $('#gidall'+v,l_position+' i').removeClass('fa-check');
+                    $('#gidall'+v.l_position+' i').removeClass('fa-check');
                     _renderinput.unloadGeosNames(v.l_position, v.g_id);
                 }else {
                     $('#gid'+v.g_id).addClass('active');
@@ -1315,13 +1330,15 @@ function RenderInput() {
         });
     };
 
-    this.renderAllGeoNames = function(l_position) {
+    this.renderAllGeoNames = function(l_position, loaded_gids ) {
         $.each(GEOGRAPHY_INFO, function(k, v) {
             if (v.c_id == _renderinput.countryId)
             {
                 if (v.l_position == l_position) {
                     // $('#gnl'+l_position).empty();
-                    _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+                    if (loaded_gids.indexOf(v.g_id) == -1) {
+                        _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+                    }
                 }
             }
         });
@@ -1489,6 +1506,8 @@ function showTab(){
         }else {
             NextButton.show();
             PreviousButton.show();
+            SaveButton.hide();
+            SubmitButton.hide();
         }
 
         _viewPage.showThirdTab();
@@ -1557,12 +1576,15 @@ function pageControls() {
             }
         });
         if (differnt_level) {
-            displayMessage(msg.invalid_levelone + _renderinput.level_one_name + "should select in first level");
+            displayMessage(msg.invalid_levelone + _renderinput.l_one_name + " should not be selected in first level");
         }
         else {
             if (add_new) {
                 _renderinput.mapped_statu.push(info)
                 _renderinput.renderStatuGrid();
+            }
+            else {
+                displayMessage(msg.statutory_already_added);
             }
         }
     });
@@ -1750,7 +1772,8 @@ function pageControls() {
                 }
                 mon = $(".month-select", this).val();
                 trig = $(".trigger-value", this).val();
-
+                if (trig != '')
+                    trig = parseInt(trig);
                 if ((RepeatsType.val() == 1) && (RepeatsEvery.val() < trig)){
                    // validate trigger before days
                     displayMessage(msg.invalid_triggerbefore);
@@ -1919,9 +1942,11 @@ function pageControls() {
     });
 
     SaveButton.click(function() {
+        displayLoader();
         IS_SAVE = true;
         map_data = _viewPage.make_data_format(0);
         if (map_data == false) {
+            hideLoader();
             displayMessage(msg.location_selection_required);
             return false;
         }
@@ -1940,14 +1965,15 @@ function pageControls() {
     });
 
     SubmitButton.click(function() {
+        displayLoader();
         IS_SAVE = false;
         map_data = _viewPage.make_data_format(1);
         if (map_data == false) {
+            hideLoader();
             displayMessage(msg.location_selection_required);
             return false;
         }
         if (compliance_edit == false) {
-
             if (IS_EDIT)
                 _fetchback.updateMapping(map_data);
             else {
@@ -1990,6 +2016,9 @@ function pageControls() {
             });
             if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == false)){
                 $(".statu-date-label", RecurringPan).hide();
+            }
+            else if ((RepeatsType.val() == 2) && (MultiselectDate.prop('checked') == true)){
+                $(".statu-date-label", RecurringPan).show();
             }
         }
     });

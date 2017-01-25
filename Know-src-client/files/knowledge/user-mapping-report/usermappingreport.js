@@ -73,6 +73,7 @@ function initialize() {
   displayLoader();
   mirror.getUserMappingReportFilters(function (error, response) {
     if (error == null) {
+      console.log(response)
       onSuccess(response);
       hideLoader();
     } else {
@@ -520,6 +521,8 @@ function processPaging(){
   totalRecord = mappedUserList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
+    loadHeader();
+    hideLoader();
     $('.tbody-usermappingdetails-list').empty();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
@@ -527,7 +530,7 @@ function processPaging(){
     $('.tbody-usermappingdetails-list').append(clone4);
     ExportButton.hide();
     PaginationView.hide();
-    hideLoader();
+
   } else {
     if(sno==0){
       ExportButton.show();
@@ -649,15 +652,7 @@ function loadusermappingdetails() {
     }
   }
 }
-
-function loadUserMappingDetailsList(data)
-{
-  var th_cnt=3;
-  var sno = 0;
-  $('.tbody-usermappingdetails-list').empty();
-  $('.usermapping-header').empty();
-  //$('.#datatable-responsive').empty();
-  domainsList = userMappingList.usermapping_domain;
+function loadHeader(){
   var country_name = $('#countryval').val();
   var client_name = $('#groupsval').val();
   var business_group_name = $('#businessgroupsval').val();
@@ -682,6 +677,16 @@ function loadUserMappingDetailsList(data)
     $('.categoryval').text(category_name);
   else
     $('.categoryval').text(" - ");
+}
+function loadUserMappingDetailsList(data)
+{
+  var th_cnt=3;
+  var sno = 0;
+  $('.tbody-usermappingdetails-list').empty();
+  $('.usermapping-header').empty();
+  //$('.#datatable-responsive').empty();
+  domainsList = userMappingList.usermapping_domain;
+  loadHeader();
 
   //$('#datatable-responsive th').remove();
 
@@ -689,7 +694,6 @@ function loadUserMappingDetailsList(data)
   var cloneheading = tableheading.clone();
   $('.usermapping-header').append(cloneheading);
 
-  alert("1:"+domainsList.length)
   if(domainsList.length > 0)
   {
     for(var i=0;i<domainsList.length;i++)
@@ -720,7 +724,6 @@ function loadUserMappingDetailsList(data)
   var assignedDomainVal_1 = '';
   var getDomainVal  = '';
   var col=4;
-  alert("2:"+technoDetails.length)
   for(var i=0;i<technoDetails.length;i++)
   {
     //alert(technoDetails.length);
@@ -801,6 +804,13 @@ function loadUserMappingDetailsList(data)
 
 function getDomainAssigned(domain_header, unit_id, data)
 {
+  var d_header = null;
+  if(domain_header.indexOf("Domain User") >= 0){
+    d_header = "Domain Executive"+" "+domain_header.split(" ")[2]+" "+domain_header.split(" ")[3];
+  }
+  else{
+    d_header = domain_header;
+  }
   unit_domains = data.unit_domains;
   var assignedDomainVal = "NA";
   for(var j=0;j<unit_domains.length;j++)
@@ -808,7 +818,7 @@ function getDomainAssigned(domain_header, unit_id, data)
     if(unit_domains[j].unit_id == unit_id)
     {
       var domain_name = getDomainName(unit_domains[j].domain_id);
-      if(domain_header == (unit_domains[j].user_category_name+" "+domain_name))
+      if(d_header == (unit_domains[j].user_category_name+" "+domain_name))
       {
         assignedDomainVal = unit_domains[j].employee_name;
       }
@@ -932,11 +942,21 @@ $('#groupsval').keyup(function (e) {
     {
       if(clientList[i].country_id == $('#country-id').val())
       {
-        ctry_grps.push({
-          "client_id": clientList[i].client_id,
-          "group_name": clientList[i].client_name,
-          "is_active": true
-        });
+        var occur = -1
+        for(var j=0;j<ctry_grps.length;j++){
+          if(ctry_grps[j].client_id == clientList[i].client_id){
+            occur = 1;
+            break;
+          }
+        }
+        if(occur < 0){
+          ctry_grps.push({
+            "client_id": clientList[i].client_id,
+            "group_name": clientList[i].client_name,
+            "is_active": true
+          });
+        }
+
       }
     }
     commonAutoComplete(

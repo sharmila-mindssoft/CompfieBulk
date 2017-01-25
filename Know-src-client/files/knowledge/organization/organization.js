@@ -56,7 +56,6 @@ function getIndustries() {
 		industriesList = data.industries;
 		domainList = data.domains;
 		countriesList = data.countries;
-		console.log("list:"+data.domains)
 		loadIndustryList(industriesList);
 	}
 	function onFailure(error) {
@@ -108,59 +107,67 @@ function processSearch()
 function loadIndustryList(data) {
   var j = 1;
   viewTable.find('tr').remove();
+  if(data.length == 0){
+    $('.tbody-organization-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
+    $('.tbody-organization-list').append(clone4);
+  }else{
+    $.each(data, function (key, value) {
+      statusmsg = "";
+      var country_id = value.country_id;
+      var country_name = value.country_name;
+      var domain_id = value.domain_id;
+      var domain_name = value.domain_name;
+      var industryId = value.industry_id;
+      var industryName = value.industry_name;
+      var isActive = value.is_active;
+      var passStatus = null;
 
-  $.each(data, function (key, value) {
-    statusmsg = "";
-    var country_id = value.country_id;
-    var country_name = value.country_name;
-    var domain_id = value.domain_id;
-    var domain_name = value.domain_name;
-    var industryId = value.industry_id;
-    var industryName = value.industry_name;
-    var isActive = value.is_active;
-    var passStatus = null;
+      if (isActive == true) {
+        passStatus = false;
+      } else {
+        passStatus = true;
+      }
 
-    if (isActive == true) {
-      passStatus = false;
-    } else {
-      passStatus = true;
-    }
+      var tableRow = $('#templates .table-orgn-master .table-row');
+      var clone = tableRow.clone();
+      $('.sno', clone).text(j);
+      $('.country-name', clone).text(country_name);
+      $('.domain-name', clone).text(domain_name);
+      $('.organization-name', clone).text(industryName);
 
-    var tableRow = $('#templates .table-orgn-master .table-row');
-    var clone = tableRow.clone();
-    $('.sno', clone).text(j);
-    $('.country-name', clone).text(country_name);
-    $('.domain-name', clone).text(domain_name);
-    $('.organization-name', clone).text(industryName);
+      //edit icon
+      $('.edit').attr('title', 'Click Here to Edit');
+      $('.edit', clone).addClass('fa-pencil text-primary');
+      $('.edit', clone).on('click', function () {
+        displayEdit(country_id, domain_id, industryId, industryName);
+      });
 
-    //edit icon
-    $('.edit').attr('title', 'Click Here to Edit');
-    $('.edit', clone).addClass('fa-pencil text-primary');
-    $('.edit', clone).on('click', function () {
-      displayEdit(country_id, domain_id, industryId, industryName);
+      if (value.is_active == false){
+        $('.status').attr('title', 'Click Here to Activate');
+        $('.status', clone).removeClass('fa-check text-success');
+        $('.status', clone).addClass('fa-times text-danger');
+      }
+      else{
+        $('.status').attr('title', 'Click Here to Deactivate');
+        $('.status', clone).removeClass('fa-times text-danger');
+        $('.status', clone).addClass('fa-check text-success');
+      }
+      $('.status', clone).on('click', function (e) {
+        showModalDialog(e, industryId, isActive);
+      });
+
+      $('.status').hover(function(){
+        showTitle(this);
+      });
+
+      viewTable.append(clone);
+      j = j + 1;
     });
+  }
 
-    if (value.is_active == false){
-      //$('.status').attr('title', 'Click Here to Deactivate');
-      $('.status', clone).removeClass('fa-check text-success');
-      $('.status', clone).addClass('fa-times text-danger');
-    }
-    else{
-      //$('.status').attr('title', 'Click Here to Activate');
-      $('.status', clone).removeClass('fa-times text-danger');
-      $('.status', clone).addClass('fa-check text-success');
-    }
-    $('.status', clone).on('click', function (e) {
-      showModalDialog(e, industryId, isActive);
-    });
-
-    $('.status').hover(function(){
-      showTitle(this);
-    });
-
-    viewTable.append(clone);
-    j = j + 1;
-  });
 }
 
 //Status Title
@@ -232,7 +239,6 @@ function validateAuthentication(){
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -243,7 +249,6 @@ function validateMaxLength(key_name, value, show_name) {
 
 // validation
 function formValidation() {
-  console.log("inside form");
   if (country_val.val().trim().length == 0) {
     displayMessage(msg.country_required);
     country_ac.focus();
@@ -279,14 +284,11 @@ function submitOrganization()
 
   //validate controls
   var returnValidation = formValidation();
-  console.log(returnValidation)
 
   if(returnValidation == true){
-    console.log("save")
     //save organization
     if(industryId == '')
     {
-      console.log("inside save")
       function onSuccess(response) {
         getIndustries();
         AddSCreen.hide();
@@ -306,7 +308,6 @@ function submitOrganization()
         parseInt(domainId),
         industryName
       ];
-      console.log("a:"+industryDetail)
       industryDetailDict = mirror.getSaveIndustryDict(industryDetail);
       mirror.saveIndustry(industryDetailDict, function (error, response) {
         if (error == null) {
@@ -504,7 +505,6 @@ function renderControls(){
     var c_ids = null;
     var check_val = false;
     if(country_val.val() != ''){
-      console.log("ctry:"+country_val.val())
       for(var i=0;i<domainList.length;i++){
         c_ids = domainList[i].country_ids;
 
@@ -567,5 +567,13 @@ function initialize()
 //initialization
 $(document).ready(function () {
   initialize();
-  $('.js-sorting-table').jssorting(); // Sorting table
+  $(".js-sorting-table").tablesorter({
+    sortList: [[0,0]], // starting column sorting
+    headers: { // disable column sorting
+        0:{sorter: false},
+        4:{sorter: false},
+        5:{sorter: false}
+    }
+  });
+
 });

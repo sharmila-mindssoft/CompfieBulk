@@ -100,8 +100,6 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
 def process_get_geography_report(db, request_frame, user_id):
     countries = get_countries_for_user(db, user_id)
     geography_report = get_geography_report(db)
-    print "geography_data"
-    print geography_report
 
     return knowledgereport.GetGeographyReportSuccess(
         countries, geography_report

@@ -44,34 +44,15 @@ function initialize() {
 
 function processSearch()
 {
-  c_name = FilterCountry.val().toLowerCase();
-  d_name = FilterDomain.val().toLowerCase();
   usr_status = $('.search-status-li.active').attr('value');
 
-  if(d_name.length > 0 || c_name.length > 0){
     for (var entity in domainList) {
-      dName = domainList[entity].domain_name;
-      cnames = domainList[entity].c_names;
       dStatus = domainList[entity].is_active;
-      var flg = false;
-      if (c_name.length == 0)  {
-          flg = true;
-      }
-      else {
-        for (var c in cnames) {
-          if (~cnames[c].toLowerCase().indexOf(c_name)){
-              flg = true;
-              continue;
-          }
-        }
-      }
-      if ((~dName.toLowerCase().indexOf(d_name)) && flg == true) {
-        if ((usr_status == 'all') || (Boolean(parseInt(usr_status)) == dStatus)){
-            searchList.push(domainList[entity]);
-        }
+
+      if ((usr_status == 'all') || (Boolean(parseInt(usr_status)) == dStatus)){
+          searchList.push(domainList[entity]);
       }
     }
-  }
   processPaging();
 }
 
@@ -278,4 +259,7 @@ function pageData(on_current_page){
 $(function () {
   renderControls();
   loadItemsPerPage();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

@@ -149,18 +149,19 @@ function loadGeographyLevelsList(countryval) {
   var levellist;
   if (geographyLevelsList[countryval] != undefined) {
     levellist = geographyLevelsList[countryval];
-    for (var entity in levellist) {
-      var levelPosition = levellist[entity].l_position;
-      var levelName = levellist[entity].l_name;
-      var levelId = levellist[entity].l_id;
-      $('#level' + levelPosition).val(levelName);
-      $('#levelid' + levelPosition).val(levelId);
+      for (var entity in levellist) {
+        var levelPosition = levellist[entity].l_position;
+        var levelName = levellist[entity].l_name;
+        var levelId = levellist[entity].l_id;
+        $('#level' + levelPosition).val(levelName);
+        $('#levelid' + levelPosition).val(levelId);
+      }
+      if (levellist.length < 10)
+        $('#add').show();
+      else
+        $('#add').hide();
     }
-    if (levellist.length < 10)
-      $('#add').show();
-    else
-      $('#add').hide();
-  }
+
 }
 //validation
 function validate() {
@@ -278,7 +279,11 @@ $('#insert-record').click(function () {
     $('#add').show();
     //displayMessage('');
   } else {
-    displayMessage(message.title_required);
+    if ($('#country').val().trim().length == 0) {
+      displayMessage(message.country_required);
+    }else{
+      displayMessage(message.title_required);
+    }
     $('#add').hide();
     inserlevelstatus = false;
   }
