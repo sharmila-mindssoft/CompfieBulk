@@ -70,7 +70,6 @@ function FetchBack() {
         ap_status = $('.ap-status-li.active').attr('value');
 
         rcount = _renderinput.show_map_count;
-        console.log(rcount);
         if((rcount < STATU_TOTALS) && (show_more) )  {
             show_more = false;
             displayLoader();
@@ -315,7 +314,6 @@ function FetchBack() {
 
     this.updateOnlyCompliance = function(data) {
         displayLoader();
-        console.log(fetch.updateCompliance);
         fetch.updateComplianceOnly(data, function(status, response) {
             if (status == null) {
                 is_upload = false;
@@ -407,7 +405,6 @@ function ListPage() {
                     CURRENT_TAB = 3;
                 });
                 if (c.is_approved == 4) {
-                    console.log(c.remarks);
                     row.addClass('rejected_row');
                     $('.comp_approval_status', row).append(
                         '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+ c.remarks +'" data-original-title="Rejected reason goes here."></i>'

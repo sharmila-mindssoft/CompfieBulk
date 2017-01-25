@@ -83,7 +83,7 @@ ViewScreen = $('#statutorymapping-add');
 
 listTemplate = $("#templates #list-template .items");
 var file_type = [
-    "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
+    "doc", "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
     "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf"
 ]
 var msg = message;
@@ -1213,7 +1213,7 @@ function RenderInput() {
                             $(this).find('i').addClass('fa-check');
                         });
 
-                        _renderinput.clearGeosSubLevel(g_l_position);
+                        // _renderinput.clearGeosSubLevel(g_l_position);
                         _renderinput.renderAllGeoNames(g_l_position);
                     }
                 });
@@ -1574,6 +1574,9 @@ function pageControls() {
             if (add_new) {
                 _renderinput.mapped_statu.push(info)
                 _renderinput.renderStatuGrid();
+            }
+            else {
+                displayMessage(msg.statutory_already_added);
             }
         }
     });

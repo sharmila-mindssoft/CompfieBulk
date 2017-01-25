@@ -287,7 +287,7 @@
                                                     <div class="col-sm-2">
                                                         <input id="ottriggerbefore" class="form-control input-sm col-sm-3" maxlength="3" type="text">
                                                     </div>
-                                                    <div class="col-sm-2 p-t-7">Days</div>
+
                                                 </div>
                                             </div>
                                             <div class="card-box p-10 recurring scroll_box max-height-150 m-b-0" id="Recurring" style="display: none;">
@@ -310,12 +310,12 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-sm-12">
-                                                    <div class="col-sm-6">
+                                                <div class="col-sm-12 p-l-0 p-r-0">
+                                                    <div class="col-sm-6 p-l-0 p-r-0">
                                                     <div class="form-group clearfix m-b-10 repeat-by">
                                                         <label class="col-sm-4 control-label">Repeat by <span class="mandatory remove-manditory">*</span></label>
-                                                        <div class="col-sm-7 clearfix m-b-0 ">
-                                                            <div class="radio radio-success radio-single m-t-0">
+                                                        <div class="col-sm-7 clearfix m-b-0 m-t-5">
+                                                            <div class="radio radio-success radio-single m-t-0 ">
                                                                 <input id="singleRadio1" class="radio-class" name="radioSingle1" checked="checked" value="1" type="radio">
                                                                 <label for="singleRadio1" class="singleRadio1">Day of the month</label>
                                                             </div>
@@ -327,15 +327,15 @@
 
                                                     </div>
                                                     <div class="form-group clearfix m-b-10">
-                                                        <label class="col-sm-3 p-t-10">Summary</label>
-                                                        <div class="col-sm-9 recurr-summary p-t-10"></div>
+                                                        <label class="col-sm-4 p-t-10 control-label">Summary</label>
+                                                        <div class="col-sm-8 recurr-summary p-t-10"></div>
                                                     </div>
                                                     </div>
                                                     <div class="col-sm-6">
 
                                                         <div class="col-sm-12 clearfix m-b-10 show-statutory-date-multiple-1" >
-                                                            <label class="col-sm-6 p-t-5 no-padding-left statu-date-label"> Statutory Date</label>
-                                                            <label class="col-sm-6 p-t-5 no-padding-left"> Trigger Before(days)</label>
+                                                            <label class="col-sm-6 p-t-10 no-padding-left statu-date-label"> Statutory Date</label>
+                                                            <label class="col-sm-6 p-t-10 no-padding-left"> Trigger Before(days)</label>
                                                         </div>
                                                         <div class="date-list">
 
@@ -362,7 +362,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-group clearfix m-b-10">
-                                                    <label class="col-sm-5 p-t-10">Summary</label>
+                                                    <label class="col-sm-5 p-t-10 control-label">Summary</label>
                                                     <div class="col-sm-7 p-t-10 occasional_summary">
                                                     </div>
                                                 </div>
@@ -462,11 +462,11 @@
         <td class="nature_name"></td>
         <td class="s_name"></td>
         <td class="icon-3x ">
-          <i class="fa c-pointer text-primary map_edit"></i>
+          <i class="fa c-pointer text-primary map_edit" data-toggle="tooltip"></i>
         </td>
 
         <td align="center" class="icon-3x ">
-          <i class="fa c-pointer map_status"></i>
+          <i class="fa c-pointer map_status" data-toggle="tooltip"></i>
         </td>
         </td>
         <td align="center" class="approval_status">
@@ -480,7 +480,7 @@
         <td>&nbsp;</td>
         <td colspan="5" class="comp_name"></td>
         <td class="icon-3x ">
-          <i class="fa c-pointer text-primary comp_edit"></i>
+          <i class="fa c-pointer text-primary comp_edit" data-toggle="tooltip"></i>
         </td>
         <td align="center" class="icon-3x">&nbsp;</td>
         </td>
@@ -511,7 +511,7 @@
 
   <div id="statutory-li-template">
     <li width="100%">
-      <i style="float:left; padding-left:5px; padding-right:5px;" class="fa fa-pencil text-primary c-pointer edit-icon"></i>
+      <i style="float:left; padding-left:5px; padding-right:5px;" class="fa fa-pencil text-primary c-pointer edit-icon" data-toggle="tooltip"></i>
       <div class="sname-holder" width="100%"">
           <span id="sname">statutoryname</span>
           <i id="select-act" class="fa pull-right select-act"></i>
@@ -524,7 +524,7 @@
       <tr class="table-row">
         <td class="sno">1</td>
         <td class="statutory">Gratuity Act, 1972 <i class="ti-angle-double-right "></i> Tamil Nadu Gratuity Act, 1972 <i class="ti-angle-double-right "></i> Rule 3</td>
-        <td class="icon-3x text-center"><i class="remove fa fa-trash text-primary c-pointer"></i></td>
+        <td class="icon-3x text-center"><i class="remove fa fa-trash text-primary c-pointer" data-toggle="tooltip"></i></td>
       </tr>
     </table>
   </div>
@@ -538,8 +538,8 @@
         <td class="description">Within 30 days of opening a branch</td>
         <td class="frequency">One Time</td>
         <td class="summary-repeats">-</td>
-        <td class="icon-3x text-center"><i id="edit-icon" class="fa fa-pencil text-primary c-pointer"></i></td>
-        <td class="icon-3x text-center"><i id="status" class="fa c-pointer"></i></td>
+        <td class="icon-3x text-center"><i id="edit-icon" class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip"></i></td>
+        <td class="icon-3x text-center"><i id="status" class="fa c-pointer" data-toggle="tooltip"></i></td>
       </tr>
     </table>
   </div>

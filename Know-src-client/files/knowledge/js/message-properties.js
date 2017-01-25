@@ -79,6 +79,7 @@ var message = {
   'statutory_required': 'Statutory Name Required',
   'statutory_selection_required': 'Atleast one Statute should be selected',
   'statutory_selection_exceed': 'Maximum three statutes can be selected',
+  'statutory_already_added': 'Statutory already added',
   'compliance_selection_required': 'Atleast one Compliance should be added',
   'active_compliance_required': 'Atleast one Compliance should be Active',
   'location_selection_required': 'Atleast one Location should be selected',

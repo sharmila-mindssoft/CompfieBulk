@@ -1368,6 +1368,7 @@ def get_reassign_user_filters(db):
         grp_ids = list(grp_ids)
         le_ids = set(le_ids)
         le_ids = list(le_ids)
+
         domain_exec_users.append(admin.UserInfo(
             user_id, e_name, c_d_list, [t["parent_user_id"]],
             t["user_category_id"], grp_ids, le_ids
@@ -1398,6 +1399,14 @@ def get_reassign_user_filters(db):
         grp_ids = list(grp_ids)
         le_ids = set(le_ids)
         le_ids = list(le_ids)
+
+        if len(le_ids) == 0 :
+            le_ids = None
+        if len(grp_ids) == 0 :
+            grp_ids = None
+        if len(p_ids) == 0 :
+            p_ids = None
+
         domain_manag_users.append(admin.UserInfo(
             user_id, e_name, c_d_list, p_ids,
             t["user_category_id"], grp_ids, le_ids
@@ -1614,9 +1623,8 @@ def save_reassign_domain_executive(db, user_from, user_to, domain_id, unit_ids, 
     return True
 
 def save_user_replacement(db, user_type, user_from, user_to, remarks, session_user):
+    print [user_type, user_from, user_to, remarks, session_user]
     db.call_update_proc("sp_tbl_users_replacement", [
         user_type, user_from, user_to, remarks, session_user
     ])
     return True
-
-
