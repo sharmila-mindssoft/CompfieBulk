@@ -4183,6 +4183,7 @@ BEGIN
         IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
         IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
         IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
+    group by tc.statutory_mapping_id, tc.compliance_id
     limit fromcount_, pagecount_;
 END //
 
@@ -4606,29 +4607,29 @@ BEGIN
     from tbl_units as t1
     inner join tbl_geographies as t2 on t1.geography_id = t2.geography_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id
-    -- left join (
-    --     select t4.unit_id, count(distinct t1.compliance_id) as total
-    --         from tbl_compliances as t1
-    --         inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
-    --         inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-    --         inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
-    --         inner join tbl_units as t4 on t4.country_id = t1.country_id
-    --         inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
-    --         and t5.organisation_id = t2.organisation_id
-    --         left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
-    --         and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
-    --          where t1.is_active = 1 and t1.is_approved in (2, 3)
-    --          and t6.compliance_id is null
-    --          and t3.geography_id IN
-    --          (select geography_id from tbl_geographies where geography_id =
-    --             (select geography_id from tbl_units where unit_id = t4.unit_id)
-    --          or find_in_set(geography_id,
-    --             (select parent_ids from tbl_geographies where geography_id =
-    --                 (select geography_id from tbl_units where unit_id = t4.unit_id)
-    --             )
-    --         ))
-    --         group by t4.unit_id
-    -- ) as nc on t1.unit_id = nc.unit_id
+    inner join (
+        select t4.unit_id, count(distinct t1.compliance_id) as total
+            from tbl_compliances as t1
+            inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
+            inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+            inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+            inner join tbl_units as t4 on t4.country_id = t1.country_id
+            inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+            and t5.organisation_id = t2.organisation_id
+            left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+            and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
+             where t1.is_active = 1 and t1.is_approved in (2, 3)
+             and t6.compliance_id is null
+             and t3.geography_id IN
+             (select geography_id from tbl_geographies where geography_id =
+                (select geography_id from tbl_units where unit_id = t4.unit_id)
+             or find_in_set(geography_id,
+                (select parent_ids from tbl_geographies where geography_id =
+                    (select geography_id from tbl_units where unit_id = t4.unit_id)
+                )
+            ))
+            group by t4.unit_id
+    ) as nc on t1.unit_id = nc.unit_id
     left join tbl_client_statutories as t4 on t1.unit_id = t4.unit_id
     where t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
     IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
