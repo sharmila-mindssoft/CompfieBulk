@@ -57,13 +57,22 @@ function initialize() {
 }
 function onLoadList(data){
   counList = [];
-  $.each(data, function (i, value) {
+  if(data.length == 0){
+    $('.tbody-countries-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
+    $('.tbody-countries-list').append(clone4);
+  }else{
+    $.each(data, function (i, value) {
     var country = data[i];
     $.each(country, function (j, value) {
-      counList.push(country[j]);
+        counList.push(country[j]);
+      });
     });
-  });
-  loadCountriesList(counList);
+    loadCountriesList(counList);
+  }
+
 }
 //display cpuntry details in view page
 function loadCountriesList(countriesList) {
@@ -90,12 +99,12 @@ function loadCountriesList(countriesList) {
     });
 
     if (isActive == false){
-      //$('.status').attr('title', 'Click Here to Deactivate');
+      $('.status').attr('title', 'Click Here to Activate');
       $('.status', clone).removeClass('fa-check text-success');
       $('.status', clone).addClass('fa-times text-danger');
     }
     else{
-      //$('.status').attr('title', 'Click Here to Activate');
+      $('.status').attr('title', 'Click Here to Dectivate');
       $('.status', clone).removeClass('fa-times text-danger');
       $('.status', clone).addClass('fa-check text-success');
     }
@@ -332,7 +341,15 @@ function renderSearch() {
 $(function () {
   initialize();
   renderSearch();
-  $('.js-sorting-table').jssorting(); // Sorting table
+  //$('.js-sorting-table').jssorting(); // Sorting table
+  $(".js-sorting-table").tablesorter({
+    sortList: [[0,0]], // starting column sorting
+    headers: { // disable column sorting
+        0:{sorter: false},
+        2:{sorter: false},
+        3:{sorter: false}
+    }
+  });
 });
 $('#country-name').on('input', function (e) {
   this.value = isAlphabetic($(this));
