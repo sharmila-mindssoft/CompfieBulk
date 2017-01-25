@@ -1023,10 +1023,6 @@ function initMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if ((jqXHR.responseText) && (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1)) {
-                    clearSession();
-                    window.location.href = login_url;
-                }
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
                 callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
@@ -1056,10 +1052,6 @@ function initMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if ((jqXHR.responseText) && (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1)) {
-                    clearSession();
-                    window.location.href = login_url;
-                }
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
                 callback(rdata, null);
@@ -1102,10 +1094,6 @@ function initMirror() {
                 window.location.href = login_url;
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if ((jqXHR.responseText) && (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1)) {
-                    clearSession();
-                    window.location.href = login_url;
-                }
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
                 callback(rdata.responseText);
@@ -2524,10 +2512,6 @@ function initMirror() {
                     callback(status, response);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if ((jqXHR.responseText) && (jqXHR.responseText.toLowerCase().indexOf("csrf") != -1)) {
-                    clearSession();
-                    window.location.href = login_url;
-                }
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata);
                 callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
