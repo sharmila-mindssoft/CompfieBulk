@@ -2,10 +2,10 @@ var passwordStrength = 'Weak';
 var csrf_token = $('meta[name=csrf-token]').attr('content');
 var max20 = 20;
 
-function displayMessage(message) {
-  $('.reset-password-error-message').text(message);
-  $('.reset-password-error-message').show();
-}
+// function displayMessage(message) {
+//   $('.reset-password-error-message').text(message);
+//   $('.reset-password-error-message').show();
+// }
 $('#submit').click(function () {
   $('.reset-password-error-message').html('');
   url = window.location.href;
@@ -30,7 +30,7 @@ $('#submit').click(function () {
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
         function onSuccess(data) {
-          displayMessage(message.password_reset_success);
+          displaySuccessMessage(message.password_reset_success);
           $('#newpassword').val('');
           $('#confirmpassword').val('');
         }

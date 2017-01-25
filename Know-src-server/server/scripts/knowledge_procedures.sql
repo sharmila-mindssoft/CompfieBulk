@@ -1101,17 +1101,18 @@ DROP PROCEDURE IF EXISTS `sp_legalentity_is_duplicate_legalentityname`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_legalentity_is_duplicate_legalentityname`(
-    IN le_name VARCHAR(50), le_id INT(11), clientid INT(11)
+    IN le_name VARCHAR(50), le_id INT(11), clientid INT(11), countryid INT(11)
 )
 BEGIN
     IF le_id IS NULL THEN
         SELECT count(legal_entity_id) as count FROM tbl_legal_entities
-        WHERE legal_entity_name=le_name and client_id=clientid;
+        WHERE legal_entity_name=le_name and client_id=clientid and country_id=countryid;
     ELSE
         SELECT count(legal_entity_id) as count FROM tbl_legal_entities
-        WHERE legal_entity_name=le_name and client_id=clientid
+        WHERE legal_entity_name=le_name and client_id=clientid and  country_id=countryid
         and legal_entity_id != le_id;
     END IF;
+END
 END //
 
 DELIMITER ;
@@ -8779,3 +8780,18 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- To Get All user id from category id
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_get_userid_from_admin`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_userid_from_admin`()
+BEGIN
+    SELECT group_concat(user_id) as userids FROM tbl_user_login_details
+    WHERE user_category_id = 1;
+END
