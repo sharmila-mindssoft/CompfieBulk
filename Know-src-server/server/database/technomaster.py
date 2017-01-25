@@ -155,7 +155,8 @@ def save_client_group(
     current_time_stamp = get_date_time()
     message_text = '%s has been Created.' % group_name
     msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
-    db.save_messages_users(msg_id, [1])
+    data = db.call_proc("sp_get_userid_from_usercatgid", ())
+    db.save_messages_users(msg_id, data[0]["userids"])
     return client_id
 
 
@@ -220,7 +221,7 @@ def save_legal_entities(db, request, group_id, session_user):
             db, entity, group_id, session_user, current_time_stamp
         )
         if is_duplicate_legal_entity(
-            db, None, entity.legal_entity_name, group_id
+            db, None, entity.legal_entity_name, group_id, entity.country_id
         ):
             raise process_error("E068")
         legal_entity_names.append(entity.legal_entity_name)
@@ -274,11 +275,12 @@ def update_legal_entities(db, request, group_id, session_user):
         else:
             file_name = entity.old_logo
 
+        print "enter ----", entity
         business_group_id = return_business_group_id(
             db, entity, group_id, session_user, current_time_stamp
         )
         if is_duplicate_legal_entity(
-            db, entity.legal_entity_id, entity.legal_entity_name, group_id
+            db, entity.legal_entity_id, entity.legal_entity_name, group_id, entity.country_id
         ):
             raise process_error("E068")
         elif validate_total_disk_space(
@@ -342,6 +344,7 @@ def update_legal_entities(db, request, group_id, session_user):
 def return_business_group_id(
     db, request, group_id, session_user, current_time_stamp
 ):
+    print "request.business_group--", request.business_group
     if request.business_group is None:
         return None
     elif request.business_group.business_group_id is not 0:
@@ -568,11 +571,11 @@ def is_duplicate_business_group(
 #   returns False if there is no duplicates
 ##########################################################################
 def is_duplicate_legal_entity(
-    db, legal_entity_id, legal_entity_name, client_id
+    db, legal_entity_id, legal_entity_name, client_id, country_id
 ):
     count_rows = db.call_proc(
         "sp_legalentity_is_duplicate_legalentityname",
-        (legal_entity_name, legal_entity_id, client_id)
+        (legal_entity_name, legal_entity_id, client_id, country_id)
     )
     if count_rows[0]["count"] > 0:
         return True

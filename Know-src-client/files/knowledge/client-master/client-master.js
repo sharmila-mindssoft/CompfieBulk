@@ -186,10 +186,10 @@ function generateMaps() {
         }
     });
     $.each(INDUSTRIES, function(key, value) {
-        if(value.is_active == true){
+        //if(value.is_active == true){
             industry_id_map[value.industry_name] = parseInt(value.industry_id);
             industry_name_map[parseInt(value.industry_id)] = value.industry_name;
-        }
+        //}
     });
     $.each(BUSSINESSGROUPS, function(key, value) {
         business_group_name_map[value.business_group_id] = value.business_group_name;
@@ -412,7 +412,7 @@ function saveOrganization() {
                     organization_details = {};
                     return false;
                 } else {
-                    organization_details[le_cnt][d_cnt][parseInt(industry_id_map[selected_org])] = parseInt(no_of_units);
+                    organization_details[le_cnt][d_cnt][parseInt(selected_id)] = parseInt(no_of_units);
                     clearMessage();
                     
                 }
@@ -591,17 +591,19 @@ function saveClient() {
                             displayMessage(message.activationdate_required+ " for " + le_name);
                             inner_is_valid = false;
                             return false;
-                        } else if (!(i in organization_details)) {
-                            console.log(i + "-> i not in " + JSON.stringify(organization_details));
-                            displayMessage(message.organization_required + " for " + le_name);
-                            inner_is_valid = false;
-                            return false;
-                        } else if (!(j in organization_details[i])) {
-                            console.log(j + "->j not in " + JSON.stringify(organization_details[i]));
-                            displayMessage(message.organization_required + " for " + le_name);
-                            inner_is_valid = false;
-                            return false;
-                        } else if (Object.keys(organization_details[i][j]).length <= 0) {
+                        } 
+                        // else if (!(i in organization_details)) {
+                        //     console.log(i + "-> i not in " + JSON.stringify(organization_details));
+                        //     displayMessage(message.organization_required + " for " + le_name);
+                        //     inner_is_valid = false;
+                        //     return false;
+                        // } else if (!(j in organization_details[i])) {
+                        //     console.log(j + "->j not in " + JSON.stringify(organization_details[i]));
+                        //     displayMessage(message.organization_required + " for " + le_name);
+                        //     inner_is_valid = false;
+                        //     return false;
+                        // }
+                         else if (Object.keys(organization_details[i][j]).length <= 0) {
                             console.log(organization_details[i][j].length + " <= 0");
                             displayMessage(message.organization_required + " for " + le_name);
                             inner_is_valid = false;
@@ -879,6 +881,8 @@ function editClient() {
     loadActions();
     $(".input-notes").hide();
     $('.email-edit-icon').show();
+    $(".email-edit-icon").find("i").removeClass("fa-times");
+    $(".email-edit-icon").find("i").addClass("fa-pencil");   
     $(".help-block").hide();
     $("br").hide();
     le_count = 0;
@@ -892,9 +896,14 @@ function editClient() {
         legal_entity_id_map[parseInt(le_count)] = value.legal_entity_id;
         showNonEditableEntityDetails(le_count, value, value.domain_details, true)
     });
-    $(".edit-date-config").show();
-    $(".edit-date-config").find("i").removeClass("fa-times");
-    $(".edit-date-config").find("i").addClass("fa-pencil");
+    if(SELECTED_ACTION == 1){
+        $(".edit-date-config").hide();
+    }
+    else{
+        $(".edit-date-config").show();
+        $(".edit-date-config").find("i").removeClass("fa-times");
+        $(".edit-date-config").find("i").addClass("fa-pencil");   
+    }
     generateDateConfigurationList();
     $.each(DATECONFIGURATIONS, function(key, value) {
         var country_id = value.country_id;
@@ -936,7 +945,7 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     showNonEditable(le_table.find(".contract-to"), null, value.contract_to);
 
     le_table.find("#upload-logo-img").hide();
-    if(value.old_logo != null){
+    if(value.old_logo != null && value.old_logo != ""){
         name_array = value.old_logo.split("-");
         ext_array = name_array[1].split(".");
         old_logo_name = name_array[0] + "." + ext_array[ext_array.length - 1];
@@ -1043,7 +1052,7 @@ function loadActions() {
 }
 
 $(".actions select").change(function() {
-    SELECTED_ACTION = $(".actions select").val()
+    SELECTED_ACTION = $(".actions select").val();
     $(".email-edit-icon i").removeClass("fa-times");
     $(".email-edit-icon i").addClass("fa-pencil");
     if (SELECTED_ACTION == 2) {
@@ -1055,9 +1064,11 @@ $(".actions select").change(function() {
         $(".add-le").hide();
         $(".email-edit-icon i").removeClass("fa-times");
         $(".email-edit-icon i").removeClass("fa-pencil");
+        $(".edit-date-config").hide();
     }
     else{
         $(".add-le").show();
+        $(".edit-date-config").show();
     }
 
     editClient();
@@ -1071,13 +1082,15 @@ function editEntity(e, le_count, value, domain_details) {
     var image = le_table.find(".edit-right-icon").attr("src").split("?")[0].split("/");
     var image_name = image[image.length-1];
     
-    if(image_name == "icon-edit.png"){
-        
-        selected_action = $(".actions select").val()
+    if(image_name == "icon-edit.png"){        
+        selected_action = $(".actions select").val();
         if (selected_action == 1) {
             le_table.find(".edited").val(1);
             showEditable(le_table.find(".contract-from"), value.contract_from);
             showEditable(le_table.find(".contract-to"), value.contract_to);
+            le_table.find(".old-contract-from").text(value.contract_from);
+            le_table.find(".old-contract-to").text(value.contract_to);
+            $(".renewal-div").show();
             le_table.find(".edit-right-icon").attr("src", "/images/delete-icon-black.png");
             le_table.find(".edit-right-icon i").removeClass("fa-pencil");
             le_table.find(".edit-right-icon i").addClass("fa-times");
@@ -1088,6 +1101,7 @@ function editEntity(e, le_count, value, domain_details) {
             //     console.log("value.business_group.business_group_id--"+value.business_group.business_group_id);
             //     showEditable(le_table.find(".business-group"), value.business_group.business_group_id);
             // }
+
             le_table.find(".input_business_group").show();
             le_table.find(".cancel-add-business-group").hide();
             le_table.find(".select_business_group").hide();
@@ -1100,6 +1114,7 @@ function editEntity(e, le_count, value, domain_details) {
             showEditable(le_table.find("#legal_entity_text"), value.legal_entity_name);
             showEditable(le_table.find("#no-of-user-licence"), value.no_of_licence);
             showEditable(le_table.find("#file-space"), value.file_space);
+            $(".renewal-div").hide();
             if (value.is_approved == 1) {
                 showNonEditable(le_table.find(".contract-from"), null, value.contract_from);
                 showNonEditable(le_table.find(".contract-to"), null, value.contract_to);
@@ -1137,16 +1152,17 @@ function editEntity(e, le_count, value, domain_details) {
                 showEditable($("." + activationdate_class), value.domain_details[i - 1].activation_date);
                 orgs = value.domain_details[i - 1].org;                
                 organization_details[le_count][i] = orgs;     
+                console.log("orgs--"+JSON.stringify(orgs));
                 $.each(orgs, function(orgk, orgval){
                     var getindname = industry_name_map[parseInt(orgk)];
-                    orgtext += getindname+":"+orgval+" Units,";
+                    orgtext += getindname+": "+orgval+" Units,";
                 });
                 // console.log(Object.keys(orgs).length);
                 // var lengthobj = Object.keys(orgs).length;
                 // for(var m = 0; m<lengthobj; m++){
                 //     console.log("orgs[m]:"+orgs[m]);
                 // }
-                $(".addOrganizationType").find("i").attr("title", orgtext);
+                $(".addOrganizationType-"+le_count+"-"+i).find("i").attr("title", orgtext);
 
             }
             // le_table.find('.org-header').text("Organization");
@@ -1322,9 +1338,12 @@ function addClient() {
     });
     addDomain(domain_list_class, domain_count_class, le_count);
     $('.country', clone).on("change", function(){
+        var countryclassname = $(this).attr('class').split(' ').pop();
+        var splitclass = countryclassname.split('-').pop();        
+
         loadBusinessGroups(bg_class, $(this).val());
         //organization_details[le_count] = {};
-        loadDomainsforcountry(parseInt($(this).val()), "domain-"+le_count, $("." +domain_count_class).val());    
+        loadDomainsforcountry(parseInt($(this).val()), "domain-"+splitclass, $("." +domain_count_class).val());    
     });
 
 }
@@ -1447,8 +1466,10 @@ function addDomain(domain_list_class, domain_count_class, le_count) {
     //$(".domain", clone).addClass(domain_class_le)
     $(".domain", clone).addClass(domain_class);
     $(".domain", clone).change(function() {
+        var domainclassname = $(this).attr('class').split(' ').pop();
+        var splitclass = domainclassname.split('-').pop();        
         if(organization_details[le_count])
-            delete organization_details[le_count][domain_count];
+            delete organization_details[le_count][splitclass];
         //console.log("load domains organization_details--"+JSON.stringify(organization_details));
 
         generateDateConfigurationList();
@@ -1691,7 +1712,8 @@ function addOrSelectBusinessGroup(type_of_icon, thisvalue, le_count) {
     if (type_of_icon == "add") {
         $(".le-table-"+countval+" .input_business_group").show();
         $(".le-table-"+countval+" .select_business_group").hide();
-    } else if (type_of_icon == "cancel") {
+    } else if (type_of_icon == "cancel") {        
+        $(".le-table-"+countval+" .business-group-text").val("");
         $(".le-table-"+countval+" .input_business_group").hide();
         $(".le-table-"+countval+" .select_business_group").show();
     }
