@@ -155,7 +155,7 @@ def save_client_group(
     current_time_stamp = get_date_time()
     message_text = '%s has been Created.' % group_name
     msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
-    data = db.call_proc("sp_get_userid_from_usercatgid", ())
+    data = db.call_proc("sp_get_userid_from_admin", ())
     db.save_messages_users(msg_id, data[0]["userids"])
     return client_id
 
