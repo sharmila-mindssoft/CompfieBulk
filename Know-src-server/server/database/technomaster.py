@@ -1877,14 +1877,13 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
         condition_val = [client_id]
         rows = db.call_proc("sp_client_groups_details_by_id", condition_val)
         if rows:
-            group_name = rows[0]["short_name"]
+            group_name = rows[0]["group_name"]
 
     condition_val = [client_id]
     rows = db.call_proc("sp_tbl_unit_getunitcount", condition_val)
 
     for r in rows:
         no_of_units = r["units"]
-
     group_name = group_name.replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
 
