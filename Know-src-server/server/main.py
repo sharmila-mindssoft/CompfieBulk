@@ -117,7 +117,6 @@ class API(object):
             _db_clr = Database(_db_con_clr)
             _db_clr.begin()
             try:
-                print "IDLE SESSION CLEAR"
                 _db_clr.clear_session(SESSION_CUTOFF)
                 _db_clr.commit()
                 _db_con_clr.close()
@@ -140,11 +139,9 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
-        # print s
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -153,16 +150,12 @@ class API(object):
     ):
         request_data = None
         try:
-            # print request
-            # print request.data
 
             if not request.data:
                 raise ValueError("Request data is Null")
-            # print "-" * 10
             data = request.data[5:]
             data = data.decode('base64')
             data = json.loads(data)
-            print data
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -185,8 +178,6 @@ class API(object):
         self, unbound_method, request_data_type
     ):
         self._ip_addess = request.remote_addr
-        print self._ip_addess
-        # print request.environ['REMOTE_ADDR']
 
         def respond(response_data):
             return self._send_response(
@@ -213,7 +204,6 @@ class API(object):
             response_data = unbound_method(self, request_data, _db)
 
             if response_data is None or type(response_data) is bool:
-                print response_data
                 _db.rollback()
                 raise fetch_error()
             elif type(response_data) != technomasters.ClientCreationFailed:
