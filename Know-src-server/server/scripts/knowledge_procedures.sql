@@ -746,11 +746,11 @@ BEGIN
     organisation_id = t2.organisation_id ) as industry_name,
     t2.count as unit_count
     from
-    tbl_user_legalentity as t1,
-    tbl_legal_entity_domains as t2
+    tbl_user_legalentity as t1 inner join tbl_user_mapping as t3 on
+    t3.child_user_id = t1.user_id inner join tbl_legal_entity_domains as t2 on
+    t2.legal_entity_id = t1.legal_entity_id and t2.domain_id = t3.domain_id
     where
-    t2.legal_entity_id = t1.legal_entity_id and
-    t1.user_id = session_user;
+       t1.user_id = session_user;
 END //
 
 DELIMITER ;
