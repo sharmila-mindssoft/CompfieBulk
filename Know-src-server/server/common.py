@@ -384,7 +384,7 @@ def make_summary(data, data_type, c):
             summary = "Repeats every "
             is_none = True
             if c["repeats_every"] is not None :
-                summary += c["repeats_every"]
+                summary += str(c["repeats_every"])
                 is_none = False
 
             if c["repeat_type"] is not None :

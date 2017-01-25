@@ -179,12 +179,16 @@ function FetchBack() {
                 $('#dvid'+ l_position).val('');
                 $('#dvpid'+ l_position).val('');
                 _fetchback.getStatuMaster(l_position, function() {
+
                     if(p_ids.length > 0) {
                         pid = p_ids[p_ids.length - 1];
                     }
                     else{
                         pid = 0;
                         l_position = 1;
+                    }
+                    if (l_position == 1) {
+                        pid = 0;
                     }
                     $('.statutory_levelvalue #snl'+l_position).empty();
                     _renderinput.renderStatuNames(pid, l_position);

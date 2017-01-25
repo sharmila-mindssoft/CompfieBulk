@@ -4608,7 +4608,7 @@ BEGIN
     from tbl_units as t1
     inner join tbl_geographies as t2 on t1.geography_id = t2.geography_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id
-    inner join (
+    left join (
         select t4.unit_id, count(distinct t1.compliance_id) as total
             from tbl_compliances as t1
             inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
@@ -8795,6 +8795,31 @@ CREATE PROCEDURE `sp_get_userid_from_admin`()
 BEGIN
     SELECT group_concat(user_id) as userids FROM tbl_user_login_details
     WHERE user_category_id = 1;
+END //
+
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS `sp_statu_parent_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_statu_parent_update`(
+    in p
+)
+BEGIN
+    Update tbl_statutories as A inner join (
+        select p.statutory_id, (select
+        group_concat(p1.statutory_name SEPARATOR '>>')
+        from tbl_statutories as p1 where statutory_id in (
+            select parent_ids from tbl_statutories
+        ))
+        as names from tbl_statutories as p
+        where p.statutory_id = %s
+        ) as B on A.statutory_id = B.statutory_id
+        set A.parent_names = B.names
+        where A.statutory_id = %s
+
 END //
 
 DELIMITER ;

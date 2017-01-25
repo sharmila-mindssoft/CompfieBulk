@@ -1207,14 +1207,18 @@ function RenderInput() {
                     }else {
                         $('#gidall'+g_l_position).addClass('active');
                         $('#gidall'+g_l_position+' i').addClass('fa-check');
-
+                        check_gids = []
                         $.each($('#gnl'+g_l_position+' li'), function(k, v){
+                            val = $(this).val();
+                            if ($(this).hasClass('active')) {
+                                check_gids.push(val);
+                            }
                             $(this).addClass('active');
                             $(this).find('i').addClass('fa-check');
                         });
 
                         // _renderinput.clearGeosSubLevel(g_l_position);
-                        _renderinput.renderAllGeoNames(g_l_position);
+                        _renderinput.renderAllGeoNames(g_l_position, check_gids);
                     }
                 });
             }
@@ -1326,13 +1330,15 @@ function RenderInput() {
         });
     };
 
-    this.renderAllGeoNames = function(l_position) {
+    this.renderAllGeoNames = function(l_position, loaded_gids ) {
         $.each(GEOGRAPHY_INFO, function(k, v) {
             if (v.c_id == _renderinput.countryId)
             {
                 if (v.l_position == l_position) {
                     // $('#gnl'+l_position).empty();
-                    _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+                    if (loaded_gids.indexOf(v.g_id) == -1) {
+                        _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
+                    }
                 }
             }
         });
@@ -1766,7 +1772,8 @@ function pageControls() {
                 }
                 mon = $(".month-select", this).val();
                 trig = $(".trigger-value", this).val();
-
+                if (trig != '')
+                    trig = parseInt(trig);
                 if ((RepeatsType.val() == 1) && (RepeatsEvery.val() < trig)){
                    // validate trigger before days
                     displayMessage(msg.invalid_triggerbefore);
