@@ -4013,7 +4013,7 @@ BEGIN
     SELECT user_category_id INTO user_category
     FROM tbl_user_login_details WHERE user_id = userid_;
 
-    select count(t1.legal_entity_id) as total_record
+    select count(distinct t1.legal_entity_id) as total_record
     from tbl_legal_entities t1
     inner join tbl_legal_entity_domains t3 on t1.legal_entity_id = t3.legal_entity_id
     where
@@ -4181,10 +4181,11 @@ BEGIN
         tbl_statutories ts ON ts.statutory_id = tms.statutory_id
     WHERE
         tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
-        IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
-        IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
-        IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1)
+        IF(statutoryid_ IS NOT NULL, (ts.statutory_id = statutoryid_  or ts.parent_ids in (statutoryid_)), 1) AND
+        IF(fromdate_ IS NOT NULL, DATE(tsnl.created_on) >= fromdate_, 1) AND
+        IF(todate_ IS NOT NULL, DATE(tsnl.created_on) <= todate_, 1)
     group by tc.statutory_mapping_id, tc.compliance_id
+    order by tsnl.created_on desc
     limit fromcount_, pagecount_;
 END //
 
@@ -4201,7 +4202,7 @@ CREATE PROCEDURE `sp_statutory_notification_details_count`(
  countryid_ INT(11), domainid_ INT(11), statutoryid_ INT(11),
 IN fromdate_ VARCHAR(50), IN todate_ VARCHAR(50))
 BEGIN
-    SELECT COUNT(tsnl.notification_id) as total_record
+    SELECT COUNT(distinct tsnl.notification_id) as total_record
 FROM
     tbl_statutory_notifications tsnl
         INNER JOIN
@@ -4212,7 +4213,7 @@ FROM
     tbl_statutories ts ON ts.statutory_id = tms.statutory_id
 WHERE
     tc.country_id = countryid_ AND tc.domain_id = domainid_ AND
-    IF(statutoryid_ IS NOT NULL, ts.statutory_id = statutoryid_, 1) AND
+    IF(statutoryid_ IS NOT NULL, (ts.statutory_id = statutoryid_  or ts.parent_ids in (statutoryid_)), 1) AND
     IF(fromdate_ IS NOT NULL, tsnl.created_on >= fromdate_, 1) AND
     IF(todate_ IS NOT NULL, tsnl.created_on <= todate_, 1);
 END //
@@ -7515,12 +7516,11 @@ BEGIN
 
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         where t1.is_active = 1
         and t1.is_disable = 0
         and t1.user_category_id = 5
         group by user_id;
-
-
 END //
 
 DELIMITER ;
@@ -7542,6 +7542,7 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.is_active = 1
@@ -7604,6 +7605,7 @@ BEGIN
     select t1.user_id, t1.user_category_id, t1.employee_code, t1.employee_name,
         t3.parent_user_id
         from tbl_users as t1
+        inner join tbl_user_login_details as t2 on t1.user_id = t2.user_id
         inner join tbl_user_mapping as t3
         on t1.user_id = t3.child_user_id
         where t1.user_category_id = 8 and t1.is_active = 1

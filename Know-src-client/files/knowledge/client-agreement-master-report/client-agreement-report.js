@@ -203,7 +203,6 @@ function loadCompliances(data) {
     var tableRow_tr = $('#templates .table-agreement-list .heading-list');
     var clonetr = tableRow_tr.clone();
     $('.table-client-agreement-list').append(clonetr);
-
     $.each(data, function(key, value) {
         is_null = false;
         var domain_units = value.domain_used_unit + ' / ' + value.domain_total_unit;

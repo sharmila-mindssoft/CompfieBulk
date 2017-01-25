@@ -140,7 +140,7 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        # print s
+        print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
