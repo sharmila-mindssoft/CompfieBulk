@@ -1208,6 +1208,42 @@ class User(object):
             "domain_ids": self.domain_ids
         }
 
+class MappedUser(object):
+    def __init__(
+        self, user_id, employee_name, is_active, country_ids, domain_ids, mapped_country_domains
+    ):
+        self.user_id = user_id
+        self.employee_name = employee_name
+        self.is_active = is_active
+        self.country_ids = country_ids
+        self.domain_ids = domain_ids
+        self.mapped_country_domains = mapped_country_domains
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "user_id", "employee_name", "is_active",
+                "country_ids", "domain_ids", "mapped_country_domains"
+            ]
+        )
+        user_id = data.get("user_id")
+        employee_name = data.get("employee_name")
+        is_active = data.get("is_active")
+        country_ids = data.get("country_ids")
+        domain_ids = data.get("domain_ids")
+        mapped_country_domains = data.get("mapped_country_domains")
+        return MappedUser(user_id, employee_name, is_active, country_ids, domain_ids, mapped_country_domains)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "employee_name": self.employee_name,
+            "is_active": self.is_active,
+            "country_ids": self.country_ids,
+            "domain_ids": self.domain_ids,
+            "mapped_country_domains": self.mapped_country_domains
+        }
 
 class GetUserMappingsSuccess(Response):
     def __init__(

@@ -3724,13 +3724,14 @@ class AssignLegalEntity(object):
 class UnAssignLegalEntity(object):
     def __init__(
         self, legal_entity_id, legal_entity_name,
-        business_group_name, c_name, c_id
+        business_group_name, c_name, c_id, domain_ids
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.business_group_name = business_group_name
         self.c_name = c_name
         self.c_id = c_id
+        self.domain_ids = domain_ids
 
     @staticmethod
     def parse_structure(data):
@@ -3740,7 +3741,8 @@ class UnAssignLegalEntity(object):
                 "legal_entity_name",
                 "business_group_name",
                 "c_name",
-                "c_id"
+                "c_id",
+                "domain_ids"
             ]
         )
 
@@ -3749,10 +3751,11 @@ class UnAssignLegalEntity(object):
         business_group_name = data.get("business_group_name")
         c_name = data.get("c_name")
         c_id = data.get("c_id")
+        domain_ids = data.get("domain_ids")
 
         return UnAssignLegalEntity(
             legal_entity_id, legal_entity_name,
-            business_group_name, c_name, c_id
+            business_group_name, c_name, c_id, domain_ids
         )
 
     def to_structure(self):
@@ -3761,7 +3764,8 @@ class UnAssignLegalEntity(object):
             "legal_entity_name": self.legal_entity_name,
             "business_group_name": self.business_group_name,
             "c_name": self.c_name,
-            "c_id": self.c_id
+            "c_id": self.c_id,
+            "domain_ids": self.domain_ids
         }
 
 
