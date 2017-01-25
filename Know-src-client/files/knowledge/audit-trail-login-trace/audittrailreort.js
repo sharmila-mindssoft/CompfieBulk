@@ -282,9 +282,10 @@ Auditpage.prototype.fetchData = function() {
         function(error, response) {
             if (error != null) {
                 t_this.hideLoader();
-                t_this.displayMessage(error);
+                displayMessage(error);
             }
             else {
+                console.log(response)
                 t_this.hideLoader();
                 t_this._sno  = _sno;
                 t_this._auditData = response.audit_trail_details;
@@ -295,7 +296,7 @@ Auditpage.prototype.fetchData = function() {
                     t_this.renderAuditData(t_this, t_this._auditData);
                 }
                 else{
-                    t_this._total_record = response.audit_trail_details.length;
+                    t_this._total_record = response.total_records;
                     t_this.createPageView(t_this, t_this._total_record);
                     Export_btn.show();
                     t_this.renderAuditData(t_this, t_this._auditData);
@@ -374,7 +375,7 @@ Auditpage.prototype.setControlValues = function(e) {
         if(Category.val() != '')
         {
             var userId = User_id.val();
-            if(Category.val() > 2){
+            if(Category.val() > 0){
                 for(var i=0;i<a_page._auditData.length;i++)
                 {
                     frm_user_id = a_page._auditData[i].user_id;
@@ -392,7 +393,7 @@ Auditpage.prototype.setControlValues = function(e) {
                     }
                 }
             }
-            else
+            /*else
             {
                 for(var i=0;i<a_page._auditData.length;i++)
                 {
@@ -406,7 +407,7 @@ Auditpage.prototype.setControlValues = function(e) {
                         form_list = a_page.pushForms("admin", a_page._auditData[i].form_id, form_list);
                     }
                 }
-            }
+            }*/
             commonAutoComplete(
                 e, ACForm, Form_id, textval,
                 form_list, "form_name", "form_id", function (val) {
@@ -444,7 +445,6 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
             userCheck = true;
         }
     }
-
     if(u_type == "admin"){
         userCheck = true;
     }
@@ -489,6 +489,7 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
             });
         }
     }
+
     return form_list;
 };
 
@@ -568,6 +569,15 @@ initializeControlEvents = function(a_page){
         csv = true;
         a_page.exportData();
     });
+
+    Category.change(function(e) {
+        if(parseInt(Category.val()) > 2){
+            $('.user-list').show();
+        }else{
+            $('.user-list').hide();
+        }
+    });
+
     on_page_load = function() {
         a_page.resetFields();
         a_page.renderPageControls();
