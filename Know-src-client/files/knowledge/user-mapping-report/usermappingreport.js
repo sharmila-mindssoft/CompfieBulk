@@ -73,6 +73,7 @@ function initialize() {
   displayLoader();
   mirror.getUserMappingReportFilters(function (error, response) {
     if (error == null) {
+      console.log(response)
       onSuccess(response);
       hideLoader();
     } else {
@@ -520,6 +521,8 @@ function processPaging(){
   totalRecord = mappedUserList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
+    loadHeader();
+    hideLoader();
     $('.tbody-usermappingdetails-list').empty();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
@@ -527,7 +530,7 @@ function processPaging(){
     $('.tbody-usermappingdetails-list').append(clone4);
     ExportButton.hide();
     PaginationView.hide();
-    hideLoader();
+
   } else {
     if(sno==0){
       ExportButton.show();
@@ -649,15 +652,7 @@ function loadusermappingdetails() {
     }
   }
 }
-
-function loadUserMappingDetailsList(data)
-{
-  var th_cnt=3;
-  var sno = 0;
-  $('.tbody-usermappingdetails-list').empty();
-  $('.usermapping-header').empty();
-  //$('.#datatable-responsive').empty();
-  domainsList = userMappingList.usermapping_domain;
+function loadHeader(){
   var country_name = $('#countryval').val();
   var client_name = $('#groupsval').val();
   var business_group_name = $('#businessgroupsval').val();
@@ -682,6 +677,16 @@ function loadUserMappingDetailsList(data)
     $('.categoryval').text(category_name);
   else
     $('.categoryval').text(" - ");
+}
+function loadUserMappingDetailsList(data)
+{
+  var th_cnt=3;
+  var sno = 0;
+  $('.tbody-usermappingdetails-list').empty();
+  $('.usermapping-header').empty();
+  //$('.#datatable-responsive').empty();
+  domainsList = userMappingList.usermapping_domain;
+  loadHeader();
 
   //$('#datatable-responsive th').remove();
 
@@ -937,11 +942,21 @@ $('#groupsval').keyup(function (e) {
     {
       if(clientList[i].country_id == $('#country-id').val())
       {
-        ctry_grps.push({
-          "client_id": clientList[i].client_id,
-          "group_name": clientList[i].client_name,
-          "is_active": true
-        });
+        var occur = -1
+        for(var j=0;j<ctry_grps.length;j++){
+          if(ctry_grps[j].client_id == clientList[i].client_id){
+            occur = 1;
+            break;
+          }
+        }
+        if(occur < 0){
+          ctry_grps.push({
+            "client_id": clientList[i].client_id,
+            "group_name": clientList[i].client_name,
+            "is_active": true
+          });
+        }
+
       }
     }
     commonAutoComplete(

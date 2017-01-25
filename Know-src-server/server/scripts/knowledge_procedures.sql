@@ -543,7 +543,8 @@ BEGIN
         WHERE
         date(created_on) >= _from_date
         AND date(created_on) <= _to_date
-        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id;
+        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id
+        AND user_category_id like _category_id;
     end if;
 
     if _category_id > 2 then
@@ -566,7 +567,8 @@ BEGIN
         WHERE
         date(created_on) >= _from_date
         AND date(created_on) <= _to_date
-        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id;
+        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id
+        AND user_category_id like _category_id;
     end if;
 END //
 
@@ -3467,14 +3469,14 @@ BEGIN
         is_active, user_category_id FROM tbl_users WHERE
         user_category_id = 7 and
         user_id in (SELECT child_user_id FROM tbl_user_mapping
-        WHERE parent_user_id=session_user) and is_active=1 and is_disable=0;
+        WHERE parent_user_id=session_user and domain_id =_d_id) and is_active=1 and is_disable=0;
     else
         SELECT user_id,
         concat(employee_code, "-", employee_name) as employee_name,
         is_active, user_category_id FROM tbl_users WHERE
         user_category_id = 8 and
         user_id in (SELECT child_user_id FROM tbl_user_mapping
-        WHERE parent_user_id=session_user) and is_active=1 and is_disable=0;
+        WHERE parent_user_id=session_user and domain_id =_d_id) and is_active=1 and is_disable=0;
     end if;
 
 
@@ -3869,6 +3871,8 @@ BEGIN
     INNER JOIN tbl_countries t3 on t1.country_id = t3.country_id
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
     WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is null;
+
+    select domain_id, legal_entity_id from tbl_legal_entity_domains;
 END //
 
 DELIMITER ;
@@ -3888,8 +3892,15 @@ BEGIN
     INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
     AND t2.is_active = 1 AND t2.is_disable = 0
     WHERE t1.parent_user_id = session_user;
+
     SELECT user_id, country_id FROM tbl_user_countries;
+
     SELECT user_id, domain_id FROM tbl_user_domains;
+
+    SELECT t1.child_user_id as user_id, t1.country_id, t1.domain_id
+    from tbl_user_mapping t1
+    INNER JOIN tbl_users t2 ON t1.child_user_id = t2.user_id AND t2.user_category_id = 6
+    WHERE t1.parent_user_id = session_user;
 END //
 
 DELIMITER ;
@@ -4608,7 +4619,7 @@ BEGIN
     from tbl_units as t1
     inner join tbl_geographies as t2 on t1.geography_id = t2.geography_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id
-    inner join (
+    left join (
         select t4.unit_id, count(distinct t1.compliance_id) as total
             from tbl_compliances as t1
             inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
@@ -5198,30 +5209,43 @@ BEGIN
     if(userCatgId = 1)then
         select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name,tu.client_id,
         tu.business_group_id, tu.legal_entity_id,
-        tu.country_id, td.division_id, td.division_name, tc.category_id,
+        tu.country_id, tu.division_id,
+        td.division_name, tc.category_id,
         tc.category_name
         from
-        tbl_units as tu,
-        tbl_divisions as td,
-        tbl_categories as tc
+        tbl_units as tu
+        left join tbl_divisions as td on
+        td.division_id = tu.division_id
+        left join tbl_categories as tc on tc.category_id = tu.category_id
         where
-        tc.category_id = tu.category_id and
-        td.division_id = tu.division_id and
+
         tu.unit_id in (select distinct(unit_id) from tbl_user_units);
     end if;
 
-    if(userCatgId = 5 or userCatgId = 6 or userCatgId = 7 or userCatgId = 8)then
+    if(userCatgId = 5)then
         select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
         tu.business_group_id, tu.legal_entity_id,
         tu.country_id, td.division_id, td.division_name, tc.category_id,
         tc.category_name
         from
-        tbl_units as tu,
-        tbl_divisions as td,
-        tbl_categories as tc
+        tbl_units as tu
+        left join tbl_divisions as td on
+        td.division_id = tu.division_id
+        left join tbl_categories as tc on tc.category_id = tu.category_id
         where
-        tc.category_id = tu.category_id and
-        td.division_id = tu.division_id and
+        tu.unit_id in (select distinct(unit_id) from tbl_user_units);
+    end if;
+    if(userCatgId = 7 or userCatgId = 8)then
+        select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
+        tu.business_group_id, tu.legal_entity_id,
+        tu.country_id, td.division_id, td.division_name, tc.category_id,
+        tc.category_name
+        from
+        tbl_units as tu
+        left join tbl_divisions as td on
+        td.division_id = tu.division_id
+        left join tbl_categories as tc on tc.category_id = tu.category_id
+        where
         tu.unit_id in (select distinct(unit_id) from tbl_user_units
         where user_id = userId and user_category_id = userCatgId);
     end if;
@@ -6253,7 +6277,7 @@ DELIMITER //
 
 
 CREATE PROCEDURE `sp_reassign_user_report_getdata`(
-in _u_id int(11), _u_cg_id int(11), _g_id int(11))
+in _u_id int(11), _u_cg_id int(11), _g_id varchar(50))
 BEGIN
     if _u_cg_id = 5 then
         select t1.client_id, t2.group_name,
@@ -7588,7 +7612,6 @@ END //
 DELIMITER ;
 
 
-
 DROP PROCEDURE IF EXISTS `sp_tbl_users_domain_executive`;
 
 DELIMITER //
@@ -8798,3 +8821,4 @@ BEGIN
 END //
 
 DELIMITER ;
+

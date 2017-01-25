@@ -56,24 +56,14 @@ function getStatutorynature() {
 function processSearch()
 {
   searchList = [];
-  c_name = FilterCountry.val().toLowerCase();
-  s_n_name = FilterStatutorynature.val().toLowerCase();
-
   nature_status = $('.search-status-li.active').attr('value');
-
 
   for(var i in statutorynatureList){
     data = statutorynatureList[i];
-
-    data_c_name = data.country_name.toLowerCase();
-    data_s_n_name = data.statutory_nature_name.toLowerCase();
     data_is_active = data.is_active;
 
-    if ((~data_c_name.indexOf(c_name)) && (~data_s_n_name.indexOf(s_n_name)))
-    {
-      if ((nature_status == 'all' || Boolean(parseInt(nature_status)) == data.is_active)){
+    if ((nature_status == 'all' || Boolean(parseInt(nature_status)) == data.is_active)){
         searchList.push(data);
-      }
     }
   }
   //loadStatNatureData(searchList);
@@ -295,4 +285,7 @@ function initialize()
 $(document).ready(function () {
 	initialize();
   loadItemsPerPage();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

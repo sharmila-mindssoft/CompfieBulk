@@ -64,6 +64,7 @@ function initialize()
 	t0 = performance.now();
 	mirror.getAssignedUserClientGroups(function (error, response) {
 		if (error == null) {
+			console.log(response)
 		  onSuccess(response);
 		  hideLoader();
 		} else {
@@ -510,6 +511,7 @@ function bindReassignedTechexecData(data, j, tbodyClass, rowClass)
 			break;
 		}
 	}
+	console.log("le:"+le_name)
 	$('.bg-name', clone).text(bg_name);
 	$('.country-name', clone).text(val.c_names);
 
