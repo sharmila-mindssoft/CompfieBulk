@@ -746,11 +746,11 @@ BEGIN
     organisation_id = t2.organisation_id ) as industry_name,
     t2.count as unit_count
     from
-    tbl_user_legalentity as t1,
-    tbl_legal_entity_domains as t2
+    tbl_user_legalentity as t1 inner join tbl_user_mapping as t3 on
+    t3.child_user_id = t1.user_id inner join tbl_legal_entity_domains as t2 on
+    t2.legal_entity_id = t1.legal_entity_id and t2.domain_id = t3.domain_id
     where
-    t2.legal_entity_id = t1.legal_entity_id and
-    t1.user_id = session_user;
+       t1.user_id = session_user;
 END //
 
 DELIMITER ;
@@ -3559,11 +3559,11 @@ BEGIN
         ) as geography_name
         from tbl_user_units as tuu
         right join tbl_units as tu
-        on tuu.unit_id = tu.unit_id and
-        tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
+        on tu.unit_id = tuu.unit_id and
+        tu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
         and user_category_id=8) and tu.is_approved=1
         where
-        -- tuu.user_id = userid and
+        tuu.user_id = userid and
         tuu.client_id=clientid and tuu.domain_id=domainid
         group by tu.unit_id
         order by unit_name ASC;
@@ -3582,7 +3582,7 @@ BEGIN
         tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid and user_category_id=8)
 
         where
-        -- tuu.user_id = userid and
+        tuu.user_id = userid and
         tuu.client_id=clientid and tuu.domain_id=domainid
 
         group by tuu.unit_id;
