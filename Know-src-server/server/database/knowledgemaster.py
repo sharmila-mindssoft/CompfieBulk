@@ -308,8 +308,6 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
 ######################################################################################
 def get_statutory_levels(db):
     result = db.call_proc("sp_get_statutory_level_master", ())
-    print "sl"
-    print result
     return return_statutory_levels(result)
 
 
@@ -385,9 +383,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
             else:
                 raise process_error("E007")
         else:
-            print "names"
             values = [position, name, level.level_id, user_id]
-            print name
             if (
                 db.call_update_proc(
                     "sp_update_statutory_levels", values
@@ -442,8 +438,6 @@ def get_geograhpy_levels_for_user(db, user_id):
 
 def delete_grography_level(db, level_id):
     q = db.call_proc("sp_check_level_in_geographies", (level_id,))
-    print "count"
-    print q[0]['cnt']
     if q[0]['cnt'] > 0:
         return True
     else:
@@ -461,8 +455,6 @@ def save_geography_levels(db, country_id, levels, user_id):
     for n in newlist:
         if n.is_remove is True:
             result = delete_grography_level(db, n.level_id)
-            print "del result"
-            print result
             if result :
                 d_l_id = n.level_position
                 break
@@ -623,7 +615,6 @@ def update_geography(
             i = 0
             p_new_id = parent_ids[:-1].split(',')
             for p_ids_len in p_new_id:
-                print p_ids_len[i]
                 if p_ids is None:
                     p_ids = p_ids_len[i] + ","
                 else:
@@ -640,16 +631,10 @@ def update_geography(
             else:
                 map_name = ""
                 x = row["parent_ids"].strip().split(',')
-                print "x"
-                print x
                 for j in x[:-1]:
-                    print "j"
-                    print int(j)
                     if int(j) == int(geography_id) :
                         map_name += name + " >> "
                     else :
-                        print "1:"
-                        print int(j)
                         map_name += result[int(j)]["geography_name"] + " >> "
                 row["parent_ids"] = tuple(x[:-1])
 
@@ -757,8 +742,6 @@ def update_statutory(
             " from tbl_statutories " + \
             " WHERE find_in_set(%s, parent_ids)"
         result = db.select_all(qry, [statutory_id])
-        print qry, statutory_id
-        print result
 
         for row in result:
             if row["parent_ids"] == "0,":
@@ -889,7 +872,6 @@ def check_duplicate_statutory(
         where_qry += " AND domain_id = %s"
         param.append(domain_id)
 
-    print query + where_qry % (param)
     rows = db.select_all(query + where_qry, param)
     return rows
 
