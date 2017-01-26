@@ -5205,10 +5205,10 @@ BEGIN
         tbl_units as tu
         left join tbl_divisions as td on
         td.division_id = tu.division_id
-        left join tbl_categories as tc on tc.category_id = tu.category_id
-        where
+        left join tbl_categories as tc on tc.category_id = tu.category_id;
+        -- where
 
-        tu.unit_id in (select distinct(unit_id) from tbl_user_units);
+        -- tu.unit_id in (select distinct(unit_id) from tbl_user_units);
     end if;
 
     if(userCatgId = 5)then
@@ -5217,12 +5217,13 @@ BEGIN
         tu.country_id, td.division_id, td.division_name, tc.category_id,
         tc.category_name
         from
-        tbl_units as tu
+        tbl_user_clients as tuc inner join tbl_units as tu
+        on tu.client_id = tuc.client_id
         left join tbl_divisions as td on
         td.division_id = tu.division_id
         left join tbl_categories as tc on tc.category_id = tu.category_id
         where
-        tu.unit_id in (select distinct(unit_id) from tbl_user_units);
+        tuc.user_id = userId;
     end if;
     if(userCatgId = 7 or userCatgId = 8)then
         select tu.unit_id, concat(tu.unit_code,' - ',tu.unit_name) as unit_name, tu.client_id,
@@ -5230,13 +5231,13 @@ BEGIN
         tu.country_id, td.division_id, td.division_name, tc.category_id,
         tc.category_name
         from
-        tbl_units as tu
+        tbl_user_units as tuu inner join tbl_units as tu
+        on tu.unit_id = tuu.unit_id
         left join tbl_divisions as td on
         td.division_id = tu.division_id
         left join tbl_categories as tc on tc.category_id = tu.category_id
         where
-        tu.unit_id in (select distinct(unit_id) from tbl_user_units
-        where user_id = userId and user_category_id = userCatgId);
+        tuu.user_id = userId and tuu.user_category_id = userCatgId;
     end if;
 
 END //
@@ -5332,7 +5333,8 @@ BEGIN
     FROM tbl_user_login_details WHERE user_id = userId;
 
     if(@_user_category_id = 1)then
-        select t4.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user,
+        select t4.unit_id, concat(t_mgr.employee_code,'-',t_mgr.employee_name) as techno_manager,
+        concat(t_usr.employee_code,'-',t_usr.employee_name) as techno_user,
         (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t4.unit_id) as unit_name
         from
         tbl_user_legalentity as t1 inner join tbl_user_clients as t2
@@ -5341,7 +5343,7 @@ BEGIN
         t3.legal_entity_id = t1.legal_entity_id
         inner join tbl_users as t_mgr on t_mgr.user_id = t2.user_id
         inner join tbl_users as t_usr on t_usr.user_id = t1.user_id
-        inner join tbl_user_units as t4 on t4.client_id = t1.client_id and
+        inner join tbl_units as t4 on t4.client_id = t1.client_id and
         t4.legal_entity_id = t3.legal_entity_id and
         coalesce(t4.unit_id,'')like _unit_id
         where
@@ -5349,9 +5351,11 @@ BEGIN
         coalesce(t3.business_group_id,'') like bgrp_id and
         t1.legal_entity_id = legalId and
         t1.client_id = clientId
-        group by t1.user_id limit fromcount_, pagecount_;
+        -- group by t1.user_id
+        limit fromcount_, pagecount_;
 
-        select t1.unit_id, t2.employee_name, t3.user_category_name,t1.domain_id
+        select t1.unit_id, concat(t2.employee_code,'-',t2.employee_name)as employee_name,
+        t3.user_category_name,t1.domain_id
         from
         tbl_user_units as t1,tbl_units as t4,tbl_users as t2,
         tbl_user_category as t3
@@ -5377,7 +5381,8 @@ BEGIN
         t1.client_id = clientId
         order by t3.domain_name;
     elseif (@_user_category_id = 5)then
-        select t4.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user,
+        select t4.unit_id, concat(t_mgr.employee_code,'-',t_mgr.employee_name) as techno_manager,
+        concat(t_usr.employee_code,'-',t_usr.employee_name) as techno_user,
         (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t4.unit_id) as unit_name
         from
         tbl_user_legalentity as t1 inner join tbl_user_clients as t2
@@ -5386,7 +5391,7 @@ BEGIN
         t3.legal_entity_id = t1.legal_entity_id
         inner join tbl_users as t_mgr on t_mgr.user_id = t2.user_id
         inner join tbl_users as t_usr on t_usr.user_id = t1.user_id
-        inner join tbl_user_units as t4 on t4.client_id = t1.client_id and
+        inner join tbl_units as t4 on t4.client_id = t1.client_id and
         t4.legal_entity_id = t3.legal_entity_id and
         coalesce(t4.unit_id,'')like _unit_id
         where
@@ -5394,9 +5399,11 @@ BEGIN
         coalesce(t3.business_group_id,'') like bgrp_id and
         t1.legal_entity_id = legalId and
         t1.client_id = clientId
-        group by t1.user_id limit fromcount_, pagecount_;
+        -- group by t1.user_id
+        limit fromcount_, pagecount_;
 
-        select t1.unit_id, t2.employee_name, t3.user_category_name,t1.domain_id
+        select t1.unit_id, concat(t2.employee_code,'-',t2.employee_name)as employee_name,
+        t3.user_category_name,t1.domain_id
         from
         tbl_user_units as t1,tbl_units as t4,tbl_users as t2,
         tbl_user_category as t3
@@ -5422,26 +5429,29 @@ BEGIN
         t1.client_id = clientId
         order by t3.domain_name;
     elseif (@_user_category_id = 7)then
-        select t4.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user,
+        select t4.unit_id, concat(t_mgr.employee_name,'-',t_mgr.employee_name) as techno_manager,
+        concat(t_usr.employee_code,'-',t_usr.employee_name) as techno_user,
         (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t4.unit_id) as unit_name
         from
-        tbl_user_legalentity as t1 inner join tbl_user_clients as t2
-        on t2.client_id = t1.client_id
-        inner join tbl_legal_entities as t3 on t3.client_id = t1.client_id and
-        t3.legal_entity_id = t1.legal_entity_id
+        tbl_user_units as t4 inner join tbl_units as t5 on
+        t5.unit_id = t4.unit_id inner join tbl_user_clients as t2 on
+        t2.client_id = t4.client_id
+        inner join tbl_user_legalentity as t1 on t1.legal_entity_id = t4.legal_entity_id
         inner join tbl_users as t_mgr on t_mgr.user_id = t2.user_id
         inner join tbl_users as t_usr on t_usr.user_id = t1.user_id
-        inner join tbl_user_units as t4 on t4.client_id = t1.client_id and
-        t4.legal_entity_id = t3.legal_entity_id and
-        coalesce(t4.unit_id,'')like _unit_id
-        where
-        t3.country_id = counrtyId and
-        coalesce(t3.business_group_id,'') like bgrp_id and
-        t1.legal_entity_id = legalId and
-        t1.client_id = clientId
-        group by t1.user_id limit fromcount_, pagecount_;
 
-        select t1.unit_id, t2.employee_name, t3.user_category_name,t1.domain_id
+        where
+        t5.country_id = counrtyId and
+        coalesce(t4.unit_id,'')like _unit_id and
+        coalesce(t5.business_group_id,'') like bgrp_id and
+        t4.user_id = userId and t4.user_category_id = 7 and
+        t4.legal_entity_id = legalId and
+        t4.client_id = clientId
+        group by t4.unit_id
+        limit fromcount_, pagecount_;
+
+        select t1.unit_id, concat(t2.employee_code,'-',t2.employee_name)as employee_name,
+        t3.user_category_name,t1.domain_id
         from
         tbl_user_units as t1,tbl_units as t4,tbl_users as t2,
         tbl_user_category as t3
@@ -6089,6 +6099,16 @@ BEGIN
         t3.legal_entity_id = t2.legal_entity_id and
         t3.client_id = t2.client_id and t2.client_id = t1.client_id
         order by t3.unit_name asc;
+
+        select t3.unit_id, t4.domain_id, t4.organisation_id
+        from
+        tbl_user_clients as t1,
+        tbl_units as t3, tbl_units_organizations as  t4
+        where
+        t4.unit_id =t3.unit_id and
+        t3.client_id = t1.client_id;
+        -- and t1.user_id = _u_id;
+        -- group by t3.unit_id;
     end if;
     if @u_cat_id = 5  THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
@@ -6107,7 +6127,18 @@ BEGIN
         t3.legal_entity_id = t2.legal_entity_id and
         t3.client_id = t2.client_id and t2.client_id = t1.client_id
         and user_id = _u_id
+        group by t3.unit_id
         order by t3.unit_name asc;
+
+        select t3.unit_id, t4.domain_id, t4.organisation_id
+        from
+        tbl_user_clients as t1,
+        tbl_units as t3, tbl_units_organizations as  t4
+        where
+        t4.unit_id =t3.unit_id and
+        t3.client_id = t1.client_id
+        and t1.user_id = _u_id;
+        -- group by t3.unit_id;
     END IF;
     if @u_cat_id = 6  THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
@@ -6126,7 +6157,18 @@ BEGIN
         t3.legal_entity_id = t2.legal_entity_id and
         t3.client_id = t2.client_id and t2.client_id = t1.client_id
         and user_id = _u_id
+        group by t3.unit_id
         order by t3.unit_name asc;
+
+        select t3.unit_id, t4.domain_id, t4.organisation_id
+        from
+        tbl_user_legalentity as t1,
+        tbl_units as t3, tbl_units_organizations as  t4
+        where
+        t4.unit_id =t3.unit_id and
+        t3.legal_entity_id = t1.legal_entity_id
+        and t1.user_id = _u_id;
+        -- group by t3.unit_id;
     end if;
     if @u_cat_id = 7 or @u_cat_id = 8 THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
@@ -6140,20 +6182,23 @@ BEGIN
         division_id = t3.division_id) as division_name,
         (select category_name from tbl_categories where
         category_id = t3.category_id) as category_name
-        from tbl_user_units as t1, tbl_legal_entities as t2,
-        tbl_units as t3 where
-        t3.legal_entity_id = t2.legal_entity_id and
-        t3.client_id = t2.client_id and t2.client_id = t1.client_id
+        from tbl_user_units as t1,tbl_units as t3 where
+        t3.unit_id = t1.unit_id
         and user_id = _u_id and user_category_id = @u_cat_id
+        group by t3.unit_id
         order by t3.unit_name asc;
 
-    end if;
+        select t3.unit_id, t4.domain_id, t4.organisation_id
+        from
+        tbl_user_units as t1,
+        tbl_units as t3, tbl_units_organizations as  t4
+        where
+        t4.unit_id =t3.unit_id and
+        t3.unit_id = t1.unit_id
+        and t1.user_id = _u_id and t1.user_category_id = @u_cat_id;
+        -- group by t3.unit_id;
 
-    select t3.unit_id, t3.domain_id, t3.organisation_id
-    from
-    tbl_units as t2, tbl_units_organizations as t3
-    where
-    t3.unit_id = t2.unit_id;
+    end if;
 
 END //
 
@@ -6982,9 +7027,9 @@ DROP PROCEDURE IF EXISTS `sp_reassign_user_report_domain_user_getdata`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_reassign_user_report_domain_user_getdata`(
-    IN _u_id int(11), _u_cg_id int(11), _g_id int(11), _bg_id int(11), _le_id int(11), _d_id int(11)
+    IN _u_id int(11), _u_cg_id int(11), _g_id int(11), _bg_id varchar(50),
+    _le_id int(11), _d_id int(11)
 )
-
 BEGIN
     if _u_cg_id = 7 or _u_cg_id = 8 then
         select t2.unit_id, t2.unit_code, t2.unit_name, t2.address, t2.postal_code,
@@ -8299,48 +8344,46 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_usermapping_report_details_for_export`(
     in userId int(11), clientId int(11), legalId int(11), counrtyId int(11),
-    bgrp_id int(11), _divi_id int(11), _cg_id int(11), _unit_id int(11))
+    bgrp_id varchar(10), _divi_id varchar(11), _cg_id varchar(11), _unit_id varchar(11))
 BEGIN
     SELECT @_user_category_id := user_category_id as user_category_id
     FROM tbl_user_login_details WHERE user_id = userId;
 
     if(@_user_category_id = 1)then
-        select t3.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user,
-        (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t3.unit_id) as unit_name
+        select t4.unit_id, concat(t_mgr.employee_code,'-',t_mgr.employee_name) as techno_manager,
+        concat(t_usr.employee_code,'-',t_usr.employee_name) as techno_user,
+        (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t4.unit_id) as unit_name
         from
-        tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
-        tbl_users as t_usr,tbl_user_units as t3
+        tbl_user_legalentity as t1 inner join tbl_user_clients as t2
+        on t2.client_id = t1.client_id
+        inner join tbl_legal_entities as t3 on t3.client_id = t1.client_id and
+        t3.legal_entity_id = t1.legal_entity_id
+        inner join tbl_users as t_mgr on t_mgr.user_id = t2.user_id
+        inner join tbl_users as t_usr on t_usr.user_id = t1.user_id
+        inner join tbl_units as t4 on t4.client_id = t1.client_id and
+        t4.legal_entity_id = t3.legal_entity_id and
+        coalesce(t4.unit_id,'')like _unit_id
         where
-        case when _unit_id <> 0 then t3.unit_id = _unit_id else
-        t3.unit_id = t3.unit_id end and
-        t3.client_id = t1.client_id and
-        t3.legal_entity_id = t1.legal_entity_id and
-        t_usr.user_id = t1.user_id and
-        t_mgr.user_id = t2.created_by and
-        case when bgrp_id <> 0 then t2.business_group_id = bgrp_id else
-        t2.business_group_id = t2.business_group_id end and
-        t2.country_id = counrtyId and
-        t2.client_id = t1.client_id and
-        t2.legal_entity_id = t1.legal_entity_id and
+        t3.country_id = counrtyId and
+        coalesce(t3.business_group_id,'') like bgrp_id and
         t1.legal_entity_id = legalId and
-        t1.client_id = clientId
-        group by t1.user_id;
+        t1.client_id = clientId;
+        -- group by t1.user_id
 
-        select t1.unit_id, t2.employee_name, t3.user_category_name,t1.domain_id
+
+        select t1.unit_id, concat(t2.employee_code,'-',t2.employee_name)as employee_name,
+        t3.user_category_name,t1.domain_id
         from
         tbl_user_units as t1,tbl_units as t4,tbl_users as t2,
         tbl_user_category as t3
         where
         t3.user_category_id = t1.user_category_id and
         t2.user_id = t1.user_id and
-        case when _cg_id <> 0 then t4.category_id = _cg_id else
-        t4.category_id = t4.category_id end and
-        case when _divi_id <> 0 then t4.division_id = _divi_id else
-        t4.division_id = t4.division_id end and
+        coalesce(t4.category_id,'') like _cg_id and
+        coalesce(t4.division_id,'') like _divi_id and
         t4.unit_id = t1.unit_id and
         t4.country_id = counrtyId and
-        case when _unit_id <> 0 then t1.unit_id = _unit_id else
-        t1.unit_id = t1.unit_id end and
+        coalesce(t1.unit_id,'') like _unit_id and
         t1.legal_entity_id =legalId and
         t1.client_id = clientId;
 
@@ -8350,49 +8393,46 @@ BEGIN
         where
         t3.domain_id = t2.domain_id and
         t2.unit_id = t1.unit_id and
-        case when _unit_id <> 0 then t1.unit_id = _unit_id else
-        t1.unit_id = t1.unit_id end and
+        coalesce(t1.unit_id,'') like _unit_id and
         t1.legal_entity_id =legalId and
         t1.client_id = clientId
         order by t3.domain_name;
     elseif (@_user_category_id = 5)then
-        select t3.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user,
-        (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t3.unit_id) as unit_name
+        select t4.unit_id, concat(t_mgr.employee_code,'-',t_mgr.employee_name) as techno_manager,
+        concat(t_usr.employee_code,'-',t_usr.employee_name) as techno_user,
+        (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t4.unit_id) as unit_name
         from
-        tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
-        tbl_users as t_usr,tbl_user_units as t3
+        tbl_user_legalentity as t1 inner join tbl_user_clients as t2
+        on t2.client_id = t1.client_id
+        inner join tbl_legal_entities as t3 on t3.client_id = t1.client_id and
+        t3.legal_entity_id = t1.legal_entity_id
+        inner join tbl_users as t_mgr on t_mgr.user_id = t2.user_id
+        inner join tbl_users as t_usr on t_usr.user_id = t1.user_id
+        inner join tbl_units as t4 on t4.client_id = t1.client_id and
+        t4.legal_entity_id = t3.legal_entity_id and
+        coalesce(t4.unit_id,'')like _unit_id
         where
-        case when _unit_id <> 0 then t3.unit_id = _unit_id else
-        t3.unit_id = t3.unit_id end and
-        t3.client_id = t1.client_id and
-        t3.legal_entity_id = t1.legal_entity_id and
-        t_usr.user_id = t1.user_id and
-        t_mgr.user_id = t2.created_by and
-        t2.created_by = userId and
-        case when bgrp_id <> 0 then t2.business_group_id = bgrp_id else
-        t2.business_group_id = t2.business_group_id end and
-        t2.country_id = counrtyId and
-        t2.client_id = t1.client_id and
-        t2.legal_entity_id = t1.legal_entity_id and
+        t3.country_id = counrtyId and
+        coalesce(t3.business_group_id,'') like bgrp_id and
         t1.legal_entity_id = legalId and
-        t1.client_id = clientId
-        group by t1.user_id;
+        t1.client_id = clientId;
+        -- group by t1.user_id
 
-        select t1.unit_id, t2.employee_name, t3.user_category_name,t1.domain_id
+
+
+        select t1.unit_id, concat(t2.employee_code,'-',t2.employee_name)as employee_name,
+        t3.user_category_name,t1.domain_id
         from
         tbl_user_units as t1,tbl_units as t4,tbl_users as t2,
         tbl_user_category as t3
         where
         t3.user_category_id = t1.user_category_id and
         t2.user_id = t1.user_id and
-        case when _cg_id <> 0 then t4.category_id = _cg_id else
-        t4.category_id = t4.category_id end and
-        case when _divi_id <> 0 then t4.division_id = _divi_id else
-        t4.division_id = t4.division_id end and
+        coalesce(t4.category_id,'') like _cg_id and
+        coalesce(t4.division_id,'') like _divi_id and
         t4.unit_id = t1.unit_id and
         t4.country_id = counrtyId and
-        case when _unit_id <> 0 then t1.unit_id = _unit_id else
-        t1.unit_id = t1.unit_id end and
+        coalesce(t1.unit_id,'') like _unit_id and
         t1.legal_entity_id =legalId and
         t1.client_id = clientId;
 
@@ -8402,49 +8442,45 @@ BEGIN
         where
         t3.domain_id = t2.domain_id and
         t2.unit_id = t1.unit_id and
-        case when _unit_id <> 0 then t1.unit_id = _unit_id else
-        t1.unit_id = t1.unit_id end and
+        coalesce(t1.unit_id,'') like _unit_id and
         t1.legal_entity_id =legalId and
         t1.client_id = clientId
         order by t3.domain_name;
     elseif (@_user_category_id = 7)then
-        select t3.unit_id, t_mgr.employee_name as techno_manager,t_usr.employee_name as techno_user,
-        (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t3.unit_id) as unit_name
+        select t4.unit_id, concat(t_mgr.employee_name,'-',t_mgr.employee_name) as techno_manager,
+        concat(t_usr.employee_code,'-',t_usr.employee_name) as techno_user,
+        (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = t4.unit_id) as unit_name
         from
-        tbl_user_legalentity as t1,tbl_legal_entities as t2,tbl_users as t_mgr,
-        tbl_users as t_usr,tbl_user_units as t3
-        where
-        case when _unit_id <> 0 then t3.unit_id = _unit_id else
-        t3.unit_id = t3.unit_id end and
-        t3.client_id = t1.client_id and
-        t3.legal_entity_id = t1.legal_entity_id and
-        t_usr.user_id = t1.user_id and
-        t_mgr.user_id = t2.created_by and
-        case when bgrp_id <> 0 then t2.business_group_id = bgrp_id else
-        t2.business_group_id = t2.business_group_id end and
-        t2.country_id = counrtyId and
-        t2.client_id = t1.client_id and
-        t2.legal_entity_id = t1.legal_entity_id and
-        t1.legal_entity_id = legalId and
-        t1.client_id = clientId
-        group by t1.user_id_;
+        tbl_user_units as t4 inner join tbl_units as t5 on
+        t5.unit_id = t4.unit_id inner join tbl_user_clients as t2 on
+        t2.client_id = t4.client_id
+        inner join tbl_user_legalentity as t1 on t1.legal_entity_id = t4.legal_entity_id
+        inner join tbl_users as t_mgr on t_mgr.user_id = t2.user_id
+        inner join tbl_users as t_usr on t_usr.user_id = t1.user_id
 
-        select t1.unit_id, t2.employee_name, t3.user_category_name,t1.domain_id
+        where
+        t5.country_id = counrtyId and
+        coalesce(t4.unit_id,'')like _unit_id and
+        coalesce(t5.business_group_id,'') like bgrp_id and
+        t4.user_id = userId and t4.user_category_id = 7 and
+        t4.legal_entity_id = legalId and
+        t4.client_id = clientId
+        group by t4.unit_id;
+
+
+        select t1.unit_id, concat(t2.employee_code,'-',t2.employee_name)as employee_name,
+        t3.user_category_name,t1.domain_id
         from
         tbl_user_units as t1,tbl_units as t4,tbl_users as t2,
         tbl_user_category as t3
         where
         t3.user_category_id = t1.user_category_id and
         t2.user_id = t1.user_id and
-        case when _cg_id <> 0 then t4.category_id = _cg_id else
-        t4.category_id = t4.category_id end and
-        case when _divi_id <> 0 then t4.division_id = _divi_id else
-        t4.division_id = t4.division_id end and
+        coalesce(t4.category_id,'') like _cg_id and
+        coalesce(t4.division_id,'') like _divi_id and
         t4.unit_id = t1.unit_id and
         t4.country_id = counrtyId and
-        t1.user_id = userId and
-        case when _unit_id <> 0 then t1.unit_id = _unit_id else
-        t1.unit_id = t1.unit_id end and
+        coalesce(t1.unit_id,'') like _unit_id and
         t1.legal_entity_id =legalId and
         t1.client_id = clientId;
 
@@ -8454,9 +8490,7 @@ BEGIN
         where
         t3.domain_id = t2.domain_id and
         t2.unit_id = t1.unit_id and
-        t1.user_id = userId and
-        case when _unit_id <> 0 then t1.unit_id = _unit_id else
-        t1.unit_id = t1.unit_id end and
+        coalesce(t1.unit_id,'') like _unit_id and
         t1.legal_entity_id =legalId and
         t1.client_id = clientId
         order by t3.domain_name;
@@ -8543,7 +8577,7 @@ BEGIN
         coalesce(t3.unit_id,'') like _unit and
         coalesce(t2.business_group_id,'') like _bgrp and
         t2.legal_entity_id = _legal and t2.country_id = _country and
-        t1.user_id = _user order by t3.unit_name;
+        t1.user_id = _user group by t3.unit_id order by t3.unit_name;
     END IF;
     if @u_cat_id = 6 THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
@@ -8574,7 +8608,7 @@ BEGIN
         coalesce(t3.unit_id,'') like _unit and
         coalesce(t2.business_group_id,'') like _bgrp and
         t2.legal_entity_id = _legal and t2.country_id = _country and
-        t1.user_id = _user order by t3.unit_name;
+        t1.user_id = _user group by t3.unit_id order by t3.unit_name;
     END IF;
     if @u_cat_id = 7 or @u_cat_id = 8 THEN
         select t3.country_id, t3.client_id, t3.legal_entity_id, t3.business_group_id,
@@ -8605,7 +8639,9 @@ BEGIN
         coalesce(t3.unit_id,'') like _unit and
         coalesce(t2.business_group_id,'') like _bgrp and
         t2.legal_entity_id = _legal and t2.country_id = _country and
-        t1.user_id = _user and t1.user_category_id = @u_cat_id order by t3.unit_name;
+        t1.user_id = _user and t1.user_category_id = @u_cat_id
+        group by t3.unit_id
+        order by t3.unit_name;
     END IF;
     select t3.unit_id, t3.domain_id, t3.organisation_id,
     (select domain_name from tbl_domains where domain_id = t3.domain_id) as
