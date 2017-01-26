@@ -66,6 +66,7 @@ function processSearch()
         searchList.push(data);
     }
   }
+  totalRecord = searchList.length;
   //loadStatNatureData(searchList);
   processPaging();
 }
@@ -140,7 +141,7 @@ function renderControls(){
 		$(event.target).parent().addClass('active');
 
 		var currentClass = $(event.target).html();
-    Search_status_1.html(currentClass);
+    Search_status.html(currentClass);
 		/*Search_status.removeClass();
 		if(currentClass != undefined){
 		  Search_status.addClass(currentClass);
@@ -219,20 +220,21 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = statutorynatureList.length;
-  ReportData = pageData(on_current_page);
+  //totalRecord = statutorynatureList.length;
   if (totalRecord == 0) {
-    $('.table-statutory-nature-list').empty();
+    viewTable.find('tr').remove();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
-    $('.table-statutory-nature-list').append(clone4);
+    viewTable.append(clone4);
     PaginationView.hide();
-    hideLoader();
+    //hideLoader();
   } else {
     if(sno==0){
       createPageView(totalRecord);
     }
+    ReportData = pageData(on_current_page);
+
     PaginationView.show();
     loadStatNatureData(ReportData);
   }
