@@ -1178,8 +1178,8 @@ function RenderInput() {
                 }
 
             });
-            if ($('#gnl'+i).length == 1) {
-                $('gidall'+i).remove();
+            if ($('#gnl'+i).children().length == 1) {
+                $('#gidall'+i).remove();
             }
         }
     };
@@ -1198,28 +1198,34 @@ function RenderInput() {
                    if ($('#gidall'+g_l_position).hasClass('active')) {
                         $('#gidall'+g_l_position).removeClass('active');
                         $('#gidall'+g_l_position+' i').removeClass('fa-check');
-                        _renderinput.clearGeosSubLevel(g_l_position);
+                        // _renderinput.clearGeosSubLevel(g_l_position);
                         _renderinput.selected_geos_parent = [];
                         $.each($('#gnl'+g_l_position+' li'), function(k, v){
                             $(this).removeClass('active');
                             $(this).find('i').removeClass('fa-check');
+                            _tpid = $(this).val();
+                            _renderinput.unloadGeosNames(g_l_position, _tpid);
                         });
 
                     }else {
                         $('#gidall'+g_l_position).addClass('active');
                         $('#gidall'+g_l_position+' i').addClass('fa-check');
-                        check_gids = []
+                        check_gids = [];
+                        load_g_ids = [];
                         $.each($('#gnl'+g_l_position+' li'), function(k, v){
                             val = $(this).val();
                             if ($(this).hasClass('active')) {
                                 check_gids.push(val);
+                            }
+                            else {
+                                load_g_ids.push(val);
                             }
                             $(this).addClass('active');
                             $(this).find('i').addClass('fa-check');
                         });
 
                         // _renderinput.clearGeosSubLevel(g_l_position);
-                        _renderinput.renderAllGeoNames(g_l_position, check_gids);
+                        _renderinput.renderAllGeoNames(g_l_position, check_gids, load_g_ids);
                     }
                 });
             }
@@ -1331,11 +1337,11 @@ function RenderInput() {
         });
     };
 
-    this.renderAllGeoNames = function(l_position, loaded_gids ) {
+    this.renderAllGeoNames = function(l_position, loaded_gids, load_g_ids) {
         $.each(GEOGRAPHY_INFO, function(k, v) {
             if (v.c_id == _renderinput.countryId)
             {
-                if (v.l_position == l_position) {
+                if ((v.l_position == l_position) && (load_g_ids.indexOf(v.g_id) != -1)) {
                     // $('#gnl'+l_position).empty();
                     if (loaded_gids.indexOf(v.g_id) == -1) {
                         _renderinput.renderGeosNames(v.g_id, v.l_position, v.g_name);
