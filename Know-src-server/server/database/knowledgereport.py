@@ -11,16 +11,12 @@ from server.database.knowledgemaster import (
 
 def get_geography_report(db):
     result = db.call_proc("sp_geographymaster_report_data", ())
-    print "geography report"
-    print result
 
     def return_report_data(result) :
         # mapping_dict = {}
         _list = []
         for item in result:
             geography_mapping = item["parent_names"]
-            print "geo mapping"
-            print geography_mapping
             is_active = bool(item["is_active"])
             country_id = item["country_id"]
             # _list = mapping_dict.get(country_id)
@@ -30,7 +26,6 @@ def get_geography_report(db):
                     country_id, geography_mapping, is_active
                 )
             )
-            print _list
         return _list
 
     # print bool(GEOGRAPHY_PARENTS)
