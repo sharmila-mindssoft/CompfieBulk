@@ -780,7 +780,7 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
             file_name = file_list.file_name
             file_size = file_list.file_size
 
-        if data.is_file_removed :
+        if data.is_file_removed and file_name :
             # remove uploaded file
             remove_uploaded_file(file_path + "/" + file_name)
             file_name = ""
