@@ -616,9 +616,9 @@ def update_geography(
             p_new_id = parent_ids[:-1].split(',')
             for p_ids_len in p_new_id:
                 if p_ids is None:
-                    p_ids = p_ids_len[i] + ","
+                    p_ids = p_ids_len + ","
                 else:
-                    p_ids = p_ids + p_ids_len[i]
+                    p_ids = p_ids + p_ids_len
                 i = i + 1
         result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
 
@@ -632,10 +632,13 @@ def update_geography(
                 map_name = ""
                 x = row["parent_ids"].strip().split(',')
                 for j in x[:-1]:
+                    if j > len(result):
+                        continue
                     if int(j) == int(geography_id) :
                         map_name += name + " >> "
                     else :
                         map_name += result[int(j)]["geography_name"] + " >> "
+
                 row["parent_ids"] = tuple(x[:-1])
 
             map_name += row["geography_name"]
