@@ -1450,7 +1450,7 @@ def update_unit(db, client_id, units, session_user):
         raise process_error("E057")
 
     action = "Updated following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, 19, action)
+    db.save_activity(session_user, 22, action)
     db.call_insert_proc("sp_client_unit_messages_update", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
     if result is True:
         for i in unit_ids:

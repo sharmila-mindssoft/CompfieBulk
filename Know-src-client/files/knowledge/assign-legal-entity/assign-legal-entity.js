@@ -219,9 +219,8 @@ function loadUserList(assignLegalEntitiesList) {
 
 function checkusercountries(userid, usercountryids, userdomainids, mapped_country_domains) {
     var returnval = 0;
-    var arrc = true;
-    var arrd = true;
-    var mapped_condition = true;
+    var arrc = [];
+    var arrd = [];
     var countryids = [];
     var domain_ids = [];
     $('input[name="le"]:checked').each(function() {
@@ -234,18 +233,21 @@ function checkusercountries(userid, usercountryids, userdomainids, mapped_countr
             }
         }
     });
-
     for (var mc = 0; mc < countryids.length; mc++) {
-        if($.inArray(countryids[mc], usercountryids) == -1){
-            arrc = false;
+        for (var m = 0; m < usercountryids.length; m++) {
+            if (usercountryids[m] == countryids[mc]) {
+                arrc.push(usercountryids[m]);
+            }
         }
     }
     for (var mc = 0; mc < domain_ids.length; mc++) {
-        if($.inArray(domain_ids[mc], userdomainids) == -1){
-            arrd = false;
+        for (var m = 0; m < userdomainids.length; m++) {
+            if (userdomainids[m] == domain_ids[mc]) {
+                arrd.push(userdomainids[m]);
+            }
         }
     }
-    
+    var mapped_condition = true;
     for (var mc = 0; mc < mapped_country_domains.length; mc++) {
         if($.inArray(mapped_country_domains[mc]["c_id"], countryids) == -1){
           mapped_condition = false;
@@ -255,8 +257,7 @@ function checkusercountries(userid, usercountryids, userdomainids, mapped_countr
           mapped_condition = false;
         }
     }
-    
-    if (arrc && arrd && mapped_condition) {
+    if (arrc.length > 0 && arrd.length > 0 && mapped_condition) {
         returnval = 1;
     }
     return returnval;
