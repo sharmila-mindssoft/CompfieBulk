@@ -1448,7 +1448,7 @@ def update_unit(db, client_id, units, session_user):
         raise process_error("E057")
 
     action = "Updated following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, 19, action)
+    db.save_activity(session_user, 22, action)
     db.call_insert_proc("sp_client_unit_messages_update", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
     if result is True:
         for i in unit_ids:
@@ -1497,7 +1497,7 @@ def update_unit_old(db, client_id,  units, session_user):
             action = "Unit details updated for \"%s - %s\"" % (
                 unit.unit_code, unit.unit_name
             )
-            db.save_activity(session_user, 19, action)
+            db.save_activity(session_user, 22, action)
         else:
             raise process_error("E057")
 
@@ -2466,6 +2466,7 @@ def save_assigned_units(db, request, session_user):
     res = db.bulk_insert(
         tblUserUnits, columns, values_list
     )
+
     if res is False:
         raise process_error("E080")
     return res
