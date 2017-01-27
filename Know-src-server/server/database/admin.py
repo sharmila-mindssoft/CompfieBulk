@@ -682,7 +682,7 @@ def save_user(
     save_user_countries(db, country_ids, user_id, session_user)
     save_user_domains(db, domain_ids, user_id, session_user)
     action = "Created User \"%s - %s\"" % (employee_code, employee_name)
-    db.save_activity(session_user, 4, action)
+    db.save_activity(session_user, 10, action)
     name = "%s - %s" % (employee_code, employee_name)
     save_registraion_token(db, user_id, name, email_id)
 
@@ -771,7 +771,7 @@ def update_user(
     save_user_countries(db, country_ids, user_id, session_user)
     save_user_domains(db, domain_ids, user_id, session_user)
     action = "Updated User \"%s - %s\"" % (employee_code, employee_name)
-    db.save_activity(session_user, 4, action)
+    db.save_activity(session_user, 10, action)
     return True
 
 
@@ -808,7 +808,7 @@ def update_user_status(db, user_id, is_active, session_user):
         action = "Activated User \"%s\"" % employee_name
     else:
         action = "Dectivated User \"%s\"" % employee_name
-    db.save_activity(session_user, 4, action)
+    db.save_activity(session_user, 10, action)
     return result
 
 
@@ -833,7 +833,7 @@ def update_disable_status(db, user_id, is_disable, remarks, session_user):
         action = "Disabled User \"%s\"" % employee_name
     else:
         action = "Enabled User \"%s\"" % employee_name
-    db.save_activity(session_user, 4, action)
+    db.save_activity(session_user, 11, action)
     return result
 
 def is_user_idle(db, user_id):
