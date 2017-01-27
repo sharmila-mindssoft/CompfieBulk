@@ -231,7 +231,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 //Autocomplete Script ends
 // dynamically load geograph first levels data according to geography level
 function loadGeographyFirstLevels(saverecord) {
-  //console.log(if(! (saverecord in geographyLevelsList)));
+  //.log(if(! (saverecord in geographyLevelsList)));
   $('.tbody-geography-level').find('div').remove();
   var geographyLevelList = geographyLevelsList[saverecord];
   var levelposition;
@@ -717,13 +717,13 @@ function renderControls(){
 //initialization
 $(document).ready(function () {
   renderControls();
-  //$('.js-sorting-table').jssorting(); // Sorting table
-  $(".js-sorting-table").tablesorter({
-    sortList: [[0,0]], // starting column sorting
-    headers: { // disable column sorting
-        0:{sorter: false},
-        4:{sorter: false},
-        5:{sorter: false}
-    }
-  });
+  $('.js-sorting-table').jssorting(); // Sorting table
+  // $(".js-sorting-table").tablesorter({
+  //   sortList: [[0,0]], // starting column sorting
+  //   headers: { // disable column sorting
+  //       0:{sorter: false},
+  //       4:{sorter: false},
+  //       5:{sorter: false}
+  //   }
+  // });
 });

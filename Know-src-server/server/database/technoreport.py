@@ -87,6 +87,23 @@ def return_compliance_statutory(db, stat_compl_list):
     return results
 
 ######################################################################################
+# To Get domain and organization
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of domains and organization list
+######################################################################################
+def get_domains_for_unit(db, user_id):
+    rows = db.call_proc("sp_domains_for_user", (user_id,))
+
+    fn = core.UnitDomainOrganisation
+    results = [
+        fn(
+           d["legal_entity_id"], d["domain_id"], d["domain_name"], d["industry_id"], d["industry_name"],
+           d["unit_count"]
+        ) for d in rows
+    ]
+    return results
+
+######################################################################################
 # To Get client units under user
 # Parameter(s) : Object of database, user id
 # Return Type : Return list of client units

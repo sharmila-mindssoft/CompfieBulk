@@ -925,6 +925,7 @@ function intTo5digitsString(nb) {
 // Unit code auto generation
 function autoGenerateUnitCode() {
     var client_id = $('#group-select').val();
+
     if (client_id == '' || client_id == null || client_id == "Select") {
         client_id = $('#client-unit-id').val();
     }
@@ -961,7 +962,6 @@ function unitcodeautogenerate(auto_generate_initial_value) {
             var flag = 0;
             $('.add-country-unit-list .unit-code').each(function(i) {
                 if ($(this).prev('.unit-id').val() == '') {
-
                     $(this).val(get2CharsofGroup + intTo5digitsString(unitcodeautogenerateids));
                     unitcodeautogenerateids++;
                 } else {

@@ -77,8 +77,10 @@ Auditpage.prototype.resetFields = function(){
     this._sno = 0;
     //CountryVal.val('');
     Form.val('');
+    Form_id.val('');
     User.val('');
-    this.clearMessage();
+    User_id.val('');
+    //this.clearMessage();
 };
 
 // To get the corresponding value
@@ -208,7 +210,11 @@ Auditpage.prototype.renderAuditData = function(a_page, audit_data){
                 f_name = a_page.getValue("formname", v.form_id);
             }
             $('.snumber', rowClone).text(parseInt(a_page._sno));
-            $('.username', rowClone).text(a_page.getValue('username', v.user_id));
+            var u_name = a_page.getValue('username', v.user_id);
+            if(u_name.indexOf("None") >= 0){
+                u_name = "Administrator";
+            }
+            $('.username', rowClone).text(u_name);
             $('.usertype', rowClone).text(a_page.getValue('usercategory', v.user_category_id));
            //$('.usertype', rowClone).text("categoryName");
             $('.formname', rowClone).text(f_name);
@@ -285,7 +291,6 @@ Auditpage.prototype.fetchData = function() {
                 displayMessage(error);
             }
             else {
-                console.log(response)
                 t_this.hideLoader();
                 t_this._sno  = _sno;
                 t_this._auditData = response.audit_trail_details;
@@ -293,12 +298,16 @@ Auditpage.prototype.fetchData = function() {
                     t_this.hidePageView();
                     a_page.hidePagePan();
                     Export_btn.hide();
+                    PaginationView.hide();
                     t_this.renderAuditData(t_this, t_this._auditData);
                 }
                 else{
                     t_this._total_record = response.total_records;
-                    t_this.createPageView(t_this, t_this._total_record);
+                    if (t_this._sno == 0) {
+                        t_this.createPageView(t_this, t_this._total_record);
+                    }
                     Export_btn.show();
+                    PaginationView.show();
                     t_this.renderAuditData(t_this, t_this._auditData);
                 }
             }
@@ -372,10 +381,17 @@ Auditpage.prototype.setControlValues = function(e) {
     Form.keyup(function(e) {
         var textval = $(this).val();
         var form_list = [];
-        if(Category.val() != '')
+        if(Category.val() != '' && Category.val() > 0)
         {
-            var userId = User_id.val();
-            if(Category.val() > 0){
+            if(Category.val() == 1){
+                for(var i=0;i<a_page._auditData.length;i++)
+                {
+                    if((a_page._auditData[i].user_category_id == Category.val())){
+                        form_list = a_page.pushForms("user", a_page._auditData[i].form_id, form_list);
+                    }
+                }
+            }else{
+                var userId = User_id.val();
                 for(var i=0;i<a_page._auditData.length;i++)
                 {
                     frm_user_id = a_page._auditData[i].user_id;
@@ -384,30 +400,13 @@ Auditpage.prototype.setControlValues = function(e) {
                             (userId == frm_user_id)){
                             form_list = a_page.pushForms("user", a_page._auditData[i].form_id, form_list);
                         }
-                    }
-                    else
-                    {
+                    }else{
                         if((a_page._auditData[i].user_category_id == Category.val())){
                             form_list = a_page.pushForms("user", a_page._auditData[i].form_id, form_list);
                         }
                     }
                 }
             }
-            /*else
-            {
-                for(var i=0;i<a_page._auditData.length;i++)
-                {
-                    if(userId > 0){
-                        if((a_page._auditData[i].user_id == userId)){
-                            form_list = a_page.pushForms("admin", a_page._auditData[i].form_id, form_list);
-                        }
-                    }
-                    else
-                    {
-                        form_list = a_page.pushForms("admin", a_page._auditData[i].form_id, form_list);
-                    }
-                }
-            }*/
             commonAutoComplete(
                 e, ACForm, Form_id, textval,
                 form_list, "form_name", "form_id", function (val) {
@@ -415,7 +414,6 @@ Auditpage.prototype.setControlValues = function(e) {
             });
         }
     });
-
 
     Category.empty();
     Category.append($('<option></option>').val('').html('Select'));
@@ -431,7 +429,6 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
     var a_page = this;
     var userCheck = false;
     //var form_list = [];
-
     if(u_type == "user"){
         var arr_form_id = [];
         element = form_id;
@@ -444,11 +441,14 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
         if(arr_form_id.length > 0){
             userCheck = true;
         }
+
+        if(arr_form_id.length == 0 && form_id == 0){
+            userCheck = true;
+        }
     }
     if(u_type == "admin"){
         userCheck = true;
     }
-
     if(userCheck == true){
         form_name = null;
         if(form_id > 0){
@@ -472,7 +472,6 @@ Auditpage.prototype.pushForms = function(u_type, form_id, form_list){
                     arr.push(i);
                 return arr;
             }, []);
-
 
             if(arr_form.length == 0){
                 form_list.push({
@@ -508,6 +507,7 @@ Auditpage.prototype.hidePageView = function() {
 Auditpage.prototype.createPageView = function(a_obj, total_records) {
     perPage = parseInt(ItemsPerPage.val());
     a_obj.hidePageView();
+
     $('#pagination-rpt').twbsPagination({
         totalPages: Math.ceil(total_records/perPage),
         visiblePages: visiblePageCount,
@@ -554,7 +554,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 initializeControlEvents = function(a_page){
 
     Show_btn.click(function(e) {
-        //a_page.resetFields();
+        a_page.resetFields();
         Export_btn.hide();
         is_valid = a_page.validateMandatory();
         if (is_valid == true) {
@@ -571,11 +571,14 @@ initializeControlEvents = function(a_page){
     });
 
     Category.change(function(e) {
+        a_page.resetFields();
         if(parseInt(Category.val()) > 2){
             $('.user-list').show();
+            User.val('');
         }else{
             $('.user-list').hide();
         }
+
     });
 
     on_page_load = function() {

@@ -104,7 +104,7 @@ function LegalEntityClosureData(data) {
     });
     // j = 1;
     // var status_select = $('#status_select').val();
-    // console.log("status:"+status_select)
+    // .log("status:"+status_select)
     // for(var i=0;i<data.length;i++)
     // {
     // 	if(status_select == "-1")
@@ -140,7 +140,7 @@ function LegalEntityClosureData(data) {
 }
 // function bindLegalEntityClosureData(data, j)
 // {
-// 	console.log(data);
+// 	.log(data);
 // 	val = data;
 // 	var tableRow = $('#templates .table-row');
 // 	var clone = tableRow.clone();
@@ -152,8 +152,8 @@ function LegalEntityClosureData(data) {
 // 	$('.legal-entity', clone).text(val.legal_entity_name);
 // 	$('.le_id', clone).text(val.legal_entity_id);
 
-// 	console.log(j)
-// 	console.log("le:"+val.legal_entity_id)
+// 	.log(j)
+// 	.log("le:"+val.legal_entity_id)
 // 	if(val.is_active == true)
 // 	{
 // 		$('#close', clone).show();
@@ -175,7 +175,7 @@ function LegalEntityClosureData(data) {
 // 	}
 // 	else
 // 	{
-// 		console.log("validity:"+val.validity_days)
+// 		.log("validity:"+val.validity_days)
 // 		if(parseInt(val.validity_days) > 90)
 // 		{
 // 			$('#close', clone).hide();
@@ -186,7 +186,7 @@ function LegalEntityClosureData(data) {
 // 		}
 // 		else
 // 		{
-// 			console.log('validity')
+// 			.log('validity')
 // 			$('#close', clone).hide();
 // 			$('#reactive', clone).show();
 // 			$('#reactive', clone).addClass('-'+val.legal_entity_id)
@@ -212,7 +212,7 @@ function LegalEntityClosureData(data) {
 function popup_toggle(le_id, mode) {
     $(".popup_legal_entity_id").val(le_id);
     $(".popup_mode").val(mode);
-    //console.log("e--------"+e);
+    //.log("e--------"+e);
     //var split_e_le_id = e.split("-")[2].trim();
     //$('.modal').show();
     $('#techno_pwd').val('');

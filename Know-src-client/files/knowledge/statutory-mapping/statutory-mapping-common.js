@@ -256,7 +256,7 @@ function FetchBack() {
         else {
             displaySuccessMessage(msg.mapping_submit_success);
         }
-
+        hideLoader();
         _viewPage.hide();
         _listPage.show();
         _renderinput.resetField();
@@ -281,11 +281,11 @@ function FetchBack() {
                 }
             }
             else {
-
+                hideLoader();
                 possibleFailure(status, response.compliance_name);
                 return false;
             }
-            hideLoader();
+
         });
     };
 
@@ -307,11 +307,11 @@ function FetchBack() {
                 }
             }
             else {
-
+                hideLoader();
                 possibleFailure(status);
                 return false;
             }
-            hideLoader();
+
         });
     };
 
@@ -334,10 +334,11 @@ function FetchBack() {
                 }
             }
             else {
+                hideLoader();
                 possibleFailure(status);
                 return false;
             }
-            hideLoader();
+
         });
     };
 

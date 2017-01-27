@@ -925,8 +925,6 @@ def return_country_domain_mappings(data):
             country_domain_map[country_id] = []
         if domain_id not in country_domain_map[country_id]:
             country_domain_map[country_id].append(domain_id)
-    print "country_domain_map"
-    print country_domain_map
     return country_domain_map
 
 
@@ -941,7 +939,6 @@ def save_validity_date_settings(db, data, session_user):
     domain_id = None
     for datum in data:
         if (datum.validity_days == 0 or datum.validity_days > 366):
-            print "no entry"
             country_id = datum.country_id
             domain_id = datum.domain_id
             break
@@ -953,14 +950,8 @@ def save_validity_date_settings(db, data, session_user):
         if (datum.validity_days > 0 and datum.validity_days <= 366):
             validity_days_id = datum.validity_days_id
             country_id = datum.country_id
-            print "c id"
-            print country_id
             domain_id = datum.domain_id
-            print "d_id"
-            print domain_id
             validity_days = datum.validity_days
-            print "v days"
-            print validity_days
             db.call_insert_proc(
                 "sp_validitydays_settings_save", (
                     validity_days_id, country_id, domain_id, validity_days,
@@ -979,7 +970,6 @@ def get_user_mappings(db):
 
 
 def return_user_mapping_users(data):
-    print data
     result = []
     for datum in data:
         fn = admin.UserMapping

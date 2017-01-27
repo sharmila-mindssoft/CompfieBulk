@@ -455,8 +455,6 @@ def return_assigned_statutories_by_id(statutories):
 ######################################################################################
 def get_groupadmin_registration_grouplist(db, user_id):
     groupadmin_grouplist = db.call_proc_with_multiresult_set("sp_groupadmin_registration_email_groupslist", (user_id,), 3)
-    print "group admin group list"
-    print groupadmin_grouplist
     return return_groupadmin_registration_grouplist(groupadmin_grouplist)
 ######################################################################################
 # To convert databse result to list
@@ -491,8 +489,6 @@ def return_groupadmin_registration_grouplist(groupslist):
 def get_groupadmin_registration_unitlist(db, user_id):
     groupadmin_unitlist = db.call_proc_with_multiresult_set("sp_groupadmin_registration_email_unitslist", (user_id,), 2)
     result = []
-    print "group admin unit list"
-    print groupadmin_unitlist
     result = groupadmin_unitlist[1]
     return return_groupadmin_registration_unitlist(result)
 ######################################################################################
@@ -565,7 +561,6 @@ def send_groupadmin_registration_mail(db, request, user_id):
     legal_entity_name = request.legal_entity_name
     insert_result = False
     try:
-        print group_mode
         notify_grp_admin_thread = threading.Thread(
             target=notify_grp_admin_mail, args=[
                 group_mode, email_id, group_name, legal_entity_name
@@ -636,10 +631,8 @@ def get_LegalEntityClosureReportData(db, user_id):
 ######################################################################################
 def save_legalentity_closure_data(db, user_id, password, legal_entity_id, remarks, action_mode):
     current_time_stamp = get_current_date()
-    print action_mode
     return_result = None
     if action_mode == "close":
-        print "save"
         return_result = "Unable to Close the Legal Entity"
         result = db.call_update_proc("sp_legalentity_closure_save", (
             user_id, legal_entity_id, 1, current_time_stamp, remarks
@@ -653,7 +646,6 @@ def save_legalentity_closure_data(db, user_id, password, legal_entity_id, remark
     if result:
         return_result = None
 
-    print result, return_result
     if(return_result is None):
         return result
     else:
