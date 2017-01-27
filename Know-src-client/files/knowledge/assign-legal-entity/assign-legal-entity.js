@@ -219,13 +219,21 @@ function loadUserList(assignLegalEntitiesList) {
 
 function checkusercountries(userid, usercountryids, userdomainids, mapped_country_domains) {
     var returnval = 0;
-    var arrc = [];
-    var arrd = [];
+    var arrc = true;
+    var arrd = true;
+    var mapped_condition = false;
+    var m_c = false;
+    var m_d = false;
+
     var countryids = [];
     var domain_ids = [];
     $('input[name="le"]:checked').each(function() {
         var splitIds = (this.value).split(',');
-        countryids.push(parseInt(splitIds[0]));
+
+        if ($.inArray(parseInt(splitIds[0]), countryids) == -1) {
+            countryids.push(parseInt(splitIds[0]));
+        }
+
         var d_ids = LE_DOMAINS[splitIds[1]];
         for(var i=0; i<d_ids.length; i++){
             if ($.inArray(d_ids[i], domain_ids) == -1) {
@@ -233,31 +241,36 @@ function checkusercountries(userid, usercountryids, userdomainids, mapped_countr
             }
         }
     });
+
     for (var mc = 0; mc < countryids.length; mc++) {
-        for (var m = 0; m < usercountryids.length; m++) {
-            if (usercountryids[m] == countryids[mc]) {
-                arrc.push(usercountryids[m]);
-            }
+        if($.inArray(countryids[mc], usercountryids) == -1){
+            arrc = false;
         }
     }
+
     for (var mc = 0; mc < domain_ids.length; mc++) {
-        for (var m = 0; m < userdomainids.length; m++) {
-            if (userdomainids[m] == domain_ids[mc]) {
-                arrd.push(userdomainids[m]);
-            }
+        if($.inArray(domain_ids[mc], userdomainids) == -1){
+            arrd = false;
         }
     }
-    var mapped_condition = true;
+
     for (var mc = 0; mc < mapped_country_domains.length; mc++) {
-        if($.inArray(mapped_country_domains[mc]["c_id"], countryids) == -1){
-          mapped_condition = false;
+        m_c = false;
+        m_d = false;
+        if($.inArray(mapped_country_domains[mc]["c_id"], countryids) == 0){
+          m_c = true;
         }
 
-        if($.inArray(mapped_country_domains[mc]["d_id"], domain_ids) == -1){
-          mapped_condition = false;
+        if($.inArray(mapped_country_domains[mc]["d_id"], domain_ids) == 0){
+          m_d = true;
+        }
+
+        if(m_c && m_d){
+            mapped_condition = true;
         }
     }
-    if (arrc.length > 0 && arrd.length > 0 && mapped_condition) {
+    
+    if (arrc && arrd && mapped_condition) {
         returnval = 1;
     }
     return returnval;
