@@ -132,7 +132,7 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     if new_id is False:
         raise process_error("E001")
     else:
-        action = "New Industry type %s added" % (industry_name)
+        action = "New Organization %s added" % (industry_name)
         db.save_activity(user_id, 6, action)
         return True
 
@@ -150,7 +150,7 @@ def update_industry(db, country_ids, domain_ids, industry_id, industry_name, use
     values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
     new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
     if new_id is True:
-        action = "Industry type %s updated" % (industry_name)
+        action = "Organization %s updated" % (industry_name)
         db.save_activity(user_id, 6, action)
         return True
     else:
@@ -173,7 +173,7 @@ def update_industry_status(db, industry_id, is_active, user_id):
         else:
             status = "activated"
 
-        action = "Industry type %s status - %s" % (oldData, status)
+        action = "Organization %s status - %s" % (oldData, status)
         db.save_activity(user_id, 6, action)
         return True
     else:
