@@ -1355,7 +1355,7 @@ def save_unit(
         raise process_error("E056")
 
     action = "Created following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, 19, action)
+    db.save_activity(session_user, 22, action)
     db.call_insert_proc("sp_client_unit_messages_save", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
 
     max_unit_id = None
