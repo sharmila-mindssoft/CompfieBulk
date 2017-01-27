@@ -53,7 +53,7 @@ function initialize()
 		userClientGroups = data.clients;
 		userDomainList = data.reassign_domains;
 		//userGroupAssignedList = data.reassign_assignedgroups;
-		//console.log(data);
+		//.log(data);
 		//resetAllfilter();
 		loadUserCategory();
 	}
@@ -64,7 +64,6 @@ function initialize()
 	t0 = performance.now();
 	mirror.getAssignedUserClientGroups(function (error, response) {
 		if (error == null) {
-			console.log(response)
 		  onSuccess(response);
 		  hideLoader();
 		} else {
@@ -143,7 +142,7 @@ $('.btn-show').click(function () {
   		group_id_none = 0;
   	}
   	function onSuccess(data) {
-      //console.log(data);
+      //.log(data);
       $('.details').show();
 	    $('#compliance_animation')
 	      .removeClass().addClass('bounceInLeft animated')
@@ -511,7 +510,6 @@ function bindReassignedTechexecData(data, j, tbodyClass, rowClass)
 			break;
 		}
 	}
-	console.log("le:"+le_name)
 	$('.bg-name', clone).text(bg_name);
 	$('.country-name', clone).text(val.c_names);
 
@@ -704,6 +702,39 @@ function processPaging(tbodyClass){
   //totalRecord = userGroupAssignedList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
+  	if(categoryName == "Techno Manager"){
+  		$('.categoryval').text($('#usercategory option:selected').text());
+		$('.userval').text($('#managerval').val());
+		var tableheading = $('#templates .tr-heading');
+		var cloneheading = tableheading.clone();
+		tbodyClass.append(cloneheading);
+	}else if(categoryName == "Techno Executive"){
+  		$('.categoryval').text($('#usercategory option:selected').text());
+		$('.userval').text($('#managerval').val());
+		var tableheading = $('#templates .tr-heading');
+		var cloneheading = tableheading.clone();
+		tbodyClass.append(cloneheading);
+	}else if(categoryName == "Domain Manager"){
+  		$('.categoryval').text($('#usercategory option:selected').text());
+		$('.userval').text($('#managerval').val());
+		$('.groupval').text(GroupVal.val());
+		$('.bgval').text(BusinessGroupVal.val());
+		$('.leval').text(LegalEntityVal.val());
+		$('.domainval').text(DomainVal.val());
+		var tableheading = $('#templates .tr-heading');
+		var cloneheading = tableheading.clone();
+		tbodyClass.append(cloneheading);
+	}else if(categoryName == "Domain Executive"){
+  		$('.categoryval').text($('#usercategory option:selected').text());
+		$('.userval').text($('#managerval').val());
+		$('.groupval').text(GroupVal.val());
+		$('.bgval').text(BusinessGroupVal.val());
+		$('.leval').text(LegalEntityVal.val());
+		$('.domainval').text(DomainVal.val());
+		var tableheading = $('#templates .tr-heading');
+		var cloneheading = tableheading.clone();
+		tbodyClass.append(cloneheading);
+	}
     tbodyClass.empty();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
@@ -767,7 +798,7 @@ function loadUserCategory()
 		clone.text(u_cg_name);
 		$('#usercategory').append(clone);
 	});
-	//console.timeEnd("end loading user categories");
+	//.timeEnd("end loading user categories");
 }
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -1026,6 +1057,16 @@ function resetAllfilter()
 	$('#usercategory').empty();
 	$('#groupsval').val('');
 	$('#managerval').val('');
+	UserVal.val('');
+  	User.val('');
+  	GroupVal.val('');
+  	Group.val('')
+  	BusinessGroupVal.val('');
+  	BusinessGroup.val('');
+  	LegalEntityVal.val('');
+  	LegalEntity.val('');
+  	DomainVal.val('');
+  	Domain.val('');
 	$('.tbody-reassignuserrpt-list').find('tr').remove();
 }
 
@@ -1090,6 +1131,7 @@ ItemsPerPage.on('change', function (e) {
 $(function () {
   $('.grid-table-rpt').hide();
   initialize();
+  resetAllfilter();
   loadItemsPerPage();
   $('.tree-open-close').click(function() {
 	    $('.tree-data').toggle("slow");

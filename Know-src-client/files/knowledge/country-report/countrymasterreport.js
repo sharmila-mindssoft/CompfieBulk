@@ -101,7 +101,7 @@ function renderControls(){
     $(event.target).parent().addClass('active');
 
     var currentClass = $(event.target).html();
-    Search_status_1.html(currentClass);
+    Search_status.html(currentClass);
 
     /*Search_status.removeClass();
     if(currentClass != undefined){
@@ -111,6 +111,7 @@ function renderControls(){
       Search_status.addClass('fa');
       Search_status.text('All');
     }*/
+
     processSearch();
   });
 

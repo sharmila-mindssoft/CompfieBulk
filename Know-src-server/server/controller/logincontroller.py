@@ -58,7 +58,6 @@ def process_login_request(request, db, session_user_ip):
 
 
 def process_login(db, request, session_user_ip):
-    print session_user_ip
     login_type = request.login_type
     username = request.username
     password = request.password
@@ -123,7 +122,6 @@ def mobile_user_login_respone(db, login_type, ip, data, forms):
     employee_code = data["employee_code"]
 
     form_ids = [int(x["form_id"]) for x in forms]
-    print form_ids
     if frmApproveStatutoryMapping not in form_ids:
         return login.InvalidMobileCredentials()
 
@@ -191,11 +189,9 @@ def process_forgot_password(db, request):
     else:
         is_mobile = False
     rows = db.verify_username(request.username)
-    print "-------------------", rows
     if rows is 0:
         return login.InvalidUserName()
     else:
-        print rows
         send_reset_link(db, rows[0]['user_id'], rows[0]['email_id'], rows[0]['employee_name'])
         return login.ForgotPasswordSuccess()
 

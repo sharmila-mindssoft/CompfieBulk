@@ -66,6 +66,7 @@ function initialize() {
     categoryList = data.usermapping_unit;
     assignedUnitList = data.usermapping_unit;
     resetAllfilter();
+    resetFields();
   }
   function onFailure(error) {
     displayMessage(error);
@@ -73,7 +74,6 @@ function initialize() {
   displayLoader();
   mirror.getUserMappingReportFilters(function (error, response) {
     if (error == null) {
-      console.log(response)
       onSuccess(response);
       hideLoader();
     } else {
@@ -102,8 +102,8 @@ function initialize() {
 //load client groups
 function loadClientGroups()
 {
-  console.log($('#clientids').length);
-  console.log("country:"+$('#countries').val());
+  .log($('#clientids').length);
+  .log("country:"+$('#countries').val());
   var country_id = $('#countries').val();
   prev_country_id = country_id;
   if(country_id > 0)
@@ -132,7 +132,7 @@ function loadClientGroups()
 //load Business groups
 function loadBusinessGroup()
 {
-  console.log("Client:"+$('#clientids').val());
+  .log("Client:"+$('#clientids').val());
   var country_id = $('#country-id').val();
   var client_id = $('#clientids').val();
   prev_client_id = client_id;
@@ -174,7 +174,7 @@ function loadBusinessGroup()
 //load legal entity'
 function loadLegalEntity()
 {
-  console.log("Client:"+$('#clientids').val());
+  .log("Client:"+$('#clientids').val());
   var country_id = $('#countries').val();
   var client_id = $('#clientids').val();
   var bgrp_id = $('#businessgroup').val();
@@ -186,7 +186,7 @@ function loadLegalEntity()
     {
       if((clientList[i].country_id == country_id && clientList[i].client_id == client_id))
       {
-        console.log("inside le loop")
+        .log("inside le loop")
         for(var j = 0; j < lagelEntityList.length; j++)
         {
           if(lagelEntityList[j].legal_entity_id == clientList[i].legal_entity_id)
@@ -568,7 +568,15 @@ function pageData(on_current_page){
   }
   return data;
 }
-
+function resetFields(){
+  $('#country-id').val('');
+  $('#group-id').val('');
+  $('#businessgroupid').val('');
+  $('#legalentityid').val('');
+  $('#divisionid').val('');
+  $('#categoryid').val('');
+  $('#unitid').val('');
+}
 function loadusermappingdetails() {
   clearMessage();
   var country_id = $('#country-id').val();
@@ -738,7 +746,6 @@ function loadUserMappingDetailsList(data)
     $('.techno-manager', clone1).text(technoDetails[i].techno_manager);
     $('.techno-user', clone1).text(technoDetails[i].techno_user);
     $('.tbody-usermappingdetails-list').append(clone1);
-
     for(var k=col;k<=th_cnt;k++)
     {
       var headerObj = $('#datatable-responsive').find('th').eq(k);
@@ -762,18 +769,17 @@ function loadUserMappingDetailsList(data)
     }
 
   }
-
   var split_domain_with_colon = "";
   if(assignedDomainVal_1.indexOf(";") > 0)
     split_domain_with_colon = assignedDomainVal_1.split(";");
   else
     split_domain_with_colon = assignedDomainVal_1;
-
+  var row_indx = 0;
   $('.tbody-usermappingdetails-list tr :last-child').each(function() {
     var index = $(this).closest('td').index();
-    if(index > 0 && split_domain_with_colon.indexOf(";") > 0)
+    if(index > 0 && assignedDomainVal_1.indexOf(";") < 0)
     {
-      var split_domain_with_comma = split_domain_with_colon[index - 1].split(",");
+      var split_domain_with_comma = split_domain_with_colon.split(",");
       for(var k=0;k<split_domain_with_comma.length;k++)
       {
         var clone2 = $(this).clone().html('&nbsp;');
@@ -787,14 +793,18 @@ function loadUserMappingDetailsList(data)
     {
       if(index > 0)
       {
-        var split_domain_with_comma = split_domain_with_colon.split(",");
-        for(var k=0;k<split_domain_with_comma.length;k++)
-        {
-          var clone2 = $(this).clone().html('&nbsp;');
-          if (clone2.is('td')) {
-            clone2.text(split_domain_with_comma[k]);
+        for(var m=row_indx;m<split_domain_with_colon.length;m++){
+          var split_domain_with_comma = split_domain_with_colon[m].split(",");
+          for(var k=0;k<split_domain_with_comma.length;k++)
+          {
+            var clone2 = $(this).clone().html('&nbsp;');
+            if (clone2.is('td')) {
+              clone2.text(split_domain_with_comma[k]);
+            }
+            $(this).parent().append(clone2);
           }
-          $(this).parent().append(clone2);
+          row_indx = row_indx + 1;
+          break;
         }
       }
     }
@@ -1090,27 +1100,28 @@ $('#divisionval').keyup(function (e) {
   {
    var condition_fields = [];
     var condition_values = [];
-    if(Group.val() != ''){
-      condition_fields.push("client_id");
-      condition_values.push(Group.val());
-    }
       condition_fields.push("legal_entity_id");
       condition_values.push(le_id);
     for(var i =0; i < divisionList.length; i++)
     {
-      var bg_check = bgrp_id>0?(bgrp_id === divisionList[i].business_group_id):false;
+      var bg_check = true;
+      if(bgrp_id>0 && (bgrp_id != assignedUnitList[i].business_group_id)){
+        bg_check =false;
+      }
+
       if(divisionList[i].country_id == country_id &&
         divisionList[i].client_id == client_id && divisionList[i].legal_entity_id == le_id
-        && (bg_check == true || bg_check == false))
+        && bg_check == true)
       //        (bgrp_id > 0 && divisionList[i].business_group_id == bgrp_id))
       {
         var occur = -1;
         for(var k=0;k<division_list.length;k++){
           if(division_list[k].division_id==divisionList[i].division_id){
             occur = 1;
+            break;
           }
         }
-        if(occur < 0){
+        if(occur < 0 && divisionList[i].division_id != null){
           division_list.push({
             "client_id": divisionList[i].client_id,
             "legal_entity_id": divisionList[i].legal_entity_id,
@@ -1157,12 +1168,17 @@ $('#categoryval').keyup(function (e) {
   {
     for(var i =0; i < categoryList.length; i++)
     {
-      var bg_check = bgrp_id>0?(bgrp_id === categoryList[i].business_group_id):false;
-      var divi_check = divi_id>0?(divi_id === categoryList[i].division_id):false;
+      var bg_check = true;
+      if(bgrp_id>0 && (bgrp_id != assignedUnitList[i].business_group_id)){
+        bg_check =false;
+      }
+      var divi_check = true;
+      if(divi_id>0 &&(divi_id != assignedUnitList[i].division_id)){
+        divi_check = false;
+      }
       if(categoryList[i].country_id == country_id &&
         categoryList[i].client_id == client_id && categoryList[i].legal_entity_id == le_id
-        && (bg_check == true || bg_check == false) && (divi_check == true || divi_check == false))
-      //        (bgrp_id > 0 && divisionList[i].business_group_id == bgrp_id))
+        && bg_check == true && divi_check == true)
       {
         var occur = -1;
         for(var k=0;k<catg_list.length;k++){
@@ -1170,7 +1186,7 @@ $('#categoryval').keyup(function (e) {
             occur = 1;
           }
         }
-        if(occur < 0){
+        if(occur < 0 && categoryList[i].category_name != null){
           catg_list.push({
             "category_id": categoryList[i].category_id,
             "category_name": categoryList[i].category_name
@@ -1216,12 +1232,23 @@ $('#unitval').keyup(function (e) {
   {
     for(var i =0; i < assignedUnitList.length; i++)
     {
-      var bg_check = bgrp_id>0?(bgrp_id === assignedUnitList[i].business_group_id):false;
-      var divi_check = divi_id>0?(divi_id === assignedUnitList[i].division_id):false;
-      var catg_check = catg_id>0?(catg_id === assignedUnitList[i].category_id):false;
+      var bg_check = true;
+      if(bgrp_id>0 && (bgrp_id != assignedUnitList[i].business_group_id)){
+        bg_check =false;
+      }
+      var divi_check = true;
+      if(divi_id>0 &&(divi_id != assignedUnitList[i].division_id)){
+        divi_check = false;
+      }
+      var catg_check = true;
+      if(catg_id>0 && (catg_id != assignedUnitList[i].category_id)){
+        catg_check = false;
+      }
+
+
       if(assignedUnitList[i].country_id == country_id &&
         assignedUnitList[i].client_id == client_id && assignedUnitList[i].legal_entity_id == le_id
-        && (bg_check == true || bg_check == false) && (divi_check == true || divi_check == false))
+        && bg_check == true && divi_check == true && catg_check == true)
       //        (bgrp_id > 0 && divisionList[i].business_group_id == bgrp_id))
       {
         unit_list.push({
