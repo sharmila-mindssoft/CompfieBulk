@@ -1305,8 +1305,6 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
 
     fromcount = rcount
     tocount = 10
-    print [user_id, approve_status, fromcount, tocount]
-    print "--------------"
     result = db.call_proc_with_multiresult_set(
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 6
@@ -1471,6 +1469,8 @@ def save_approve_mapping(db, user_id, data):
 
             if d.approval_status_id == 3 :
                 save_approve_notify(db, text, user_id, d.compliance_id)
+
+            db.save_activity(updated_by, frmApproveStatutoryMapping, text)
         return True
     except Exception, e :
         print e
