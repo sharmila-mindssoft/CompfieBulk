@@ -296,7 +296,7 @@ def save_client(db, request, session_user):
                     else:
                         div_ids.append({"div_id": 0})
                 else:
-                    div_id = 0
+                    div_id = division_id
                     div_ids.append({"div_id": div_id})
 
                 if category_name is not None:

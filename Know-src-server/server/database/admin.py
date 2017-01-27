@@ -208,7 +208,7 @@ def update_domain_status(db, domain_id, is_active, updated_by):
             action = "Domain %s status  - %s" % (
                 oldData, "deactivated" if is_active == 0 else "activated"
             )
-            db.save_activity(updated_by, 1, action)
+            db.save_activity(updated_by, 2, action)
             return True
         else:
             raise process_error("E026")

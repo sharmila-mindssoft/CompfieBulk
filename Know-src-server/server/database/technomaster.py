@@ -1357,7 +1357,7 @@ def save_unit(
         raise process_error("E056")
 
     action = "Created following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, 19, action)
+    db.save_activity(session_user, 22, action)
     db.call_insert_proc("sp_client_unit_messages_save", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
 
     max_unit_id = None
@@ -1450,7 +1450,7 @@ def update_unit(db, client_id, units, session_user):
         raise process_error("E057")
 
     action = "Updated following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, 19, action)
+    db.save_activity(session_user, 22, action)
     db.call_insert_proc("sp_client_unit_messages_update", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
     if result is True:
         for i in unit_ids:
@@ -1499,7 +1499,7 @@ def update_unit_old(db, client_id,  units, session_user):
             action = "Unit details updated for \"%s - %s\"" % (
                 unit.unit_code, unit.unit_name
             )
-            db.save_activity(session_user, 19, action)
+            db.save_activity(session_user, 22, action)
         else:
             raise process_error("E057")
 
@@ -2437,6 +2437,7 @@ def save_assigned_units(db, request, session_user):
     client_id = request.client_id
     active_units = request.active_units
     values_list = []
+    unit_names = []
     current_time_stamp = get_date_time()
     domains = get_user_domains(db, session_user)
     user_category_id = get_user_category_id(db, domain_manager_id)
@@ -2454,10 +2455,15 @@ def save_assigned_units(db, request, session_user):
             session_user, current_time_stamp
         )
         values_list.append(value_tuple)
+
         db.call_insert_proc("sp_assign_client_unit_save", (
             domain_manager_id, unit.unit_id, '/knowledge/assign-client-unit',
             session_user, current_time_stamp)
         )
+
+        unit_name = db.call_proc("sp_unitname_by_id", (unit.unit_id,))
+        for r in unit_name:
+            unit_names.append(r["unit_name"])
     #
     # To delete all the settings under the given domain manager
     # Parameters - domain manager id
@@ -2468,6 +2474,8 @@ def save_assigned_units(db, request, session_user):
     res = db.bulk_insert(
         tblUserUnits, columns, values_list
     )
+    action = "Assigned following Units %s" % (",".join(unit_names))
+    db.save_activity(session_user, 19, action)
     if res is False:
         raise process_error("E080")
     return res
@@ -2600,6 +2608,8 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
     ]
 
     for user_id in user_ids:
+        name_rows = db.call_proc("sp_empname_by_id", (user_id,))
+        user_name = name_rows[0]["empname"]
         for legal_entity_id in legal_entity_ids:
             values_tuple = (
                 user_id, client_id, legal_entity_id,
@@ -2610,6 +2620,10 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
                 user_id, legal_entity_id, '/knowledge/assign-legal-entity', session_user, current_time_stamp)
             )
     res = db.bulk_insert(tblUserLegalEntity, columns, values_list)
+
+    action = "New Legal entity assigned for %s" % (user_name)
+    db.save_activity(session_user, 18, action)
+
     if res is False:
         raise process_error("E041")
     return res
