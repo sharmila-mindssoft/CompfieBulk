@@ -155,7 +155,8 @@ def save_client_group(
     current_time_stamp = get_date_time()
     message_text = '%s has been Created.' % group_name
     msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
-    db.save_messages_users(msg_id, [1])
+    data = db.call_proc("sp_get_userid_from_admin", ())
+    db.save_messages_users(msg_id, data[0]["userids"])
     return client_id
 
 
@@ -220,7 +221,7 @@ def save_legal_entities(db, request, group_id, session_user):
             db, entity, group_id, session_user, current_time_stamp
         )
         if is_duplicate_legal_entity(
-            db, None, entity.legal_entity_name, group_id
+            db, None, entity.legal_entity_name, group_id, entity.country_id
         ):
             raise process_error("E068")
         legal_entity_names.append(entity.legal_entity_name)
@@ -278,7 +279,7 @@ def update_legal_entities(db, request, group_id, session_user):
             db, entity, group_id, session_user, current_time_stamp
         )
         if is_duplicate_legal_entity(
-            db, entity.legal_entity_id, entity.legal_entity_name, group_id
+            db, entity.legal_entity_id, entity.legal_entity_name, group_id, entity.country_id
         ):
             raise process_error("E068")
         elif validate_total_disk_space(
@@ -342,6 +343,7 @@ def update_legal_entities(db, request, group_id, session_user):
 def return_business_group_id(
     db, request, group_id, session_user, current_time_stamp
 ):
+    print "request.business_group--", request.business_group
     if request.business_group is None:
         return None
     elif request.business_group.business_group_id is not 0:
@@ -566,11 +568,11 @@ def is_duplicate_business_group(
 #   returns False if there is no duplicates
 ##########################################################################
 def is_duplicate_legal_entity(
-    db, legal_entity_id, legal_entity_name, client_id
+    db, legal_entity_id, legal_entity_name, client_id, country_id
 ):
     count_rows = db.call_proc(
         "sp_legalentity_is_duplicate_legalentityname",
-        (legal_entity_name, legal_entity_id, client_id)
+        (legal_entity_name, legal_entity_id, client_id, country_id)
     )
     if count_rows[0]["count"] > 0:
         return True
@@ -2471,9 +2473,15 @@ def save_assigned_units(db, request, session_user):
         raise process_error("E080")
     return res
 
+def get_user_domain(user_id, data):
+    domain_ids = []
+    for r in data:
+        if int(r["user_id"]) == user_id:
+            domain_ids.append(admin.CountryWiseDomain(int(r["country_id"]), int(r["domain_id"])))
+    return domain_ids
 
-def return_users(data, country_map, domain_map):
-    fn = admin.User
+def return_users(data, country_map, domain_map, mapped_country_domains):
+    fn = admin.MappedUser
     result = []
     for datum in data:
         user_id = int(datum["user_id"])
@@ -2481,7 +2489,8 @@ def return_users(data, country_map, domain_map):
             user_id=user_id, employee_name=datum["employee_name"],
             is_active=bool(datum["is_active"]),
             country_ids=country_map[user_id],
-            domain_ids=domain_map[user_id]
+            domain_ids=domain_map[user_id],
+            mapped_country_domains = get_user_domain(user_id, mapped_country_domains)
         )
         result.append(user)
     return result
@@ -2521,11 +2530,12 @@ def generate_domain_map(domains):
 #  date configurations
 ##########################################################################
 def get_unassigned_legal_entity(db, client_id):
-    legal_entities = db.call_proc(
-        "sp_unassigned_legal_entity_details_by_group_id", (client_id,)
-    )
+
+    legal_entities = db.call_proc_with_multiresult_set(
+        "sp_unassigned_legal_entity_details_by_group_id", (client_id,), 2)
+
     legal_entities = return_unassigned_legal_entities(
-        legal_entities
+        legal_entities[0], legal_entities[1]
     )
     return (
         legal_entities
@@ -2538,23 +2548,30 @@ def get_techno_users_list(db, session_user):
     user_countries = result[1]
     user_domains = result[2]
     techno_users_result = result[0]
+    mapped_country_domains = result[3]
 
     user_countries_map = generate_country_map(user_countries)
     user_domains_map = generate_domain_map(user_domains)
     techno_users = return_users(
-        techno_users_result, user_countries_map, user_domains_map)
+        techno_users_result, user_countries_map, user_domains_map, mapped_country_domains)
 
     return (
         techno_users
     )
 
+def get_le_domains(legl_entity_id, data):
+        domain_ids = []
+        for r in data:
+            if int(r["legal_entity_id"]) == legl_entity_id:
+                domain_ids.append(int(r["domain_id"]))
+        return domain_ids
 
 ##########################################################################
 #  To convert the data fetched from database into Legal entity object
 #  Parameters : Legal entity tuple, incharge person tuple, domain tuple
 #  Return Type : List of object of Legal entities
 ##########################################################################
-def return_unassigned_legal_entities(legal_entities):
+def return_unassigned_legal_entities(legal_entities, domain_ids):
     results = []
     for legal_entity in legal_entities:
         results.append(
@@ -2563,7 +2580,8 @@ def return_unassigned_legal_entities(legal_entities):
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
                 c_name=legal_entity["country_name"],
-                c_id=legal_entity["country_id"]
+                c_id=legal_entity["country_id"],
+                domain_ids = get_le_domains(legal_entity["legal_entity_id"], domain_ids)
             )
         )
     return results
@@ -2583,6 +2601,8 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
     ]
 
     for user_id in user_ids:
+        name_rows = db.call_proc("sp_empname_by_id", (user_id,))
+        user_name = name_rows[0]["empname"]
         for legal_entity_id in legal_entity_ids:
             values_tuple = (
                 user_id, client_id, legal_entity_id,
@@ -2593,6 +2613,10 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
                 user_id, legal_entity_id, '/knowledge/assign-legal-entity', session_user, current_time_stamp)
             )
     res = db.bulk_insert(tblUserLegalEntity, columns, values_list)
+
+    action = "New Legal entity assigned for %s" % (user_name)
+    db.save_activity(session_user, 18, action)
+    
     if res is False:
         raise process_error("E041")
     return res

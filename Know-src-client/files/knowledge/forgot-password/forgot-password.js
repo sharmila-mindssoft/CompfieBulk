@@ -1,18 +1,18 @@
 var csrf_token = $('meta[name=csrf-token]').attr('content')
-function clearMessage() {
-  $('.error-message').hide();
-  $('.error-message').text('');
-}
-function displayMessage(message) {
-  $('.error-message').text(message);
-  $('.error-message').show();
-}
-function displayLoader() {
-  $('.loading-indicator-spin').show();
-}
-function hideLoader() {
-  $('.loading-indicator-spin').hide();
-}
+// function clearMessage() {
+//   $('.error-message').hide();
+//   $('.error-message').text('');
+// }
+// function displayMessage(message) {
+//   $('.error-message').text(message);
+//   $('.error-message').show();
+// }
+// function displayLoader() {
+//   $('.loading-indicator-spin').show();
+// }
+// function hideLoader() {
+//   $('.loading-indicator-spin').hide();
+// }
 //check the url is client or knowledge
 function getShortName() {
   var pathArray = window.location.pathname.split('/');
@@ -121,11 +121,11 @@ $('#submit').click(function () {
   $('.forgot-password-error-message').html('');
   var username = $('#username').val().trim();
   if (username.length == 0) {
-    $('.forgot-password-error-message').html('User Id Required');
+    displayMessage('User Id Required');
   } else {
     displayLoader();
     function onSuccess(data) {
-      displayMessage('Password reset link has been sent to your email Id');
+      displaySuccessMessage('Password reset link has been sent to your email Id');
       $('#username').val('');
       hideLoader();
     }

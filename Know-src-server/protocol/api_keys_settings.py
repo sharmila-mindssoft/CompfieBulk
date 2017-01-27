@@ -624,6 +624,8 @@ api_params = {
     'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'group_info': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'clientcoordinationmaster', 'class_name': 'GroupInfo'},
     'old_d_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "mapped_country_domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
+    "mapped_techno_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "MappedUser"},
 
 }
 api_params['domain_id'] = api_params.get('d_id')

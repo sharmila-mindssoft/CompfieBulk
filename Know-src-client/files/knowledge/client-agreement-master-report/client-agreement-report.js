@@ -203,7 +203,6 @@ function loadCompliances(data) {
     var tableRow_tr = $('#templates .table-agreement-list .heading-list');
     var clonetr = tableRow_tr.clone();
     $('.table-client-agreement-list').append(clonetr);
-
     $.each(data, function(key, value) {
         is_null = false;
         var domain_units = value.domain_used_unit + ' / ' + value.domain_total_unit;
@@ -240,7 +239,7 @@ function loadCompliances(data) {
             $('.file-space', clone).html(file_space_details);
             $('.le-email', clone).html(value.legal_entity_admin_email);
             $('.le-contactno', clone).html(value.legal_entity_admin_contactno);
-            $('.domain-count', clone).html(value.domain_count).on('click', function() { tree_open_close(key); });
+            $('.domain-count', clone).html(value.domain_count).on('click', function() { tree_open_close(value.legal_entity_id); });
             $('.contract-from', clone).html(value.contract_from);
             $('.contract-to', clone).html(value.contract_to);
             $('.status', clone).html(status);
@@ -250,7 +249,7 @@ function loadCompliances(data) {
             acc_count++;
 
             var tableRowvalues_ul = $('#templates .agreement-inner-list');
-            var cloneval_ul = tableRowvalues_ul.clone().addClass('tree' + key);;
+            var cloneval_ul =  tableRowvalues_ul.clone().addClass('tree' + value.legal_entity_id);;
             $('.inner-domain-name', cloneval_ul).html(value.d_name);
             $('.inner-domain-units', cloneval_ul).text(domain_units);
             $('.inner-domain-units', cloneval_ul).on('click', function() {
@@ -260,7 +259,7 @@ function loadCompliances(data) {
             $('.table-client-agreement-list').append(cloneval_ul);
         } else {
             var tableRowvalues_ul = $('#templates .agreement-inner-list');
-            var cloneval_ul = tableRowvalues_ul.clone().addClass('tree' + key);;
+            var cloneval_ul = tableRowvalues_ul.clone().addClass('tree' + value.legal_entity_id);;
             $('.inner-domain-name', cloneval_ul).html(value.d_name);
             $('.inner-domain-units', cloneval_ul).text(domain_units);
             $('.inner-domain-units', cloneval_ul).on('click', function() {

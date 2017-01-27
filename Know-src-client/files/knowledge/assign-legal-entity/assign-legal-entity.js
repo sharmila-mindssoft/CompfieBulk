@@ -23,6 +23,8 @@ var AddFilterLE = $('#add-filter-le');
 var AC_User = $('#ac-user');
 var AC_Textbox = $('.ac-textbox');
 
+var LE_DOMAINS = {};
+
 function resetValues() {
     ListFilterBox.val('');
     AddFilterBox.val('');
@@ -51,6 +53,7 @@ function processSave() {
         });
         mirror.saveAssignLegalEntity(CLIENT_ID, s_le, s_users, function(error, response) {
             if (error == null) {
+                displaySuccessMessage(message.assign_success);
                 AddScreen.hide();
                 ListScreen.show();
                 ViewScreen.hide();
@@ -73,7 +76,7 @@ function assignLE(cId, cName, gName) {
             Group_Label.text(gName);
             //Country_Label.text(cName);
             assignLegalEntitiesList = data.unassign_legal_entities;
-            userList = data.techno_users;
+            userList = data.mapped_techno_users;
             $(".select_all").prop('checked', false);
             $(".form_checkbox").prop('checked', false);
             $('.selected_checkbox_count').html('0');
@@ -145,6 +148,7 @@ $(".select_all").change(function() {
 });
 
 function loadLegalEntityList(assignLegalEntitiesList) {
+    LE_DOMAINS = {};
     var j = 1;
     $('.tbody-add-list').find('tr').remove();
     $.each(assignLegalEntitiesList, function(key, value) {
@@ -174,6 +178,7 @@ function loadLegalEntityList(assignLegalEntitiesList) {
             $('.form_checkbox').closest('tr').removeClass('checked_row');
             che.closest('tr').addClass('checked_row');
         });
+        LE_DOMAINS[value.legal_entity_id] = value.domain_ids;
     });
     
     if($('.select_all').prop('checked')){
@@ -212,13 +217,21 @@ function loadUserList(assignLegalEntitiesList) {
     });
 }
 
-function checkusercountries(userid, usercountryids) {
+function checkusercountries(userid, usercountryids, userdomainids, mapped_country_domains) {
     var returnval = 0;
     var arrc = [];
+    var arrd = [];
     var countryids = [];
+    var domain_ids = [];
     $('input[name="le"]:checked').each(function() {
         var splitIds = (this.value).split(',');
         countryids.push(parseInt(splitIds[0]));
+        var d_ids = LE_DOMAINS[splitIds[1]];
+        for(var i=0; i<d_ids.length; i++){
+            if ($.inArray(d_ids[i], domain_ids) == -1) {
+                domain_ids.push(d_ids[i]);
+            }
+        }
     });
     for (var mc = 0; mc < countryids.length; mc++) {
         for (var m = 0; m < usercountryids.length; m++) {
@@ -227,7 +240,24 @@ function checkusercountries(userid, usercountryids) {
             }
         }
     }
-    if (arrc.length > 0) {
+    for (var mc = 0; mc < domain_ids.length; mc++) {
+        for (var m = 0; m < userdomainids.length; m++) {
+            if (userdomainids[m] == domain_ids[mc]) {
+                arrd.push(userdomainids[m]);
+            }
+        }
+    }
+    var mapped_condition = true;
+    for (var mc = 0; mc < mapped_country_domains.length; mc++) {
+        if($.inArray(mapped_country_domains[mc]["c_id"], countryids) == -1){
+          mapped_condition = false;
+        }
+
+        if($.inArray(mapped_country_domains[mc]["d_id"], domain_ids) == -1){
+          mapped_condition = false;
+        }
+    }
+    if (arrc.length > 0 && arrd.length > 0 && mapped_condition) {
         returnval = 1;
     }
     return returnval;
@@ -268,7 +298,10 @@ function processAddFilter() {
     var filteredList = [];
     for (var entity in assignLegalEntitiesList) {
         var countryName = assignLegalEntitiesList[entity].c_name;
-        var bgName = assignLegalEntitiesList[entity].business_group_name;
+        var bgName = '-';
+        if(assignLegalEntitiesList[entity].business_group_name != null){
+            bgName = assignLegalEntitiesList[entity].business_group_name;
+        }
         var leName = assignLegalEntitiesList[entity].legal_entity_name;
         if (~countryName.toLowerCase().indexOf(addcountryfilter) && ~bgName.toLowerCase().indexOf(bgfilter) && ~leName.toLowerCase().indexOf(lefilter)) {
             filteredList.push(assignLegalEntitiesList[entity]);
@@ -325,7 +358,7 @@ function pageControls() {
         if (textval.length > 0) {
             for (var i in users) {
                 if (~users[i].employee_name.toLowerCase().indexOf(textval.toLowerCase()) && users[i].is_active == true) {
-                    if (checkusercountries(users[i].user_id, users[i].country_ids) == 1) {
+                    if (checkusercountries(users[i].user_id, users[i].country_ids, users[i].domain_ids, users[i].mapped_country_domains) == 1) {
                         console.log(users[i].user_id);
                         suggestions.push([
                             users[i].user_id,

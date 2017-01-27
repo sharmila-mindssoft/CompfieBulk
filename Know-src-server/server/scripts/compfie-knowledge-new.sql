@@ -161,7 +161,7 @@ CREATE TABLE `tbl_users` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`user_id`),
   KEY `fk_tbl_users_user_group_id` (`user_group_id`),
-  CONSTRAINT `fk_tbl_users_user_category_id` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_category` (`user_category_id`),
+  CONSTRAINT `fk_tbl_users_user_category_id` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`),
   CONSTRAINT `fk_tbl_users_user_group_id` FOREIGN KEY (`user_group_id`) REFERENCES `tbl_user_groups` (`user_group_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 

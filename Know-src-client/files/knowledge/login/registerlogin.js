@@ -186,6 +186,10 @@ checkAvailability = function() {
         displayMessage("Username required");
         return;
     }
+    else if (Uname.val().length > 20) {
+        displayMessage("Username should not exceed 20 character");
+        return;
+    }
     else if (IS_VALID == false) {
         displayMessage("Session expired");
         return;
@@ -209,7 +213,10 @@ checkAvailability = function() {
         }
     });
 };
-
+function isAlphanumeric(inputElm) {
+  //allowed => alphanumeric
+  return inputElm.val().replace(/[^0-9A-Za-z_-]/gi, '');
+}
 $(function () {
     Pword_hint.css('display', 'none');
     hideLoader();
@@ -246,7 +253,9 @@ $(function () {
         Status_msg.text('');
         Status_check.removeClass();
     });
-
+    Uname.on('input', function(e) {
+        this.value = isAlphanumeric($(this));
+    });
     CPword.keyup('input', function(e) {
         this.value = this.value.replace(/\s/g, '');
     });

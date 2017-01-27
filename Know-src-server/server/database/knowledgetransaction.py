@@ -780,7 +780,7 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
             file_name = file_list.file_name
             file_size = file_list.file_size
 
-        if data.is_file_removed :
+        if data.is_file_removed and file_name :
             # remove uploaded file
             remove_uploaded_file(file_path + "/" + file_name)
             file_name = ""
@@ -1421,7 +1421,7 @@ def get_compliance_details(db, user_id, compliance_id):
             )
             date_list.append(s_date)
     summary, dates = make_summary(date_list, c_info["frequency_id"], c_info)
-    if summary != '' and dates is not None or dates != '' :
+    if summary != "" and dates is not None and dates != "" :
         summary += ' on (%s)' % (dates)
     return (
         c_info["compliance_id"], c_info["statutory_provision"],
@@ -1443,18 +1443,22 @@ def save_approve_mapping(db, user_id, data):
                     q = "update tbl_statutory_mappings set is_approved = %s, " + \
                         "remarks = %s where statutory_mapping_id = %s"
                     db.execute(q, [d.approval_status_id, remarks, d.mapping_id])
-                    remarks = ""
 
             q1 = "update tbl_compliances set is_approved = %s, " + \
                 "approved_by = %s, approved_on = %s, remarks = %s where compliance_id = %s "
-            db.execute(q1, [d.approval_status_id, user_id, get_date_time(), remarks, d.compliance_id])
 
             if d.approval_status_id == 2 :
                 text = "%s - %s - %s - %s has been approved"
+                q1 = "update tbl_compliances set is_approved = %s, " + \
+                    "approved_by = %s, approved_on = %s where compliance_id = %s "
+                db.execute(q1, [d.approval_status_id, user_id, get_date_time(), d.compliance_id])
+
             elif d.approval_status_id == 3:
                 text = "%s - %s - %s - %s has been approved & Notified With remarks " + d.remarks
+                db.execute(q1, [d.approval_status_id, user_id, get_date_time(), remarks, d.compliance_id])
             else :
                 text = "%s - %s - %s - %s has been rejected wih reason " + d.remarks
+                db.execute(q1, [d.approval_status_id, user_id, get_date_time(), remarks, d.compliance_id])
 
             text = text % (
                 d.country_name, d.domain_name, d.mapping_text, d.compliance_task
@@ -1465,6 +1469,8 @@ def save_approve_mapping(db, user_id, data):
 
             if d.approval_status_id == 3 :
                 save_approve_notify(db, text, user_id, d.compliance_id)
+
+            db.save_activity(updated_by, frmApproveStatutoryMapping, text)
         return True
     except Exception, e :
         print e
@@ -1550,6 +1556,8 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
         else :
             date_list = None
         summary, dates = make_summary(date_list, c["frequency_id"], c)
+        # if summary != "" and dates is not None or dates != "" :
+        #     summary += ' on (%s)' % (dates)
         f_list = []
         if int(c["format_file_size"]) > 0 :
             f_list.append(core.FileList(

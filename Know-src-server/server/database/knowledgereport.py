@@ -1,12 +1,7 @@
 import json
 from protocol import (core, knowledgereport)
-from server.common import (convert_to_dict, make_summary)
+from server.common import (make_summary)
 from server.constants import KNOWLEDGE_FORMAT_DOWNLOAD_URL
-from server.database.knowledgemaster import (
-    GEOGRAPHY_PARENTS,
-    get_geographies,
-    get_industry_by_id
-)
 
 
 def get_geography_report(db):
@@ -45,16 +40,16 @@ def get_statutory_mapping_report(
         'sp_tbl_statutory_mappings_reportdata', [
             country_id, domain_id, industry_id, statutory_nature_id, geography_id,
             level_1_statutory_id, frequency_id, user_id, from_count, to_count
-        ], 4
+        ], 5
     )
     print [
             country_id, domain_id, industry_id, statutory_nature_id, geography_id,
             level_1_statutory_id, frequency_id, user_id, from_count, to_count
         ]
-    rcount = result[0][0]["count"]
-    records = result[1]
-    industry = result[2]
-    georecord = result[3]
+    rcount = result[1][0]["count"]
+    records = result[2]
+    industry = result[3]
+    georecord = result[4]
     report_list = []
     for r in records:
         m_lst = json.loads(r["statutory_mapping"])
@@ -65,7 +60,7 @@ def get_statutory_mapping_report(
         mapping = m_lst[0].split(">>")
         act_name = mapping[0].strip()
 
-        statutory_provision += r["statutory_provision"]
+        statutory_provision += " >> " + r["statutory_provision"]
         compliance_task = r["compliance_task"]
         document_name = r["document_name"]
         if document_name == "None":
