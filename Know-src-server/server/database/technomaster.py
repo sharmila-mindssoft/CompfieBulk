@@ -2601,6 +2601,8 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
     ]
 
     for user_id in user_ids:
+        name_rows = db.call_proc("sp_empname_by_id", (user_id,))
+        user_name = name_rows[0]["empname"]
         for legal_entity_id in legal_entity_ids:
             values_tuple = (
                 user_id, client_id, legal_entity_id,
@@ -2611,6 +2613,10 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
                 user_id, legal_entity_id, '/knowledge/assign-legal-entity', session_user, current_time_stamp)
             )
     res = db.bulk_insert(tblUserLegalEntity, columns, values_list)
+
+    action = "New Legal entity assigned for %s" % (user_name)
+    db.save_activity(session_user, 18, action)
+    
     if res is False:
         raise process_error("E041")
     return res
