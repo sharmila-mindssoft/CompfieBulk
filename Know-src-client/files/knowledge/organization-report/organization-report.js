@@ -57,6 +57,7 @@ function getIndustries() {
 
 function processSearch()
 {
+  searchList = [];
   usr_status = $('.search-status-li.active').attr('value');
   for(var i in industriesList){
     data = industriesList[i];
@@ -138,7 +139,7 @@ function renderControls(){
 		$(event.target).parent().addClass('active');
 
 		var currentClass = $(event.target).html();
-    Search_status_1.html(currentClass);
+    Search_status.html(currentClass);
 		/*Search_status.removeClass();
 		if(currentClass != undefined){
 		  Search_status.addClass(currentClass);

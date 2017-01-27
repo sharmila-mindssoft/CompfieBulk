@@ -44,10 +44,8 @@ function initialize() {
 
 function processSearch()
 {
-  alert("s")
   searchList = [];
   usr_status = $('.search-status-li.active').attr('value');
-  alert(usr_status)
   for(var i in countriesList){
     data = countriesList[i];
     data_is_active = data.is_active;
@@ -103,7 +101,7 @@ function renderControls(){
     $(event.target).parent().addClass('active');
 
     var currentClass = $(event.target).html();
-    Search_status_li.html(currentClass);
+    Search_status.html(currentClass);
 
     /*Search_status.removeClass();
     if(currentClass != undefined){
@@ -113,6 +111,7 @@ function renderControls(){
       Search_status.addClass('fa');
       Search_status.text('All');
     }*/
+
     processSearch();
   });
 

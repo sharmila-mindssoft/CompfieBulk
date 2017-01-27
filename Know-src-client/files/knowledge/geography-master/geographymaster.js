@@ -231,7 +231,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 //Autocomplete Script ends
 // dynamically load geograph first levels data according to geography level
 function loadGeographyFirstLevels(saverecord) {
-  //console.log(if(! (saverecord in geographyLevelsList)));
+  //.log(if(! (saverecord in geographyLevelsList)));
   $('.tbody-geography-level').find('div').remove();
   var geographyLevelList = geographyLevelsList[saverecord];
   var levelposition;

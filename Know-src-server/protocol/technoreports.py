@@ -773,9 +773,9 @@ class Response(object):
         raise NotImplementedError
 
 class GetClientDetailsReportFiltersSuccess(Response):
-    def __init__(self, countries, domains, statutory_groups, statutory_business_groups, units_report, industry_name_id):
+    def __init__(self, countries, domains_organization_list, statutory_groups, statutory_business_groups, units_report, industry_name_id):
         self.countries = countries
-        self.domains = domains
+        self.domains_organization_list = domains_organization_list
         self.statutory_groups = statutory_groups
         self.statutory_business_groups = statutory_business_groups
         self.units_report = units_report
@@ -783,19 +783,19 @@ class GetClientDetailsReportFiltersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "statutory_groups", "statutory_business_groups", "units_report", "industry_name_id"])
+        data = parse_dictionary(data, ["countries", "domains_organization_list", "statutory_groups", "statutory_business_groups", "units_report", "industry_name_id"])
         countries = data.get("countries")
-        domains = data.get("domains")
+        domains_organization_list = data.get("domains_organization_list")
         statutory_groups = data.get("statutory_groups")
         statutory_business_groups = data.get("statutory_business_groups")
         units_report = data.get("units_report")
         industry_name_id = data.get("industry_name_id")
-        return GetClientDetailsReportFiltersSuccess(countries, domains, statutory_groups, statutory_business_groups, units_report, industry_name_id)
+        return GetClientDetailsReportFiltersSuccess(countries, domains_organization_list, statutory_groups, statutory_business_groups, units_report, industry_name_id)
 
     def to_inner_structure(self):
         data = {
             "countries": self.countries,
-            "domains": self.domains,
+            "domains_organization_list": self.domains_organization_list,
             "statutory_groups": self.statutory_groups,
             "statutory_business_groups": self.statutory_business_groups,
             "units_report": self.units_report,

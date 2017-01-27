@@ -49,7 +49,8 @@ from server.database.technoreport import (
     get_ReassignUserReportData,
     get_ReassignUserDomainReportData,
     get_assigned_statutories_list,
-    get_ComplianceStatutoriesList
+    get_ComplianceStatutoriesList,
+    get_domains_for_unit
 )
 
 __all__ = [
@@ -226,14 +227,14 @@ def process_get_statutory_notifications_report_data(db, request, user_id):
 ##################################################################################################################
 def process_get_client_details_report_filters(db, request_frame, session_user):
     countries = get_countries_for_user(db, session_user)
-    domains = get_domains_for_user(db, session_user)
+    domains_organization_list = get_domains_for_unit(db, session_user)
     group_companies = get_group_companies_for_statutorysetting_report(db, session_user)
     business_groups = get_business_groups_for_statutorysetting_report(db, session_user)
     units_report = get_units_for_clientdetails_report(db, session_user)
     industries = get_active_industries(db)
     return technoreports.GetClientDetailsReportFiltersSuccess(
         countries=countries,
-        domains=domains,
+        domains_organization_list=domains_organization_list,
         statutory_groups=group_companies,
         statutory_business_groups=business_groups,
         units_report=units_report,
