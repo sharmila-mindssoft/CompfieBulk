@@ -1019,7 +1019,7 @@ def change_approval_status(db, data, updated_by):
         users["domain_id"], users["country_id"], updated_by,
         user_id
     )
-    db.save_activity(updated_by, 11, notification_log_text)
+    db.save_activity(updated_by, frmApproveStatutoryMapping, notification_log_text)
     return True
 
 
