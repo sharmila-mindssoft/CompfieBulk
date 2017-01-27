@@ -230,28 +230,44 @@
 <script type="text/javascript" src="/script/client-unit-details/clientdetailsreport.js"></script>
 <script type="text/javascript">
 $(function() {
-  $("#from-date" ).datepicker({
-    changeMonth: true,
-    changeYear: true,
-    numberOfMonths: 1,
-    dateFormat: "dd-M-yy",
-    monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    onClose: function( selectedDate ) {
-      $( "#to-date" ).datepicker();
-    }
-});// "option", "minDate", selectedDate
-$( "#to-date" ).datepicker({
-  changeMonth: true,
-  changeYear: true,
-  numberOfMonths: 1,
-  dateFormat: "dd-M-yy",
-  monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  onClose: function( selectedDate ) {
-    $( "#from-date" ).datepicker();
-  }
-});
+  $("#from-date").datepicker({
+        showButtonPanel: true,
+        closeText: 'Clear',
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ],
+        onClose: function(selectedDate) {
+            $("#to-date").datepicker("option", "minDate", selectedDate);
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
+        }
+
+    });
+
+    $("#to-date").datepicker({
+        showButtonPanel: true,
+        closeText: 'Clear',
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ],
+        onClose: function(selectedDate) {
+            $("#from-date").datepicker("option", "maxDate", selectedDate);
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
+        }
+    });
 });// "option", "maxDate", selectedDate
 </script>
 {% endblock %}

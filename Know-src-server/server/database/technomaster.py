@@ -1499,7 +1499,7 @@ def update_unit_old(db, client_id,  units, session_user):
             action = "Unit details updated for \"%s - %s\"" % (
                 unit.unit_code, unit.unit_name
             )
-            db.save_activity(session_user, 19, action)
+            db.save_activity(session_user, 22, action)
         else:
             raise process_error("E057")
 
@@ -2437,6 +2437,7 @@ def save_assigned_units(db, request, session_user):
     client_id = request.client_id
     active_units = request.active_units
     values_list = []
+    unit_names = []
     current_time_stamp = get_date_time()
     domains = get_user_domains(db, session_user)
     user_category_id = get_user_category_id(db, domain_manager_id)
@@ -2454,10 +2455,15 @@ def save_assigned_units(db, request, session_user):
             session_user, current_time_stamp
         )
         values_list.append(value_tuple)
+
         db.call_insert_proc("sp_assign_client_unit_save", (
             domain_manager_id, unit.unit_id, '/knowledge/assign-client-unit',
             session_user, current_time_stamp)
         )
+
+        unit_name = db.call_proc("sp_unitname_by_id", (unit.unit_id,))
+        for r in unit_name:
+            unit_names.append(r["unit_name"])
     #
     # To delete all the settings under the given domain manager
     # Parameters - domain manager id
@@ -2468,6 +2474,8 @@ def save_assigned_units(db, request, session_user):
     res = db.bulk_insert(
         tblUserUnits, columns, values_list
     )
+    action = "Assigned following Units %s" % (",".join(unit_names))
+    db.save_activity(session_user, 19, action)
     if res is False:
         raise process_error("E080")
     return res
@@ -2615,7 +2623,7 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
 
     action = "New Legal entity assigned for %s" % (user_name)
     db.save_activity(session_user, 18, action)
-    
+
     if res is False:
         raise process_error("E041")
     return res

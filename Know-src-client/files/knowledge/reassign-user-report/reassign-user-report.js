@@ -466,7 +466,7 @@ function loadtechnoexecGroupAssignedList(tbodyClass, data)
 					arr_indx = arr_clients[k];
 					if(client_occur_cnt == 0)
 					{
-						bindReassignedTechexecData(data[arr_indx], j, tbodyClass);
+						bindReassignedTechexecData(data[arr_indx], j, tbodyClass, true);
 						j = j + 1;
 						client_occur_cnt = client_occur_cnt + 1;
 					}
@@ -575,7 +575,7 @@ function loaddomainexecGroupAssignedList(tbodyClass, data)
 				arr_indx = arr_clients[k];
 				if(client_occur_cnt == 0)
 				{
-					bindReassignedDomainData(data[arr_indx], j, tbodyClass);
+					bindReassignedDomainData(data[arr_indx], j, tbodyClass, true);
 					j = j + 1;
 					client_occur_cnt = client_occur_cnt + 1;
 				}
