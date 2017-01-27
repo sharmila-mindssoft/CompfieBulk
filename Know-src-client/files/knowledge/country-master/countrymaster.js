@@ -341,15 +341,15 @@ function renderSearch() {
 $(function () {
   initialize();
   renderSearch();
-  //$('.js-sorting-table').jssorting(); // Sorting table
-  $(".js-sorting-table").tablesorter({
-    sortList: [[0,0]], // starting column sorting
-    headers: { // disable column sorting
-        0:{sorter: false},
-        2:{sorter: false},
-        3:{sorter: false}
-    }
-  });
+  $('.js-sorting-table').jssorting(); // Sorting table
+  // $(".js-sorting-table").tablesorter({
+  //   sortList: [[0,0]], // starting column sorting
+  //   headers: { // disable column sorting
+  //       0:{sorter: false},
+  //       2:{sorter: false},
+  //       3:{sorter: false}
+  //   }
+  // });
 });
 $('#country-name').on('input', function (e) {
   this.value = isAlphabetic($(this));

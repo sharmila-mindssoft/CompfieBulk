@@ -780,7 +780,7 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
             file_name = file_list.file_name
             file_size = file_list.file_size
 
-        if data.is_file_removed :
+        if data.is_file_removed and file_name :
             # remove uploaded file
             remove_uploaded_file(file_path + "/" + file_name)
             file_name = ""
@@ -1469,6 +1469,8 @@ def save_approve_mapping(db, user_id, data):
 
             if d.approval_status_id == 3 :
                 save_approve_notify(db, text, user_id, d.compliance_id)
+
+            db.save_activity(updated_by, frmApproveStatutoryMapping, text)
         return True
     except Exception, e :
         print e
