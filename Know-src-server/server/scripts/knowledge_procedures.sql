@@ -7065,7 +7065,7 @@ BEGIN
         t1.client_id = _g_id and
         t1.user_id = _u_id and
         t1.user_category_id = _u_cg_id
-        group by t2.unit_id;
+        group by t4.reassigned_to;
 
     end if;
 
