@@ -644,11 +644,9 @@ function bindReassignedDomainData(data, j, tbodyClass, rowClass)
 	$('.country-name', clone).text(val.unit_code);
 
     var titleText = val.address+","+val.postal_code;
+    $('.unit-name', clone).addClass("unit-name-"+val.unit_id);
 	$('.unit-name', clone).text(val.unit_name);
-	var unit_ctrl = '<span class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="' + titleText + '"></span>';
-	$('.unit-name').parent().prepend(unit_ctrl);
-    $('[data-toggle="tooltip"]').tooltip();
-    $('.unit-name', clone).addClass("-"+val.unit_id);
+	var unit_ctrl = null;
 	$('.unit-name', clone).on('click', function() { tree_open_close(this); });
 	$('.no-of-le', clone).text(val.geography_name);
 	$('.assigned-date', clone).text(val.unit_email_date);
@@ -656,6 +654,9 @@ function bindReassignedDomainData(data, j, tbodyClass, rowClass)
 	$('.remarks', clone).text(val.remarks);
 	tbodyClass.append(clone);
 	//bindReassignSubData(data, tbodyClass);
+	unit_ctrl = '<span class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="' + titleText + '"></span>&nbsp;';
+	$('.unit-name-'+val.unit_id).parent().prepend(unit_ctrl);
+    $('[data-toggle="tooltip"]').tooltip();
 }
 
 //Status Title
