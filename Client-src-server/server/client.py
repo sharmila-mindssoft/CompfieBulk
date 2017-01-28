@@ -1,6 +1,8 @@
 import time
 import threading
 import base64
+import random
+import string
 # from tornado.httpclient import HTTPRequest
 import json
 import requests
@@ -45,15 +47,25 @@ class CompanyManager(object) :
             GetCompanyServerDetails().to_structure(), indent=2
         )
         print self._request_body
-        self._request_body = self._request_body.encode('base64')
+        self._request_body = self._request_body
         self._poll()
 
     def _poll(self) :
         def on_timeout():
-            response = requests.post(self._poll_url, data=self._request_body)
-            data = response.text
-            data = base64.decodestring(data + b'=' * 10)
+            req_data = self._request_body
+            key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+            req_data = base64.b64encode(req_data)
+            req_data = key+req_data
+            # req_data = json.dumps(key+req_data)
+            response = requests.post(self._poll_url, data=req_data)
+            print response.text
 
+            data = response.text[6:]
+            print data
+            data = str(data).decode('base64')
+            # data = json.loads(data)
+            print data
+            # data = json.dumps(key+data)
             self._poll_response(data, response.status_code)
 
             # self._http_client.fetch(self._request_body, self._poll_response)

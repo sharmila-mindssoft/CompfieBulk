@@ -524,7 +524,7 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
         #compliances=compliances_list,
         #users=users_list
     )
-
+    
 def get_reassignedhistory_report(db, request, session_user, client_id):
     if not request.csv:
         country_id = request.country_id

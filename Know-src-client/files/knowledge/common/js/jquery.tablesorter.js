@@ -460,6 +460,7 @@
 
                 var l = list.length;
                 for (var i = 0; i < l; i++) {
+                    if(h[list[i][0]])
                     h[list[i][0]].addClass(css[list[i][1]]);
                 }
             }

@@ -1,5 +1,7 @@
 import base64
 import time
+import random
+import string
 from tornado.httpclient import HTTPRequest
 import json
 from distribution.protocol import (
@@ -53,7 +55,7 @@ class CompanyManager(object) :
             request_timeout=10
         )
         self._request_body = request
-        # print request.body
+        print request.body
         self._io_loop.add_callback(self._poll)
 
     def get_token(self, ip, port):
@@ -88,7 +90,14 @@ class CompanyManager(object) :
 
     def _poll(self) :
         def on_timeout():
-            self._http_client.fetch(self._request_body, self._poll_response)
+            req_data = self._request_body
+            print "---------->>>>>>>>>", req_data.to_structure()
+            key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+            req_data = base64.b64encode(req_data)
+            req_data = key+req_data
+            print req_data
+
+            self._http_client.fetch(req_data, self._poll_response)
         if self._first_time:
             self._first_time = False
             on_timeout()
@@ -103,8 +112,9 @@ class CompanyManager(object) :
         if not response.error :
             r = None
             try:
-                data = response.body
-                data = base64.decodestring(data + b'=' * 10)
+                print response.body
+                data = response.body[6:]
+                data = str(data).decode('base64')
                 print data
                 r = Response.parse_structure(
                     json.loads(data)

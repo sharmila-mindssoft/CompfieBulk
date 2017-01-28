@@ -1,13 +1,10 @@
-
-
-{% extends "files/knowledge/common/html/container.html" %}
-{% block content %}
+ {% extends "files/knowledge/common/html/container.html" %} {% block content %}
 <div class="container" id="organization-view">
     <div class="row">
         <div class="col-sm-2"></div>
         <div class="col-sm-8">
             <div class="btn-group pull-right m-t-5 m-b-25">
-                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" id="btn-orgn-add"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add</button>
+                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light " id="btn-orgn-add"><span class="m-l-5"><i class="fa fa-plus-circle"></i></span> Add</button>
             </div>
             <h4 class="page-title">Organization</h4>
         </div>
@@ -21,10 +18,10 @@
                     <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Country <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
-                                <th>Domain <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
-                                <th>Organization <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                                <th>#<span class="none-sort-sno"></span></th>
+                                <th>Country <span data-sort="string" class="fa fa-sort pull-right sort active header"></span></th>
+                                <th>Domain <span data-sort="string" class="fa fa-sort pull-right sort active header"></span></th>
+                                <th>Organization <span data-sort="string" class="fa fa-sort pull-right sort active header"></span></th>
                                 <th class="text-center">Edit</th>
                                 <th class="text-center" width="15%">Status</th>
                             </tr>
@@ -67,8 +64,7 @@
                                 </td>
                             </tr>
                         </thead>
-                        <tbody class="tbody-organization-list">
-                        </tbody>
+                        <tbody class="tbody-organization-list"></tbody>
                     </table>
                 </div>
                 <div class="clearfix"></div>
@@ -102,8 +98,8 @@
                         Organization Master
                     </h3>
                     <div class="portlet-widgets">
-                        <a id="btn-orgn-cancel" >
-                        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        <a id="btn-orgn-cancel">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
                         </a>
                     </div>
                     <div class="clearfix"></div>
@@ -113,11 +109,11 @@
                         <div class="form-horizontal group-border-dashed">
                             <div class="form-group has-feedback">
                                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Country:
-                                <span class="mandatory">*</span></label>
+                                    <span class="mandatory">*</span></label>
                                 <div class="col-sm-6 controls">
                                     <input type="text" id="countryname" name="example-input-small" class="form-control input-sm" placeholder="Enter Country Name" value="" tabindex="1">
                                     <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                                    <input id="countryid" type="hidden" >
+                                    <input id="countryid" type="hidden">
                                     <div id="ac-country" class="ac-textbox default-display-none">
                                         <ul style="width:94%;"></ul>
                                     </div>
@@ -125,11 +121,11 @@
                             </div>
                             <div class="form-group has-feedback">
                                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Domain:
-                                <span class="mandatory">*</span></label>
+                                    <span class="mandatory">*</span></label>
                                 <div class="col-sm-6 controls">
                                     <input type="text" id="domainname" name="example-input-small" class="form-control input-sm" placeholder="Enter Domain Name" value="" tabindex="2">
                                     <i class="fa-1-5x form-control-feedback fa fa-search"></i>
-                                    <input id="domainid" type="hidden" >
+                                    <input id="domainid" type="hidden">
                                     <div id="ac-domain" class="ac-textbox default-display-none">
                                         <ul style="width:94%;"></ul>
                                     </div>
@@ -137,10 +133,10 @@
                             </div>
                             <div class="form-group">
                                 <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Organization
-                                <span class="mandatory">*</span></label>
+                                    <span class="mandatory">*</span></label>
                                 <div class="col-sm-6">
                                     <input type="text" id="organizationname" name="example-input-small" class="form-control input-sm" placeholder="Organization Name" value="" tabindex="3" maxlength="50">
-                                    <input id="organizationid" type="hidden" >
+                                    <input id="organizationid" type="hidden">
                                 </div>
                             </div>
                             <div class="form-group text-center m-b-0 m-t-20">
@@ -153,6 +149,7 @@
         </div>
     </div>
 </div>
+
 <!-- Modal -->
 <div id="custom-modal" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
@@ -170,6 +167,5 @@
     </div>
 </div>
 <script type="text/javascript" src="/script/organization/organization.js"></script>
-<script src="/js/js-sorting.js"></script>
+<script src="/js/jquery.tablesorter.js"></script>
 {% endblock %}
-

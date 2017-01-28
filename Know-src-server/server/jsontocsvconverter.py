@@ -98,7 +98,7 @@ class ConvertJsonToCSV(object):
         #     for filename in files:
         #         if filename in documents:
         #             shutil.copy(abs_src+"/"+filename, temp_path)
-
+        
         timestamp = datetime.datetime.utcnow()
         # report_generated_date = self.datetime_to_string(timestamp)
         zip_file_name = "AssigneewiseComplianceDetails%s.zip" % (
@@ -193,7 +193,7 @@ class ConvertJsonToCSV(object):
             legal_entity_admin_contactno = le_admin_contactno
             legal_entity_admin_email = le_admin_email
             business_group_name=client_agreement["business_group_name"]
-
+            
             if not is_header:
                 csv_headers = [
                     "Group Name", "Business Group Name",
