@@ -2840,7 +2840,7 @@ BEGIN
     (select file_server_name from tbl_file_server
     where file_server_id = t2.file_server_id) as file_server_name, t1.is_created
     from tbl_legal_entities as t1 left join tbl_client_database as t2
-    on t1.legal_entity_id = t2.legal_entity_id;
+    on t1.legal_entity_id = t2.legal_entity_id and t1.is_approved = 1;
 
     SELECT machine_id, machine_name, ip, port, client_ids FROM tbl_application_server;
 
@@ -7065,7 +7065,7 @@ BEGIN
         t1.client_id = _g_id and
         t1.user_id = _u_id and
         t1.user_category_id = _u_cg_id
-        group by t4.reassigned_to;
+        group by t4.user_account_id;
 
     end if;
 
