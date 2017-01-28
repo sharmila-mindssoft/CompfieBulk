@@ -115,7 +115,7 @@ def save_domain(db, country_ids, domain_name, user_id):
     else:
         save_domain_country(db, country_ids, domain_id)
     action = "Add Domain - \"%s\"" % domain_name
-    db.save_activity(user_id, 2, action)
+    db.save_activity(user_id, frmDomain, action)
     return True
 
 
@@ -165,7 +165,7 @@ def update_domain(db, c_ids, domain_id, domain_name, updated_by):
             db.call_update_proc("sp_domaincountries_delete", (domain_id,))
             save_domain_country(db, c_ids, domain_id)
             action = "Edit Domain - \"%s\"" % domain_name
-            db.save_activity(updated_by, 2, action)
+            db.save_activity(updated_by, frmDomain, action)
             return True
         else:
             raise process_error("E025")
@@ -208,7 +208,7 @@ def update_domain_status(db, domain_id, is_active, updated_by):
             action = "Domain %s status  - %s" % (
                 oldData, "deactivated" if is_active == 0 else "activated"
             )
-            db.save_activity(updated_by, 2, action)
+            db.save_activity(updated_by, frmCountry, action)
             return True
         else:
             raise process_error("E026")
@@ -349,7 +349,7 @@ def save_country(db, country_name, created_by):
     )
     if country_id:
         action = "Add Country - \"%s\"" % country_name
-        db.save_activity(created_by, 1, action)
+        db.save_activity(created_by, frmCountry, action)
         return True
     else:
         raise process_error("E027")
@@ -373,7 +373,7 @@ def update_country(db, country_id, country_name, updated_by):
         )
         if result:
             action = "Edit Country - \"%s\"" % country_name
-            db.save_activity(updated_by, 1, action)
+            db.save_activity(updated_by, frmCountry, action)
             return True
         else:
             raise process_error("E028")
@@ -416,7 +416,7 @@ def update_country_status(db, country_id, is_active, updated_by):
             action = "Country %s status  - %s" % (
                 oldData, "deactivated" if is_active == 0 else "activated"
             )
-            db.save_activity(updated_by, 1, action)
+            db.save_activity(updated_by, frmCountry, action)
             return True
         else:
             raise process_error("E029")
@@ -524,7 +524,7 @@ def save_user_group(
     if ug_id:
         if user_group_forms(db, ug_id, form_ids) is True :
             action = "Created User Group \"%s\"" % user_group_name
-            db.save_activity(session_user, 3, action)
+            db.save_activity(session_user, frmUserGroup, action)
             return True
         else:
             return False
@@ -553,7 +553,7 @@ def update_user_group(
     if result:
         if user_group_forms(db, user_group_id, form_ids) is True :
             action = "Updated User Group \"%s\"" % user_group_name
-            db.save_activity(session_user, 3, action)
+            db.save_activity(session_user, frmUserGroup, action)
             return True
         else:
             return False
@@ -580,7 +580,7 @@ def update_user_group_status(db, user_group_id, ug_name, is_active, session_user
         "Deactivated" if is_active == 0 else "Activated",
         ug_name
     )
-    db.save_activity(session_user, 3, action)
+    db.save_activity(session_user, frmUserGroup, action)
     return result
 
 
@@ -682,7 +682,7 @@ def save_user(
     save_user_countries(db, country_ids, user_id, session_user)
     save_user_domains(db, domain_ids, user_id, session_user)
     action = "Created User \"%s - %s\"" % (employee_code, employee_name)
-    db.save_activity(session_user, 10, action)
+    db.save_activity(session_user, frmGeographyLevelMaster, action)
     name = "%s - %s" % (employee_code, employee_name)
     save_registraion_token(db, user_id, name, email_id)
 
@@ -771,7 +771,7 @@ def update_user(
     save_user_countries(db, country_ids, user_id, session_user)
     save_user_domains(db, domain_ids, user_id, session_user)
     action = "Updated User \"%s - %s\"" % (employee_code, employee_name)
-    db.save_activity(session_user, 10, action)
+    db.save_activity(session_user, frmGeographyLevelMaster, action)
     return True
 
 
@@ -808,7 +808,7 @@ def update_user_status(db, user_id, is_active, session_user):
         action = "Activated User \"%s\"" % employee_name
     else:
         action = "Dectivated User \"%s\"" % employee_name
-    db.save_activity(session_user, 10, action)
+    db.save_activity(session_user, frmGeographyLevelMaster, action)
     return result
 
 
@@ -833,16 +833,18 @@ def update_disable_status(db, user_id, is_disable, remarks, session_user):
         action = "Disabled User \"%s\"" % employee_name
     else:
         action = "Enabled User \"%s\"" % employee_name
-    db.save_activity(session_user, 11, action)
+    db.save_activity(session_user, frmGeographyLevelMaster, action)
     return result
+
 
 def is_user_idle(db, user_id):
     rows = db.call_proc("sp_get_user_mapped_data", [user_id], 1)
-    if rows :
-        if rows[0].get('cnt') > 0 :
+    if rows:
+        if rows[0].get('cnt') > 0:
             return False
-    else :
+    else:
         return True
+
 
 #####################################################################
 # To Fetch Countries which are mapped to Domains
