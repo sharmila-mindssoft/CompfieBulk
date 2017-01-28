@@ -1594,8 +1594,8 @@ def _init_Response_class_map():
         SaveUserMappingsSuccess, SaveReassignUserAccountSuccess,
         SendRegistraionSuccess,
         GetTechnoUserDataSuccess, GetDomainUserDataSuccess,
-        UserReplacementSuccess, CannotDisableUserTransactionExists,
-        SaveValidityDateSettingsFailure, CannotRemoveUserTransactionExists,
+        SaveValidityDateSettingsFailure, UserReplacementSuccess, 
+        CannotDisableUserTransactionExists, CannotRemoveUserTransactionExists,
         CheckUserMappingsSuccess
     ]
     class_map = {}

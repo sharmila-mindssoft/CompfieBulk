@@ -1,5 +1,3 @@
-// Stupid jQuery table plugin.
-
 (function($) {
     $.fn.jssorting = function(sortFns) {
         return this.each(function() {

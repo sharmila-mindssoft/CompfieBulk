@@ -16,7 +16,7 @@ from server.clientdatabase.general import (
     verify_username,
     validate_reset_token, update_password, delete_used_token,
     remove_session, update_profile, verify_password, get_user_name_by_id,
-    get_user_forms, get_forms_by_category, get_legal_entity_info
+    get_user_forms, get_forms_by_category, get_legal_entity_info, get_country_info
     )
 from server.exceptionmessage import client_process_error
 from server.clientcontroller.corecontroller import process_user_forms
@@ -93,11 +93,10 @@ def process_login(db, request, client_id, session_user_ip):
     logger.logLogin("info", user_ip, username, "Login process begin")
     user_id = verify_username(db, username)
     if user_id is None:
-        # return clientlogin.InvalidUserName()
         return clientlogin.InvalidCredentials(None)
     else:
         response = verify_login(db, username, encrypt_password)
-        print response
+        #print response
     if login_type.lower() == "web":
         if response is True:
             logger.logLogin("info", user_ip, username, "Login process end")
@@ -244,6 +243,7 @@ def user_login_response(db, data, client_id, ip):
     contact_no = data["contact_no"]
     user_group_name = data["user_group_name"]
     le_info = get_legal_entity_info(db, user_id, cat_id)
+    c_info = get_country_info(db, user_id, cat_id)
 
     if len(le_info) == 0:
         return clientlogin.LegalEntityNotVailable()
@@ -257,7 +257,7 @@ def user_login_response(db, data, client_id, ip):
     return clientlogin.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
-        client_id, username, mobile_no, le_info
+        client_id, username, mobile_no, le_info, c_info
     )
 
 

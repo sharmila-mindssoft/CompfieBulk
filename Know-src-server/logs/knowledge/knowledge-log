@@ -1,0 +1,18 @@
+2017-01-18 13:42:15,346 - knowledge_logger - main.py-handle-api- : 'is_approved' 
+
+2017-01-18 13:42:15,359 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Know-src-server\server\main.py", line 219, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Know-src-server\server\main.py", line 333, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "D:\Bogi\Project\Compfie\Know-src-server\server\controller\technocontroller.py", line 65, in process_techno_request
+    db, request_frame, session_user
+  File "D:\Bogi\Project\Compfie\Know-src-server\server\controller\technomastercontroller.py", line 110, in get_edit_client_group_form_data
+    ) = get_client_details(db, group_id)
+  File "D:\Bogi\Project\Compfie\Know-src-server\server\database\technomaster.py", line 630, in get_client_details
+    legal_entities, domain_map
+  File "D:\Bogi\Project\Compfie\Know-src-server\server\database\technomaster.py", line 671, in return_legal_entities
+    is_approved=int(legal_entity["is_approved"])
+KeyError: 'is_approved'
+ 
+

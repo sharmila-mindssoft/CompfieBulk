@@ -1,0 +1,36 @@
+2016-12-21 12:17:25,026 - knowledge_logger - main.py-handle-api- : sp_get_user_category_id_by_userid- (5,)- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_get_user_category_id_by_userid does not exist 
+
+2016-12-21 12:17:25,073 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 315, in handle_techno
+    return controller.process_techno_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technocontroller.py", line 149, in process_techno_request
+    result = get_unassigned_units(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technomastercontroller.py", line 548, in get_unassigned_units
+    user_category_id = get_user_category_id(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\technomaster.py", line 2256, in get_user_category_id
+    result = db.call_proc("sp_get_user_category_id_by_userid", (int(session_user),))
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_get_user_category_id_by_userid- (5,)- 1305 (42000): PROCEDURE compfie_knowledge_updated.sp_get_user_category_id_by_userid does not exist
+ 
+
+2016-12-21 12:17:28,184 - knowledge_logger - main.py-handle-api- : sp_units_approval_list- [5]- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_units_approval_list; expected 0, got 1 
+
+2016-12-21 12:17:28,186 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 202, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 356, in handle_client_coordination_master
+    request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\clientcoordinationmastercontroller.py", line 48, in process_client_coordination_master_request
+    result = process_get_client_unit_approval_list(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\clientcoordinationmastercontroller.py", line 103, in process_get_client_unit_approval_list
+    unit_approval_list = get_unit_approval_list(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\clientcoordinationmaster.py", line 28, in get_unit_approval_list
+    "sp_units_approval_list", [session_user]
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 783, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_units_approval_list- [5]- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_updated.sp_units_approval_list; expected 0, got 1
+ 
+

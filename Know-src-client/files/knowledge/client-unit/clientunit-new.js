@@ -606,7 +606,6 @@ function addcountryrownew() {
         unitrow_remove(this.className);
     });
     if ($('#client-unit-id').val() > 0) {
-
         $('.edit-icon', clone).addClass('edit-icon-' + division_cnt + '-' + 1).attr('title', 'Edit');
         $('.edit-icon', clone).on('click', function() {
             var orgtypeArray = $('.orgtypeselected-' + division_cnt + '-' + 1, clone).val();
@@ -653,6 +652,9 @@ function addcountryrownew() {
     $('.unitcnt-' + division_cnt + '-' + 1).val(1);
     if ($("#client-unit-id").val() == "") {
         loadDomains(division_cnt + '-' + 1,null);
+        $('.orgtypeselected-' + division_cnt + '-' + 1).multiselect('rebuild');
+    } else {
+        $('.domainselected-' + division_cnt + '-' + 1).multiselect('rebuild');
         $('.orgtypeselected-' + division_cnt + '-' + 1).multiselect('rebuild');
     }
 
