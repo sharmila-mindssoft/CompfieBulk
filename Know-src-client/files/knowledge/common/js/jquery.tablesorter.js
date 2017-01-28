@@ -248,7 +248,6 @@
                             tableBody[0].appendChild(r[pos][j]);
                         }
 
-                        //
                     }
                 }
 
@@ -300,7 +299,6 @@
                     this.column = header_index[this.parentNode.rowIndex + "-" + this.cellIndex];
                     // this.column = index;
                     this.order = formatSortingOrder(table.config.sortInitialOrder);
-
 
                     this.count = this.order;
 
@@ -461,7 +459,7 @@
                 var l = list.length;
                 for (var i = 0; i < l; i++) {
                     if(h[list[i][0]])
-                    h[list[i][0]].addClass(css[list[i][1]]);
+                        h[list[i][0]].addClass(css[list[i][1]]);
                 }
             }
 
@@ -694,16 +692,6 @@
                         }
                         // cancel selection
 
-
-
-
-
-
-
-
-
-
-
                     }).mousedown(function () {
                         if (config.cancelSelection) {
                             this.onselectstart = function () {
@@ -905,6 +893,7 @@
             }
             if (c.dateFormat == "pt") {
                 s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$2/$1");
+
             } else if (c.dateFormat == "uk") {
                 // reformat the string in ISO format
                 s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$2/$1");
@@ -957,4 +946,5 @@
             }
         }
     });
+
 })(jQuery);

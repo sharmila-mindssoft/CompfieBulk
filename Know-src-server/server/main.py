@@ -142,6 +142,7 @@ class API(object):
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
+
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -153,6 +154,7 @@ class API(object):
 
             if not request.data:
                 raise ValueError("Request data is Null")
+
             data = request.data[5:]
             data = data.decode('base64')
             data = json.loads(data)

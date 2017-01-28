@@ -730,11 +730,11 @@ class Database(object):
             " LEFT JOIN tbl_user_login_details t02 ON t01.user_id = t02.user_id " + \
             " and is_active = 1 " + \
             " WHERE  session_token=%s"
-        print query
-        print session_token
+        #print query
+        #print session_token
         param = [session_token]
         row = self.select_one(query, param)
-        print row
+        #print row
         user_id = None
         if row:
             user_id = row["user_id"]
