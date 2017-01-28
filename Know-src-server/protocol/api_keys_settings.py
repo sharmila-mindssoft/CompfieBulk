@@ -627,6 +627,18 @@ api_params = {
     "mapped_country_domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
     "mapped_techno_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "MappedUser"},
 
+    'complied_count': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'delayed_compliance_count': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'inprogress_compliance_count': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'not_complied_count': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'filter_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'ageing': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'service_provider_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'contact_person': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'statutory_nature': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+
+
+
 }
 api_params['domain_id'] = api_params.get('d_id')
 api_params['domain_name'] = api_params.get('d_name')
@@ -689,3 +701,24 @@ api_params["days_left"] = api_params.get("total_records")
 api_params["allow_enable"] = api_params.get("is_active")
 api_params["is_file_removed"] = api_params.get("is_active")
 api_params["allow_domain_edit"] = api_params.get("is_active")
+api_params['compliance_applicable_status'] = api_params.get('is_active')
+api_params['assignee_name'] = api_params.get('employee_name')
+api_params['statutory'] = api_params.get('employee_name')
+api_params['opted_status'] = api_params.get('is_active')
+api_params['compliance_opted_status'] = api_params.get('is_active')
+api_params['user_level'] = api_params.get('l_position')
+api_params['start_date'] = api_params.get('contract_from')
+api_params['due_date'] = api_params.get('contract_from')
+api_params['year'] = api_params.get('contract_from')
+api_params['not_applicable_remarks'] = api_params.get('remarks')
+api_params['compliance_remarks'] = api_params.get('contract_from')
+
+api_params['compliance_description'] = api_params.get('description')
+api_params['validity_date'] = api_params.get('contract_from')
+api_params['next_due_date'] = api_params.get('contract_from')
+api_params['seating_unit_id'] = api_params.get('unit_id')
+api_params['service_provider_id'] = api_params.get('unit_id')
+api_params['format_file_name'] = api_params.get('file_name')
+api_params['file_names'] = api_params.get('file_name')
+api_params['download_url'] = api_params.get('url')
+
