@@ -222,7 +222,7 @@ def run_web_front_end(port, knowledge_server_address):
             io_loop,
             knowledge_server_address,
             http_client,
-            80,
+            800,
             server_added
         )
         controller = Controller(
