@@ -246,7 +246,7 @@ def user_login_response(db, data, client_id, ip):
     c_info = get_country_info(db, user_id, cat_id)
 
     if len(le_info) == 0:
-        return clientlogin.LegalEntityNotVailable()
+        return clientlogin.LegalEntityNotAvailable()
     if cat_id == 1 :
         forms = get_forms_by_category(db, cat_id)
     else :
