@@ -734,8 +734,7 @@ DROP TABLE IF EXISTS `tbl_units_organizations`;
 CREATE TABLE `tbl_units_organizations` (
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
-  `organisation_id` int(11) DEFAULT NULL,
-  UNIQUE KEY `fk_unit_id` (`unit_id`, `domain_id`, `organisation_id`)
+  `organisation_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_statutories`;

@@ -75,7 +75,7 @@ def verify_login(db, username, password):
         " FROM tbl_user_login_details as ul  " + \
         " INNER JOIN tbl_users t1 on t1.user_id = ul.user_id " + \
         " WHERE ul.password= %s and ul.username = %s and ul.is_active=1 "
-    print q
+    #print q
     data_list = db.select_one(q, [password, username])
     if data_list is None:
         return False

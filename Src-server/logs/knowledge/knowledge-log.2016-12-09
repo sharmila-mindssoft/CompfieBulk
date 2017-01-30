@@ -1,0 +1,2084 @@
+2016-12-09 10:54:28,437 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 10:54:28,572 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 148, in _parse_request
+    # data = request.data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\admin.py", line 1197, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 10:54:28,581 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 10:54:28,582 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 188, in handle_api_request
+    request_data = self._parse_request(
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:01:07,523 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:01:07,526 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:01:13,667 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:01:13,668 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:01:18,135 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:01:18,137 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:01:38,256 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:01:38,256 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:02:43,348 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:02:43,348 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:02:59,885 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:02:59,887 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:03:36,493 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:03:36,493 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:04:13,342 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:04:13,344 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:04:20,759 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:04:20,760 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 307, in handle_admin
+    return controller.process_admin_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 63, in process_admin_request
+    result = get_users(db, request_frame, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\admincontroller.py", line 288, in get_users
+    country_list = get_countries_for_user(db, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:05:21,275 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:05:21,276 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:06:27,615 - knowledge_logger - main.py-handle-api- : list indices must be integers, not str 
+
+2016-12-09 11:06:27,617 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\generalcontroller.py", line 84, in process_general_request
+    result = process_get_countries(db, user_id)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\generalcontroller.py", line 314, in process_get_countries
+    results = get_countries_for_user(db, 0)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 262, in get_countries_for_user
+    return return_countries(result)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\admin.py", line 274, in return_countries
+    d["country_id"], d["country_name"], bool(d["is_active"])
+TypeError: list indices must be integers, not str
+ 
+
+2016-12-09 11:12:42,296 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 11:12:42,299 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\admin.py", line 1197, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:12:42,302 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 11:12:42,303 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:17:26,029 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 11:17:26,039 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\admin.py", line 1197, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:17:26,043 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 11:17:26,045 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:17:28,318 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 11:17:28,322 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\admin.py", line 1197, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:17:28,325 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 11:17:28,325 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:17:30,109 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 11:17:30,111 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\admin.py", line 1197, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:17:30,115 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 11:17:30,117 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:17:31,492 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 11:17:31,494 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\admin.py", line 1197, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:17:31,499 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 11:17:31,500 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:18:38,971 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 11:18:38,976 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:18:38,982 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 11:18:38,983 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:41:55,558 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x031A1DD0> is not JSON serializable 
+
+2016-12-09 11:41:55,568 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x031A1DD0> is not JSON serializable
+ 
+
+2016-12-09 11:42:05,290 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x03481C90> is not JSON serializable 
+
+2016-12-09 11:42:05,292 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x03481C90> is not JSON serializable
+ 
+
+2016-12-09 11:48:22,459 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x03421810> is not JSON serializable 
+
+2016-12-09 11:48:22,461 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x03421810> is not JSON serializable
+ 
+
+2016-12-09 11:56:12,332 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x034813B0> is not JSON serializable 
+
+2016-12-09 11:56:12,332 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x034813B0> is not JSON serializable
+ 
+
+2016-12-09 11:59:17,828 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x033B2EF0> is not JSON serializable 
+
+2016-12-09 11:59:17,828 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x033B2EF0> is not JSON serializable
+ 
+
+2016-12-09 11:59:56,628 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 11:59:56,628 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\knowledgemaster.py", line 960, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 11:59:56,638 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 11:59:56,638 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:00:04,392 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x034218F0> is not JSON serializable 
+
+2016-12-09 12:00:04,394 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x034218F0> is not JSON serializable
+ 
+
+2016-12-09 12:00:06,076 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x034816B0> is not JSON serializable 
+
+2016-12-09 12:00:06,078 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x034816B0> is not JSON serializable
+ 
+
+2016-12-09 12:01:29,836 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 12:01:29,849 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:29,854 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 12:01:29,855 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:34,509 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x034676D0> is not JSON serializable 
+
+2016-12-09 12:01:34,513 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x034676D0> is not JSON serializable
+ 
+
+2016-12-09 12:01:37,970 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 12:01:37,980 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:37,983 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 12:01:37,984 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:40,938 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 12:01:40,941 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:40,946 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 12:01:40,947 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:41,989 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 12:01:42,003 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:42,006 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 12:01:42,009 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:42,828 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 12:01:42,832 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:42,835 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 12:01:42,836 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:43,552 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 12:01:43,555 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:43,558 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 12:01:43,559 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 12:01:48,398 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x0316A2B0> is not JSON serializable 
+
+2016-12-09 12:01:48,400 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x0316A2B0> is not JSON serializable
+ 
+
+2016-12-09 12:07:59,296 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x032A57D0> is not JSON serializable 
+
+2016-12-09 12:07:59,301 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x032A57D0> is not JSON serializable
+ 
+
+2016-12-09 12:08:14,635 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x0313ED50> is not JSON serializable 
+
+2016-12-09 12:08:14,638 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x0313ED50> is not JSON serializable
+ 
+
+2016-12-09 12:09:15,390 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x037CAE70> is not JSON serializable 
+
+2016-12-09 12:09:15,391 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x037CAE70> is not JSON serializable
+ 
+
+2016-12-09 12:09:30,938 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x038BA3D0> is not JSON serializable 
+
+2016-12-09 12:09:30,940 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x038BA3D0> is not JSON serializable
+ 
+
+2016-12-09 12:09:40,713 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x038C4730> is not JSON serializable 
+
+2016-12-09 12:09:40,716 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x038C4730> is not JSON serializable
+ 
+
+2016-12-09 12:09:47,371 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x0374FB70> is not JSON serializable 
+
+2016-12-09 12:09:47,371 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x0374FB70> is not JSON serializable
+ 
+
+2016-12-09 12:14:53,736 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x037A8290> is not JSON serializable 
+
+2016-12-09 12:14:53,737 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x037A8290> is not JSON serializable
+ 
+
+2016-12-09 12:15:41,276 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x03769990> is not JSON serializable 
+
+2016-12-09 12:15:41,278 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x03769990> is not JSON serializable
+ 
+
+2016-12-09 12:25:34,023 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x0374FEB0> is not JSON serializable 
+
+2016-12-09 12:25:34,023 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x0374FEB0> is not JSON serializable
+ 
+
+2016-12-09 12:25:47,993 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x037D1CF0> is not JSON serializable 
+
+2016-12-09 12:25:47,994 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x037D1CF0> is not JSON serializable
+ 
+
+2016-12-09 12:26:12,703 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x038C4970> is not JSON serializable 
+
+2016-12-09 12:26:12,706 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x038C4970> is not JSON serializable
+ 
+
+2016-12-09 12:33:17,732 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x0374F530> is not JSON serializable 
+
+2016-12-09 12:33:17,733 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x0374F530> is not JSON serializable
+ 
+
+2016-12-09 12:36:15,509 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x038C7910> is not JSON serializable 
+
+2016-12-09 12:36:15,512 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x038C7910> is not JSON serializable
+ 
+
+2016-12-09 12:52:42,680 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x038BEE90> is not JSON serializable 
+
+2016-12-09 12:52:42,683 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x038BEE90> is not JSON serializable
+ 
+
+2016-12-09 12:57:21,779 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x0378DB70> is not JSON serializable 
+
+2016-12-09 12:57:21,782 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x0378DB70> is not JSON serializable
+ 
+
+2016-12-09 13:03:09,503 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x031A8030> is not JSON serializable 
+
+2016-12-09 13:03:09,506 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x031A8030> is not JSON serializable
+ 
+
+2016-12-09 13:13:01,002 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x037B4FF0> is not JSON serializable 
+
+2016-12-09 13:13:01,003 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x037B4FF0> is not JSON serializable
+ 
+
+2016-12-09 13:15:07,457 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x037B1850> is not JSON serializable 
+
+2016-12-09 13:15:07,457 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x037B1850> is not JSON serializable
+ 
+
+2016-12-09 13:16:00,220 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x037B1FB0> is not JSON serializable 
+
+2016-12-09 13:16:00,230 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x037B1FB0> is not JSON serializable
+ 
+
+2016-12-09 13:18:40,529 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x038175D0> is not JSON serializable 
+
+2016-12-09 13:18:40,532 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x038175D0> is not JSON serializable
+ 
+
+2016-12-09 13:19:09,750 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x037BA9B0> is not JSON serializable 
+
+2016-12-09 13:19:09,756 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x037BA9B0> is not JSON serializable
+ 
+
+2016-12-09 13:22:46,086 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x037A4F30> is not JSON serializable 
+
+2016-12-09 13:22:46,086 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x037A4F30> is not JSON serializable
+ 
+
+2016-12-09 13:35:00,006 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x0380A170> is not JSON serializable 
+
+2016-12-09 13:35:00,007 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x0380A170> is not JSON serializable
+ 
+
+2016-12-09 13:39:07,971 - knowledge_logger - main.py-handle-api- : <protocol.core.Country object at 0x037AA450> is not JSON serializable 
+
+2016-12-09 13:39:07,973 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 215, in handle_api_request
+    return respond(response_data)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 180, in respond
+    response_data, 200
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 136, in _send_response
+    s = json.dumps(data, indent=2)
+  File "C:\Python27\lib\json\__init__.py", line 251, in dumps
+    sort_keys=sort_keys, **kw).encode(obj)
+  File "C:\Python27\lib\json\encoder.py", line 209, in encode
+    chunks = list(chunks)
+  File "C:\Python27\lib\json\encoder.py", line 431, in _iterencode
+    for chunk in _iterencode_list(o, _current_indent_level):
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 408, in _iterencode_dict
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 332, in _iterencode_list
+    for chunk in chunks:
+  File "C:\Python27\lib\json\encoder.py", line 442, in _iterencode
+    o = _default(o)
+  File "C:\Python27\lib\json\encoder.py", line 184, in default
+    raise TypeError(repr(o) + " is not JSON serializable")
+TypeError: <protocol.core.Country object at 0x037AA450> is not JSON serializable
+ 
+
+2016-12-09 15:22:41,437 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 15:22:41,441 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 15:22:41,444 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 15:22:41,444 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 16:50:12,914 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 16:50:13,063 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\generalcontroller.py", line 129, in process_general_request
+    result = process_get_messages(db, request_frame, user_id)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\generalcontroller.py", line 445, in process_get_messages
+    db, request.from_count, request.page_count, session_user
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\general.py", line 335, in get_messages
+    for row in rows[1]:
+IndexError: list index out of range
+ 
+
+2016-12-09 16:50:13,354 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 16:50:13,355 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 323, in handle_general
+    return controller.process_general_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\generalcontroller.py", line 129, in process_general_request
+    result = process_get_messages(db, request_frame, user_id)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\generalcontroller.py", line 445, in process_get_messages
+    db, request.from_count, request.page_count, session_user
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\general.py", line 335, in get_messages
+    for row in rows[1]:
+IndexError: list index out of range
+ 
+
+2016-12-09 17:24:01,117 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 17:24:01,121 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\admin.py", line 1197, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 17:24:01,124 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 17:24:01,125 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 17:24:06,786 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 17:24:06,789 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 17:24:06,793 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 17:24:06,796 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 17:24:14,493 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 17:24:14,496 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\general.py", line 1048, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 17:24:14,502 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 17:24:14,503 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 17:24:19,602 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 17:24:19,605 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\admin.py", line 1197, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 17:24:19,608 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 17:24:19,609 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 18:06:28,010 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 18:06:28,010 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 293, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 79, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\login.py", line 38, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0 :
+IndexError: list index out of range
+ 
+
+2016-12-09 18:07:27,960 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 18:07:27,960 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 293, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 79, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\login.py", line 38, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0 :
+IndexError: list index out of range
+ 
+
+2016-12-09 18:08:24,780 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 18:08:24,780 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 293, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 79, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\login.py", line 38, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0 :
+IndexError: list index out of range
+ 
+
+2016-12-09 18:09:32,221 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 18:09:32,221 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 293, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 79, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\login.py", line 38, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0 :
+IndexError: list index out of range
+ 
+
+2016-12-09 18:09:36,752 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 18:09:36,752 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 293, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 79, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\login.py", line 38, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0 :
+IndexError: list index out of range
+ 
+
+2016-12-09 18:13:50,194 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 18:13:50,196 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 293, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 79, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\login.py", line 38, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0 :
+IndexError: list index out of range
+ 
+
+2016-12-09 18:14:11,967 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 18:14:11,967 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 293, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 79, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\login.py", line 38, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0 :
+IndexError: list index out of range
+ 
+
+2016-12-09 18:20:52,970 - knowledge_logger - main.py-handle-api- : list index out of range 
+
+2016-12-09 18:20:52,970 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 293, in handle_login
+    return controller.process_login_request(request, db, self._ip_addess)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 29, in process_login_request
+    result = process_login(db, request, session_user_ip)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\logincontroller.py", line 79, in process_login
+    response = verify_login(db, username, encrypt_password)
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\login.py", line 38, in verify_login
+    if len(result[1]) == 0 and len(result[0]) > 0 :
+IndexError: list index out of range
+ 
+
+2016-12-09 18:36:27,724 - knowledge_logger - main.py-parse-request : null is not allowed 
+
+2016-12-09 18:36:27,736 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\knowledgemaster.py", line 960, in parse_structure
+    data = parse_dictionary(data, ["session_token", "request"])
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 189, in parse_dictionary
+    x = parse_dictionary_values(x, field_names, True)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 378, in parse_dictionary_values
+    val = parse_values(field_name, param, val, "parse")
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 279, in parse_values
+    val = parse_string(val)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 79, in parse_string
+    raise empty_error()
+ValueError: null is not allowed
+ 
+
+2016-12-09 18:36:27,743 - knowledge_logger - main.py-handle-api- : null is not allowed 
+
+2016-12-09 18:36:27,743 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: null is not allowed
+ 
+
+2016-12-09 19:39:39,259 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list' 
+
+2016-12-09 19:39:39,279 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 381, in process_get_client_agreement_report_data
+    request.from_count, request.page_count, session_user
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\technoreport.py", line 843, in get_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list'
+ 
+
+2016-12-09 19:39:47,611 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list' 
+
+2016-12-09 19:39:47,611 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 381, in process_get_client_agreement_report_data
+    request.from_count, request.page_count, session_user
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\technoreport.py", line 843, in get_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list'
+ 
+
+2016-12-09 19:43:07,144 - knowledge_logger - main.py-parse-request : expected key "statutory_id_optional" is missing in the dictionary, but received: {u'level_1_statutory_id': None, u'from_date': None, u'country_id': 1, u'domain_id': 1, u'to_date': None} 
+
+2016-12-09 19:43:07,154 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\technoreports.py", line 1141, in parse_structure
+    request = parse_structure_VariantType_technoreports_Request(request)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\parse_structure.py", line 1237, in parse_structure_VariantType_technoreports_Request
+    return technoreports.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\technoreports.py", line 94, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\technoreports.py", line 347, in parse_inner_structure
+    "from_date_optional", "to_date_optional", "from_count", "page_count"
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "statutory_id_optional" is missing in the dictionary, but received: {u'level_1_statutory_id': None, u'from_date': None, u'country_id': 1, u'domain_id': 1, u'to_date': None}
+ 
+
+2016-12-09 19:43:07,154 - knowledge_logger - main.py-handle-api- : expected key "statutory_id_optional" is missing in the dictionary, but received: {u'level_1_statutory_id': None, u'from_date': None, u'country_id': 1, u'domain_id': 1, u'to_date': None} 
+
+2016-12-09 19:43:07,164 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected key "statutory_id_optional" is missing in the dictionary, but received: {u'level_1_statutory_id': None, u'from_date': None, u'country_id': 1, u'domain_id': 1, u'to_date': None}
+ 
+
+2016-12-09 19:43:08,993 - knowledge_logger - main.py-parse-request : expected key "statutory_id_optional" is missing in the dictionary, but received: {u'level_1_statutory_id': None, u'from_date': None, u'country_id': 1, u'domain_id': 1, u'to_date': None} 
+
+2016-12-09 19:43:09,003 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 155, in _parse_request
+    data
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\technoreports.py", line 1141, in parse_structure
+    request = parse_structure_VariantType_technoreports_Request(request)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\parse_structure.py", line 1237, in parse_structure_VariantType_technoreports_Request
+    return technoreports.Request.parse_structure(data)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\technoreports.py", line 94, in parse_structure
+    return _Request_class_map[name].parse_inner_structure(data)
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\technoreports.py", line 347, in parse_inner_structure
+    "from_date_optional", "to_date_optional", "from_count", "page_count"
+  File "D:\Bogi\Project\Compfie\Src-server\protocol\jsonvalidators.py", line 187, in parse_dictionary
+    raise expectation_error(msg, x)
+ValueError: expected key "statutory_id_optional" is missing in the dictionary, but received: {u'level_1_statutory_id': None, u'from_date': None, u'country_id': 1, u'domain_id': 1, u'to_date': None}
+ 
+
+2016-12-09 19:43:09,003 - knowledge_logger - main.py-handle-api- : expected key "statutory_id_optional" is missing in the dictionary, but received: {u'level_1_statutory_id': None, u'from_date': None, u'country_id': 1, u'domain_id': 1, u'to_date': None} 
+
+2016-12-09 19:43:09,003 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 196, in handle_api_request
+    raise ValueError(request_data)
+ValueError: expected key "statutory_id_optional" is missing in the dictionary, but received: {u'level_1_statutory_id': None, u'from_date': None, u'country_id': 1, u'domain_id': 1, u'to_date': None}
+ 
+
+2016-12-09 19:43:34,160 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list' 
+
+2016-12-09 19:43:34,160 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 381, in process_get_client_agreement_report_data
+    request.from_count, request.page_count, session_user
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\technoreport.py", line 843, in get_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list'
+ 
+
+2016-12-09 20:21:39,433 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list' 
+
+2016-12-09 20:21:39,436 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 381, in process_get_client_agreement_report_data
+    request.from_count, request.page_count, session_user
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\technoreport.py", line 843, in get_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list'
+ 
+
+2016-12-09 20:22:36,762 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list' 
+
+2016-12-09 20:22:36,763 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 381, in process_get_client_agreement_report_data
+    request.from_count, request.page_count, session_user
+  File "D:\Bogi\Project\Compfie\Src-server\server\database\technoreport.py", line 843, in get_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10, 3)- 1054 (42S22): Unknown column 't1.used_licence' in 'field list'
+ 
+
+2016-12-09 20:30:54,015 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9 
+
+2016-12-09 20:30:54,016 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 372, in process_get_client_agreement_report_data
+    db, request, session_user, "ClientAgreementReport"
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 81, in __init__
+    db, request, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 1417, in generate_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9
+ 
+
+2016-12-09 20:31:07,759 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9 
+
+2016-12-09 20:31:07,760 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 372, in process_get_client_agreement_report_data
+    db, request, session_user, "ClientAgreementReport"
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 81, in __init__
+    db, request, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 1417, in generate_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9
+ 
+
+2016-12-09 20:31:15,000 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9 
+
+2016-12-09 20:31:15,002 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 372, in process_get_client_agreement_report_data
+    db, request, session_user, "ClientAgreementReport"
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 81, in __init__
+    db, request, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 1417, in generate_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9
+ 
+
+2016-12-09 20:31:17,486 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9 
+
+2016-12-09 20:31:17,487 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 372, in process_get_client_agreement_report_data
+    db, request, session_user, "ClientAgreementReport"
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 81, in __init__
+    db, request, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 1417, in generate_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9
+ 
+
+2016-12-09 20:31:21,598 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9 
+
+2016-12-09 20:31:21,599 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 372, in process_get_client_agreement_report_data
+    db, request, session_user, "ClientAgreementReport"
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 81, in __init__
+    db, request, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 1417, in generate_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9
+ 
+
+2016-12-09 20:32:39,880 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9 
+
+2016-12-09 20:32:39,881 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 372, in process_get_client_agreement_report_data
+    db, request, session_user, "ClientAgreementReport"
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 81, in __init__
+    db, request, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 1417, in generate_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9
+ 
+
+2016-12-09 20:34:28,188 - knowledge_logger - main.py-handle-api- : sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9 
+
+2016-12-09 20:34:28,190 - knowledge_logger - main.py : Traceback (most recent call last):
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 203, in handle_api_request
+    response_data = unbound_method(self, request_data, _db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\main.py", line 364, in handle_techno_report
+    return controller.process_techno_report_request(request, db)
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 190, in process_techno_report_request
+    db, request_frame, user_id
+  File "D:\Bogi\Project\Compfie\Src-server\server\controller\technoreportcontroller.py", line 372, in process_get_client_agreement_report_data
+    db, request, session_user, "ClientAgreementReport"
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 81, in __init__
+    db, request, session_user)
+  File "D:\Bogi\Project\Compfie\Src-server\server\jsontocsvconverter.py", line 1417, in generate_client_agreement_report
+    legal_entity_id, domain_id, contract_from, contract_to, from_count, page_count)
+  File "D:\Bogi\Project\Compfie\Src-server\server\dbase.py", line 782, in call_proc
+    raise process_procedure_error(procedure_name, args, e)
+RuntimeError: sp_client_agreement_details- (1, None, None, None, None, None, None, 0, 10)- 1318 (42000): Incorrect number of arguments for PROCEDURE compfie_knowledge_new.sp_client_agreement_details; expected 10, got 9
+ 
+

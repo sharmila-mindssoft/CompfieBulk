@@ -6,6 +6,7 @@ from server.common import (
     get_date_time
 )
 from server.database.tables import *
+from server.database.forms import *
 
 __all__ = [
     "get_industries", "get_active_industries",
@@ -131,9 +132,9 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     new_id = db.call_insert_proc("sp_industry_master_saveindustry", values)
     if new_id is False:
         raise process_error("E001")
-    else:
-        action = "New Organization %s added" % (industry_name)
-        db.save_activity(user_id, 6, action)
+    else :
+        action = "New Organization type %s added" % (industry_name)
+        db.save_activity(user_id, frmOrganizationMaster, action)
         return True
 
 ######################################################################################
@@ -150,8 +151,8 @@ def update_industry(db, country_ids, domain_ids, industry_id, industry_name, use
     values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
     new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
     if new_id is True:
-        action = "Organization %s updated" % (industry_name)
-        db.save_activity(user_id, 6, action)
+        action = "Organization type %s updated" % (industry_name)
+        db.save_activity(user_id, frmOrganizationMaster, action)
         return True
     else:
         raise process_error("E002")
@@ -173,8 +174,8 @@ def update_industry_status(db, industry_id, is_active, user_id):
         else:
             status = "activated"
 
-        action = "Organization %s status - %s" % (oldData, status)
-        db.save_activity(user_id, 6, action)
+        action = "Organization type %s status - %s" % (oldData, status)
+        db.save_activity(user_id, frmOrganizationMaster, action)
         return True
     else:
         raise process_error("E003")
@@ -255,7 +256,7 @@ def save_statutory_nature(db, nature_name, country_id, user_id):
         raise process_error("E004")
     else:
         action = "New Statutory Nature %s added" % (nature_name)
-        db.save_activity(user_id, 7, action)
+        db.save_activity(user_id, frmStatutoryNatureMaster, action)
         return True
 
 ######################################################################################
@@ -273,7 +274,7 @@ def update_statutory_nature(db, nature_id, nature_name, country_id, user_id):
 
     if new_id is True:
         action = "Statutory Nature '%s' updated" % (nature_name)
-        db.save_activity(user_id, 7, action)
+        db.save_activity(user_id, frmStatutoryNatureMaster, action)
         return True
     else:
         raise process_error("E005")
@@ -296,7 +297,7 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
             status = "activated"
 
         action = "Statutory nature %s status  - %s" % (oldData, status)
-        db.save_activity(user_id, 7, action)
+        db.save_activity(user_id, frmStatutoryNatureMaster, action)
         return True
     else:
         raise process_error("E006")
@@ -341,8 +342,9 @@ def delete_statutory_level(db, level_id):
         res = db.call_proc(
             "sp_delete_statutory_level", [level_id]
         )
-        if res is False :
+        if res is False:
             raise process_error("E009")
+
 
 def save_statutory_levels(db, country_id, domain_id, levels, user_id):
     table_name = "tbl_statutory_levels"
@@ -350,22 +352,22 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
     newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
     result = False
     s_l_id = None
-    for n in newlist :
-        if n.is_remove is True :
+    for n in newlist:
+        if n.is_remove is True:
             result = delete_statutory_level(db, n.level_id)
-            if result :
+            if result:
                 s_l_id = n.level_position
                 break
-            else :
+            else:
                 continue
-    if result :
+    if result:
         return knowledgemaster.LevelShouldNotbeEmpty(s_l_id)
 
     for level in levels:
         name = level.level_name
         position = level.level_position
         values = []
-        if level.is_remove :
+        if level.is_remove:
             continue
 
         if level.level_id is None:
@@ -379,7 +381,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
             new_id = db.call_insert_proc("sp_insert_statutory_level", values)
             if new_id is not False:
                 action = "New Statutory levels added"
-                db.save_activity(user_id, 8, action)
+                db.save_activity(user_id, frmStatutoryLevelMaster, action)
             else:
                 raise process_error("E007")
         else:
@@ -390,7 +392,7 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
                 )
             ):
                 action = "Statutory levels updated"
-                db.save_activity(user_id, 8, action)
+                db.save_activity(user_id, frmStatutoryLevelMaster, action)
             else:
                 raise process_error("E008")
     return knowledgemaster.SaveStatutoryLevelSuccess()
@@ -477,7 +479,7 @@ def save_geography_levels(db, country_id, levels, user_id):
                 )
             ):
                 action = "Geography levels updated"
-                db.save_activity(user_id, 4, action)
+                db.save_activity(user_id, frmGeographyLevelMaster, action)
             else:
                 raise process_error("E011")
 
@@ -489,7 +491,7 @@ def save_geography_levels(db, country_id, levels, user_id):
             new_id = db.call_insert_proc("sp_save_geographylevel_master", values)
             if new_id is not False:
                 action = "New Geography levels added"
-                db.save_activity(user_id, 4, action)
+                db.save_activity(user_id, frmGeographyLevelMaster, action)
             else:
                 raise process_error("E010")
 
@@ -590,7 +592,7 @@ def save_geography(
         raise process_error("E012")
     else:
         action = "New Geography %s added" % (geography_name)
-        db.save_activity(user_id, 5, action)
+        db.save_activity(user_id, frmGeographyMaster, action)
         return True
 
 
@@ -604,21 +606,21 @@ def update_geography(
     values = [geography_id, name, parent_ids, parent_names, updated_by]
     if (db.call_update_proc("sp_update_geography_master", values)):
         action = "Geography - %s updated" % name
-        db.save_activity(updated_by, 5, action)
+        db.save_activity(updated_by, frmGeographyMaster, action)
 
-        if len(parent_ids[:-1]) == 1 :
+        if len(parent_ids[:-1]) == 1:
             # p_ids = tuple([parent_ids[:-1], str(geography_id)])
             # p_ids = parent_ids[:-1] + "," + str(geography_id)
             p_ids = parent_ids[:-1]
-        else :
+        else:
             p_ids = None
             i = 0
             p_new_id = parent_ids[:-1].split(',')
             for p_ids_len in p_new_id:
                 if p_ids is None:
-                    p_ids = p_ids_len[i] + ","
+                    p_ids = p_ids_len + ","
                 else:
-                    p_ids = p_ids + p_ids_len[i]
+                    p_ids = p_ids + p_ids_len
                 i = i + 1
         result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
 
@@ -632,10 +634,13 @@ def update_geography(
                 map_name = ""
                 x = row["parent_ids"].strip().split(',')
                 for j in x[:-1]:
+                    if j > len(result):
+                        continue
                     if int(j) == int(geography_id) :
                         map_name += name + " >> "
                     else :
                         map_name += result[int(j)]["geography_name"] + " >> "
+
                 row["parent_ids"] = tuple(x[:-1])
 
             map_name += row["geography_name"]
@@ -685,7 +690,7 @@ def change_geography_status(db, geography_id, is_active, updated_by):
         action = "Geography %s status - %s" % (
             oldData[0]["geography_name"], status
         )
-        db.save_activity(updated_by, 5, action)
+        db.save_activity(updated_by, frmGeographyMaster, action)
         return True
     else:
         raise process_error("E014")
@@ -717,7 +722,7 @@ def save_statutory(db, name, level_id, parent_ids, parent_names, user_id):
         raise process_error("E015")
     else:
         action = "Statutory - %s added" % name
-        db.save_activity(user_id, 8, action)
+        db.save_activity(user_id, frmStatutoryMapping, action)
         return True
 
 
@@ -737,7 +742,7 @@ def update_statutory(
     values = [name, str(updated_by), statutory_id]
     if (db.update(table_name, columns, values, where_condition)):
         action = "Statutory - %s updated" % name
-        db.save_activity(updated_by, 8, action)
+        db.save_activity(updated_by, frmStatutoryMapping, action)
         qry = "SELECT statutory_id, statutory_name, parent_ids " + \
             " from tbl_statutories " + \
             " WHERE find_in_set(%s, parent_ids)"
@@ -752,27 +757,29 @@ def update_statutory(
             pids.append(0)
             pids = tuple(pids)
 
-            q = "Update tbl_statutories , " + \
-                "(select p.statutory_id, (select  group_concat(p1.statutory_name SEPARATOR '>>')  " + \
-                "from tbl_statutories as p1 where statutory_id in %s )  as names from tbl_statutories as p  " + \
-                " where p.statutory_id = %s) as B " + \
-                " set tbl_statutories.parent_names = B.names  " + \
-                " where tbl_statutories.statutory_id = B.statutory_id  and tbl_statutories.statutory_id = %s "
-            print q
+            # q = "Update tbl_statutories , " + \
+            #     "(select p.statutory_id, (select  group_concat(p1.statutory_name SEPARATOR '>>')  " + \
+            #     "from tbl_statutories as p1 where statutory_id in %s )  as names from tbl_statutories as p  " + \
+            #     " where p.statutory_id = %s) as B " + \
+            #     " set tbl_statutories.parent_names = B.names  " + \
+            #     " where tbl_statutories.statutory_id = B.statutory_id  and tbl_statutories.statutory_id = %s "
+            # print q
 
-            # q = "Update tbl_statutories as A inner join ( " + \
-            #     " select p.statutory_id, (select " + \
-            #     " group_concat(p1.statutory_name SEPARATOR '>>') " + \
-            #     " from tbl_statutories as p1 where statutory_id in (%s)) " + \
-            #     " as names from tbl_statutories as p " + \
-            #     " where p.statutory_id = %s " + \
-            #     " ) as B on A.statutory_id = B.statutory_id " + \
-            #     " set A.parent_names = B.names " + \
-            #     " where A.statutory_id = %s "
-            db.execute(q, [str(pids), row["statutory_id"], row["statutory_id"]])
+            q = "Update tbl_statutories as A inner join ( " + \
+                " select p.statutory_id, (select " + \
+                " group_concat(p1.statutory_name SEPARATOR '>>') " + \
+                " from tbl_statutories as p1 where statutory_id in (%s)) " + \
+                " as names from tbl_statutories as p " + \
+                " where p.statutory_id = %s " + \
+                " ) as B on A.statutory_id = B.statutory_id " + \
+                " set A.parent_names = B.names " + \
+                " where A.statutory_id = %s "
+
+            db.execute(q, [row["parent_ids"], row["statutory_id"], row["statutory_id"]])
             action = "statutory name %s updated in child rows." % name
-            db.save_activity(updated_by, 8, action)
+            db.save_activity(updated_by, frmStatutoryMapping, action)
         return True
+
     else:
         raise process_error("E016")
 

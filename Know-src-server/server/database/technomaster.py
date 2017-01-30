@@ -1,6 +1,7 @@
 from protocol import (
     core, technomasters, admin
 )
+from server.database.forms import *
 from server.exceptionmessage import process_error
 from server.constants import (CLIENT_LOGO_PATH)
 from server.common import (
@@ -154,8 +155,10 @@ def save_client_group(
     )
     current_time_stamp = get_date_time()
     message_text = '%s has been Created.' % group_name
+    db.save_activity(session_user, frmClientGroup, message_text)
     msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
     data = db.call_proc("sp_get_userid_from_admin", ())
+    print data[0]["userids"]
     db.save_messages_users(msg_id, data[0]["userids"])
     return client_id
 
@@ -172,6 +175,7 @@ def update_client_group(db, client_id, email_id, no_of_licence, remarks, session
     data = db.call_proc("sp_group_name_by_id", (client_id, ))
     current_time_stamp = get_date_time()
     message_text = '%s has been Updated.' % data[0]["group_name"]
+    db.save_activity(session_user, frmClientGroup, message_text)
     msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
     db.save_messages_users(msg_id, [1])
 
@@ -1119,7 +1123,7 @@ def update_client_group_record(db, client_group, session_user):
     values.append(client_group.client_id)
     if db.update(tblClientGroups, columns, values, condition):
         action = "Updated Client \"%s\"" % client_group.group_name
-        db.save_activity(session_user, 18, action)
+        db.save_activity(session_user, frmClientGroup, action)
         return True
     else:
         raise process_error("E046")
@@ -1149,7 +1153,7 @@ def update_client_group_status(db, client_id, is_active, session_user):
             action = "Activated Client \"%s\"" % group_name
         else:
             action = "Deactivated Client \"%s\"" % group_name
-        db.save_activity(session_user, 18, action)
+        db.save_activity(session_user, frmClientGroup, action)
 
 ##########################################################################
 ##########################################################################
@@ -1173,7 +1177,7 @@ def update_division(db, client_id, division_id, division_name, session_user):
     result = db.update(tblDivisions, columns, values, condition)
     if result:
         action = "Updated Division \"%s\"" % division_name
-        db.save_activity(session_user, 19, action)
+        db.save_activity(session_user, frmClientUnit, action)
         return result
     else:
         raise process_error("E055")
@@ -1357,7 +1361,8 @@ def save_unit(
         raise process_error("E056")
 
     action = "Created following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, 22, action)
+
+    db.save_activity(session_user, frmClientUnit, action)
     db.call_insert_proc("sp_client_unit_messages_save", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
 
     max_unit_id = None
@@ -1450,7 +1455,8 @@ def update_unit(db, client_id, units, session_user):
         raise process_error("E057")
 
     action = "Updated following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, 22, action)
+
+    db.save_activity(session_user, frmClientUnit, action)
     db.call_insert_proc("sp_client_unit_messages_update", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
     if result is True:
         for i in unit_ids:
@@ -1499,7 +1505,8 @@ def update_unit_old(db, client_id,  units, session_user):
             action = "Unit details updated for \"%s - %s\"" % (
                 unit.unit_code, unit.unit_name
             )
-            db.save_activity(session_user, 22, action)
+
+            db.save_activity(session_user, frmClientUnit, action)
         else:
             raise process_error("E057")
 
@@ -1923,7 +1930,7 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
     action = "Reactivated Unit \"%s-%s\"" % (
         result["unit_code"], result["unit_name"]
     )
-    db.save_activity(session_user, 19, action)
+    db.save_activity(session_user, frmClientUnit, action)
 
     next_auto_gen_no = get_next_auto_gen_number(db, client_id=client_id)
     unit_code = group_name[:2].upper()

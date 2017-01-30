@@ -1192,10 +1192,9 @@ function import_toast(){
     "hideMethod": "fadeOut"
   };
   return toastr;
-
 }
 
-function confirm_alert(message, callback){
+function confirm_alert(message, callback) {
   swal({
       title: "Are you sure?",
       text: message,

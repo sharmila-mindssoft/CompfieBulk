@@ -3872,7 +3872,7 @@ BEGIN
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
     WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is null;
 
-    select domain_id, legal_entity_id from tbl_legal_entity_domains;
+    select distinct domain_id, legal_entity_id from tbl_legal_entity_domains;
 END //
 
 DELIMITER ;

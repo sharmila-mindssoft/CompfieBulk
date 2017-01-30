@@ -1,6 +1,6 @@
 
 from clientprotocol.jsonvalidators_client import (
-    parse_dictionary, parse_static_list
+    parse_dictionary, parse_static_list, to_structure_dictionary_values
 )
 from clientprotocol.parse_structure import (
     parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -176,6 +176,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -843,7 +845,6 @@ class GetComplianceActivityReport(Request):
 class GetReassignedHistoryReportFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
-
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -1088,6 +1089,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -1635,18 +1638,21 @@ class GetComplianceActivityReportSuccess(Response):
 #         }
 
 class GetReassignedHistoryReportFiltersSuccess(Response):
-    def __init__(self, countries):
-        self.countries = countries
+    def __init__(self, domains, units):
+        self.domains = domains
+        self.units = units
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries"])
-        countries = data.get("countries")
-        return GetReassignedHistoryReportFiltersSuccess(countries)
+        data = parse_dictionary(data, ["domains", "units"])
+        domains = data.get("domains")
+        units = data.get("units")
+        return GetReassignedHistoryReportFiltersSuccess(domains, units)
 
     def to_inner_structure(self):
         return {
-            "countries": self.countries,
+            "domains": self.domains,
+            "units": self.units,
         }
 
 class GetReassignedHistoryReportSuccess(Response):
