@@ -148,5 +148,20 @@ api_params = {
     "assign_unit_infos": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
-    "client_admin": make_int_field()
+    "client_admin": make_int_field(),
+
+    "service_providers": make_vector_type_field(module="clientcore", klass_name="ServiceProviderDetails"),
+    "s_p_id" : make_int_field(),
+    "s_p_name": make_string_field(),
+    "s_p_short": make_string_field(),
+    "cont_from": make_string_field(),
+    "cont_to": make_string_field(),
+    "cont_person": make_string_field(),
+    "cont_no": make_string_field(is_optional=True),
+    "mob_no": make_string_field(),
+    "e_id": make_string_field(is_optional=True),
+    "address": make_string_field(length=500, is_optional=True),
+    "remarks": make_string_field(is_optional=True),
+    "is_blocked": make_bool_field(),
+    "unblock_days": make_int_field(),
 }
