@@ -1,4 +1,3 @@
-var ListTable = $(".user-privileges-table-list");
 var AddScreen = $("#add-screen");
 var ViewScreen = $("#list-screen");
 var AddButton = $("#btn-add");
@@ -111,6 +110,7 @@ UserPrivilegesPage.prototype.showAddScreen = function() {
     UserGroupName.val('');
     Category.val('');
     FormList.hide();
+    UserGroupId.val('');
     this.renderCategoryList(t_this._FormsList);
 };
 
@@ -379,8 +379,6 @@ PageControls = function() {
         fList = key_search(u_p_page._UserGroupsList);
         u_p_page.renderList(fList);
     });
-    
-    ListTable.jssorting(); // Sorting table
 }
 u_p_page = new UserPrivilegesPage();
 
