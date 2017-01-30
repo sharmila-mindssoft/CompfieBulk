@@ -44,8 +44,9 @@ class CompanyManager(object) :
             GetCompanyServerDetails().to_structure(), indent=2
         )
         print body
-
         body = body.encode('base64')
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        body = key + body
         request = HTTPRequest(
             self._poll_url, method="POST", body=body,
             headers={
@@ -91,11 +92,6 @@ class CompanyManager(object) :
     def _poll(self) :
         def on_timeout():
             req_data = self._request_body
-            print "---------->>>>>>>>>", req_data.to_structure()
-            key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
-            req_data = base64.b64encode(req_data)
-            req_data = key+req_data
-            print req_data
 
             self._http_client.fetch(req_data, self._poll_response)
         if self._first_time:
@@ -112,7 +108,6 @@ class CompanyManager(object) :
         if not response.error :
             r = None
             try:
-                print response.body
                 data = response.body[6:]
                 data = str(data).decode('base64')
                 print data

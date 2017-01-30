@@ -1334,7 +1334,7 @@ function industrytype(classval, selected_arr) {
 
                     if(selected_arr != null && selected_arr != "undefined"){
                     for (var j = 0; j < selected_arr.length; j++) {
-                            if (selected_arr[j] == domains[i].industry_id) {
+                            if (selected_arr[j] == domains[i].industry_id && domain_id[domain] == domains[i].domain_id) {
                                 selectorgtypestatus = 'selected';
                             }
                         }
@@ -1363,7 +1363,7 @@ function industrytype(classval, selected_arr) {
                 var selectorgtypestatus = '';
                     if(editorgtypeval != null && editorgtypeval != "undefined"){
                         for (var j = 0; j < editorgtypeval.length; j++) {
-                            if (editorgtypeval[j] == domains[i].industry_id) {
+                            if (editorgtypeval[j] == domains[i].industry_id && domain_id[domain] == domains[i].domain_id) {
                                 selectorgtypestatus = 'selected';
                             }
                         }
@@ -1558,8 +1558,8 @@ $('#btn-clientunit-submit').click(function() {
         var businessGroup;
         var bgIdValue;
         var bgNameValue;
-        bgIdValue = parseInt(businessgroupValue);
-        if (businessgroupValue != 0) {
+        //bgIdValue = parseInt(businessgroupValue);
+        if (businessgroupValue != 0 && businessgroupValue != "0") {
             bgNameValue = businessgroupName;
         } else {
             for(var le=0;le<legalEntitiesList.length;le++){
@@ -1962,7 +1962,6 @@ $('#btn-clientunit-submit').click(function() {
                                     if (total_div != i) {
                                         total_div = total_div + 1;
                                     }
-
                                     div_arr = mirror.getDivisionDict(parseInt(divIdValue), divNameValue, category, total_div, parseInt(total_units));
                                     division_units.push(div_arr);
                                     unit = mirror.getUnitDict(parseInt(unitId), unitName, unitCode, unitAddress, parseInt(unitPostalCode), parseInt(unitGeographyId), unitdomains, unitIndustryIds, 0);
@@ -1982,7 +1981,7 @@ $('#btn-clientunit-submit').click(function() {
             }
         }
         if(units.length > 0){
-            mirror.saveClient(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units, function(error, response) {
+           mirror.saveClient(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.unit_updated);
                     units_count = [];

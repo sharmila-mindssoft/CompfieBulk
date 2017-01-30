@@ -969,13 +969,17 @@ Note :
     [
         "GetReviewSettingsComplainces",
         {
+            "domain_month": String,
             "compliance_list": [
                 {
                     "comp_id": Int,
+                    "level_one_name": String,
+                    "level_two_name": String,
+                    "s_pro": String,
                     "comp_name": String,
                     "doc_name": String,
                     "comp_description": String,
-                    "frequency": String,
+
                     "Repeat_type": String,
                     "Repeats_evey": Int,
                     "Actual_Statu_Dates": [

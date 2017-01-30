@@ -3872,7 +3872,7 @@ BEGIN
     LEFT JOIN tbl_user_legalentity t4 on t1.legal_entity_id = t4.legal_entity_id
     WHERE t1.client_id=clientid and t1.is_closed = 0 and t1.is_approved = 1 and t4.legal_entity_id is null;
 
-    select domain_id, legal_entity_id from tbl_legal_entity_domains;
+    select distinct domain_id, legal_entity_id from tbl_legal_entity_domains;
 END //
 
 DELIMITER ;
@@ -7055,7 +7055,7 @@ BEGIN
         tbl_user_account_reassign_history as t4,
         tbl_users as t5
         where
-        t5.user_id = t4.assigned_by and
+        t5.user_id = t4.reassigned_to and
         t4.reassigned_data = t1.unit_id and
         t3.domain_id = t1.domain_id and t3.unit_id = t2.unit_id and
         COALESCE(t2.business_group_id,'') LIKE _bg_id and
@@ -7064,7 +7064,8 @@ BEGIN
         t1.legal_entity_id = _le_id and
         t1.client_id = _g_id and
         t1.user_id = _u_id and
-        t1.user_category_id = _u_cg_id;
+        t1.user_category_id = _u_cg_id
+        group by t4.reassigned_to;
 
     end if;
 

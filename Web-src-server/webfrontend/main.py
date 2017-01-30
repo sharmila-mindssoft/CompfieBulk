@@ -3,7 +3,7 @@ import json
 import traceback
 import mimetypes
 import jinja2
-import base64
+
 import time
 from tornado.httpclient import AsyncHTTPClient
 from tornado.web import (

@@ -132,8 +132,8 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     new_id = db.call_insert_proc("sp_industry_master_saveindustry", values)
     if new_id is False:
         raise process_error("E001")
-    else:
-        action = "New Industry type %s added" % (industry_name)
+    else :
+        action = "New Organization type %s added" % (industry_name)
         db.save_activity(user_id, frmOrganizationMaster, action)
         return True
 
@@ -151,7 +151,7 @@ def update_industry(db, country_ids, domain_ids, industry_id, industry_name, use
     values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
     new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
     if new_id is True:
-        action = "Industry type %s updated" % (industry_name)
+        action = "Organization type %s updated" % (industry_name)
         db.save_activity(user_id, frmOrganizationMaster, action)
         return True
     else:
@@ -174,7 +174,7 @@ def update_industry_status(db, industry_id, is_active, user_id):
         else:
             status = "activated"
 
-        action = "Industry type %s status - %s" % (oldData, status)
+        action = "Organization type %s status - %s" % (oldData, status)
         db.save_activity(user_id, frmOrganizationMaster, action)
         return True
     else:
@@ -618,9 +618,9 @@ def update_geography(
             p_new_id = parent_ids[:-1].split(',')
             for p_ids_len in p_new_id:
                 if p_ids is None:
-                    p_ids = p_ids_len[i] + ","
+                    p_ids = p_ids_len + ","
                 else:
-                    p_ids = p_ids + p_ids_len[i]
+                    p_ids = p_ids + p_ids_len
                 i = i + 1
         result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
 
@@ -634,10 +634,13 @@ def update_geography(
                 map_name = ""
                 x = row["parent_ids"].strip().split(',')
                 for j in x[:-1]:
+                    if j > len(result):
+                        continue
                     if int(j) == int(geography_id) :
                         map_name += name + " >> "
                     else :
                         map_name += result[int(j)]["geography_name"] + " >> "
+
                 row["parent_ids"] = tuple(x[:-1])
 
             map_name += row["geography_name"]
