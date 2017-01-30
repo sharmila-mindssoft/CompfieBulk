@@ -27,7 +27,6 @@ from protocol.to_structure import (
     to_structure_OptionalType_VectorType_RecordType_core_ComplianceApplicability,
     to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
     to_structure_MapType_CustomTextType_50_VectorType_UnsignedIntegerType_32,
-
 )
 
 #
@@ -2860,8 +2859,8 @@ class ComplianceApplicability(object):
             "statutory_provision": self.statutory_provision,
             "statutory_nature": self.statutory_nature,
             "compliance_applicable_status": self.compliance_applicable_status,
-            "compliance_opted_status":(self.compliance_opted_status,
-            "compliance_remarks": self.compliance_remarks,
+            "compliance_opted_status": self.compliance_opted_status,
+            "compliance_remarks": self.compliance_remarks
         }
 
 #
