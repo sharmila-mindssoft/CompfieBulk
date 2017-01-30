@@ -1,4 +1,4 @@
-USE `compfie_knowledge`;
+USE `compfie_knowledge_new`;
 
 -- DELETE FROM tbl_form_category;
 INSERT INTO tbl_user_category VALUES(1, "Compfie Admin");
@@ -16,6 +16,10 @@ INSERT INTO tbl_form_type VALUES(2, "Transaction");
 INSERT INTO tbl_form_type VALUES(3, "Report");
 INSERT INTO tbl_form_type VALUES(4, "My Accounts");
 
+-- DELETE FROM tbl_forms
+-- fields(form_id, form_type_id, form_name, form_url, form_order, parent_menu)
+
+-- mirror_knowledge
 -- masters
 INSERT INTO tbl_forms VALUES(1, 1, 'Country', '/knowledge/country-master', 1,  null);
 INSERT INTO tbl_forms VALUES(2, 1, 'Domain', '/knowledge/domain-master', 2, null);
@@ -32,6 +36,7 @@ INSERT INTO tbl_forms VALUES(10, 2, 'User Management', '/knowledge/user-manageme
 INSERT INTO tbl_forms VALUES(11, 2, 'User Mapping', '/knowledge/user-mapping', 11, null);
 INSERT INTO tbl_forms VALUES(12, 2, 'Reassign User Account ', '/knowledge/reassign-user-account', 12, null);
 INSERT INTO tbl_forms VALUES(13, 2, 'Approve Client Group', '/knowledge/client-master-approval', 13, null);
+INSERT INTO tbl_forms VALUES(14, 2, 'Group Admin Registraion Email', '/knowledge/group-admin-registration-email', 14, null);
 INSERT INTO tbl_forms VALUES(15, 2, 'Statutory Mapping', '/knowledge/statutory-mapping', 15, null);
 INSERT INTO tbl_forms VALUES(16, 2, 'Approve Statutory Mapping', '/knowledge/approve-statutory-mapping', 16, null);
 
@@ -65,7 +70,10 @@ INSERT INTO tbl_forms VALUES(37, 3, 'Statutory Notification List', '/knowledge/s
 INSERT INTO tbl_forms VALUES(38, 3, 'Client Agreement Master Report', '/knowledge/client-agreement-report', 38, null);
 INSERT INTO tbl_forms VALUES(39, 3, 'Domain Wise Agreement Master Report', '/knowledge/domain-agreement-master-report', 39, null);
 INSERT INTO tbl_forms VALUES(40, 3, 'Client Unit Details', '/knowledge/client-unit-details', 40, null);
+INSERT INTO tbl_forms VALUES(41, 3, 'Client Profile', '/knowledge/client-profile', 41, null);
+INSERT INTO tbl_forms VALUES(42, 3, 'Statutory Settings Report', '/knowledge/statutory-setting-report', 42, null);
 INSERT INTO tbl_forms VALUES(43, 3, 'Audit Trail Login Trace', '/knowledge/audit-trail-login-trace', 43, null);
+INSERT INTO tbl_forms VALUES(48, 3, 'Group Admin Registration Email Report', '/knowledge/group-admin-registration-email-report', 48, NULL);
 INSERT INTO tbl_forms VALUES(49, 3, 'Reassign User Report', '/knowledge/reassign-user-report', 49, NULL);
 INSERT INTO tbl_forms VALUES(51, 3, 'Form Authorization - IP Settings Report', '/knowledge/ip-settings-report', 51, null);
 INSERT INTO tbl_forms VALUES(52, 3, 'Allocate Server Report', '/knowledge/allocate-database-environment-report', 52, NULL);
@@ -94,7 +102,7 @@ INSERT INTO tbl_form_category VALUES(10, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(11, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(12, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(13, 1, 0, 0, 0, 0, 0, 0, 0);
--- INSERT INTO tbl_form_category VALUES(14, 1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(14, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(15, 0, 0, 0, 1, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(16, 0, 0, 1, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(17, 0, 0, 0, 0, 1, 0, 0, 0);
@@ -124,7 +132,10 @@ INSERT INTO tbl_form_category VALUES(37, 1, 0, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(38, 1, 0, 0, 0, 1, 0, 1, 0);
 INSERT INTO tbl_form_category VALUES(39, 1, 0, 0, 0, 1, 0, 1, 1);
 INSERT INTO tbl_form_category VALUES(40, 1, 0, 0, 0, 1, 1, 1, 1);
+INSERT INTO tbl_form_category VALUES(41, 1, 0, 0, 0, 1, 0, 1, 1);
+INSERT INTO tbl_form_category VALUES(42, 1, 0, 0, 0, 1, 0, 1, 1);
 INSERT INTO tbl_form_category VALUES(43, 1, 0, 0, 0, 0, 0, 0, 0);
+INSERT INTO tbl_form_category VALUES(48, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(49, 1, 0, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(51, 0, 1, 0, 0, 0, 0, 0, 0);
 INSERT INTO tbl_form_category VALUES(52, 0, 1, 0, 0, 0, 0, 0, 0);
@@ -135,15 +146,19 @@ INSERT INTO tbl_form_category VALUES(45, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(46, 1, 1, 1, 1, 1, 1, 1, 1);
 INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
 
+
+
+
 -- tbl_user_login_details
 -- user_id, user_category_id, username, password, is_active --- p@$$word@123
 INSERT INTO tbl_user_login_details (user_id, user_category_id, email_id, username, password, is_active) VALUES(1, 1, "compfieadmin@compfie.com", "compfieadmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
+INSERT INTO tbl_user_login_details (user_id, user_category_id, email_id, username, password, is_active) VALUES(1, 1, "consoledmin@compfie.com", "consoledmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
+
 
 -- tbl_session_types
 INSERT INTO tbl_session_types VALUES(1, "web");
 INSERT INTO tbl_session_types VALUES(2, "android");
 INSERT INTO tbl_session_types VALUES(3, "ios");
-INSERT INTO tbl_session_types VALUES(4, "blackberry");
 
 -- tbl_compliance_duration_type
 INSERT INTO tbl_compliance_duration_type VALUES(1, "Day(s)");
@@ -166,3 +181,4 @@ INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
 INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");
+

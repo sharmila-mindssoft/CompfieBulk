@@ -635,12 +635,11 @@ class Country(object):
         return Country(country_id, country_name, is_active)
 
     def to_structure(self):
-        data = {
+        return {
             "c_id": self.country_id,
             "c_name": self.country_name,
             "is_active": self.is_active
         }
-        return to_structure_dictionary_values(data)
 
 #
 # Domain
@@ -648,37 +647,34 @@ class Country(object):
 
 class Domain(object):
     def __init__(
-        self, country_ids, country_names, domain_id, domain_name, is_active
+        self, domain_id, domain_name, legal_entity_id, is_active
     ):
-        self.country_ids = country_ids
-        self.country_names = country_names
         self.domain_id = domain_id
         self.domain_name = domain_name
+        self.legal_entity_id = legal_entity_id
         self.is_active = is_active
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "c_ids", "c_names", "d_id", "d_name", "is_active"
+            "d_id", "d_name", "le_id", "is_active"
         ])
-        country_ids = data.get("c_ids")
-        country_names = data.get("c_names")
         domain_id = data.get("d_id")
         domain_name = data.get("d_name")
+        legal_entity_id = data.get("le_id")
         is_active = data.get("is_active")
         return Domain(
-            country_ids, country_names, domain_id, domain_name, is_active
+            domain_id, domain_name, is_active
         )
 
     def to_structure(self):
         data = {
-            "c_ids": self.country_ids,
-            "c_names": self.country_names,
             "d_id": self.domain_id,
             "d_name": self.domain_name,
+            "le_id": self.legal_entity_id,
             "is_active": self.is_active,
         }
-        return to_structure_dictionary_values(data)
+        return data
 
 #
 # Level
@@ -1850,18 +1846,18 @@ class UnitDetails(object):
 
 class ClientUnit(object):
     def __init__(
-        self, unit_id, division_id, legal_entity_id, business_group_id,
-        unit_code, unit_name, address, is_active, domain_ids, country_id,
+        self, unit_id, division_id, category_id, legal_entity_id, business_group_id,
+        unit_code, unit_name, address, domain_ids, country_id,
         is_closed
     ):
         self.unit_id = unit_id
         self.division_id = division_id
+        self.category_id = category_id
         self.legal_entity_id = legal_entity_id
         self.business_group_id = business_group_id
         self.unit_code = unit_code
         self.unit_name = unit_name
         self.address = address
-        self.is_active = is_active
         self.domain_ids = domain_ids
         self.country_id = country_id
         self.is_closed = is_closed
@@ -1870,50 +1866,42 @@ class ClientUnit(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "unit_id", "division_id", "legal_entity_id",
+                "unit_id", "division_id", "category_id", "legal_entity_id",
                 "business_group_id", "unit_code", "unit_name", "address",
-                "is_active", "domain_ids", "country_id", "is_closed"
+                "domain_ids", "country_id", "is_closed"
             ]
         )
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
         division_id = data.get("division_id")
-        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
+        category_id = data.get("category_id")
         legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
         business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
         unit_code = data.get("unit_code")
-        unit_code = parse_structure_CustomTextType_20(unit_code)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
         address = data.get("address")
-        address = parse_structure_CustomTextType_250(address)
-        is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
         domain_ids = data.get("domain_ids")
         country_id = data.get("country_id")
         is_closed = data.get("is_closed")
         is_closed = parse_structure_Bool(is_closed)
         return Unit(
-            unit_id, division_id, legal_entity_id, business_group_id,
-            unit_code, unit_name, address, is_active, domain_ids,
+            unit_id, division_id, category_id, legal_entity_id, business_group_id,
+            unit_code, unit_name, address, domain_ids,
             country_id, is_closed
         )
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id),
-            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "unit_code": to_structure_CustomTextType_20(self.unit_code),
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "address": to_structure_CustomTextType_250(self.address),
-            "is_active": to_structure_Bool(self.is_active),
-            "domain_ids": self.domain_ids,
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
-            "is_closed" : to_structure_Bool(self.is_closed)
+            "unit_id": self.unit_id,
+            "division_id": self.division_id,
+            "category_id": self.category_id,
+            "legal_entity_id": self.legal_entity_id,
+            "business_group_id": self.business_group_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "address": self.address,
+            "d_ids": self.domain_ids,
+            "country_id": self.country_id,
+            "is_closed" : self.is_closed
         }
 
 #
@@ -3980,17 +3968,18 @@ class UnitClosure_Units(object):
         }
 
 class LegalEntityInfo(object):
-    def __init__(self, legal_entity_id, legal_entity_name, business_group_id, business_group_name):
+    def __init__(self, legal_entity_id, legal_entity_name, country_id, business_group_id, business_group_name):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
+        self.country_id = country_id
         self.business_group_id = business_group_id
         self.business_group_name = business_group_name
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["le_id", "le_name", "bg_id", "bg_name"])
+        data = parse_dictionary(data, ["le_id", "le_name", "country_id", "bg_id", "bg_name"])
         return LegalEntityInfo(
-            data.get("le_id"), data.get("le_name"),
+            data.get("le_id"), data.get("le_name"), data.get("country_id"),
             data.get("bg_id"), data.get("bg_name")
         )
 
@@ -3998,6 +3987,7 @@ class LegalEntityInfo(object):
         return {
             "le_id": self.legal_entity_id,
             "le_name": self.legal_entity_name,
+            "c_id": self.country_id,
             "bg_id": self.business_group_id,
             "bg_name": self.business_group_name
         }
