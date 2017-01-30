@@ -238,8 +238,8 @@ StatusReportConsolidated = function() {
 
 StatusReportConsolidated.prototype.loadSearch = function() {
     reportView.hide();
-    country.empty();
-    legalEntity.empty();
+    country.val('');
+    legalEntity.val('');
     domain.val('');
     domainId.val('');
     unit.val('');
@@ -270,8 +270,8 @@ StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this._complianceTaskStatus = object.compliance_task_status;
     t_this._serviceProviders = object.service_providers;
 
-    t_this.renderCountriesList(t_this._countries);
-    t_this.renderLegalEntityList(t_this._entities);
+    //t_this.renderCountriesList(t_this._countries);
+    //t_this.renderLegalEntityList(t_this._entities);
     t_this.renderComplianceFrequencyList(t_this._frequencies);
     t_this.renderUserTypeList(t_this._userType);
     t_this.renderComplianceTaskStatusList(t_this._complianceTaskStatus);
@@ -444,6 +444,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     var actname = "";
     var complianceTask = "";
     $.each(data, function(k, v) {
+       // alert(k);
         if (unitname != v.u_name) {
             var cloneone = $('#template #report-table .row-one').clone();
             $('.unit-name', cloneone).text(v.u_name);

@@ -20,9 +20,9 @@
                     <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight js-filtertable m-b-0 js-sorting-table" cellspacing="0" width="100%" >
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>User Group Name <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
-                                <th>Category Name <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                                <th>#<span class="none-sort-sno"></span></th>
+                                <th>User Group Name <span class="fa fa-sort pull-right sort active"></span></th>
+                                <th>Category Name <span class="fa fa-sort pull-right sort active"></span></th>
                                 <th class="text-center">Edit</th>
                                 <th class="text-center" width="15%">Status</th>
                             </tr>
@@ -67,7 +67,7 @@
         </div>
     </div>
 </div>
-<div class="container" id="userGroupAdd">
+<div class="containe default-display-none" id="userGroupAdd">
     <div class="row" id="animationSandbox">
         <div class="col-sm-2"> </div>
         <div class="col-sm-8">
@@ -187,7 +187,13 @@
         </div>
     </div>
 </div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
 <script type="text/javascript" src="/script/user-privileges/userprivileges.js"></script>
-<script src="/js/js-sorting.js"></script>
 {% endblock %}
 

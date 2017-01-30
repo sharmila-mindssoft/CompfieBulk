@@ -228,6 +228,13 @@ function initializeNavBar() {
                 $('.slink').attr('href', '/knowledge/statutory-notifications');
                 $('.notification-items-ul').append(msgObject1);
               }
+
+              if(NOTIFICATIONS.length == 0){
+                var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                $('.statu-heading', msgObject).text('No Notifications');
+                $('.notification-items-ul').append(msgObject);
+              }
+
             }
           });
         }

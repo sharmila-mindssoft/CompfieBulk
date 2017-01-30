@@ -93,21 +93,28 @@ def process_get_statutory_mapping_report_data(db, request_frame, user_id):
         country_id, domain_id, report_data, total_record
     )
 
-
+##############################################################################
+# To get geography report and countries list under user id
+# Returns the list of countries and geographies
+##############################################################################
 def process_get_geography_report(db, request_frame, user_id):
     countries = get_countries_for_user(db, user_id)
     geography_report = get_geography_report(db)
-    print "geography_data"
-    print geography_report
 
     return knowledgereport.GetGeographyReportSuccess(
         countries, geography_report
     )
 
-
+##############################################################################
+# To generate country master report under user id
+# Returns countries list
+##############################################################################
 def process_get_country_report(db, user_id):
     return process_get_countries(db, user_id)
 
-
+##############################################################################
+# To generate domain master report under report
+# Returns domains list
+##############################################################################
 def process_get_domain_report(db, user_id):
     return process_get_domains(db, user_id)

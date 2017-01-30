@@ -77,7 +77,14 @@ function initClientMirror() {
         else
             return null;
     }
-
+    function getUserCountry(){
+        var info = getUserInfo();
+        return info.country_info;
+    }
+    function getUserLegalEntity() {
+        var info = getUserInfo();
+        return info.entity_info;
+    }
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -778,11 +785,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     /* Reassigned History Report */
-    function getReassignedHistoryReportFilters(callback) {
+    function getReassignedHistoryReportFilters(le_id, callback) {
         var request = [
             'GetReassignedHistoryReportFilters',
             {
-                'le_id' : 1
+                'le_id' : le_id
             }
         ];
         callerName = 'client_reports';
@@ -1919,6 +1926,8 @@ function initClientMirror() {
         getEmployeeName: getEmployeeName,
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,
+        getUserCountry: getUserCountry,
+        getUserLegalEntity: getUserLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
         clientApiRequest: clientApiRequest,

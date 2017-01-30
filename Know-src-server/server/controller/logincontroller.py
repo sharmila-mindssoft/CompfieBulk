@@ -2,7 +2,8 @@ from corecontroller import process_admin_forms
 from server.emailcontroller import EmailHandler as email
 from protocol import login, mobile
 from server.constants import (
-    KNOWLEDGE_URL, CAPTCHA_LENGTH, NO_OF_FAILURE_ATTEMPTS
+    KNOWLEDGE_URL, CAPTCHA_LENGTH, NO_OF_FAILURE_ATTEMPTS,
+    FORGOTPASSWORD_EXPIRY
 )
 
 from server.common import (
@@ -11,6 +12,9 @@ from server.common import (
 from server.database.tables import *
 from server.database.login import *
 from server.database.forms import *
+from server.common import (
+    get_date_time, addHours, get_current_date
+)
 
 __all__ = [
     "process_login_request",
@@ -54,7 +58,6 @@ def process_login_request(request, db, session_user_ip):
 
 
 def process_login(db, request, session_user_ip):
-    print session_user_ip
     login_type = request.login_type
     username = request.username
     password = request.password
@@ -119,7 +122,6 @@ def mobile_user_login_respone(db, login_type, ip, data, forms):
     employee_code = data["employee_code"]
 
     form_ids = [int(x["form_id"]) for x in forms]
-    print form_ids
     if frmApproveStatutoryMapping not in form_ids:
         return login.InvalidMobileCredentials()
 
@@ -130,6 +132,7 @@ def mobile_user_login_respone(db, login_type, ip, data, forms):
         data["employee_name"],
         session_token
     )
+
 
 def user_login_response(db, ip, data, forms):
     data = data[0]
@@ -160,6 +163,7 @@ def user_login_response(db, ip, data, forms):
         designation, None, bool(1), user_name, mobile_no
     )
 
+
 def admin_login_response(db, ip, result, forms):
     user_id = result.get('user_id')
     user_category_id = result.get('user_category_id')
@@ -177,19 +181,20 @@ def admin_login_response(db, ip, result, forms):
         employee_name, None
     )
 
+
 def process_forgot_password(db, request):
     login_type = request.login_type.lower()
-    if login_type != "web" :
+    if login_type != "web":
         is_mobile = True
-    else :
-        is_mobile = False
-    user_id = db.verify_username(request.username, is_mobile)
-
-    if user_id is not None:
-        send_reset_link(db, user_id, request.username)
-        return login.ForgotPasswordSuccess()
     else:
+        is_mobile = False
+    rows = db.verify_username(request.username)
+    if rows is 0:
         return login.InvalidUserName()
+    else:
+        send_reset_link(db, rows[0]['user_id'], rows[0]['email_id'], rows[0]['employee_name'])
+        return login.ForgotPasswordSuccess()
+
 
 def send_reset_link(db, user_id, email_id, employee_name):
     reset_token = new_uuid()
@@ -198,9 +203,12 @@ def send_reset_link(db, user_id, email_id, employee_name):
     )
     condition = "user_id = %s "
     condition_val = [user_id]
+    current_time_stamp = get_current_date()
+    expiredon = addHours(int(FORGOTPASSWORD_EXPIRY), current_time_stamp)
+
     db.delete(tblEmailVerification, condition, condition_val)
-    columns = ["user_id", "verification_code"]
-    values_list = [user_id, reset_token]
+    columns = ["user_id", "verification_code", "verification_type_id", "expiry_date"]
+    values_list = [user_id, reset_token, 2, expiredon]
     db.insert(tblEmailVerification, columns, values_list)
     if email().send_reset_link(
         db, user_id, email_id, reset_link, employee_name
@@ -208,6 +216,7 @@ def send_reset_link(db, user_id, email_id, employee_name):
         return True
     else:
         print "Send email failed"
+
 
 def process_reset_token(db, request):
     user_id = validate_reset_token(db, request.reset_token)
@@ -232,8 +241,11 @@ def process_reset_password(db, request):
 def process_change_password(db, request):
     session_user = db.validate_session_token(request.session_token)
     if verify_password(db, request.current_password, session_user):
-        update_password(db, request.new_password, session_user)
-        return login.ChangePasswordSuccess()
+        if verify_new_password(db, request.new_password, session_user):
+            update_password(db, request.new_password, session_user)
+            return login.ChangePasswordSuccess()
+        else:
+            return login.CurrentandNewPasswordSame()
     else:
         return login.InvalidCurrentPassword()
 
@@ -254,17 +266,19 @@ def process_save_logindetails(db, request):
     username = request.username
     password = request.password
     # duplication username validation
-
-    encrypt_password = encrypt(password)
-    token = request.token
-    if save_login_details(db, token, username, encrypt_password):
-        return login.SaveRegistraionSuccess()
+    if check_username_duplicate(db, username) is False:
+        return login.UsernameAlreadyExists()
     else :
-        return login.InvalidSessionToken()
+        encrypt_password = encrypt(password)
+        token = request.token
+        if save_login_details(db, token, username, encrypt_password):
+            return login.SaveRegistraionSuccess()
+        else :
+            return login.InvalidSessionToken()
 
 def process_check_username(db, request):
     uname = request.username
-    print uname
+
     if check_username_duplicate(db, uname):
         return login.CheckUsernameSuccess()
     else :

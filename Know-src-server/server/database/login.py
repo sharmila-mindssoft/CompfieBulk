@@ -15,7 +15,8 @@ __all__ = [
     "delete_used_token", "remove_session",
     "save_login_failure", "delete_login_failure_history",
     "get_login_attempt_and_time", "save_login_details",
-    "validate_email_token", "check_username_duplicate"
+    "validate_email_token", "check_username_duplicate",
+    "verify_new_password"
 ]
 
 
@@ -35,16 +36,16 @@ def verify_login(db, username, password):
     '''
     user_info = forms = response = {}
 
-    if len(result[1]) == 0 and len(result[0]) > 0 :
+    if len(result[1]) == 0 and len(result[0]) > 0:
         user_id = result[0][0].get("user_id")
         username = result[0][0].get("username")
         is_login = False
 
-    elif len(result[1]) == 0 and len(result[0]) == 0 :
+    elif len(result[1]) == 0 and len(result[0]) == 0:
         user_id = None
         username = None
         is_login = False
-    else :
+    else:
         is_login = True
         user_id = result[1][0].get("user_id")
         user_category_id = result[1][0].get('user_category_id')
@@ -60,6 +61,7 @@ def verify_login(db, username, password):
             user_info = result[2]
             forms = result[3]
     return (is_login, user_id, username, response, user_info, forms)
+
 
 ########################################################
 # To clear user session
@@ -121,6 +123,13 @@ def verify_password(db, password, user_id):
     else:
         return True
 
+def verify_new_password(db, new_password, user_id):
+    encrypted_password = encrypt(new_password)
+    row = db.call_proc("sp_verify_password", (user_id,encrypted_password,))
+    if(int(row[0]["count"]) <= 0):
+        return True
+    else:
+        return False
 
 ########################################################
 # Check whether the given reset token is valid
@@ -133,8 +142,10 @@ def validate_reset_token(db, reset_token):
         tblEmailVerification, email_verification_column,
         email_verification_condition, email_verification_condition_val
     )
+    print email_verification_rows
     if email_verification_rows:
-        user_id = email_verification_rows[0]["user_id"]
+        user_id = email_verification_rows[0]['user_id']
+        print "userid-=-", user_id
         if user_id == 0:  # Returning if user is admin
             return user_id
         else:  # Checking if user is active

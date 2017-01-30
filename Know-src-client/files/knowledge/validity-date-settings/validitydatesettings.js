@@ -7,6 +7,13 @@ country_names = {}
 domain_names = {}
 values_to_save = []
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function initialize(){
   function onSuccess(data) {
     COUNTRIES = data["countries"];
@@ -19,11 +26,14 @@ function initialize(){
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getValidityDateList(function (error, response) {
     if (error == null) {
       onSuccess(response);
+      hideLoader();
     } else {
       onFailure(error);
+      hideLoader();
     }
   });
 }
@@ -43,6 +53,8 @@ function initialize_maps(){
 
 function loadValidityDatesList(){
   var count = 0;
+  $('.tbody-validity-config-list').empty();
+
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     ++ count;
     if(domain_list.length > 0){
@@ -78,9 +90,11 @@ function loadValidityDatesList(){
   });
   if(count <= 0){
     $("#btn-submit").hide();
-    var clone = $(".no-records tr").clone();
+    $('.tbody-validity-config-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
     $('.tbody-validity-config-list').append(clone);
-
   }
 }
 
@@ -93,23 +107,50 @@ function save_validity_date_settings() {
   if(result != false && values_to_save.length > 0){
     function onSuccess(data) {
       displaySuccessMessage(message.settings_save_success);
+      initialize();
     }
-    function onFailure(error) {
-      displayMessage(error);
+    function onFailure(error, response) {
+      if(error == "SaveValidityDateSettingsFailure")
+      {
+        var msgText = '';
+        for(var i=0;i<COUNTRIES.length;i++){
+          if(COUNTRIES[i].country_id == response.country_id){
+            msgText = COUNTRIES[i].country_name;
+            break;
+          }
+        }
+        for(var i=0;i<DOMAINS.length;i++){
+          if(DOMAINS[i].domain_id == response.domain_id){
+            msgText =  "Enter days between 1 to 366 for "+DOMAINS[i].domain_name+" under "+msgText;
+            break;
+          }
+        }
+        displayMessage(msgText);
+      }else{
+        displayMessage(error);
+      }
     }
+    displayLoader();
     mirror.saveValidityDateSettings(
       values_to_save, function (error, response) {
       if (error == null) {
         onSuccess(response);
+        hideLoader();
       } else {
-        onFailure(error);
+        onFailure(error, response);
+        hideLoader();
       }
     });
   }
+  else{
+        if(values_to_save.length == 0)
+          displayMessage(message.validity_date_required);
+      }
 }
 
 function collect_and_validate_values(){
   values_to_save = []
+  var returnVal = true;
   $.each(COUNTRY_DOMAIN_MAPPINGS, function (country_id, domain_list) {
     for (var dcount = 0; dcount < domain_list.length; dcount++) {
       domain_id = parseInt(domain_list[dcount])
@@ -121,8 +162,21 @@ function collect_and_validate_values(){
           validity_days != null
       ){
         if ((parseInt(validity_days) > 366)){
-          displayMessage(message.invalid_validity_days);
-          return false;
+          var msgText = '';
+          for(var i=0;i<COUNTRIES.length;i++){
+            if(COUNTRIES[i].country_id == country_id){
+              msgText = COUNTRIES[i].country_name;
+              //break;
+            }
+          }
+          for(var i=0;i<DOMAINS.length;i++){
+            if(DOMAINS[i].domain_id == domain_id){
+              msgText =  "Enter days between 1 to 366 for "+DOMAINS[i].domain_name+" under "+msgText;
+              //break;
+            }
+          }
+          displayMessage(msgText);
+          returnVal =false;
           break;
         }
         if(validity_days_id){
@@ -133,13 +187,16 @@ function collect_and_validate_values(){
           parseInt(validity_days)
         )
         values_to_save.push(value)
-      }else{
-        displayMessage(message.validity_date_required);
-        return false;
-        break;
+
       }
+      /*else{
+        displayMessage(message.validity_date_required);
+        returnVal = false;
+        break;
+      }*/
     }
   });
+  return returnVal;
 }
 
 //initialization

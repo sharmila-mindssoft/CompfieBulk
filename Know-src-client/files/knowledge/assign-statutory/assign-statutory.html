@@ -1,72 +1,5 @@
 {% extends "files/knowledge/common/html/container.html" %}
 {% block content %}
-
-<style>
-.gt input[type="checkbox"] {
-display: none !important;
-}
-.gt input[type="radio"] {
-display: none !important;
-}
-.gt input[type="radio"]+label {
-background: url('images/tick1boldinactive.png') no-repeat;
-height:17px;
-padding-left: 18px;
-cursor: pointer;
-}
-.gt input[type="radio"]:checked + label {
-background: url('images/tick1bold.png') no-repeat;
-height:17px;
-cursor: pointer;
-}
-.gt_blue input[type="radio"] + label {
-    background: url('images/tick1bold.png') no-repeat;
-    height:17px;
-    cursor: pointer;
-}
-.gt-cross input[type="radio"] {
-display: none !important;
-}
-.gt-cross input[type="radio"]+label {    
-background: url('images/deleteboldinactive.png') no-repeat;
-height:17px;
-padding-left: 18px;
-cursor: pointer;
-}
-.gt-cross input[type="radio"]:checked + label {
-background: url('images/deletebold.png') no-repeat;
-height:17px;
-cursor: pointer;
-}
-.gt-minus input[type="radio"] {
-display: none !important;
-}
-.gt-minus input[type="radio"]+label {    
-background: url('images/iconminusinactive.png') no-repeat;
-height:17px;
-padding-left: 18px;
-cursor: pointer;
-}
-.gt-minus input[type="radio"]:checked + label {
-background: url('images/iconminusactive.png') no-repeat;
-height:17px;
-cursor: pointer;
-}
-.gt-one input[type="checkbox"] {
-display: none !important;
-}
-.gt-one input[type="checkbox"]+label {    
-    background: url('images/deletebold.png') no-repeat;
-    height:17px;
-    padding-left: 18px;
-    cursor: pointer;
-}
-.gt-one input[type="checkbox"]:checked + label {
-    background: url('images/tick1boldinactive.png') no-repeat;
-    height:17px;
-    cursor: pointer;
-}
-</style>
 <div class="container" id="assignstatutory-view">
   <div class="row">
     <div class="col-sm-12">
@@ -205,7 +138,7 @@ display: none !important;
                                           <div class="form-group  clearfix m-b-10">
                                               <label class="col-sm-4 control-label">Group <span class="mandatory">*</span></label>
                                               <div class="col-sm-6 has-feedback">
-                                                  <input class="form-control input-sm" type="text" value="" id="group_name">
+                                                  <input class="form-control input-sm" type="text" value="" id="group_name" tabindex="1">
                                                   <i class="form-control-feedback fa fa-search"></i>
                                                   <input type="hidden" id="group_id" value="">
                                                   <div id="ac-group" class="ac-textbox default-display-none">
@@ -216,7 +149,7 @@ display: none !important;
                                           <div class="form-group clearfix m-b-10 has-feedback">
                                               <label class="col-sm-4 control-label">Legal Entity <span class="mandatory">*</span></label>
                                               <div class="col-sm-6 has-feedback">
-                                                  <input class="form-control input-sm" type="text" value="" id="legal_entity_name">
+                                                  <input class="form-control input-sm" type="text" value="" id="legal_entity_name" tabindex="3">
                                                   <i class="form-control-feedback fa fa-search"></i>
                                                   <input type="hidden" id="legal_entity_id" value="">
                                                   <div id="ac-entity" class="ac-textbox default-display-none">
@@ -227,7 +160,7 @@ display: none !important;
                                           <div class="form-group clearfix m-b-10">
                                               <label class="col-sm-4 control-label">Category </label>
                                               <div class="col-sm-6 has-feedback">
-                                                  <input class="form-control input-sm" type="text" value="" id="category_name">
+                                                  <input class="form-control input-sm" type="text" value="" id="category_name" tabindex="5">
                                                   <i class="form-control-feedback fa fa-search"></i>
                                                   <input type="hidden" id="category_id">
                                                   <div id="ac-category" class="ac-textbox default-display-none">
@@ -240,7 +173,7 @@ display: none !important;
                                           <div class="form-group  clearfix m-b-10">
                                               <label class="col-sm-4 control-label">Business Group</label>
                                               <div class="col-sm-6 has-feedback">
-                                                  <input class="form-control input-sm" type="text" value="" id="business_group_name">
+                                                  <input class="form-control input-sm" type="text" value="" id="business_group_name" tabindex="2">
                                                   <i class="form-control-feedback fa fa-search"></i>
                                                   <input type="hidden" id="business_group_id">
                                                   <div id="ac-business-group" class="ac-textbox default-display-none">
@@ -251,7 +184,7 @@ display: none !important;
                                           <div class="form-group clearfix m-b-10 has-feedback">
                                               <label class="col-sm-4 control-label">Division</label>
                                               <div class="col-sm-6 has-feedback">
-                                                  <input class="form-control input-sm" type="text" value="" id="division_name"> 
+                                                  <input class="form-control input-sm" type="text" value="" id="division_name" tabindex="4"> 
                                                   <i class="form-control-feedback fa fa-search"></i>
                                                   <input type="hidden" id="division_id">
                                                   <div id="ac-division" class="ac-textbox default-display-none">
@@ -262,7 +195,7 @@ display: none !important;
                                           <div class="form-group clearfix m-b-10">
                                               <label class="col-sm-4 control-label">Domain <span class="mandatory">*</span></label>
                                               <div class="col-sm-6 has-feedback">
-                                                  <input class="form-control input-sm" type="text" value="" id="domain_name">
+                                                  <input class="form-control input-sm" type="text" value="" id="domain_name" tabindex="6">
                                                   <i class="form-control-feedback fa fa-search"></i>
                                                   <input type="hidden" id="domain_id" value="">
                                                   <div id="ac-domain" class="ac-textbox default-display-none">
@@ -276,7 +209,7 @@ display: none !important;
                                   <div class="clearfix"></div>
                                   <center>
                                       <div class="form-group m-t-10">
-                                          <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
+                                          <button class="btn btn-primary waves-effect waves-light btn-show" type="button" tabindex="7"> Show </button>
                                       </div>
                                   </center>
                                   
@@ -291,7 +224,7 @@ display: none !important;
                                           <tr>
                                                   <td>
                                                       <div class="form-group has-feedback col-sm-6 m-b-0 no-padding">
-                                                          <input class="form-control input-sm" placeholder="Enter Unit" type="text">
+                                                          <input class="form-control input-sm" placeholder="Enter Unit" type="text" id="unit-search">
                                                           <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                       </div>
                                                       <div class="form-group col-sm-6 m-b-0 no-padding">
@@ -336,7 +269,7 @@ display: none !important;
                               </div>
 
                               <div class="total_count_view default-display-none">
-                                <br> Total Records: <span class="total_count"></span>
+                                 <br> <span class="total_count"></span>
                               </div>
 
                               <ul class="pager wizard m-b-0 m-t-10">
@@ -398,8 +331,8 @@ display: none !important;
                     aria-expanded="true" >
                     <span></span>
                 <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
-                      <label class="col-sm-3 control-label p-t-5">Remarks:</label>
-                      <div class="col-sm-9 no-padding">
+                      <label class="col-sm-3 control-label p-t-5" style="margin-right: 10px;">Remarks:</label>
+                      <div class="col-sm-8 no-padding">
                       <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
                       </div>
 
@@ -455,17 +388,17 @@ display: none !important;
 
           </td>
           <td align="center" class="gt">
-              <input type="radio" class="comp compliance-ck-box-1">
+              <input type="radio" class="comp compliance-ck-box-1" value="1">
               <label class="compliance-label-1"></label>
           </td>
 
           <td align="center" class="gt-cross">
-              <input type="radio" class="comp compliance-ck-box-2">
+              <input type="radio" class="comp compliance-ck-box-2" value="2">
               <label class="compliance-label-2"></label>
           </td>
 
           <td align="center" class="gt-minus">
-              <input type="radio" class="comp compliance-ck-box-3">
+              <input type="radio" class="comp compliance-ck-box-3" value="3">
               <label class="compliance-label-3"></label>
           </td>
 
@@ -493,8 +426,8 @@ display: none !important;
                     aria-expanded="true" >
                     <span></span>
                   <div class="controls pull-right m-t-m-5 r-view" style="display:none;">
-                      <label class="col-sm-3 control-label p-t-5">Remarks:</label>
-                      <div class="col-sm-9 no-padding">
+                      <label class="col-sm-3 control-label p-t-5" style="margin-right: 10px;">Remarks:</label>
+                      <div class="col-sm-8 no-padding">
                       <input type="text" class="form-control input-sm remarks" placeholder="Enter Remarks" /> 
                       </div>
 
@@ -592,17 +525,17 @@ display: none !important;
         <td width="15%" class="unit-locatiion"></td>
         <td width="15%" colspan="2" class="unit-name"></td>
         <td align="center" class="gt">
-            <input type="radio" class="comp compliance-ck-box-1">
+            <input type="radio" class="comp compliance-ck-box-1" value="1">
             <label class="compliance-label-1"></label>
         </td>
 
         <td align="center" class="gt-cross">
-            <input type="radio" class="comp compliance-ck-box-2">
+            <input type="radio" class="comp compliance-ck-box-2" value="2">
             <label class="compliance-label-2"></label>
         </td>
 
         <td align="center" class="gt-minus">
-            <input type="radio" class="comp compliance-ck-box-3">
+            <input type="radio" class="comp compliance-ck-box-3" value="3">
             <label class="compliance-label-3"></label>
         </td>
         <td width="1%"></td>
@@ -619,9 +552,6 @@ display: none !important;
     <td colspan="100%" align="center"> No Records Found</td>
     </tr>
 </table>
-
-<!-- <script type="text/javascript" src="/js/wizard/jquery.bootstrap.wizard.js"></script>
- -->
 <script type="text/javascript" src="/script/assign-statutory/assign-statutory.js"></script>
 
 <script type="text/javascript">

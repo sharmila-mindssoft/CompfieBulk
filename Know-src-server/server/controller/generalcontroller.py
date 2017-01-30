@@ -1,4 +1,6 @@
+from werkzeug import secure_filename
 import os
+from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import core, login, general, possiblefailure
 from server.constants import (
     FILE_TYPES,
@@ -14,6 +16,7 @@ from server.database.general import (
     verify_password,
     get_messages,
     get_statutory_notifications,
+    update_statutory_notification_status,
     get_audit_trail_filters
 )
 
@@ -79,6 +82,9 @@ def process_general_request(request, db):
 
     elif type(request_frame) is general.GetAuditTrails:
         result = process_get_audit_trails(db, request_frame, user_id)
+
+    elif type(request_frame) is general.ExportAuditTrails:
+        result = process_export_audit_trails(db, request_frame, user_id)
 
     elif type(request_frame) is general.GetAuditTrailsFilter:
         result = process_get_audit_trails_filter(db, request_frame, user_id)
@@ -174,13 +180,13 @@ def process_change_domain_status(db, request, user_id):
     is_active = request.is_active
     domain_id = int(request.domain_id)
     if is_active is False:
-        if is_transaction_exists_for_domain(db, domain_id):
-            if (update_domain_status(db, domain_id, is_active, user_id)):
-                return general.ChangeDomainStatusSuccess()
-            else:
-                return general.InvalidDomainId()
+        # if is_transaction_exists_for_domain(db, domain_id):
+        if (update_domain_status(db, domain_id, is_active, user_id)):
+            return general.ChangeDomainStatusSuccess()
         else:
-            return general.TransactionExists()
+            return general.InvalidDomainId()
+        # else:
+        #     return general.TransactionExists()
     else:
         if (update_domain_status(db, domain_id, is_active, user_id)):
             return general.ChangeDomainStatusSuccess()
@@ -274,23 +280,32 @@ def process_get_countries(db, user_id):
 # To retrieve all the audit trails of the given User
 ########################################################
 def process_get_audit_trails(db, request, session_user):
-    print "inside controller"
     from_count = request.record_count
     to_count = request.page_count
     from_date = request.from_date
     to_date = request.to_date
     user_id = request.user_id_search
     form_id = request.form_id_search
-    country_id = request.country_id
     category_id = request.category_id
     audit_trails = get_audit_trails(
         db,
         session_user, from_count, to_count,
         from_date, to_date, user_id, form_id,
-        country_id, category_id
+        category_id
     )
     return audit_trails
 
+########################################################
+# To retrieve all the audit trails of the given User
+########################################################
+def process_export_audit_trails(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "AuditTraiReport"
+        )
+        return general.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
 
 ########################################################
 # To retrieve all the audit trails filter data - user, categories
@@ -330,9 +345,9 @@ def process_uploaded_file(info, f_type, client_id=None):
     res = None
     for k in info_keys:
         try:
-            file_info = info[k][0]
-            file_name = file_info.file_name()
-            file_content = file_info.body()
+            file_info = info[k]
+            file_name = file_info.filename
+            file_content = file_info.read()
             f_name = file_name.split('.')
             if len(f_name) == 1:
                 res = possiblefailure.InvalidFile()
@@ -349,15 +364,8 @@ def process_uploaded_file(info, f_type, client_id=None):
                     res = possiblefailure.FileMaxLimitExceed()
                     is_valid = False
 
-        except Exception, e:
-            print e
-    if is_valid:
-        lst = []
-        for k in info_keys:
-            try:
-                file_info = info[k][0]
-                file_name = file_info.file_name()
-                file_content = file_info.body()
+            if is_valid :
+                lst = []
                 if f_type == "knowledge":
                     file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
                 else:
@@ -372,11 +380,11 @@ def process_uploaded_file(info, f_type, client_id=None):
                         None
                     )
                     lst.append(file_response)
-            except Exception, e:
-                print e
-        res = general.FileUploadSuccess(lst)
-    else:
-        print "is_valid ", is_valid
+                res = general.FileUploadSuccess(lst)
+
+        except Exception, e:
+            print e
+
     return res
 
 ########################################################
@@ -428,4 +436,3 @@ def process_update_statutory_notification_status(db, request, session_user):
         return general.UpdateStatutoryNotificationStatusSuccess()
     else:
         raise process_error("E029")
-

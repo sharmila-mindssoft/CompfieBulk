@@ -6,6 +6,7 @@ from server.common import (
     get_date_time
 )
 from server.database.tables import *
+from server.database.forms import *
 
 __all__ = [
     "get_industries", "get_active_industries",
@@ -35,7 +36,11 @@ __all__ = [
 STATUTORY_PARENTS = {}
 GEOGRAPHY_PARENTS = {}
 
-
+#############################################################################
+# To get industries list
+# Parameter(s) : Object of database
+# Return Type : List of Object of Organization
+#############################################################################
 def get_industries(db):
     columns = [
         "country_id", "country_name",
@@ -46,6 +51,11 @@ def get_industries(db):
     result = db.call_proc("sp_industry_master_getindustries", (), columns)
     return return_industry(result)
 
+#############################################################################
+# To get industries by id
+# Parameter(s) : Object of database, industry id
+# Return Type : List of Object of Organization
+#############################################################################
 def get_industry_by_id(db, industry_id):
     if type(industry_id) is int:
         values_list = [industry_id]
@@ -89,7 +99,11 @@ def return_industry(data):
         ))
     return results
 
-
+######################################################################################
+# To get count of organziation by id
+# Parameter(s) : Object of database, industry id, industry name, country id, domain id
+# Return Type : Count of organization
+######################################################################################
 def check_duplicate_industry(db, country_id, domain_id, industry_name, industry_id):
     isDuplicate = False
 
@@ -105,7 +119,11 @@ def check_duplicate_industry(db, country_id, domain_id, industry_name, industry_
 
     return isDuplicate
 
-
+######################################################################################
+# To Save organziation
+# Parameter(s) : Object of database, industry id, industry name, country id, domain id
+# Return Type : Return value of the organization saved
+######################################################################################
 def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     # table_name = "tbl_industries"
     created_on = get_date_time()
@@ -114,12 +132,16 @@ def save_industry(db, country_ids, domain_ids, industry_name, user_id):
     new_id = db.call_insert_proc("sp_industry_master_saveindustry", values)
     if new_id is False:
         raise process_error("E001")
-    else:
-        action = "New Industry type %s added" % (industry_name)
-        db.save_activity(user_id, 7, action)
+    else :
+        action = "New Organization type %s added" % (industry_name)
+        db.save_activity(user_id, frmOrganizationMaster, action)
         return True
 
-
+######################################################################################
+# To Update organziation
+# Parameter(s) : Object of database, industry id, industry name, country id, domain id
+# Return Type : Return value of the organization updated
+######################################################################################
 def update_industry(db, country_ids, domain_ids, industry_id, industry_name, user_id):
     new_id = False
     oldData = get_industry_by_id(db, industry_id)
@@ -129,13 +151,17 @@ def update_industry(db, country_ids, domain_ids, industry_id, industry_name, use
     values = [industry_id, industry_name, country_ids, domain_ids, str(user_id)]
     new_id = db.call_update_proc("sp_industry_master_updateindustry", values)
     if new_id is True:
-        action = "Industry type %s updated" % (industry_name)
-        db.save_activity(user_id, 7, action)
+        action = "Organization type %s updated" % (industry_name)
+        db.save_activity(user_id, frmOrganizationMaster, action)
         return True
     else:
         raise process_error("E002")
 
-
+######################################################################################
+# To Update organziation Status
+# Parameter(s) : Object of database, industry id, status, user id
+# Return Type : Return value of the organization status updated
+######################################################################################
 def update_industry_status(db, industry_id, is_active, user_id):
     oldData = get_industry_by_id(db, industry_id)
     if oldData is None:
@@ -148,13 +174,17 @@ def update_industry_status(db, industry_id, is_active, user_id):
         else:
             status = "activated"
 
-        action = "Industry type %s status - %s" % (oldData, status)
-        db.save_activity(user_id, 7, action)
+        action = "Organization type %s status - %s" % (oldData, status)
+        db.save_activity(user_id, frmOrganizationMaster, action)
         return True
     else:
         raise process_error("E003")
 
-
+######################################################################################
+# To Get Statutory Nature name by id
+# Parameter(s) : Object of database, nature id
+# Return Type : Return statutory nature name
+######################################################################################
 def get_nature_by_id(db, nature_id):
     if type(nature_id) is int:
         values_list = [nature_id]
@@ -166,7 +196,11 @@ def get_nature_by_id(db, nature_id):
         nature_name = r["statutory_nature_name"]
     return nature_name
 
-
+######################################################################################
+# To Get Statutory Nature
+# Parameter(s) : Object of database, nature id
+# Return Type : Return list of statutory nature
+######################################################################################
 def get_statutory_nature(db):
     columns = [
         "statutory_nature_id", "statutory_nature_name", "country_id", "country_name",
@@ -190,7 +224,11 @@ def return_statutory_nature(data):
         ))
     return results
 
-
+######################################################################################
+# To check dupliacte Statutory Nature
+# Parameter(s) : Object of database, nature id, nature name, country id
+# Return Type : Return count of the statutory nature list under the parameter
+######################################################################################
 def check_duplicate_statutory_nature(db, nature_name, country_id, nature_id):
     isDuplicate = False
     if nature_id is not None:
@@ -204,7 +242,11 @@ def check_duplicate_statutory_nature(db, nature_name, country_id, nature_id):
             isDuplicate = True
     return isDuplicate
 
-
+######################################################################################
+# To Save Statutory Nature
+# Parameter(s) : Object of database, country id, nature name, user id
+# Return Type : Return value of the saved staturtory nature
+######################################################################################
 def save_statutory_nature(db, nature_name, country_id, user_id):
     created_on = get_date_time()
     # columns = ["statutory_nature_name", "country_id", "created_by", "created_on"]
@@ -214,10 +256,14 @@ def save_statutory_nature(db, nature_name, country_id, user_id):
         raise process_error("E004")
     else:
         action = "New Statutory Nature %s added" % (nature_name)
-        db.save_activity(user_id, 8, action)
+        db.save_activity(user_id, frmStatutoryNatureMaster, action)
         return True
 
-
+######################################################################################
+# To Update Statutory Nature
+# Parameter(s) : Object of database, nature id, nature name, country id, user id
+# Return Type : Return updated value of statutory nature
+######################################################################################
 def update_statutory_nature(db, nature_id, nature_name, country_id, user_id):
     oldData = get_nature_by_id(db, nature_id)
     if oldData is None:
@@ -228,12 +274,16 @@ def update_statutory_nature(db, nature_id, nature_name, country_id, user_id):
 
     if new_id is True:
         action = "Statutory Nature '%s' updated" % (nature_name)
-        db.save_activity(user_id, 8, action)
+        db.save_activity(user_id, frmStatutoryNatureMaster, action)
         return True
     else:
         raise process_error("E005")
 
-
+######################################################################################
+# To update Statutory Nature status
+# Parameter(s) : Object of database, nature id, status, user id
+# Return Type : Return value of the updated statutory nature status
+######################################################################################
 def update_statutory_nature_status(db, nature_id, is_active, user_id):
     oldData = get_nature_by_id(db, nature_id)
     if oldData is None:
@@ -247,16 +297,18 @@ def update_statutory_nature_status(db, nature_id, is_active, user_id):
             status = "activated"
 
         action = "Statutory nature %s status  - %s" % (oldData, status)
-        db.save_activity(user_id, 8, action)
+        db.save_activity(user_id, frmStatutoryNatureMaster, action)
         return True
     else:
         raise process_error("E006")
 
-
+######################################################################################
+# To Get Statutory Level
+# Parameter(s) : Object of database
+# Return Type : Return list of statutory levels
+######################################################################################
 def get_statutory_levels(db):
     result = db.call_proc("sp_get_statutory_level_master", ())
-    print "sl"
-    print result
     return return_statutory_levels(result)
 
 
@@ -284,14 +336,15 @@ def return_statutory_levels(data):
 
 def delete_statutory_level(db, level_id):
     row = db.call_proc("sp_get_statutory_level_count", (level_id,))
-    if row[0] > 0:
+    if row[0]['cnt'] > 0:
         return True
     else:
         res = db.call_proc(
             "sp_delete_statutory_level", [level_id]
         )
-        if res is False :
+        if res is False:
             raise process_error("E009")
+
 
 def save_statutory_levels(db, country_id, domain_id, levels, user_id):
     table_name = "tbl_statutory_levels"
@@ -299,22 +352,22 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
     newlist = sorted(levels, key=lambda k: k.level_position, reverse=True)
     result = False
     s_l_id = None
-    for n in newlist :
-        if n.is_remove is True :
+    for n in newlist:
+        if n.is_remove is True:
             result = delete_statutory_level(db, n.level_id)
-            if result :
+            if result:
                 s_l_id = n.level_position
                 break
-            else :
+            else:
                 continue
-    if result :
+    if result:
         return knowledgemaster.LevelShouldNotbeEmpty(s_l_id)
 
     for level in levels:
         name = level.level_name
         position = level.level_position
         values = []
-        if level.is_remove :
+        if level.is_remove:
             continue
 
         if level.level_id is None:
@@ -328,20 +381,18 @@ def save_statutory_levels(db, country_id, domain_id, levels, user_id):
             new_id = db.call_insert_proc("sp_insert_statutory_level", values)
             if new_id is not False:
                 action = "New Statutory levels added"
-                db.save_activity(user_id, 9, action)
+                db.save_activity(user_id, frmStatutoryLevelMaster, action)
             else:
                 raise process_error("E007")
         else:
-            print "names"
             values = [position, name, level.level_id, user_id]
-            print name
             if (
                 db.call_update_proc(
                     "sp_update_statutory_levels", values
                 )
             ):
                 action = "Statutory levels updated"
-                db.save_activity(user_id, 9, action)
+                db.save_activity(user_id, frmStatutoryLevelMaster, action)
             else:
                 raise process_error("E008")
     return knowledgemaster.SaveStatutoryLevelSuccess()
@@ -389,7 +440,7 @@ def get_geograhpy_levels_for_user(db, user_id):
 
 def delete_grography_level(db, level_id):
     q = db.call_proc("sp_check_level_in_geographies", (level_id,))
-    if q[0] > 0:
+    if q[0]['cnt'] > 0:
         return True
     else:
         res = db.call_proc("sp_delete_geographylevel", (level_id,))
@@ -428,7 +479,7 @@ def save_geography_levels(db, country_id, levels, user_id):
                 )
             ):
                 action = "Geography levels updated"
-                db.save_activity(user_id, 5, action)
+                db.save_activity(user_id, frmGeographyLevelMaster, action)
             else:
                 raise process_error("E011")
 
@@ -440,7 +491,7 @@ def save_geography_levels(db, country_id, levels, user_id):
             new_id = db.call_insert_proc("sp_save_geographylevel_master", values)
             if new_id is not False:
                 action = "New Geography levels added"
-                db.save_activity(user_id, 5, action)
+                db.save_activity(user_id, frmGeographyLevelMaster, action)
             else:
                 raise process_error("E010")
 
@@ -541,7 +592,7 @@ def save_geography(
         raise process_error("E012")
     else:
         action = "New Geography %s added" % (geography_name)
-        db.save_activity(user_id, 6, action)
+        db.save_activity(user_id, frmGeographyMaster, action)
         return True
 
 
@@ -555,22 +606,21 @@ def update_geography(
     values = [geography_id, name, parent_ids, parent_names, updated_by]
     if (db.call_update_proc("sp_update_geography_master", values)):
         action = "Geography - %s updated" % name
-        db.save_activity(updated_by, 6, action)
+        db.save_activity(updated_by, frmGeographyMaster, action)
 
-        if len(parent_ids[:-1]) == 1 :
+        if len(parent_ids[:-1]) == 1:
             # p_ids = tuple([parent_ids[:-1], str(geography_id)])
             # p_ids = parent_ids[:-1] + "," + str(geography_id)
             p_ids = parent_ids[:-1]
-        else :
+        else:
             p_ids = None
             i = 0
             p_new_id = parent_ids[:-1].split(',')
             for p_ids_len in p_new_id:
-                print p_ids_len[i]
                 if p_ids is None:
-                    p_ids = p_ids_len[i] + ","
+                    p_ids = p_ids_len + ","
                 else:
-                    p_ids = p_ids + p_ids_len[i]
+                    p_ids = p_ids + p_ids_len
                 i = i + 1
         result = db.call_proc("sp_get_geography_master", [geography_id, p_ids], ())
 
@@ -583,17 +633,14 @@ def update_geography(
             else:
                 map_name = ""
                 x = row["parent_ids"].strip().split(',')
-                print "x"
-                print x
                 for j in x[:-1]:
-                    print "j"
-                    print int(j)
+                    if j > len(result):
+                        continue
                     if int(j) == int(geography_id) :
                         map_name += name + " >> "
                     else :
-                        print "1:"
-                        print int(j)
                         map_name += result[int(j)]["geography_name"] + " >> "
+
                 row["parent_ids"] = tuple(x[:-1])
 
             map_name += row["geography_name"]
@@ -643,7 +690,7 @@ def change_geography_status(db, geography_id, is_active, updated_by):
         action = "Geography %s status - %s" % (
             oldData[0]["geography_name"], status
         )
-        db.save_activity(updated_by, 6, action)
+        db.save_activity(updated_by, frmGeographyMaster, action)
         return True
     else:
         raise process_error("E014")
@@ -675,7 +722,7 @@ def save_statutory(db, name, level_id, parent_ids, parent_names, user_id):
         raise process_error("E015")
     else:
         action = "Statutory - %s added" % name
-        db.save_activity(user_id, 10, action)
+        db.save_activity(user_id, frmStatutoryMapping, action)
         return True
 
 
@@ -695,19 +742,28 @@ def update_statutory(
     values = [name, str(updated_by), statutory_id]
     if (db.update(table_name, columns, values, where_condition)):
         action = "Statutory - %s updated" % name
-        db.save_activity(updated_by, 10, action)
+        db.save_activity(updated_by, frmStatutoryMapping, action)
         qry = "SELECT statutory_id, statutory_name, parent_ids " + \
             " from tbl_statutories " + \
             " WHERE find_in_set(%s, parent_ids)"
         result = db.select_all(qry, [statutory_id])
-        print qry, statutory_id
-        print result
 
         for row in result:
             if row["parent_ids"] == "0,":
                 row["parent_ids"] = statutory_id
             else:
                 row["parent_ids"] = row["parent_ids"][:-1]
+            pids = [int(x) for x in row["parent_ids"].split(',')]
+            pids.append(0)
+            pids = tuple(pids)
+
+            # q = "Update tbl_statutories , " + \
+            #     "(select p.statutory_id, (select  group_concat(p1.statutory_name SEPARATOR '>>')  " + \
+            #     "from tbl_statutories as p1 where statutory_id in %s )  as names from tbl_statutories as p  " + \
+            #     " where p.statutory_id = %s) as B " + \
+            #     " set tbl_statutories.parent_names = B.names  " + \
+            #     " where tbl_statutories.statutory_id = B.statutory_id  and tbl_statutories.statutory_id = %s "
+            # print q
 
             q = "Update tbl_statutories as A inner join ( " + \
                 " select p.statutory_id, (select " + \
@@ -718,15 +774,12 @@ def update_statutory(
                 " ) as B on A.statutory_id = B.statutory_id " + \
                 " set A.parent_names = B.names " + \
                 " where A.statutory_id = %s "
-            db.execute(
-                q, (
-                    row["parent_ids"], row["statutory_id"],
-                    row["statutory_id"]
-                )
-            )
+
+            db.execute(q, [row["parent_ids"], row["statutory_id"], row["statutory_id"]])
             action = "statutory name %s updated in child rows." % name
-            db.save_activity(updated_by, 10, action)
+            db.save_activity(updated_by, frmStatutoryMapping, action)
         return True
+
     else:
         raise process_error("E016")
 
@@ -832,7 +885,6 @@ def check_duplicate_statutory(
         where_qry += " AND domain_id = %s"
         param.append(domain_id)
 
-    print query + where_qry % (param)
     rows = db.select_all(query + where_qry, param)
     return rows
 

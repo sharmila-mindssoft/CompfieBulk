@@ -82,8 +82,8 @@ function PageControls() {
         var legalEntityList = REPORT._entities;
         if (legalEntityList.length == 0 && text_val != '')
             displayMessage(message.domainname_required);
-        var condition_fields = ["is_active", "c_id"];
-        var condition_values = [true, countryId.val()];
+        var condition_fields = ["c_id"];
+        var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -191,7 +191,6 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domainId.val(val[0]);
     domain.focus();
     clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
-    REPORT.fetchUnitList(val[0]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
@@ -241,33 +240,21 @@ ReassignHistory.prototype.loadSearch = function() {
 
 ReassignHistory.prototype.fetchSearchList = function() {
     t_this = this;
-    //var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"c_id":1,"le_name":"RG Legal Entity","is_active":true},{"le_id":2,"c_id":1,"le_name":"ABC Legal Entity","is_active":true}],"users":[{"u_id":1,"u_name":"Siva ","is_active":true},{"u_id":2,"u_name":"Hari","is_active":true}]}';
-    //var object = jQuery.parseJSON(jsondata);
-    client_mirror.getReassignedHistoryReportFilters(function(error, response) {
-        if (error == null) {
-            alert(t_this._countries.toSource());
-            t_this._countries = object.countries;
-            //t_this._entities = object.entities;
-            //t_this._users = object.users;
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
-    
+    t_this._countries = client_mirror.getUserCountry();
+    t_this._entities = client_mirror.getUserLegalEntity();
 };
 
 ReassignHistory.prototype.fetchDomainList = function(le_id) {
     t_this = this;
-    var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":2,"is_active":true},{"d_id":3,"d_name":"Employee Law","le_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._domains = object.domains;
-};
+    client_mirror.getReassignedHistoryReportFilters(parseInt(le_id), function(error, response) {
+        if (error == null) {
+            t_this._domains = response.domains;
+            t_this._units = response.units;
 
-ReassignHistory.prototype.fetchUnitList = function(dom_id) {
-    t_this = this;
-    var jsondata = '{"units":[{"u_id":1,"u_name":"RG Madurai Unit","u_code":"RG1034","address":"12 RJ Complex, Main road, Madurai, 625022","d_id":1,"is_active":true},{"u_id":2,"u_name":"RG Dindugal Unit","u_code":"RG1035","address":"10 RG Complex, Main road, Dindugal, 623020","d_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._units = object.units;
+        } else {
+            t_this.possibleFailures(error);
+        }
+    });
 };
 
 ReassignHistory.prototype.fetchActList = function(unit_id) {

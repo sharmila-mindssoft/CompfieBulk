@@ -134,10 +134,10 @@ function loadCountwiseResult(filterList) {
       var clone = tableRow.clone();
       $('.actname', clone).text(actname);
       $('.tbody-compliance').append(clone);
-      
+
       lastOccuranceid = 0;
       count++;
-      
+
     }
     var occurance = '';
     var occuranceid;
@@ -165,61 +165,7 @@ function loadCountwiseResult(filterList) {
     } else {
       $('.tbl_compliancetask', clone1).html('<a href= "' + download_url + '" target="_blank" download>' + compliance_name + '</a>');
     }
-    var sdateDesc = '';
-    var duration = filterList[entity].duration;
-    var duration_type_id = filterList[entity].d_type_id;
-    var repeats_every = filterList[entity].r_every;
-    var repeats_type_id = filterList[entity].r_type_id;
-    var statutory_date = filterList[entity].statu_dates;
-    var statutorydate = '';
-    var duration_type = '';
-    var repeats_type = '';
-    if (frequency_id == 4) {
-      if (duration_type_id == 1) {
-        duration_type = 'Day(s)';
-      } else {
-        duration_type = 'Hour(s)';
-      }
-      sdateDesc = 'To complete with in ' + duration + ' ' + duration_type;
-    } else if (frequency_id == 1) {
-      sdateDesc = '';
-    } else {
-      if (repeats_type_id == 1) {
-        repeats_type = 'Day(s)';
-      } else if (repeats_type_id == 2) {
-        repeats_type = 'Month(s)';
-      } else {
-        repeats_type = 'Year(s)';
-      }
-      sdateDesc = 'Every ' + repeats_every + ' ' + repeats_type;
-    }
-    if (frequency_id != 4) {
-      for (z = 0; z < statutory_date.length; z++) {
-        var sDay = '';
-        if (statutory_date[z].statutory_date != null)
-          sDay = statutory_date[z].statutory_date;
-        var sMonth = '';
-        if (statutory_date[z].statutory_month != null)
-          sMonth = statutory_date[z].statutory_month;
-        if (sMonth != '')
-          sMonth = getMonth_IntegertoString(sMonth);
-        statutorydate += sMonth + ' ' + sDay + ' ';
-        if (statutorydate.trim() != '')
-          statutorydate += ', ';
-      }
-      if (statutorydate.trim() != '') {
-        statutorydate = statutorydate.replace(/,\s*$/, '');
-        if (sdateDesc == '') {
-          statutorydate = statutorydate;
-        } else {
-          statutorydate = sdateDesc + ' ( ' + statutorydate + ' )';
-        }
-      } else {
-        statutorydate = sdateDesc;
-      }
-    } else {
-      statutorydate = sdateDesc;
-    }
+    var statutorydate = filterList[entity].summary;
     $('.tbl_description', clone1).text(filterList[entity].description);
     $('.tbl_penalconsequences', clone1).text(filterList[entity].p_consequences);
     $('.tbl_occurance', clone1).text(statutorydate);
@@ -233,7 +179,7 @@ function loadCountwiseResult(filterList) {
     lastActName = actname;
     lastOccuranceid = frequency_id;
   }
-  
+
   if (is_null == true) {
     hidePagePan();
   }
@@ -300,14 +246,11 @@ function processSubmit() {
       totalRecord = data.total_count;
       hideLoader();
 
-      $('.country').text(CountryVal.val());
-      $('.domain').text(DomainVal.val());
-
       if (totalRecord == 0) {
-        $('.ttbody-compliance').empty();
-        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+        $('.tbody-compliance').empty();
+        var tableRow4 = $('#nocompliance-templates .table-nocompliances-list .table-row');
         var clone4 = tableRow4.clone();
-        $('.no_records', clone4).text('No Records Found');
+        $('.tbl_norecords', clone4).text('No Records Found');
         $('.tbody-compliance').append(clone4);
         PaginationView.hide();
         ReportView.show();
@@ -404,13 +347,16 @@ function pageControls() {
     if(Country.val() != ''){
       condition_fields.push("country_ids");
       condition_values.push(Country.val());
+
+      var text_val = $(this).val();
+      commonAutoComplete(
+        e, ACDomain, Domain, text_val,
+        domainsList, "domain_name", "domain_id", function (val) {
+            onAutoCompleteSuccess(DomainVal, Domain, val);
+        }, condition_fields, condition_values);
+
     }
-    var text_val = $(this).val();
-    commonAutoComplete(
-      e, ACDomain, Domain, text_val,
-      domainsList, "domain_name", "domain_id", function (val) {
-          onAutoCompleteSuccess(DomainVal, Domain, val);
-      }, condition_fields, condition_values);
+
   });
 
   ItemsPerPage.on('change', function (e) {
@@ -423,6 +369,8 @@ function pageControls() {
 
   SubmitButton.click(function () {
     on_current_page = 1;
+    $('.country').text("Country: " + CountryVal.val());
+    $('.domain').text("Domain: " + DomainVal.val());
     processSubmit();
   });
 
@@ -431,7 +379,7 @@ function pageControls() {
     var condition_fields = [];
     var condition_values = [];
     if(Country.val() != '' && Domain.val() != ''){
-      condition_fields.push("country_ids");
+      condition_fields.push("country_id");
       condition_values.push(Country.val());
       condition_fields.push("domain_id");
       condition_values.push(Domain.val());
@@ -450,7 +398,7 @@ function pageControls() {
     var condition_fields = [];
     var condition_values = [];
     if(Country.val() != ''){
-      condition_fields.push("country_ids");
+      condition_fields.push("country_id");
       condition_values.push(Country.val());
     }
     commonAutoComplete(

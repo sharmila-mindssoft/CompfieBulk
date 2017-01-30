@@ -1,26 +1,17 @@
 import json
 from protocol import (core, knowledgereport)
-from server.common import (convert_to_dict)
+from server.common import (make_summary)
 from server.constants import KNOWLEDGE_FORMAT_DOWNLOAD_URL
-from server.database.knowledgemaster import (
-    GEOGRAPHY_PARENTS,
-    get_geographies,
-    get_industry_by_id
-)
 
 
 def get_geography_report(db):
     result = db.call_proc("sp_geographymaster_report_data", ())
-    print "geography report"
-    print result
 
     def return_report_data(result) :
         # mapping_dict = {}
         _list = []
         for item in result:
             geography_mapping = item["parent_names"]
-            print "geo mapping"
-            print geography_mapping
             is_active = bool(item["is_active"])
             country_id = item["country_id"]
             # _list = mapping_dict.get(country_id)
@@ -30,7 +21,6 @@ def get_geography_report(db):
                     country_id, geography_mapping, is_active
                 )
             )
-            print _list
         return _list
 
     # print bool(GEOGRAPHY_PARENTS)
@@ -50,18 +40,16 @@ def get_statutory_mapping_report(
         'sp_tbl_statutory_mappings_reportdata', [
             country_id, domain_id, industry_id, statutory_nature_id, geography_id,
             level_1_statutory_id, frequency_id, user_id, from_count, to_count
-        ], 4
+        ], 5
     )
     print [
             country_id, domain_id, industry_id, statutory_nature_id, geography_id,
             level_1_statutory_id, frequency_id, user_id, from_count, to_count
         ]
-    rcount = result[0][0]["count"]
-    records = result[1]
-    industry = result[2]
-    print industry
-    georecord = result[3]
-    print georecord
+    rcount = result[1][0]["count"]
+    records = result[2]
+    industry = result[3]
+    georecord = result[4]
     report_list = []
     for r in records:
         m_lst = json.loads(r["statutory_mapping"])
@@ -72,7 +60,7 @@ def get_statutory_mapping_report(
         mapping = m_lst[0].split(">>")
         act_name = mapping[0].strip()
 
-        statutory_provision += r["statutory_provision"]
+        statutory_provision += " >> " + r["statutory_provision"]
         compliance_task = r["compliance_task"]
         document_name = r["document_name"]
         if document_name == "None":
@@ -102,7 +90,7 @@ def get_statutory_mapping_report(
         g_names = []
         for g in georecord :
             if g["statutory_mapping_id"] == r["statutory_mapping_id"]:
-                g_names.append(g["parent_names"] + ' >> ' + g["geography_name"])
+                g_names.append(g["parent_names"])
 
         statutory_dates = r["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)
@@ -115,6 +103,7 @@ def get_statutory_mapping_report(
                 date.get("repeat_by")
             )
             date_list.append(s_date)
+        summary, sum_dates = make_summary(date_list, r["frequency_id"], r)
 
         info = knowledgereport.StatutoryMappingReport(
             r["country_name"],
@@ -136,7 +125,8 @@ def get_statutory_mapping_report(
             r["repeats_every"],
             r["duration_type_id"],
             r["duration"],
-            url
+            url,
+            summary
         )
         report_list.append(info)
     return report_list, rcount

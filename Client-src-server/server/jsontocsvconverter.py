@@ -1405,7 +1405,7 @@ class ConvertJsonToCSV(object):
         contract_from = request.contract_from
         contract_to = request.contract_to
         from_count = 0
-        page_count = 10
+        page_count = 100000
 
         if contract_from is not None:
             contract_from = string_to_datetime(contract_from).date()
@@ -1479,7 +1479,7 @@ class ConvertJsonToCSV(object):
         contract_from = request.contract_from
         contract_to = request.contract_to
         from_count = 0
-        page_count = 10
+        page_count = 100000
 
         if contract_from is not None:
             contract_from = string_to_datetime(contract_from).date()

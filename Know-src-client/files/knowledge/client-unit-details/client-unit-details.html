@@ -102,8 +102,8 @@
                                     <div class="col-sm-6">
                                         <select class="form-control input-sm" id="unit-status" tabindex="8">
                                             <option value="-1">Select</option>
-                                            <option value="false">Closed</option>
-                                            <option value="true">Active</option>
+                                            <option value="true">Closed</option>
+                                            <option value="false">Active</option>
                                         </select>
                                     </div>
                                 </div>
@@ -126,7 +126,7 @@
                                 <center>
                                     <div class="form-group m-b-0 m-t-5">
                                         <button class="btn btn-primary waves-effect waves-light" type="submit" id="show-button" tabindex="11"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit" tabindex="12"> Export </button>
+                                        <button class="btn btn-info waves-effect waves-light default-display-none" type="submit" id="export" tabindex="12"> Export </button>
                                     </div>
                                 </center>
                             </div>
@@ -186,7 +186,7 @@
                               entries
                               </span>
                             </td>
-                            <td style="width:650px;"></td>
+                            <td style="width:600px;"></td>
                             <td style="text-align:right;padding-right:10px;">
                               <ul id="pagination-rpt"></ul>
                             </td>
@@ -230,28 +230,44 @@
 <script type="text/javascript" src="/script/client-unit-details/clientdetailsreport.js"></script>
 <script type="text/javascript">
 $(function() {
-  $("#from-date" ).datepicker({
-  changeMonth: true,
-  changeYear: true,
-  numberOfMonths: 1,
-  dateFormat: "dd-M-yy",
-  monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-  onClose: function( selectedDate ) {
-  $( "#to-date" ).datepicker( "option", "minDate", selectedDate );
-  }
-});
-$( "#to-date" ).datepicker({
-changeMonth: true,
-changeYear: true,
-numberOfMonths: 1,
-dateFormat: "dd-M-yy",
-monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-onClose: function( selectedDate ) {
-$( "#from-date" ).datepicker( "option", "maxDate", selectedDate );
-}
-});
-});
+  $("#from-date").datepicker({
+        showButtonPanel: true,
+        closeText: 'Clear',
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ],
+        onClose: function(selectedDate) {
+            $("#to-date").datepicker("option", "minDate", selectedDate);
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
+        }
+
+    });
+
+    $("#to-date").datepicker({
+        showButtonPanel: true,
+        closeText: 'Clear',
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ],
+        onClose: function(selectedDate) {
+            $("#from-date").datepicker("option", "maxDate", selectedDate);
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
+        }
+    });
+});// "option", "maxDate", selectedDate
 </script>
 {% endblock %}

@@ -1,8 +1,11 @@
 import os
 import json
+import threading
 import traceback
 import jinja2
 import base64
+import random
+import string
 import mysql.connector.pooling
 from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
@@ -10,7 +13,7 @@ from functools import wraps
 import logging
 from lxml import etree
 from protocol import (
-    admin, consoleadmin, clientadminsettings,
+    admin, consoleadmin,
     general, knowledgemaster, knowledgereport, knowledgetransaction,
     login, technomasters, technoreports, technotransactions,
     clientcoordinationmaster, mobile, domaintransactionprotocol
@@ -31,7 +34,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    IS_DEVELOPMENT
+    IS_DEVELOPMENT, SESSION_CUTOFF
 )
 
 from server.templatepath import (
@@ -51,29 +54,15 @@ log.setLevel(logging.ERROR)
 # base config
 
 csrf = CsrfProtect()
-app.secret_key = "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
-app.config["WTF_CSRF_TIME_LIMIT"] = 500
-# app.config["CSRF_COOKIE_NAME"] = "_csrf_token"
+app.secret_key = "MGRkZjg2NTBiNGM0YzAzNmM1NTNhZTZhYTFiZjg1ZThjb21wZmllY29tcGZpZQ=="  # "0ddf8650b4c4c036c553ae6aa1bf85e8compfiecompfie"
+app.config["WTF_CSRF_TIME_LIMIT"] = 100000
+
 csrf.init_app(app)
 
 if IS_DEVELOPMENT:
     app.config["debug"] = True
 else:
     app.config["debug"] = False
-
-
-# @app.before_request
-# def make_session_time():
-#     session.permanent = True
-#     app.permanent_session_lifetime = timedelta(minutes=1)
-
-#
-# cors_handler
-#
-def cors_handler(response):
-    response.headers["Access-Control-Allow-Origin"] = "*"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    response.headers["Access-Control-Allow-Methods"] = "Post"
 
 
 #
@@ -119,25 +108,28 @@ class API(object):
         self._con_pool = con_pool
         # self._db_con = dbcon
         self._ip_addess = None
-        # self._remove_old_session()
+        self._remove_old_session()
 
-    # def _remove_old_session(self):
-    #     def on_return():
-    #         self._remove_old_session()
+    def _remove_old_session(self):
 
-    #     def on_session_timeout():
-    #         self._db.begin()
-    #         try:
-    #             self._db.clear_session(SESSION_CUTOFF)
-    #             self._db.commit()
-    #             on_return()
-    #         except Exception, e:
-    #             print e
-    #             self._db.rollback()
+        def on_session_timeout():
+            _db_con_clr = self._con_pool.get_connection()
+            _db_clr = Database(_db_con_clr)
+            _db_clr.begin()
+            try:
+                _db_clr.clear_session(SESSION_CUTOFF)
+                _db_clr.commit()
+                _db_con_clr.close()
 
-    #     self._io_loop.add_timeout(
-    #         time.time() + 1080, on_session_timeout
-    #     )
+                t = threading.Timer(500, on_session_timeout)
+                t.daemon = True
+                t.start()
+            except Exception, e:
+                print e
+                _db_clr.rollback()
+                _db_con_clr.close()
+
+        on_session_timeout()
 
     def _send_response(
         self, response_data, status_code
@@ -147,10 +139,10 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        print s
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
-        s = json.dumps(s)
-        print s
+        s = json.dumps(key+s)
+
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -159,14 +151,12 @@ class API(object):
     ):
         request_data = None
         try:
-            print request
-            print request.data
 
             if not request.data:
                 raise ValueError("Request data is Null")
-            print "-" * 10
-            data = request.data.decode('base64')
-            print data
+
+            data = request.data[5:]
+            data = data.decode('base64')
             data = json.loads(data)
             request_data = request_data_type.parse_structure(
                 data
@@ -190,7 +180,6 @@ class API(object):
         self, unbound_method, request_data_type
     ):
         self._ip_addess = request.remote_addr
-        # print request.environ['REMOTE_ADDR']
 
         def respond(response_data):
             return self._send_response(
@@ -199,8 +188,7 @@ class API(object):
 
         try:
             if request_data_type == "knowledgeformat":
-                # request_data = request
-                pass
+                request_data = request
             else:
                 request_data = self._parse_request(
                     request_data_type
@@ -218,7 +206,6 @@ class API(object):
             response_data = unbound_method(self, request_data, _db)
 
             if response_data is None or type(response_data) is bool:
-                # print response_data
                 _db.rollback()
                 raise fetch_error()
             elif type(response_data) != technomasters.ClientCreationFailed:
@@ -305,6 +292,7 @@ class API(object):
             gen.remove_trail_log(client_id, received_count)
         return GetDelReplicatedSuccess()
 
+    @csrf.exempt
     @api_request(login.Request)
     def handle_login(self, request, db):
         return controller.process_login_request(request, db, self._ip_addess)
@@ -312,7 +300,7 @@ class API(object):
     @csrf.exempt
     @api_request(login.Request)
     def handle_mobile_login_request(self, request, db):
-        return controller.process_mobile_request(request, db, self._ip_addess)
+        return controller.process_mobile_login_request(request, db, self._ip_addess)
 
     @csrf.exempt
     @api_request(mobile.RequestFormat)
@@ -330,10 +318,6 @@ class API(object):
     @api_request(technomasters.RequestFormat)
     def handle_techno(self, request, db):
         return controller.process_techno_request(request, db)
-
-    @api_request(clientadminsettings.Request)
-    def handle_client_admin_settings(self, request, db):
-        pass
 
     @api_request(general.RequestFormat)
     def handle_general(self, request, db):
@@ -379,21 +363,19 @@ class API(object):
 
     @api_request("knowledgeformat")
     def handle_format_file(self, request, db):
-        def validate_session_from_body(content):
-            content_list = content.split("\r\n\r\n")
-            session = content_list[-1].split("\r\n")[0]
-            user_id = db.validate_session_token(str(session))
-            if user_id is None:
-                return False
-            else:
-                return True
+        # def validate_session_from_body(content):
+        #     content_list = content.split("\r\n\r\n")
+        #     session = content_list[-1].split("\r\n")[0]
+        #     user_id = db.validate_session_token(str(session))
+        #     if user_id is None:
+        #         return False
+        #     else:
+        #         return True
 
-        if (validate_session_from_body(request.body())):
-            info = request.files()
-            response_data = controller.process_uploaded_file(info, "knowledge")
-            return response_data
-        else:
-            return login.InvalidSessionToken()
+        info = request.files
+        print info
+        response_data = controller.process_uploaded_file(info, "knowledge")
+        return response_data
 
 template_loader = jinja2.FileSystemLoader(
     os.path.join(ROOT_PATH, "Know-src-client")
@@ -408,7 +390,10 @@ CSS_PATH = os.path.join(COMMON_PATH, "css")
 IMG_PATH = os.path.join(COMMON_PATH, "images")
 FONT_PATH = os.path.join(COMMON_PATH, "fonts")
 SCRIPT_PATH = os.path.join(TEMP_PATH, "knowledge")
-LOGO_PATH = os.path.join(ROOT_PATH, "Src-server", "server", "clientlogo")
+LOGO_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "clientlogo")
+DOC_PATH = os.path.join(ROOT_PATH, "Know-src-server", "server", "knowledgeformat")
+
+CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 
 STATIC_PATHS = [
     ("/knowledge/css/<path:filename>", CSS_PATH),
@@ -416,7 +401,9 @@ STATIC_PATHS = [
     ("/knowledge/images/<path:filename>", IMG_PATH),
     ("/knowledge/fonts/<path:filename>", FONT_PATH),
     ("/knowledge/script/<path:filename>", SCRIPT_PATH),
-    ("/knowledge/clientlogo/<path:filename>", LOGO_PATH)
+    ("/knowledge/clientlogo/<path:filename>", LOGO_PATH),
+    ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
+    ("/knowledge/compliance_format/<path:filename>", DOC_PATH)
 
 ]
 
@@ -487,7 +474,7 @@ def run_server(port):
             ("/knowledge/api/admin", api.handle_admin),
             ("/knowledge/api/console_admin", api.handle_console_admin),
             ("/knowledge/api/techno", api.handle_techno),
-            ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
+            # ("/knowledge/api/handle_client_admin_settings", api.handle_client_admin_settings),
             ("/knowledge/api/general", api.handle_general),
             ("/knowledge/api/knowledge_master", api.handle_knowledge_master),
             ("/knowledge/api/knowledge_transaction", api.handle_knowledge_transaction),
@@ -499,7 +486,7 @@ def run_server(port):
             ("/knowledge/api/client_coordination_master", api.handle_client_coordination_master),
             ("/knowledge/api/mobile/login", api.handle_mobile_login_request),
             ("/knowledge/api/mobile", api.handle_mobile_request),
-            ("/knowledge/api/upload", api.handle_mobile_request)
+
         ]
 
         for idx, path in enumerate(TEMPLATE_PATHS):

@@ -189,6 +189,8 @@ function validateAuthentication() {
             Custombox.close();
         } else {
             displayMessage(error);
+            CurrentPassword.val('');
+            CurrentPassword.focus();
         }
     });
 }
@@ -213,6 +215,8 @@ function loadAssignedStatutories(){
         
         $('.view-icon', clone).on('click', function () {
             displayLoader();
+            ApprovalStatus.val('');
+            $('#reason').val('');
             LastAct='';
             LastSubAct='';
             statutoriesCount = 1;
@@ -250,11 +254,11 @@ SubmitButton.click(function(){
      if (approval_status.length <= 0) {
         displayMessage(message.action_required);
         return false;
-    } else if (approval_status == 4 && reason.trim().length <= 0) {
-        displayMessage(message.reason_required);
-        return false;
     } else if (approval_status == 4 && REJ_COMP.length == 0) {
         displayMessage(message.no_compliance_to_reject);
+        return false;
+    } else if (approval_status == 4 && reason.trim().length <= 0) {
+        displayMessage(message.reason_required);
         return false;
     } else {
     	Custombox.open({
@@ -262,6 +266,7 @@ SubmitButton.click(function(){
 	        effect: 'contentscale',
 	        complete: function() {
 	            CurrentPassword.focus();
+                CurrentPassword.val('');
 	            isAuthenticate = false;
 	        },
 	        close: function() {

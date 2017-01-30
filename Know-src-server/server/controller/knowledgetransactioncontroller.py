@@ -6,6 +6,7 @@ from server.database.knowledgetransaction import (
     check_duplicate_statutory_mapping,
     save_statutory_mapping,
     update_statutory_mapping,
+    update_only_compliance,
     change_statutory_mapping_status,
     statutory_mapping_master,
     statutories_master,
@@ -62,6 +63,9 @@ def process_knowledge_transaction_request(request, db):
     elif type(request_frame) is knowledgetransaction.UpdateStatutoryMapping:
         result = process_update_statutory_mapping(db, request_frame, user_id)
 
+    elif type(request_frame) is knowledgetransaction.UpdateCompliance:
+        result = process_update_compliance(db, request_frame, user_id)
+
     elif type(
         request_frame
     ) is knowledgetransaction.ChangeStatutoryMappingStatus:
@@ -88,7 +92,9 @@ def process_knowledge_transaction_request(request, db):
 
     return result
 
-
+##############################################################################
+# To return the statutory master list under user id
+##############################################################################
 def process_get_statutory_master(db, user_id):
     return statutories_master(db, user_id)
 
@@ -124,11 +130,21 @@ def process_save_statutory_mapping(db, request_frame, user_id):
     else:
         return knowledgetransaction.ComplianceNameAlreadyExists(is_duplicate)
 
-
 def process_update_statutory_mapping(db, request_frame, user_id):
     is_duplicate = check_duplicate_compliance_name(db, request_frame)
     if is_duplicate is False:
         if (update_statutory_mapping(db, request_frame, user_id)):
+            return knowledgetransaction.UpdateStatutoryMappingSuccess()
+        else:
+            return knowledgetransaction.InvalidStatutoryMappingId()
+    else:
+        return knowledgetransaction.ComplianceNameAlreadyExists(is_duplicate)
+
+
+def process_update_compliance(db, request_frame, user_id):
+    is_duplicate = check_duplicate_compliance_name(db, request_frame)
+    if is_duplicate is False:
+        if (update_only_compliance(db, request_frame, user_id)):
             return knowledgetransaction.UpdateStatutoryMappingSuccess()
         else:
             return knowledgetransaction.InvalidStatutoryMappingId()

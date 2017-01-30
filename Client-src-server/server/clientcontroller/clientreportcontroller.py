@@ -20,14 +20,14 @@ __all__ = [
 ]
 
 
-def process_client_report_requests(request, db, session_user, client_id):
-    session_token = request.session_token
-    client_info = request.session_token.split("-")
+def process_client_report_requests(request, db, session_user, client_id, le_id):
+    # session_token = request.session_token
+    # client_info = request.session_token.split("-")
     request = request.request
-    client_id = int(client_info[0])
+    # client_id = int(client_info[0])
     # session_user = db.validate_session_token(session_token)
     # if session_user is None:
-    #     return clientlogin.InvalidSessionToken()
+    # return clientlogin.InvalidSessionToken()
 
     if type(request) is clientreport.GetClientReportFilters:
         logger.logClientApi(
@@ -507,23 +507,24 @@ def get_risk_report_filters(db, request, session_user, client_id):
 def get_reassignedhistory_report_filters(db, request, session_user, client_id):
     #user_company_info = get_user_company_details(db, session_user)
     #unit_ids = user_company_info[0]
-    country_list = get_countries_for_user(db, session_user)
-    #domain_list = get_domains_for_user(db, session_user)
-    #unit_list = get_units_for_user(db, unit_ids)
+    #country_list = get_countries_for_user(db, session_user)
+    #legal_entities_list = get_legal_entities_for_user(db, request.legal_entity_id)
+    
+    domain_list = get_domains_for_user(db, session_user)
+    unit_list = get_units_for_user(db, session_user)
+    acts = get_acts_for_user(db, session_user)
     #level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
     #compliances_list = get_client_compliances(db, session_user)
     #users_list = get_client_users(db)
 
     return clientreport.GetReassignedHistoryReportFiltersSuccess(
-        countries=country_list,
-        #domains=domain_list,
-        #units=unit_list,
+        domains=domain_list,
+        units=unit_list,
         #level_1_statutories=level_1_statutories_list,
         #compliances=compliances_list,
         #users=users_list
     )
-
-
+    
 def get_reassignedhistory_report(db, request, session_user, client_id):
     if not request.csv:
         country_id = request.country_id

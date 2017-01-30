@@ -83,6 +83,7 @@ api_params = {
 
     'form_ids': make_int_field(),
 
+    "country_info": make_vector_type_field(module="clientcore", klass_name="Country"),
     "entity_info": make_vector_type_field(module="clientcore", klass_name="LegalEntityInfo"),
     "ct_id": make_int_field(),
     "le_id": make_int_field(),
@@ -110,7 +111,6 @@ api_params = {
     "u_name": make_string_field(),
     "c_name": make_string_field(),
     "c_id": make_int_field(),
-    "c_name": make_string_field(),
     "c_ids": make_vector_type_int(),
     "c_names": make_vector_type_string(),
     "d_id": make_int_field(),
@@ -138,13 +138,24 @@ api_params = {
     "comp_opt_status": make_bool_field(),
     "comp_remarks": make_text_field(length=500, is_optional=True),
     "r_count": make_int_field(length=100000),
+    "unit_id": make_int_field(),
+    "division_id": make_int_field(is_optional=True),
+    "category_id": make_int_field(is_optional=True),
+    "legal_entity_id": make_int_field(),
+    "business_group_id": make_int_field(is_optional=True),
+    "unit_code": make_string_field(),
+    "unit_name": make_string_field(),
+    "address": make_text_field(is_optional=True),
+    "country_id": make_int_field(is_optional=True),
+    "is_closed": make_bool_field(),
 
     "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "bg_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
     "le_infos": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
     "div_infos": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
-
+    "units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
+    
     "assign_unit_infos": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),

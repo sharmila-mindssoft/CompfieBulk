@@ -1,5 +1,3 @@
-// Stupid jQuery table plugin.
-
 (function($) {
     $.fn.jssorting = function(sortFns) {
         return this.each(function() {
@@ -71,7 +69,7 @@
             trs.each(function(index, tr) {
                 var $e = $(tr).children().eq(th_index);
                 var sort_val = $e.data("sort-value");
-
+                
                 // Store and read from the .data cache for display text only sorts
                 // instead of looking through the DOM every time
                 if (typeof(sort_val) === "undefined") {
@@ -100,6 +98,17 @@
 
             $table.trigger("aftertablesort", { column: th_index, direction: sort_dir });
             $table.css("display");
+
+            //Sno order only asc
+            $this_th.parents("tr").find("th span.none-sort-sno").each(function(i) {
+                var th_index = $(this).parent().index();
+                var rows = $table.children("tbody").children("tr");
+                rows.each(function(index, tr) {
+                    $(tr).children().eq(th_index).html(index+1);
+                });
+            });
+
+            
         }, 10);
 
         return $this_th;
@@ -116,6 +125,7 @@
             $this_td.attr('data-sort-value', new_sort_val);
         }
         $this_td.data("sort-value", new_sort_val);
+
         return $this_td;
     };
 
@@ -139,4 +149,5 @@
             return a.localeCompare(b);
         }
     };
+
 })(jQuery);

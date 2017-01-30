@@ -6,10 +6,11 @@
 *.log
 *.xlsx
 *.zip
-/Src-server/logs/
-/Src-server/processes/*.log
-/Src-server/server/knowledgeformat/*
-/Src-server/server/clientdocuments/
-/Src-server/server/clientlogo/
+/Know-src-server/logs/
+/Know-src-server/processes/*.log
+/Know-src-server/server/knowledgeformat/
+/Know-src-server/server/clientdocuments/
+/Know-src-server/server/clientlogo/
 /exported_reports/
-/Src-server/processes/expired/
+/Know-src-server/processes/expired/
+/knowledgeformat/

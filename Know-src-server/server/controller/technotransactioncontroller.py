@@ -109,19 +109,24 @@ def process_get_assigned_statutories_by_id(db, request, session_user):
         statutories_for_assigning=assigned_statutories
     )
 
-
+######################################################################################
+# Process to get group admin registered email units and groups list
+# Parameter(s) : Object of the database, user id
+# Return Type : Return lists of group admin registered email units and groups list
+######################################################################################
 def process_get_groupadmingroup_unit_list(db, session_user):
-    print "inside controller"
     groupadmin_groupsList = get_groupadmin_registration_grouplist(db, session_user)
     groupadmin_unitsList = get_groupadmin_registration_unitlist(db, session_user)
-    print "controller"
-    print groupadmin_unitsList
     return technotransactions.getGroupAdminGroupsUnitsSuccess(
         groupadmin_groupList=groupadmin_groupsList,
         groupadmin_unitList=groupadmin_unitsList
     )
 
-
+######################################################################################
+# Process to resend group admin registered email list
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return the value of the email process
+######################################################################################
 def resend_user_registration_mail(db, request, session_user):
     res = resave_registraion_token(db, request.user_id, request.email_id)
     if res:
@@ -129,9 +134,12 @@ def resend_user_registration_mail(db, request, session_user):
     else:
         print "send email failed"
 
-
+######################################################################################
+# Process to send group admin registered email list
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return the process message
+######################################################################################
 def process_Send_GroupAdminRegn_Mail(db, request_frame, session_user):
-    print "inside group admin controller"
     result = send_groupadmin_registration_mail(db, request_frame, session_user)
     if result is True:
         return technotransactions.SaveGroupAdminRegnSuccess()
@@ -140,13 +148,22 @@ def process_Send_GroupAdminRegn_Mail(db, request_frame, session_user):
 #
 # To get the legal entity list under the techno manager for closure prrocess
 #
+######################################################################################
+# To get legal entity closure form data
+# Parameter(s) : Object of the database, user id
+# Return Type : Return list of legal entity list with its status
+######################################################################################
 def process_get_LegalEntityClosureReportData(db, session_user):
     result = get_LegalEntityClosureReportData(db, session_user)
     return technotransactions.LegalEntityClosureReportDataSuccess(
         legalentity_closure=result
     )
 
-
+######################################################################################
+# To save Legal entity closure data
+# Parameter(s) : Object of the database, user id, request set
+# Return Type : Return value of the save process
+######################################################################################
 def process_Save_LegalEntityClosureData(db, request_frame, session_user):
     session_user = int(session_user)
     legal_entity_id = request_frame.legal_entity_id
@@ -155,14 +172,13 @@ def process_Save_LegalEntityClosureData(db, request_frame, session_user):
     remarks = request_frame.closed_remarks
 
     if not is_invalid_id(db, "legal_entity_id", legal_entity_id):
-        print "invalid le"
         return technomasters.InvalidLegalEntityId()
     else:
         if verify_password(db, password, session_user):
-            print "valid pwd"
             result = save_legalentity_closure_data(db, session_user, password, legal_entity_id, remarks, action_mode)
-            print result
             if result is True:
                 return technotransactions.SaveLegalEntityClosureSuccess()
+            else:
+                return technotransactions.SaveLegalEntityClosureFailure()
         else:
             return technomasters.InvalidPassword()

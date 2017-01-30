@@ -102,7 +102,7 @@
                                 <center>
                                     <div class="form-group m-b-0 m-t-5">
                                         <button class="btn btn-primary waves-effect waves-light" type="submit" id="show-button" tabindex="8"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit" tabindex="9"> Export </button>
+                                        <button class="btn btn-info waves-effect waves-light default-display-none" type="submit" id="export" tabindex="9"> Export </button>
                                     </div>
                                 </center>
                             </div>
@@ -126,13 +126,13 @@
                         </div>
                     </div>
                     <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                        <thead>
-                            <tr align="left" class="tr-heading">
+                        <thead class="usermapping-header">
+                            <!-- <tr align="left" class="tr-heading">
                               <th width="3%" align="center" class="header-bg">#</th>
                               <th class="header-bg">Unit</th>
                               <th class="header-bg">Techno Manager</th>
                               <th class="header-bg">Techno User</th>
-                            </tr>
+                            </tr> -->
                         </thead>
                         <tbody class="tbody-usermappingdetails-list">
                         </tbody>
@@ -163,8 +163,12 @@
 </div>
 <div id="templates">
     <table>
-
-
+        <tr align="left" class="tr-heading">
+          <th width="3%" align="center" class="header-bg">#</th>
+          <th class="header-bg">Unit</th>
+          <th class="header-bg">Techno Manager</th>
+          <th class="header-bg">Techno User</th>
+        </tr>
         <tr class="table-row" >
           <td align="center" class="sno"></td>
           <td class="unit-name"></td>
@@ -176,7 +180,7 @@
 <div id="no-record-templates" class="default-display-none">
   <table class="table-no-content">
     <tr align="left" class="table-row-no-content">
-      <td  align="left" colspan="10" class="no_records" style="padding:40px; font-size:1.2em;"></td>
+      <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em;"></td>
     </tr>
   </table>
 </div>

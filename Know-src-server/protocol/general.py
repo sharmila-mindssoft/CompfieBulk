@@ -300,7 +300,7 @@ class UpdateStatutoryNotificationStatus(Request):
         notification_id = data.get("notification_id")
         user_id = data.get("user_id")
         has_read = data.get("has_read")
-        return UpdateNotificationStatus(notification_id, has_read)
+        return UpdateStatutoryNotificationStatus(notification_id, user_id, has_read)
 
     def to_inner_structure(self):
         return {
@@ -310,32 +310,29 @@ class UpdateStatutoryNotificationStatus(Request):
         }
 
 class GetAuditTrails(Request):
-    def __init__(self, from_date, to_date, user_id_search, form_id_search, country_id, category_id, record_count, page_count):
+    def __init__(self, from_date, to_date, user_id_search, form_id_search, category_id, record_count, page_count):
         self.from_date = from_date
         self.to_date = to_date
         self.user_id_search = user_id_search
         self.form_id_search = form_id_search
-        self.country_id = country_id
         self.category_id = category_id
         self.record_count = record_count
         self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "country_id", "category_id", "record_count", "page_count"])
+        data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "category_id", "record_count", "page_count"])
         from_date = data.get("from_date")
         to_date = data.get("to_date")
         user_id_search = data.get("user_id_search")
         form_id_search = data.get("form_id_search")
-        country_id = data.get("country_id")
         category_id = data.get("category_id")
         record_count = data.get("record_count")
         page_count = data.get("page_count")
         return GetAuditTrails(
             from_date, to_date,
             user_id_search, form_id_search,
-            country_id, category_id,
-            record_count, page_count
+            category_id, record_count, page_count
         )
 
     def to_inner_structure(self):
@@ -344,10 +341,43 @@ class GetAuditTrails(Request):
             "to_date": self.to_date,
             "user_id_search": self.user_id_search,
             "form_id_search": self.form_id_search,
-            "country_id": self.country_id,
             "category_id": self.category_id,
             "record_count": self.record_count,
             "page_count": self.page_count
+        }
+
+class ExportAuditTrails(Request):
+    def __init__(self, from_date, to_date, user_id_search, form_id_search, category_id, csv):
+        self.from_date = from_date
+        self.to_date = to_date
+        self.user_id_search = user_id_search
+        self.form_id_search = form_id_search
+        self.category_id = category_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["from_date", "to_date", "user_id_search", "form_id_search", "category_id", "csv"])
+        from_date = data.get("from_date")
+        to_date = data.get("to_date")
+        user_id_search = data.get("user_id_search")
+        form_id_search = data.get("form_id_search")
+        category_id = data.get("category_id")
+        csv = data.get("csv")
+        return ExportAuditTrails(
+            from_date, to_date,
+            user_id_search, form_id_search,
+            category_id, csv
+        )
+
+    def to_inner_structure(self):
+        return {
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "user_id_search": self.user_id_search,
+            "form_id_search": self.form_id_search,
+            "category_id": self.category_id,
+            "csv": self.csv
         }
 
 class GetAuditTrailsFilter(Request):
@@ -385,7 +415,7 @@ def _init_Request_class_map():
         ChangeDomainStatus, GetCountriesForUser, GetCountries, SaveCountry, UpdateCountry,
         ChangeCountryStatus, GetNotifications, UpdateNotificationStatus,
         GetAuditTrails, VerifyPassword, GetMessages, GetStatutoryNotifications, UpdateStatutoryNotificationStatus,
-        GetAuditTrailsFilter
+        GetAuditTrailsFilter, ExportAuditTrails
     ]
     class_map = {}
     for c in classes:
@@ -844,6 +874,21 @@ class VerifyPasswordSuccess(Response):
         return {
         }
 
+class ExportToCSVSuccess(Response):
+    def __init__(self, link):
+        self.link = link
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["link"])
+        link = data.get("link")
+        return ExportToCSVSuccess(link)
+
+    def to_inner_structure(self):
+        return {
+            "link" : self.link
+        }
+
 def _init_Response_class_map():
     classes = [
         UpdateUserProfileSuccess, ContactNumberAlreadyExists,
@@ -852,7 +897,8 @@ def _init_Response_class_map():
         GetNotificationsSuccess, UpdateNotificationStatusSuccess, GetAuditTrailSuccess,
         MasterDataNotAvailableForClient, TransactionExists, TransactionJobId,
         FileUploadSuccess, VerifyPasswordSuccess, InvalidPassword, GetMessagesSuccess,
-        GetStatutoryNotificationsSuccess, UpdateStatutoryNotificationStatusSuccess
+        GetStatutoryNotificationsSuccess, UpdateStatutoryNotificationStatusSuccess,
+        ExportToCSVSuccess
     ]
     class_map = {}
     for c in classes:
@@ -922,6 +968,9 @@ class AuditTrail(object):
             "date": self.date
         }
 
+#
+# Audit Trail -  Countries
+#
 class AuditTrailCountries(object):
     def __init__(self, user_id, user_category_id, country_id, country_name):
         self.user_id = user_id

@@ -14,6 +14,13 @@ var Search_status = $('#search-status');
 var Search_status_ul = $('.search-status-list');
 var Search_status_li = $('.search-status-li');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 $('#btnUserGroupCancel').click(function () {
   $('#userGroupAdd').hide();
   $('#userGroupView').show();
@@ -55,12 +62,15 @@ function initialize() {
     loadUserGroupdata(uglist);
   }
   function onFailure(error) {
-    custom_alert(error);
+    displayMessage(error);
   }
+  displayLoader();
   mirror.getAdminUserGroupList(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -106,6 +116,13 @@ function getCategoryName(catgId) {
 function loadUserGroupdata(userGroupList) {
   $('.tbody-usergroups-list').find('tr').remove();
   var sno = 0;
+  if(userGroupList.length == 0){
+    $('.tbody-usergroups-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
+    $('.tbody-usergroups-list').append(clone4);
+  }
   $.each(userGroupList, function (key, value) {
     var catgid = value.user_category_id;
     var userGroupName = value.user_group_name;
@@ -130,10 +147,12 @@ function loadUserGroupdata(userGroupList) {
     });
 
     if (isActive == true){
+      $('.status').attr('title', 'Click Here to Deactivate');
       $('.status', clone).removeClass('fa-times text-danger');
       $('.status', clone).addClass('fa-check text-success');
     }
     else{
+      $('.status').attr('title', 'Click Here to Activate');
       $('.status', clone).removeClass('fa-check text-success');
       $('.status', clone).addClass('fa-times text-danger');
     }
@@ -178,10 +197,13 @@ function getFormsList(categoryNameVal){
       displayMessage(error);
     }
   }
+  displayLoader();
   mirror.getAdminUserGroupList(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -361,7 +383,6 @@ $('#btnUserGroupSubmit').click(function () {
         initialize();
       }
       function onFailure(error) {
-        alert(error)
         if (error == 'GroupNameAlreadyExists') {
           displayMessage(message.groupname_exists);
         } else if (error == 'CannotDeactivateUserExists') {
@@ -371,10 +392,13 @@ $('#btnUserGroupSubmit').click(function () {
         }
       }
       var userGroupInsertDetails = mirror.getSaveAdminUserGroupDict(groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+      displayLoader();
       mirror.saveAdminUserGroup(userGroupInsertDetails, function (error, response) {
         if (error == null) {
+          hideLoader();
           onSuccess(response);
         } else {
+          hideLoader();
           onFailure(error);
         }
       });
@@ -404,10 +428,13 @@ $('#btnUserGroupSubmit').click(function () {
         }
       }
       var userGroupInsertDetails = mirror.getUpdateAdminUserGroupDict(parseInt(groupIdVal), groupNameVal, parseInt(categoryNameVal), chkArrayInt);
+      displayLoader();
       mirror.updateAdminUserGroup(userGroupInsertDetails, function (error, response) {
         if (error == null) {
+          hideLoader();
           onSuccess(response);
         } else {
+          hideLoader();
           onFailure(error);
         }
       });
@@ -431,10 +458,13 @@ function userGroupEdit(userGroupId, userGroupName, catgid) {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getAdminUserGroupList(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -452,8 +482,10 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
       displayMessage(error);
     }
   }
+  displayLoader();
   mirror.changeAdminUserGroupStatus(userGroupId, userGroupName, isActive, function (error, response) {
   if (error == null) {
+    hideLoader();
     if (isActive) {
       displaySuccessMessage(message.status_success);
     }
@@ -463,6 +495,7 @@ function userGroupActive(userGroupId, userGroupName, isActive) {
     }
     onSuccess(response);
   } else {
+    hideLoader();
     onFailure(error);
     }
   });
@@ -502,7 +535,6 @@ function renderControls(){
 $(function () {
   renderControls();
   initialize();
-  $('.js-sorting-table').jssorting(); // Sorting table
 });
 /*$(document).find('.js-filtertable').each(function () {
   $(this).filtertable().addFilter('.js-filter');

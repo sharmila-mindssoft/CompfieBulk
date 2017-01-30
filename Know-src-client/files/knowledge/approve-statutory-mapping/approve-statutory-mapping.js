@@ -149,7 +149,9 @@ function loadApprovalList() {
                     $('.popup-frequency').text(response.freq);
                     $('.popup-occurance').text(response.summary);
                     $('.popup-applicablelocation').text(response.locat);
-                    $('.popup-referencelink').text(response.refer);
+                    $('.popup-referencelink a span').text(response.refer);
+                    $('.popup-referencelink a').attr('href', response.refer);
+
                     Custombox.open({
                         target: '#custom-modal',
                         effect: 'contentscale',
@@ -277,7 +279,7 @@ function validateForm(){
         var action_class = "caction-"+comp_id;
         var reason_class = "creason-"+comp_id;
         var selected_option = parseInt($("#"+action_class).val());
-        var remarks = $("#"+reason_class).val().replace(/ /g,'');
+        var remarks = $("#"+reason_class).val();
 
         if(selected_option == 3 || selected_option == 4){
             if(remarks.length == 0){
@@ -358,13 +360,16 @@ function pageControls() {
         if(Country.val() != ''){
           condition_fields.push("country_ids");
           condition_values.push(Country.val());
+
+          var text_val = $(this).val();
+            commonAutoComplete(
+                e, ACDomain, Domain, text_val,
+                DomainList, "domain_name", "domain_id", function (val) {
+                    onAutoCompleteSuccess(DomainVal, Domain, val);
+                }, condition_fields, condition_values
+            );
         }
-        var text_val = $(this).val();
-        commonAutoComplete(
-            e, ACDomain, Domain, text_val,
-            DomainList, "domain_name", "domain_id", function (val) {
-                onAutoCompleteSuccess(DomainVal, Domain, val);
-            }, condition_fields, condition_values);
+
     });
 
     //load organization list in autocomplete text box

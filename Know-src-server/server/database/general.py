@@ -31,7 +31,8 @@ __all__ = [
     "get_audit_trails",
     "update_profile", "return_compliance_duration",
     "return_compliance_repeat", "return_compliance_frequency",
-    "return_approval_status"
+    "return_approval_status",
+    "update_statutory_notification_status"
 ]
 
 
@@ -477,24 +478,25 @@ def get_user_cetegories_db(db):
         )
     return userCategoryList
 
+###############################################################################
+#  To get list of activity log under a form or user
+#  Parameters : Object of database, Received request
+#  Return Type : Returns List of object of activities log
+###############################################################################
 def get_audit_trails(
     db, session_user, from_count, to_count,
     from_date, to_date, user_id, form_id,
-    country_id, category_id
+    category_id
 ):
-    print "inside database"
     if user_id is None:
         user_id = '%'
     if form_id is None :
         form_id = '%'
-    if country_id is None :
-        country_id = '%'
     if category_id is None :
         category_id = '%'
     from_date = string_to_datetime(from_date).date()
     to_date = string_to_datetime(to_date).date()
-    args = [from_date, to_date, user_id, form_id, country_id, category_id, from_count, to_count]
-    print args
+    args = [from_date, to_date, user_id, form_id, category_id, from_count, to_count]
     expected_result = 2
     result = db.call_proc_with_multiresult_set('sp_get_audit_trails', args, expected_result)
     '''
@@ -502,7 +504,6 @@ def get_audit_trails(
     '''
 
     activity_log = result[0]
-    print len(activity_log)
     total = result[1]
 
     assert len(total) > 0
@@ -520,6 +521,11 @@ def get_audit_trails(
         )
     return general.GetAuditTrailSuccess(audit_trail_details, c_total)
 
+###############################################################################
+#  To get list of User category
+#  Parameters : Object of database
+#  Return Type : Returns List of object of user category
+###############################################################################
 def get_user_cetegories_audit_trail(db):
     userCategoryList = []
     rows = db.call_proc("sp_audit_trail_usercategory_list", None)
@@ -529,6 +535,11 @@ def get_user_cetegories_audit_trail(db):
         )
     return userCategoryList
 
+###############################################################################
+#  To get list of users, user categories, forms
+#  Parameters : Object of database
+#  Return Type : Returns List of object of user category, forms, users list
+###############################################################################
 def get_audit_trail_filters(db):
     user_categories = get_user_cetegories_audit_trail(db)
     expected_result = 4

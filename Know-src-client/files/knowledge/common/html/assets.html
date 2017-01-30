@@ -1,13 +1,14 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style type="text/css">
+    .default-display-none {
+        display: none;
+    }
+</style>
+
 <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" property="icon">
-<!-- css -->
 <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 <link href="/css/menu.css" rel="stylesheet" type="text/css" />
-
-<!--link href="/css/core/css-one.css?family=Arimo:400,700" rel="stylesheet" type="text/css" />
-<link href="/css/core/css-two.css?family=Karla:400,700" rel="stylesheet" type="text/css" />
-<link href="/css/core/css-three.css?family=Raleway:400,700" rel="stylesheet" type="text/css" /-->
-
 <link href="/css/core.css" rel="stylesheet" type="text/css" />
 <link href="/css/components.css" rel="stylesheet" type="text/css" />
 <link href="/css/icons.css" rel="stylesheet" type="text/css" />
@@ -17,20 +18,11 @@
 <link href="/css/style.css" rel="stylesheet" type="text/css" />
 <link href="/css/custombox.min.css" rel="stylesheet" type="text/css" />
 <link href="/css/pagination.css" rel="stylesheet" type="text/css" />
-
-<link href="/css/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
-<link href="/css/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="/css/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="/css/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="/css/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
 <link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 <link href="/css/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
-
 <link href="/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui/jquery-ui.css">
 
-<!-- js -->
 <script src="/js/modernizr.min.js"></script>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
@@ -40,57 +32,15 @@
 <script src="/js/custombox.min.js"></script>
 <script src="/js/legacy.min.js"></script>
 <script src="/js/filter/filtertable.jquery.js"></script>
-
-<script src="/js/datatables/jquery.dataTables.min.js"></script>
-<script src="/js/datatables/dataTables.fixedHeader.min.js"></script>
-<script src="/js/datatables/dataTables.keyTable.min.js"></script>
-<script src="/js/datatables/dataTables.responsive.min.js"></script>
-<script src="/js/datatables/responsive.bootstrap.min.js"></script>
-<script src="/js/datatables/jquery.datatables.init.js"></script>
-
 <script src="/js/toastr/toastr.min.js"></script>
 <script src="/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
 <script src="/js/jquery.sweet-alert.init.js"></script>
 <script src="/js/multiselect/bootstrap-multiselect.js"></script>
-<script type="text/javascript" src="/js/jquery-ui/jquery-ui.js"></script>
-<script type="text/javascript" src="/js/jquery-ui/jquery-ui-timepicker.js"></script>
-
+<script src="/js/jquery-ui/jquery-ui.js"></script>
+<script src="/js/jquery-ui/jquery-ui-timepicker.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-	//Tooltip jquery
-    $('[data-toggle="tooltip"]').tooltip();
-
-    //-----------------------------//
-
-    function testAnim(x) {
-	    $('#animationSandbox')
-	    .removeClass().addClass(x + ' animated')
-	    .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-	 		$(this).removeClass();
-	    });
-	};
-
-    //Form Animation start
-    $('.js--triggerAnimation').click(function(e){
-      e.preventDefault();
-      var anim = $('.js--animations').val();
-      testAnim(anim);
-    });
-
-    $('.js--animations').change(function(){
-      var anim = $(this).val();
-      testAnim(anim);
-    });
-
-    //setTimeout(function () {
-         // testAnim('fadeInDownBig');
- 	//}, 1000);
-
- 	//-----------------------------//
-  //hide left margin
-  //$(".content-page").addClass('m-l-0');
-
+	$("body").tooltip({ selector: '[data-toggle=tooltip]' });
 });
-
 </script>
 

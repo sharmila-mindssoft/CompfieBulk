@@ -19,9 +19,9 @@
           <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
             <thead>
               <tr>
-                <th>#</th>
-                <th>Country <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
-                <th>Statutory Nature <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                <th>#<span class="none-sort-sno"></span></th>
+                <th>Country <span class="fa fa-sort pull-right sort active"></span></th>
+                <th>Statutory Nature <span class="fa fa-sort pull-right sort active"></span></th>
                 <th class="text-center">Edit</th>
                 <th class="text-center" width="15%">Status</th>
               </tr>
@@ -37,7 +37,7 @@
                 <td>
                   <div class="form-group col-sm-12 no-padding m-b-0">
                     <input type="text" class="form-control input-sm filter-text-box"
-                    placeholder="Organization" id="search-statutory-nature-name" />
+                    placeholder="Statutory Nature" id="search-statutory-nature-name" />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
@@ -150,6 +150,12 @@
         </div>
     </div>
 </div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
 <script type="text/javascript" src="/script/statutory-nature/statutory-nature.js"></script>
-<script src="/js/js-sorting.js"></script>
 {% endblock %}

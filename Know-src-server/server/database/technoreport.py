@@ -18,11 +18,8 @@ from server.database.technotransaction import (
 
 def get_group_companies_for_statutorysetting_report(db, user_id):
     result = []
-    print "inside group company"
-    print user_id
     result = db.call_proc_with_multiresult_set(
         "sp_statutory_setting_report_clientdetails", (user_id,), 2)
-    print result[1]
     return return_group_companies(db, result[1])
 
 
@@ -89,16 +86,40 @@ def return_compliance_statutory(db, stat_compl_list):
         )
     return results
 
+######################################################################################
+# To Get domain and organization
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of domains and organization list
+######################################################################################
+def get_domains_for_unit(db, user_id):
+    rows = db.call_proc("sp_domains_for_user", (user_id,))
+
+    fn = core.UnitDomainOrganisation
+    results = [
+        fn(
+           d["legal_entity_id"], d["domain_id"], d["domain_name"], d["industry_id"], d["industry_name"],
+           d["unit_count"]
+        ) for d in rows
+    ]
+    return results
+
+######################################################################################
+# To Get client units under user
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of client units
+######################################################################################
 def get_units_for_clientdetails_report(db, session_user):
     result = db.call_proc_with_multiresult_set("sp_client_details_report_unitlist", (int(session_user),), 3)
     return return_unit_details(result)
 
+######################################################################################
+# To convert db data to list
+# Parameter(s) : result set from db
+# Return Type : Return list of client units as list
+######################################################################################
 def return_unit_details(result):
     unitdetails = []
-    print "inside unit details"
-    print result
     for r in result[1]:
-        print r
         country_id = int(r.get("country_id"))
         client_id = int(r.get("client_id"))
         legal_entity_id = int(r.get("legal_entity_id"))
@@ -127,10 +148,13 @@ def return_unit_details(result):
             closed_on, check_date, emp_code_name, created_on, division_name,
             category_name, d_ids, i_ids
         ))
-    print "unitdetails"
-    print unitdetails
     return unitdetails
 
+######################################################################################
+# To Get assigned statutories
+# Parameter(s) : Object of database, user id, requests
+# Return Type : Return list of assigned statutories for report
+######################################################################################
 def get_assigned_statutories_report_data(db, request_data, user_id):
     country_id = request_data.country_id
     group_id = request_data.group_id
@@ -144,6 +168,11 @@ def get_assigned_statutories_report_data(db, request_data, user_id):
     result = db.call_proc_with_multiresult_set("sp_statutory_setting_report_recordset", param_list, 3)
     return return_assigned_statutories_report_data(db, result)
 
+######################################################################################
+# To convert DB recordset to list
+# Parameter(s) : DB Resultset
+# Return Type : Return list of assigned statutories
+######################################################################################
 def return_assigned_statutories_report_data(db, result):
     unit_grp = []
     act_grp = []
@@ -165,8 +194,6 @@ def return_assigned_statutories_report_data(db, result):
             r.get("compfie_admin"), r.get("admin_update"), r.get("client_admin"),
             r.get("client_update"), r.get("statutory_nature_name")
         ))
-    print "inside grouping"
-    print unit_grp
     return (unit_grp, act_grp, stat_compl_list)
 
 
@@ -309,7 +336,6 @@ def return_assigned_statutory_report(
                 db, client_statutory_id, level_1_statutory_id,
                 applicable_status
             )
-            print '*' * 50
             unit_statutories = technoreports.UNIT_WISE_ASSIGNED_STATUTORIES(
                 data["unit_id"],
                 unit_name,
@@ -325,7 +351,6 @@ def return_assigned_statutory_report(
             new_stautory = return_assigned_compliances_by_id(
                 db, client_statutory_id, None, applicable_status
             )
-            print '*' * 50
             for new_s in new_stautory:
                 new_id = new_s.level_1_statutory_id
                 is_exists = False
@@ -876,7 +901,7 @@ def return_client_agreement_report(client_agreement_list):
                 contract_to = datetime_to_string(client_agreement["contract_to"]),
                 group_name=client_agreement["group_name"],
                 group_admin_email=client_agreement["groupadmin_email"],
-                is_active=bool(client_agreement["is_closed"]),
+                is_closed=bool(client_agreement["is_closed"]),
                 domain_count=int(client_agreement["domaincount"]),
                 d_name=client_agreement["domain_name"],
                 domain_total_unit=int(client_agreement["domain_total_unit"]),
@@ -991,12 +1016,14 @@ def get_user_category_details(db, session_user):
     result = db.call_proc("sp_get_user_category_details", (int(session_user),))
     return result
 
-
+######################################################################################
+# To get countries list for user mapping report
+# Parameter(s) : Object of database, user category id, user id
+# Return Type : Return list of countries
+######################################################################################
 def get_countries_for_usermapping_report_filter(db, user_category_id, user_id):
 
     result = db.call_proc("sp_countries_for_usermapping_report", (user_category_id, user_id))
-    print "countries"
-    print result
     results = []
     for d in result:
         results.append(core.Country(
@@ -1004,7 +1031,11 @@ def get_countries_for_usermapping_report_filter(db, user_category_id, user_id):
         ))
     return results
 
-
+######################################################################################
+# To get group details for user mapping report
+# Parameter(s) : Object of the database, user category id, user id
+# Return Type : Return list of client groups
+######################################################################################
 def get_group_details_for_usermapping_report_filter(db, user_category_id, user_id):
     result = db.call_proc("sp_usermapping_report_group_details", (user_category_id, user_id))
     results = []
@@ -1014,6 +1045,11 @@ def get_group_details_for_usermapping_report_filter(db, user_category_id, user_i
         ))
     return results
 
+######################################################################################
+# To get business groups for user mapping report
+# Parameter(s) : Object of Database
+# Return Type : Return list of business groups
+######################################################################################
 def get_business_groups_for_usermapping_report(db):
     result = db.call_proc("sp_usermapping_report_business_groups", ())
     results = []
@@ -1022,7 +1058,11 @@ def get_business_groups_for_usermapping_report(db):
             d["business_group_id"], d["business_group_name"]
         ))
     return results
-
+######################################################################################
+# To get legal entity list
+# Parameter(s) : Object of database
+# Return Type : Return list of legal entities
+######################################################################################
 def get_legal_entities_for_usermapping_report(db):
     result = db.call_proc("sp_usermapping_report_legal_entity", ())
     results = []
@@ -1031,7 +1071,11 @@ def get_legal_entities_for_usermapping_report(db):
             d["legal_entity_id"], d["legal_entity_name"], d["business_group_id"]
         ))
     return results
-
+######################################################################################
+# To get units list for user mapping report
+# Parameter(s) : Object of datanase, user category id, user id
+# Return Type : Return list of units
+######################################################################################
 def get_unit_details_for_usermapping_report(db, user_category_id, user_id):
     result = db.call_proc("sp_usermapping_report_unit_details", (user_category_id, user_id))
     results = []
@@ -1042,21 +1086,36 @@ def get_unit_details_for_usermapping_report(db, user_category_id, user_id):
             d["category_id"], d["category_name"]
         ))
     return results
+####################################################################################################
+# To get the user mapping report data
+# Parameter(s) : Object of the database, user id, client id, legal entity id, country id,
+#                   business group id, division id, category id, unit id
+# Return Type : Return list of user mapped data
+####################################################################################################
+def get_usermapping_report_dataset(
+        db, user_id, client_id, legal_entity_id, country_id, bgrp_id,
+        division_id, category_id, unit_id, from_count, page_count
+):
+    if bgrp_id == 0:
+        bgrp_id = '%'
+    if division_id == 0:
+        division_id = '%'
+    if category_id == 0:
+        category_id = '%'
+    if unit_id == 0:
+        unit_id = '%'
 
-def get_usermapping_report_dataset(db, user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id):
-    args = [user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id]
+    args = [user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id, from_count, page_count]
     expected_result = 4
     result = db.call_proc_with_multiresult_set(
-       "sp_usermapping_report_details", args, expected_result
+       "sp_usermapping_report_details", (
+        user_id, client_id, legal_entity_id, country_id, bgrp_id, division_id, category_id, unit_id, from_count, page_count
+       ), expected_result
     )
-    print "result"
-    print result
     techno_details = unit_domains = domains = {}
 
     if(len(result) > 0):
         if(len(result[1]) > 0):
-            print "result 1"
-            print result[1]
             techno_details = result[1]
             '''for techno in result[1]:
                 techno_details.append(core.UserMappingReportTechno(
@@ -1076,14 +1135,21 @@ def get_usermapping_report_dataset(db, user_id, client_id, legal_entity_id, coun
                     domain["domain_id"], domain["domain_name"], domain["is_active"]
                 ))'''
     return (techno_details, unit_domains, domains)
-
+######################################################################################
+# To get group admin email registration report data
+# Parameter(s) : Object of database, user id
+# Return Type : Return list of group admin registered email data
+######################################################################################
 def get_GroupAdminReportData(db, user_id):
     result = db.call_proc_with_multiresult_set("sp_group_admin_registration_email_report_data", (user_id,), 3)
     return result
-
+######################################################################################
+# To get reassigned user group user category and filter data
+# Parameter(s) : Object of the database, user id
+# Return Type : Return list of reassigned user report filter data
+######################################################################################
 def get_AssignedUserClientGroupsDetails(db, user_id):
     result = db.call_proc_with_multiresult_set("sp_reassignuser_report_usercategories", (), 5)
-    print len(result)
     client_categories = []
     for categories in result[1]:
         user_id = int(categories.get("user_id"))
@@ -1096,49 +1162,49 @@ def get_AssignedUserClientGroupsDetails(db, user_id):
         client_categories.append([
             user_id, user_category_id, emp_code_name, client_ids
         ])
-    print "user clients"
-    print client_categories
     return (result[0], client_categories, result[3], result[4])
-
+######################################################################################
+# To get reassigned user group data
+# Parameter(s) : Object of the database, user id, user category id, group id
+# Return Type : Return list of reassigned user report data
+######################################################################################
 def get_ReassignUserReportData(db, user_category_id, user_id, group_id):
     c_names = []
 
-    if group_id is None:
+    if group_id is None or group_id == 0:
         args = [user_id, user_category_id, '%']
     else:
         args = [user_id, user_category_id, group_id]
-    print "inside args"
-    print args
     result = db.call_proc_with_multiresult_set("sp_reassign_user_report_getdata", args, 2)
     reassign_group_list = []
-    print len(result)
-    print len(result[0])
-    print result
     if len(result[0]) > 0:
         for cl in result[0]:
-            print "inside 1 loop"
+            c_names = []
             client_id = int(cl.get("client_id"))
-            print client_id
             group_name = cl.get("group_name")
-            print group_name
             assigned_on = cl.get("assigned_on")
             emp_code_name = cl.get("emp_code_name")
             remarks = cl.get("remarks")
             le_count = int(cl.get("le_count"))
             for country in result[1]:
-                print "inside 2 loop"
-                print client_id
+
                 if client_id == country.get("client_id"):
-                    print country.get("client_id")
-                    c_names.append(country.get("country_name"))
+                    if len(c_names) == 0:
+                        c_names.append(country.get("country_name"))
+                    else:
+                        for c_n in c_names:
+                            if c_n.find(country.get("country_name")) == -1:
+                                c_names.append(country.get("country_name"))
 
             reassign_group_list.append(technoreports.ReassignedUserList(
                 client_id, group_name, le_count, c_names, assigned_on, emp_code_name, remarks
             ))
-    print "inside database"
-    print reassign_group_list
     return reassign_group_list
-
+######################################################################################
+# To get reassigned user group domain data
+# Parameter(s) : Object of the database, request
+# Return Type : Return list of reassigned user report data for domain user
+######################################################################################
 def get_ReassignUserDomainReportData(db, request_data):
     user_category_id = request_data.user_category_id
     user_id = request_data.user_id
@@ -1151,8 +1217,6 @@ def get_ReassignUserDomainReportData(db, request_data):
         args = [user_id, user_category_id, group_id, bg_id, le_id, d_id]
     else:
         args = [user_id, user_category_id, group_id, bg_id, le_id, d_id]
-    print "inside args"
-    print args
     result = db.call_proc("sp_reassign_user_report_domain_user_getdata", args)
     reassign_group_list = []
     for d in result:
@@ -1160,8 +1224,6 @@ def get_ReassignUserDomainReportData(db, request_data):
             int(d["unit_id"]), d["unit_code"], d["unit_name"], d["address"], d["postal_code"],
             d["geography_name"], d["unit_email_date"], d["emp_code_name"], d["remarks"]
         ))
-    print "after append"
-    print reassign_group_list
     return reassign_group_list
 
 def get_assigned_statutories_list(db, user_id):
@@ -1174,8 +1236,6 @@ def get_assigned_statutories_list(db, user_id):
             row["unit_id"], row["unit_name"], row["domain_name"], row["statutory_id"],
             row["domain_id"]
         ))
-    print "approved list"
-    print assigned_statutories
     return assigned_statutories
 
 def get_ComplianceStatutoriesList(db, unit_id, domain_id, user_id):

@@ -2,11 +2,16 @@ var visiblePageCount = 10;
 var m_names = new Array('Jan','Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', "Dec");
 //Load count values in pagination selectbox
 var pageList = [25, 50, 100];
+var ValidityDays = 90;
 function loadItemsPerPage() {
   for(var i = 0; i < pageList.length; i++) {
     var Id = pageList[i];
     $('#items_per_page').append($('<option value="' + Id + '">' + Id + '</option>'));
   };
+}
+
+function checkValidityDays(){
+  return parseInt(ValidityDays);
 }
 
 function validateEmail($email) {
@@ -49,7 +54,7 @@ function past_days(days){
 function displayMessage(message) {
   // $('.error-message').text(message);
   // $('.error-message').show();
-  if($('.toast-error').css('display') == "block"){
+  if($('.toast').css('display') == "block"){
     $('.toast').remove();
   }
   var toastPan = import_toast();
@@ -58,7 +63,7 @@ function displayMessage(message) {
 }
 
 function displaySuccessMessage(message) {
-  if($('.toast-error').css('display') == "block"){
+  if($('.toast').css('display') == "block"){
     $('.toast').remove();
   }
   var toastPan = import_toast();
@@ -143,7 +148,7 @@ function isNumbers_Countrycode(inputElm) {
 }
 function isAlphanumeric_Shortname(inputElm) {
   //allowed => alphanumeric
-  return inputElm.val().replace(/[^0-9a-z]/gi, '');
+  return inputElm.val().replace(/[^0-9a-z]/, ''); ///[^0-9a-z]/gi
 }
 function isCommon_Unitcode(inputElm) {
   //allowed => alphanumeric
@@ -980,8 +985,11 @@ function commonAutoComplete(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  if(list_val[i][value].length != undefined){
+
+                  if(jQuery.type( list_val[i][value] ) == 'array'){
                     condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
+                  }else if(jQuery.type( condition_values[key] ) == 'array'){
+                    condition_result = ($.inArray(list_val[i][value], condition_values[key]) >= 0);
                   }else{
                     condition_result = (list_val[i][value] == condition_values[key]);
                   }
@@ -998,16 +1006,19 @@ function commonAutoComplete(
                     }
                 });
             }
+
             if(
                 ~list_val[i][field_name].toLowerCase().indexOf(
                     text_val.toLowerCase()
                 ) && validation_result
+
             )
                 suggestions.push([
                     list_val[i][id_name],
                     list_val[i][field_name]
                 ]);
         }
+
         var str = '';
         for (var i in suggestions) {
             str += '<li id="' + suggestions[i][0] + '"onclick="activate_text(this,' + callback + ')">' + suggestions[i][1] + '</li>';
@@ -1053,7 +1064,7 @@ function onCommonArrowKey(e, ac_item, callback) {
 
 function commonAutoComplete1(
     e, ac_div, id_element, text_val, list_val, field_name, id_name, callback,
-    condition_fields, condition_values1, condition_values2
+    condition_fields, condition_values
 ){
     ac_div.show();
     id_element.val('');
@@ -1066,28 +1077,67 @@ function commonAutoComplete1(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  if(list_val[i][value].length != undefined){
-                    var cresult = false;
-                    var dresult = false;
-                    for(var j=0; j<list_val[i][value].length; j++){
-                      /*console.log(condition_values1);
-                      console.log(condition_values2);*/
-                      if($.inArray(list_val[i][value][j]["c_id"], condition_values1) >= 0){
-                        cresult = true;
+                  if(jQuery.type( list_val[i][value] ) == 'array'){
+                    if(value == 'country_domains'){
+                      for(var j=0; j<condition_values[key][0].length; j++){
+                          var cresult = false;
+                          for(var k=0; k<list_val[i][value].length; k++)  {
+                              if(list_val[i][value][k]["c_id"] == condition_values[key][0][j]){
+                                  cresult = true;
+                              }
+                          }
                       }
-                      if($.inArray(list_val[i][value][j]["d_id"], condition_values2) >= 0){
-                        dresult = true;
+                      for(var j=0; j<condition_values[key][1].length; j++){
+                          var dresult = false;
+                          for(var k=0; k<list_val[i][value].length; k++)  {
+                              if(list_val[i][value][k]["d_id"] == condition_values[key][1][j]){
+                                  dresult = true;
+                              }
+                          }
+                          
                       }
-                    }
-
-                    if(cresult && dresult){
-                      condition_result = true;
+                      if(cresult && dresult){
+                          condition_result = true;
+                      }else{
+                          condition_result = false;
+                      } 
+                      /*var cresult = false;
+                      var dresult = false;
+                      for(var j=0; j<list_val[i][value].length; j++){
+                        if($.inArray(list_val[i][value][j]["c_id"], condition_values[key][0]) >= 0){
+                          cresult = true;
+                        }
+                        if($.inArray(list_val[i][value][j]["d_id"], condition_values[key][1]) >= 0){
+                          dresult = true;
+                        }
+                      }
+                      if(cresult && dresult){
+                        condition_result = true;
+                      }else{
+                        condition_result = false;
+                      }*/
+                    }else if(value == 'p_user_ids' && jQuery.type( condition_values[key] ) == 'array'){
+                      var common_values = [];
+                      var array1 = condition_values[key];
+                      var array2 = list_val[i][value];
+                      jQuery.grep(array1, function(el) {
+                        if (jQuery.inArray(el, array2) == 0) common_values.push(el);
+                      });
+                      if(common_values.length > 0){
+                        condition_result = true;
+                      }else{
+                        condition_result = false;
+                      }
                     }else{
-                      condition_result = false;
+                      condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                     }
 
                   }else{
-                    condition_result = (list_val[i][value] == condition_values[key]);
+                    if(value == 'user_id'){
+                      condition_result = (list_val[i][value] != condition_values[key]);
+                    }else{
+                      condition_result = (list_val[i][value] == condition_values[key]);
+                    }
                   }
                   validation_results.push(
                     condition_result
@@ -1134,7 +1184,7 @@ function import_toast(){
     "onclick": null,
     "showDuration": "300",
     "hideDuration": "1000",
-    "timeOut": "5000",
+    "timeOut": "20000",
     "extendedTimeOut": "1000",
     "showEasing": "swing",
     "hideEasing": "linear",
@@ -1142,10 +1192,9 @@ function import_toast(){
     "hideMethod": "fadeOut"
   };
   return toastr;
-
 }
 
-function confirm_alert(message, callback){
+function confirm_alert(message, callback) {
   swal({
       title: "Are you sure?",
       text: message,
@@ -1167,3 +1216,63 @@ function displayLoader() {
 function hideLoader() {
   $(".loading-indicator-spin").hide();
 }
+
+$(function() {
+    $( ":input" ).attr('autocomplete','off');
+
+    //sort
+    $('.sort').click(function(event) {
+      var table = $(this).closest("table");
+      var tbody = table.find('tbody');
+      var col_num = $(this).closest("th").index();
+      if($(this).hasClass("asc")) {
+          $(this).addClass("desc");
+          $(this).removeClass("asc");
+      } else {
+          $(this).addClass("asc");
+          $(this).removeClass("desc");
+      }
+
+      function extract_value(tr) {
+          var td = $(tr).find('td')[col_num];
+          var sort_value = $(td).html();
+          var data_sort_value = $(td).attr('data-sort-value');
+          if (typeof data_sort_value !== "undefined") {
+              sort_value = data_sort_value;
+          }
+          return sort_value;
+      }
+
+      var allTrs = tbody.find('tr');
+      tbody.find('tr').remove();
+
+      allTrs.sort(function(tr_a, tr_b) {
+          var aval = extract_value(tr_a);
+          var bval = extract_value(tr_b);
+          if (isNaN(aval) || isNaN(bval)) {
+              return aval.localeCompare(bval);
+          } else {
+              aval = parseFloat(aval);
+              bval = parseFloat(bval);
+              return (aval > bval ? 1 : (bval > aval) ? -1 : 0);
+          }
+      });
+
+      if ($(this).hasClass("asc")) {
+          for (var i = allTrs.length - 1; i >= 0; i--) {
+              $(allTrs[i]).appendTo(tbody);
+          };
+      } else {
+          for (var i = 0; i < allTrs.length; i++) {
+              $(allTrs[i]).appendTo(tbody);
+          };
+      }
+      table.find("th span.none-sort-sno").each(function(i) {
+          var th_index = $(this).parent().index();
+          var rows = table.children("tbody").children("tr");
+          rows.each(function(index, tr) {
+              $(tr).children().eq(th_index).html(index+1);
+          });
+      });
+  });
+});
