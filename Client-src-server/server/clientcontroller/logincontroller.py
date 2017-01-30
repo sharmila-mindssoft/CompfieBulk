@@ -98,22 +98,17 @@ def process_login(db, request, client_id, session_user_ip):
         response = verify_login(db, username, encrypt_password)
         #print response
     if login_type.lower() == "web":
-        if response is True:
+        if response is "ContractExpired":
+            logger.logLogin("info", user_ip, username, "ContractExpired")
+            return clientlogin.ContractExpired()
+        elif response is False:
             logger.logLogin("info", user_ip, username, "Login process end")
-            delete_loguser_login_responsein_failure_history(db, user_id)
-            return admin_login_response(db, client_id, user_ip)
+            return invalid_credentials(db, user_id, session_user_ip)
         else:
-            if response is "ContractExpired":
-                logger.logLogin("info", user_ip, username, "ContractExpired")
-                return clientlogin.ContractExpired()
-            elif response is False:
-                logger.logLogin("info", user_ip, username, "Login process end")
-                return invalid_credentials(db, user_id, session_user_ip)
-            else:
-                print "user_login_response"
-                logger.logLogin("info", user_ip, username, "Login process end")
-                delete_login_failure_history(db, user_id)
-                return user_login_response(db, response, client_id, user_ip)
+            print "user_login_response"
+            logger.logLogin("info", user_ip, username, "Login process end")
+            delete_login_failure_history(db, user_id)
+            return user_login_response(db, response, client_id, user_ip)
 
     else:
         if response is True:
