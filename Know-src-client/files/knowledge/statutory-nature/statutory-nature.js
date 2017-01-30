@@ -35,21 +35,30 @@ var viewTable = $('.tbody-statutory-nature-list');
 var AddSCreen = $('#statutory-nature-add');
 var viewScreen = $('#statutory-nature-view');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 // get statutory nature list from api
 function getStatutorynatures() {
 	function onSuccess(data) {
 		  countriesList = data.countries;
     	statutorynatureList = data.statutory_natures;
-		  console.log("list:"+data)
 		  loadStatNatureData(statutorynatureList);
 	}
 	function onFailure(error) {
-		custom_alert(error);
+		displayMessage(error);
 	}
+  displayLoader();
 	mirror.getStatutoryNatureList(function (error, response) {
 		if (error == null) {
+      hideLoader();
 		  onSuccess(response);
 		} else {
+      hideLoader();
 		  onFailure(error);
 		}
 	});
@@ -85,53 +94,63 @@ function processSearch()
 function loadStatNatureData(data) {
   var j = 1;
   viewTable.find('tr').remove();
+  if(data.length == 0){
+    viewTable.empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
+    viewTable.append(clone4);
+  }else{
+    $.each(data, function (key, value) {
+      var countryId = value.country_id;
+      var countryName = value.country_name;
+      var statNatureId = value.statutory_nature_id;
+      var statNatureName = value.statutory_nature_name;
+      var isActive = value.is_active;
+      var passStatus = null;
 
-  $.each(data, function (key, value) {
-    var countryId = value.country_id;
-    var countryName = value.country_name;
-    var statNatureId = value.statutory_nature_id;
-    var statNatureName = value.statutory_nature_name;
-    var isActive = value.is_active;
-    var passStatus = null;
+      if (isActive == true) {
+        passStatus = false;
+      } else {
+        passStatus = true;
+      }
 
-    if (isActive == true) {
-      passStatus = false;
-    } else {
-      passStatus = true;
-    }
+      var tableRow = $('#templates .table-statutory-nature-master .table-row');
+      var clone = tableRow.clone();
+      $('.sno', clone).text(j);
+      $('.country-name', clone).text(countryName);
+      $('.statutory-nature-name', clone).text(statNatureName);
 
-    var tableRow = $('#templates .table-statutory-nature-master .table-row');
-    var clone = tableRow.clone();
-    $('.sno', clone).text(j);
-    $('.country-name', clone).text(countryName);
-    $('.statutory-nature-name', clone).text(statNatureName);
+      //edit icon
+      $('.edit').attr('title', 'Click Here to Edit');
+      $('.edit', clone).addClass('fa-pencil text-primary');
+      $('.edit', clone).on('click', function () {
+        statNature_edit(statNatureId, statNatureName, countryId);
+      });
+      if (isActive == true){
+        $('.status').attr('title', 'Click Here to Deactivate');
+        $('.status', clone).removeClass('fa-times text-danger');
+        $('.status', clone).addClass('fa-check text-success');
+      }
+      else{
+        $('.status').attr('title', 'Click Here to Activate');
+        $('.status', clone).removeClass('fa-check text-success');
+        $('.status', clone).addClass('fa-times text-danger');
+      }
 
-    //edit icon
-    $('.edit').attr('title', 'Click Here to Edit');
-    $('.edit', clone).addClass('fa-pencil text-primary');
-    $('.edit', clone).on('click', function () {
-      statNature_edit(statNatureId, statNatureName, countryId);
+      $('.status', clone).on('click', function (e) {
+        showModalDialog(e, statNatureId, isActive);
+      });
+
+      $('.status').hover(function(){
+        showTitle(this);
+      });
+
+      viewTable.append(clone);
+      j = j + 1;
     });
-    if (isActive == true){
-      $('.status', clone).removeClass('fa-times text-danger');
-      $('.status', clone).addClass('fa-check text-success');
-    }
-    else{
-      $('.status', clone).removeClass('fa-check text-success');
-      $('.status', clone).addClass('fa-times text-danger');
-    }
+  }
 
-    $('.status', clone).on('click', function (e) {
-      showModalDialog(e, statNatureId, isActive);
-    });
-
-    $('.status').hover(function(){
-      showTitle(this);
-    });
-
-    viewTable.append(clone);
-    j = j + 1;
-  });
 }
 
 //Status Title
@@ -187,12 +206,15 @@ function validateAuthentication(){
   else {
     validateMaxLength('password', password, "Password");
   }
+  displayLoader();
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
+      hideLoader();
       isAuthenticate = true;
       Custombox.close();
     }
     else {
+      hideLoader();
       if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
       }
@@ -202,7 +224,6 @@ function validateAuthentication(){
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -235,12 +256,10 @@ function submitStatutoryNature()
 	var countryId = country_val.val();
 	var countryName = country_ac.val().trim();
 	var statutorynatureId = statutory_nature_id.val();
-  console.log("id:"+statutorynatureId)
 	var statutorynatureName = statutory_nature_name.val();
 
 	//validate controls
 	var returnValidation = formValidation();
-	console.log(returnValidation)
 
 	if(returnValidation == true){
 		//save statutory nature
@@ -263,18 +282,20 @@ function submitStatutoryNature()
 				parseInt(countryId)
 			];
 			statutoryNatureDetailDict = mirror.getSaveStatutoryNatureDict(statutoryNatureDetail);
+      displayLoader();
 			mirror.saveStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
+          hideLoader();
 					displaySuccessMessage(msg.statutoty_nature_save_success);
 					onSuccess(response);
 				} else {
+          hideLoader();
 					onFailure(error);
 				}
 			});
 		}
 		else //update organization
 		{
-      console.log("update")
 			function onSuccess(response) {
 				getStatutorynatures();
 				AddSCreen.hide();
@@ -293,11 +314,14 @@ function submitStatutoryNature()
 				parseInt(countryId)
 			];
 			statutoryNatureDetailDict = mirror.getUpdateStatutoryNatureDict(statutoryNatureDetail);
+      displayLoader();
     	mirror.updateStatutoryNature(statutoryNatureDetailDict, function (error, response) {
 				if (error == null) {
+          hideLoader();
 					displaySuccessMessage(msg.statutoty_nature_update_success)
 					onSuccess(response);
 				} else {
+          hideLoader();
 					onFailure(error);
 				}
 			});
@@ -336,8 +360,10 @@ function statNature_edit(statNatureId, statNatureName, countryId) {
 
 // activate / deactivate industry master
 function statNature_active(statNatureId, isActive) {
+  displayLoader();
 	mirror.changeStatutoryNatureStatus(parseInt(statNatureId), isActive, function (error, response) {
     if (error == null) {
+      hideLoader();
       if (isActive) {
         displaySuccessMessage(message.statutoty_nature_status_active_success);
       }
@@ -348,6 +374,7 @@ function statNature_active(statNatureId, isActive) {
       getStatutorynatures();
       //onSuccess(response);
     } else {
+      hideLoader();
       displayMessage(error);
     }
   });
@@ -376,7 +403,7 @@ function displayViewMode(){
   Search_status.removeClass();
   Search_status.addClass('fa');
   Search_status.text('All');
-  loadStatNatureData(industriesList);
+  loadStatNatureData(statutorynatureList);
 }
 
 //callback for autocomplete success
@@ -461,4 +488,12 @@ function initialize()
 $(document).ready(function () {
   initialize();
   $('.js-sorting-table').jssorting(); // Sorting table
+  // $(".js-sorting-table").tablesorter({
+  //   sortList: [[0,0]], // starting column sorting
+  //   headers: { // disable column sorting
+  //       0:{sorter: false},
+  //       3:{sorter: false},
+  //       4:{sorter: false}
+  //   }
+  // });
 });

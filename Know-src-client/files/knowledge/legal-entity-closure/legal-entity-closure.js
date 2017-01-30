@@ -17,8 +17,6 @@ function hideLoader() {
 }
 
 function loadLegalEntityClosureList() {
-    console.log("inside getGroupAdmin_Group")
-
     function onSuccess(data) {
         legalEntityClosureList = data.legalentity_closure;
         LegalEntityClosureData(legalEntityClosureList);
@@ -53,7 +51,7 @@ function LegalEntityClosureData(data) {
         $('.legal-entity', clone).text(val.legal_entity_name);
         $('.le_id', clone).text(val.legal_entity_id);
 
-        if (val.is_active == false && val.validity_days < checkValidityDays()) {
+        if (val.is_active == false && val.validity_days <= checkValidityDays()) {
             $('#close', clone).css("display", "block");
             $('#close', clone).addClass('-' + val.legal_entity_id)
             $('#close', clone).on('click', function() {
@@ -106,7 +104,7 @@ function LegalEntityClosureData(data) {
     });
     // j = 1;
     // var status_select = $('#status_select').val();
-    // console.log("status:"+status_select)
+    // .log("status:"+status_select)
     // for(var i=0;i<data.length;i++)
     // {
     // 	if(status_select == "-1")
@@ -142,7 +140,7 @@ function LegalEntityClosureData(data) {
 }
 // function bindLegalEntityClosureData(data, j)
 // {
-// 	console.log(data);
+// 	.log(data);
 // 	val = data;
 // 	var tableRow = $('#templates .table-row');
 // 	var clone = tableRow.clone();
@@ -154,8 +152,8 @@ function LegalEntityClosureData(data) {
 // 	$('.legal-entity', clone).text(val.legal_entity_name);
 // 	$('.le_id', clone).text(val.legal_entity_id);
 
-// 	console.log(j)
-// 	console.log("le:"+val.legal_entity_id)
+// 	.log(j)
+// 	.log("le:"+val.legal_entity_id)
 // 	if(val.is_active == true)
 // 	{
 // 		$('#close', clone).show();
@@ -177,7 +175,7 @@ function LegalEntityClosureData(data) {
 // 	}
 // 	else
 // 	{
-// 		console.log("validity:"+val.validity_days)
+// 		.log("validity:"+val.validity_days)
 // 		if(parseInt(val.validity_days) > 90)
 // 		{
 // 			$('#close', clone).hide();
@@ -188,7 +186,7 @@ function LegalEntityClosureData(data) {
 // 		}
 // 		else
 // 		{
-// 			console.log('validity')
+// 			.log('validity')
 // 			$('#close', clone).hide();
 // 			$('#reactive', clone).show();
 // 			$('#reactive', clone).addClass('-'+val.legal_entity_id)
@@ -214,7 +212,7 @@ function LegalEntityClosureData(data) {
 function popup_toggle(le_id, mode) {
     $(".popup_legal_entity_id").val(le_id);
     $(".popup_mode").val(mode);
-    //console.log("e--------"+e);
+    //.log("e--------"+e);
     //var split_e_le_id = e.split("-")[2].trim();
     //$('.modal').show();
     $('#techno_pwd').val('');
@@ -269,9 +267,8 @@ $('#update_status').click(function() {
             }
         });
     } else {
-        console.log("Welcome2");
         if (txtpwd == '') {
-            displayMessage(message.enter_password);
+            displayMessage(message.password_required);
         } else {
             displayMessage(message.reason_required);
         }
@@ -286,7 +283,6 @@ function processFilterSearch()
 	lename_search = $('#search-legal-entity').val().toLowerCase();
     var status_select = $('.search-status-li.active').attr('value');
     var closure_select = $('.search-status-li-1.active').attr('value');
-    console.log("closure_select:"+closure_select)
     var data_is_active = false;
     var data_closure = 0;
 	searchList = [];
@@ -304,34 +300,26 @@ function processFilterSearch()
         else{
             bg_name = data.business_group_name.toLowerCase();
         }
-        console.log("active:"+data.is_active)
 		le_name = data.legal_entity_name.toLowerCase();
-        if((data.validity_days < checkValidityDays() && data.validity_days > 0) && (data.is_active == true)){
-            console.log("1:"+data.validity_days)
+        if((data.validity_days <= checkValidityDays() && data.validity_days > 0) && (data.is_active == true)){
             data_is_active = false;
             data_closure = 2;
         }
 
         if(data.validity_days > checkValidityDays()){
-            console.log(data.validity_days)
             data_closure = 1;
             data_is_active = false;
         }
 		if (
 	      (~c_name.indexOf(ctryname_search)) && (~g_name.indexOf(grpname_search)) &&
 	      (~bg_name.indexOf(bgrpname_search)) && (~le_name.indexOf(lename_search)) &&
-            ((closure_select == 'all') || (~closure_select.indexOf(data_closure)))
+            ((closure_select == 'all') || (~closure_select.indexOf(data_closure))) &&
+            ((status_select == 'all') || (Boolean(parseInt(status_select)) == data_is_active))
 	    )
 		{
-            if ((status_select == 'all') || (Boolean(parseInt(status_select)) == data_is_active))
-            {
-                console.log("2:"+data.validity_days,g_name)
-                searchList.push(data);
-
-            }
+            searchList.push(data);
 		}
 	}
-    console.log(searchList.length)
 	LegalEntityClosureData(searchList);
 }
 
@@ -359,7 +347,7 @@ function renderSearch() {
     });
     $(event.target).parent().addClass('active');
 
-    var currentClass = $(event.target).find('i').attr('class');
+    /*var currentClass = $(event.target).find('i').attr('class');
     Search_status.removeClass();
     if(currentClass != undefined){
       Search_status.addClass(currentClass);
@@ -367,7 +355,10 @@ function renderSearch() {
     }else{
       Search_status.addClass('fa');
       Search_status.text('All');
-    }
+    }*/
+    var currentClass = $(event.target).html();
+    Search_status.html(currentClass);
+
     processFilterSearch();
   });
 
@@ -377,22 +368,22 @@ function renderSearch() {
     });
     $(event.target).parent().addClass('active');
 
-    var currentClass = $(event.target).find('i').attr('class');
-    Search_status_1.removeClass();
+    var currentClass = $(event.target).html();
+    Search_status_1.html(currentClass);
+    /*Search_status_1.removeClass();
     if(currentClass != undefined){
       Search_status_1.addClass(currentClass);
       Search_status_1.text('');
     }else{
       Search_status_1.addClass('fa');
       Search_status_1.text('All');
-    }
+    }*/
     processFilterSearch();
   });
 }
 
 // page load
 function initialize() {
-    console.log("initialize")
     clearMessage();
     loadLegalEntityClosureList();
 }

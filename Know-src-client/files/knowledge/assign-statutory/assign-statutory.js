@@ -440,7 +440,7 @@ function pageControls() {
         //UNIT_CS_ID = {};
          if(UNITS.length > 0){
             $('.unit-list li').each(function (index, el) {
-                if(ACTIVE_UNITS.length >= 10){
+                if(ACTIVE_UNITS.length >= 20){
                     displayMessage(message.maximum_units);
                     return false;
                 }else{
@@ -722,7 +722,7 @@ function loadSingleUnitCompliances() {
 
         count = actCount;
         LastAct = value.level_1_s_name;
-        LastSubAct = value.level_1_s_name;
+        LastSubAct = "";
         actCount = actCount + 1;
         }
 
@@ -805,8 +805,12 @@ function loadSingleUnitCompliances() {
         $(".tbody-compliance-list").append(no_clone);
         $(".total_count_view").hide();
     }else{
-        SubmitButton.show();
         SaveButton.show();
+        if(totalRecord == (sno-1)){
+            SubmitButton.show();
+        }else{
+            SubmitButton.hide();
+        }
         $(".total_count").text('Showing 1 to ' + (sno-1) + ' of ' + totalRecord + ' entries');
         $(".total_count_view").show();
     }
@@ -860,7 +864,7 @@ function loadMultipleUnitCompliances() {
             });
         count = actCount;
         LastAct = value.level_1_s_name;
-        LastSubAct = value.level_1_s_name;
+        LastSubAct = "";
         actCount = actCount + 1;
         }
 

@@ -1,5 +1,6 @@
 from werkzeug import secure_filename
 import os
+from server.jsontocsvconverter import ConvertJsonToCSV
 from protocol import core, login, general, possiblefailure
 from server.constants import (
     FILE_TYPES,
@@ -81,6 +82,9 @@ def process_general_request(request, db):
 
     elif type(request_frame) is general.GetAuditTrails:
         result = process_get_audit_trails(db, request_frame, user_id)
+
+    elif type(request_frame) is general.ExportAuditTrails:
+        result = process_export_audit_trails(db, request_frame, user_id)
 
     elif type(request_frame) is general.GetAuditTrailsFilter:
         result = process_get_audit_trails_filter(db, request_frame, user_id)
@@ -276,23 +280,32 @@ def process_get_countries(db, user_id):
 # To retrieve all the audit trails of the given User
 ########################################################
 def process_get_audit_trails(db, request, session_user):
-    print "inside controller"
     from_count = request.record_count
     to_count = request.page_count
     from_date = request.from_date
     to_date = request.to_date
     user_id = request.user_id_search
     form_id = request.form_id_search
-    country_id = request.country_id
     category_id = request.category_id
     audit_trails = get_audit_trails(
         db,
         session_user, from_count, to_count,
         from_date, to_date, user_id, form_id,
-        country_id, category_id
+        category_id
     )
     return audit_trails
 
+########################################################
+# To retrieve all the audit trails of the given User
+########################################################
+def process_export_audit_trails(db, request, session_user):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "AuditTraiReport"
+        )
+        return general.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
 
 ########################################################
 # To retrieve all the audit trails filter data - user, categories
@@ -332,14 +345,10 @@ def process_uploaded_file(info, f_type, client_id=None):
     res = None
     for k in info_keys:
         try:
-            print k
             file_info = info[k]
             file_name = file_info.filename
-            print file_name
             file_content = file_info.read()
-            print len(file_content)
             f_name = file_name.split('.')
-            print f_name
             if len(f_name) == 1:
                 res = possiblefailure.InvalidFile()
                 is_valid = False
@@ -359,7 +368,6 @@ def process_uploaded_file(info, f_type, client_id=None):
                 lst = []
                 if f_type == "knowledge":
                     file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)
-                    print file_path
                 else:
                     client_dir = "%s/%s" % (CLIENT_DOCS_BASE_PATH, client_id)
                     file_path = "%s/%s" % (client_dir, file_name)
@@ -374,9 +382,10 @@ def process_uploaded_file(info, f_type, client_id=None):
                     lst.append(file_response)
                 res = general.FileUploadSuccess(lst)
 
-            return res
         except Exception, e:
             print e
+
+    return res
 
 ########################################################
 # To Handle the verify password request

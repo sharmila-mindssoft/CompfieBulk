@@ -19,9 +19,9 @@
                         <thead>
                             <tr>
                                 <th>#<span class="none-sort-sno"></span></th>
-                                <th>Country <span data-sort="string" class="fa fa-sort pull-right sort active header"></span></th>
-                                <th>Domain <span data-sort="string" class="fa fa-sort pull-right sort active header"></span></th>
-                                <th>Organization <span data-sort="string" class="fa fa-sort pull-right sort active header"></span></th>
+                                <th>Country <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                                <th>Domain <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
+                                <th>Organization <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
                                 <th class="text-center">Edit</th>
                                 <th class="text-center" width="15%">Status</th>
                             </tr>
@@ -165,6 +165,13 @@
             <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
         </div>
     </div>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
 </div>
 <script type="text/javascript" src="/script/organization/organization.js"></script>
 <script src="/js/jquery.tablesorter.js"></script>

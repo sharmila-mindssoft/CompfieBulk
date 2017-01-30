@@ -20,6 +20,9 @@ var DM_PARANTS = {};
 var DE_GROUPS = {};
 var DM_GROUPS = {};
 var LE_COUNTRIES = {};
+var LE_DOMAINS = {};
+var DE_LE = {};
+var DM_LE = {};
 
 var TechnoManagerName = $("#techno_manager_name");
 var TechnoManagerId = $("#techno_manager_id");
@@ -39,6 +42,8 @@ var TERemarks = $("#te_remarks");
 var TEShow = $(".te-show-btn");
 var TESubmit = $(".btn-submit-2");
 var TESelectAll = $(".te-selectall");
+var TECheckbox = $(".te-group-checkbox");
+var TECountries = [];
 
 var DomainManagerName = $("#domain_manager_name");
 var DomainManagerId = $("#domain_manager_id");
@@ -90,12 +95,17 @@ var ManagerCategory = '';
 var ManagerId = '';
 var ReplaceManagerId = '';
 
+var RemarkView1 = $(".remark-view1");
+var SubmitView1 = $(".submit-view1");
+var RemarkView2 = $(".remark-view2");
+var SubmitView2 = $(".submit-view2");
+var RemarkView3 = $(".remark-view3");
+var SubmitView3 = $(".submit-view3");
+var RemarkView4 = $(".remark-view4");
+var SubmitView4 = $(".submit-view4");
+
 //retrive businessgroup form autocomplete value
 function clearData(){
-    $('.tbody-tm-view').empty();
-    $('.tbody-te-view').empty();
-    $('.tbody-dm-view').empty();
-    $('.tbody-de-view').empty();
     TMRemarks.val('');
     TERemarks.val('');
     DMRemarks.val('');
@@ -114,14 +124,74 @@ function clearData(){
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
+    value_element.focus();
+    var current_id = id_element[0].id;
+    if (current_id == 'domain_manager_id') {
+        DMGroupName.val('');
+        DMGroupId.val('');
+        DMBusinessGroupName.val('');
+        DMBusinessGroupId.val('');
+        DMLegalEntityName.val('');
+        DMLegalEntityId.val('');
+        DMDomainName.val('');
+        DMDomainId.val('');
+    }else if (current_id == 'dm_group_id') {
+        DMBusinessGroupName.val('');
+        DMBusinessGroupId.val('');
+        DMLegalEntityName.val('');
+        DMLegalEntityId.val('');
+        DMDomainName.val('');
+        DMDomainId.val('');
+    } else if (current_id == 'dm_business_group_id') {
+        DMLegalEntityName.val('');
+        DMLegalEntityId.val('');
+        DMDomainName.val('');
+        DMDomainId.val('');
+    } else if (current_id == 'dm_legal_entity_id') {
+        DMDomainName.val('');
+        DMDomainId.val('');
+    }else if (current_id == 'domain_executive_id') {
+        DEGroupName.val('');
+        DEGroupId.val('');
+        DEBusinessGroupName.val('');
+        DEBusinessGroupId.val('');
+        DELegalEntityName.val('');
+        DELegalEntityId.val('');
+        DEDomainName.val('');
+        DEDomainId.val('');
+    }else if (current_id == 'de_group_id') {
+        DEBusinessGroupName.val('');
+        DEBusinessGroupId.val('');
+        DELegalEntityName.val('');
+        DELegalEntityId.val('');
+        DEDomainName.val('');
+        DEDomainId.val('');
+    } else if (current_id == 'de_business_group_id') {
+        DELegalEntityName.val('');
+        DELegalEntityId.val('');
+        DEDomainName.val('');
+        DEDomainId.val('');
+    } else if (current_id == 'de_legal_entity_id') {
+        DEDomainName.val('');
+        DEDomainId.val('');
+    }else if (current_id == 'techno_manager_id') {
+        clearData();
+        $('.tbody-tm-view').empty();
+        callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
+    }else if (current_id == 'techno_executive_id') {
+        clearData();
+        $('.tbody-te-view').empty();
+        callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
+    }
 }
 
 function loadTMList(){
         var LastGroup = '';
         var group_countries = {};
         var group_domains = {};
-
+        var isCount = false;
         $.each(TechnoDetailsList, function(key, value) {
+            isCount = true;
             if(LastGroup != value.ct_name){
                 var grouptableRow = $('#templates .tm-view-row .tm-view-group-row');
                 var clone = grouptableRow.clone();
@@ -137,7 +207,6 @@ function loadTMList(){
                 $('.tm-techno-manager-name', clone).keyup(function(e){
                     var condition_fields = ["country_domains", "user_id"];
                     var condition_values = [[group_countries[value.ct_id], group_domains[value.ct_id]], TechnoManagerId.val()];
-                    
                     var text_val = $(this).val();
                     selected_textbox = $(this);
                     selected_textid = $("#techno_manager_id_"+value.ct_id);
@@ -193,6 +262,17 @@ function loadTMList(){
             $('.tbody-tm-view').append(clone);
         });
 
+        if(isCount == false){
+            RemarkView1.hide();
+            SubmitView1.hide();
+            var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+            var norecord_clone = norecord_row.clone();
+            $('.tbl_norecords', norecord_clone).text('No Records Found');
+            $('.tbody-tm-view').append(norecord_clone);
+        }else{
+            RemarkView1.show();
+            SubmitView1.show();
+        }
         //console.log(group_countries)
         //console.log(group_domains)
         $('.tm-group-checkbox').on('click', function(e) {
@@ -209,7 +289,9 @@ function loadTMList(){
 }
 
 function loadTEList(){
+        var isCount = false;
         $.each(TechnoDetailsList, function(key, value) {
+            isCount = true;
             var letableRow = $('#templates .te-view-row .te-view-le-row');
             var clone = letableRow.clone();
 
@@ -224,14 +306,31 @@ function loadTEList(){
             $('.te-le', clone).text(value.le_name);
             $('.tbody-te-view').append(clone);
         });
+
+        $('.te-group-checkbox').click(function() {
+            getTEValidCountries();
+        });
+        if(isCount == false){
+            RemarkView2.hide();
+            SubmitView2.hide();
+            var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+            var norecord_clone = norecord_row.clone();
+            $('.tbl_norecords', norecord_clone).text('No Records Found');
+            $('.tbody-te-view').append(norecord_clone);
+        }else{
+            RemarkView2.show();
+            SubmitView2.show();
+        }
+
 }
 
 function loadDMList(){
         var LastLE = '';
         var group_countries = {};
         var group_domains = {};
-
+        var isCount = false;
         $.each(DomainDetailsList, function(key, value) {
+            isCount = true;
             if(LastLE != value.le_name){
                 var letableRow = $('#templates .dm-view-row .dm-view-le-row');
                 var clone = letableRow.clone();
@@ -329,10 +428,24 @@ function loadDMList(){
                 $(de_view).hide();
             }
         });
+
+        if(isCount == false){
+            RemarkView3.hide();
+            SubmitView3.hide();
+            var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+            var norecord_clone = norecord_row.clone();
+            $('.tbl_norecords', norecord_clone).text('No Records Found');
+            $('.tbody-dm-view').append(norecord_clone);
+        }else{
+            RemarkView3.show();
+            SubmitView3.show();
+        }
 }
 
 function loadDEList(){
+    var isCount = false;
     $.each(DomainDetailsList, function(key, value) {
+        isCount = true;
         var unittableRow = $('#templates .de-view-row .de-view-unit-row');
         var clone = unittableRow.clone();
 
@@ -345,6 +458,18 @@ function loadDEList(){
         
         $('.tbody-de-view').append(clone);
     });
+
+    if(isCount == false){
+        RemarkView4.hide();
+        SubmitView4.hide();
+        var norecord_row = $('#nocompliance-templates .table-nocompliances-list .table-row');
+        var norecord_clone = norecord_row.clone();
+        $('.tbl_norecords', norecord_clone).text('No Records Found');
+        $('.tbody-de-view').append(norecord_clone);
+    }else{
+        RemarkView4.show();
+        SubmitView4.show();
+    }
 }
 
 function callTechnoUserInfo(userId, type){
@@ -379,7 +504,7 @@ function callDomainUserInfo(userId, groupId, legalentityId, domainId, type){
 
 }
 
-function getCountryId(l_Id){
+/*function getCountryId(l_Id){
     var country_id = '';
     $.each(LEGAL_ENTITIES, function(key, value) {
         if(value.legal_entity_id == parseInt(l_Id)){
@@ -387,6 +512,26 @@ function getCountryId(l_Id){
         }
     });
     return country_id;
+}*/
+
+function getTEValidCountries(){
+    TECountries = [];
+    TEDomains = [];
+    $('.te-group-checkbox:checkbox:checked').each(function (index, el) {
+        var combile_id = $(this).val().split('-');
+        var le_id = combile_id[1];
+        var cn_id = LE_COUNTRIES[le_id];
+        var d_ids = LE_DOMAINS[le_id];
+        if ($.inArray(cn_id, TECountries) == -1) {
+            TECountries.push(cn_id);
+        }
+
+        for(var i=0; i<d_ids.length; i++){
+            if ($.inArray(d_ids[i], TEDomains) == -1) {
+                TEDomains.push(d_ids[i]);
+            }
+        }
+    });
 }
 
 function pageControls(){
@@ -410,8 +555,9 @@ function pageControls(){
 
     RTechnoExecutiveName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = ["user_id", "p_user_ids"];
-        var condition_values = [TechnoExecutiveId.val(), TE_PARANTS[TechnoExecutiveId.val()]];
+        
+        var condition_fields = ["country_domains", "user_id", "p_user_ids", ];
+        var condition_values = [[TECountries, TEDomains], TechnoExecutiveId.val(), TE_PARANTS[TechnoExecutiveId.val()]];
         commonAutoComplete1(
             e, RACTechnoExecutive, RTechnoExecutiveId, text_val,
             TECHNO_USERS, "employee_name", "user_id", function (val) {
@@ -421,9 +567,13 @@ function pageControls(){
 
     TESelectAll.change(function() {
         $(".tbody-te-view .te-group-checkbox").prop('checked', $(this).prop("checked"));
+        getTEValidCountries();
     });
 
     DomainManagerName.keyup(function(e){
+        var condition_fields = ["p_user_ids"];
+        var condition_values = [];
+
         var text_val = $(this).val();
         commonAutoComplete(
             e, ACDomainManager, DomainManagerId, text_val,
@@ -462,13 +612,12 @@ function pageControls(){
 
     DMLegalEntityName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = [];
-        var condition_values = [];
+        var condition_fields = ["legal_entity_id"];
+        var condition_values = [DM_LE[DomainManagerId.val()]];
         if(DMBusinessGroupId.val() != ''){
             condition_fields.push("business_group_id");
             condition_values.push(DMBusinessGroupId.val());
         }
-
         if(DMGroupId.val() != ''){
             condition_fields.push("client_id");
             condition_values.push(DMGroupId.val());
@@ -485,8 +634,9 @@ function pageControls(){
     DMDomainName.keyup(function(e){
         var text_val = $(this).val();
         var cn_id = LE_COUNTRIES[DMLegalEntityId.val()];
-        var condition_fields = ["is_active", "country_ids"];
-        var condition_values = [true, cn_id];
+        var d_ids = LE_DOMAINS[DMLegalEntityId.val()];
+        var condition_fields = ["is_active", "country_ids", "domain_id"];
+        var condition_values = [true, cn_id, d_ids];
 
         commonAutoComplete(
             e, DMACDomain, DMDomainId, text_val,
@@ -509,7 +659,6 @@ function pageControls(){
         var text_val = $(this).val();
         var condition_fields = ["country_domains", "user_id", "p_user_ids"];
         var condition_values = [[[c_id], [d_id]], DomainExecutiveId.val(), DE_PARANTS[DomainExecutiveId.val()]];
-
         commonAutoComplete1(
             e, RACDomainExecutive, RDomainExecutiveId, text_val,
             DOMAIN_USERS, "employee_name", "user_id", function (val) {
@@ -542,15 +691,13 @@ function pageControls(){
                 function (val) {
                     onAutoCompleteSuccess(DEBusinessGroupName, DEBusinessGroupId, val);
                 }, condition_fields, condition_values);
-
         }
-        
     });
 
     DELegalEntityName.keyup(function(e){
         var text_val = $(this).val();
-        var condition_fields = [];
-        var condition_values = [];
+        var condition_fields = ["legal_entity_id"];
+        var condition_values = [DE_LE[DomainExecutiveId.val()]];
 
         if(DEBusinessGroupId.val() != ''){
             condition_fields.push("business_group_id");
@@ -572,8 +719,9 @@ function pageControls(){
     DEDomainName.keyup(function(e){
         var text_val = $(this).val();
         var cn_id = LE_COUNTRIES[DELegalEntityId.val()];
-        var condition_fields = ["is_active", "country_ids"];
-        var condition_values = [true, cn_id];
+        var d_ids = LE_DOMAINS[DELegalEntityId.val()];
+        var condition_fields = ["is_active", "country_ids", "domain_id"];
+        var condition_values = [true, cn_id, d_ids];
     
         commonAutoComplete(
             e, DEACDomain, DEDomainId, text_val,
@@ -583,33 +731,11 @@ function pageControls(){
             }, condition_fields, condition_values);
     });
 
-    TMShow.click(function(){
-        clearData();
-        if(TechnoManagerId.val() == ''){
-            displayMessage(message.reassign_from_required)
-        }else{
-            callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
-        }
-    });
-
-    TEShow.click(function(){
-        clearData();
-        if(TechnoExecutiveId.val() == ''){
-            displayMessage(message.reassign_from_required)
-        }else{
-            callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
-        }
-    });
-
     DMShow.click(function(){
-        clearData();
         var dm_id = DomainManagerId.val();
         var group_id = DMGroupId.val();
         var le_id = DMLegalEntityId.val();
         var domain_id = DMDomainId.val();
-
-        d_id = parseInt(domain_id);
-        c_id = getCountryId(le_id);
 
         if(dm_id == ''){
             displayMessage(message.reassign_from_required);
@@ -620,19 +746,19 @@ function pageControls(){
         }else if(domain_id == ''){
             displayMessage(message.domain_required);
         }else{
+            clearData();
+            $('.tbody-dm-view').empty();
+            d_id = parseInt(domain_id);
+            c_id = LE_COUNTRIES[le_id];
             callDomainUserInfo(parseInt(dm_id), parseInt(group_id), parseInt(le_id), parseInt(domain_id), 'DM');
         }
     });
 
     DEShow.click(function(){
-        clearData();
         var de_id = DomainExecutiveId.val();
         var group_id = DEGroupId.val();
         var le_id = DELegalEntityId.val();
         var domain_id = DEDomainId.val();
-
-        d_id = parseInt(domain_id);
-        c_id = getCountryId(le_id);
 
         if(de_id == ''){
             displayMessage(message.reassign_from_required);
@@ -643,6 +769,10 @@ function pageControls(){
         }else if(domain_id == ''){
             displayMessage(message.domain_required);
         }else{
+            clearData();
+            $('.tbody-de-view').empty();
+            d_id = parseInt(domain_id);
+            c_id = LE_COUNTRIES[le_id];
             callDomainUserInfo(parseInt(de_id), parseInt(group_id), parseInt(le_id), parseInt(domain_id), 'DE');
         }
     });
@@ -650,7 +780,6 @@ function pageControls(){
     ReplaceManagerShow.change(function(){
         clearData();
         var category = $('#category').val();
-
         if(category == ''){
             displayMessage(message.user_category_required);
             $(".manager-list").empty();
@@ -723,7 +852,9 @@ function pageControls(){
                         function(error, response) {
                         if (error == null) {
                             displaySuccessMessage(message.reassign_users_account_success);
-                            TMShow.trigger( "click" );
+                            clearData();
+                            $('.tbody-tm-view').empty();
+                            callTechnoUserInfo(parseInt(TechnoManagerId.val()), 'TM');
                         } else {
                             displayMessage(error);
                         }
@@ -779,7 +910,9 @@ function pageControls(){
                             function(error, response) {
                             if (error == null) {
                                 displaySuccessMessage(message.reassign_users_account_success);
-                                TEShow.trigger( "click" );
+                                clearData();
+                                $('.tbody-te-view').empty();
+                                callTechnoUserInfo(parseInt(TechnoExecutiveId.val()), 'TE');
                             } else {
                                 displayMessage(error);
                             }
@@ -917,9 +1050,10 @@ function pageControls(){
         }else if(replace_remarks == ''){
             displayMessage(message.remarks_required);
         }else{
-            mirror.SaveUserReplacement(5, parseInt(ManagerId), parseInt(ReplaceManagerId), replace_remarks, 
+            mirror.SaveUserReplacement(parseInt(ManagerCategory), parseInt(ManagerId), parseInt(ReplaceManagerId), replace_remarks, 
                 function(error, response) {
                 if (error == null) {
+                    getFormData();
                     displaySuccessMessage(message.reassign_users_account_success);
                     ReplaceManagerShow.trigger( "change" );
                 } else {
@@ -930,7 +1064,7 @@ function pageControls(){
     });
 }
 
-function activateManager(element) {
+function activateManager(element, country_domains) {
     $('.manager-list li').each(function () {
         $(this).removeClass('active');
         $(this).find('i').removeClass('fa fa-check pull-right');
@@ -950,9 +1084,9 @@ function activateManager(element) {
     }
 
     if(ManagerCategory == '5'){
-        loadReplaceManagerList(ManagerId, TECHNO_MANAGERS);
+        loadReplaceManagerList(ManagerId, TECHNO_MANAGERS, country_domains);
     }else{
-        loadReplaceManagerList(ManagerId, DOMAIN_MANAGERS);
+        loadReplaceManagerList(ManagerId, DOMAIN_MANAGERS, country_domains);
     }
 
 }
@@ -987,25 +1121,46 @@ function loadManagerList(USER_LIST){
         clone.attr('id', user_idval);
         $('.manager-list').append(clone);
         clone.click(function() {
-            activateManager(this);
+            activateManager(this, value.country_domains);
         });
     });
 }
 
-function loadReplaceManagerList(selected_id, USER_LIST){
+function loadReplaceManagerList(selected_id, USER_LIST, country_domains){
     var selectedMgr = selected_id;
     $(".replace-manager-list").empty();
     $.each(USER_LIST, function(key, value) {
         if(value.user_id != selectedMgr){
-            user_idval = value.user_id;
-            user_text = value.employee_name;
-            var clone = $("#templates .drop-down-option li").clone();
-            clone.html(user_text + '<i></i>');
-            clone.attr('id', user_idval);
-            $('.replace-manager-list').append(clone);
-            clone.click(function() {
-                activateReplaceManager(this);
-            });
+            var condition_result = true;
+            for(var j=0; j<country_domains.length; j++){
+                var cresult = false;
+                var dresult = false;
+                for(var i=0; i<value.country_domains.length; i++)  {
+                    if(value.country_domains[i]["c_id"] == country_domains[j]["c_id"]){
+                        cresult = true;
+                    }
+                    if(value.country_domains[i]["d_id"] == country_domains[j]["d_id"]){
+                        dresult = true;
+                    }
+                }    
+                if(cresult && dresult){
+                    condition_result = true;
+                }else{
+                    condition_result = false;
+                } 
+            }
+            if(condition_result == true){
+                user_idval = value.user_id;
+                user_text = value.employee_name;
+                var clone = $("#templates .drop-down-option li").clone();
+                clone.html(user_text + '<i></i>');
+                clone.attr('id', user_idval);
+                $('.replace-manager-list').append(clone);
+                clone.click(function() {
+                    activateReplaceManager(this);
+                });
+            }
+            
         }
     });
 }
@@ -1017,6 +1172,9 @@ function generateMap(){
     DE_GROUPS = {};
     DM_GROUPS = {};
     LE_COUNTRIES = {};
+    LE_DOMAINS = {};
+    DE_LE = {};
+    DM_LE = {};
 
     $.each(TECHNO_USERS, function(key, value) {
         TE_PARANTS[value.user_id] = value.p_user_ids;
@@ -1025,15 +1183,18 @@ function generateMap(){
     $.each(DOMAIN_USERS, function(key, value) {
         DE_PARANTS[value.user_id] = value.p_user_ids;
         DE_GROUPS[value.user_id] = value.grp_ids;
+        DE_LE[value.user_id] = value.le_ids;
     });
 
     $.each(DOMAIN_MANAGERS, function(key, value) {
         DM_PARANTS[value.user_id] = value.p_user_ids;
         DM_GROUPS[value.user_id] = value.grp_ids;
+        DM_LE[value.user_id] = value.le_ids;
     });
 
     $.each(LEGAL_ENTITIES, function(key, value) {
         LE_COUNTRIES[value.legal_entity_id] = value.country_id;
+        LE_DOMAINS[value.legal_entity_id] = value.domain_ids;
     });
 
 }

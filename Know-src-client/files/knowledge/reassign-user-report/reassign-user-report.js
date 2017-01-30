@@ -34,6 +34,9 @@ var sno = 0;
 var totalRecord;
 var ReassignedUsersList;
 
+var ExportButton = $('#export');
+var csv = false;
+
 function displayLoader() {
   $('.loading-indicator-spin').show();
 }
@@ -45,13 +48,12 @@ function initialize()
 {
 	var t0, t1;
 	function onSuccess(data) {
-		console.log('Took', (t1 - t0).toFixed(4), 'milliseconds to generate:');
 		userCategoryList = data.user_categories;
 		userList = data.reassign_user_clients;
 		userClientGroups = data.clients;
 		userDomainList = data.reassign_domains;
 		//userGroupAssignedList = data.reassign_assignedgroups;
-		//console.log(data);
+		//.log(data);
 		//resetAllfilter();
 		loadUserCategory();
 	}
@@ -72,6 +74,61 @@ function initialize()
 	t1 = performance.now();
 }
 
+ExportButton.click(function () {
+	if($('#datatable-responsive').find('tbody').find('tr').length > 0){
+		csv = true;
+		var category_val = $('#usercategory').val();
+		var user_id = $('#manager-id').val();
+		var group_id_none = $('#group-id').val();
+		categoryName = $('#usercategory option:selected').text();
+		if(group_id_none == '')
+	  	{
+	  		group_id_none = 0;
+	  	}
+	  	var u_m_none = null;
+	  	if(categoryName == "Techno Manager" || categoryName == "Techno Executive"){
+	    	displayLoader();
+	    	mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
+	    		if (error == null) {
+		        onSuccess(response);
+		        hideLoader();
+		      } else {
+		        onFailure(error);
+		        hideLoader();
+		      }
+		    });
+	    }else{
+	    	var bg_id_none = null;
+			if(BusinessGroup.val() != '')
+			{
+				bg_id_none = BusinessGroup.val();
+			}
+			u_m_none = bg_id_none +","+LegalEntity.val()+","+Domain.val();
+			function onSuccess(data) {
+				if (csv) {
+					var download_url = data.link;
+					window.open(download_url, '_blank');
+				}
+			}
+			function onFailure(error) {
+				displayMessage(error);
+			}
+			displayLoader();
+			mirror.exportReassignUserDomainReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
+	    		if (error == null) {
+		        onSuccess(response);
+		        hideLoader();
+		      } else {
+		        onFailure(error);
+		        hideLoader();
+		      }
+		    });
+	    }
+	}else{
+		displayMessage(message.export_empty);
+	}
+});
+
 $('.btn-show').click(function () {
   var category_val = $('#usercategory').val();
   var user_id = $('#manager-id').val();
@@ -85,7 +142,7 @@ $('.btn-show').click(function () {
   		group_id_none = 0;
   	}
   	function onSuccess(data) {
-      //console.log(data);
+      //.log(data);
       $('.details').show();
 	    $('#compliance_animation')
 	      .removeClass().addClass('bounceInLeft animated')
@@ -98,7 +155,7 @@ $('.btn-show').click(function () {
       		$('.domain-user').hide();
       		$('.tbody-reassignuserrpt-techno-manager-list').find('tr').remove();
       		userGroupAssignedList = data.reassign_user_list;
-      		totalRecord = getTechnoRecordLength();
+      		totalRecord = getTechnoRecordLength("techno");
 			processPaging();
 		}else if(categoryName == "Techno Executive"){
 			$('.techno-manager').hide();
@@ -106,7 +163,7 @@ $('.btn-show').click(function () {
       		$('.domain-user').hide();
       		$('.tbody-reassignuserrpt-techno-exec-list').find('tr').remove();
       		userGroupAssignedList = data.reassign_user_list;
-      		totalRecord = getTechnoRecordLength();
+      		totalRecord = getTechnoRecordLength("techno");
 			processPaging();
 		}else if(categoryName == "Domain Manager"){
 			$('.techno-manager').hide();
@@ -114,7 +171,7 @@ $('.btn-show').click(function () {
       		$('.domain-user').show();
       		$('.tbody-reassignuserrpt-domain-user-list').find('tr').remove();
       		userGroupAssignedList = data.reassign_domains_list;
-      		totalRecord = userGroupAssignedList.length;
+      		totalRecord = getTechnoRecordLength("domain");
 			processPaging();
 		}else if(categoryName == "Domain Executive"){
 			$('.techno-manager').hide();
@@ -122,10 +179,14 @@ $('.btn-show').click(function () {
       		$('.domain-user').show();
       		$('.tbody-reassignuserrpt-domain-user-list').find('tr').remove();
       		userGroupAssignedList = data.reassign_domains_list;
-      		totalRecord = userGroupAssignedList.length;
+      		totalRecord = getTechnoRecordLength("domain");
 			processPaging();
 		}
-
+		if(totalRecord > 0){
+			ExportButton.show();
+		}else{
+			ExportButton.hide();
+		}
     }
     function onFailure(error) {
       displayMessage(error);
@@ -190,7 +251,7 @@ $('.btn-show').click(function () {
   }
 });
 
-function getTechnoRecordLength(){
+function getTechnoRecordLength(category){
 	var arr_clients = [];
 	var recordCOunt = 0;
 
@@ -204,19 +265,35 @@ function getTechnoRecordLength(){
 		    return arr;
 		}, []);
 	}*/
-	for(var i=0;i<userGroupAssignedList.length;i++){
-		recordCOunt = 0;
-		if(i==0){
-			arr_clients.push(userGroupAssignedList[i].client_id);
-		}
-		else{
-			for(var j=0;j<userGroupAssignedList.length;j++){
-				if(arr_clients[j] == userGroupAssignedList[i].client_id){
-					recordCOunt++;
+	if(category == "techno"){
+		for(var i=0;i<userGroupAssignedList.length;i++){
+			recordCOunt = 0;
+			if(i==0){
+				arr_clients.push(userGroupAssignedList[i].client_id);
+			}
+			else{
+				for(var j=0;j<userGroupAssignedList.length;j++){
+					if(arr_clients[j] == userGroupAssignedList[i].client_id){
+						recordCOunt++;
+					}
+				}
+				if(recordCOunt == 0){
+					arr_clients.push(userGroupAssignedList[i].client_id);
 				}
 			}
-			if(recordCOunt == 0){
-				arr_clients.push(userGroupAssignedList[i].client_id);
+		}
+	}
+	else{
+		for(var i=0;i<userGroupAssignedList.length;i++){
+			var occur = -1;
+			for(var j=0;j<arr_clients.length;j++){
+				if(arr_clients[j] == userGroupAssignedList[i].unit_id){
+					occur = 1;
+					break;
+				}
+			}
+			if(occur < 0){
+				arr_clients.push(userGroupAssignedList[i].unit_id)
 			}
 		}
 	}
@@ -245,38 +322,20 @@ function loaduserGroupAssignedList(tbodyClass, data)
 
 	if($('#group-id').val() > 0)
 	{
+		client_occur_cnt = 0;
 		for(var i=0;i<data.length;i++)
 		{
-			client_occur_cnt = 0;
-			var arr_clients = [];
-			element = $('#group-id').val();
-			arr_clients = data.reduce(function(arr, e, i) {
-			    if (e.client_id === element)
-			        arr.push(i);
-			    return arr;
-			}, []);
-
-			if(arr_clients.length > 0)
+			if(client_occur_cnt == 0)
 			{
-				if(client_occur_cnt == 0)
-				{
-					if(arr_clients > 1)
-					{
-						bindReassignedTechUserData(data[i], j, tbodyClass, true);
-					}
-					else
-					{
-						bindReassignedTechUserData(data[i], j, tbodyClass, false);
-					}
-					j = j + 1;
-					client_occur_cnt = client_occur_cnt + 1;
-				}
-				else
-				{
-					bindReassignTechSubData(data[i], tbodyClass);
-				}
-
+				bindReassignedTechUserData(data[i], j, tbodyClass, true);
+				j = j + 1;
+				client_occur_cnt = client_occur_cnt + 1;
 			}
+			else
+			{
+				bindReassignTechSubData(data[i], tbodyClass);
+			}
+
 		}
 		client_occur_cnt = 0;
 	}
@@ -385,38 +444,21 @@ function loadtechnoexecGroupAssignedList(tbodyClass, data)
 
 	if($('#group-id').val() > 0)
 	{
+		client_occur_cnt = 0;
+
 		for(var i=0;i<data.length;i++)
 		{
-			client_occur_cnt = 0;
-			var arr_clients = [];
-			element = $('#group-id').val();
-			arr_clients = data.reduce(function(arr, e, i) {
-			    if (e.client_id === element)
-			        arr.push(i);
-			    return arr;
-			}, []);
-
-			if(arr_clients.length > 0)
+			if(client_occur_cnt == 0)
 			{
-				if(client_occur_cnt == 0)
-				{
-					if(arr_clients > 1)
-					{
-						bindReassignedTechexecData(data[i], j, tbodyClass, true);
-					}
-					else
-					{
-						bindReassignedTechexecData(data[i], j, tbodyClass, false);
-					}
-					j = j + 1;
-					client_occur_cnt = client_occur_cnt + 1;
-				}
-				else
-				{
-					bindReassignTechexecSubData(data[i], tbodyClass);
-				}
-
+				bindReassignedTechexecData(data[i], j, tbodyClass, true);
+				j = j + 1;
+				client_occur_cnt = client_occur_cnt + 1;
 			}
+			else
+			{
+				bindReassignTechexecSubData(data[i], tbodyClass);
+			}
+
 		}
 		client_occur_cnt = 0;
 	}
@@ -440,7 +482,7 @@ function loadtechnoexecGroupAssignedList(tbodyClass, data)
 					arr_indx = arr_clients[k];
 					if(client_occur_cnt == 0)
 					{
-						bindReassignedTechexecData(data[arr_indx], j, tbodyClass);
+						bindReassignedTechexecData(data[arr_indx], j, tbodyClass, true);
 						j = j + 1;
 						client_occur_cnt = client_occur_cnt + 1;
 					}
@@ -515,6 +557,23 @@ function bindReassignTechexecSubData(data, tbodyClass)
 }
 //Techno exec end---------------------------------------------------------------------------
 
+function getDomainUnits(){
+	var unit_ids =[];
+	for(var i=0;i<userGroupAssignedList.length;i++){
+		var occur = -1;
+		for(var j=0;j<unit_ids.length;j++){
+			if(unit_ids[j] == userGroupAssignedList[i].unit_id){
+				occur = 1;
+				break;
+			}
+		}
+		if(occur < 0){
+			unit_ids.push(userGroupAssignedList[i].unit_id)
+		}
+	}
+	return unit_ids;
+}
+
 //Domain manager or exec start------------------------------------------------------------
 function loaddomainexecGroupAssignedList(tbodyClass, data)
 {
@@ -529,19 +588,20 @@ function loaddomainexecGroupAssignedList(tbodyClass, data)
 	var tableheading = $('#templates .tr-heading');
 	var cloneheading = tableheading.clone();
 	tbodyClass.append(cloneheading);
-	j = 1;
+	s_no = 1;
+	unit_ids = getDomainUnits();
 
-	for(var i=0;i<userGroupAssignedList.length;i++)
+
+	for(var i=0;i<unit_ids.length;i++)
 	{
 		client_occur_cnt = 0;
-		element = userGroupAssignedList[i].unit_id;
+		element = unit_ids[i];
 		var arr_clients = []
 		arr_clients = data.reduce(function(arr, e, i) {
 		    if (e.unit_id === element)
 		        arr.push(i);
 		    return arr;
 		}, []);
-
 		if(arr_clients.length > 0)
 		{
 			for(var k=0;k<arr_clients.length;k++)
@@ -549,8 +609,8 @@ function loaddomainexecGroupAssignedList(tbodyClass, data)
 				arr_indx = arr_clients[k];
 				if(client_occur_cnt == 0)
 				{
-					bindReassignedDomainData(data[arr_indx], j, tbodyClass);
-					j = j + 1;
+					bindReassignedDomainData(data[arr_indx], s_no, tbodyClass, true);
+					s_no = s_no + 1;
 					client_occur_cnt = client_occur_cnt + 1;
 				}
 				else
@@ -584,12 +644,12 @@ function bindReassignedDomainData(data, j, tbodyClass, rowClass)
 	$('.country-name', clone).text(val.unit_code);
 
     var titleText = val.address+","+val.postal_code;
-	$('.u_name', clone).text(val.unit_name);
+	$('.unit-name', clone).text(val.unit_name);
 	var unit_ctrl = '<span class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="' + titleText + '"></span>';
-	$('.u_name').parent().prepend(unit_ctrl);
+	$('.unit-name').parent().prepend(unit_ctrl);
     $('[data-toggle="tooltip"]').tooltip();
-    $('.u_name', clone).addClass("-"+val.unit_id);
-	$('.u_name', clone).on('click', function() { tree_open_close(this); });
+    $('.unit-name', clone).addClass("-"+val.unit_id);
+	$('.unit-name', clone).on('click', function() { tree_open_close(this); });
 	$('.no-of-le', clone).text(val.geography_name);
 	$('.assigned-date', clone).text(val.unit_email_date);
 	$('.assigned', clone).text(val.emp_code_name);
@@ -676,6 +736,39 @@ function processPaging(tbodyClass){
   //totalRecord = userGroupAssignedList.length;
   ReportData = pageData(on_current_page);
   if (totalRecord == 0) {
+  	if(categoryName == "Techno Manager"){
+  		$('.categoryval').text($('#usercategory option:selected').text());
+		$('.userval').text($('#managerval').val());
+		var tableheading = $('#templates .tr-heading');
+		var cloneheading = tableheading.clone();
+		tbodyClass.append(cloneheading);
+	}else if(categoryName == "Techno Executive"){
+  		$('.categoryval').text($('#usercategory option:selected').text());
+		$('.userval').text($('#managerval').val());
+		var tableheading = $('#templates .tr-heading');
+		var cloneheading = tableheading.clone();
+		tbodyClass.append(cloneheading);
+	}else if(categoryName == "Domain Manager"){
+  		$('.categoryval').text($('#usercategory option:selected').text());
+		$('.userval').text($('#managerval').val());
+		$('.groupval').text(GroupVal.val());
+		$('.bgval').text(BusinessGroupVal.val());
+		$('.leval').text(LegalEntityVal.val());
+		$('.domainval').text(DomainVal.val());
+		var tableheading = $('#templates .tr-heading');
+		var cloneheading = tableheading.clone();
+		tbodyClass.append(cloneheading);
+	}else if(categoryName == "Domain Executive"){
+  		$('.categoryval').text($('#usercategory option:selected').text());
+		$('.userval').text($('#managerval').val());
+		$('.groupval').text(GroupVal.val());
+		$('.bgval').text(BusinessGroupVal.val());
+		$('.leval').text(LegalEntityVal.val());
+		$('.domainval').text(DomainVal.val());
+		var tableheading = $('#templates .tr-heading');
+		var cloneheading = tableheading.clone();
+		tbodyClass.append(cloneheading);
+	}
     tbodyClass.empty();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
@@ -739,7 +832,7 @@ function loadUserCategory()
 		clone.text(u_cg_name);
 		$('#usercategory').append(clone);
 	});
-	//console.timeEnd("end loading user categories");
+	//.timeEnd("end loading user categories");
 }
 
 function onAutoCompleteSuccess(value_element, id_element, val) {
@@ -788,20 +881,34 @@ $('#groupsval').keyup(function (e) {
   {
     for(var i=0;i<userList.length;i++)
     {
-      if(userList[i].user_id == $('#manager-id').val())
-      {
-      	for(var j=0;j<userClientGroups.length;j++)
-      	{
-      		if(jQuery.inArray(userList[i].client_ids, userClientGroups[j].client_id)){
-      			group_list.push({
-		          "client_id": userClientGroups[j].client_id,
-		          "group_name": userClientGroups[j].group_name,
-		          "is_active":userClientGroups[j].is_active
-		        });
-      		}
-      	}
-      }
-    }
+    	if(userList[i].user_id == $('#manager-id').val())
+		{
+	      	var client_ids = userList[i].client_ids;
+	      	for(var j=0;j<client_ids.length;j++)
+	      	{
+	      		for(var c=0;c<userClientGroups.length;c++)
+	      		{
+	      			if(client_ids[j] == userClientGroups[c].client_id){
+	      				var occur = -1;
+		      			for(var k=0;k<group_list.length;k++){
+		      				if(group_list[k].client_id == userClientGroups[c].client_id){
+		      					occur = 1;
+		      					break;
+		      				}
+		      			}
+		      			if(occur < 0){
+			      			group_list.push({
+					          "client_id": userClientGroups[c].client_id,
+					          "group_name": userClientGroups[c].group_name,
+					          "is_active":userClientGroups[c].is_active
+					        });
+		      			}
+		      			break;
+	      			}
+	      		}
+			}
+		}
+	}
     commonAutoComplete(
       e, ACGroup, Group, text_val,
       group_list, "group_name", "client_id", function (val) {
@@ -831,12 +938,21 @@ $('#businessgroupsval').keyup(function (e) {
   {
     for(var i=0;i<userDomainList.length;i++)
     {
+
       if(userDomainList[i].user_id == $('#manager-id').val() && userDomainList[i].client_id == $('#group-id').val())
       {
-        bg_grp.push({
-            "business_group_id": userDomainList[i].business_group_id,
-            "business_group_name": userDomainList[i].business_group_name
-        });
+      	var occur = -1;
+      	for(var k=0;k<bg_grp.length;k++){
+      		if(bg_grp[k].business_group_id == userDomainList[i].business_group_id){
+      			occur = 1;
+      		}
+      	}
+      	if(occur < 0 && userDomainList[i].business_group_id != null){
+      		bg_grp.push({
+	            "business_group_id": userDomainList[i].business_group_id,
+	            "business_group_name": userDomainList[i].business_group_name
+	        });
+      	}
       }
     }
     commonAutoComplete(
@@ -870,10 +986,18 @@ $('#legalentityval').keyup(function (e) {
       	&& (bg_check == true || bg_check == false) &&
       	(userDomainList[i].user_id == $('#manager-id').val()))
       {
-        le_list.push({
-          "legal_entity_id": userDomainList[i].legal_entity_id,
-          "legal_entity_name": userDomainList[i].legal_entity_name
-        });
+      	var occur = -1;
+      	for(var k=0;k<le_list.length;k++){
+      		if(le_list[k].legal_entity_id == userDomainList[i].legal_entity_id){
+      			occur = 1;
+      		}
+      	}
+      	if(occur < 0){
+      		le_list.push({
+	          "legal_entity_id": userDomainList[i].legal_entity_id,
+	          "legal_entity_name": userDomainList[i].legal_entity_name
+	        });
+      	}
       }
     }
     var text_val = $(this).val();
@@ -910,11 +1034,18 @@ $('#domainval').keyup(function (e) {
       if((userDomainList[i].user_id == user_id && userDomainList[i].client_id == client_id &&
         userDomainList[i].legal_entity_id == le_id) && (bg_check == true || bg_check == false))
       	{
-            domain_list.push({
-              "domain_id": userDomainList[i].domain_id,
-              "domain_name": userDomainList[i].domain_name,
-            });
-            break;
+      		var occur = -1;
+      		for(var k=0;k<domain_list.length;k++){
+      			if(domain_list[k].domain_id == userDomainList[i].domain_id){
+      				occur = 1;
+      			}
+      		}
+      		if(occur < 0){
+      			domain_list.push({
+	              "domain_id": userDomainList[i].domain_id,
+	              "domain_name": userDomainList[i].domain_name,
+	            });
+      		}
         }
 	}
     var text_val = $(this).val();
@@ -940,12 +1071,13 @@ function loadSearchFilter(categoryName)
 {
 	if(categoryName == "Techno Manager"){
 		$(".mandatory").show();
+		$("#te").hide();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();
 	}
 	else if(categoryName == "Techno Executive"){
-		$(".mandatory").show();
+		$("#te").hide();
 		$(".filter-business").hide();
     	$(".filter-legal").hide();
     	$(".filter-domain").hide();
@@ -966,8 +1098,17 @@ function resetAllfilter()
 	$('#usercategory').empty();
 	$('#groupsval').val('');
 	$('#managerval').val('');
+	UserVal.val('');
+  	User.val('');
+  	GroupVal.val('');
+  	Group.val('')
+  	BusinessGroupVal.val('');
+  	BusinessGroup.val('');
+  	LegalEntityVal.val('');
+  	LegalEntity.val('');
+  	DomainVal.val('');
+  	Domain.val('');
 	$('.tbody-reassignuserrpt-list').find('tr').remove();
-	$('.grid-table-rpt').hide();
 }
 
 function resetfilter(evt)
@@ -1031,6 +1172,7 @@ ItemsPerPage.on('change', function (e) {
 $(function () {
   $('.grid-table-rpt').hide();
   initialize();
+  resetAllfilter();
   loadItemsPerPage();
   $('.tree-open-close').click(function() {
 	    $('.tree-data').toggle("slow");
@@ -1040,4 +1182,5 @@ $('#usercategory').on('change', function(e){
 	$('.user_category_name').text($('#usercategory option:selected').text())
 	loadSearchFilter($('#usercategory option:selected').text());
 	resetfilter('category');
+	$('.details').hide();
 });

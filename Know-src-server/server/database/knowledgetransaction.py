@@ -24,7 +24,6 @@ from server.database.knowledgemaster import (
 )
 from server.exceptionmessage import process_error, fetch_error
 
-from server.constants import RECORD_DISPLAY_COUNT
 
 APPROVAL_STATUS = ["Yet to submit", "Pending", "Approved", "Rejected", "Approved & Notified"]
 
@@ -404,7 +403,7 @@ def save_statutory_mapping(db, data, created_by):
         text = "New statutory mapping has been created %s - %s - %s for the following compliances %s" % (
                 c_name, d_name, str(statutory_mapping), names
             )
-
+        names = json.dumps(names)
         link = "/knowledge/approve-statutory-mapping"
         save_messages(db, 3, "Statutory Mapping", text, link, created_by)
 
@@ -438,13 +437,9 @@ def save_compliance(
             file_name = file_list.file_name
             file_size = file_list.file_size
 
-        print file_name, file_size
-        print file_list
         if data.is_file_removed :
             # remove uploaded file
-            print file_name, file_size
             remove_uploaded_file(file_path + "/" + file_name)
-            print " remove process"
             file_name = ""
             file_size = 0
 
@@ -698,16 +693,42 @@ def update_statutory_mapping(db, data, updated_by):
         db, statutory_mapping_id, data.statutory_ids, updated_by, False
     )
 
+    names = json.dumps(names)
+    text = " %s - %s - %s statutory mappings has been edited for following compliances %s" % (c_name, d_name, str(statutory_mapping), str(names))
+    db.save_activity(updated_by, frmStatutoryMapping, text)
+
+    link = "/knowledge/approve-statutory-mapping"
+    save_messages(db, 3, "Statutory Mapping", text, link, updated_by)
+    return True
+
+
+def update_only_compliance(db, data, updated_by):
+    statutory_mapping_id = data.mapping_id
+    is_exists = get_statutory_mapping_by_id(db, statutory_mapping_id)
+    if bool(is_exists) is False:
+        raise process_error("E020")
+    domain_id = data.domain_id
+    country_id = int(is_exists["country_id"])
+    c_name, d_name = get_country_domain_name(db, country_id, domain_id)
+
+    compliances = data.compliances
+    statutory_mapping = json.dumps(data.mappings)
+    if data.tr_type == 0:
+        is_approve = 0
+    else:
+        is_approve = 1
+
+    ids, names = update_compliance(
+        db, statutory_mapping_id, country_id, domain_id, compliances, updated_by,
+        is_approve
+    )
+    names = json.dumps(names)
     text = " %s - %s - %s statutory mappings has been edited for following compliances %s" % (c_name, d_name, str(statutory_mapping), names)
     db.save_activity(updated_by, frmStatutoryMapping, text)
 
     link = "/knowledge/approve-statutory-mapping"
     save_messages(db, 3, "Statutory Mapping", text, link, updated_by)
-    # save_notifications(
-    #     db, notification_log_text, link,
-    #     domain_id, country_id, updated_by,
-    #     user_id=None
-    # )
+
     return True
 
 
@@ -759,39 +780,11 @@ def update_compliance(db, mapping_id, country_id, domain_id, datas, updated_by, 
             file_name = file_list.file_name
             file_size = file_list.file_size
 
-        print file_name, file_size
-        print file_list
-        if data.is_file_removed :
+        if data.is_file_removed and file_name :
             # remove uploaded file
-            print file_name, file_size
-            print " remove process"
             remove_uploaded_file(file_path + "/" + file_name)
             file_name = ""
             file_size = 0
-
-
-        # file_list = data.format_file_list
-        # file_name = ""
-        # file_size = 0
-        # # file_content = ""
-        # saved_file_name = saved_file[0]
-        # if len(saved_file_name) == 0:
-        #     saved_file_name = None
-        # if file_list is None:
-        #     if saved_file_name is not None:
-        #         remove_uploaded_file(file_path + "/" + saved_file_name)
-        # else:
-        #     file_list = file_list[0]
-        #     file_name = file_list.file_name
-        #     file_size = file_list.file_size
-        #     # file_content = file_list.file_content
-
-        #     if saved_file_name is not None:
-        #         if len(file_name) == 0:
-        #             file_name = None
-        #             remove_uploaded_file(file_path + "/" + saved_file_name)
-        #         elif file_name != saved_file_name:
-        #             remove_uploaded_file(file_path + "/" + saved_file_name)
 
         penal_consequences = data.penal_consequences
         compliance_frequency = data.frequency_id
@@ -1026,7 +1019,7 @@ def change_approval_status(db, data, updated_by):
         users["domain_id"], users["country_id"], updated_by,
         user_id
     )
-    db.save_activity(updated_by, 11, notification_log_text)
+    db.save_activity(updated_by, frmApproveStatutoryMapping, notification_log_text)
     return True
 
 
@@ -1311,7 +1304,7 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         return statutory
 
     fromcount = rcount
-    tocount = rcount + RECORD_DISPLAY_COUNT
+    tocount = 10
     result = db.call_proc_with_multiresult_set(
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 6
@@ -1374,7 +1367,7 @@ def approve_statutory_mapping_list(db, user_id, request):
 
     for m in mappings :
         map_id = m["statutory_mapping_id"]
-        if m["document_name"] is None :
+        if (m["document_name"] is None or m["document_name"] == ''):
             c_name = m["compliance_task"]
         else :
             c_name = m["document_name"] + " - " + m["compliance_task"]
@@ -1407,7 +1400,7 @@ def get_compliance_details(db, user_id, compliance_id):
     for g in geo_info:
         geo_names.append(g["parent_names"])
 
-    if c_info["document_name"] is None :
+    if c_info["document_name"] is None or c_info["document_name"] == '':
         c_name = c_info["compliance_task"]
     else :
         c_name = c_info["document_name"] + " - " + c_info["compliance_task"]
@@ -1428,8 +1421,8 @@ def get_compliance_details(db, user_id, compliance_id):
             )
             date_list.append(s_date)
     summary, dates = make_summary(date_list, c_info["frequency_id"], c_info)
-    if dates is not None :
-        summary += dates
+    if summary != "" and dates is not None and dates != "" :
+        summary += ' on (%s)' % (dates)
     return (
         c_info["compliance_id"], c_info["statutory_provision"],
         c_name, c_info["compliance_description"],
@@ -1450,18 +1443,22 @@ def save_approve_mapping(db, user_id, data):
                     q = "update tbl_statutory_mappings set is_approved = %s, " + \
                         "remarks = %s where statutory_mapping_id = %s"
                     db.execute(q, [d.approval_status_id, remarks, d.mapping_id])
-                    remarks = ""
 
             q1 = "update tbl_compliances set is_approved = %s, " + \
                 "approved_by = %s, approved_on = %s, remarks = %s where compliance_id = %s "
-            db.execute(q1, [d.approval_status_id, user_id, get_date_time(), remarks, d.compliance_id])
 
             if d.approval_status_id == 2 :
                 text = "%s - %s - %s - %s has been approved"
+                q1 = "update tbl_compliances set is_approved = %s, " + \
+                    "approved_by = %s, approved_on = %s where compliance_id = %s "
+                db.execute(q1, [d.approval_status_id, user_id, get_date_time(), d.compliance_id])
+
             elif d.approval_status_id == 3:
-                text = "%s - %s - %s - %s has been approv & Notified With remarks " + d.remarks
+                text = "%s - %s - %s - %s has been approved & Notified With remarks " + d.remarks
+                db.execute(q1, [d.approval_status_id, user_id, get_date_time(), remarks, d.compliance_id])
             else :
                 text = "%s - %s - %s - %s has been rejected wih reason " + d.remarks
+                db.execute(q1, [d.approval_status_id, user_id, get_date_time(), remarks, d.compliance_id])
 
             text = text % (
                 d.country_name, d.domain_name, d.mapping_text, d.compliance_task
@@ -1472,6 +1469,8 @@ def save_approve_mapping(db, user_id, data):
 
             if d.approval_status_id == 3 :
                 save_approve_notify(db, text, user_id, d.compliance_id)
+
+            db.save_activity(user_id, frmApproveStatutoryMapping, text)
         return True
     except Exception, e :
         print e
@@ -1509,7 +1508,7 @@ def save_approve_notify(db, text, user_id, comppliance_id):
 def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :
         comp_id = '%'
-    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 4)
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 5)
     if len(result) == 0 :
         raise process_error("E087")
 
@@ -1517,6 +1516,10 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
     org_info = result[1]
     geo_info = result[2]
     statu_info = result[3]
+    is_assigned = result[4][0]["is_assigned"]
+    allow_edit = True
+    if is_assigned > 0 :
+        allow_edit = False
     org_list = []
     for org in org_info :
         org_list.append(org["organisation_id"])
@@ -1553,12 +1556,14 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
         else :
             date_list = None
         summary, dates = make_summary(date_list, c["frequency_id"], c)
+        # if summary != "" and dates is not None or dates != "" :
+        #     summary += ' on (%s)' % (dates)
         f_list = []
         if int(c["format_file_size"]) > 0 :
             f_list.append(core.FileList(
                 int(c["format_file_size"]), c["format_file"], None
             ))
-
+        is_file_removed = False
         compliance_list.append(knowledgetransaction.ComplianceList(
             c["compliance_id"], c["statutory_provision"],
             c["compliance_task"], c["document_name"],
@@ -1567,13 +1572,13 @@ def get_statutory_mapping_edit(db, map_id, comp_id):
             c["frequency_id"], date_list, c["repeats_type_id"],
             c["repeats_every"], c["duration_type_id"],
             c["duration"], c["format_file"], f_list,
-            summary, c["reference_link"],  c["freq_name"], False
+            summary, c["reference_link"],  c["freq_name"], is_file_removed
         ))
 
     data = knowledgetransaction.GetComplianceEditSuccess(
         mapping_id, country_id, domain_id, nature_id,
         org_list, statu_list, compliance_list,
-        geo_list
+        geo_list, allow_edit
     )
 
     return data

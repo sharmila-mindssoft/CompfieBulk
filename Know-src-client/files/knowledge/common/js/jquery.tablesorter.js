@@ -189,9 +189,9 @@
             };
 
             function getElementText(config, node) {
-                
+
                 if (!node) return "";
-                
+
                 var $node = $(node),
                     data = $node.attr('data-sort-value');
                 if (data !== undefined) return data;
@@ -248,7 +248,6 @@
                             tableBody[0].appendChild(r[pos][j]);
                         }
 
-                        // 
                     }
                 }
 
@@ -280,7 +279,7 @@
                 setTimeout(function () {
 
                     $(table).trigger("sortEnd");
-                    
+
                 }, 0);
 
             };
@@ -292,7 +291,7 @@
                 }
 
                 var meta = ($.metadata) ? true : false;
-                
+
                 var header_index = computeTableHeaderCellIndexes(table);
 
                 var $tableHeaders = $(table.config.selectorHeaders, table).each(function (index) {
@@ -300,8 +299,7 @@
                     this.column = header_index[this.parentNode.rowIndex + "-" + this.cellIndex];
                     // this.column = index;
                     this.order = formatSortingOrder(table.config.sortInitialOrder);
-                    
-                    
+
                     this.count = this.order;
 
                     if (checkHeaderMetadata(this) || checkHeaderOptions(table, index)) this.sortDisabled = true;
@@ -404,12 +402,12 @@
                 };
                 return false;
             }
-            
+
              function checkHeaderOptionsSortingLocked(table, i) {
                 if ((table.config.headers[i]) && (table.config.headers[i].lockedOrder)) return table.config.headers[i].lockedOrder;
                 return false;
             }
-            
+
             function applyWidget(table) {
                 var c = table.config.widgets;
                 var l = c.length;
@@ -461,7 +459,7 @@
                 var l = list.length;
                 for (var i = 0; i < l; i++) {
                     if(h[list[i][0]])
-                    h[list[i][0]].addClass(css[list[i][1]]);
+                        h[list[i][0]].addClass(css[list[i][1]]);
                 }
             }
 
@@ -488,7 +486,7 @@
             }
 
             /* sorting methods */
-            
+
             var sortWrapper;
 
             function multisort(table, sortList, cache) {
@@ -642,7 +640,7 @@
                             this.order = this.count++ % 2;
                             // always sort on the locked order.
                             if(this.lockedOrder) this.order = this.lockedOrder;
-                            
+
                             // user only whants to sort on one
                             // column
                             if (!e[config.sortMultiSortKey]) {
@@ -693,16 +691,6 @@
                             return false;
                         }
                         // cancel selection
-                    
-
-
-
-
-
-
-
-
-
 
                     }).mousedown(function () {
                         if (config.cancelSelection) {
@@ -902,9 +890,10 @@
             if (c.dateFormat == "us") {
                 // reformat the string in ISO format
                 s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$1/$2");
-            }    
+            }
             if (c.dateFormat == "pt") {
-                s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$2/$1");   
+                s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$2/$1");
+
             } else if (c.dateFormat == "uk") {
                 // reformat the string in ISO format
                 s = s.replace(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/, "$3/$2/$1");
@@ -957,4 +946,5 @@
             }
         }
     });
+
 })(jQuery);

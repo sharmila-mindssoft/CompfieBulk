@@ -1,4 +1,11 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style type="text/css">
+    .default-display-none {
+        display: none;
+    }
+</style>
+
 <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" property="icon">
 <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
 <link href="/css/menu.css" rel="stylesheet" type="text/css" />
@@ -15,6 +22,7 @@
 <link href="/css/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
 <link href="/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui/jquery-ui.css">
+
 <script src="/js/modernizr.min.js"></script>
 <script src="/js/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
@@ -32,7 +40,7 @@
 <script src="/js/jquery-ui/jquery-ui-timepicker.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-$('[data-toggle="tooltip"]').tooltip();
+	$("body").tooltip({ selector: '[data-toggle=tooltip]' });
 });
 </script>
 

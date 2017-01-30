@@ -1,3 +1,9 @@
+var fetch = mirror;
+var j = 1;
+var STATU_MAPPINGS;
+var STATU_TOTALS;
+var show_more = false;
+
 //
 // callback with compfie input data
 //
@@ -15,7 +21,6 @@ function FetchBack() {
                 STATUTORY_LEVEL_INFO = response.statutory_levels;
                 GEOGRAPHY_LEVEL_INFO = response.geography_level_info;
                 GEOGRAPHY_INFO = response.geography_info;
-                console.log(GEOGRAPHY_INFO);
                 FREQUENCY_INFO = response.compliance_frequency;
                 REPEATSTYPE_INFO = response.compliance_repeat_type;
                 APPROVALSTATUS_INFO = response.compliance_approval_status;
@@ -52,11 +57,36 @@ function FetchBack() {
                 else {
                     STATU_MAPPINGS = response.statu_mappings;
                     STATU_TOTALS = response.total_records;
+                    _listPage.clearList();
                     _listPage.renderList(STATU_MAPPINGS, STATU_TOTALS);
                 }
                 hideLoader();
             }
         );
+    };
+
+    this.getMoreMappedList = function() {
+
+        ap_status = $('.ap-status-li.active').attr('value');
+
+        rcount = _renderinput.show_map_count;
+        if((rcount < STATU_TOTALS) && (show_more) )  {
+            show_more = false;
+            displayLoader();
+            fetch.getStatutoryMappings(ap_status, rcount,
+                function(status, response){
+                    if (status != null) {
+                        displayMessage(status);
+                    }
+                    else {
+                        $.merge(STATU_MAPPINGS, response.statu_mappings);
+                        STATU_TOTALS = response.total_records;
+                        _listPage.renderList(response.statu_mappings, STATU_TOTALS);
+                    }
+                    hideLoader();
+                }
+            );
+        }
     };
 
     this.getMapDatabyId = function(mapping_id, compliance_id) {
@@ -67,6 +97,7 @@ function FetchBack() {
                     displayMessage(status);
                 }
                 else {
+
                     _renderinput.countryId = response.c_id;
                     _renderinput.domainId = response.d_id;
                     _renderinput.natureId = response.s_n_id;
@@ -75,7 +106,7 @@ function FetchBack() {
                     _renderinput.selected_geos_parent = [];
                     _renderinput.mapped_compliances = response.comp_list;
                     _renderinput.mapping_id = response.m_id;
-
+                    _renderinput.allow_domain_edit = response.allow_domain_edit
                     $.each(GEOGRAPHY_INFO, function(k, v) {
                         if(response.g_ids.indexOf(v.g_id) > -1) {
                             $.each(v.p_ids, function(idx, pid) {
@@ -90,18 +121,18 @@ function FetchBack() {
                         if (response.s_ids.indexOf(v.s_id) > -1) {
                             info = {}
                             info["s_id"] = v.s_id;
+                            info["s_names"] = [];
                             if (v.p_maps != null)
-                                info["s_names"] = v.p_maps
-                            else
-                                info["s_names"] = [];
-                            info["s_names"].push(v.s_name)
+                                $.merge(info["s_names"], v.p_maps);
+
+                            info["s_names"].push(v.s_name);
+
                             if (v.p_ids == null) {
                                 info["l_one_id"] = 0;
                             }
                             else {
                                 info["l_one_id"] = v.p_ids[0];
                             }
-                            // alert(info);
                             _renderinput.mapped_statu.push(info);
                         }
                     });
@@ -148,12 +179,16 @@ function FetchBack() {
                 $('#dvid'+ l_position).val('');
                 $('#dvpid'+ l_position).val('');
                 _fetchback.getStatuMaster(l_position, function() {
+
                     if(p_ids.length > 0) {
                         pid = p_ids[p_ids.length - 1];
                     }
                     else{
                         pid = 0;
                         l_position = 1;
+                    }
+                    if (l_position == 1) {
+                        pid = 0;
                     }
                     $('.statutory_levelvalue #snl'+l_position).empty();
                     _renderinput.renderStatuNames(pid, l_position);
@@ -221,7 +256,7 @@ function FetchBack() {
         else {
             displaySuccessMessage(msg.mapping_submit_success);
         }
-
+        hideLoader();
         _viewPage.hide();
         _listPage.show();
         _renderinput.resetField();
@@ -246,11 +281,11 @@ function FetchBack() {
                 }
             }
             else {
-
+                hideLoader();
                 possibleFailure(status, response.compliance_name);
                 return false;
             }
-            hideLoader();
+
         });
     };
 
@@ -272,13 +307,41 @@ function FetchBack() {
                 }
             }
             else {
-
+                hideLoader();
                 possibleFailure(status);
                 return false;
             }
-            hideLoader();
+
         });
     };
+
+
+    this.updateOnlyCompliance = function(data) {
+        displayLoader();
+        fetch.updateComplianceOnly(data, function(status, response) {
+            if (status == null) {
+                is_upload = false;
+                $.each(_renderinput.uploaded_files_fcids, function(key, value) {
+                    if (value == true) {
+                        is_upload = true
+                    }
+                });
+                if(is_upload) {
+                    _fetchback.uploadFileProcess();
+                }
+                else {
+                    _fetchback.mapping_success_callback();
+                }
+            }
+            else {
+                hideLoader();
+                possibleFailure(status);
+                return false;
+            }
+
+        });
+    };
+
 
     this.validateAuthentication = function() {
         var password = CurrentPassword.val().trim();
@@ -317,19 +380,21 @@ function FetchBack() {
 // Render List Page
 //
 function ListPage() {
-
-    this.renderList = function(data, tRecord) {
+    this.clearList = function() {
         $('.tbl-statutorymapping-list .table-no-record').remove();
         $('.tbl-statutorymapping-list .mapping-row').remove();
         $('.tbl-statutorymapping-list .compliance-row').remove();
+        _renderinput.show_map_count = 0;
+        j = 1;
+    };
+
+    this.renderList = function(data, tRecord) {
 
         if (data.length == 0) {
             norow = $('#templates .table-no-record').clone();
             $('.tbl-statutorymapping-list').append(norow);
             return;
         }
-        // $('.tbl-statutorymapping-list tr').find('mapping_row');
-        // $('.tbl-statutorymapping-list tr').find('compliance_row');
 
         function comp_row(rowObjec, cdata, mapping_id) {
             var x = 1;
@@ -337,13 +402,14 @@ function ListPage() {
                 row = $('#templates .compliance-row').clone();
 
                 $('.comp_name', row).text(c.comp_name);
-                $('.comp_edit', row).attr('title', 'Client here to edit compliance');
+                $('.comp_edit', row).attr('title', 'Click here to edit compliance');
                 $('.comp_edit', row).addClass('fa-pencil text-primary');
                 $('.comp_edit', row).on('click', function() {
+                    compliance_edit = true;
                     _listPage.displayMappingEdit(mapping_id, c.comp_id);
+                    CURRENT_TAB = 3;
                 });
                 if (c.is_approved == 4) {
-                    console.log(c.remarks);
                     row.addClass('rejected_row');
                     $('.comp_approval_status', row).append(
                         '<i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="'+ c.remarks +'" data-original-title="Rejected reason goes here."></i>'
@@ -365,11 +431,12 @@ function ListPage() {
           }
         }
 
-        var j = 1;
+
         $.each(data, function(k, v) {
             orgNames = v.i_names.join(' , ');
             s_names = v.s_maps.join(', ');
             crow = $('#templates .mapping-row').clone();
+            _renderinput.show_map_count = j;
             $('.sno', crow).text(j);
             $('.c_name', crow).text(v.c_name);
             $('.d_name', crow).text(v.d_name);
@@ -379,8 +446,10 @@ function ListPage() {
             $('.map_edit', crow).attr('title', 'Click here to edit');
             $('.map_edit', crow).addClass('fa-pencil text-primary');
             $('.map_edit', crow).on('click', function() {
+                compliance_edit = false;
                 _listPage.displayMappingEdit(v.m_id, null);
             });
+
             if (v.is_active == true){
                 $('.map_status', crow).attr('title', msg.active_tooltip);
                 $('.map_status', crow).addClass("fa-check text-success");
@@ -431,6 +500,7 @@ function ListPage() {
             $('.tbl-statutorymapping-list').append(crow);
             comp_row($('.tbl-statutorymapping-list'), v.mapped_comps, v.m_id);
         });
+        show_more = true;
     };
 
     this.displayMappingEdit = function(map_id, comp_id) {
@@ -477,6 +547,7 @@ function ListPage() {
                 filteredList.push(data);
             }
         });
+        _listPage.clearList();
         _listPage.renderList(filteredList, filteredList.length);
     };
 }
@@ -597,6 +668,7 @@ function ViewPage() {
     };
     this.show = function() {
         ViewScreen.show();
+        show_more = false;
         this.showFirstTab();
     };
     this.hide = function() {
@@ -608,6 +680,9 @@ function ViewPage() {
         _renderinput.selected_geos_parent = [];
         for (var i=1; i<11; i++) {
             $('#gnl'+i).children().each(function(){
+                if ($(this).hasClass('select-all')) {
+                    return;
+                }
                 if ($(this).hasClass('active')) {
                     _renderinput.selected_geos.push($(this).val());
                     _renderinput.selected_geos_parent.push($(this).attr('name'));
@@ -631,7 +706,9 @@ function ViewPage() {
         });
     };
     this.make_data_format = function(trType){
-        _viewPage.getFourthTabValues();
+        if (compliance_edit == false) {
+            _viewPage.getFourthTabValues();
+        }
         if (_renderinput.selected_geos.length == 0)
         {
             return false;

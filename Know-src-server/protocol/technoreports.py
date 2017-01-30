@@ -84,8 +84,6 @@ class Request(object):
 
     @staticmethod
     def parse_structure(data):
-        print "techno reports"
-        print data
         data = parse_static_list(data, 2)
         name, data = data
         if _Request_class_map.get(name) is None:
@@ -502,25 +500,31 @@ class GetUserMappingReportFilters(Request):
 
 class GetUserMappingDetailsReportData(Request):
     def __init__(
-        self, country_id, client_id, legal_entity_id, u_m_none
+        self, country_id, client_id, legal_entity_id, u_m_none, csv, from_count, page_count
     ):
         self.country_id = country_id
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.u_m_none = u_m_none
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_id", "client_id", "legal_entity_id", "u_m_none"
+            "country_id", "client_id", "legal_entity_id", "u_m_none", "csv", "from_count", "page_count"
         ])
         country_id = data.get("country_id")
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
         u_m_none = data.get("u_m_none")
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
 
         return GetUserMappingDetailsReportData(
-            country_id, client_id, legal_entity_id, u_m_none
+            country_id, client_id, legal_entity_id, u_m_none, csv, from_count, page_count
         )
 
     def to_inner_structure(self):
@@ -528,7 +532,10 @@ class GetUserMappingDetailsReportData(Request):
             "country_id": self.country_id,
             "client_id": self.client_id,
             "legal_entity_id": self.legal_entity_id,
-            "u_m_none": self.u_m_none
+            "u_m_none": self.u_m_none,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
         }
 
 class GetAssignedUserClientGroups(Request):
@@ -568,7 +575,38 @@ class GetReassignUserReportData(Request):
             "user_id": self.user_id,
             "group_id_none": self.group_id_none,
         }
-        print "inside protocol"
+        return data
+
+class ExportReassignUserReportData(Request):
+    def __init__(self, user_category_id, user_id, group_id_none, u_m_none, csv):
+        self.user_category_id = user_category_id
+        self.user_id = user_id
+        self. group_id_none = group_id_none
+        self.u_m_none = u_m_none
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "user_category_id", "user_id", "group_id_none", "u_m_none", "csv"
+        ])
+        user_category_id = data.get("user_category_id")
+        user_id = data.get("user_id")
+        group_id_none = data.get("group_id_none")
+        u_m_none = data.get("u_m_none")
+        csv = data.get("csv")
+        return ExportReassignUserReportData(
+            user_category_id, user_id, group_id_none, u_m_none, csv
+        )
+
+    def to_inner_structure(self):
+        data = {
+            "user_category_id": self.user_category_id,
+            "user_id": self.user_id,
+            "group_id_none": self.group_id_none,
+            "u_m_none": self.u_m_none,
+            "csv": self.csv
+        }
         return data
 
 class GetAssignedStatutoriesList(Request):
@@ -639,6 +677,40 @@ class GetComplianceStatutoriesList(Request):
         }
         return data
 
+class ExportClientDetailsReportData(Request):
+    def __init__(
+        self, country_id, client_id, legal_entity_id, u_m_none, csv
+    ):
+        self.country_id = country_id
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.u_m_none = u_m_none
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "client_id", "legal_entity_id", "u_m_none", "csv"
+        ])
+        country_id = data.get("country_id")
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        u_m_none = data.get("u_m_none")
+        csv = data.get("csv")
+
+        return ExportClientDetailsReportData(
+            country_id, client_id, legal_entity_id, u_m_none, csv
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "u_m_none": self.u_m_none,
+            "csv": self.csv,
+        }
+
 def _init_Request_class_map():
     classes = [
         GetClientDetailsReportFilters,
@@ -660,7 +732,9 @@ def _init_Request_class_map():
         GetReassignUserReportData,
         GetReassignUserDomainReportData,
         GetAssignedStatutoriesList,
-        GetComplianceStatutoriesList
+        GetComplianceStatutoriesList,
+        ExportClientDetailsReportData,
+        ExportReassignUserReportData
     ]
 
     class_map = {}
@@ -699,9 +773,9 @@ class Response(object):
         raise NotImplementedError
 
 class GetClientDetailsReportFiltersSuccess(Response):
-    def __init__(self, countries, domains, statutory_groups, statutory_business_groups, units_report, industry_name_id):
+    def __init__(self, countries, domains_organization_list, statutory_groups, statutory_business_groups, units_report, industry_name_id):
         self.countries = countries
-        self.domains = domains
+        self.domains_organization_list = domains_organization_list
         self.statutory_groups = statutory_groups
         self.statutory_business_groups = statutory_business_groups
         self.units_report = units_report
@@ -709,19 +783,19 @@ class GetClientDetailsReportFiltersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "statutory_groups", "statutory_business_groups", "units_report", "industry_name_id"])
+        data = parse_dictionary(data, ["countries", "domains_organization_list", "statutory_groups", "statutory_business_groups", "units_report", "industry_name_id"])
         countries = data.get("countries")
-        domains = data.get("domains")
+        domains_organization_list = data.get("domains_organization_list")
         statutory_groups = data.get("statutory_groups")
         statutory_business_groups = data.get("statutory_business_groups")
         units_report = data.get("units_report")
         industry_name_id = data.get("industry_name_id")
-        return GetClientDetailsReportFiltersSuccess(countries, domains, statutory_groups, statutory_business_groups, units_report, industry_name_id)
+        return GetClientDetailsReportFiltersSuccess(countries, domains_organization_list, statutory_groups, statutory_business_groups, units_report, industry_name_id)
 
     def to_inner_structure(self):
         data = {
             "countries": self.countries,
-            "domains": self.domains,
+            "domains_organization_list": self.domains_organization_list,
             "statutory_groups": self.statutory_groups,
             "statutory_business_groups": self.statutory_business_groups,
             "units_report": self.units_report,
@@ -1137,8 +1211,6 @@ class ReassignUserDomainReportDataSuccess(Response):
         data = {
             "reassign_domains_list": self.reassign_domains_list,
         }
-        print "inside success"
-        print data
         return data
 
 class ApproveAssignedStatutoriesListSuccess(Response):
@@ -1155,8 +1227,6 @@ class ApproveAssignedStatutoriesListSuccess(Response):
         data = {
             "approve_assigned_statutories": self.approve_assigned_statutories,
         }
-        print "inside success"
-        print data
         return data
 
 def _init_Response_class_map():

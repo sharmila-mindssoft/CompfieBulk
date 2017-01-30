@@ -16,6 +16,7 @@ __all__ = [
     "save_login_failure", "delete_login_failure_history",
     "get_login_attempt_and_time", "save_login_details",
     "validate_email_token", "check_username_duplicate",
+    "verify_new_password"
 ]
 
 
@@ -122,6 +123,13 @@ def verify_password(db, password, user_id):
     else:
         return True
 
+def verify_new_password(db, new_password, user_id):
+    encrypted_password = encrypt(new_password)
+    row = db.call_proc("sp_verify_password", (user_id,encrypted_password,))
+    if(int(row[0]["count"]) <= 0):
+        return True
+    else:
+        return False
 
 ########################################################
 # Check whether the given reset token is valid
@@ -134,8 +142,10 @@ def validate_reset_token(db, reset_token):
         tblEmailVerification, email_verification_column,
         email_verification_condition, email_verification_condition_val
     )
+    print email_verification_rows
     if email_verification_rows:
-        user_id = email_verification_rows[0]["user_id"]
+        user_id = email_verification_rows[0]['user_id']
+        print "userid-=-", user_id
         if user_id == 0:  # Returning if user is admin
             return user_id
         else:  # Checking if user is active

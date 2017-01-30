@@ -1,7 +1,7 @@
 var visiblePageCount = 10;
 var m_names = new Array('Jan','Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', "Dec");
 //Load count values in pagination selectbox
-var pageList = [2, 50, 100];
+var pageList = [25, 50, 100];
 var ValidityDays = 90;
 function loadItemsPerPage() {
   for(var i = 0; i < pageList.length; i++) {
@@ -54,7 +54,7 @@ function past_days(days){
 function displayMessage(message) {
   // $('.error-message').text(message);
   // $('.error-message').show();
-  if($('.toast-error').css('display') == "block"){
+  if($('.toast').css('display') == "block"){
     $('.toast').remove();
   }
   var toastPan = import_toast();
@@ -63,7 +63,7 @@ function displayMessage(message) {
 }
 
 function displaySuccessMessage(message) {
-  if($('.toast-error').css('display') == "block"){
+  if($('.toast').css('display') == "block"){
     $('.toast').remove();
   }
   var toastPan = import_toast();
@@ -148,7 +148,7 @@ function isNumbers_Countrycode(inputElm) {
 }
 function isAlphanumeric_Shortname(inputElm) {
   //allowed => alphanumeric
-  return inputElm.val().replace(/[^0-9a-z]/gi, '');
+  return inputElm.val().replace(/[^0-9a-z]/, ''); ///[^0-9a-z]/gi
 }
 function isCommon_Unitcode(inputElm) {
   //allowed => alphanumeric
@@ -985,7 +985,7 @@ function commonAutoComplete(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  
+
                   if(jQuery.type( list_val[i][value] ) == 'array'){
                     condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                   }else if(jQuery.type( condition_values[key] ) == 'array'){
@@ -1077,10 +1077,31 @@ function commonAutoComplete1(
                 validation_results = [];
                 $.each(condition_fields, function(key, value){
                   var condition_result;
-                  //alert(condition_values3);
                   if(jQuery.type( list_val[i][value] ) == 'array'){
                     if(value == 'country_domains'){
-                      var cresult = false;
+                      for(var j=0; j<condition_values[key][0].length; j++){
+                          var cresult = false;
+                          for(var k=0; k<list_val[i][value].length; k++)  {
+                              if(list_val[i][value][k]["c_id"] == condition_values[key][0][j]){
+                                  cresult = true;
+                              }
+                          }
+                      }
+                      for(var j=0; j<condition_values[key][1].length; j++){
+                          var dresult = false;
+                          for(var k=0; k<list_val[i][value].length; k++)  {
+                              if(list_val[i][value][k]["d_id"] == condition_values[key][1][j]){
+                                  dresult = true;
+                              }
+                          }
+                          
+                      }
+                      if(cresult && dresult){
+                          condition_result = true;
+                      }else{
+                          condition_result = false;
+                      } 
+                      /*var cresult = false;
                       var dresult = false;
                       for(var j=0; j<list_val[i][value].length; j++){
                         if($.inArray(list_val[i][value][j]["c_id"], condition_values[key][0]) >= 0){
@@ -1094,19 +1115,14 @@ function commonAutoComplete1(
                         condition_result = true;
                       }else{
                         condition_result = false;
-                      }
+                      }*/
                     }else if(value == 'p_user_ids' && jQuery.type( condition_values[key] ) == 'array'){
                       var common_values = [];
                       var array1 = condition_values[key];
                       var array2 = list_val[i][value];
-
                       jQuery.grep(array1, function(el) {
-                        //alert(el +' in '+ array1);
                         if (jQuery.inArray(el, array2) == 0) common_values.push(el);
                       });
-                      //alert(common_values)
-                      //alert(array1 + '==' + array2)
-                      //alert(common_values.length)
                       if(common_values.length > 0){
                         condition_result = true;
                       }else{
@@ -1115,7 +1131,7 @@ function commonAutoComplete1(
                     }else{
                       condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                     }
-                    
+
                   }else{
                     if(value == 'user_id'){
                       condition_result = (list_val[i][value] != condition_values[key]);
@@ -1168,7 +1184,7 @@ function import_toast(){
     "onclick": null,
     "showDuration": "300",
     "hideDuration": "1000",
-    "timeOut": "5000",
+    "timeOut": "20000",
     "extendedTimeOut": "1000",
     "showEasing": "swing",
     "hideEasing": "linear",
@@ -1260,4 +1276,3 @@ $(function() {
       });
   });
 });
-

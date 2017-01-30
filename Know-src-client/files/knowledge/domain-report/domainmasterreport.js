@@ -21,50 +21,38 @@ var sno = 0;
 var totalRecord;
 var ReportData;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function initialize() {
   function success(status, data) {
+    hideLoader();
     domainList = data.domains;
-    console.log(data)
     totalRecord = domainList.length;
     processPaging();
   }
   function failure(status, data) {
+    hideLoader();
   }
+  displayLoader();
   mirror.getDomainReport(success, failure);
 }
 
 function processSearch()
 {
-  c_name = FilterCountry.val().toLowerCase();
-  d_name = FilterDomain.val().toLowerCase();
   usr_status = $('.search-status-li.active').attr('value');
 
-  if(d_name.length > 0 || c_name.length > 0){
     for (var entity in domainList) {
-      dName = domainList[entity].domain_name;
-      cnames = domainList[entity].c_names;
       dStatus = domainList[entity].is_active;
-      var flg = false;
-      if (c_name.length == 0)  {
-          flg = true;
-      }
-      else {
-        for (var c in cnames) {
-          if (~cnames[c].toLowerCase().indexOf(c_name)){
-              flg = true;
-              continue;
-          }
-        }
-      }
-      if ((~dName.toLowerCase().indexOf(d_name)) && flg == true) {
-        if ((usr_status == 'all') || (Boolean(parseInt(usr_status)) == dStatus)){
-            searchList.push(domainList[entity]);
-        }
+
+      if ((usr_status == 'all') || (Boolean(parseInt(usr_status)) == dStatus)){
+          searchList.push(domainList[entity]);
       }
     }
-  }
-  console.log("len:"+searchList.length)
-  console.log(searchList)
   processPaging();
 }
 
@@ -130,15 +118,17 @@ function renderControls(){
     });
     $(event.target).parent().addClass('active');
 
-    var currentClass = $(event.target).find('i').attr('class');
-    Search_status.removeClass();
+    var currentClass = $(event.target).html();
+    Search_status_1.html(currentClass);
+
+    /*Search_status.removeClass();
     if(currentClass != undefined){
       Search_status.addClass(currentClass);
       Search_status.text('');
     }else{
       Search_status.addClass('fa');
       Search_status.text('All');
-    }
+    }*/
     processSearch();
   });
 
@@ -245,6 +235,7 @@ function pageData(on_current_page){
   {
     recordData = domainList;
   }
+  totalRecord = recordData.length;
   for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
@@ -268,4 +259,7 @@ function pageData(on_current_page){
 $(function () {
   renderControls();
   loadItemsPerPage();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

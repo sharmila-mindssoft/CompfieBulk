@@ -20,7 +20,7 @@
                         <table id="datatable-responsive"  class="table table-striped dt-responsive nowrap highlight m-b-0 js-sorting-table" cellspacing="0" width="100%">
                             <thead>
                                 <tr>
-                                    <th width="5%">#</th>
+                                    <th width="5%">#<span class="none-sort-sno"></span></th>
                                     <th width="70%">Country Name <span data-sort="string" class="fa fa-sort pull-right sort active"></span></th>
                                     <th class="text-center">Edit</th>
                                     <th class="text-center">Status</th>
@@ -130,8 +130,16 @@
         </div>
     </div>
 </div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
 <!-- Sweet Alert js -->
-<script type="text/javascript" src="/script/country-master/countrymaster.js"></script>
 <script src="/js/js-sorting.js"></script>
+<script type="text/javascript" src="/script/country-master/countrymaster.js"></script>
+
 {% endblock %}
 

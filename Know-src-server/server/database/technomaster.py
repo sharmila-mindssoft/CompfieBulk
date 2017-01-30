@@ -1,6 +1,7 @@
 from protocol import (
     core, technomasters, admin
 )
+from server.database.forms import *
 from server.exceptionmessage import process_error
 from server.constants import (CLIENT_LOGO_PATH)
 from server.common import (
@@ -51,7 +52,15 @@ def get_client_business_groups(db, client_id):
     business_groups = db.call_proc(
         "sp_business_groups_list", (client_id,)
     )
-    return return_business_groups(business_groups)
+    results = []
+    for business_group in business_groups:
+        results.append(core.ClientBusinessGroupCountry(
+            business_group["business_group_id"],
+            business_group["business_group_name"],
+            business_group["client_id"],
+            business_group["country_id"]
+        ))
+    return results
 
 
 ##########################################################################
@@ -144,6 +153,13 @@ def save_client_group(
         "sp_client_group_save",
         (group_name, username, short_name, no_of_view_licence, session_user)
     )
+    current_time_stamp = get_date_time()
+    message_text = '%s has been Created.' % group_name
+    db.save_activity(session_user, frmClientGroup, message_text)
+    msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
+    data = db.call_proc("sp_get_userid_from_admin", ())
+    print data[0]["userids"]
+    db.save_messages_users(msg_id, data[0]["userids"])
     return client_id
 
 
@@ -152,10 +168,16 @@ def save_client_group(
 #  Parameters : Object of database, group name and client id
 #  Return Type : None
 ##########################################################################
-def update_client_group(db, client_id, email_id, no_of_licence, remarks):
+def update_client_group(db, client_id, email_id, no_of_licence, remarks, session_user):
     db.call_update_proc(
         "sp_client_group_update", (client_id, email_id, no_of_licence, remarks)
     )
+    data = db.call_proc("sp_group_name_by_id", (client_id, ))
+    current_time_stamp = get_date_time()
+    message_text = '%s has been Updated.' % data[0]["group_name"]
+    db.save_activity(session_user, frmClientGroup, message_text)
+    msg_id = db.save_toast_messages(1, "Client Group", message_text, None, session_user, current_time_stamp)
+    db.save_messages_users(msg_id, [1])
 
 
 ##########################################################################
@@ -203,7 +225,7 @@ def save_legal_entities(db, request, group_id, session_user):
             db, entity, group_id, session_user, current_time_stamp
         )
         if is_duplicate_legal_entity(
-            db, None, entity.legal_entity_name, group_id
+            db, None, entity.legal_entity_name, group_id, entity.country_id
         ):
             raise process_error("E068")
         legal_entity_names.append(entity.legal_entity_name)
@@ -261,7 +283,7 @@ def update_legal_entities(db, request, group_id, session_user):
             db, entity, group_id, session_user, current_time_stamp
         )
         if is_duplicate_legal_entity(
-            db, entity.legal_entity_id, entity.legal_entity_name, group_id
+            db, entity.legal_entity_id, entity.legal_entity_name, group_id, entity.country_id
         ):
             raise process_error("E068")
         elif validate_total_disk_space(
@@ -325,6 +347,7 @@ def update_legal_entities(db, request, group_id, session_user):
 def return_business_group_id(
     db, request, group_id, session_user, current_time_stamp
 ):
+    print "request.business_group--", request.business_group
     if request.business_group is None:
         return None
     elif request.business_group.business_group_id is not 0:
@@ -336,7 +359,6 @@ def return_business_group_id(
         ):
             raise process_error("E066")
         else:
-            print business_group_name, group_id, request.country_id, session_user, current_time_stamp
             business_group_id = db.call_insert_proc(
                 "sp_business_group_save", (
                     business_group_name, group_id, request.country_id,
@@ -365,7 +387,6 @@ def save_date_configurations(
         "month_to", "updated_by", "updated_on"
     ]
     for configuration in date_configurations:
-        print client_id, configuration.country_id, configuration.domain_id, configuration.month_from, configuration.month_to, session_user, current_time_stamp
         value_tuple = (
             client_id, configuration.country_id, configuration.domain_id,
             configuration.month_from, configuration.month_to,
@@ -551,11 +572,11 @@ def is_duplicate_business_group(
 #   returns False if there is no duplicates
 ##########################################################################
 def is_duplicate_legal_entity(
-    db, legal_entity_id, legal_entity_name, client_id
+    db, legal_entity_id, legal_entity_name, client_id, country_id
 ):
     count_rows = db.call_proc(
         "sp_legalentity_is_duplicate_legalentityname",
-        (legal_entity_name, legal_entity_id, client_id)
+        (legal_entity_name, legal_entity_id, client_id, country_id)
     )
     if count_rows[0]["count"] > 0:
         return True
@@ -571,7 +592,7 @@ def is_duplicate_legal_entity(
 ##########################################################################
 def is_logo_in_image_format(logo):
     exten = logo.file_name.split('.')[1]
-    if exten in ["png", "jpg", "jpeg"]:
+    if exten in ["png", "jpg", "jpeg", "gif", "bmp"]:
         return True
     else:
         return False
@@ -1102,7 +1123,7 @@ def update_client_group_record(db, client_group, session_user):
     values.append(client_group.client_id)
     if db.update(tblClientGroups, columns, values, condition):
         action = "Updated Client \"%s\"" % client_group.group_name
-        db.save_activity(session_user, 18, action)
+        db.save_activity(session_user, frmClientGroup, action)
         return True
     else:
         raise process_error("E046")
@@ -1132,7 +1153,7 @@ def update_client_group_status(db, client_id, is_active, session_user):
             action = "Activated Client \"%s\"" % group_name
         else:
             action = "Deactivated Client \"%s\"" % group_name
-        db.save_activity(session_user, 18, action)
+        db.save_activity(session_user, frmClientGroup, action)
 
 ##########################################################################
 ##########################################################################
@@ -1156,7 +1177,7 @@ def update_division(db, client_id, division_id, division_name, session_user):
     result = db.update(tblDivisions, columns, values, condition)
     if result:
         action = "Updated Division \"%s\"" % division_name
-        db.save_activity(session_user, 19, action)
+        db.save_activity(session_user, frmClientUnit, action)
         return result
     else:
         raise process_error("E055")
@@ -1169,8 +1190,6 @@ def update_division(db, client_id, division_id, division_name, session_user):
 ######################################################################################
 def is_duplicate_unit_code(db, unit_id, unit_code, client_id):
     params = [unit_id, unit_code, None, client_id]
-    print "unit code params"
-    print params
     rows = db.call_proc("sp_tbl_units_checkduplication", params)
     for d in rows:
         if(int(d["unit_code_cnt"]) > 0):
@@ -1197,9 +1216,6 @@ def is_duplicate_unit_name(db, unit_id, unit_name, client_id):
 # Return Type : Return count of the column
 ######################################################################################
 def is_invalid_id(db, check_mode, val):
-    print "inside valid checking"
-    print check_mode
-
     if check_mode == "unit_id":
         params = [val,]
         rows = db.call_proc("sp_tbl_units_check_unitId", params)
@@ -1281,8 +1297,6 @@ def save_category(
     values = [
         client_id, business_group_id, legal_entity_id, div_id,
         category_name, session_user, current_time_stamp]
-    print "inside category saving"
-    print values
     catg_id = db.call_insert_proc("sp_tbl_units_save_category", values)
     return catg_id
 
@@ -1295,13 +1309,12 @@ def save_unit(
     db, client_id, units, business_group_id, legal_entity_id,
     country_id, session_user
 ):
-    print "inside save db"
 
     current_time_stamp = str(get_date_time())
     columns = [
         "client_id", "geography_id", "unit_code", "unit_name",
         "address", "postal_code", "country_id", "created_by", "created_on",
-        "division_id", "category_id"
+        "is_approved", "division_id", "category_id"
     ]
     if business_group_id is not None:
         columns.append("business_group_id")
@@ -1314,11 +1327,10 @@ def save_unit(
     while int_i < len(units):
         # domain_ids = ",".join(str(x) for x in units[int_i].domain_ids)
         # industry_ids = ",".join(str(x) for x in unit[int_i].industry_ids)
-        print int_i
         vals = [
             client_id, units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
             units[int_i].unit_address, units[int_i].postal_code, country_id,
-            session_user, current_time_stamp,
+            session_user, current_time_stamp, units[int_i].is_approved
         ]
         unit_names.append("\"%s - %s\"" % (
             str(units[int_i].unit_code).upper(), units[int_i].unit_name)
@@ -1326,7 +1338,6 @@ def save_unit(
 
         int_i = int_i + 1
         if units[int_i].get("div_id") is not None:
-            print units[int_i].get("div_id")
             vals.append(units[int_i].get("div_id"))
         else:
             vals.append(None)
@@ -1344,14 +1355,14 @@ def save_unit(
             vals.append(legal_entity_id)
 
         values_list.append(vals)
-        print "Valuesof append----", vals
 
     result = db.bulk_insert(tblUnits, columns, values_list)
     if result is False:
         raise process_error("E056")
 
     action = "Created following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, 19, action)
+
+    db.save_activity(session_user, frmClientUnit, action)
     db.call_insert_proc("sp_client_unit_messages_save", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
 
     max_unit_id = None
@@ -1397,15 +1408,11 @@ def save_unit(
 # Return Type : Return value of the updated units
 ######################################################################################
 def update_unit(db, client_id, units, session_user):
-    print "inside update db"
-    print units
-    print type(units)
-    print len(units)
     current_time_stamp = str(get_date_time())
     columns = [
         "geography_id", "unit_code", "unit_name",
         "address", "postal_code", "updated_by", "updated_on",
-        "division_id", "category_id"
+        "is_approved", "division_id", "category_id"
     ]
 
     values_list = []
@@ -1417,7 +1424,7 @@ def update_unit(db, client_id, units, session_user):
         vals = [
             units[int_i].geography_id, units[int_i].unit_code.upper(), units[int_i].unit_name,
             units[int_i].unit_address, units[int_i].postal_code,
-            session_user, current_time_stamp,
+            session_user, current_time_stamp, units[int_i].is_approved
         ]
         condition = "client_id=%s and unit_id=%s" % (
                 client_id, units[int_i].unit_id)
@@ -1442,29 +1449,24 @@ def update_unit(db, client_id, units, session_user):
         int_i = int_i + 1
 
         values_list.append(vals)
-        print vals
 
     result = db.bulk_update(tblUnits, columns, values_list, conditions)
     if result is False:
         raise process_error("E057")
 
     action = "Updated following Units %s" % (",".join(unit_names))
-    db.save_activity(session_user, 19, action)
+
+    db.save_activity(session_user, frmClientUnit, action)
     db.call_insert_proc("sp_client_unit_messages_update", (session_user, '/knowledge/client-unit', client_id, current_time_stamp))
     if result is True:
         for i in unit_ids:
-            print "i"
-            print i
             delete_res = db.call_proc("sp_tbl_units_delete_unitorganizations", (i,))
-            print delete_res
         columns = ["unit_id", "domain_id", "organisation_id"]
         values_list = []
         # unit_id = None
         j = 0
         if len(units) == 3:
-            print"unit_id"
             d_i_id = units[j].industry_ids
-            print units[j].unit_id
 
             for c in d_i_id:
                 vals = [units[j].unit_id, c.domain_id, c.industry_id]
@@ -1473,8 +1475,6 @@ def update_unit(db, client_id, units, session_user):
         else:
             while j < len(units):
                 d_i_id = units[j].industry_ids
-                print"unit_id"
-                print units[j].unit_id
 
                 for c in d_i_id:
                     vals = [units[j].unit_id, c.domain_id, c.industry_id]
@@ -1505,7 +1505,8 @@ def update_unit_old(db, client_id,  units, session_user):
             action = "Unit details updated for \"%s - %s\"" % (
                 unit.unit_code, unit.unit_name
             )
-            db.save_activity(session_user, 19, action)
+
+            db.save_activity(session_user, frmClientUnit, action)
         else:
             raise process_error("E057")
 
@@ -1592,8 +1593,6 @@ def get_business_groups_for_user(db, user_id):
 ######################################################################################
 def get_legal_entities_for_user(db, user_id):
     result = db.call_proc("sp_tbl_unit_getclientlegalentity", (user_id,))
-    print "unit legal entity"
-    print result
     return return_legal_entities_for_unit(result)
 
 
@@ -1766,7 +1765,24 @@ def return_units_assign(units):
 def get_unit_details_for_user(db, user_id, request):
     where_condition_val = [user_id]
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser", where_condition_val, 2)
-    return return_unit_details(result)
+    return return_client_unit_list(result)
+
+def return_client_unit_list(result):
+    unitlist = []
+    for r in result[0]:
+        client_id = int(r.get("client_id"))
+        business_group_id = r.get("business_group_id")
+        legal_entity_id = int(r.get("legal_entity_id"))
+        country_id = int(r.get("country_id"))
+        country_name = r.get("country_name")
+        client_name = r.get("group_name")
+        business_group_name = r.get("b_group")
+        legal_entity_name = r.get("l_entity")
+        unitlist.append(core.UnitList(
+            client_id, business_group_id, legal_entity_id, country_id,
+            country_name, client_name, business_group_name, legal_entity_name
+        ))
+    return unitlist
 
 ######################################################################################
 # To Get units under user
@@ -1774,12 +1790,10 @@ def get_unit_details_for_user(db, user_id, request):
 # Return Type : Return list of units
 ######################################################################################
 def get_unit_details_for_user_edit(db, user_id, request):
-    print request.to_structure()
     if(request.business_group_id is None):
         where_condition_val = [request.client_id, '%', request.legal_entity_id, request.country_id, user_id]
     else:
         where_condition_val = [request.client_id, str(request.business_group_id), request.legal_entity_id, request.country_id, user_id]
-    print where_condition_val
     result = db.call_proc_with_multiresult_set("sp_tbl_unit_getunitdetailsforuser_edit", where_condition_val, 2)
     return return_unit_details(result)
 
@@ -1819,8 +1833,6 @@ def return_unit_details(result):
             d_ids, i_ids,
             is_active, is_approved, category_id, remarks
         ))
-    print "unitdetails"
-    print unitdetails
     return unitdetails
 
 ######################################################################################
@@ -1874,23 +1886,18 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
         condition_val = [client_id]
         rows = db.call_proc("sp_client_groups_details_by_id", condition_val)
         if rows:
-            group_name = rows[0]["short_name"]
+            group_name = rows[0]["group_name"]
 
     condition_val = [client_id]
     rows = db.call_proc("sp_tbl_unit_getunitcount", condition_val)
 
     for r in rows:
         no_of_units = r["units"]
-
-    print "units count"
-    print no_of_units
     group_name = group_name.replace(" ", "")
     unit_code_start_letters = group_name[:2].upper()
 
     # unit_code_start_letters = "%s%s" % (unit_code_start_letters, "%")
-    print "unit_code_start_letters--", unit_code_start_letters
     condition_val = [unit_code_start_letters, client_id]
-    print condition_val
     rows = db.call_proc("sp_tbl_unit_getunitcode", condition_val)
     auto_generated_unit_codes = []
     for row in rows:
@@ -1906,8 +1913,6 @@ def get_next_auto_gen_number(db, group_name=None, client_id=None):
             next_auto_gen_no = no_of_units + 1
         else:
             next_auto_gen_no = existing_max_unit_code + 1
-    print "next"
-    print next_auto_gen_no
     return next_auto_gen_no
 
 
@@ -1925,7 +1930,7 @@ def reactivate_unit_data(db, client_id, unit_id, session_user):
     action = "Reactivated Unit \"%s-%s\"" % (
         result["unit_code"], result["unit_name"]
     )
-    db.save_activity(session_user, 19, action)
+    db.save_activity(session_user, frmClientUnit, action)
 
     next_auto_gen_no = get_next_auto_gen_number(db, client_id=client_id)
     unit_code = group_name[:2].upper()
@@ -2199,40 +2204,24 @@ def get_unassigned_units_list(db, session_user):
 #  Return Type : Returns List of object of UnassignedUnit
 ###############################################################################
 def return_unassigned_units(data):
-    print "inside"
     assigned_total = 0
     result = []
     for datum in data:
-        if (datum["assigned_units"] > 0 or datum["total_units"] > 0 or datum["unassigned_units"] > 0):
-            print "units"
-            print datum["assigned_units"]
-            if datum["total_units"] == 0:
-                if datum["unassigned_units"] == 0:
-                    assigned_total = "%s / %s" % (
-                        datum["unassigned_units"] + datum["assigned_units"],
-                        datum["assigned_units"]
-                    )
-                else:
-                    assigned_total = "%s / %s" % (
-                        datum["unassigned_units"] - datum["assigned_units"],
-                        datum["unassigned_units"]
-                    )
-            else:
-                assigned_total = "%s / %s" % (
-                    datum["total_units"] - datum["assigned_units"],
-                    datum["total_units"]
-                )
+        assigned_total = "%s / %s" % (
+            datum["total_units"] - datum["assigned_units"],
+            datum["total_units"]
+        )
 
-            result.append(technomasters.UnassignedUnit(
-                domain_name=datum["domain_name"],
-                group_name=datum["client_name"],
-                legal_entity_name=datum["legal_entity_name"],
-                business_group_name=datum["business_group_name"],
-                unassigned_units=assigned_total,
-                domain_id=datum["domain_id"],
-                client_id=datum["client_id"],
-                legal_entity_id=datum["legal_entity_id"]
-            ))
+        result.append(technomasters.UnassignedUnit(
+            domain_name=datum["domain_name"],
+            group_name=datum["client_name"],
+            legal_entity_name=datum["legal_entity_name"],
+            business_group_name=datum["business_group_name"],
+            unassigned_units=assigned_total,
+            domain_id=datum["domain_id"],
+            client_id=datum["client_id"],
+            legal_entity_id=datum["legal_entity_id"]
+        ))
 
     return result
 
@@ -2287,8 +2276,6 @@ def get_assigned_unit_details_list(db, request):
     user_id = request.user_id
     client_id = request.client_id
     domain_id = request.domain_id
-    print "args"
-    print legal_entity_id, user_id
     #
     # To get details of assigned units under a domain manager and legal entity
     #  Parameters - Domain manager id, legal entity id
@@ -2368,8 +2355,6 @@ def get_legal_entities_for_client(db, client_id):
     data = db.call_proc(
         "sp_legal_entities_by_client", (client_id,)
     )
-    print "le data"
-    print data
     return return_legal_entities_for_unit(data)
 
 
@@ -2386,17 +2371,12 @@ def get_domain_managers_for_user(db, client_id, domain_id, session_user):
     # users = db.call_proc_with_multiresult_set(
     #     "sp_users_domain_managers", [session_user], 2
 
-    print "params"
-    print session_user, domain_id, client_id
     users = db.call_proc_with_multiresult_set(
         "sp_users_domain_managers", [session_user, domain_id, client_id], 3)
-    print "users"
-    print users
     return return_domain_managers(users)
 
 
 def return_domain_managers(data):
-    print len(data)
     fn = core.User
     result = [
         fn(
@@ -2411,7 +2391,6 @@ def return_domain_managers(data):
             user_id=datum["user_id"], legal_entity_id=datum["legal_entity_id"]
         ) for datum in data[2]
     ]
-    print domain_user_list
     return result, domain_user_list
 
 ######################################################################################
@@ -2465,6 +2444,7 @@ def save_assigned_units(db, request, session_user):
     client_id = request.client_id
     active_units = request.active_units
     values_list = []
+    unit_names = []
     current_time_stamp = get_date_time()
     domains = get_user_domains(db, session_user)
     user_category_id = get_user_category_id(db, domain_manager_id)
@@ -2482,12 +2462,15 @@ def save_assigned_units(db, request, session_user):
             session_user, current_time_stamp
         )
         values_list.append(value_tuple)
+
         db.call_insert_proc("sp_assign_client_unit_save", (
             domain_manager_id, unit.unit_id, '/knowledge/assign-client-unit',
             session_user, current_time_stamp)
         )
-        print "assigned list"
-        print values_list
+
+        unit_name = db.call_proc("sp_unitname_by_id", (unit.unit_id,))
+        for r in unit_name:
+            unit_names.append(r["unit_name"])
     #
     # To delete all the settings under the given domain manager
     # Parameters - domain manager id
@@ -2498,13 +2481,21 @@ def save_assigned_units(db, request, session_user):
     res = db.bulk_insert(
         tblUserUnits, columns, values_list
     )
+    action = "Assigned following Units %s" % (",".join(unit_names))
+    db.save_activity(session_user, 19, action)
     if res is False:
         raise process_error("E080")
     return res
 
+def get_user_domain(user_id, data):
+    domain_ids = []
+    for r in data:
+        if int(r["user_id"]) == user_id:
+            domain_ids.append(admin.CountryWiseDomain(int(r["country_id"]), int(r["domain_id"])))
+    return domain_ids
 
-def return_users(data, country_map, domain_map):
-    fn = admin.User
+def return_users(data, country_map, domain_map, mapped_country_domains):
+    fn = admin.MappedUser
     result = []
     for datum in data:
         user_id = int(datum["user_id"])
@@ -2512,7 +2503,8 @@ def return_users(data, country_map, domain_map):
             user_id=user_id, employee_name=datum["employee_name"],
             is_active=bool(datum["is_active"]),
             country_ids=country_map[user_id],
-            domain_ids=domain_map[user_id]
+            domain_ids=domain_map[user_id],
+            mapped_country_domains = get_user_domain(user_id, mapped_country_domains)
         )
         result.append(user)
     return result
@@ -2552,11 +2544,12 @@ def generate_domain_map(domains):
 #  date configurations
 ##########################################################################
 def get_unassigned_legal_entity(db, client_id):
-    legal_entities = db.call_proc(
-        "sp_unassigned_legal_entity_details_by_group_id", (client_id,)
-    )
+
+    legal_entities = db.call_proc_with_multiresult_set(
+        "sp_unassigned_legal_entity_details_by_group_id", (client_id,), 2)
+
     legal_entities = return_unassigned_legal_entities(
-        legal_entities
+        legal_entities[0], legal_entities[1]
     )
     return (
         legal_entities
@@ -2569,23 +2562,30 @@ def get_techno_users_list(db, session_user):
     user_countries = result[1]
     user_domains = result[2]
     techno_users_result = result[0]
+    mapped_country_domains = result[3]
 
     user_countries_map = generate_country_map(user_countries)
     user_domains_map = generate_domain_map(user_domains)
     techno_users = return_users(
-        techno_users_result, user_countries_map, user_domains_map)
+        techno_users_result, user_countries_map, user_domains_map, mapped_country_domains)
 
     return (
         techno_users
     )
 
+def get_le_domains(legl_entity_id, data):
+        domain_ids = []
+        for r in data:
+            if int(r["legal_entity_id"]) == legl_entity_id:
+                domain_ids.append(int(r["domain_id"]))
+        return domain_ids
 
 ##########################################################################
 #  To convert the data fetched from database into Legal entity object
 #  Parameters : Legal entity tuple, incharge person tuple, domain tuple
 #  Return Type : List of object of Legal entities
 ##########################################################################
-def return_unassigned_legal_entities(legal_entities):
+def return_unassigned_legal_entities(legal_entities, domain_ids):
     results = []
     for legal_entity in legal_entities:
         results.append(
@@ -2594,7 +2594,8 @@ def return_unassigned_legal_entities(legal_entities):
                 legal_entity_name=legal_entity["legal_entity_name"],
                 business_group_name=legal_entity["business_group_name"],
                 c_name=legal_entity["country_name"],
-                c_id=legal_entity["country_id"]
+                c_id=legal_entity["country_id"],
+                domain_ids = get_le_domains(legal_entity["legal_entity_id"], domain_ids)
             )
         )
     return results
@@ -2614,6 +2615,8 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
     ]
 
     for user_id in user_ids:
+        name_rows = db.call_proc("sp_empname_by_id", (user_id,))
+        user_name = name_rows[0]["empname"]
         for legal_entity_id in legal_entity_ids:
             values_tuple = (
                 user_id, client_id, legal_entity_id,
@@ -2624,6 +2627,10 @@ def save_assign_legal_entity(db, client_id, legal_entity_ids, user_ids, session_
                 user_id, legal_entity_id, '/knowledge/assign-legal-entity', session_user, current_time_stamp)
             )
     res = db.bulk_insert(tblUserLegalEntity, columns, values_list)
+
+    action = "New Legal entity assigned for %s" % (user_name)
+    db.save_activity(session_user, 18, action)
+
     if res is False:
         raise process_error("E041")
     return res

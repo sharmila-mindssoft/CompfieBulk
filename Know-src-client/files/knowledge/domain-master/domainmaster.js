@@ -100,41 +100,52 @@ DomainPage.prototype.renderList = function(d_data) {
     t_this = this;
     var j =1;
     ListContainer.find('tr').remove();
-    $.each(d_data, function(k, v) {
-        var cloneRow = $('#templates .table-domain-master .table-row').clone();
-        $('.sno', cloneRow).text(j);
+    if(data.length == 0){
+        $('.tbody-domain-list1').empty();
+        var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+        var clone4 = tableRow4.clone();
+        $('.no_records', clone4).text('No Records Found');
+        $('.tbody-domain-list1').append(clone4);
+    }else{
+        $.each(d_data, function(k, v) {
+            var cloneRow = $('#templates .table-domain-master .table-row').clone();
+            $('.sno', cloneRow).text(j);
 
-        var c_n = v.c_names.join(', ');
+            var c_n = v.c_names.join(', ');
 
-        $('.c_names', cloneRow).text(c_n);
-        $('.domain-name', cloneRow).text(v.domain_name);
+            $('.c_names', cloneRow).text(c_n);
+            $('.domain-name', cloneRow).text(v.domain_name);
 
-        $('.edit').attr('title', 'Click Here to Edit');
-        $('.edit', cloneRow).addClass('fa-pencil text-primary');
-        $('.edit', cloneRow).on('click', function () {
-          t_this.showEdit(v.domain_id, v.domain_name, v.country_ids);
+            $('.edit').attr('title', 'Click Here to Edit');
+            $('.edit', cloneRow).addClass('fa-pencil text-primary');
+            $('.edit', cloneRow).on('click', function () {
+              t_this.showEdit(v.domain_id, v.domain_name, v.country_ids);
+            });
+
+            if (v.is_active == true) {
+                $('.status').attr('title', 'Click Here to Deactivate');
+                $('.status', cloneRow).removeClass('fa-times text-danger');
+                $('.status', cloneRow).addClass('fa-check text-success');
+            } else {
+                $('.status').attr('title', 'Click Here to Activate');
+                $('.status', cloneRow).removeClass('fa-check text-success');
+                $('.status', cloneRow).addClass('fa-times text-danger');
+            }
+
+            $('.status', cloneRow).on('click', function (e) {
+              showModalDialog(e, v.domain_id, v.is_active);
+            });
+
+            $('.status').hover(function(){
+              showTitle(this);
+            });
+
+            ListContainer.append(cloneRow);
+            j = j + 1;
+
         });
+    }
 
-        if (v.is_active == true) {
-            $('.status', cloneRow).removeClass('fa-times text-danger');
-            $('.status', cloneRow).addClass('fa-check text-success');
-        } else {
-            $('.status', cloneRow).removeClass('fa-check text-success');
-            $('.status', cloneRow).addClass('fa-times text-danger');
-        }
-
-        $('.status', cloneRow).on('click', function (e) {
-          showModalDialog(e, v.domain_id, v.is_active);
-        });
-
-        $('.status').hover(function(){
-          showTitle(this);
-        });
-
-        ListContainer.append(cloneRow);
-        j = j + 1;
-
-    });
 };
 
 //Status Title
@@ -241,7 +252,6 @@ DomainPage.prototype.showEdit = function(d_id, d_name, d_country) {
 
 DomainPage.prototype.changeStatus = function(d_id, status) {
     mirror.changeDomainStatus(d_id, status, function(error, response) {
-        console.log(error,response)
         if (error == null) {
             t_this.showList();
             t_this.fetchDomain();
@@ -271,7 +281,6 @@ DomainPage.prototype.validate = function() {
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -305,12 +314,10 @@ DomainPage.prototype.submitProcess = function() {
     t_this = this;
     if (Domain_id.val() == '') {
         mirror.saveDomain(name, c_ids, function(error, response) {
-            console.log(error,response)
             if (error == null) {
 
                 displaySuccessMessage(message.save_success);
                 t_this.showList();
-                t_this.fetchDomain();
             } else {
                 t_this.possibleFailures(error);
             }
@@ -320,7 +327,6 @@ DomainPage.prototype.submitProcess = function() {
             if (error == null) {
                 displaySuccessMessage(message.update_success);
                 t_this.showList();
-                t_this.fetchDomain();
             } else {
                 t_this.possibleFailures(error);
             }
@@ -544,7 +550,14 @@ $(document).ready(function() {
     });
     PageControls();
     d_page.showList();
-    d_page.fetchDomain();
     $('.js-sorting-table').jssorting(); // Sorting table
+    // $(".js-sorting-table").tablesorter({
+    //     sortList: [[0,0]], // starting column sorting
+    //     headers: { // disable column sorting
+    //         0:{sorter: false},
+    //         3:{sorter: false},
+    //         4:{sorter: false}
+    //     }
+    // });
 });
 

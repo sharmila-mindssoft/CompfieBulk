@@ -88,7 +88,7 @@
                                 <center>
                                     <div class="form-group m-t-5 m-b-0">
                                         <button class="btn btn-primary waves-effect waves-light" type="submit" id="submit" tabindex="8"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit" id="export" tabindex="9"> Export </button>
+                                        <!-- <button class="btn btn-info waves-effect waves-light" type="submit" id="export" tabindex="9"> Export </button> -->
                                     </div>
                                 </center>
                             </div>
@@ -157,17 +157,18 @@
 <div id="templates">
     <table class="table-agreement-list" style="display: none;">
         <tr class="group-list">
-            <td colspan="2">
+            <td> </td>
+            <td>
                 <div class="col-sm-12 no-padding">
                     <mark class="p-l-10 p-r-10 group-name"></mark>
                 </div>
             </td>
-            <td>
+            <td colspan="2">
                 <div class="col-sm-12 no-padding">
                     <mark class="p-l-10 p-r-10 business-group-name"></mark>
                 </div>
             </td>
-            <td></td>
+            
             <td class="group-admin-email"></td>
             <td class="le-contactno"></td>
             <td></td>
@@ -256,6 +257,8 @@
 <script type="text/javascript">
 $(function() {
     $("#fromdate").datepicker({
+        showButtonPanel: true,
+        closeText: 'Clear',
         changeMonth: true,
         changeYear: true,
         numberOfMonths: 1,
@@ -265,10 +268,17 @@ $(function() {
         ],
         onClose: function(selectedDate) {
             $("#todate").datepicker("option", "minDate", selectedDate);
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
         }
+
     });
 
     $("#todate").datepicker({
+        showButtonPanel: true,
+        closeText: 'Clear',
         changeMonth: true,
         changeYear: true,
         numberOfMonths: 1,
@@ -278,6 +288,10 @@ $(function() {
         ],
         onClose: function(selectedDate) {
             $("#fromdate").datepicker("option", "maxDate", selectedDate);
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
         }
     });
 });

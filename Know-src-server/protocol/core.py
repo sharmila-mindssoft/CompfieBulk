@@ -1580,6 +1580,34 @@ class ClientConfiguration(object):
 # BusinessGroup
 #
 
+class ClientBusinessGroupCountry(object):
+    def __init__(self, business_group_id, business_group_name, client_id, country_id):
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+        self.client_id = client_id
+        self.country_id = country_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "business_group_id", "business_group_name", "client_id", "country_id"
+        ])
+        business_group_id = data.get("business_group_id")
+        business_group_name = data.get("business_group_name")
+        client_id = data.get("client_id")
+        country_id = data.get("country_id")
+        return ClientBusinessGroupCountry(business_group_id, business_group_name, client_id, country_id)
+
+    def to_structure(self):
+        data = {
+            "business_group_id": self.business_group_id,
+            "business_group_name": self.business_group_name,
+            "client_id": self.client_id,
+            "country_id": self.country_id,
+        }
+        return data
+
+
 class BusinessGroup(object):
     def __init__(self, business_group_id, business_group_name, client_id):
         self.business_group_id = business_group_id
@@ -1823,7 +1851,7 @@ class UnitDetails(object):
         is_approved = data.get("is_approved")
         category_id = data.get("category_id")
         remarks = data.get("remarks")
-        return Unit(
+        return UnitDetails(
             unit_id, client_id, business_group_id, legal_entity_id, country_id,
             division_id, category_name, geography_id, unit_code, unit_name, address,
             postal_code, domain_ids, i_ids, is_active, is_approved, category_id, remarks
@@ -1849,6 +1877,53 @@ class UnitDetails(object):
             "is_approved": self.is_approved,
             "category_id": self.category_id,
             "remarks": self.remarks,
+        }
+        return to_structure_dictionary_values(data)
+
+class UnitList(object):
+    def __init__(
+        self, client_id, business_group_id, legal_entity_id, country_id,
+        country_name, client_name, business_group_name, legal_entity_name
+    ):
+        self.client_id = client_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.country_name = country_name
+        self.client_name = client_name
+        self.business_group_name = business_group_name
+        self.legal_entity_name = legal_entity_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+                "client_id", "business_group_id", "legal_entity_id", "country_id",
+                "country_name", "client_name", "business_group_name", "legal_entity_name"
+        ])
+        client_id = data.get("client_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        country_id = data.get("country_id")
+        country_name = data.get("country_name")
+        client_name = data.get("client_name")
+        business_group_name = data.get("business_group_name")
+        legal_entity_name = data.get("legal_entity_name")
+
+        return UnitList(
+            client_id, business_group_id, legal_entity_id, country_id,
+            country_name, client_name, business_group_name, legal_entity_name
+        )
+
+    def to_structure(self):
+        data = {
+            "client_id": self.client_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+            "country_id": self.country_id,
+            "country_name": self.country_name,
+            "client_name": self.client_name,
+            "business_group_name": self.business_group_name,
+            "legal_entity_name": self.legal_entity_name,
         }
         return to_structure_dictionary_values(data)
 
@@ -3649,13 +3724,14 @@ class AssignLegalEntity(object):
 class UnAssignLegalEntity(object):
     def __init__(
         self, legal_entity_id, legal_entity_name,
-        business_group_name, c_name, c_id
+        business_group_name, c_name, c_id, domain_ids
     ):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.business_group_name = business_group_name
         self.c_name = c_name
         self.c_id = c_id
+        self.domain_ids = domain_ids
 
     @staticmethod
     def parse_structure(data):
@@ -3665,7 +3741,8 @@ class UnAssignLegalEntity(object):
                 "legal_entity_name",
                 "business_group_name",
                 "c_name",
-                "c_id"
+                "c_id",
+                "domain_ids"
             ]
         )
 
@@ -3674,10 +3751,11 @@ class UnAssignLegalEntity(object):
         business_group_name = data.get("business_group_name")
         c_name = data.get("c_name")
         c_id = data.get("c_id")
+        domain_ids = data.get("domain_ids")
 
         return UnAssignLegalEntity(
             legal_entity_id, legal_entity_name,
-            business_group_name, c_name, c_id
+            business_group_name, c_name, c_id, domain_ids
         )
 
     def to_structure(self):
@@ -3686,7 +3764,8 @@ class UnAssignLegalEntity(object):
             "legal_entity_name": self.legal_entity_name,
             "business_group_name": self.business_group_name,
             "c_name": self.c_name,
-            "c_id": self.c_id
+            "c_id": self.c_id,
+            "domain_ids": self.domain_ids
         }
 
 
@@ -3885,32 +3964,35 @@ class UserMappingUnitDetails(object):
 
 class UserMappingReportTechno(object):
     def __init__(
-        self, unit_id, techno_manager, techno_user
+        self, unit_id, techno_manager, techno_user, unit_code_with_name
     ):
         self.unit_id = unit_id
         self.techno_manager = techno_manager
         self.techno_user = techno_user
+        self.unit_code_with_name = unit_code_with_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "unit_id", "techno_manager", "techno_user"
+                "unit_id", "techno_manager", "techno_user", "unit_code_with_name"
             ]
         )
         unit_id = data.get("unit_id")
         techno_manager = data.get("techno_manager")
         techno_user = data.get("techno_user")
+        unit_code_with_name = data.get("unit_code_with_name")
 
         return UserMappingReportTechno(
-                unit_id, techno_manager, techno_user
+                unit_id, techno_manager, techno_user, unit_code_with_name
         )
 
     def to_structure(self):
         return {
             "unit_id": self.unit_id,
             "techno_manager": self.techno_manager,
-            "techno_user": self.techno_user
+            "techno_user": self.techno_user,
+            "unit_code_with_name": self.unit_code_with_name
         }
 
 class UserMappingReportDomain(object):

@@ -53,27 +53,26 @@ function hideLoader() {
 
 // get industries list from api
 function getIndustries() {
-    function onSuccess(data) {
-        industriesList = data.industries;
-        domainList = data.domains;
-        countriesList = data.countries;
-        console.log("list:" + data.domains)
-        loadIndustryList(industriesList);
-    }
 
-    function onFailure(error) {
-        displayMessage(error);
-    }
-    displayLoader();
-    mirror.getIndustryList(function(error, response) {
-        if (error == null) {
-            onSuccess(response);
-            hideLoader();
-        } else {
-            onFailure(error);
-            hideLoader();
-        }
-    });
+	function onSuccess(data) {
+		industriesList = data.industries;
+		domainList = data.domains;
+		countriesList = data.countries;
+		loadIndustryList(industriesList);
+	}
+	function onFailure(error) {
+		displayMessage(error);
+	}
+  displayLoader();
+	mirror.getIndustryList(function (error, response) {
+		if (error == null) {
+		  onSuccess(response);
+      hideLoader();
+		} else {
+		  onFailure(error);
+      hideLoader();
+		}
+	});
 }
 
 function processSearch() {
@@ -106,68 +105,69 @@ function processSearch() {
 
 //display industry list in view page
 function loadIndustryList(data) {
-    var j = 1;
-    viewTable.find('tr').remove();
+  var j = 1;
+  viewTable.find('tr').remove();
+  if(data.length == 0){
+    $('.tbody-organization-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
+    $('.tbody-organization-list').append(clone4);
+  }else{
+    $.each(data, function (key, value) {
+      statusmsg = "";
+      var country_id = value.country_id;
+      var country_name = value.country_name;
+      var domain_id = value.domain_id;
+      var domain_name = value.domain_name;
+      var industryId = value.industry_id;
+      var industryName = value.industry_name;
+      var isActive = value.is_active;
+      var passStatus = null;
 
-    $.each(data, function(key, value) {
-        statusmsg = "";
-        var country_id = value.country_id;
-        var country_name = value.country_name;
-        var domain_id = value.domain_id;
-        var domain_name = value.domain_name;
-        var industryId = value.industry_id;
-        var industryName = value.industry_name;
-        var isActive = value.is_active;
-        var passStatus = null;
+      if (isActive == true) {
+        passStatus = false;
+      } else {
+        passStatus = true;
+      }
 
-        if (isActive == true) {
-            passStatus = false;
-        } else {
-            passStatus = true;
-        }
+      var tableRow = $('#templates .table-orgn-master .table-row');
+      var clone = tableRow.clone();
+      $('.sno', clone).text(j);
+      $('.country-name', clone).text(country_name);
+      $('.domain-name', clone).text(domain_name);
+      $('.organization-name', clone).text(industryName);
 
-        var tableRow = $('#templates .table-orgn-master .table-row');
-        var clone = tableRow.clone();
-        $('.sno', clone).text(j);
-        $('.country-name', clone).text(country_name);
-        $('.domain-name', clone).text(domain_name);
-        $('.organization-name', clone).text(industryName);
+      //edit icon
+      $('.edit').attr('title', 'Click Here to Edit');
+      $('.edit', clone).addClass('fa-pencil text-primary');
+      $('.edit', clone).on('click', function () {
+        displayEdit(country_id, domain_id, industryId, industryName);
+      });
 
-        //edit icon
-        $('.edit').attr('title', 'Click Here to Edit');
-        $('.edit', clone).addClass('fa-pencil text-primary');
-        $('.edit', clone).on('click', function() {
-            displayEdit(country_id, domain_id, industryId, industryName);
-        });
+      if (value.is_active == false){
+        $('.status').attr('title', 'Click Here to Activate');
+        $('.status', clone).removeClass('fa-check text-success');
+        $('.status', clone).addClass('fa-times text-danger');
+      }
+      else{
+        $('.status').attr('title', 'Click Here to Deactivate');
+        $('.status', clone).removeClass('fa-times text-danger');
+        $('.status', clone).addClass('fa-check text-success');
+      }
+      $('.status', clone).on('click', function (e) {
+        showModalDialog(e, industryId, isActive);
+      });
 
-        if (value.is_active == false) {
-            //$('.status').attr('title', 'Click Here to Deactivate');
-            $('.status', clone).removeClass('fa-check text-success');
-            $('.status', clone).addClass('fa-times text-danger');
-        } else {
-            //$('.status').attr('title', 'Click Here to Activate');
-            $('.status', clone).removeClass('fa-times text-danger');
-            $('.status', clone).addClass('fa-check text-success');
-        }
-        $('.status', clone).on('click', function(e) {
-            showModalDialog(e, industryId, isActive);
-        });
+      $('.status').hover(function(){
+        showTitle(this);
+      });
 
-        $('.status').hover(function() {
-            showTitle(this);
-        });
-
-        viewTable.append(clone);
-        j = j + 1;
+      viewTable.append(clone);
+      j = j + 1;
     });
-    $(".js-sorting-table").tablesorter({
-        sortList: [[0, 0]], // starting column sorting
-        headers: { // disable column sorting
-            0: { sorter: false },
-            4: { sorter: false },
-            5: { sorter: false }
-        }
-    });
+  }
+
 }
 
 //Status Title
@@ -235,39 +235,38 @@ function validateAuthentication() {
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-    console.log("inside length" + show_name)
-    e_n_msg = validateLength(key_name, value.trim())
-    if (e_n_msg != true) {
-        displayMessage(show_name + e_n_msg);
-        return false;
-    }
-    return true;
+  e_n_msg = validateLength(key_name, value.trim())
+  if (e_n_msg != true) {
+    displayMessage(show_name + e_n_msg);
+    return false;
+  }
+  return true;
 }
 
 // validation
 function formValidation() {
-    console.log("inside form");
-    if (country_val.val().trim().length == 0) {
-        displayMessage(msg.country_required);
-        country_ac.focus();
-        return false;
-    }
 
-    if (domain_val.val().trim().length == 0) {
-        displayMessage(msg.domainname_required);
-        domain_ac.focus();
-        return false;
-    }
+  if (country_val.val().trim().length == 0) {
+    displayMessage(msg.country_required);
+    country_ac.focus();
+    return false;
+  }
 
-    if (orgn_name.val().trim().length == 0) {
-        displayMessage(msg.industryname_required);
-        orgn_name.focus();
-        return false;
-    } else {
-        validateMaxLength('organization_name', orgn_name.val(), "Organization Name");
-    }
-    return true;
+  if (domain_val.val().trim().length == 0) {
+    displayMessage(msg.domainname_required);
+    domain_ac.focus();
+    return false;
+  }
 
+  if (orgn_name.val().trim().length == 0) {
+    displayMessage(msg.industryname_required);
+    orgn_name.focus();
+    return false;
+  }
+  else {
+    validateMaxLength('organization_name', orgn_name.val(), "Organization Name");
+  }
+  return true;
 }
 
 function submitOrganization() {
@@ -460,96 +459,95 @@ function keyError() {
     });
 }
 //render controls
-function renderControls() {
+function renderControls(){
     getIndustries();
 
     //status of the list
-    Search_status_ul.click(function(event) {
-        Search_status_li.each(function(index, el) {
-            $(el).removeClass('active');
+    Search_status_ul.click(function (event) {
+        Search_status_li.each(function (index, el) {
+          $(el).removeClass('active');
         });
         $(event.target).parent().addClass('active');
 
         var currentClass = $(event.target).find('i').attr('class');
         Search_status.removeClass();
-        if (currentClass != undefined) {
-            Search_status.addClass(currentClass);
-            Search_status.text('');
-        } else {
-            Search_status.addClass('fa');
-            Search_status.text('All');
+        if(currentClass != undefined){
+          Search_status.addClass(currentClass);
+          Search_status.text('');
+        }else{
+          Search_status.addClass('fa');
+          Search_status.text('All');
         }
         processSearch();
     });
 
-    country_ac.keyup(function(e) {
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
-        var text_val = $(this).val();
-        commonAutoComplete(
-            e, AcCountry, country_val, text_val,
-            countriesList, "country_name", "country_id",
-            function(val) {
-                onAutoCompleteSuccess(country_ac, country_val, val);
-            }, condition_fields, condition_values);
+  country_ac.keyup(function(e){
+    var condition_fields = ["is_active"];
+    var condition_values = [true];
+    var text_val = $(this).val();
+    commonAutoComplete(
+      e, AcCountry, country_val, text_val,
+      countriesList, "country_name", "country_id", function (val) {
+          onAutoCompleteSuccess(country_ac, country_val, val);
+      }, condition_fields, condition_values);
 
-    });
+  });
 
-    domain_ac.keyup(function(e) {
-        var text_val = $(this).val();
-        var domain_list = [];
-        var c_ids = null;
-        var check_val = false;
-        if (country_val.val() != '') {
-            console.log("ctry:" + country_val.val())
-            for (var i = 0; i < domainList.length; i++) {
-                c_ids = domainList[i].country_ids;
+  domain_ac.keyup(function(e){
+    var text_val = $(this).val();
+    var domain_list = [];
+    var c_ids = null;
+    var check_val = false;
+    if(country_val.val() != ''){
+      for(var i=0;i<domainList.length;i++){
+        c_ids = domainList[i].country_ids;
 
-                for (var j = 0; j < c_ids.length; j++) {
-                    if (c_ids[j] == country_val.val()) {
-                        check_val = true;
-                    }
-                }
-
-                if (check_val == true && domainList[i].is_active == true) {
-                    domain_list.push({
-                        "domain_id": domainList[i].domain_id,
-                        "domain_name": domainList[i].domain_name
-                    });
-                    check_val = false;
-                    //break;
-                }
-            }
-            commonAutoComplete(
-                e, AcDomain, domain_val, text_val,
-                domain_list, "domain_name", "domain_id",
-                function(val) {
-                    onAutoCompleteSuccess(domain_ac, domain_val, val);
-                });
-        } else {
-            displayMessage(message.country_required);
+        for(var j=0;j<c_ids.length;j++){
+          if(c_ids[j] == country_val.val())
+          {
+            check_val = true;
+          }
         }
-    });
+
+        if(check_val == true && domainList[i].is_active == true){
+          domain_list.push({
+            "domain_id": domainList[i].domain_id,
+            "domain_name": domainList[i].domain_name
+          });
+          check_val = false;
+          //break;
+        }
+      }
+      commonAutoComplete(
+        e, AcDomain, domain_val, text_val,
+        domain_list, "domain_name", "domain_id", function (val) {
+            onAutoCompleteSuccess(domain_ac, domain_val, val);
+        });
+    }
+    else{
+      displayMessage(message.country_required);
+    }
+  });
 
 
     FilterBox.keyup(function() {
         processSearch();
     });
-    CancelButton.click(function() {
+  CancelButton.click(function() {
         displayViewMode();
     });
-    AddButton.click(function() {
+  AddButton.click(function() {
         displayAddMode();
     });
-    SubmitButton.click(function() {
+  SubmitButton.click(function() {
         submitOrganization();
     });
-    Search_status.change(function() {
+  Search_status.change(function() {
         processSearch();
     });
-    PasswordSubmitButton.click(function() {
-        validateAuthentication();
-    });
+  PasswordSubmitButton.click(function() {
+    validateAuthentication();
+  });
 }
 
 
@@ -561,6 +559,17 @@ function initialize() {
 }
 
 //initialization
-$(document).ready(function() {
-    initialize();
+
+$(document).ready(function () {
+  initialize();
+  $('.js-sorting-table').jssorting();
+  // $(".js-sorting-table").tablesorter({
+  //   sortList: [[0,0]], // starting column sorting
+  //   headers: { // disable column sorting
+  //       0:{sorter: false},
+  //       4:{sorter: false},
+  //       5:{sorter: false}
+  //   }
+  // });
+
 });

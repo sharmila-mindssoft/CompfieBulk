@@ -110,7 +110,7 @@ def get_edit_client_group_form_data(db, request, session_user):
     ) = get_client_details(db, group_id)
     return technomasters.GetEditClientGroupFormDataSuccess(
         countries=countries, domains=domains,
-        business_groups=business_groups,
+        business_groups_country=business_groups,
         industries=industries, group_name=group_name,
         email_id=user_name, short_name=short_name,
         no_of_licence=total_view_licence,
@@ -132,7 +132,7 @@ def process_update_client_group(db, request, session_user):
         db, request.client_id, request.date_configurations, session_user
     )
     update_client_group(
-        db, request.client_id, request.email_id, request.no_of_view_licence, request.remarks
+        db, request.client_id, request.email_id, request.no_of_view_licence, request.remarks, session_user
     )
     legal_entity_names = update_legal_entities(
         db, request, request.client_id, session_user)
@@ -170,13 +170,9 @@ def change_client_group_status(db, request, session_user):
 ########################################################
 def validate_duplicate_data(db, request, session_user):
     session_user = int(session_user)
-    print "request"
     client_id = request.client_id
-    print client_id
     business_group_id = request.business_group_id
-    print business_group_id
     legal_entity_id = request.legal_entity_id
-    print legal_entity_id
     divisions_list = request.division_units
 
     if not is_invalid_id(db, "client_id", client_id):
@@ -187,8 +183,6 @@ def validate_duplicate_data(db, request, session_user):
             return technomasters.InvalidBusinessGroupId()
 
     if divisions_list is not None:
-        print "inside divisions valid checking"
-        print divisions_list
         for row_division in divisions_list:
             division_id = row_division.division_id
             division_name = row_division.division_name
@@ -211,6 +205,7 @@ def validate_duplicate_data(db, request, session_user):
             return technomasters.InvalidLegalEntityId()
     return True
 
+
 ########################################################################
 # To Validate unit data and merge the divisions, categories for each unit
 # Divisions, categories and Units received in the request
@@ -222,35 +217,24 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
     old_unit_list = []
     # dict_unit_list = []
     # int_div_cnt = 1
-    int_unit_cnt = 1
+    # int_unit_cnt = 1
     i = 0
+    j = 1
     # var unit
-    print "inside valid unit data"
-    print div_ids
-    print category_ids
-    print "Map:"
     for counts, div, catg in map(None, divisions, div_ids, category_ids):
-        div_cnt = counts.division_cnt
-        print div_cnt
+        # div_cnt = counts.division_cnt
         unit_cnt = counts.unit_cnt
-        print "inside merge loop"
-        print unit_cnt
         while i < len(units):
-            print "inside units"
-            print "unit dict"
             unit = units[i]
-            print type(unit)
-            print int_unit_cnt
             unit_id = unit.unit_id
-            unit_name = unit.unit_name
-            print unit_name
+            # unit_name = unit.unit_name
             if is_duplicate_unit_code(db, unit_id, unit.unit_code, client_id):
                 return technomasters.UnitCodeAlreadyExists(
-                    get_next_auto_gen_number(db, client_id)
+                    get_next_auto_gen_number(db, client_id=client_id)
                 )
 
-            elif is_duplicate_unit_name(db, unit_id, unit_name, client_id):
-                return technomasters.UnitNameAlreadyExists()
+            # elif is_duplicate_unit_name(db, unit_id, unit_name, client_id):
+            #     return technomasters.UnitNameAlreadyExists()
             else:
                 pass
 
@@ -260,16 +244,13 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
                 old_unit_list.append(unit)
                 old_unit_list.append({"div_id": div.get("div_id")})
                 old_unit_list.append({"catg_id": catg.get("catg_id")})
-                print "old unit list"
-                print old_unit_list
             else:
                 new_unit_list.append(unit)
                 new_unit_list.append({"div_id": div.get("div_id")})
                 new_unit_list.append({"catg_id": catg.get("catg_id")})
-                print "new unit list"
-                print new_unit_list
-            if i == (unit_cnt - 1):
+            if j == unit_cnt:
                 i = i + 1
+                j = 1
                 break
             else:
                 i = i + 1
@@ -291,11 +272,8 @@ def save_client(db, request, session_user):
     res = None
 
     is_valid = validate_duplicate_data(db, request, session_user)
-    print "is_valid"
-    print is_valid
     if is_valid is True:
         if divisions is not None:
-            print "inside division is not None"
             for division in divisions:
                 division_id = division.division_id
                 division_name = division.division_name
@@ -306,10 +284,7 @@ def save_client(db, request, session_user):
                 if(category_name == "---"):
                     category_name = None
 
-                print "cg"
-                print category_name
                 if division_id is None:
-                    print "inside div id is None"
                     if division_name is not None:
                         div_id = save_division(
                             db, client_id, division_name, business_group_id, legal_entity_id, session_user
@@ -322,7 +297,6 @@ def save_client(db, request, session_user):
                         div_ids.append({"div_id": 0})
                 else:
                     div_id = division_id
-                    print div_id
                     div_ids.append({"div_id": div_id})
 
                 if category_name is not None:
@@ -330,8 +304,6 @@ def save_client(db, request, session_user):
                         category_id = save_category(
                             db, client_id, div_id, business_group_id, legal_entity_id, category_name, session_user
                         )
-                        print "saved category_id"
-                        print category_id
                         if category_id == 0 or category_id < 0:
                             return False
                         else:
@@ -341,17 +313,12 @@ def save_client(db, request, session_user):
                         category_ids.append({"catg_id": category_id})
                 else:
                     category_ids.append({"catg_id": 0})
-
         is_valid_unit = validate_unit_data(db, request, div_ids, category_ids, client_id, session_user)
-        print "is_valid_unit : %s" % is_valid
         if type(is_valid_unit) is not list:
             return is_valid_unit
         else:
             if is_valid_unit[0] is True:
                 units = is_valid_unit[1]
-                print "after append"
-                print units
-                print "is valid unit--------------------", is_valid_unit[1]
                 if(len(is_valid_unit[1]) > 0):
                     res = save_unit(
                         db, client_id, units, business_group_id, legal_entity_id, country_id, session_user
@@ -361,8 +328,6 @@ def save_client(db, request, session_user):
                 else:
                     if(len(is_valid_unit[2]) > 0):
                         res = update_unit(db, client_id, is_valid_unit[2], session_user)
-        print "update result"
-        print res
         if res:
             return technomasters.SaveClientSuccess()
         else:
@@ -435,7 +400,7 @@ def get_clients(db, request, session_user):
         db, session_user
     )
     if len(group_company_list) > 0:
-        unit_list = get_unit_details_for_user(db, session_user, request)
+        client_unit_list = get_unit_details_for_user(db, session_user, request)
         business_group_list = get_business_groups_for_user(db, session_user)
         countries_units = get_countries_for_unit(db, session_user)
         legal_entity_list = get_legal_entities_for_user(db, session_user)
@@ -446,7 +411,7 @@ def get_clients(db, request, session_user):
         # unit_industries_list = get_client_industries(db, session_user)
         # client_domains = get_user_client_domains(db, session_user)
         return technomasters.GetClientsSuccess(
-            unit_list=unit_list,
+            client_unit_list=client_unit_list,
             group_company_list=group_company_list,
             business_group_list=business_group_list,
             countries_units=countries_units,

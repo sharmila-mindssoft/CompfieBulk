@@ -33,6 +33,16 @@
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="20/12/2016" readonly="readonly" id="to-date" tabindex="5">
+                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group has-feedback user-list">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">User:</label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" id="user" autofocus tabindex="4" placeholder="Type User">
@@ -43,9 +53,7 @@
                                         <i class="fa-1-5x form-control-feedback fa fa-search"></i>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group has-feedback">
+                                <div class="form-group has-feedback default-display-none">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
                                         <input type="text" class="form-control input-sm" id="countryval" autofocus tabindex="4" placeholder="Type Country">
@@ -55,13 +63,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group has-feedback">
-                                    <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="20/12/2016" readonly="readonly" id="to-date" tabindex="5">
-                                        <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
-                                    </div>
-                                </div>
+
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Form Name:</label>
                                     <div class="col-sm-6">
@@ -78,7 +80,7 @@
                                 <center>
                                     <div class="form-group  m-t-5 m-b-0">
                                         <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="7"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit"> Export </button>
+                                        <button class="btn btn-info waves-effect waves-light default-display-none" type="submit" id="export"> Export </button>
                                     </div>
                                 </center>
                             </div>
@@ -92,7 +94,7 @@
                     <div class="table-responsive">
                         <div class="col-sm-12">
                             <div class="col-sm-12 text-center"><h4>Audit Trail / Login Trace</h4></div>
-                            <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countryval"></span></h6></div>
+                            <!-- <div class="col-sm-6 text-center"><h6>Country: <span style="margin-left:10px; font-weight:bold;" class="countryval"></span></h6></div> -->
                             <div class="col-sm-6 text-center"><h6>Type: <span style="margin-left:10px; font-weight:bold;" class="typeval"></span></h6></div>
                         </div>
                         <div class="clearfix"></div>
@@ -145,32 +147,55 @@
 </tr>
 </table>
 </div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
 <script type="text/javascript" src="/script/audit-trail-login-trace/audittrailreort.js"></script>
 
 <script type="text/javascript">
 $(function() {
-  $("#from-date" ).datepicker({
-    changeMonth: true,
-    changeYear: true,
-    numberOfMonths: 1,
-    dateFormat: "dd-M-yy",
-    monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    onClose: function( selectedDate ) {
-    $( "#to-date" ).datepicker( "option", "minDate", selectedDate );
-  }
-});
-$( "#to-date" ).datepicker({
-changeMonth: true,
-changeYear: true,
-numberOfMonths: 1,
-dateFormat: "dd-M-yy",
-monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-onClose: function( selectedDate ) {
-$( "#from-date" ).datepicker( "option", "maxDate", selectedDate );
-}
-});
+  $("#from-date").datepicker({
+        showButtonPanel: true,
+        closeText: 'Clear',
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ],
+        onClose: function(selectedDate) {
+            $("#to-date").datepicker("option", "minDate", selectedDate);
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
+        }
+
+    });
+
+    $("#to-date").datepicker({
+        showButtonPanel: true,
+        closeText: 'Clear',
+        changeMonth: true,
+        changeYear: true,
+        numberOfMonths: 1,
+        dateFormat: "dd-M-yy",
+        monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        ],
+        onClose: function(selectedDate) {
+            $("#from-date").datepicker("option", "maxDate", selectedDate);
+            var event = arguments.callee.caller.caller.arguments[0];
+            if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
+                $(this).val('');
+            }
+        }
+    });
 });
 </script>
 {% endblock %}

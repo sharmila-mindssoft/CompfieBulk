@@ -20,6 +20,13 @@ var AcCountry = $('#ac-country');
 var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 $('#btn-geography-add').click(function () {
   $('#geography-view').hide();
   $('#geography-add').show();
@@ -42,64 +49,73 @@ $('#btn-geography-back').click(function () {
 function loadGeographiesList(geographiesList) {
   var j = 1;
   $('.tbody-geography-list').find('tr').remove();
-  $.each(geographiesList, function (keys, values) {
-    var countryName = '';
-    var geographyList = values;
-    for (var countryList in countriesList) {
-      if (countriesList[countryList].country_id == keys) {
-        countryName = countriesList[countryList].country_name;
-        break;
-      }
-    }
-    $.each(geographyList, function (key, value) {
-      var geographyId = value.geography_id;
-      var geographyName = value.geography_name;
-      var isActive = value.is_active;
-      var level = '';
-      var lposition = 0;
-      var parentid = value.parent_id;
-      var geographyLevelList = geographyLevelsList[keys];
-      for (var i in geographyLevelList) {
-        if (geographyLevelList[i].l_id == value.level_id) {
-          level = geographyLevelList[i].l_name;
-          lposition = geographyLevelList[i].l_position;
+  if(geographiesList.length == 0){
+    $('.tbody-geography-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
+    $('.tbody-geography-list').append(clone4);
+  }else{
+    $.each(geographiesList, function (keys, values) {
+      var countryName = '';
+      var geographyList = values;
+      for (var countryList in countriesList) {
+        if (countriesList[countryList].country_id == keys) {
+          countryName = countriesList[countryList].country_name;
           break;
         }
       }
-      var tableRow = $('#templates .table-geography-master .table-row');
-      var clone = tableRow.clone();
-      $('.sno', clone).text(j);
-      $('.country', clone).text(countryName);
-      $('.level', clone).text(level);
-      $('.name', clone).text(geographyName);
-      //edit icon
-      $('.edit').attr('title', 'Click Here to Edit');
-      $('.edit', clone).addClass('fa-pencil text-primary');
-      $('.edit', clone).on('click', function () {
-        displayEdit(geographyId, geographyName, countryName, keys, lposition, parentid);
-      });
+      $.each(geographyList, function (key, value) {
+        var geographyId = value.geography_id;
+        var geographyName = value.geography_name;
+        var isActive = value.is_active;
+        var level = '';
+        var lposition = 0;
+        var parentid = value.parent_id;
+        var geographyLevelList = geographyLevelsList[keys];
+        for (var i in geographyLevelList) {
+          if (geographyLevelList[i].l_id == value.level_id) {
+            level = geographyLevelList[i].l_name;
+            lposition = geographyLevelList[i].l_position;
+            break;
+          }
+        }
+        var tableRow = $('#templates .table-geography-master .table-row');
+        var clone = tableRow.clone();
+        $('.sno', clone).text(j);
+        $('.country', clone).text(countryName);
+        $('.level', clone).text(level);
+        $('.name', clone).text(geographyName);
+        //edit icon
+        $('.edit').attr('title', 'Click Here to Edit');
+        $('.edit', clone).addClass('fa-pencil text-primary');
+        $('.edit', clone).on('click', function () {
+          displayEdit(geographyId, geographyName, countryName, keys, lposition, parentid);
+        });
 
-      if (value.is_active == false){
-        //$('.status').attr('title', 'Click Here to Deactivate');
-        $('.status', clone).removeClass('fa-check text-success');
-        $('.status', clone).addClass('fa-times text-danger');
-      }
-      else{
-        //$('.status').attr('title', 'Click Here to Activate');
-        $('.status', clone).removeClass('fa-times text-danger');
-        $('.status', clone).addClass('fa-check text-success');
-      }
-      $('.status', clone).on('click', function (e) {
-        showModalDialog(e, geographyId, isActive);
-      });
+        if (value.is_active == false){
+          $('.status').attr('title', 'Click Here to Activate');
+          $('.status', clone).removeClass('fa-check text-success');
+          $('.status', clone).addClass('fa-times text-danger');
+        }
+        else{
+          $('.status').attr('title', 'Click Here to Deactivate');
+          $('.status', clone).removeClass('fa-times text-danger');
+          $('.status', clone).addClass('fa-check text-success');
+        }
+        $('.status', clone).on('click', function (e) {
+          showModalDialog(e, geographyId, isActive);
+        });
 
-      $('.status').hover(function(){
-        showTitle(this);
+        $('.status').hover(function(){
+          showTitle(this);
+        });
+        $('.tbody-geography-list').append(clone);
+        j = j + 1;
       });
-      $('.tbody-geography-list').append(clone);
-      j = j + 1;
     });
-  });
+  }
+
 }
 
 //Status Title
@@ -155,12 +171,15 @@ function validateAuthentication(){
   } else {
     validateMaxLength('password', password, "Password");
   }
+  displayLoader();
   mirror.verifyPassword(password, function(error, response) {
     if (error == null) {
+      hideLoader();
       isAuthenticate = true;
       Custombox.close();
     }
     else {
+      hideLoader();
       if (error == 'InvalidPassword') {
         displayMessage(message.invalid_password);
       }
@@ -170,7 +189,6 @@ function validateAuthentication(){
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -181,7 +199,6 @@ function validateMaxLength(key_name, value, show_name) {
 
 // activate/deactivate geographies
 function changeStatus(geographyId, isActive) {
-  console.log(isActive)
   function onSuccess(response) {
     displaySuccessMessage(message.status_success);
     GetGeographies();
@@ -189,10 +206,13 @@ function changeStatus(geographyId, isActive) {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.changeGeographyStatus(geographyId, isActive, function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -211,7 +231,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 //Autocomplete Script ends
 // dynamically load geograph first levels data according to geography level
 function loadGeographyFirstLevels(saverecord) {
-  //console.log(if(! (saverecord in geographyLevelsList)));
+  //.log(if(! (saverecord in geographyLevelsList)));
   $('.tbody-geography-level').find('div').remove();
   var geographyLevelList = geographyLevelsList[saverecord];
   var levelposition;
@@ -323,7 +343,6 @@ function processSearch(){
     var flist = [];
     var countryGeographyList = geographiesList[entity];
     for (var geography in countryGeographyList) {
-      console.log(countryGeographyList[geography])
       var cName = '';
       for (country in countriesList) {
         var cId = countriesList[country].country_id;
@@ -400,11 +419,14 @@ function saverecord1(j, e) {
         if (map_gm_id.length == 0) {
           map_gm_id.push(0);
         }
+        displayLoader();
         mirror.saveGeography(parseInt(glm_id), datavalue, map_gm_id, map_gm_name, countryId, function (error, response) {
           if (error == null) {
+            hideLoader();
             onSuccess(response);
             $('.listfilter').val('');
           } else {
+            hideLoader();
             onFailure(error);
           }
         });
@@ -421,11 +443,14 @@ function reload(last_geography_id, last_level, cny) {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getGeographies(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
       $('.listfilter').val('');
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -575,11 +600,14 @@ function updaterecord(j, e) {
         if (map_gm_id.length == 0) {
           map_gm_id.push(0);
         }
+        displayLoader();
         mirror.updateGeography(parseInt(geographyid), parseInt(glm_id), datavalue, map_gm_id, map_gm_name, parseInt($('#country').val()), function (error, response) {
           if (error == null) {
+            hideLoader();
             onSuccess(response);
             $('.listfilter').val('');
           } else {
+            hideLoader();
             onFailure(error);
           }
         });
@@ -629,13 +657,16 @@ function GetGeographies() {
     loadGeographiesList(geographiesList);
   }
   function onFailure(error) {
-    custom_alert(error);
+    displayMessage(error);
   }
+  displayLoader();
   mirror.getGeographies(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
       $('.listfilter').val('');
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -672,7 +703,6 @@ function renderControls(){
       countriesList, "country_name", "country_id", function (val) {
           onAutoCompleteSuccess(country_ac, country_val, val);
       }, condition_fields, condition_values);
-
   });
 
   Search_status.change(function() {
@@ -688,4 +718,12 @@ function renderControls(){
 $(document).ready(function () {
   renderControls();
   $('.js-sorting-table').jssorting(); // Sorting table
+  // $(".js-sorting-table").tablesorter({
+  //   sortList: [[0,0]], // starting column sorting
+  //   headers: { // disable column sorting
+  //       0:{sorter: false},
+  //       4:{sorter: false},
+  //       5:{sorter: false}
+  //   }
+  // });
 });
