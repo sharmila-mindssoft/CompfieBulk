@@ -254,11 +254,11 @@ SubmitButton.click(function(){
      if (approval_status.length <= 0) {
         displayMessage(message.action_required);
         return false;
-    } else if (approval_status == 4 && reason.trim().length <= 0) {
-        displayMessage(message.reason_required);
-        return false;
     } else if (approval_status == 4 && REJ_COMP.length == 0) {
         displayMessage(message.no_compliance_to_reject);
+        return false;
+    } else if (approval_status == 4 && reason.trim().length <= 0) {
+        displayMessage(message.reason_required);
         return false;
     } else {
     	Custombox.open({

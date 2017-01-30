@@ -223,6 +223,7 @@ api_params = {
 
     'unit_approval_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'clientcoordinationmaster', "class_name": "UnitApproval"},
     'unit_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitDetails"},
+    'client_unit_list': {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "UnitList"},
     'unit_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': False},
     'division_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'div_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -350,7 +351,7 @@ api_params = {
     "client_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientGroup"},
     "client_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "LegalEntity"},
     "allocate_db_list": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': True, 'module_name': 'consoleadmin', "class_name": "AllocateDBList"},
-
+    "business_groups_country": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientBusinessGroupCountry"},
     "legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "LegalEntity"},
     "business_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "BusinessGroup"},
     "bgrps": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "BusinessGroup"},
@@ -410,6 +411,8 @@ api_params = {
     "child_user_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     "remarks": {'type': 'TEXT', 'length': 500, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "p_user_ids": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "new_child_users": {'type': 'VECTOR_TYPE_INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "new_child_user_names": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': True},
 
     'bg_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     'bg_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
@@ -564,7 +567,7 @@ api_params = {
     "emp_code_name": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     'statutory_count': {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
     'grp_mode': {'type': 'string', 'length': 50, 'validation_method': None, 'is_optional': False},
-    "u_m_none": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
+    "u_m_none": {'type': 'TEXT', 'length': 1000, 'validation_method': None, 'is_optional': True},
     "usermapping_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "UserMappingDomain"},
     "country_wise_domain": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
     "units_report" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'technoreports', "class_name": "ClientUnitDetailsReport"},
@@ -620,8 +623,21 @@ api_params = {
     "console_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'group_info': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'clientcoordinationmaster', 'class_name': 'GroupInfo'},
-
     'old_d_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    "mapped_country_domains": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "CountryWiseDomain"},
+    "mapped_techno_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'admin', "class_name": "MappedUser"},
+
+    'complied_count': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'delayed_compliance_count': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'inprogress_compliance_count': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'not_complied_count': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'filter_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'ageing': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
+    'service_provider_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'contact_person': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    'statutory_nature': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+
+
 
 }
 api_params['domain_id'] = api_params.get('d_id')
@@ -684,3 +700,25 @@ api_params["count"] = api_params.get("total_records")
 api_params["days_left"] = api_params.get("total_records")
 api_params["allow_enable"] = api_params.get("is_active")
 api_params["is_file_removed"] = api_params.get("is_active")
+api_params["allow_domain_edit"] = api_params.get("is_active")
+api_params['compliance_applicable_status'] = api_params.get('is_active')
+api_params['assignee_name'] = api_params.get('employee_name')
+api_params['statutory'] = api_params.get('employee_name')
+api_params['opted_status'] = api_params.get('is_active')
+api_params['compliance_opted_status'] = api_params.get('is_active')
+api_params['user_level'] = api_params.get('l_position')
+api_params['start_date'] = api_params.get('contract_from')
+api_params['due_date'] = api_params.get('contract_from')
+api_params['year'] = api_params.get('contract_from')
+api_params['not_applicable_remarks'] = api_params.get('remarks')
+api_params['compliance_remarks'] = api_params.get('contract_from')
+
+api_params['compliance_description'] = api_params.get('description')
+api_params['validity_date'] = api_params.get('contract_from')
+api_params['next_due_date'] = api_params.get('contract_from')
+api_params['seating_unit_id'] = api_params.get('unit_id')
+api_params['service_provider_id'] = api_params.get('unit_id')
+api_params['format_file_name'] = api_params.get('file_name')
+api_params['file_names'] = api_params.get('file_name')
+api_params['download_url'] = api_params.get('url')
+

@@ -579,14 +579,14 @@ class NotConfigured(Response):
         return {
         }
 
-class LegalEntityNotVailable(Response):
+class LegalEntityNotAvailable(Response):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return LegalEntityNotVailable()
+        return LegalEntityNotAvailable()
 
     def to_inner_structure(self):
         return {
@@ -700,7 +700,7 @@ def _init_Response_class_map():
         InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess,
         InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken,
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
-        NotConfigured, LegalEntityNotVailable, ContractNotYetStarted, UpdateUserProfileSuccess,
+        NotConfigured, LegalEntityNotAvailable, ContractNotYetStarted, UpdateUserProfileSuccess,
         CheckRegistrationTokenSuccess, InvalidCaptcha,
         SaveRegistraionSuccess, CheckUsernameSuccess, UsernameAlreadyExists
     ]

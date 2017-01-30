@@ -10,6 +10,13 @@ var Search_status_li = $('.search-status-li');
 var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 $('#btn-country-add').click(function () {
   $('#ctry-view').hide();
   $('#country-add').show();
@@ -37,24 +44,35 @@ function initialize() {
   function onFailure(error) {
     custom_alert(error);
   }
+  displayLoader();
   mirror.getCountryList(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
 }
 function onLoadList(data){
   counList = [];
-  $.each(data, function (i, value) {
+  if(data.length == 0){
+    $('.tbody-countries-list').empty();
+    var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
+    var clone4 = tableRow4.clone();
+    $('.no_records', clone4).text('No Records Found');
+    $('.tbody-countries-list').append(clone4);
+  }else{
+    $.each(data, function (i, value) {
     var country = data[i];
     $.each(country, function (j, value) {
-      counList.push(country[j]);
+        counList.push(country[j]);
+      });
     });
-  });
-  console.log(counList);
-  loadCountriesList(counList);
+    loadCountriesList(counList);
+  }
+
 }
 //display cpuntry details in view page
 function loadCountriesList(countriesList) {
@@ -81,12 +99,12 @@ function loadCountriesList(countriesList) {
     });
 
     if (isActive == false){
-      //$('.status').attr('title', 'Click Here to Deactivate');
+      $('.status').attr('title', 'Click Here to Activate');
       $('.status', clone).removeClass('fa-check text-success');
       $('.status', clone).addClass('fa-times text-danger');
     }
     else{
-      //$('.status').attr('title', 'Click Here to Activate');
+      $('.status').attr('title', 'Click Here to Dectivate');
       $('.status', clone).removeClass('fa-times text-danger');
       $('.status', clone).addClass('fa-check text-success');
     }
@@ -169,7 +187,6 @@ function validateAuthentication(){
 
 //length validation
 function validateMaxLength(key_name, value, show_name) {
-  console.log("inside length"+ show_name)
   e_n_msg = validateLength(key_name, value.trim())
   if (e_n_msg != true) {
     displayMessage(show_name + e_n_msg);
@@ -208,11 +225,14 @@ $('#btn-submit').click(function () {
             displayMessage(error);
           }
         }
+        displayLoader();
         mirror.saveCountry(countryNameValue, function (error, response) {
           if (error == null) {
             onSuccess(response);
+            hideLoader();
           } else {
             onFailure(error);
+            hideLoader();
           }
         });
       } else {
@@ -231,10 +251,13 @@ $('#btn-submit').click(function () {
             displayMessage(error);
           }
         }
+        displayLoader();
         mirror.updateCountry(parseInt(countryIdValue), countryNameValue, function (error, response) {
           if (error == null) {
+            hideLoader();
             onSuccess(response);
           } else {
+            hideLoader();
             onFailure(error);
           }
         });
@@ -252,11 +275,14 @@ function country_edit(countryId, countryName) {
 }
 //activate/deactivate country
 function country_active(countryId, isActive) {
+  displayLoader();
   mirror.changeCountryStatus(parseInt(countryId), isActive, function (error, response) {
     if (error == null) {
+      hideLoader();
       displaySuccessMessage(message.status_success);
       initialize();
     } else {
+      hideLoader();
       displayMessage(error);
     }
   });
@@ -315,7 +341,6 @@ function renderSearch() {
 $(function () {
   initialize();
   renderSearch();
-  $('.js-sorting-table').jssorting(); // Sorting table
 });
 $('#country-name').on('input', function (e) {
   this.value = isAlphabetic($(this));

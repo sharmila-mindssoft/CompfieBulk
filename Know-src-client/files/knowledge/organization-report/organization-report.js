@@ -23,6 +23,15 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 var ReportData;
+var searchList = [];
+
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 // get industries list from api
 function getIndustries() {
@@ -34,10 +43,13 @@ function getIndustries() {
 	function onFailure(error) {
 		displayMessage(error);
 	}
+  displayLoader();
 	mirror.getIndustryList(function (error, response) {
 		if (error == null) {
+      hideLoader();
 		  onSuccess(response);
 		} else {
+      hideLoader();
 		  onFailure(error);
 		}
 	});
@@ -45,32 +57,16 @@ function getIndustries() {
 
 function processSearch()
 {
-  c_name = FilterCountry.val().toLowerCase();
-  d_name = FilterDomain.val().toLowerCase();
-  o_name = FilterOrgn.val().toLowerCase();
-
+  searchList = [];
   usr_status = $('.search-status-li.active').attr('value');
-
-  searchList = []
-
   for(var i in industriesList){
     data = industriesList[i];
-
-    data_c_name = data.country_name.toLowerCase();
-    data_d_name = data.domain_name.toLowerCase();
-    data_o_name = data.industry_name.toLowerCase();
-    data_is_active = data.is_active;
-
-    if (
-      (~data_c_name.indexOf(c_name)) && (~data_d_name.indexOf(d_name)) &&
-      (~data_o_name.indexOf(o_name)))
-    {
-      if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
-        searchList.push(data);
-      }
+    if ((usr_status == 'all' || Boolean(parseInt(usr_status)) == data.is_active)){
+      searchList.push(data);
     }
   }
   loadIndustryList(searchList);
+  processPaging();
 }
 
 //display industry list in view page
@@ -142,15 +138,16 @@ function renderControls(){
 		});
 		$(event.target).parent().addClass('active');
 
-		var currentClass = $(event.target).find('i').attr('class');
-		Search_status.removeClass();
+		var currentClass = $(event.target).html();
+    Search_status.html(currentClass);
+		/*Search_status.removeClass();
 		if(currentClass != undefined){
 		  Search_status.addClass(currentClass);
 		  Search_status.text('');
 		}else{
 		  Search_status.addClass('fa');
 		  Search_status.text('All');
-		}
+		}*/
 		processSearch();
 	});
 
@@ -243,19 +240,30 @@ function processPaging(){
 
 function pageData(on_current_page){
   data = [];
+  recordData = [];
   _page_limit = parseInt(ItemsPerPage.val());
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  for(i=sno;i<industriesList.length;i++)
+  if(searchList.length > 0)
+  {
+    recordData = searchList;
+  }
+  else
+  {
+    recordData = industriesList;
+  }
+  totalRecord = recordData.length;
+  for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
-    data.push(industriesList[i]);
+    data.push(recordData[i]);
     if(i == (recordLength-1))
     {
       break;
     }
   }
+  //totalRecord = data.length;
   if (is_null == true) {
     hidePagePan();
   }
@@ -278,4 +286,7 @@ function initialize()
 $(document).ready(function () {
 	initialize();
   loadItemsPerPage();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

@@ -167,7 +167,7 @@
                                 <div class="form-group">
                                     <label class=" col-sm-5 control-label">View Only Licence(s) <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" id="view-licence-text" class="form-control input-sm numeric" maxlength="3" placeholder="0" tabindex="">
+                                        <input type="text" id="view-licence-text" class="form-control input-sm numeric" maxlength="3" placeholder="Enter View Only Licence(s)" tabindex="">
                                     </div>
                                 </div>
                             </div>
@@ -217,6 +217,7 @@
                                 </div>
                                 <h4 class="page-title">Date Configuration</h4>
                             </div>
+                            <div class="clear"></div>
                             <div class="table-responsive">
                                 <table id="datatable-responsive" class="table table-striped dt-responsive nowrap" width="100%" cellspacing="0">
                                     <thead>
@@ -277,7 +278,7 @@
         <tr class="org-row">
             <td>
                 <div class="form-group has-feedback col-sm-12 no-padding m-b-0">
-                    <input class="form-control input-sm" id="orgselected" type="text">
+                    <input class="form-control input-sm" id="orgselected" type="text" autofocus>
                     <input type="hidden" id="industry">
                     <div id="ac-industry" class="ac-textbox default-display-none" width="10%">
                         <ul></ul>
@@ -346,6 +347,25 @@
                     </label>
                 </div>
             </div>
+               <div class="col-sm-4  clear renewal-div default-display-none">
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">Old Contract From</label>
+                    <div class="col-sm-6 no-padding-right ">
+                        <span class="old-contract-from l-h-30"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4 renewal-div default-display-none" >
+                <div class="form-group">
+                    <label class=" col-sm-4 p-t-5">Old Contract To</label>
+                    <div class="col-sm-6 no-padding-right">
+                        <span class="old-contract-to l-h-30"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4 renewal-div default-display-none">
+            </div>
             <div class="col-sm-4  clear">
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">Contract From<span class="mandatory">*</span></label>
@@ -370,6 +390,7 @@
                     </div>
                 </div>
             </div>
+           
             <div class="col-sm-4 clear">
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">Upload Logo</label>
@@ -385,28 +406,26 @@
                 <div class="form-group">
                     <label class=" col-sm-4 p-t-5">File Space<span class="mandatory">*</span></label>
                     <div class="col-sm-3 no-padding-right" id="file-space-div">
-                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex="">
-                        <abbr class="l-h-30"> GB</abbr>
+                        <input class="form-control input-sm pull-left" id="file-space" type="text" tabindex=""><abbr class="l-h-30"> &nbsp;GB</abbr>
                     </div>
                     <div class="col-sm-4 pull-left"></div>
                 </div>
             </div>
-            <div class="card-box table-responsive">
-                <table id="datatable-responsive" class="table table-striped dt-responsive nowrap domain-table" width="100%" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th width="30%">Domain <span class="mandatory">*</span></th>
-                            <th width="30%">Activation Date <span class="mandatory">*</span></th>
-                            <th width="30%">Organization <span class="mandatory">*</span></th>
-                            <th width="10%" class="text-center">
-                                <abbr class="remove-domain-heading">Remove</abbr>
-                            </th>
-                        </tr>
-                    </thead>
-                    <input type="hidden" class="domain-count" value='0' />
-                    <tbody class="domain-list">
-                    </tbody>
-                </table>
+           <div class="clear"></div>
+         <div class="table-responsive">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap domain-table" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th width="30%">Domain <span class="mandatory">*</span></th>
+                        <th width="30%">Activation Date <span class="mandatory">*</span></th>
+                        <th width="30%">Organization <span class="mandatory">*</span></th>
+                        <th width="10%" class="text-center"><abbr class="remove-domain-heading">Remove</abbr></th>
+                    </tr>
+                </thead>
+                <input type="hidden" class="domain-count" value='0' />
+                <tbody class="domain-list">
+                </tbody>
+            </table>
             </div>
             <!-- <button type="button" class="btn btn-info btn-sm waves-effect waves-light pull-right m-t-5">
             <span><i class="fa fa-plus"></i></span> 
@@ -521,6 +540,7 @@
         <option></option>
     </select>
 </div>
+
 <script type="text/javascript" src="/script/client-master/client-master.js"></script>
-<div class="form-group col-sm-6 m-b-0 add-org">
-    {% endblock %}
+ <!-- <div class="form-group col-sm-6 m-b-0 add-org"> -->
+{% endblock %}

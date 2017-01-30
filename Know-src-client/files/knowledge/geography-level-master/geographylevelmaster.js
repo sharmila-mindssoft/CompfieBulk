@@ -5,6 +5,14 @@ var country_ac = $("#countryval");
 var AcCountry = $('#ac-country');
 
 var geographyLevelsList;
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 $('.btn-geographylevel-cancel').click(function () {
   $('.input-sm').val('');
   $('.hiddenvalue').val('');
@@ -33,10 +41,13 @@ function GetGeographyLevels() {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getGeographyLevels(function (error, response) {
     if (error == null) {
+      hideLoader();
       onSuccess(response);
     } else {
+      hideLoader();
       onFailure(error);
     }
   });
@@ -105,10 +116,8 @@ function GetGeographyLevels() {
 //retrive country autocomplete value
 //callback for autocomplete success
 function onAutoCompleteSuccess(value_element, id_element, val) {
-  console.log("val:"+id_element)
   value_element.val(val[1]);
   id_element.val(val[0]);
-  console.log("val:"+id_element.val())
   value_element.focus();
   for(var i=1;i<=10;i++){
     $('#level'+i).val('');
@@ -140,18 +149,19 @@ function loadGeographyLevelsList(countryval) {
   var levellist;
   if (geographyLevelsList[countryval] != undefined) {
     levellist = geographyLevelsList[countryval];
-    for (var entity in levellist) {
-      var levelPosition = levellist[entity].l_position;
-      var levelName = levellist[entity].l_name;
-      var levelId = levellist[entity].l_id;
-      $('#level' + levelPosition).val(levelName);
-      $('#levelid' + levelPosition).val(levelId);
+      for (var entity in levellist) {
+        var levelPosition = levellist[entity].l_position;
+        var levelName = levellist[entity].l_name;
+        var levelId = levellist[entity].l_id;
+        $('#level' + levelPosition).val(levelName);
+        $('#levelid' + levelPosition).val(levelId);
+      }
+      if (levellist.length < 10)
+        $('#add').show();
+      else
+        $('#add').hide();
     }
-    if (levellist.length < 10)
-      $('#add').show();
-    else
-      $('#add').hide();
-  }
+
 }
 //validation
 function validate() {
@@ -183,16 +193,13 @@ $('#submit').click(function () {
       }
     }
     if (result) {
-      console.log("1");
       var passlevellist = [];
       var isAdd = true;
       for (var k = 1; k <= 10; k++) {
         if ($('#levelid' + k).val() != '') {
           var isRemove = false;
           if ($('#level' + k).val().trim() == '') {
-            console.log("2");
             isRemove = true;
-            console.log('#level' + k);
           }
           passlevellist.push({
             'l_position': k,
@@ -222,7 +229,6 @@ $('#submit').click(function () {
         GetGeographyLevels();
       }
       function onFailure(error, response) {
-        console.log(error, response)
         if (error == 'DuplicateGeographyLevelsExists') {
           displayMessage(message.geographylevel_exists);
         } else if (error == 'LevelShouldNotbeEmpty') {
@@ -233,13 +239,16 @@ $('#submit').click(function () {
           displayMessage(error);
         }
       }
+      displayLoader();
       mirror.saveAndUpdateGeographyLevels(parseInt(country), passlevellist, function (error, response) {
         if (error == null) {
+          hideLoader();
           $('.input-sm').val('');
           $('.hiddenvalue').val('');
           $('#country').val('');
           onSuccess(response);
         } else {
+          hideLoader();
           onFailure(error, response);
         }
       });
@@ -251,7 +260,6 @@ $('#submit').click(function () {
 //insert a new level in between levels
 $('#insert-record').click(function () {
   var insertlvl = parseInt($('#levelslist').val());
-  console.log(insertlvl);
   var insertvalue = $('#insertvalue').val().trim();
   var inserlevelstatus = true;
   if (insertvalue.length > 0) {
@@ -271,7 +279,11 @@ $('#insert-record').click(function () {
     $('#add').show();
     //displayMessage('');
   } else {
-    displayMessage(message.title_required);
+    if ($('#country').val().trim().length == 0) {
+      displayMessage(message.country_required);
+    }else{
+      displayMessage(message.title_required);
+    }
     $('#add').hide();
     inserlevelstatus = false;
   }

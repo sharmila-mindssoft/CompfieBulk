@@ -1,18 +1,18 @@
 var csrf_token = $('meta[name=csrf-token]').attr('content')
-function clearMessage() {
-  $('.error-message').hide();
-  $('.error-message').text('');
-}
-function displayMessage(message) {
-  $('.error-message').text(message);
-  $('.error-message').show();
-}
-function displayLoader() {
-  $('.loading-indicator-spin').show();
-}
-function hideLoader() {
-  $('.loading-indicator-spin').hide();
-}
+// function clearMessage() {
+//   $('.error-message').hide();
+//   $('.error-message').text('');
+// }
+// function displayMessage(message) {
+//   $('.error-message').text(message);
+//   $('.error-message').show();
+// }
+// function displayLoader() {
+//   $('.loading-indicator-spin').show();
+// }
+// function hideLoader() {
+//   $('.loading-indicator-spin').hide();
+// }
 //check the url is client or knowledge
 function getShortName() {
   var pathArray = window.location.pathname.split('/');
@@ -37,6 +37,19 @@ function validateEmail($email) {
   var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
   return emailReg.test($email);
 }
+function makekey()
+{
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    return text;
+}
+
+function parseJSON(data) {
+    return JSON.parse(data);
+}
 function processForgotpassword(username, shortName, callback) {
     displayLoader();
     var request = [
@@ -57,7 +70,7 @@ function processForgotpassword(username, shortName, callback) {
       ];
       BASE_URL = '/api/';
     }
-  
+
   // jQuery.post(BASE_URL + 'login', JSON.stringify(requestFrame, null, ' '), function (data) {
   //   var data = JSON.parse(data);
   //   if (typeof data != 'string') {
@@ -80,20 +93,25 @@ function processForgotpassword(username, shortName, callback) {
     headers: { 'X-CSRFToken': csrf_token },
     type: 'POST',
     contentType: 'application/json',
-    data: btoa(actula_data),
+    data: makekey() + btoa(actula_data),
     success: function (data, textStatus, jqXHR) {
       console.log(data);
-      //data = atob(data);
-      //data = parseJSON(data);
+      data = atob(data.substring(5));
+      data = JSON.parse(data);
+      var status = data[0];
+      var response = data[1];
+
       matchString = 'success';
       if (status.toLowerCase().indexOf(matchString) != -1) {
         callback(null, response);
       } else {
-        callback(data, null);
+        callback(status, null);
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      displayMessage(errorThrown);
+      rdata = parseJSON(jqXHR.responseText);
+      rdata = atob(rdata.substring(5));
+      displayMessage(rdata);
       callback(rdata, errorThrown);
     }
   });
@@ -103,17 +121,17 @@ $('#submit').click(function () {
   $('.forgot-password-error-message').html('');
   var username = $('#username').val().trim();
   if (username.length == 0) {
-    $('.forgot-password-error-message').html('User Id Required');
+    displayMessage('User Id Required');
   } else {
     displayLoader();
     function onSuccess(data) {
-      displayMessage(message.forgotpassword_success);
+      displaySuccessMessage('Password reset link has been sent to your email Id');
       $('#username').val('');
       hideLoader();
     }
     function onFailure(error) {
       if (error == 'InvalidUserName') {
-        displayMessage(message.nouser_exists);
+        displayMessage("No User Exists");
       } else {
         displayMessage(error);
       }

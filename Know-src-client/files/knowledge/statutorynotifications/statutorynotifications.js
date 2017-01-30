@@ -15,8 +15,10 @@ function updateNotificationStatus(n_id, u_id, r_status){
 }
 // User List render process
 function loadMessages() {
+  var isEmpty = true;
   $('.tbody-message-list').find('tr').remove();
   $.each(NotificationList, function(k, v) {
+    isEmpty = false;
     var tableRow = $('#templates .table-message .table-row');
     var rowClone = tableRow.clone();
 
@@ -36,7 +38,7 @@ function loadMessages() {
                 target: '#custom-modal',
                 effect: 'contentscale',
             });
-            //updateNotificationStatus(v.notification_id, v.user_id, true);
+            updateNotificationStatus(v.notification_id, v.user_id, true);
             e.preventDefault();
         }
         else {
@@ -50,6 +52,14 @@ function loadMessages() {
     $('.message-user',rowClone).text('User: '+v.created_by);
     $('.tbody-message-list').append(rowClone);
   });
+
+  if(isEmpty){
+    var no_record_row = $("#templates .table-no-record tr");
+    var clone = no_record_row.clone();
+    $(".tbody-message-list").append(clone);
+  }
+  
+
 }
 
 // page load

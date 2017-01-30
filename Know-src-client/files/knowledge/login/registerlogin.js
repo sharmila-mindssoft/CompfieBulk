@@ -15,17 +15,25 @@ register_page = null;
 _rtoken = null;
 _captcha = null;
 IS_VALID = false;
+function makekey()
+{
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
+  for( var i=0; i < 5; i++ )
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  return text;
+}
 function call_api(request, callback) {
-    
+
     $.ajax({
         url: '/knowledge/api/login',
         type: 'POST',
         contentType: 'application/json',
         headers: { 'X-CSRFToken': csrf_token },
-        data: btoa(JSON.stringify(request, null, '')),
+        data: makekey() + btoa(JSON.stringify(request, null, '')),
         success: function(data, textStatus, jqXHR) {
-            data = atob(data);
+            data = atob(data.substring(5));
             data = JSON.parse(data);
             var status = data[0];
             var response = data[1];
@@ -39,7 +47,7 @@ function call_api(request, callback) {
         },
         error: function(jqXHR, textStatus, errorThrown) {
             rdata = JSON.parse(jqXHR.responseText);
-            rdata = atob(rdata);    
+            rdata = atob(rdata.substring(5));
            callback(rdata, null);
         }
     });
@@ -122,7 +130,11 @@ saveData = function() {
             displaySuccessMessage("Saved Successfully");
         }
         else {
-            displayMessage(status);
+            if (status == "UsernameAlreadyExists") {
+                displayMessage("User Name Already Exists");
+            }
+            else
+                displayMessage(status);
         }
     });
 };
@@ -174,6 +186,10 @@ checkAvailability = function() {
         displayMessage("Username required");
         return;
     }
+    else if (Uname.val().length > 20) {
+        displayMessage("Username should not exceed 20 character");
+        return;
+    }
     else if (IS_VALID == false) {
         displayMessage("Session expired");
         return;
@@ -187,17 +203,20 @@ checkAvailability = function() {
     Status_check.addClass("load-icon");
     call_api(request, function(status, data) {
         Status_check.removeClass();
-        Status_msg.text('User name already exists');
+        Status_msg.text('User ID Already Exists');
         if (status == null) {
             Status_msg.text('')
             Status_check.addClass("tick-icon");
         }
         else {
-            Status_msg.text('User name already exists');
+            Status_msg.text('User ID Already Exists');
         }
     });
 };
-
+function isAlphanumeric(inputElm) {
+  //allowed => alphanumeric
+  return inputElm.val().replace(/[^0-9A-Za-z_-]/gi, '');
+}
 $(function () {
     Pword_hint.css('display', 'none');
     hideLoader();
@@ -234,7 +253,9 @@ $(function () {
         Status_msg.text('');
         Status_check.removeClass();
     });
-
+    Uname.on('input', function(e) {
+        this.value = isAlphanumeric($(this));
+    });
     CPword.keyup('input', function(e) {
         this.value = this.value.replace(/\s/g, '');
     });

@@ -22,6 +22,14 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 var ReportData;
+var searchList = [];
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 // get statutory nature list from api
 function getStatutorynature() {
@@ -31,12 +39,15 @@ function getStatutorynature() {
     processPaging();
 	}
 	function onFailure(error) {
-		custom_alert(error);
+		displayMessage(error);
 	}
+  displayLoader();
 	mirror.getStatutoryNatureList(function (error, response) {
 		if (error == null) {
+      hideLoader();
 		  onSuccess(response);
 		} else {
+      hideLoader();
 		  onFailure(error);
 		}
 	});
@@ -44,28 +55,20 @@ function getStatutorynature() {
 
 function processSearch()
 {
-  c_name = FilterCountry.val().toLowerCase();
-  s_n_name = FilterStatutorynature.val().toLowerCase();
-
+  searchList = [];
   nature_status = $('.search-status-li.active').attr('value');
-
-  searchList = []
 
   for(var i in statutorynatureList){
     data = statutorynatureList[i];
-
-    data_c_name = data.country_name.toLowerCase();
-    data_s_n_name = data.statutory_nature_name.toLowerCase();
     data_is_active = data.is_active;
 
-    if ((~data_c_name.indexOf(c_name)) && (~data_s_n_name.indexOf(s_n_name)))
-    {
-      if ((nature_status == 'all' || Boolean(parseInt(nature_status)) == data.is_active)){
+    if ((nature_status == 'all' || Boolean(parseInt(nature_status)) == data.is_active)){
         searchList.push(data);
-      }
     }
   }
-  loadStatNatureData(searchList);
+  totalRecord = searchList.length;
+  //loadStatNatureData(searchList);
+  processPaging();
 }
 
 //display statutory nature list in view page
@@ -137,15 +140,16 @@ function renderControls(){
 		});
 		$(event.target).parent().addClass('active');
 
-		var currentClass = $(event.target).find('i').attr('class');
-		Search_status.removeClass();
+		var currentClass = $(event.target).html();
+    Search_status.html(currentClass);
+		/*Search_status.removeClass();
 		if(currentClass != undefined){
 		  Search_status.addClass(currentClass);
 		  Search_status.text('');
 		}else{
 		  Search_status.addClass('fa');
 		  Search_status.text('All');
-		}
+		}*/
 		processSearch();
 	});
 
@@ -216,20 +220,21 @@ function processPaging(){
     sno = (on_current_page - 1) *  _page_limit;
   }
   sno  = sno;
-  totalRecord = statutorynatureList.length;
-  ReportData = pageData(on_current_page);
+  //totalRecord = statutorynatureList.length;
   if (totalRecord == 0) {
-    $('.table-statutory-nature-list').empty();
+    viewTable.find('tr').remove();
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
-    $('.table-statutory-nature-list').append(clone4);
+    viewTable.append(clone4);
     PaginationView.hide();
-    hideLoader();
+    //hideLoader();
   } else {
     if(sno==0){
       createPageView(totalRecord);
     }
+    ReportData = pageData(on_current_page);
+
     PaginationView.show();
     loadStatNatureData(ReportData);
   }
@@ -241,15 +246,25 @@ function pageData(on_current_page){
   recordLength = (parseInt(on_current_page) * _page_limit);
   var showFrom = sno + 1;
   var is_null = true;
-  for(i=sno;i<statutorynatureList.length;i++)
+  if(searchList.length > 0)
+  {
+    recordData = searchList;
+  }
+  else
+  {
+    recordData = statutorynatureList;
+  }
+  totalRecord = recordData.length;
+  for(i=sno;i<recordData.length;i++)
   {
     is_null = false;
-    data.push(statutorynatureList[i]);
+    data.push(recordData[i]);
     if(i == (recordLength-1))
     {
       break;
     }
   }
+  //totalRecord = data.length;
   if (is_null == true) {
     hidePagePan();
   }
@@ -272,4 +287,7 @@ function initialize()
 $(document).ready(function () {
 	initialize();
   loadItemsPerPage();
+});
+$(document).find('.js-filtertable').each(function(){
+    $(this).filtertable().addFilter('.js-filter');
 });

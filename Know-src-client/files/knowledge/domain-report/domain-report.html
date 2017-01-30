@@ -15,7 +15,7 @@
         <div id="bg-primary1" class="panel-collapse collapse in">
           <div class="portlet-body">
             <div class="table-responsive">
-              <table id="datatable-responsive" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
+              <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable" cellspacing="0" width="100%">
                 <thead>
                   <tr>
                     <th>#</th>
@@ -27,13 +27,13 @@
                   <td></td>
                   <td>
                     <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
-                      <input type="text" class="form-control input-sm filter-text-box" id="search-domain-name" />
+                      <input type="text" class="form-control input-sm js-filter" id="search-domain-name" />
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
                   <td>
                     <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
-                      <input type="text" class="form-control input-sm filter-text-box" id="search-country-name" />
+                      <input type="text" class="form-control input-sm js-filter" id="search-country-name" />
                       <i class="fa fa-filter form-control-feedback l-h-34"></i>
                     </div>
                   </td>
@@ -45,8 +45,8 @@
                         </button>
                         <ul class="dropdown-menu search-status-list">
                             <li value="all" class="search-status-li active"><a>All</a></li>
-                            <li value="1" class="search-status-li"><a>Active</a></li>
-                            <li value="0" class="search-status-li"><a>Inactive</a></li>
+                            <li value="1" class="search-status-li text-success"><a>Active</a></li>
+                            <li value="0" class="search-status-li text-danger"><a>Inactive</a></li>
                         </ul>
                     </div>
                   </td>

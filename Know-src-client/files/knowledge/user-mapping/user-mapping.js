@@ -10,6 +10,8 @@ var USER_MAPPINGS = '';
 
 var ACTIVE_PARENT_USER = '';
 var ACTIVE_CHILD_USERS = [];
+var NEW_CHILD_USER_IDS = [];
+var NEW_CHILD_USER_NAMES = [];
 var selected_country = '';
 var selected_domain = '';
 
@@ -46,6 +48,8 @@ $("#show").click(function(){
         $(".submit-button-container").show();
         ACTIVE_PARENT_USER = '';
         ACTIVE_CHILD_USERS = [];
+        NEW_CHILD_USER_IDS = [];
+        NEW_CHILD_USER_NAMES = [];
         loadParentUsers();
         loadChildUsers();
     }
@@ -95,6 +99,8 @@ function clearFields(){
     $(".child-user-list").empty();
     ACTIVE_PARENT_USER = '';
     ACTIVE_CHILD_USERS = [];
+    NEW_CHILD_USER_IDS = [];
+    NEW_CHILD_USER_NAMES = [];
     selected_country = '';
     selected_domain = '';
     //cTab = '';
@@ -204,29 +210,33 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 
 //load country list in autocomplete text box
 CountryVal.keyup(function(e){
-var text_val = $(this).val();
-commonAutoComplete(
-  e, ACCountry, Country, text_val, 
-  COUNTRIES, "country_name", "country_id", function (val) {
-    onAutoCompleteSuccess(CountryVal, Country, val);
-  });
+    $(".parent-user-list").empty();
+    $(".child-user-list").empty();
+    var text_val = $(this).val();
+    commonAutoComplete(
+      e, ACCountry, Country, text_val, 
+      COUNTRIES, "country_name", "country_id", function (val) {
+        onAutoCompleteSuccess(CountryVal, Country, val);
+      });
 });
 
 
 //load domain list in autocomplete text box
 DomainVal.keyup(function(e){
-var condition_fields = [];
-var condition_values = [];
-if(Country.val() != ''){
-  condition_fields.push("country_ids");
-  condition_values.push(Country.val());
-}
-var text_val = $(this).val();
-commonAutoComplete(
-  e, ACDomain, Domain, text_val, 
-  DOMAINS, "domain_name", "domain_id", function (val) {
-      onAutoCompleteSuccess(DomainVal, Domain, val);
-  }, condition_fields, condition_values);
+    $(".parent-user-list").empty();
+    $(".child-user-list").empty();
+    var condition_fields = [];
+    var condition_values = [];
+    if(Country.val() != ''){
+      condition_fields.push("country_ids");
+      condition_values.push(Country.val());
+    }
+    var text_val = $(this).val();
+    commonAutoComplete(
+      e, ACDomain, Domain, text_val, 
+      DOMAINS, "domain_name", "domain_id", function (val) {
+          onAutoCompleteSuccess(DomainVal, Domain, val);
+      }, condition_fields, condition_values);
 });
 
 
@@ -254,7 +264,8 @@ function activateParentUser(element, user_id){
 
 function activateChildUsers(){
     ACTIVE_CHILD_USERS = [];
-
+    NEW_CHILD_USER_IDS = [];
+    NEW_CHILD_USER_NAMES = [];
     var INACTIVE_CHILD_USERS = [];
 
     $.each(USER_MAPPINGS, function(key, value){
@@ -292,21 +303,40 @@ function activateChildUsers(){
         });
     }   
     //}
-    
 }
 
 function activateChildUser(element, user_id){
     var chkstatus = $(element).attr('class');
     if (chkstatus == 'active'){
-        $(element).removeClass('active');
-        $(element).find('i').removeClass('fa fa-check pull-right');
-        index = ACTIVE_CHILD_USERS.indexOf(user_id);
-        ACTIVE_CHILD_USERS.splice(index, 1);
+        displayLoader();
+        mirror.checkUserMappings(selected_country, selected_domain,
+            ACTIVE_PARENT_USER, parseInt(user_id), parseInt(uCategory), 
+            function (error, response) {
+                if (error == null) {
+                    $(element).removeClass('active');
+                    $(element).find('i').removeClass('fa fa-check pull-right');
+                    index = ACTIVE_CHILD_USERS.indexOf(user_id);
+                    ACTIVE_CHILD_USERS.splice(index, 1);
+
+                    new_index = NEW_CHILD_USER_IDS.indexOf(user_id);
+                    NEW_CHILD_USER_IDS.splice(new_index, 1);
+
+                    new_name_index = NEW_CHILD_USER_NAMES.indexOf($(element).text());
+                    NEW_CHILD_USER_NAMES.splice(new_name_index, 1);
+
+                    hideLoader();
+                } else {
+                    displayMessage(error);
+                    hideLoader();
+                }
+        });
     }else{
         $(element).addClass('active');
         $(element).find('i').addClass('fa fa-check pull-right');
         //index = ACTIVE_CHILD_USERS.indexOf(user_id)
         ACTIVE_CHILD_USERS.push(user_id);
+        NEW_CHILD_USER_IDS.push(user_id);
+        NEW_CHILD_USER_NAMES.push($(element).text())
     }
 }
 
@@ -336,7 +366,8 @@ function saveUserMapping(){
             custom_alert(error);
         }
         mirror.saveUserMappings(selected_country, selected_domain,
-            ACTIVE_PARENT_USER, ACTIVE_CHILD_USERS, parseInt(uCategory), 
+            ACTIVE_PARENT_USER, ACTIVE_CHILD_USERS, parseInt(uCategory), NEW_CHILD_USER_IDS, 
+            NEW_CHILD_USER_NAMES,  
             function (error, response) {
                 if (error == null) {
                     onSuccess(response);

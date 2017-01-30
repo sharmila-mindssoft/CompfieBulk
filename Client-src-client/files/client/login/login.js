@@ -49,22 +49,22 @@ function setLandingPage(userProfile) {
 //
 function isLoginValidated(e_email, e_password, e_captcha) {
   if (e_email.val() == '') {
-    displayLoginMessage(message.username_password_required);
+    displayLoginMessage('Enter username / password');
     e_email.focus();
     return false;
   }
   if (e_password.val() == '') {
-    displayLoginMessage(message.username_password_required);
+    displayLoginMessage('Enter username / password');
     e_password.focus();
     return false;
   }
   if (e_captcha.val() == '' && captchaStatus == true) {
-    displayLoginMessage(message.captcha_required);
+    displayLoginMessage('Enter Captcha');
     e_captcha.focus();
     return false;
   }
   if (e_captcha.val() != '' && getCaptcha() != e_captcha.val()) {
-    displayLoginMessage(message.invalid_captcha);
+    displayLoginMessage('Invalid Captcha');
     e_captcha.focus();
     return false;
   }
@@ -161,11 +161,11 @@ function performLogin(e_button, e_email, e_password, e_shortname, e_captcha) {
     } else {
       status = data;
     }
-    var disp_message = message.invalid_username_password;
+    var disp_message = 'Unable to login. Incorrect username / password!';
     if (status == 'NotConfigured') {
-      disp_message = message.accountconfiguration_underprogress;
+      disp_message = 'Please Wait...Your account configuration is under progress..';
     } else if (status.indexOf('timeout') >= 0) {
-      disp_message = message.connection_timeout;
+      disp_message = 'Connection Timeout';
     } else {
       status = status.replace(/([A-Z])/g, ' $1').trim();
       disp_message = status;
@@ -204,7 +204,10 @@ function initializeLogin() {
   });
   $('#txt-password').keydown(function (e) {
     if (e.keyCode == 13 && $(this).val() != '')
-      //performLogin($(this), $("#txt-username"), $("#txt-password"));
+      $('#txt-shortname').focus();
+  });
+  $('#txt-shortname').keydown(function (e) {
+    if (e.keyCode == 13 && $(this).val() != '')
       performLogin($(this), $('#txt-username'), $('#txt-password'), $('#txt-shortname'), $('#txt-captcha'));
   });
   $('#txt-captcha').keydown(function (e) {

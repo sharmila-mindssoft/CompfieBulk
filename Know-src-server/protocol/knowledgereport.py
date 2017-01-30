@@ -220,7 +220,7 @@ class StatutoryMappingReport(object):
         penal_consequences,
         frequency_id, statutory_dates, repeats_type_id,
         repeats_every, duration_type_id,
-        duration, url
+        duration, url, summary
     ):
         self.country_name = country_name
         self.domain_name = domain_name
@@ -242,6 +242,7 @@ class StatutoryMappingReport(object):
         self.duration_type_id = duration_type_id
         self.duration = duration
         self.url = url
+        self.summary = summary
 
     @staticmethod
     def parse_structure(data):
@@ -256,7 +257,7 @@ class StatutoryMappingReport(object):
             "p_consequences", "frequency_id",
             "statu_dates", "r_type_id",
             "r_every", "d_type_id",
-            "duration", "url"
+            "duration", "url", "summary"
         ])
         country_name = data.get("country_name")
         domain_name = data.get("domain_name")
@@ -278,6 +279,7 @@ class StatutoryMappingReport(object):
         duration_type_id = data.get("d_type_id")
         duration = data.get("duration")
         url = data.get("url")
+        summary = data.get("summary")
         return StatutoryMappingReport(
             country_name, domain_name,
             industry_names,
@@ -289,7 +291,7 @@ class StatutoryMappingReport(object):
             penal_consequences, frequency_id,
             statutory_dates, repeats_type_id,
             repeats_every, duration_type_id,
-            duration, url
+            duration, url, summary
         )
 
     def to_structure(self):
@@ -313,7 +315,8 @@ class StatutoryMappingReport(object):
             "r_every": self.repeats_every,
             "d_type_id": self.duration_type_id,
             "duration": self.duration,
-            "url": self.url
+            "url": self.url,
+            "summary": self.summary
 
         }
 

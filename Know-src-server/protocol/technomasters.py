@@ -5,20 +5,12 @@ from protocol.jsonvalidators import (
 from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_GroupCompany,
     parse_structure_UnsignedIntegerType_32, parse_structure_Bool,
-    parse_structure_OptionalType_VectorType_RecordType_core_Division,
-    parse_structure_OptionalType_VectorType_RecordType_core_BusinessGroup,
-    parse_structure_VectorType_RecordType_core_Country,
     parse_structure_CustomTextType_50,
     parse_structure_CustomTextType_100,
-    parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS,
-    parse_structure_CustomTextType_250,
-    parse_structure_VectorType_RecordType_core_ClientConfiguration,
     parse_structure_VectorType_RecordType_core_LegalEntity,
-    parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_RecordType_technomasters_PROFILE_DETAIL,
     parse_structure_VectorType_RecordType_technomasters_PROFILES,
-    parse_structure_VariantType_technomasters_Request,
     parse_structure_CustomTextType_20,
     parse_structure_OptionalType_RecordType_techno_master_BUSINESSGROUP,
     parse_structure_OptionalType_RecordType_techno_master_LEGALENTITY,
@@ -26,71 +18,38 @@ from protocol.parse_structure import (
     parse_structure_VectorType_RecordType_techno_master_UNIT,
     parse_structure_VectorType_RecordType_techno_master_COUNTRYWISEUNITS,
     parse_structure_Float,
-    parse_structure_VectorType_RecordType_core_Industry,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
     parse_structure_VectorType_RecordType_technomasters_Unit,
     parse_structure_VectorType_RecordType_technomasters_CountryWiseUnits,
     parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
-    parse_structure_RecordType_core_FileList,
-    parse_structure_VectorType_UnsignedIntegerType_32,
     parse_structure_CustomTextType_500,
-    parse_structure_VectorType_RecordType_core_ClientInchargePersons,
-    parse_structure_OptionalType_RecordType_core_FileList,
     parse_structure_OptionalType_CustomTextType_250,
     parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_OptionalType_CustomTextType_50,
-    parse_structure_VectorType_RecordType_core_ClientGroup,
-    parse_structure_VectorType_RecordType_core_LegalEntityDetails,
-    parse_structure_VectorType_RecordType_core_Industries,
-    parse_structure_VectorType_RecordType_core_AssignLegalEntity
+    parse_structure_OptionalType_CustomTextType_50
 )
 from protocol.to_structure import (
     to_structure_VectorType_RecordType_core_GroupCompany,
     to_structure_SignedIntegerType_8, to_structure_Bool,
-    to_structure_OptionalType_VectorType_RecordType_core_Division,
     to_structure_RecordType_core_CountryWiseUnits,
-    to_structure_OptionalType_VectorType_RecordType_core_BusinessGroup,
-    to_structure_VectorType_RecordType_core_Country,
     to_structure_OptionalType_RecordType_core_Division,
     to_structure_VectorType_RecordType_core_UnitDetails,
     to_structure_OptionalType_SignedIntegerType_8,
     to_structure_CustomTextType_50,
     to_structure_RecordType_core_LegalEntity,
     to_structure_CustomTextType_100,
-    to_structure_VectorType_SignedIntegerType_8,
     to_structure_OptionalType_RecordType_core_BusinessGroup,
     to_structure_VectorType_RecordType_technomasters_LICENCE_HOLDER_DETAILS,
-    to_structure_CustomTextType_250,
-    to_structure_VectorType_RecordType_core_ClientConfiguration,
     to_structure_VectorType_RecordType_core_LegalEntity,
-    to_structure_VectorType_RecordType_core_Domain,
     to_structure_RecordType_technomasters_PROFILE_DETAIL,
     to_structure_VectorType_RecordType_technomasters_PROFILES,
-    to_structure_VariantType_technomasters_Request,
     to_structure_CustomTextType_20,
     to_structure_Float,
-    to_structure_VectorType_RecordType_core_Industry,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_Level,
-    to_structure_VectorType_RecordType_technomasters_Unit,
     to_structure_VectorType_RecordType_technomasters_UnitDetails,
-    to_structure_OptionalType_UnsignedIntegerType_32,
     to_structure_UnsignedIntegerType_32,
     to_structure_MapType_UnsignedInteger_32_VectorType_RecordType_technomaster_UnitDetails,
-    to_structure_MapType_SignedIntegerType_8_VectorType_RecordType_core_GeographyWithMapping,
-    to_structure_RecordType_core_FileList,
-    to_structure_VectorType_UnsignedIntegerType_32,
     to_structure_CustomTextType_500,
-    to_structure_VectorType_RecordType_core_ClientInchargePersons,
-    to_structure_OptionalType_RecordType_core_FileList,
     to_structure_OptionalType_CustomTextType_250,
     to_structure_OptionalType_CustomTextType_20,
-    to_structure_OptionalType_CustomTextType_50,
-    to_structure_VectorType_RecordType_core_GroupCompanyForUnitCreation,
-    to_structure_VectorType_RecordType_core_ClientGroup,
-    to_structure_VectorType_RecordType_core_LegalEntityDetails,
-    to_structure_VectorType_RecordType_core_Industries,
-    to_structure_VectorType_RecordType_core_AssignLegalEntity
+    to_structure_OptionalType_CustomTextType_50
 )
 
 
@@ -446,7 +405,7 @@ class UnitDivision(object):
 class UNIT(object):
     def __init__(
         self, unit_id, geography_id, unit_code, unit_name, unit_address,
-        postal_code, domain_ids, industry_ids
+        postal_code, domain_ids, industry_ids, is_approved
     ):
         self.unit_id = unit_id
         self.geography_id = geography_id
@@ -456,16 +415,16 @@ class UNIT(object):
         self.postal_code = postal_code
         self.domain_ids = domain_ids
         self.industry_ids = industry_ids
+        self.is_approved = is_approved
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
                 "unit_id", "geography_id", "unit_code", "unit_name",
                 "address", "postal_code",  "d_ids",
-                "i_ids_list"
+                "i_ids_list", "is_approved"
             ]
         )
-        print "inside class uint after append"
         unit_id = data.get("unit_id")
         geography_id = data.get("geography_id")
         unit_code = data.get("unit_code")
@@ -474,9 +433,10 @@ class UNIT(object):
         postal_code = data.get("postal_code")
         domain_ids = data.get("d_ids")
         industry_ids = data.get("i_ids_list")
+        is_approved = data.get("is_approved")
         return UNIT(
             unit_id, geography_id, unit_code, unit_name, unit_address,
-            postal_code, domain_ids, industry_ids
+            postal_code, domain_ids, industry_ids, is_approved
         )
 
     def to_structure(self):
@@ -488,7 +448,8 @@ class UNIT(object):
             "unit_address": self.unit_address,
             "postal_code": self.postal_code,
             "domain_ids": self.domain_ids,
-            "industry_ids": self.industry_ids
+            "industry_ids": self.industry_ids,
+            "is_approved": self.is_approved
         }
 
 class COUNTRYWISEUNITS(object):
@@ -1133,11 +1094,11 @@ class GetEditAssignLegalEntitySuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "unassign_legal_entities", "techno_users"
+            "unassign_legal_entities", "mapped_techno_users"
         ])
 
         unassign_legal_entities = data.get("unnssign_legal_entities")
-        techno_users = data.get("techno_users")
+        techno_users = data.get("mapped_techno_users")
 
         return GetEditAssignLegalEntitySuccess(
             unassign_legal_entities, techno_users
@@ -1147,7 +1108,7 @@ class GetEditAssignLegalEntitySuccess(Response):
 
         return {
             "unassign_legal_entities": self.unassign_legal_entities,
-            "techno_users": self.techno_users
+            "mapped_techno_users": self.techno_users
         }
 
 class SaveAssignLegalEntitySuccess(Response):
@@ -1356,12 +1317,12 @@ class GetClientGroupFormDataSuccess(Response):
 
 class GetEditClientGroupFormDataSuccess(Response):
     def __init__(
-        self, countries,  business_groups, domains, industries,
+        self, countries,  business_groups_country, domains, industries,
         group_name, email_id, short_name, no_of_licence,
         legal_entities, date_configurations
     ):
         self.countries = countries
-        self.business_groups = business_groups
+        self.business_groups_country = business_groups_country
         self.domains = domains
         self.industries = industries
         self.group_name = group_name
@@ -1374,12 +1335,12 @@ class GetEditClientGroupFormDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "business_groups", "domains", "industries",
+            "countries", "business_groups_country", "domains", "industries",
             "client_details", "group_name", "email_id", "legal_entities_list",
             "date_configurations", "short_name", "no_of_licence"
         ])
         countries = data.get("countries")
-        business_groups = data.get("business_groups")
+        business_groups_country = data.get("business_groups_country")
         domains = data.get("domains")
         industries = data.get("industries")
         group_name = data.get("group_name")
@@ -1389,16 +1350,16 @@ class GetEditClientGroupFormDataSuccess(Response):
         date_configurations = data.get("date_configurations")
         no_of_licence = data.get("no_of_licence")
         return GetEditClientGroupFormDataSuccess(
-            countries,  business_groups, domains, industries,
+            countries,  business_groups_country, domains, industries,
             group_name, email_id, short_name, no_of_licence,
             legal_entities, date_configurations
         )
 
     def to_inner_structure(self):
-        #print "self.business_groups: %s" % self.business_groups
+        # print "self.business_groups_country: %s" % self.business_groups_country
         return {
             "countries": self.countries,
-            "business_groups": self.business_groups,
+            "business_groups_country": self.business_groups_country,
             "domains": self.domains,
             "industries": self.industries,
             "group_name": self.group_name,
@@ -1412,10 +1373,10 @@ class GetEditClientGroupFormDataSuccess(Response):
 
 class GetClientsSuccess(Response):
     def __init__(
-        self, unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
+        self, client_unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
         domains_organization_list, divisions, unit_geography_level_list, unit_geographies_list
     ):
-        self.unit_list = unit_list
+        self.client_unit_list = client_unit_list
         self.group_company_list = group_company_list
         self.business_group_list = business_group_list
         self.countries_units = countries_units
@@ -1428,10 +1389,10 @@ class GetClientsSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "unit_list", "group_company_list", "business_group_list", "countries_units", "unit_legal_entity",
+            "client_unit_list", "group_company_list", "business_group_list", "countries_units", "unit_legal_entity",
             "domains_organization_list", "divisions", "unit_geography_level_list", "unit_geographies_list"
         ])
-        unit_list = data.get("unit_list")
+        client_unit_list = data.get("client_unit_list")
         group_company_list = data.get("group_company_list")
         business_group_list = data.get("business_group_list")
         countries_units = data.get("countries_units")
@@ -1442,13 +1403,13 @@ class GetClientsSuccess(Response):
         unit_geographies_list = data.get("unit_geographies_list")
 
         return GetClientsSuccess(
-            unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
+            client_unit_list, group_company_list, business_group_list, countries_units, unit_legal_entity,
             domains_organization_list, divisions, unit_geography_level_list, unit_geographies_list
         )
 
     def to_inner_structure(self):
         data = {
-            "unit_list": self.unit_list,
+            "client_unit_list": self.client_unit_list,
             "group_company_list": self.group_company_list,
             "business_group_list": self.business_group_list,
             "countries_units": self.countries_units,

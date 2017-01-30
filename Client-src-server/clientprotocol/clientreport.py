@@ -1638,18 +1638,21 @@ class GetComplianceActivityReportSuccess(Response):
 #         }
 
 class GetReassignedHistoryReportFiltersSuccess(Response):
-    def __init__(self, countries):
-        self.countries = countries
+    def __init__(self, domains, units):
+        self.domains = domains
+        self.units = units
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries"])
-        countries = data.get("countries")
-        return GetReassignedHistoryReportFiltersSuccess(countries)
+        data = parse_dictionary(data, ["domains", "units"])
+        domains = data.get("domains")
+        units = data.get("units")
+        return GetReassignedHistoryReportFiltersSuccess(domains, units)
 
     def to_inner_structure(self):
         return {
-            "countries": self.countries,
+            "domains": self.domains,
+            "units": self.units,
         }
 
 class GetReassignedHistoryReportSuccess(Response):
