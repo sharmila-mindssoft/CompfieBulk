@@ -454,7 +454,7 @@ def return_assigned_statutories_by_id(statutories):
 # Return Type : Return list of group admin registered email list
 ######################################################################################
 def get_groupadmin_registration_grouplist(db, user_id):
-    groupadmin_grouplist = db.call_proc_with_multiresult_set("sp_groupadmin_registration_email_groupslist", (user_id,), 3)
+    groupadmin_grouplist = db.call_proc_with_multiresult_set("sp_groupadmin_registration_email_groupslist", (user_id,), 2)
     return return_groupadmin_registration_grouplist(groupadmin_grouplist)
 ######################################################################################
 # To convert databse result to list
@@ -463,7 +463,7 @@ def get_groupadmin_registration_grouplist(db, user_id):
 ######################################################################################
 def return_groupadmin_registration_grouplist(groupslist):
     groupadmin_grouplist = []
-    for groups in groupslist[1]:
+    for groups in groupslist[0]:
         client_id = groups.get("client_id")
         group_name = groups.get("group_name")
         no_of_legal_entities = groups.get("no_of_legal_entities")
@@ -472,9 +472,15 @@ def return_groupadmin_registration_grouplist(groupslist):
         user_id_search = groups.get("user_id")
         emp_code_name = groups.get("emp_code_name")
         c_names = []
-        for countries in groupslist[2]:
+        occur = -1
+        for countries in groupslist[1]:
             if client_id == countries.get("client_id"):
-                c_names.append(countries.get("country_name"))
+                if len(c_names) > 0:
+                    for c_n in c_names:
+                        if(c_n.find(countries.get("country_name")) >= 0):
+                            occur = 1
+                if occur < 0:
+                        c_names.append(countries.get("country_name"))
 
         groupadmin_grouplist.append(technotransactions.GroupAdmin_GroupList(
                 client_id, group_name, no_of_legal_entities,
