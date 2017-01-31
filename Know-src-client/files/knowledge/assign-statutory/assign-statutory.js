@@ -314,6 +314,12 @@ function pageControls() {
         callAPI(API_Wizard1);
     });
 
+    /*$(".btn-assignstatutory-showmore").click(function() {
+        if(sno <= totalRecord){
+            callAPI(API_Wizard2);
+        }
+    });*/
+
     CancelButton.click(function() {
         CURRENT_TAB = 1;
         AssignStatutoryView.show();
@@ -710,15 +716,15 @@ function loadSingleUnitCompliances() {
             }
 
             $('#act'+actCount).click(function() {
-            if($(this).attr('for') == "1") {
-              $(this).html('<img src="images/deletebold.png">').attr('for','2');
-            } else if($(this).attr('for') == "2") {
-              $(this).html('<img src="images/iconminusactive.png">').attr('for','3');
-            } else {
-              $(this).html('<img src="images/tick1bold.png">').attr('for','1');
-            }
-            actstatus(this);
-        });
+                if($(this).attr('for') == "1") {
+                  $(this).html('<img src="images/deletebold.png">').attr('for','2');
+                } else if($(this).attr('for') == "2") {
+                  $(this).html('<img src="images/iconminusactive.png">').attr('for','3');
+                } else {
+                  $(this).html('<img src="images/tick1bold.png">').attr('for','1');
+                }
+                actstatus(this);
+            });
 
         count = actCount;
         LastAct = value.level_1_s_name;
@@ -819,7 +825,16 @@ function loadSingleUnitCompliances() {
 }
 
 function loadMultipleUnitCompliances() {
-
+    
+    /*for(var i=1; i<=1000; i++){
+        actCount = actCount +1;
+        var subTitleRow123 = $("#multi-statutory-value .sub-title-row");
+        var clone3123 = subTitleRow123.clone();
+        $(".sub-title", clone3123).text("This is cloned row from assigned statutory - " + actCount);
+        $(".tbody-assignstatutory").append(clone3123);
+    }
+    hideLoader();
+    isShowMore = true;*/
     $.each(COMPLIANCES_LIST, function(key, value) {
         if(LastAct != value.level_1_s_name){
             var acttableRow = $('#multi-act-templates .p-head');
@@ -862,10 +877,10 @@ function loadMultipleUnitCompliances() {
                 }
                 actstatus(this);
             });
-        count = actCount;
-        LastAct = value.level_1_s_name;
-        LastSubAct = "";
-        actCount = actCount + 1;
+            count = actCount;
+            LastAct = value.level_1_s_name;
+            LastSubAct = "";
+            actCount = actCount + 1;
         }
 
         if(LastSubAct != value.map_text){
@@ -962,8 +977,9 @@ function loadMultipleUnitCompliances() {
         $('.remarks').on('input', function (e) {
           this.value = isCommon($(this));
         });
-        $('#appl'+(sno-1)).text(++applcount +'/'+ACTIVE_UNITS.length)
+        $('#appl'+(sno-1)).text(++applcount +'/'+ACTIVE_UNITS.length);
         $('#collapse'+count+' .tbody-compliance-list').append(clone4);
+        
 
         if(value.comp_status > 0){
             if(value.comp_status == 1){
