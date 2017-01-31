@@ -2840,7 +2840,7 @@ BEGIN
     (select file_server_name from tbl_file_server
     where file_server_id = t2.file_server_id) as file_server_name, t1.is_created
     from tbl_legal_entities as t1 left join tbl_client_database as t2
-    on t1.legal_entity_id = t2.legal_entity_id;
+    on t1.legal_entity_id = t2.legal_entity_id and t1.is_approved = 1;
 
     SELECT machine_id, machine_name, ip, port, client_ids FROM tbl_application_server;
 
@@ -5915,11 +5915,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_groupadmin_registration_email_groupslist`(
 in _user_id int(11))
 BEGIN
-    SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
-
-    if @u_cat_id = 1 then
-
-        select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
+    select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
         no_of_legal_entities, t3.group_admin_username as ug_name,
         (select email_id from tbl_client_users where client_id = t3.client_id) as email_id,
         (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
@@ -5935,28 +5931,6 @@ BEGIN
         select t2.client_id, t3.country_id, t3.country_name
         from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
         where t3.country_id = t2.country_id and t2.client_id = t1.client_id;
-    else
-        if @u_cat_id = 5 then
-            select t3.client_id, t3.group_name, count(t2.legal_entity_id )
-            as no_of_legal_entities, t3.group_admin_username as ug_name,
-            (select email_id from tbl_client_users where client_id = t3.client_id) as email_id,
-            (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
-            (select concat(employee_name,'-',(case when employee_code is null then
-            '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name
-            from
-            tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
-            where
-
-            t3.client_id = t2.client_id and t2.client_id = t1.client_id and
-            t1.user_category_id = @u_cat_id and t1.user_id = _user_id
-            group by t2.country_id order by t3.group_name;
-
-            select t2.client_id, t3.country_id, t3.country_name
-            from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
-            where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
-            t1.user_category_id = @u_cat_id and t1.user_id = _user_id;
-        end if;
-    end if;
 END //
 
 DELIMITER ;
@@ -5976,54 +5950,30 @@ BEGIN
     SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
 
     if @u_cat_id = 1 then
-        SELECT @u_cat_id := user_category_id from tbl_users where user_id = _user_id;
-        select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
-        unit_count, (select country_name from tbl_countries where country_id = t2.country_id) as
-        country_name, (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
-        client_informed_id = (select max(client_informed_id) from tbl_group_admin_email_notification
-        where t2.client_id and legal_entity_id = t2.legal_entity_id)) as unit_creation_informed,
-        (select assign_statutory_informed from tbl_group_admin_email_notification  where client_id =
-        client_informed_id = (select max(client_informed_id) from tbl_group_admin_email_notification
-        where t2.client_id and legal_entity_id = t2.legal_entity_id)) as statutory_assigned_informed,
-        (select email_id from tbl_client_users where client_id = t4.client_id) as email_id,
-        (select user_id from tbl_client_users where client_id = t4.client_id) as user_id,
-        (select concat(employee_name,'-',(case when employee_code is null then
-        '' else employee_code end)) from tbl_client_users where client_id = t4.client_id) as emp_code_name,
-        (select count(*) from tbl_client_statutories where client_id = t4.client_id and
-        unit_id = t4.unit_id) as statutory_count
+
+        select t3.client_id, t2.legal_entity_id, t2.legal_entity_name,
+        (select COUNT(unit_id) as a from tbl_units where client_id = t1.client_id and
+        legal_entity_id = t2.legal_entity_id and country_id = t2.country_id) as unit_count,
+        (select country_name from tbl_countries where country_id = t2.country_id) as
+            country_name,
+        (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
+            t2.client_id and legal_entity_id = t2.legal_entity_id) as unit_creation_informed,
+        (select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
+            t2.client_id and legal_entity_id = t2.legal_entity_id) as statutory_assigned_informed,
+        (select email_id from tbl_client_groups where client_id = t1.client_id) as email_id,
+        (select user_id from tbl_client_users where client_id = t1.client_id) as user_id,
+        'Group Admin' as emp_code_name,
+        (select count(*) from tbl_client_statutories where client_id = t1.client_id and
+            unit_id in (select unit_id from tbl_units where client_id = t1.client_id and
+            legal_entity_id = t2.legal_entity_id and country_id = t2.country_id)) as statutory_count
         from
-        tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
-        tbl_units as t4
+        tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
+        -- tbl_units as t4
         where
 
-        t4.country_id = t2.country_id and t4.legal_entity_id = t2.legal_entity_id and
-        t4.client_id = t3.client_id and t3.client_id = t2.client_id and
-        t2.client_id = t1.client_id order by t2.legal_entity_name;
-    else
-        SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
-        if @u_cat_id = 5 then
-            select t3.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
-            unit_count, (select country_name from tbl_countries where country_id = t2.country_id) as
-            country_name, (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id) as unit_creation_informed,
-            (select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id) as statutory_assigned_informed,
-            (select email_id from tbl_client_users where client_id = t4.client_id) as email_id,
-        (select user_id from tbl_client_users where client_id = t4.client_id) as user_id,
-        (select concat(employee_name,'-',(case when employee_code is null then
-        '' else employee_code end)) from tbl_client_users where client_id = t4.client_id) as emp_code_name,
-            (select count(*) from tbl_client_statutories where client_id = t4.client_id and
-            unit_id = t4.unit_id) as statutory_count
-            from
-            tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3,
-            tbl_units as t4
-            where
 
-            t4.country_id = t2.country_id and t4.legal_entity_id = t2.legal_entity_id and
-            t4.client_id = t2.client_id and t3.client_id = t2.client_id and
-            t2.client_id = t1.client_id and t1.user_category_id = @u_cat_id and
-            t1.user_id = _user_id order by t2.legal_entity_name;
-        end if;
+        t3.client_id = t2.client_id and
+        t2.client_id = t1.client_id order by t2.legal_entity_name;
 
     end if;
 
@@ -6226,7 +6176,8 @@ DELIMITER //
 CREATE PROCEDURE `sp_group_admin_registration_email_report_data`(
 in _u_id int(11))
 BEGIN
-    if _u_id = 1 then
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _u_id;
+    if @u_cat_id = 1 then
         select t2.client_id, t2.group_name, t2.is_active
         from
         tbl_user_clients as t1, tbl_client_groups as t2
@@ -7065,7 +7016,7 @@ BEGIN
         t1.client_id = _g_id and
         t1.user_id = _u_id and
         t1.user_category_id = _u_cg_id
-        group by t4.reassigned_to;
+        group by t4.user_account_id;
 
     end if;
 
@@ -8796,6 +8747,66 @@ CREATE PROCEDURE `sp_get_userid_from_admin`()
 BEGIN
     SELECT group_concat(user_id) as userids FROM tbl_user_login_details
     WHERE user_category_id = 1;
+END //
+
+DELIMITER ;
+
+--
+-- legal entity master data
+--
+
+DROP PROCEDURE IF EXISTS `sp_get_le_master_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_le_master_info`(
+    in cid int(11), le_id int(11)
+)
+BEGIN
+    IF le_id is null then
+        select distinct c.country_id, c.country_name from tbl_countries c inner join tbl_legal_entities as le
+        on le.country_id = c.country_id where client_id = cid;
+
+        select distinct d.domain_id, d.domain_name from tbl_domains d inner join tbl_legal_entity_domains as le
+        on le.domain_id = d.domain_id
+        inner join tbl_legal_entities as l on l.legal_entity_id = le.legal_entity_id
+        where client_id = cid;
+
+        select distinct d.domain_id, d.country_id from tbl_domain_countries d
+        inner join tbl_legal_entity_domains as le
+        on le.domain_id = d.domain_id
+        inner join tbl_legal_entities as l on l.legal_entity_id = le.legal_entity_id
+        where client_id = cid;
+
+        select distinct o.organisation_id, o.organisation_name, o.country_id, o.domain_id , is_active
+            from tbl_organisation as o
+            inner join tbl_legal_entities as le on o.country_id = le.country_id
+            inner join tbl_legal_entity_domains as led
+            on o.domain_id = led.domain_id where client_id = cid;
+
+    ELSE
+        select distinct c.country_id, c.country_name from tbl_countries c inner join tbl_legal_entities as le
+        on le.country_id = c.country_id where  client_id = cid and le.legal_entity_id = le_id;
+
+        select distinct d.domain_id, d.domain_name from tbl_domains d inner join tbl_legal_entity_domains as le
+        on le.domain_id = d.domain_id
+        inner join tbl_legal_entities as l on l.legal_entity_id = le.legal_entity_id
+        where  client_id = cid and le.legal_entity_id = le_id;
+
+        select distinct d.domain_id, d.country_id from tbl_domain_countries d
+        inner join tbl_legal_entity_domains as le
+        on le.domain_id = d.domain_id
+        inner join tbl_legal_entities as l on l.legal_entity_id = le.legal_entity_id
+        where client_id = cid and le.legal_entity_id = le_id;
+
+        select distinct o.organisation_id, o.organisation_name, o.country_id, o.domain_id , is_active
+            from tbl_organisation as o
+            inner join tbl_legal_entities as le on o.country_id = le.country_id
+            inner join tbl_legal_entity_domains as led on o.domain_id = led.domain_id
+            where client_id = cid and le.legal_entity_id = le_id;
+
+    END IF ;
+
 END //
 
 DELIMITER ;

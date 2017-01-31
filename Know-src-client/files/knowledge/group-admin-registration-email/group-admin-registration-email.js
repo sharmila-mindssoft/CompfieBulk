@@ -3,9 +3,7 @@ var groupAdmin_UnitList;
 
 function getGroupAdmin_Group()
 {
-	console.log("inside getGroupAdmin_Group")
 	function onSuccess(data) {
-		console.log("data:"+data)
 		groupAdmin_GroupList = data.groupadmin_groupList;
 		groupAdmin_UnitList = data.groupadmin_unitList;
 		fillGroupAdmingroupData(groupAdmin_GroupList);
@@ -23,7 +21,6 @@ function getGroupAdmin_Group()
 }
 function processGroupAdminFilters()
 {
-	console.log("search")
 	var search_1, search_2, search_3;
 	searchList = []
 	var grp_admin_table = $('#table-group-admin-group-list').attr('style');
@@ -37,7 +34,6 @@ function processGroupAdminFilters()
 		for(var i in groupAdmin_GroupList)
 		{
 			row_data = groupAdmin_GroupList[i];
-			console.log(row_data)
 			var flg = false;
 			for (var c in row_data.c_names) {
 	          if (~row_data.c_names[c].toLowerCase().indexOf(search_1)){
@@ -56,7 +52,6 @@ function processGroupAdminFilters()
 	}
 	else if(grp_admin_table == "display: none;")
 	{
-		console.log("unit search")
 		search_1 = $('#search-unit-country-name').val().toLowerCase();
 		search_2 = $('#search-legal_entity-name').val().toLowerCase();
 		search_3 = $('#search-no-of-units').val();
@@ -65,16 +60,12 @@ function processGroupAdminFilters()
 		for(var i=0;i<table_tr.length;i++)
 		{
 			var table_ctry = table_tr[i].childNodes[3].innerText.toLowerCase();
-			console.log(table_ctry)
 			var table_le = table_tr[i].childNodes[5].innerText.toLowerCase();
-			console.log(table_le)
 			var table_lecnt = table_tr[i].childNodes[7].innerText.toLowerCase();
-			console.log(table_lecnt)
 			if((~table_ctry.indexOf(search_1)) &&
 			(~table_le.toLowerCase().indexOf(search_2)) &&
 			(~table_lecnt.indexOf(search_3)))
 			{
-				console.log("matched")
 				searchList.push(groupAdmin_UnitList[i])
 			}
 		}
@@ -89,14 +80,12 @@ function fillGroupAdmingroupData(groupAdminList)
 	$.each(data, function(k, v) {
 		var tableRow = $('#templates .table-group-admin-regn-master .table-row');
         var rowClone = tableRow.clone();
-        console.log("ctry:"+v.c_names)
         $('.sno', rowClone).text(i);
         $('.client-id', rowClone).addClass('client-id-'+i);
         $('.Country', rowClone).text(v.c_names);
         $('.Group',rowClone).html(v.group_name);
         $('.No-of-legalentity', rowClone).html(v.no_of_legal_entities);
         if (v.ug_name == null){
-        	console.log(v.ug_name)
           $('#btnResend', rowClone).show();
           $('#btnResend', rowClone).on('click', function() {
             sendCredentials(v.client_id, v.emp_code_name, v.email_id);
@@ -119,7 +108,6 @@ function sendCredentials(_cl_id, _u_name, _e_id ) {
     'username': _u_name,
     'email_id': _e_id
   };
-  custom_alert(req_dict);
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
@@ -190,12 +178,10 @@ function bindsearchedUnitList(data)
 }
 function displayLegalEntityList(client_id, group_name)
 {
-	alert("display:"+client_id)
 	$('#table-group-admin-group-list').hide();
 	$('#table-grp-admin-unit-list').show();
 	$('.tbody-grp-admin-unit-email-list').find('tr').remove();
 	$('#btn-back').show(groupAdmin_UnitList.length);
-	console.log()
 	var i = 1;
 	$.each(groupAdmin_UnitList, function(k, v) {
 		if(v.client_id == client_id)
@@ -262,9 +248,7 @@ function sendmail(_mode, _u_id, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_na
 	    'legal_entity_id': _le_id,
 	    'legal_entity_name': _le_name
 	  };
-	  console.log(req_dict)
-  custom_alert(req_dict);
-  mirror.sendGroupAdminRegnmail(req_dict, function(error, response) {
+	mirror.sendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
       displaySuccessMessage(message.resend);
@@ -277,7 +261,6 @@ function sendmail(_mode, _u_id, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_na
 
 function initialize_form()
 {
-	console.log("initialize_form")
 	$('.table-grp-admin-unit-list').hide();
 	$('.tbody-grp-admin-unit-email-list').find('tr').remove();
 	$('#btn-back').hide();
@@ -297,7 +280,6 @@ $('.filter-text-box').keyup(function() {
 
 // page load
 function initialize() {
-	console.log("initialize")
 	clearMessage();
   	initialize_form();
 }

@@ -75,7 +75,6 @@ class API(object):
         self._address = address
         self._knowledge_server_address = knowledge_server_address
         # self._http_client = http_client
-        print self._knowledge_server_address
         self._group_databases = {}
         self._le_databases = {}
         self._replication_managers = {}
@@ -140,12 +139,10 @@ class API(object):
 
             for company in servers:
                 company_id = company.company_id
-                print company
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
                 print self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
-                    print company.to_structure()
                     if company.is_group is True:
                         if self._group_databases.get(company_id) is not None :
                             continue
@@ -180,8 +177,6 @@ class API(object):
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
 
-            print self._le_databases
-            print self._group_databases
             print "after connection created"
             # After database connection client poll for replication
 
@@ -276,9 +271,6 @@ class API(object):
                 self._send_response("Invalid json format", 300)
 
             company_id = int(data[0])
-            print company_id
-            print "-" * 10
-            print is_group
             actual_data = data[1]
             request_data = request_data_type.parse_structure(
                 actual_data
@@ -294,23 +286,16 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             return str(e)
-        print request_data, company_id
         return request_data, company_id
 
     def _validate_user_session(self, session):
         session_token = session.split('-')
         client_id = int(session_token[0])
-        print self._group_databases
         _group_db_cons = self._group_databases.get(client_id).get_connection()
-        print client_id
-        print _group_db_cons
         _group_db = Database(_group_db_cons)
-        print "----"
-        print _group_db
         try :
             _group_db.begin()
             session_user = _group_db.validate_session_token(session)
-            print session_user
             _group_db.commit()
             _group_db_cons.close()
             if session_user is None :
@@ -345,15 +330,12 @@ class API(object):
         # validate session token
         if need_client_id is False :
             session = request_data.session_token
-            print session
             session_user, client_id = self._validate_user_session(session)
             if session_user is False :
                 return respond(clientlogin.InvalidSessionToken())
         else :
             session_user = None
         # request process in controller
-        print "in handle api"
-        print is_group
         if is_group :
             print "Group DB"
             db_cons = self._group_databases.get(company_id)
@@ -361,7 +343,6 @@ class API(object):
             print "LE Db"
             db_cons = self._le_databases.get(company_id)
 
-        print company_id
         if db_cons is None:
             print 'connection pool is none'
             self._send_response("Company not found", 404)
@@ -410,7 +391,7 @@ class API(object):
         return controller.process_client_master_requests(request, db, session_user, client_id)
 
     @api_request(clienttransactions.RequestFormat)
-    def handle_client_transaction(self, request, db, session_user, client_id):
+    def handle_client_transaction(self, request, db, session_user, client_id, le_id):
         return controller.process_client_transaction_requests(request, db, session_user, client_id)
 
     @api_request(clientreport.RequestFormat)
@@ -418,23 +399,23 @@ class API(object):
         return controller.process_client_report_requests(request, db, session_user, client_id, le_id)
 
     @api_request(dashboard.RequestFormat)
-    def handle_client_dashboard(self, request, db, session_user, client_id):
+    def handle_client_dashboard(self, request, db, session_user, client_id, le_id):
         return controller.process_client_dashboard_requests(request, db)
 
     @api_request(clientadminsettings.RequestFormat)
-    def handle_client_admin_settings(self, request, db, session_user, client_id):
+    def handle_client_admin_settings(self, request, db, session_user, client_id, le_id):
         return controller.process_client_admin_settings_requests(request, db)
 
     @api_request(general.RequestFormat)
-    def handle_general(self, request, db, session_user, client_id):
+    def handle_general(self, request, db, session_user, client_id, le_id):
         return controller.process_general_request(request, db)
 
     @api_request(clientuser.RequestFormat)
-    def handle_client_user(self, request, db, session_user, client_id):
+    def handle_client_user(self, request, db, session_user, client_id, le_id):
         return controller.process_client_user_request(request, db)
 
     @api_request(clientmobile.RequestFormat)
-    def handle_mobile_request(self, request, db, session_user, client_id):
+    def handle_mobile_request(self, request, db, session_user, client_id, le_id):
         return mobilecontroller.process_client_mobile_request(request, db)
 
 
