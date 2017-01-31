@@ -144,6 +144,7 @@ def get_servers(db):
 def return_companies(data):
     results = []
     for d in data:
+        print d
         database_ip = IPAddress(
             d["database_ip"],
             int(d["database_port"])
@@ -153,6 +154,7 @@ def return_companies(data):
             int(d["server_port"])
         )
         is_group = bool(d["is_group"])
+
         if is_group is True:
             company_id = d["client_id"]
         else:
@@ -175,13 +177,7 @@ def get_client_replication_list(db):
         " domain_id from tbl_client_replication_status " + \
         " where is_new_data = 1"
     rows = db.select_all(q)
-    results = []
-    if rows:
-        column = [
-            "client_id", "is_new_data", "is_new_domain", "domain_id"
-        ]
-        results = convert_to_dict(rows, column)
-    return _return_clients(results)
+    return _return_clients(rows)
 
 
 def _return_clients(data):
