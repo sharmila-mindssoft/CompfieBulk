@@ -23,6 +23,12 @@ CLIENT_TEMPLATE_PATHS = [
         "files/client/home/home.html",
         None, {}
     ),
+     # Welcome ---------------------------------------------------------------------
+    (
+        "/welcome",
+        "files/client/home/welcome.html",
+        None, {}
+    ),
     # Dashboard ---------------------------------------------------------------------
     (
         "/dashboard",
