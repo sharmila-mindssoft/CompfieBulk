@@ -107,7 +107,6 @@ function processLogin(username, password, shortName, callback) {
       'username': username,
       'password': password,
       'short_name': shortName,
-      'ip': ''
     }
   ];
   console.log(request);

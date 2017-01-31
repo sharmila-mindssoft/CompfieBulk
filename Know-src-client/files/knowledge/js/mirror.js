@@ -83,20 +83,7 @@ function initMirror() {
         'unit_cnt': unit_cnt
       };
     }
-    /*function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, uLoc, iId, iName, dIds) {
-      return {
-        'u_id': uId,
-        'u_name': uName,
-        'u_code': uCode,
-        'u_add': uAdd,
-        'p_code': pCode,
-        'geo_id': geoId,
-        'u_loc': uLoc,
-        'i_id': iId,
-        'i_name': iName,
-        'd_ids': dIds
-      };
-    }old*/
+
     function getUnitDict(uId, uName, uCode, uAdd, pCode, geoId, dIds, iIds, status) {
         return {
             'unit_id': uId,
@@ -677,271 +664,271 @@ function initMirror() {
 
   //user mapping report
 
-  function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, csv, from_count, page_count, callback) {
-    callerName = 'techno_report';
-    var request = [
-      'GetUserMappingDetailsReportData',
-      {
-        'country_id': countryId,
-        'client_id': clientId,
-        'legal_entity_id': legalEntityId,
-        'u_m_none': u_m_none,
-        'csv': csv,
-        'from_count': from_count,
-        'page_count': page_count
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
+    function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, csv, from_count, page_count, callback) {
+      callerName = 'techno_report';
+      var request = [
+        'GetUserMappingDetailsReportData',
+        {
+          'country_id': countryId,
+          'client_id': clientId,
+          'legal_entity_id': legalEntityId,
+          'u_m_none': u_m_none,
+          'csv': csv,
+          'from_count': from_count,
+          'page_count': page_count
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
 
-  function getGroupAdminGroupList(callback)
-  {
-    console.log("mirror")
-    callerName = 'techno_transaction';
-    var request = [
-      'GetGroupAdminGroupUnitList',
-      {}
-    ];
-    apiRequest(callerName, request, callback);
-  }
-
-  function resendGroupAdminRegnmail(clientInfo, callback) {
-    var request = ['ResendGroupAdminRegnMail', clientInfo];
-    apiRequest("techno_transaction", request, callback);
-  }
-
-  function sendGroupAdminRegnmail(clientInfo, callback) {
-    var request = ['SendGroupAdminRegnMail', clientInfo];
-    apiRequest("techno_transaction", request, callback);
-  }
-
-  function getGroupAdminReportData(callback){
-    console.log("mirror")
-    callerName = 'techno_report';
-    var request = [
-      'GetGroupAdminReportData',
-      {}
-    ];
-    apiRequest(callerName, request, callback);
-  }
-
-  function getAssignedUserClientGroups(callback)
-  {
-    console.log("mirror")
-    callerName = 'techno_report';
-    var request = [
-      'GetAssignedUserClientGroups',
-      {}
-    ];
-    apiRequest(callerName, request, callback);
-  }
-
-  function getReassignUserReportData(cg_id, u_id, g_id, callback)
-  {
-    callerName = 'techno_report';
-    var request = [
-      'GetReassignUserReportData',
-      {
-        "user_category_id": cg_id,
-        "user_id": u_id,
-        "group_id_none": g_id
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
-  function exportReassignUserReportData(cg_id, u_id, g_id, u_m_none, csv, callback)
-  {
-    callerName = 'techno_report';
-    var request = [
-      'ExportReassignUserReportData',
-      {
-        "user_category_id": cg_id,
-        "user_id": u_id,
-        "group_id_none": g_id,
-        "u_m_none": u_m_none,
-        "csv": csv
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
-  function getReassignUserDomainReportData(cg_id, u_id, g_id, bg_id, le_id, d_id, callback){
-    callerName = 'techno_report';
-    var request = [
-      'GetReassignUserDomainReportData',
-      {
-        "user_category_id": cg_id,
-        "user_id": u_id,
-        "group_id_none": g_id,
-        "bg_id": bg_id,
-        "le_id": le_id,
-        "d_id": d_id
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
-
-  function getLegalEntityClosureData(callback){
-    callerName = 'techno_transaction';
-    var request = [
-      'GetLegalEntityClosureReportData',
-      {}
-    ];
-    apiRequest(callerName, request, callback);
-  }
-
-  function saveLegalEntityClosureData(password, remarks, le_id, action_mode, callback)
-  {
-    callerName = 'techno_transaction';
-    var request = [
-      'SaveLegalEntityClosureData',
-      {
-        "password": password,
-        "closed_remarks": remarks,
-        "legal_entity_id": le_id,
-        "grp_mode": action_mode
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
-  //Verify Password
-  function verifyPassword(password, callback) {
-    var request = [
-      'VerifyPassword',
-      {
-        'password': password
-      }
-    ];
-    apiRequest('general', request, callback);
-  }
-
-  // Client Agreement Master Report
-  function getClientAgreementReportFilters(callback) {
-    callerName = 'techno_report';
-    var request = [
-        'GetClientAgreementReportFilters',
+    function getGroupAdminGroupList(callback)
+    {
+      console.log("mirror")
+      callerName = 'techno_transaction';
+      var request = [
+        'GetGroupAdminGroupUnitList',
         {}
       ];
       apiRequest(callerName, request, callback);
-  }
+    }
 
-  function getClientAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
-    callerName = 'techno_report';
-    var request = [
-      'GetClientAgreementReportData',
-      {
-        'country_id': countryId,
-        'client_id': clientId,
-        'business_group_id': businessGroupId,
-        'legal_entity_id': legalEntityId,
-        'domain_id_optional': domainId,
-        'contract_from_optional': contractFrom,
-        'contract_to_optional': contractTo,
-        'csv': csv,
-        'from_count': from_count,
-        'page_count': page_count
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
+    function resendGroupAdminRegnmail(clientInfo, callback) {
+      var request = ['ResendGroupAdminRegnMail', clientInfo];
+      apiRequest("techno_transaction", request, callback);
+    }
 
-  function getDomainwiseAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
-    callerName = 'techno_report';
-    var request = [
-      'GetDomainwiseAgreementReportData',
-      {
-        'country_id': countryId,
-        'client_id': clientId,
-        'business_group_id': businessGroupId,
-        'legal_entity_id': legalEntityId,
-        'domain_id': domainId,
-        'contract_from_optional': contractFrom,
-        'contract_to_optional': contractTo,
-        'csv': csv,
-        'from_count': from_count,
-        'page_count': page_count
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
+    function sendGroupAdminRegnmail(clientInfo, callback) {
+      var request = ['SendGroupAdminRegnMail', clientInfo];
+      apiRequest("techno_transaction", request, callback);
+    }
 
-  function getOrganizationWiseUnitCount(legalEntityId, domainId, callback) {
-    callerName = 'techno_report';
-    var request = [
-      'GetOrganizationWiseUnitCount',
-      {
-        'legal_entity_id': legalEntityId,
-        'domain_id': domainId
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
-
-  /* Messages */
-  function getMessages(from_count, page_count, callback) {
-    callerName = 'general';
-    var request = [
-      'GetMessages',
-      {
-        'from_count': from_count,
-        'page_count': page_count
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
-
-  /* Messages */
-  function getStatutoryNotifications(from_count, page_count, callback) {
-    callerName = 'general';
-    var request = [
-      'GetStatutoryNotifications',
-      {
-        'from_count': from_count,
-        'page_count': page_count
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
-
-  function updateStatutoryNotificationStatus(notification_id, user_id, has_read, callback) {
-    callerName = 'general';
-    var request = [
-      'UpdateStatutoryNotificationStatus',
-      {
-        'notification_id': notification_id,
-        'user_id': user_id,
-        'has_read': has_read
-      }
-    ];
-    apiRequest(callerName, request, callback);
-  }
-
-  function getAssignedStatutoriesList(callback) {
-    var request = [
-      'GetAssignedStatutoriesList',
-      {}
-    ];
-    apiRequest('techno_report', request, callback);
-  }
-
-  function getComplianceStatutoriesList(unitId, domainId, callback){
-    var request = [
-      'GetComplianceStatutoriesList',
-      {
-        'unit_id': unitId,
-        'd_id': domainId
-      }
-    ];
-    apiRequest("techno_report", request, callback);
-  }
-
-  function getAssignedStatutoriesForApprove(callback){
-    callerName = 'domain_transaction';
-    var request = [
-        "GetAssignedStatutoriesForApprove",
+    function getGroupAdminReportData(callback){
+      console.log("mirror")
+      callerName = 'techno_report';
+      var request = [
+        'GetGroupAdminReportData',
         {}
       ];
-    apiRequest(callerName, request, callback);
-  }
+      apiRequest(callerName, request, callback);
+    }
+
+    function getAssignedUserClientGroups(callback)
+    {
+      console.log("mirror")
+      callerName = 'techno_report';
+      var request = [
+        'GetAssignedUserClientGroups',
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    function getReassignUserReportData(cg_id, u_id, g_id, callback)
+    {
+      callerName = 'techno_report';
+      var request = [
+        'GetReassignUserReportData',
+        {
+          "user_category_id": cg_id,
+          "user_id": u_id,
+          "group_id_none": g_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function exportReassignUserReportData(cg_id, u_id, g_id, u_m_none, csv, callback)
+    {
+      callerName = 'techno_report';
+      var request = [
+        'ExportReassignUserReportData',
+        {
+          "user_category_id": cg_id,
+          "user_id": u_id,
+          "group_id_none": g_id,
+          "u_m_none": u_m_none,
+          "csv": csv
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    function getReassignUserDomainReportData(cg_id, u_id, g_id, bg_id, le_id, d_id, callback){
+      callerName = 'techno_report';
+      var request = [
+        'GetReassignUserDomainReportData',
+        {
+          "user_category_id": cg_id,
+          "user_id": u_id,
+          "group_id_none": g_id,
+          "bg_id": bg_id,
+          "le_id": le_id,
+          "d_id": d_id
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    function getLegalEntityClosureData(callback){
+      callerName = 'techno_transaction';
+      var request = [
+        'GetLegalEntityClosureReportData',
+        {}
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    function saveLegalEntityClosureData(password, remarks, le_id, action_mode, callback)
+    {
+      callerName = 'techno_transaction';
+      var request = [
+        'SaveLegalEntityClosureData',
+        {
+          "password": password,
+          "closed_remarks": remarks,
+          "legal_entity_id": le_id,
+          "grp_mode": action_mode
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+    //Verify Password
+    function verifyPassword(password, callback) {
+      var request = [
+        'VerifyPassword',
+        {
+          'password': password
+        }
+      ];
+      apiRequest('general', request, callback);
+    }
+
+    // Client Agreement Master Report
+    function getClientAgreementReportFilters(callback) {
+      callerName = 'techno_report';
+      var request = [
+          'GetClientAgreementReportFilters',
+          {}
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
+    function getClientAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+      callerName = 'techno_report';
+      var request = [
+        'GetClientAgreementReportData',
+        {
+          'country_id': countryId,
+          'client_id': clientId,
+          'business_group_id': businessGroupId,
+          'legal_entity_id': legalEntityId,
+          'domain_id_optional': domainId,
+          'contract_from_optional': contractFrom,
+          'contract_to_optional': contractTo,
+          'csv': csv,
+          'from_count': from_count,
+          'page_count': page_count
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    function getDomainwiseAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
+      callerName = 'techno_report';
+      var request = [
+        'GetDomainwiseAgreementReportData',
+        {
+          'country_id': countryId,
+          'client_id': clientId,
+          'business_group_id': businessGroupId,
+          'legal_entity_id': legalEntityId,
+          'domain_id': domainId,
+          'contract_from_optional': contractFrom,
+          'contract_to_optional': contractTo,
+          'csv': csv,
+          'from_count': from_count,
+          'page_count': page_count
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    function getOrganizationWiseUnitCount(legalEntityId, domainId, callback) {
+      callerName = 'techno_report';
+      var request = [
+        'GetOrganizationWiseUnitCount',
+        {
+          'legal_entity_id': legalEntityId,
+          'domain_id': domainId
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    /* Messages */
+    function getMessages(from_count, page_count, callback) {
+      callerName = 'general';
+      var request = [
+        'GetMessages',
+        {
+          'from_count': from_count,
+          'page_count': page_count
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    /* Messages */
+    function getStatutoryNotifications(from_count, page_count, callback) {
+      callerName = 'general';
+      var request = [
+        'GetStatutoryNotifications',
+        {
+          'from_count': from_count,
+          'page_count': page_count
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    function updateStatutoryNotificationStatus(notification_id, user_id, has_read, callback) {
+      callerName = 'general';
+      var request = [
+        'UpdateStatutoryNotificationStatus',
+        {
+          'notification_id': notification_id,
+          'user_id': user_id,
+          'has_read': has_read
+        }
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    function getAssignedStatutoriesList(callback) {
+      var request = [
+        'GetAssignedStatutoriesList',
+        {}
+      ];
+      apiRequest('techno_report', request, callback);
+    }
+
+    function getComplianceStatutoriesList(unitId, domainId, callback){
+      var request = [
+        'GetComplianceStatutoriesList',
+        {
+          'unit_id': unitId,
+          'd_id': domainId
+        }
+      ];
+      apiRequest("techno_report", request, callback);
+    }
+
+    function getAssignedStatutoriesForApprove(callback){
+      callerName = 'domain_transaction';
+      var request = [
+          "GetAssignedStatutoriesForApprove",
+          {}
+        ];
+      apiRequest(callerName, request, callback);
+    }
     function getUserId() {
         var info = getUserInfo();
         if (info !== null)
@@ -2635,25 +2622,6 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    /*function submitAssignedStatutory(
-      client_statutory_id, units, client_id, unit_ids, compliances_list, level_1_statutory_wise_compliances, callback
-    ){
-      callerName = 'techno_transaction';
-      var request = [
-          "SaveAssignedStatutory",
-          {
-            "client_statutory_id": client_statutory_id,
-            "unit_id_name": units,
-            "client_id": client_id,
-            "unit_ids": unit_ids,
-            "compliances_applicablity_status": compliances_list,
-            "level_1_statutory_wise_compliances": level_1_statutory_wise_compliances,
-            "submission_type": "submit"
-          }
-        ];
-        apiRequest(callerName, request, callback);
-    }*/
-
     function getAssignedStatutories(callback) {
         callerName = 'domain_transaction';
         var request = [
@@ -2680,226 +2648,6 @@ function initMirror() {
         callerName = 'techno_report';
         var request = [
             'GetUserMappingReportFilters',
-            {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getGroupAdminGroupList(callback) {
-        console.log("mirror")
-        callerName = 'techno_transaction';
-        var request = [
-            'GetGroupAdminGroupUnitList',
-            {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function resendGroupAdminRegnmail(clientInfo, callback) {
-        var request = ['ResendGroupAdminRegnMail', clientInfo];
-        apiRequest("techno_transaction", request, callback);
-    }
-
-    function sendGroupAdminRegnmail(clientInfo, callback) {
-        var request = ['SendGroupAdminRegnMail', clientInfo];
-        apiRequest("techno_transaction", request, callback);
-    }
-
-    function getGroupAdminReportData(callback) {
-        console.log("mirror")
-        callerName = 'techno_report';
-        var request = [
-            'GetGroupAdminReportData',
-            {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getAssignedUserClientGroups(callback) {
-        console.log("mirror")
-        callerName = 'techno_report';
-        var request = [
-            'GetAssignedUserClientGroups',
-            {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getReassignUserReportData(cg_id, u_id, g_id, callback) {
-        callerName = 'techno_report';
-        var request = [
-            'GetReassignUserReportData', {
-                "user_category_id": cg_id,
-                "user_id": u_id,
-                "group_id_none": g_id
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getReassignUserDomainReportData(cg_id, u_id, g_id, bg_id, le_id, d_id, callback) {
-        callerName = 'techno_report';
-        var request = [
-            'GetReassignUserDomainReportData', {
-                "user_category_id": cg_id,
-                "user_id": u_id,
-                "group_id_none": g_id,
-                "bg_id": bg_id,
-                "le_id": le_id,
-                "d_id": d_id
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getLegalEntityClosureData(callback) {
-        callerName = 'techno_transaction';
-        var request = [
-            'GetLegalEntityClosureReportData',
-            {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function saveLegalEntityClosureData(password, remarks, le_id, action_mode, callback) {
-        callerName = 'techno_transaction';
-        var request = [
-            'SaveLegalEntityClosureData', {
-                "password": password,
-                "closed_remarks": remarks,
-                "legal_entity_id": le_id,
-                "grp_mode": action_mode
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-    //Verify Password
-    function verifyPassword(password, callback) {
-        var request = [
-            'VerifyPassword', {
-                'password': password
-            }
-        ];
-        apiRequest('general', request, callback);
-    }
-
-    // Client Agreement Master Report
-    function getClientAgreementReportFilters(callback) {
-        callerName = 'techno_report';
-        var request = [
-            'GetClientAgreementReportFilters',
-            {}
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getClientAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
-        callerName = 'techno_report';
-        var request = [
-            'GetClientAgreementReportData', {
-                'country_id': countryId,
-                'client_id': clientId,
-                'business_group_id': businessGroupId,
-                'legal_entity_id': legalEntityId,
-                'domain_id_optional': domainId,
-                'contract_from_optional': contractFrom,
-                'contract_to_optional': contractTo,
-                'csv': csv,
-                'from_count': from_count,
-                'page_count': page_count
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getDomainwiseAgreementReport(countryId, clientId, businessGroupId, legalEntityId, domainId, contractFrom, contractTo, csv, from_count, page_count, callback) {
-        callerName = 'techno_report';
-        var request = [
-            'GetDomainwiseAgreementReportData', {
-                'country_id': countryId,
-                'client_id': clientId,
-                'business_group_id': businessGroupId,
-                'legal_entity_id': legalEntityId,
-                'domain_id': domainId,
-                'contract_from_optional': contractFrom,
-                'contract_to_optional': contractTo,
-                'csv': csv,
-                'from_count': from_count,
-                'page_count': page_count
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getOrganizationWiseUnitCount(legalEntityId, domainId, callback) {
-        callerName = 'techno_report';
-        var request = [
-            'GetOrganizationWiseUnitCount', {
-                'legal_entity_id': legalEntityId,
-                'domain_id': domainId
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    /* Messages */
-    function getMessages(from_count, page_count, callback) {
-        callerName = 'general';
-        var request = [
-            'GetMessages', {
-                'from_count': from_count,
-                'page_count': page_count
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    /* Messages */
-    function getStatutoryNotifications(from_count, page_count, callback) {
-        callerName = 'general';
-        var request = [
-            'GetStatutoryNotifications', {
-                'from_count': from_count,
-                'page_count': page_count
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function updateStatutoryNotificationStatus(notification_id, user_id, has_read, callback) {
-        callerName = 'general';
-        var request = [
-            'UpdateStatutoryNotificationStatus', {
-                'notification_id': notification_id,
-                'user_id': user_id,
-                'has_read': has_read
-            }
-        ];
-        apiRequest(callerName, request, callback);
-    }
-
-    function getAssignedStatutoriesList(callback) {
-        var request = [
-            'GetAssignedStatutoriesList',
-            {}
-        ];
-        apiRequest('techno_report', request, callback);
-    }
-
-    function getComplianceStatutoriesList(unitId, domainId, callback) {
-        var request = [
-            'GetComplianceStatutoriesList', {
-                'unit_id': unitId,
-                'd_id': domainId
-            }
-        ];
-        apiRequest("techno_report", request, callback);
-    }
-
-    function getAssignedStatutoriesForApprove(callback) {
-        callerName = 'domain_transaction';
-        var request = [
-            "GetAssignedStatutoriesForApprove",
             {}
         ];
         apiRequest(callerName, request, callback);

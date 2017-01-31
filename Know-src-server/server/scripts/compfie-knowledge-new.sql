@@ -845,12 +845,12 @@ CREATE TABLE `tbl_file_server` (
 DROP TABLE IF EXISTS `tbl_client_users`;
 CREATE TABLE `tbl_client_users` (
   `client_id` int(11) NOT NULL,
-  `legal_entity_ids` varchar(100) NOT NULL,
+  `legal_entity_ids` varchar(100) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `user_category_id` int(11) NOT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
-  `employee_name` varchar(50) NOT NULL,
+  `employee_name` varchar(50) DEFAULT NULL,
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,

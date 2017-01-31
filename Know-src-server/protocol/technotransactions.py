@@ -236,6 +236,29 @@ class ResendRegistraionSuccess(Response):
         return {
         }
 
+class getGroupAdminGroupsUnitsSuccess(Response):
+    def __init__(self, groupadmin_groupList, groupadmin_unitList):
+        self.groupadmin_groupList = groupadmin_groupList
+        self.groupadmin_unitList = groupadmin_unitList
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "groupadmin_groupList", "groupadmin_unitList"
+        ])
+        groupadmin_groupList = data.get("groupadmin_groupList")
+        groupadmin_unitList = data.get("groupadmin_unitList")
+        return getGroupAdminGroupsUnitsSuccess(
+            groupadmin_groupList, groupadmin_unitList
+        )
+
+    def to_inner_structure(self):
+        print "inside protocol"
+        return {
+            "groupadmin_groupList": self.groupadmin_groupList,
+            "groupadmin_unitList": self.groupadmin_unitList,
+        }
+
 class LegalEntityClosureReportDataSuccess(Response):
     def __init__(self, legalentity_closure):
         self.legalentity_closure = legalentity_closure
@@ -281,13 +304,16 @@ class SaveLegalEntityClosureFailure(Response):
         return {
         }
 
+
+
 def _init_Response_class_map():
     classes = [
         SaveGroupAdminRegnSuccess,
         ResendRegistraionSuccess,
         LegalEntityClosureReportDataSuccess,
         SaveLegalEntityClosureSuccess,
-        SaveLegalEntityClosureFailure
+        SaveLegalEntityClosureFailure,
+        getGroupAdminGroupsUnitsSuccess
     ]
     class_map = {}
     for c in classes:
