@@ -152,7 +152,7 @@ INSERT INTO tbl_form_category VALUES(47, 1, 0, 1, 1, 1, 0, 1, 1);
 -- tbl_user_login_details
 -- user_id, user_category_id, username, password, is_active --- p@$$word@123
 INSERT INTO tbl_user_login_details (user_id, user_category_id, email_id, username, password, is_active) VALUES(1, 1, "compfieadmin@compfie.com", "compfieadmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
-INSERT INTO tbl_user_login_details (user_id, user_category_id, email_id, username, password, is_active) VALUES(1, 1, "consoledmin@compfie.com", "consoledmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
+INSERT INTO tbl_user_login_details (user_id, user_category_id, email_id, username, password, is_active) VALUES(2, 1, "consoledmin@compfie.com", "consoleadmin", "7ecfd14ba1b0d6800688a0a317a5a331", 1);
 
 
 -- tbl_session_types

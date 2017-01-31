@@ -53,7 +53,7 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
                 NEW.client_id,
                 NEW.client_id,
                 'total_view_licence',
-                NEW.contract_from,
+                NEW.total_view_licence,
                 'tbl_client_groups');
 
 
@@ -317,7 +317,6 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
  FOR EACH ROW BEGIN
    SET @action = 1;
 
-
    IF OLD.legal_entity_name <> NEW.legal_entity_name THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
@@ -331,6 +330,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'legal_entity_name',
                 NEW.legal_entity_name,
                 'tbl_legal_entities');
+    ENd IF;
 
     IF OLD.business_group_id <> NEW.business_group_id THEN
    INSERT INTO tbl_audit_log(action,
@@ -345,6 +345,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'business_group_id',
                 NEW.business_group_id,
                 'tbl_legal_entities');
+    END IF;
 
     IF OLD.contract_from <> NEW.contract_from THEN
    INSERT INTO tbl_audit_log(action,
@@ -359,6 +360,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'contract_from',
                 NEW.contract_from,
                 'tbl_legal_entities');
+    ENd IF;
 
     IF OLD.contract_to <> NEW.contract_to THEN
    INSERT INTO tbl_audit_log(action,
@@ -373,6 +375,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'contract_to',
                 NEW.contract_to,
                 'tbl_legal_entities');
+    END IF;
 
     IF OLD.logo <> NEW.logo THEN
    INSERT INTO tbl_audit_log(action,
@@ -387,6 +390,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'logo',
                 NEW.logo,
                 'tbl_legal_entities');
+    END IF;
 
     IF OLD.logo_size <> NEW.logo_size THEN
    INSERT INTO tbl_audit_log(action,
@@ -401,6 +405,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'logo_size',
                 NEW.logo_size,
                 'tbl_legal_entities');
+    END IF;
 
     IF OLD.file_space_limit <> NEW.file_space_limit THEN
    INSERT INTO tbl_audit_log(action,
@@ -415,6 +420,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'file_space_limit',
                 NEW.file_space_limit,
                 'tbl_legal_entities');
+    END IF;
 
     IF OLD.total_licence <> NEW.total_licence THEN
         INSERT INTO tbl_audit_log(action,
@@ -429,6 +435,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'total_licence',
                 NEW.total_licence,
                 'tbl_legal_entities');
+    END IF;
 
     IF OLD.total_licence <> NEW.total_licence THEN
         INSERT INTO tbl_audit_log(action,
@@ -443,11 +450,11 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                 'is_closed',
                 NEW.total_licence,
                 'tbl_legal_entities');
+    END If;
 
 
     UPDATE tbl_client_replication_status set is_new_data = 1
     WHERE client_id = NEW.client_id;
-   END IF;
 
 END
 //
@@ -878,608 +885,608 @@ DELIMITER ;
 --
 -- Triggers `tbl_compliances`
 --
-DROP TRIGGER IF EXISTS `after_tbl_compliances_insert`;
-DELIMITER //
-CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
- FOR EACH ROW BEGIN
-   SET @action = 0;
+-- DROP TRIGGER IF EXISTS `after_tbl_compliances_insert`;
+-- DELIMITER //
+-- CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
+--  FOR EACH ROW BEGIN
+--    SET @action = 0;
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-  SELECT @action, 0, NEW.compliance_id,
-  'statutory_mapping', statutory_mapping,
-  'tbl_compliances' FROM tbl_statutory_mappings
-  WHERE statutory_mapping_id=NEW.statutory_mapping_id;
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--   SELECT @action, 0, NEW.compliance_id,
+--   'statutory_mapping', statutory_mapping,
+--   'tbl_compliances' FROM tbl_statutory_mappings
+--   WHERE statutory_mapping_id=NEW.statutory_mapping_id;
 
-    INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'country_id',
-                NEW.country_id,
-                'tbl_compliances');
+--     INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'country_id',
+--                 NEW.country_id,
+--                 'tbl_compliances');
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'domain_id',
-                NEW.domain_id,
-                'tbl_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'domain_id',
+--                 NEW.domain_id,
+--                 'tbl_compliances');
 
-    INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'statutory_provision',
-                NEW.statutory_provision,
-                'tbl_compliances');
-
-
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'compliance_task',
-                NEW.compliance_task,
-                'tbl_compliances');
-
-    INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'document_name',
-                NEW.document_name,
-                'tbl_compliances');
-
-    INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'compliance_description',
-                NEW.compliance_description,
-                'tbl_compliances');
-
-    INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'penal_consequences',
-                NEW.penal_consequences,
-                'tbl_compliances');
-
-    INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'reference_link',
-                NEW.reference_link,
-                'tbl_compliances');
-
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'frequency_id',
-                NEW.frequency_id,
-                'tbl_compliances');
-
-    INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'statutory_dates',
-                NEW.statutory_dates,
-                'tbl_compliances');
-
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'repeats_type_id',
-                NEW.repeats_type_id,
-                'tbl_compliances');
+--     INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'statutory_provision',
+--                 NEW.statutory_provision,
+--                 'tbl_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'duration_type_id',
-                NEW.duration_type_id,
-                'tbl_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'compliance_task',
+--                 NEW.compliance_task,
+--                 'tbl_compliances');
+
+--     INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'document_name',
+--                 NEW.document_name,
+--                 'tbl_compliances');
+
+--     INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'compliance_description',
+--                 NEW.compliance_description,
+--                 'tbl_compliances');
+
+--     INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'penal_consequences',
+--                 NEW.penal_consequences,
+--                 'tbl_compliances');
+
+--     INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'reference_link',
+--                 NEW.reference_link,
+--                 'tbl_compliances');
+
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'frequency_id',
+--                 NEW.frequency_id,
+--                 'tbl_compliances');
+
+--     INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'statutory_dates',
+--                 NEW.statutory_dates,
+--                 'tbl_compliances');
+
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'repeats_type_id',
+--                 NEW.repeats_type_id,
+--                 'tbl_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'repeats_every',
-                NEW.repeats_every,
-                'tbl_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'duration_type_id',
+--                 NEW.duration_type_id,
+--                 'tbl_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'duration',
-                NEW.duration,
-                'tbl_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'repeats_every',
+--                 NEW.repeats_every,
+--                 'tbl_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'statutory_nature',
-                NEW.statutory_nature,
-                'tbl_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'duration',
+--                 NEW.duration,
+--                 'tbl_compliances');
 
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'is_active',
-                NEW.is_active,
-                'tbl_compliances');
-
-    INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'status_changed_on',
-                NEW.status_changed_on,
-                'tbl_compliances');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'statutory_nature',
+--                 NEW.statutory_nature,
+--                 'tbl_compliances');
 
 
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'is_active',
+--                 NEW.is_active,
+--                 'tbl_compliances');
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'format_file',
-                NEW.format_file,
-                'tbl_compliances');
-
-
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'format_file_size',
-                NEW.format_file_size,
-                'tbl_compliances');
-
-    UPDATE tbl_client_replication_status set is_new_data = 1 where
-    client_id in (select client_id from tbl_client_domains where domain_id = NEW.domain_id);
-END
-//
-DELIMITER ;
-
-DROP TRIGGER IF EXISTS `after_tbl_compliances_update`;
-DELIMITER //
-CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
- FOR EACH ROW BEGIN
-   SET @action = 1;
-   SET @issave = 0;
-
-    IF OLD.country_id <> NEW.country_id THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'country_id',
-                NEW.country_id,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.domain_id <> NEW.domain_id THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'domain_id',
-                NEW.domain_id,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.statutory_provision <> NEW.statutory_provision THEN
-       set @issave = 1;
-       INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'statutory_provision',
-                NEW.statutory_provision,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.compliance_task <> NEW.compliance_task THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'compliance_task',
-                NEW.compliance_task,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.document_name <> NEW.document_name THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'document_name',
-                NEW.document_name,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.compliance_description <> NEW.compliance_description THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'compliance_description',
-                NEW.compliance_description,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.penal_consequences <> NEW.penal_consequences THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'penal_consequences',
-                NEW.penal_consequences,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.reference_link <> NEW.reference_link THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'reference_link',
-                NEW.reference_link,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.frequency_id <> NEW.frequency_id THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'frequency_id',
-                NEW.frequency_id,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.statutory_dates <> NEW.statutory_dates THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'statutory_dates',
-                NEW.statutory_dates,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.repeats_type_id <> NEW.repeats_type_id THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'repeats_type_id',
-                NEW.repeats_type_id,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.duration_type_id <> NEW.duration_type_id THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'duration_type_id',
-                NEW.duration_type_id,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.repeats_every <> NEW.repeats_every THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'repeats_every',
-                NEW.repeats_every,
-                'tbl_compliances');
-    END IF;
-
-   IF OLD.duration <> NEW.duration THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'duration',
-                NEW.duration,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.statutory_nature <> NEW.statutory_nature THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'statutory_nature',
-                NEW.statutory_nature,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.is_active <> NEW.is_active THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'is_active',
-                NEW.is_active,
-                'tbl_compliances');
-    END IF;
-
-    IF OLD.status_changed_on <> NEW.status_changed_on THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'status_changed_on',
-                NEW.status_changed_on,
-                'tbl_compliances');
-    END IF;
-
-
-    IF OLD.format_file <> NEW.format_file THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'format_file',
-                NEW.format_file,
-                'tbl_compliances');
-   END IF;
-
-    IF OLD.format_file_size <> NEW.format_file_size THEN
-        set @issave = 1;
-        INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                0,
-                NEW.compliance_id,
-                'format_file_size',
-                NEW.format_file_size,
-                'tbl_compliances');
-   END IF;
-
-
-   IF @issave = 1 THEN
-    UPDATE tbl_client_replication_status set is_new_data = 1 where
-    client_id in (select client_id from tbl_client_domains where domain_id = OLD.domain_id);
-   END IF ;
+--     INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'status_changed_on',
+--                 NEW.status_changed_on,
+--                 'tbl_compliances');
 
 
 
-END
-//
-DELIMITER ;
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'format_file',
+--                 NEW.format_file,
+--                 'tbl_compliances');
+
+
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'format_file_size',
+--                 NEW.format_file_size,
+--                 'tbl_compliances');
+
+--     UPDATE tbl_client_replication_status set is_new_data = 1 where
+--     client_id in (select client_id from tbl_client_domains where domain_id = NEW.domain_id);
+-- END
+-- //
+-- DELIMITER ;
+
+-- DROP TRIGGER IF EXISTS `after_tbl_compliances_update`;
+-- DELIMITER //
+-- CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
+--  FOR EACH ROW BEGIN
+--    SET @action = 1;
+--    SET @issave = 0;
+
+--     IF OLD.country_id <> NEW.country_id THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'country_id',
+--                 NEW.country_id,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.domain_id <> NEW.domain_id THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'domain_id',
+--                 NEW.domain_id,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.statutory_provision <> NEW.statutory_provision THEN
+--        set @issave = 1;
+--        INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'statutory_provision',
+--                 NEW.statutory_provision,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.compliance_task <> NEW.compliance_task THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'compliance_task',
+--                 NEW.compliance_task,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.document_name <> NEW.document_name THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'document_name',
+--                 NEW.document_name,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.compliance_description <> NEW.compliance_description THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'compliance_description',
+--                 NEW.compliance_description,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.penal_consequences <> NEW.penal_consequences THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'penal_consequences',
+--                 NEW.penal_consequences,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.reference_link <> NEW.reference_link THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'reference_link',
+--                 NEW.reference_link,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.frequency_id <> NEW.frequency_id THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'frequency_id',
+--                 NEW.frequency_id,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.statutory_dates <> NEW.statutory_dates THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'statutory_dates',
+--                 NEW.statutory_dates,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.repeats_type_id <> NEW.repeats_type_id THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'repeats_type_id',
+--                 NEW.repeats_type_id,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.duration_type_id <> NEW.duration_type_id THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'duration_type_id',
+--                 NEW.duration_type_id,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.repeats_every <> NEW.repeats_every THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'repeats_every',
+--                 NEW.repeats_every,
+--                 'tbl_compliances');
+--     END IF;
+
+--    IF OLD.duration <> NEW.duration THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'duration',
+--                 NEW.duration,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.statutory_nature <> NEW.statutory_nature THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'statutory_nature',
+--                 NEW.statutory_nature,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.is_active <> NEW.is_active THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'is_active',
+--                 NEW.is_active,
+--                 'tbl_compliances');
+--     END IF;
+
+--     IF OLD.status_changed_on <> NEW.status_changed_on THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'status_changed_on',
+--                 NEW.status_changed_on,
+--                 'tbl_compliances');
+--     END IF;
+
+
+--     IF OLD.format_file <> NEW.format_file THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'format_file',
+--                 NEW.format_file,
+--                 'tbl_compliances');
+--    END IF;
+
+--     IF OLD.format_file_size <> NEW.format_file_size THEN
+--         set @issave = 1;
+--         INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 0,
+--                 NEW.compliance_id,
+--                 'format_file_size',
+--                 NEW.format_file_size,
+--                 'tbl_compliances');
+--    END IF;
+
+
+--    IF @issave = 1 THEN
+--     UPDATE tbl_client_replication_status set is_new_data = 1 where
+--     client_id in (select client_id from tbl_client_domains where domain_id = OLD.domain_id);
+--    END IF ;
+
+
+
+-- END
+-- //
+-- DELIMITER ;
 
 
 
@@ -1585,8 +1592,8 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
             VALUES (@action,
                     NEW.client_id,
                     NEW.client_compliance_id,
-                    'complaince_applicable_status',
-                    NEW.complaince_applicable_status,
+                    'compliance_applicable_status',
+                    NEW.compliance_applicable_status,
                     'tbl_client_compliances');
 
         INSERT INTO tbl_audit_log(action,
@@ -1770,7 +1777,7 @@ CREATE TRIGGER `after_tbl_domains_update` AFTER UPDATE ON `tbl_domains`
     client_id in (
         select distinct client_id from tbl_legal_entities as t
         inner join tbl_legal_entity_domains as t2
-        on t.legal_entity_id = t2.legal_entity_id where domain_id = new.domain_name;
+        on t.legal_entity_id = t2.legal_entity_id where domain_id = new.domain_name
     );
     END IF;
 END
@@ -1792,6 +1799,7 @@ CREATE TRIGGER `after_tbl_statutories_update` AFTER UPDATE ON `tbl_statutories`
         set @name = new.statutory_name;
     ELSE
         set @name = concat(new.parent_names, ' >> ', new.statutory_name);
+    ENd IF;
 
     -- updating statutory_name in client_compliance table
     IF OLD.statutory_name <> NEW.statutory_name THEN
@@ -1813,6 +1821,6 @@ CREATE TRIGGER `after_tbl_statutories_update` AFTER UPDATE ON `tbl_statutories`
 
     END IF;
 
-END
-//
+END //
+
 DELIMITER ;
