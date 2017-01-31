@@ -410,7 +410,7 @@ class API(object):
         return controller.process_client_master_requests(request, db, session_user, client_id)
 
     @api_request(clienttransactions.RequestFormat)
-    def handle_client_transaction(self, request, db, session_user, client_id):
+    def handle_client_transaction(self, request, db, session_user, client_id, le_id):
         return controller.process_client_transaction_requests(request, db, session_user, client_id)
 
     @api_request(clientreport.RequestFormat)
@@ -418,23 +418,23 @@ class API(object):
         return controller.process_client_report_requests(request, db, session_user, client_id, le_id)
 
     @api_request(dashboard.RequestFormat)
-    def handle_client_dashboard(self, request, db, session_user, client_id):
+    def handle_client_dashboard(self, request, db, session_user, client_id, le_id):
         return controller.process_client_dashboard_requests(request, db)
 
     @api_request(clientadminsettings.RequestFormat)
-    def handle_client_admin_settings(self, request, db, session_user, client_id):
+    def handle_client_admin_settings(self, request, db, session_user, client_id, le_id):
         return controller.process_client_admin_settings_requests(request, db)
 
     @api_request(general.RequestFormat)
-    def handle_general(self, request, db, session_user, client_id):
+    def handle_general(self, request, db, session_user, client_id, le_id):
         return controller.process_general_request(request, db)
 
     @api_request(clientuser.RequestFormat)
-    def handle_client_user(self, request, db, session_user, client_id):
+    def handle_client_user(self, request, db, session_user, client_id, le_id):
         return controller.process_client_user_request(request, db)
 
     @api_request(clientmobile.RequestFormat)
-    def handle_mobile_request(self, request, db, session_user, client_id):
+    def handle_mobile_request(self, request, db, session_user, client_id, le_id):
         return mobilecontroller.process_client_mobile_request(request, db)
 
 
