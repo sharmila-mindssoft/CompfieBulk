@@ -427,21 +427,15 @@ class ClientGroupDBCreate(ClientDBBase):
     def _save_master_countries(self):
         args = [self._client_id, None]
         m_info = self._db.call_proc_with_multiresult_set("sp_get_le_master_info", args, 4)
-        print m_info
-        print "-----------"
         country = m_info[0]
         domain = m_info[1]
         domain_country = m_info[2]
         org_data = m_info[3]
         db_cur = self.db_con.cursor()
         self.save_country(db_cur, country)
-        print country
         self.save_domain(db_cur, domain)
-        print domain
         self.save_domain_country(db_cur, domain_country)
-        print domain_country
         self.save_organisation(db_cur, org_data)
-        print org_data
         self.db_con.commit()
 
 class ClientLEDBCreate(ClientDBBase):
@@ -506,20 +500,13 @@ class ClientLEDBCreate(ClientDBBase):
     def _save_master_countries(self):
         args = [self._client_id, self._legal_entity_id]
         m_info = self._db.call_proc_with_multiresult_set("sp_get_le_master_info", args, 4)
-        print m_info
-        print "-----------"
         country = m_info[0]
         domain = m_info[1]
         domain_country = m_info[2]
         org_data = m_info[3]
         db_cur = self.db_con.cursor()
         self.save_country(db_cur, country)
-        print country
         self.save_domain(db_cur, domain)
-
-        print domain
         self.save_domain_country(db_cur, domain_country)
-        print domain_country
         self.save_organisation(db_cur, org_data)
-        print org_data
         self.db_con.commit()
