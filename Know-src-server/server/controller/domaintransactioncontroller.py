@@ -73,7 +73,11 @@ def process_get_statutory_units(db, request, user_id):
 
 def process_get_compliances_toassign(db, request, user_id):
     data, total = get_compliances_to_assign(db, request, user_id)
-    return domaintransactionprotocol.GetAssignedStatutoryWizardTwoDataSuccess(data, total)
+    unit_ids = request.unit_ids
+    if len(unit_ids) > 1 :
+        return domaintransactionprotocol.GetAssignedStatutoryWizardTwoMultipleDataSuccess(data, total)
+    else :
+        return domaintransactionprotocol.GetAssignedStatutoryWizardTwoDataSuccess(data, total)
 
 
 def process_save_assign_satutory(db, request, user_id):

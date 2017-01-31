@@ -515,6 +515,94 @@ class AssignStatutoryCompliance(object):
             "u_id": self.unit_id
         }
 
+class AssignStatutoryComplianceMultiple(object):
+    def __init__(
+        self, level_one_id, level_one_name, mapping_text,
+        statutory_provision, compliance_id,
+        document_name, compliance_name, description, organizations,
+        level_one_status, level_one_remarks, applicable_units
+
+    ):
+        self.level_one_id = level_one_id
+        self.level_one_name = level_one_name
+        self.mapping_text = mapping_text
+        self.statutory_provision = statutory_provision
+        self.compliance_id = compliance_id
+        self.document_name = document_name
+        self.compliance_name = compliance_name
+        self.description = description
+        self.organizations = organizations
+
+        self.level_one_status = level_one_status
+        self.level_one_remarks = level_one_remarks
+        self.applicable_units = applicable_units
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "level_1_s_id", "level_1_s_name", "map_text" "s_provision", "comp_id",
+            "doc_name", "comp_name", "descrip", "org_names",
+            "a_status", "remarks", "applicable_units"
+        ])
+        level_one_id = data.get("level_1_s_id")
+        level_one_name = data.get("level_1_s_name")
+
+        map_text = data.get("map_text")
+        statutory_provision = data.get("s_provision")
+        compliance_id = data.get("comp_id")
+        document_name = data.get("doc_name")
+        compliance_name = data.get("comp_name")
+        description = data.get("descrip")
+        organizations = data.get("org_names")
+
+        level_one_status = data.get("a_status")
+        level_one_remarks = data.get("remarks")
+        applicable_units = data.get("applicable_units")
+
+        return AssignStatutoryComplianceMultiple(
+            level_one_id, level_one_name, map_text, statutory_provision, compliance_id,
+            document_name, compliance_name, description, organizations,
+            level_one_status, level_one_remarks, applicable_units
+        )
+
+    def to_structure(self):
+        return {
+            "level_1_s_id": self.level_one_id,
+            "level_1_s_name": self.level_one_name,
+            "map_text": self.mapping_text,
+            "s_provision": self.statutory_provision,
+            "comp_id": self.compliance_id,
+            "doc_name": self.document_name,
+            "comp_name": self.compliance_name,
+            "descrip": self.description,
+            "org_names": self.organizations,
+
+            "a_status": self.level_one_status,
+            "remarks": self.level_one_remarks,
+            "applicable_units": self.applicable_units
+        }
+
+class ApplicableUnit(object):
+    def __init__(self, unit_id, compliance_status, is_saved):
+        self.unit_id = unit_id
+        self.compliance_status = compliance_status
+        self.is_saved = is_saved
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["u_id", "comp_status", "s_s"])
+        return ApplicableUnit(
+            data.get("u_id"), data.get("comp_status"), data.get("s_s")
+        )
+
+    def to_structure(self):
+        return {
+            "u_id": self.unit_id,
+            "comp_status": self.compliance_status,
+            "s_s": self.is_saved
+        }
+
+
 class GetAssignedStatutoryWizardTwoDataSuccess(Response):
     def __init__(self, statutories_for_assigning, total):
         self.statutories_for_assigning = statutories_for_assigning
@@ -534,6 +622,29 @@ class GetAssignedStatutoryWizardTwoDataSuccess(Response):
     def to_inner_structure(self):
         return {
             "statutories_for_assigning": self.statutories_for_assigning,
+            "total_records": self.total
+        }
+
+
+class GetAssignedStatutoryWizardTwoMultipleDataSuccess(Response):
+    def __init__(self, statutories_for_assigning, total):
+        self.statutories_for_assigning = statutories_for_assigning
+        self.total = total
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "statutories_for_multiple", "total_records"
+        ])
+        statutories_for_assigning = data.get("statutories_for_multiple")
+        total = data.get("total")
+        return GetAssignedStatutoryWizardTwoMultipleDataSuccess(
+            statutories_for_assigning, total
+        )
+
+    def to_inner_structure(self):
+        return {
+            "statutories_for_multiple": self.statutories_for_assigning,
             "total_records": self.total
         }
 
@@ -568,6 +679,7 @@ def _init_Response_class_map():
         GetAssignedStatutoriesSuccess, GetAssignedStatutoriesByIdSuccess,
         GetAssignedStatutoryWizardOneDataSuccess,
         GetAssignedStatutoryWizardTwoDataSuccess,
+        GetAssignedStatutoryWizardTwoMultipleDataSuccess,
         SaveAssignedStatutorySuccess,
         GetAssignedStatutoryWizardOneUnitsSuccess,
         ApproveAssignedStatutorySuccess

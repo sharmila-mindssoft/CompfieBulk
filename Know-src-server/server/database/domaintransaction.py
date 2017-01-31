@@ -145,7 +145,36 @@ def get_compliances_to_assign(db, request, user_id):
         totals.append(total)
 
     results.sort(key=lambda x : (x.level_one_name, x.compliance_id))
-    return results, max(totals)
+
+    if len(unit_ids) > 1 :
+        final = []
+        app_units = []
+        comp_id = None
+        for r in results :
+
+            if comp_id == r.compliance_id or comp_id is None :
+                app_units.append(domaintransactionprotocol.ApplicableUnit(
+                        r.unit_id, r.compliance_status, r.is_saved
+                    ))
+            else :
+                if r.compliance_id != comp_id and comp_id is not None:
+                    final.append(domaintransactionprotocol.AssignStatutoryComplianceMultiple(
+                        r.level_one_id, r.level_one_name, r.mapping_text, r.statutory_provision,
+                        r.compliance_id, r.document_name, r.compliance_name, r.description, r.organizations,
+                        r.level_one_status, r.level_one_remarks, app_units
+                    ))
+                    app_units = []
+
+                    app_units.append(domaintransactionprotocol.ApplicableUnit(
+                        r.unit_id, r.compliance_status, r.is_saved
+                    ))
+
+            comp_id = r.compliance_id
+
+    else :
+        final = results
+
+    return final, max(totals)
 
 def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, show_count):
     result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, from_count, show_count], 5)
