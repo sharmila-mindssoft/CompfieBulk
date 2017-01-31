@@ -155,9 +155,12 @@ api_params = {
     "le_infos": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
     "div_infos": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
     "units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
-    
+
     "assign_unit_infos": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
-    "client_admin": make_int_field()
+    "client_admin": make_int_field(),
+
+    "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
+    "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
 }

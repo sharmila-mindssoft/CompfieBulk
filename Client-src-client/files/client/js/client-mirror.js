@@ -1911,6 +1911,19 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {}
         });
     }
+
+    function getReviewSettingsFilters(le_id, callback) {
+        var request = [
+            'GetReviewSettingsFilters',
+            {
+                "le_id": le_id
+            }
+        ];
+        callerName = 'client_transaction';        
+        clientApiRequest(callerName, request, callback);
+    }
+
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2039,7 +2052,8 @@ function initClientMirror() {
         uploadFormatFile: uploadFormatFile,
         getUnitClosureData: getUnitClosureData,
         getUnitClosureUnitList: getUnitClosureUnitList,
-        saveUnitClosureData: saveUnitClosureData
+        saveUnitClosureData: saveUnitClosureData,
+        getReviewSettingsFilters: getReviewSettingsFilters,
     };
 }
 var client_mirror = initClientMirror();

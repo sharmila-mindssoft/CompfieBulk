@@ -410,7 +410,7 @@ class API(object):
         return controller.process_client_master_requests(request, db, session_user, client_id)
 
     @api_request(clienttransactions.RequestFormat)
-    def handle_client_transaction(self, request, db, session_user, client_id):
+    def handle_client_transaction(self, request, db, session_user, client_id, le_id):
         return controller.process_client_transaction_requests(request, db, session_user, client_id)
 
     @api_request(clientreport.RequestFormat)

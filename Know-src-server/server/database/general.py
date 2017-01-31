@@ -152,15 +152,20 @@ def return_companies(data):
             d["server_ip"],
             int(d["server_port"])
         )
+        is_group = bool(d["is_group"])
+        if is_group is True:
+            company_id = d["client_id"]
+        else:
+            company_id = d["legal_entity_id"]
         results.append(Company(
-            int(d["client_id"]),
+            int(company_id),
             d["short_name"],
             d["database_username"],
             d["database_password"],
             d["database_name"],
             database_ip,
             company_server_ip,
-            bool(d["is_group"])
+            is_group
         ))
     return results
 
