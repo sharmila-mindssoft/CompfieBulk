@@ -416,4 +416,5 @@ $(document).ready(function() {
     PageControls();
     // To store values in object & search list element 
     REPORT.loadSearch();
+
 });

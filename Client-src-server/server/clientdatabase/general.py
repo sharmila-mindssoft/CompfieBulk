@@ -150,20 +150,16 @@ def get_domains_for_user(db, user_id):
     if user_id != admin_id:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
         "t2.is_active FROM tbl_user_domains AS t1 " + \
-        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  " + \
-        "WHERE t1.legal_entity_id = %s "
-        print "-------------------->" 
-        print query
-        rows = db.select_all(query, [user_id])
+        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+        rows = db.select_all(query)
     else:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
         "t2.is_active FROM tbl_user_domains AS t1 " + \
-        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  "
-        print "-------------------->" 
-        print query
-        rows = db.select_all(query)
-    
+        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+        "where t1.user_id = %s "
+        rows = db.select_all(query,[user_id])
     return return_domains(rows)
+
 
 def return_domains(data):
     results = []
@@ -569,7 +565,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "t1.business_group_id, t1.country_id, " + \
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
-            "WHERE contract_to > now() and is_closed = 0"
+            "WHERE contract_to >= CURDATE() and is_closed = 0"
         rows = db.select_all(q)
         #print "------------------ Admin ---------------"
     else :
@@ -579,10 +575,9 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "from tbl_legal_entities as t1 " + \
             "inner join tbl_user_domains as t2 on " + \
             "t1.legal_entity_id = t1.legal_entity_id " + \
-            "where contract_to > now() and is_closed = 0 and t2.user_id= %s"
+            "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
         rows = db.select_all(q, [user_id])
         #print "------------------ User ---------------"
-
     le_list = []
     for r in rows :
         le_list.append(clientcore.LegalEntityInfo(

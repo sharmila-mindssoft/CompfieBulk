@@ -512,7 +512,7 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
     
     domain_list = get_domains_for_user(db, session_user)
     unit_list = get_units_for_user(db, session_user)
-    #acts = get_acts_for_user(db, session_user)
+    acts = get_acts_for_user(db, session_user)
     #level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
     #compliances_list = get_client_compliances(db, session_user)
     #users_list = get_client_users(db)
