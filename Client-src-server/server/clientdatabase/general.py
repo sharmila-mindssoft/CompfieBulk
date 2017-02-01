@@ -145,6 +145,7 @@ def return_countries(data):
 #     columns = ["domain_id", "domain_name", "is_active"]
 #     result = convert_to_dict(rows, columns)
 #     return return_domains(result)
+
 def get_domains_for_user(db, user_id):
     admin_id = get_admin_id(db)
     if user_id != admin_id:
@@ -362,25 +363,51 @@ def return_units(units):
             ))
         return results
 
+# get_acts_for_user(db, user_id):
+#     admin_id = get_admin_id(db)
+#     if user_id != admin_id:
+#         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+#         "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+#         "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
+#         "FROM tbl_user_units AS t1 " + \
+#         "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
+#         "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
+#         rows = db.select_all(query, [user_id])
+#     else:
+#         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+#         "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+#         "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
+#         "FROM tbl_user_units AS t1 " + \
+#         "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id " +\
+#         "WHERE t2.is_closed = 0 ORDER BY unit_name"
+#         rows = db.select_all(query)
+#     return return_units(rows)
+
+
 def get_acts_for_user(db, user_id):
     admin_id = get_admin_id(db)
     if user_id != admin_id:
-        query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
-        "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-        "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
-        "FROM tbl_user_units AS t1 " + \
-        "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
-        "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
-        rows = db.select_all(query, [user_id])
-    else:
-        query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
-        "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-        "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
-        "FROM tbl_user_units AS t1 " + \
-        "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id " +\
-        "WHERE t2.is_closed = 0 ORDER BY unit_name"
+        query = "SELECT distinct t1.domain_id, SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1) as act " + \
+        "FROM tbl_user_domains AS t1 " + \
+        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+        "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id "
         rows = db.select_all(query)
-    return return_units(rows)
+    else:
+        query = "SELECT distinct t1.domain_id, SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1) as act " + \
+        "FROM tbl_user_domains AS t1 " + \
+        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+        "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id " + \
+        "where t1.user_id = %s "
+        rows = db.select_all(query, [user_id])
+    return return_acts(rows)
+
+def return_acts(acts):
+        results = []
+        for act in acts:
+            results.append(clientcore.ClientAct(
+                act["domain_id"], act["act"].strip()
+            ))
+        return results
 
 def get_units_for_user_assign(db, unit_ids):
     columns = [
@@ -419,16 +446,23 @@ def return_units_assign(units):
             ))
         return results
 
-def get_client_users(db, unit_ids=None):
-    columns = "user_id, employee_name, employee_code, is_active"
-    condition = "1"
-    conditon_val = None
-    if unit_ids is not None:
-        condition += " and seating_unit_id in (%s)"
-        conditon_val = [unit_ids]
-    rows = db.get_data(
-        tblUsers, columns, condition, conditon_val
-    )
+# def get_client_users(db, unit_ids=None):
+#     columns = "user_id, employee_name, employee_code, is_active"
+#     condition = "1"
+#     conditon_val = None
+#     if unit_ids is not None:
+#         condition += " and seating_unit_id in (%s)"
+#         conditon_val = [unit_ids]
+#     rows = db.get_data(
+#         tblUsers, columns, condition, conditon_val
+#     )
+#     return return_client_users(rows)
+
+def get_client_users(db):
+    query = "SELECT distinct t1.user_id, t1.employee_name, " + \
+        "t1.employee_code, t1.is_active from tbl_users as t1 " + \
+        "inner join tbl_user_domains as t2 ON t2.user_id = t1.user_id " 
+    rows = db.select_all(query)
     return return_client_users(rows)
 
 
@@ -454,8 +488,8 @@ def get_assignees(db, unit_ids=None):
 def return_client_users(users):
     results = []
     for user in users:
-        results.append(clientreport.User(
-            user["user_id"], user["employee_code"], user["employee_name"]
+        results.append(clientcore.LegalEntityUser(
+            user["user_id"], user["employee_code"], user["employee_name"], bool(user["is_active"])
         ))
     return results
 
@@ -797,23 +831,49 @@ def return_service_providers(service_providers):
     return results
 
 
+# def get_client_compliances(db, user_id):
+#     query = " SELECT compliance_id, document_name ,compliance_task " + \
+#             " FROM tbl_compliances"
+#     rows = db.select_all(query)
+#     columns = ["compliance_id", "document_name", "compliance_name"]
+#     result = convert_to_dict(rows, columns)
+#     return return_client_compliances(result)
+
+
+# def return_client_compliances(data):
+#     results = []
+#     for d in data:
+#         compliance_name = d["compliance_name"]
+#         if d["document_name"] not in ["None", None, ""]:
+#             compliance_name = "%s - %s" % (d["document_name"], compliance_name)
+#         results.append(clientcore.ComplianceFilter(
+#             d["compliance_id"], compliance_name
+#         ))
+#     return results
+
 def get_client_compliances(db, user_id):
-    query = " SELECT compliance_id, document_name ,compliance_task " + \
-            " FROM tbl_compliances"
-    rows = db.select_all(query)
-    columns = ["compliance_id", "document_name", "compliance_name"]
-    result = convert_to_dict(rows, columns)
-    return return_client_compliances(result)
+    admin_id = get_admin_id(db)
+    if user_id != admin_id:
+        query = "SELECT distinct t1.domain_id, compliance_task " + \
+        "FROM tbl_user_domains AS t1 " + \
+        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+        "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id "
+        rows = db.select_all(query)
+    else:
+        query = "SELECT distinct t1.domain_id, compliance_task " + \
+        "FROM tbl_user_domains AS t1 " + \
+        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+        "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id " + \
+        "where t1.user_id = %s "
+        rows = db.select_all(query, [user_id])
+    return return_client_compliances(rows)
 
 
 def return_client_compliances(data):
     results = []
     for d in data:
-        compliance_name = d["compliance_name"]
-        if d["document_name"] not in ["None", None, ""]:
-            compliance_name = "%s - %s" % (d["document_name"], compliance_name)
         results.append(clientcore.ComplianceFilter(
-            d["compliance_id"], compliance_name
+            d["domain_id"], d["compliance_task"]
         ))
     return results
 
