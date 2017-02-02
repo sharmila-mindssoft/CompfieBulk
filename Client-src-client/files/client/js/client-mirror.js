@@ -1912,7 +1912,7 @@ function initClientMirror() {
         });
     }
 
-    /* Legal entity wise report */
+    /* Legal entity wise report - updated*/
     function getLegalEntityWiseReportFilters(country_id, le_id, callback) {
         var request = [
             'GetLegalEntityWiseReportFilters',
