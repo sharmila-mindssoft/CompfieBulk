@@ -1256,7 +1256,22 @@ def get_unit_closure_legal_entities(db, user_id):
 ############################################################################
 def get_unit_closure_units_list(db, request):
     le_id = request.legal_entity_id
-    result = db.call_proc("sp_unit_closure_units_list_by_le_id", (le_id,))
+
+    query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.postal_code, " + \
+            "(select business_group_name from tbl_business_groups where " + \
+            "business_group_id = t1.business_group_id) as business_group_name, " + \
+            "(select legal_entity_name from tbl_legal_entity where " + \
+            "legal_entity_id = t1.legal_entity_id) as legal_entity_name, " + \
+            "(select division_name from tbl_divisions where " + \
+            "division_id = t1.division_id) as division_name, " + \
+            "(select category_name from tbl_categories where " + \
+            "category_id = t1.category_id) as category_name, " + \
+            "t1.is_closed as is_active, t1.closed_on, " + \
+            "(case when t1.closed_on is not null then " + \
+            "DATEDIFF(NOW(), t1.closed_on) else 0 end) as validity_days, " + \
+            "t1.legal_entity_id from tbl_units as t1 where t1.legal_entity_id = %s " + \
+            "order by t1.unit_name; "
+    result = db.execute(query, [le_id, ])
     units_list = []
     for row in result:
         units_list.append(clientcore.UnitClosure_Units(
@@ -1274,7 +1289,8 @@ def is_invalid_id(db, check_mode, val):
 
     if check_mode == "unit_id":
         params = [val, ]
-        rows = db.call_proc("sp_tbl_units_check_unitId", params)
+        q = "select count(*) as unit_id_cnt from tbl_units where unit_id = %s "
+        rows = db.execute(q, params)
         for d in rows:
             if(int(d["unit_id_cnt"]) > 0):
                 return True
@@ -1285,15 +1301,17 @@ def is_invalid_id(db, check_mode, val):
 def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode):
     current_time_stamp = get_date_time()
     print action_mode
+    columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
+    values = []
     if action_mode == "close":
         print "save"
-        result = db.call_update_proc("sp_unit_closure_save", (
-            user_id, unit_id, 1, current_time_stamp, remarks
-        ))
+        values = [1, current_time_stamp, user_id, remarks]
+        condition_val = [unit_id, ]
+        result = db.update(tblUnits, columns, values, condition_val)
     elif action_mode == "reactive":
-        result = db.call_update_proc("sp_unit_closure_save", (
-            user_id, unit_id, 0, current_time_stamp, remarks
-        ))
+        values = [0, current_time_stamp, user_id, remarks]
+        condition_val = [unit_id, ]
+        result = db.update(tblUnits, columns, values, condition_val)
 
     print result
     return result
