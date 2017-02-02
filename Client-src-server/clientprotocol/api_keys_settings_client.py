@@ -145,7 +145,7 @@ api_params = {
     "business_group_id": make_int_field(is_optional=True),
     "unit_code": make_string_field(),
     "unit_name": make_string_field(),
-    "address": make_text_field(),
+    #"address": make_text_field(),
     "country_id": make_int_field(is_optional=True),
     "is_closed": make_bool_field(),
 

@@ -123,6 +123,11 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
+        "/service-provider-wise-report",
+        "files/client/service-provider-wise-report/service_provider_wise_report.html",
+        None, {}
+    ),
+    (
         "/status-report-consolidated",
         "files/client/status-report-consolidated/status_report_consolidated.html",
         None, {}
@@ -159,7 +164,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/unit-list",
-        "files/client/unit-list/risk-report.html",
+        "files/client/unit-list/unit_list.html",
         None, {}
     ),
     (
