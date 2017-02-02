@@ -1,6 +1,6 @@
 
 from clientprotocol.jsonvalidators_client import (
-    parse_dictionary, parse_static_list, to_structure_dictionary_values
+    parse_enum, parse_dictionary, parse_static_list, to_structure_dictionary_values,
 )
 from clientprotocol.parse_structure import (
     parse_structure_VectorType_RecordType_clientreport_UserWiseCompliance,
@@ -1060,6 +1060,92 @@ class GetLoginTrace(Request):
             "to_date": to_structure_OptionalType_CustomTextType_20(self.to_date)
         }
 
+class GetLegalEntityWiseReportFilters(Request):
+    def __init__(self, country_id, legal_entity_id):
+        self.country_id = country_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "legal_entity_id"])
+        country_id = data.get("country_id")
+        legal_entity_id = data.get("legal_entity_id")
+        return GetLegalEntityWiseReportFilters(country_id, legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id,
+        }
+
+class GetLegalEntityWiseReport(Request):
+    def __init__(
+        self, country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
+        compliance_id, frequency_id, user_type_id, user_id, due_from_date,
+        due_to_date, task_status_id, csv, from_count, page_count
+    ):
+        self.country_id = country_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id
+        self.statutory_mapping = statutory_mapping
+        self.compliance_id = compliance_id
+        self.frequency_id = frequency_id
+        self.user_type_id = user_type_id
+        self.user_id = user_id
+        self.due_from_date = due_from_date
+        self.due_to_date = due_to_date
+        self.task_status_id = task_status_id
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "legal_entity_id", "domain_id", "unit_id", "statutory_mapping",
+            "compliance_id", "frequency_id", "user_type_id", "user_id", "due_from_date",
+            "due_to_date", "task_status_id", "csv", "from_count", "page_count"
+        ])
+        country_id = data.get("country_id")
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id")
+        unit_id = data.get("unit_id")
+        statutory_mapping = data.get("statutory_mapping")
+        compliance_id = data.get("compliance_id")
+        frequency_id = data.get("frequency_id")
+        user_type_id = data.get("user_type_id")
+        user_id = data.get("user_id")
+        due_from_date = data.get("due_from_date")
+        due_to_date = data.get("due_to_date")
+        task_status_id = data.get("task_status_id")
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetLegalEntityWiseReport(
+            country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
+            compliance_id, frequency_id, user_type_id, user_id, due_from_date,
+            due_to_date, task_status_id, csv, from_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id,
+            "statutory_mapping": self.statutory_mapping,
+            "compliance_id": self.compliance_id,
+            "frequency_id": self.frequency_id,
+            "user_type_id": self.user_type_id,
+            "user_id": self.user_id,
+            "due_from_date": self.due_from_date,
+            "task_status_id": self.task_status_id,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
+
 def _init_Request_class_map():
     classes = [
         GetComplianceDetailsReportFilters, GetComplianceDetailsReport,
@@ -1072,7 +1158,9 @@ def _init_Request_class_map():
         GetReassignedHistoryReportFilters, GetReassignedHistoryReport,
         GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport,
         GetClientDetailsReportFilters, GetClientDetailsReportData, GetActivityLogFilters,
-        GetActivityLogReport, GetLoginTrace
+        GetActivityLogReport, GetLoginTrace, GetLegalEntityWiseReportFilters,
+        GetLegalEntityWiseReport
+
     ]
     class_map = {}
     for c in classes:
@@ -1144,6 +1232,68 @@ class GetComplianceDetailsReportFiltersSuccess(Response):
             "compliances": to_structure_VectorType_RecordType_core_ComplianceFilter(self.Compliances),
             "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
         }
+
+class GetLegalEntityWiseReportFiltersSuccess(Response):
+    def __init__(
+        self, domains, unit_legal_entity, act_legal_entity, compliance_frequency,
+        compliance_user_type, compliance_task_status, compliance_users
+    ):
+        self.domains = domains
+        self.unit_legal_entity = unit_legal_entity
+        self.act_legal_entity = act_legal_entity
+        self.compliance_frequency = compliance_frequency
+        self.compliance_user_type = compliance_user_type
+        self.compliance_task_status = compliance_task_status
+        self.compliance_users = compliance_users
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "domains", "unit_legal_entity", "act_legal_entity", "compliance_frequency",
+            "compliance_user_type", "compliance_task_status", "compliance_users"
+        ])
+        domains = data.get("domains")
+        unit_legal_entity = data.get("unit_legal_entity")
+        act_legal_entity = data.get("act_legal_entity")
+        compliance_frequency = data.get("compliance_frequency")
+        compliance_user_type = data.get("compliance_user_type")
+        compliance_task_status = data.get("compliance_task_status")
+        compliance_users = data.get("compliance_users")
+        return GetLegalEntityWiseReportFiltersSuccess(
+            domains, unit_legal_entity, act_legal_entity, compliance_frequency,
+            compliance_user_type, compliance_task_status, compliance_users
+        )
+
+    def to_structure(self):
+        return {
+            "domains": self.domains,
+            "unit_legal_entity": self.unit_legal_entity,
+            "act_legal_entity": self.act_legal_entity,
+            "compliance_frequency": self.compliance_frequency,
+            "compliance_user_type": self.compliance_user_type,
+            "compliance_task_status": self.compliance_task_status,
+            "compliance_users": self.compliance_users
+        }
+
+class GetLegalEntityWiseReportSuccess(Response):
+    def __init__(
+        self, legal_entities_compliances
+    ):
+        self.legal_entities_compliances = legal_entities_compliances
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["legal_entities_compliances"])
+        legal_entities_compliances = data.get("legal_entities_compliances")
+        return GetLegalEntityWiseReportSuccess(
+            legal_entities_compliances
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entities_compliances": self.legal_entities_compliances
+        }
+
 
 class ComplianceDetailsUnitWise(object):
     def __init__(self, unit_id, unit_name, address, Compliances):
@@ -1892,7 +2042,9 @@ def _init_Response_class_map():
         GetStatutoryNotificationsListReportSuccess,
         GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess,
         GetActivityLogReportSuccess, GetLoginTraceSuccess,
-        GetClientDetailsReportFiltersSuccess, ExportToCSVSuccess
+        GetClientDetailsReportFiltersSuccess, ExportToCSVSuccess,
+        GetLegalEntityWiseReportFiltersSuccess,
+        GetLegalEntityWiseReportSuccess
     ]
     class_map = {}
     for c in classes:
@@ -2774,6 +2926,304 @@ class UnitName(object):
         return {
             "unit_name": to_structure_CustomTextType_100(self.unit_name),
             "address": to_structure_CustomTextType_250(self.address),
+        }
+
+#
+# Units for Legal Entity
+#
+
+class UnitLegalEntity(object):
+    def __init__(self, unit_id, unit_code, unit_name, domain_id, country_id, legal_entity_id):
+        self.unit_id = unit_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.domain_id = domain_id
+        self.country_id = country_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "unit_id", "unit_code", "unit_name", "domain_id", "country_id", "legal_entity_id"
+            ]
+        )
+        unit_id = data.get("unit_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        domain_id = data.get("domain_id")
+        country_id = data.get("country_id")
+        legal_entity_id = data.get("legal_entity_id")
+        return UnitLegalEntity(unit_id, unit_code, unit_name, domain_id, country_id, legal_entity_id)
+
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "domain_id": self.domain_id,
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id
+        }
+
+#
+# Acts for Legal Entity
+#
+
+class ActLegalEntity(object):
+    def __init__(
+        self, legal_entity_id, domain_id, unit_id, compliance_id,
+        compliance_task, frequency_id, statutory_mapping
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id
+        self.compliance_id = compliance_id
+        self.compliance_task = compliance_task
+        self.frequency_id = frequency_id
+        self.statutory_mapping = statutory_mapping
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "legal_entity_id", "domain_id", "unit_id", "compliance_id",
+            "compliance_task", "frequency_id", "statutory_mapping",
+            ]
+        )
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id")
+        unit_id = data.get("unit_id")
+        compliance_id = data.get("compliance_id")
+        compliance_task = data.get("compliance_task")
+        frequency_id = data.get("frequency_id")
+        statutory_mapping = data.get("statutory_mapping")
+
+        return ActLegalEntity(
+            legal_entity_id, domain_id, unit_id, compliance_id,
+            compliance_task, frequency_id, statutory_mapping
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id,
+            "compliance_id": self.compliance_id,
+            "compliance_task": self.compliance_task,
+            "frequency_id": self.frequency_id,
+            "statutory_mapping": self.statutory_mapping,
+        }
+
+#
+# Compliance Frequency
+#
+
+class ComplianceFrequency(object):
+    def __init__(
+        self, frequency_id, frequency_name
+    ):
+        self.frequency_id = frequency_id
+        self.frequency_name = frequency_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "frequency_id", "frequency_name"
+            ]
+        )
+        frequency_id = data.get("frequency_id")
+        frequency_name = data.get("frequency_name")
+        return ComplianceFrequency(
+            frequency_id, frequency_name
+        )
+
+    def to_structure(self):
+        return {
+            "frequency_id": self.frequency_id,
+            "frequency_name": self.frequency_name
+        }
+
+#
+# Compliance user type
+#
+
+class ComplianceUserType(object):
+    def __init__(self, user_type_id, user_type):
+        self.user_type_id = user_type_id
+        self.user_type = user_type
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_type_id", "user_type"])
+        user_type_id = data.get("user_type_id")
+        user_type = data.get("user_type")
+        return ComplianceUserType(user_type_id, user_type)
+
+    def to_structure(self):
+        return {
+            "user_type_id": self.user_type_id,
+            "user_type": self.user_type,
+        }
+
+#
+# Compliance Task Status
+#
+
+class ComplianceTaskStatus(object):
+    def __init__(self, task_status_id, task_status):
+        self.task_status_id = task_status_id
+        self.task_status = task_status
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["task_status_id", "task_status"])
+        task_status_id = data.get("task_status_id")
+        task_status = data.get("task_status")
+        return ComplianceTaskStatus(task_status_id, task_status)
+
+    def to_structure(self):
+        return {
+            "task_status_id": self.task_status_id,
+            "task_status": self.task_status,
+        }
+
+#
+# Compliance user type - users
+#
+
+class ComplianceUsers(object):
+    def __init__(
+        self, legal_entity_id, country_id, domain_id, unit_id, compliance_id,
+        assignee, assignee_name, concurrence_person, concurrer_name,
+        approval_person, approver_name
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id,
+        self.compliance_id = compliance_id
+        self.assignee = assignee,
+        self.assignee_name = assignee_name,
+        self.concurrence_person = concurrence_person,
+        self.concurrer_name = concurrer_name,
+        self.approval_person = approval_person,
+        self.approver_name = approver_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
+            "assignee", "assignee_name", "concurrence_person", "concurrer_name",
+            "approval_person", "approver_name"
+        ])
+        legal_entity_id = data.get("legal_entity_id")
+        country_id = data.get("country_id")
+        domain_id = data.get("domain_id")
+        unit_id = data.get("unit_id")
+        compliance_id = data.get("compliance_id")
+        assignee = data.get("assignee")
+        assignee_name = data.get("assignee_name")
+        concurrence_person = data.get("concurrence_person")
+        concurrer_name = data.get("concurrer_name")
+        approval_person = data.get("approval_person")
+        approver_name = data.get("approver_name")
+        return ComplianceUsers(
+            legal_entity_id, country_id, domain_id, unit_id, compliance_id, assignee,
+            assignee_name, concurrence_person, concurrer_name, approval_person,
+            approver_name
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "country_id": self.country_id,
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id,
+            "compliance_id": self.compliance_id,
+            "assignee": self.assignee,
+            "assignee_name": self.assignee_name,
+            "concurrence_person": self.concurrence_person,
+            "concurrer_name": self.concurrer_name,
+            "approval_person": self.approval_person,
+            "approver_name": self.approver_name
+        }
+
+#
+# Legal Entity Wise Report
+#
+
+class LegalEntityWiseReport(object):
+    def __init__(
+        self, country_id, legal_entity_id, domain_id, unit_id, compliance_id,
+        unit_name, statutory_mapping, compliance_task, frequency_name,
+        due_date, task_status, assignee_name, activity_status, activity_date,
+        documents, completion_date
+    ):
+        self.country_id = country_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id
+        self.compliance_id = compliance_id
+        self.unit_name = unit_name
+        self.statutory_mapping = statutory_mapping
+        self.compliance_task = compliance_task
+        self.frequency_name = frequency_name
+        self.due_date = due_date
+        self.task_status = task_status
+        self.assignee_name = assignee_name
+        self.activity_status = activity_status
+        self.activity_date = activity_date
+        self.documents = documents
+        self.completion_date = completion_date
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "legal_entity_id", "domain_id", "unit_id", "compliance_id",
+            "unit_name", "statutory_mapping", "compliance_task", "frequency_name",
+            "due_date", "task_status", "assignee_name", "activity_status", "activity_date",
+            "documents", "completion_date"
+        ])
+        country_id = data.get("country_id")
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id")
+        unit_id = data.get("unit_id")
+        compliance_id = data.get("compliance_id")
+        unit_name = data.get("unit_name")
+        statutory_mapping = data.get("statutory_mapping")
+        compliance_task = data.get("compliance_task")
+        frequency_name = data.get("frequency_name")
+        due_date = data.get("due_date")
+        task_status = data.get("task_status")
+        assignee_name = data.get("assignee_name")
+        activity_status = data.get("activity_status")
+        activity_date = data.get("activity_date")
+        documents = data.get("documents")
+        completion_date = data.get("completion_date")
+        return LegalEntityWiseReport(
+            country_id, legal_entity_id, domain_id, unit_id, compliance_id,
+            unit_name, statutory_mapping, compliance_task, frequency_name,
+            due_date, task_status, assignee_name, activity_status, activity_date,
+            documents, completion_date
+        )
+
+    def to_structure(self):
+        return {
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id,
+            "compliance_id": self.compliance_id,
+            "unit_name": self.unit_name,
+            "statutory_mapping": self.statutory_mapping,
+            "compliance_task": self.compliance_task,
+            "frequency_name": self.frequency_name,
+            "due_date": self.due_date,
+            "task_status": self.task_status,
+            "assignee_name": self.assignee_name,
+            "activity_status": self.activity_status,
+            "activity_date": self.activity_date,
+            "documents": self.documents,
+            "completion_date": self.completion_date
         }
 
 #

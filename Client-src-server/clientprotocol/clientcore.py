@@ -367,6 +367,32 @@ class COMPLIANCE_STATUS(object):
         return parse_enum(self._value, COMPLIANCE_STATUS.values())
 
 #
+# COMPLIANCE USER TYPE
+#
+
+class COMPLIANCE_USER_TYPE(object):
+    # Assignee = "Assignee"
+    # Concurrence = "Concurrence"
+    # Approval = "Approval"
+
+    def __init__(self, value):
+        self._value = value
+
+    @staticmethod
+    def values():
+        return ["Assignee", "Concurrence", "Approval"]
+
+    def value(self):
+        return self._value
+
+    @staticmethod
+    def parse_structure(data):
+        return parse_enum(data, COMPLIANCE_USER_TYPE.values())
+
+    def to_structure(self):
+        return parse_enum(self._value, COMPLIANCE_USER_TYPE.values())
+
+#
 # APPLICABILITY_STATUS
 #
 

@@ -31,23 +31,21 @@ class Request(object):
 
 
 class Login(Request):
-    def __init__(self, login_type, username, password, short_name, ip):
+    def __init__(self, login_type, username, password, short_name):
         self.login_type = login_type
         self.username = username
         self.password = password
         self.short_name = short_name
-        self.ip = ip
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-            data, ["login_type", "username", "password", "ip"])
+            data, ["login_type", "username", "password"])
         login_type = data.get("login_type")
         username = data.get("username")
         password = data.get("password")
         short_name = data.get("short_name")
-        ip = data.get("ip")
-        return Login(login_type, username, password, short_name, ip)
+        return Login(login_type, username, password, short_name)
 
     def to_inner_structure(self):
         return {
@@ -55,7 +53,6 @@ class Login(Request):
             "username": self.username,
             "password": self.password,
             "short_name": self.short_name,
-            "ip": self.ip
         }
 
 
@@ -579,14 +576,14 @@ class NotConfigured(Response):
         return {
         }
 
-class LegalEntityNotVailable(Response):
+class LegalEntityNotAvailable(Response):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return LegalEntityNotVailable()
+        return LegalEntityNotAvailable()
 
     def to_inner_structure(self):
         return {
@@ -700,7 +697,7 @@ def _init_Response_class_map():
         InvalidResetToken, ResetPasswordSuccess, ChangePasswordSuccess,
         InvalidCurrentPassword, LogoutSuccess, InvalidSessionToken,
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
-        NotConfigured, LegalEntityNotVailable, ContractNotYetStarted, UpdateUserProfileSuccess,
+        NotConfigured, LegalEntityNotAvailable, ContractNotYetStarted, UpdateUserProfileSuccess,
         CheckRegistrationTokenSuccess, InvalidCaptcha,
         SaveRegistraionSuccess, CheckUsernameSuccess, UsernameAlreadyExists
     ]

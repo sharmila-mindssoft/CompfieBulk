@@ -338,7 +338,7 @@ LegalEntityWiseReport.prototype.renderComplianceFrequencyList = function(data) {
 LegalEntityWiseReport.prototype.renderUserTypeList = function(data) {
     t_this = this;
     userType.empty();
-    var userTypeList = '<option value="0">All</option>';
+    var userTypeList = '<option value="-1">All</option>';
     $.each(data, function(i, e) {
         userTypeList = userTypeList + '<option value="' + e.user_type_id + '"> ' + e.user_type_name + ' </option>';
     });
@@ -348,7 +348,7 @@ LegalEntityWiseReport.prototype.renderUserTypeList = function(data) {
 LegalEntityWiseReport.prototype.renderComplianceTaskStatusList = function(data) {
     t_this = this;
     complianceTaskStatus.empty();
-    var complianceTaskStatusList = '<option value="0">All</option>';
+    var complianceTaskStatusList = '<option value="-1">All</option>';
     $.each(data, function(i, e) {
         complianceTaskStatusList = complianceTaskStatusList + '<option value="' + e.comp_task_status_id + '"> ' + e.comp_task_status + ' </option>';
     });
@@ -477,7 +477,7 @@ LegalEntityWiseReport.prototype.showReportValues = function() {
             } else {
                 $('.uploaded-document', clonethree).text('-');
             }
-            
+
             if (v.completion_date != "")
                 $('.completion-date', clonethree).text(v.completion_date);
             else

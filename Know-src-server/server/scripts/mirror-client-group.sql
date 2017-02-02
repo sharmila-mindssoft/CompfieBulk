@@ -89,7 +89,7 @@ CREATE TABLE `tbl_legal_entities` (
   `total_licence` int(11) DEFAULT '0',
   `used_file_space` float DEFAULT '0',
   `used_licence` int(11) DEFAULT '0',
-  `is_closed` tinyint(4) DEFAULT '1',
+  `is_closed` tinyint(4) DEFAULT '0',
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,
@@ -102,8 +102,6 @@ CREATE TABLE `tbl_legal_entity_domains` (
   `activation_date` timestamp NULL DEFAULT NULL,
   `organisation_id` int(11) NOT NULL,
   `count` int(11) NOT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_divisions` (
@@ -141,14 +139,12 @@ CREATE TABLE `tbl_units` (
   `division_id` int(11) DEFAULT NULL,
   `category_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
-  `domain_ids` longtext,
-  `organisation_ids` longtext,
   `geography_name` longtext NOT NULL,
   `unit_code` varchar(50) NOT NULL,
   `unit_name` varchar(50) NOT NULL,
   `address` varchar(250) NOT NULL,
   `postal_code` int(11) NOT NULL,
-  `is_closed` tinyint(4) DEFAULT '1',
+  `is_closed` tinyint(4) DEFAULT '0',
   `closed_on` timestamp NULL DEFAULT NULL,
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,

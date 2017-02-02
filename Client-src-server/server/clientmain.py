@@ -81,7 +81,7 @@ class API(object):
         self._replication_managers = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            100,
+            1000,
             self.server_added
         )
         print "Databases initialize"
@@ -323,15 +323,15 @@ class API(object):
             _group_db_cons.close()
             raise Exception(e)
 
-        def handle_api_request(
-            self, unbound_method,
-            request_data_type, need_client_id, is_group
-        ):
-            def respond(response_data):
-                return self._send_response(
-                    response_data, 200
-                )
-            
+    def handle_api_request(
+        self, unbound_method,
+        request_data_type, need_client_id, is_group
+    ):
+        def respond(response_data):
+            return self._send_response(
+                response_data, 200
+            )
+
         ip_address = request.remote_addr
         self._ip_address = ip_address
         # response.set_default_header("Access-Control-Allow-Origin", "*")
@@ -404,7 +404,7 @@ class API(object):
 
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
-        
+
     @api_request(clientmasters.RequestFormat, is_group=True)
     def handle_client_masters(self, request, db, session_user, client_id, le_id):
         return controller.process_client_master_requests(request, db, session_user, client_id)

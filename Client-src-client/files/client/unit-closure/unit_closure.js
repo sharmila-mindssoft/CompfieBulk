@@ -13,24 +13,6 @@ var Search_status_1 = $('#search-status-1');
 var Search_status_ul_1 = $('.search-status-list-1');
 var Search_status_li_1 = $('.search-status-li-1');
 
-function loadUnitClosureList() {
-    function onSuccess(data) {
-        LegalEntityList = data.unit_closure_legal_entities;
-        loadLegalEntities();
-    }
-
-    function onFailure(error) {
-        displayMessage(error);
-    }
-    client_mirror.getUnitClosureData(function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            onSuccess(response);
-        } else {
-            onFailure(error);
-        }
-    });
-}
 
 function loadLegalEntities(){
 	var obj_le = $(".le-drop-down option");
@@ -302,7 +284,8 @@ function initialize() {
     console.log("initialize")
     clearMessage();
     $('.tbody-unit-closure-list').empty();
-    loadUnitClosureList();
+    LegalEntityList = client_mirror.getUserLegalEntity();
+    loadLegalEntities();
 }
 
 Search_status.change(function() {

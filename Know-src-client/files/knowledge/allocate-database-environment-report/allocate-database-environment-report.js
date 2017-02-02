@@ -25,6 +25,12 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 function initialize() {
   function onSuccess(data) {
@@ -38,10 +44,13 @@ function initialize() {
   function onFailure(error) {
     displayMessage(error);
   }
+  displayLoader();
   mirror.getAllocateServerReportData(function (error, response) {
     if (error == null) {
+    	hideLoader();
       onSuccess(response);
     } else {
+    	hideLoader();
       onFailure(error);
     }
   });
