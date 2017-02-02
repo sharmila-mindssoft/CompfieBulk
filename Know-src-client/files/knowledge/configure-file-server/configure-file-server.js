@@ -188,8 +188,9 @@ $(function () {
 
   //key press for IP address
     file_server_ip.on('keypress', function (e) {
-        var k = e.which;
-        var ok = k >= 48 && k <= 57 || k == 46;
+        var k = e.which || e.keyCode;
+        var ok = k >= 48 && k <= 57 || k == 46 || k == Key.LEFT ||
+                k == Key.RIGHT;
 
       if (!ok){
           e.preventDefault();
@@ -198,8 +199,9 @@ $(function () {
 
     //key press for IP address
     file_server_port.on('keypress', function (e) {
-        var k = e.which;
-        var ok = k >= 48 && k <= 57;
+        var k = e.which || e.keyCode;
+        var ok = k >= 48 && k <= 57 || k == Key.LEFT ||
+                k == Key.RIGHT;
 
       if (!ok){
           e.preventDefault();

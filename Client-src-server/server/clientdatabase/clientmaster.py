@@ -1288,11 +1288,11 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
     if action_mode == "close":
         print "save"
         result = db.call_update_proc("sp_unit_closure_save", (
-            user_id, unit_id, 0, current_time_stamp, remarks
+            user_id, unit_id, 1, current_time_stamp, remarks
         ))
     elif action_mode == "reactive":
         result = db.call_update_proc("sp_unit_closure_save", (
-            user_id, unit_id, 1, current_time_stamp, remarks
+            user_id, unit_id, 0, current_time_stamp, remarks
         ))
 
     print result
