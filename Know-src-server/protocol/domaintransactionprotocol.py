@@ -158,28 +158,41 @@ class GetAssignedStatutoryWizardTwoData(Request):
 
 class SaveAssignedStatutory(Request):
     def __init__(
-        self, compliances_applicablity_status, submission_type
+        self, compliances_applicablity_status, submission_type,
+        client_id, legal_entity_id, domain_id, domain_name
     ):
         self.compliances_applicablity_status = compliances_applicablity_status
         self.submission_type = submission_type
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.domain_name = domain_name
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
                 "compliances_applicablity_status",
-                "submission_status"
+                "submission_status",
+                "ct_id", "le_id", "d_id",
+                "d_name"
             ]
         )
         return SaveAssignedStatutory(
             data.get("compliances_applicablity_status"),
-            data.get("submission_status")
+            data.get("submission_status"),
+            data.get("ct_id"), data.get("le_id"), data.get("d_id"),
+            data.get("d_name")
         )
 
     def to_inner_structure(self):
         return {
             "compliances_applicablity_status": self.compliances_applicablity_status,
-            "submission_status": self.submission_type
+            "submission_status": self.submission_type,
+            "ct_id": self.client_id,
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id,
+            "d_name": self.domain_name
         }
 
 
@@ -232,16 +245,13 @@ class ApproveAssignedStatutory(Request):
 
 class SaveComplianceStatus(object):
     def __init__(
-        self, client_id, legal_entity_id, unit_id, domain_id,
+        self, unit_id,
         compliance_id, compliance_status,
         level_1_id, status, remarks, client_statutory_id,
-        unit_name, domain_name
+        unit_name
 
     ):
-        self.client_id = client_id
-        self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
-        self.domain_id = domain_id
         self.compliance_id = compliance_id
         self.compliance_status = compliance_status
         self.level_1_id = level_1_id
@@ -249,22 +259,18 @@ class SaveComplianceStatus(object):
         self.remarks = remarks
         self.client_statutory_id = client_statutory_id
         self.unit_name = unit_name
-        self.domain_name = domain_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "ct_id", "le_id", "u_id", "d_id",
+            "u_id"
             "comp_id", "comp_status",
             "level_1_s_id",
             "a_status", "remarks", "client_statutory_id",
-            "u_name", "d_name"
+            "u_name",
         ])
 
-        client_id = data.get("ct_id")
-        legal_entity_id = data.get("le_id")
         unit_id = data.get("u_id")
-        domain_id = data.get("d_id")
         compliance_id = data.get("comp_id")
         compliance_status = data.get("comp_status")
         level_one_id = data.get("level_1_s_id")
@@ -272,21 +278,16 @@ class SaveComplianceStatus(object):
         remarks = data.get("remarks")
         client_statutory_id = data.get("client_statutory_id")
         unit_name = data.get("u_name")
-        domain_name = data.get("d_name")
 
         return SaveComplianceStatus(
-            client_id, legal_entity_id,
-            unit_id, domain_id, compliance_id, compliance_status,
+            unit_id, compliance_id, compliance_status,
             level_one_id, a_status, remarks,
-            client_statutory_id, unit_name, domain_name
+            client_statutory_id, unit_name
         )
 
     def to_structure(self):
         return {
-            "ct_id": self.client_id,
-            "le_id": self.legal_entity_id,
             "u_id": self.unit_id,
-            "d_id": self.domain_id,
             "comp_id": self.compliance_id,
             "comp_status": self.compliance_status,
             "level_1_s_id": self.level_1_id,
@@ -294,7 +295,6 @@ class SaveComplianceStatus(object):
             "remarks": self.remarks,
             "client_statutory_id": self.client_statutory_id,
             "u_name": self.unit_name,
-            "d_name": self.domain_name
         }
 
 def _init_Request_class_map():

@@ -254,6 +254,11 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
 
 def save_client_statutories(db, request, user_id):
     status = request.submission_type
+    client_id = request.client_id
+    legal_entity_id = request.legal_entity_id
+    domain_name = request.domain_name
+    domain_id = request.domain_id
+
     comps = request.compliances_applicablity_status
     q = "INSERT INTO tbl_client_statutories(client_id, unit_id, status)" + \
         " values (%s, %s, %s)"
@@ -266,7 +271,7 @@ def save_client_statutories(db, request, user_id):
             continue
 
         if c.client_statutory_id is None :
-            csid = db.execute_insert(q, [c.client_id, c.unit_id, status])
+            csid = db.execute_insert(q, [client_id, c.unit_id, status])
             if csid is False :
                 raise process_error("E088")
         else :
@@ -276,11 +281,10 @@ def save_client_statutories(db, request, user_id):
 
         saved_unit.append(c.unit_id)
         save_statutory_compliances(
-            db, comps,
+            db, client_id, legal_entity_id, domain_id, comps,
             c.unit_id, status, user_id, csid
         )
         unit_name = c.unit_name
-        domain_name = c.domain_name
 
         msg = "Statutories has been assigned for following unit(s) %s in %s domain " % (
             unit_name, domain_name
@@ -290,7 +294,9 @@ def save_client_statutories(db, request, user_id):
     return True
 
 
-def save_statutory_compliances(db, data, unit_id, status, user_id, csid):
+def save_statutory_compliances(
+    db, client_id, legal_entity_id, domain_id, data, unit_id, status, user_id, csid
+):
     value_list = []
     for r in data :
         if r.unit_id == unit_id :
@@ -299,7 +305,7 @@ def save_statutory_compliances(db, data, unit_id, status, user_id, csid):
                 remarks = ''
             value_list.append(
                 (
-                    csid, r.client_id, r.legal_entity_id, unit_id, r.domain_id,
+                    csid, client_id, legal_entity_id, unit_id, domain_id,
                     r.level_1_id, r.status, str(remarks),
                     r.compliance_id, r.compliance_status, status,
                     user_id, get_date_time(), status
