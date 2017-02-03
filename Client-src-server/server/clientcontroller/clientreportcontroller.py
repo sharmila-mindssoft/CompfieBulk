@@ -259,14 +259,14 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         logger.logClientApi("GetClientDetailsReportData", "process end")
         logger.logClientApi("------", str(time.time()))
 
-    elif type(request) is clientreport.ExportToCSV:
-        logger.logClientApi(
-            "ExportToCSV  - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
-        result = export_to_csv(db, request, session_user, client_id)
-        logger.logClientApi("ExportToCSV", "process end")
-        logger.logClientApi("------", str(time.time()))
+    # elif type(request) is clientreport.ExportToCSV:
+    #     logger.logClientApi(
+    #         "ExportToCSV  - " + str(client_id), "process begin"
+    #     )
+    #     logger.logClientApi("------", str(time.time()))
+    #     result = export_to_csv(db, request, session_user, client_id)
+    #     logger.logClientApi("ExportToCSV", "process end")
+    #     logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetLegalEntityWiseReportFilters:
         logger.logClientApi(
@@ -797,14 +797,16 @@ def get_legal_entity_wise_report_filters(db, request, session_user, client_id):
     domains_list = get_domains_for_le(db, legal_entity_id)
     unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
     act_list = get_acts_for_le_domain(db, legal_entity_id)
+    task_list = get_task_for_le_domain(db, legal_entity_id)
     frequency_list = get_frequency_list(db)
     compliance_user_type = get_compliance_user_type(db)
     compliance_status = get_compiance_status(db)
     compliance_user_list = get_compliance_user_list(db, country_id, legal_entity_id)
     return clientreport.GetLegalEntityWiseReportFiltersSuccess(
         domains=domains_list, unit_legal_entity=unit_list, act_legal_entity=act_list,
-        compliance_frequency=frequency_list, compliance_user_type=compliance_user_type,
-        compliance_task_status=compliance_status, compliance_users=compliance_user_list
+        compliance_task_list=task_list, compliance_frequency_list=frequency_list,
+        compliance_user_type=compliance_user_type, compliance_task_status=compliance_status,
+        compliance_users=compliance_user_list
     )
 
 ###############################################################################################
