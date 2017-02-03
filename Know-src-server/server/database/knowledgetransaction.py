@@ -1269,9 +1269,9 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
 
             compliances.append(
                 core.MappedCompliance(
-                    c["compliance_id"], cname, bool(c["is_active"]),
-                    c["is_approved"],
-                    core.getMappingApprovalStatus(c["is_approved"]),
+                    c["compliance_id"], cname, bool(c["c_is_active"]),
+                    c["c_is_approved"],
+                    core.getMappingApprovalStatus(c["c_is_approved"]),
                     c["remarks"]
                 )
             )
@@ -1304,24 +1304,31 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         return statutory
 
     fromcount = rcount
-    tocount = 10
+    tocount = 1000
     result = db.call_proc_with_multiresult_set(
         'sp_tbl_statutory_mapping_list',
-        [user_id, approve_status, fromcount, tocount], 6
+        [user_id, approve_status, fromcount, tocount], 5
     )
+    print [user_id, approve_status, fromcount, tocount]
     if len(result) == 0 :
         raise fetch_error()
     mapping = result[0]
-    compliance = result[1]
-    organisation = result[2]
-    statutory = result[3]
-    location = result[4]
-    total_record = result[5][0].get("total")
-
+    # compliance = result[1]
+    organisation = result[1]
+    statutory = result[2]
+    location = result[3]
+    total_record = result[4][0].get("total")
+    print total_record
     data = []
+    m_ids = []
+
     for m in mapping:
         map_id = m["statutory_mapping_id"]
-        mapped_compliance = return_compliance(map_id, compliance)
+        if map_id in m_ids :
+            continue
+
+        m_ids.append(map_id)
+        mapped_compliance = return_compliance(map_id, mapping)
         if len(mapped_compliance) == 0 :
             continue
 
@@ -1508,7 +1515,7 @@ def save_approve_notify(db, text, user_id, comppliance_id):
 def get_statutory_mapping_edit(db, map_id, comp_id):
     if comp_id is None :
         comp_id = '%'
-    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id], 5)
+    result = db.call_proc_with_multiresult_set("sp_tbl_statutory_mapping_by_id", [map_id, comp_id, 0, 1000], 5)
     if len(result) == 0 :
         raise process_error("E087")
 
