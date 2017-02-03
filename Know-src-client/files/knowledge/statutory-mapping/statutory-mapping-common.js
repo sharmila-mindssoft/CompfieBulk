@@ -1,6 +1,6 @@
 var fetch = mirror;
 var j = 1;
-var STATU_MAPPINGS;
+var STATU_MAPPINGS = [];
 var STATU_TOTALS;
 var show_more = false;
 
@@ -49,6 +49,7 @@ function FetchBack() {
 
     this.getMappedList = function(approv_status, rcount) {
         displayLoader();
+        _listPage.mapping_id = [];
         fetch.getStatutoryMappings(approv_status, rcount,
             function(status, response){
                 if (status != null) {
@@ -58,7 +59,7 @@ function FetchBack() {
                     STATU_MAPPINGS = response.statu_mappings;
                     STATU_TOTALS = response.total_records;
                     _listPage.clearList();
-                    _listPage.renderList(STATU_MAPPINGS, STATU_TOTALS);
+                    _listPage.renderList(response.statu_mappings, STATU_TOTALS);
                 }
                 hideLoader();
             }
@@ -70,6 +71,7 @@ function FetchBack() {
         ap_status = $('.ap-status-li.active').attr('value');
 
         rcount = _renderinput.show_map_count;
+        console.log(rcount);
         if((rcount < STATU_TOTALS) && (show_more) )  {
             show_more = false;
             displayLoader();
@@ -258,6 +260,7 @@ function FetchBack() {
         }
         hideLoader();
         _viewPage.hide();
+        STATU_MAPPINGS = [];
         _listPage.show();
         _renderinput.resetField();
     };
@@ -380,6 +383,7 @@ function FetchBack() {
 // Render List Page
 //
 function ListPage() {
+    this.mapping_id = [];
     this.clearList = function() {
         $('.tbl-statutorymapping-list .table-no-record').remove();
         $('.tbl-statutorymapping-list .mapping-row').remove();
@@ -400,7 +404,7 @@ function ListPage() {
             var x = 1;
             $.each(cdata, function(k, c) {
                 row = $('#templates .compliance-row').clone();
-
+                $('.cno', row).text(x);
                 $('.comp_name', row).text(c.comp_name);
                 $('.comp_edit', row).attr('title', 'Click here to edit compliance');
                 $('.comp_edit', row).addClass('fa-pencil text-primary');
@@ -418,86 +422,89 @@ function ListPage() {
 
                 $('.comp_approval_status', row).append(c.approval_status_text);
                 rowObjec.append(row);
+                x = x + 1;
             });
+            _renderinput.show_map_count += x;
         }
 
-        function showTitle(e){
-          if(e.className == "fa c-pointer map_status fa-times text-danger"){
-            e.title = 'Click Here to Activate';
-          }
-          else if(e.className == "fa c-pointer map_status fa-check text-success")
-          {
-            e.title = 'Click Here to Deactivate';
-          }
-        }
+        // function showTitle(e){
+        //   if(e.className == "fa c-pointer map_status fa-times text-danger"){
+        //     e.title = 'Click Here to Activate';
+        //   }
+        //   else if(e.className == "fa c-pointer map_status fa-check text-success")
+        //   {
+        //     e.title = 'Click Here to Deactivate';
+        //   }
+        // }
 
 
         $.each(data, function(k, v) {
             orgNames = v.i_names.join(' , ');
             s_names = v.s_maps.join(', ');
             crow = $('#templates .mapping-row').clone();
-            _renderinput.show_map_count = j;
-            $('.sno', crow).text(j);
-            $('.c_name', crow).text(v.c_name);
-            $('.d_name', crow).text(v.d_name);
-            $('.org_name', crow).text(orgNames);
-            $('.nature_name', crow).text(v.s_n_name);
-            $('.s_name', crow).text(s_names);
-            $('.map_edit', crow).attr('title', 'Click here to edit');
-            $('.map_edit', crow).addClass('fa-pencil text-primary');
-            $('.map_edit', crow).on('click', function() {
-                compliance_edit = false;
-                _listPage.displayMappingEdit(v.m_id, null);
-            });
+            m_id = v.m_id;
+            if (_listPage.mapping_id.indexOf(m_id) == -1) {
+                _listPage.mapping_id.push(m_id);
+                $('.sno', crow).text(j);
+                $('.c_name', crow).text(v.c_name);
+                $('.d_name', crow).text(v.d_name);
+                $('.org_name', crow).text(orgNames);
+                $('.nature_name', crow).text(v.s_n_name);
+                $('.s_name', crow).text(s_names);
+                $('.map_edit', crow).attr('title', 'Click here to edit');
+                $('.map_edit', crow).addClass('fa-pencil text-primary');
+                $('.map_edit', crow).on('click', function() {
+                    compliance_edit = false;
+                    _listPage.displayMappingEdit(v.m_id, null);
+                });
 
-            if (v.is_active == true){
-                $('.map_status', crow).attr('title', msg.active_tooltip);
-                $('.map_status', crow).addClass("fa-check text-success");
+                if (v.is_active == true){
+                    $('.map_status', crow).attr('title', msg.active_tooltip);
+                    $('.map_status', crow).addClass("fa-check text-success");
 
-            }
-            else {
-                $('.map_status', crow).attr('title', msg.deactive_tooltip);
-                $('.map_status', crow).addClass("fa-times text-danger");
-
-            }
-            $('.map_status', crow).hover(function(){
-                showTitle(this);
-            });
-            $('.map_status', crow).on('click', function(e) {
-                if (v.is_active == true) {
-                    statusmsg = msg.deactive_message;
-                    passStatus = false;
                 }
                 else {
-                    statusmsg = msg.active_message;
-                    passStatus = true;
+                    $('.map_status', crow).attr('title', msg.deactive_tooltip);
+                    $('.map_status', crow).addClass("fa-times text-danger");
+
                 }
-
-
-                CurrentPassword.val('');
-                confirm_alert(statusmsg, function(isConfirm) {
-                    if (isConfirm) {
-                        Custombox.open({
-                            target: '#custom-modal',
-                            effect: 'contentscale',
-                            complete: function() {
-                                CurrentPassword.focus();
-                                isAuthenticate = false;
-                            },
-                            close: function() {
-                                if (isAuthenticate) {
-                                    _fetchback.changeStatus(v.m_id, passStatus);
-                                }
-                            },
-                        });
-                        e.preventDefault();
+                $('.map_status', crow).on('click', function(e) {
+                    if (v.is_active == true) {
+                        statusmsg = msg.deactive_message;
+                        passStatus = false;
                     }
-                });
-            });
+                    else {
+                        statusmsg = msg.active_message;
+                        passStatus = true;
+                    }
 
-            $('.approval_status', crow).text("");
-            j = j + 1;
-            $('.tbl-statutorymapping-list').append(crow);
+
+                    CurrentPassword.val('');
+                    confirm_alert(statusmsg, function(isConfirm) {
+                        if (isConfirm) {
+                            Custombox.open({
+                                target: '#custom-modal',
+                                effect: 'contentscale',
+                                complete: function() {
+                                    CurrentPassword.focus();
+                                    isAuthenticate = false;
+                                },
+                                close: function() {
+                                    if (isAuthenticate) {
+                                        _fetchback.changeStatus(v.m_id, passStatus);
+                                    }
+                                },
+                            });
+                            e.preventDefault();
+                        }
+                    });
+                });
+
+                $('.approval_status', crow).text("");
+                j = j + 1;
+                $('.tbl-statutorymapping-list').append(crow);
+            }
+
             comp_row($('.tbl-statutorymapping-list'), v.mapped_comps, v.m_id);
         });
         show_more = true;
@@ -513,8 +520,11 @@ function ListPage() {
         CURRENT_TAB = 1;
         ListScreen.show();
         ViewScreen.hide();
-        ap_status = $('.ap-status-li.active').attr('value');
-        _fetchback.getMappedList(ap_status, 0);
+        if (STATU_MAPPINGS.length == 0) {
+            ap_status = $('.ap-status-li.active').attr('value');
+            _fetchback.getMappedList(ap_status, 0);
+        }
+
     };
     this.hide = function() {
         ListScreen.hide();
@@ -548,6 +558,7 @@ function ListPage() {
             }
         });
         _listPage.clearList();
+        _listPage.mapping_id = [];
         _listPage.renderList(filteredList, filteredList.length);
     };
 }
