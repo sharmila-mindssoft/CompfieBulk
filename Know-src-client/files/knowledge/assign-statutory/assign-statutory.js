@@ -110,6 +110,7 @@ var totalRecord = 0;
 AssignStatutoryList.empty();
 SingleAssignStatutoryList.empty();
 var SELECTED_COMPLIANCE = {};
+var ACT_MAP = {};
 
 function callAPI(api_type) {
     if (api_type == API_LIST){
@@ -495,6 +496,7 @@ function reset(){
     UnitList.empty();
     ACTIVE_UNITS = [];
     SELECTED_COMPLIANCE = {};
+    ACT_MAP = {};
 
 }
 
@@ -642,6 +644,8 @@ function mactstatus(element) {
 function actstatus(element, A_ID) {
     var checkedVal = parseInt($(element).attr("for"));
     var remarkbox = '#r-view' + $(element).val();
+    var A_REMARK = $('#remark' + $(element).val()).val();
+
     if(checkedVal > 1){
         $(remarkbox).show();
     }else{
@@ -664,13 +668,21 @@ function actstatus(element, A_ID) {
         $('#save'+sid).addClass('fa-square');
 
         var combine_ids = $('#combineid'+sid).val().split('#');
+
+        if(CLIENT_STATUTORY_ID == null){
+            CLIENT_STATUTORY_ID = UNIT_CS_ID[combine_ids[1]].client_statutory_id;
+            UNIT_TEXT = UNIT_CS_ID[combine_ids[1]].unit_code+' - '+UNIT_CS_ID[combine_ids[1]].u_name;
+        }
+
         SELECTED_COMPLIANCE[combine_ids[0]] = {
             'u_id' : parseInt(combine_ids[1]),
             'c_id' : parseInt(combine_ids[0]),
             'c_status' : checkedVal,
-            'act_id' : A_ID
-            /*'act_status' : A_STATUS,
-            'act_remarks' : A_REMARK*/
+            'act_id' : A_ID,
+            'act_status' : checkedVal,
+            'act_remarks' : A_REMARK,
+            'client_statutory_id' : CLIENT_STATUTORY_ID,
+            'u_name' : UNIT_TEXT
         }
         console.log(SELECTED_COMPLIANCE)
     });
@@ -681,21 +693,29 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     var sid = sname.substr(sname.lastIndexOf('y') + 1);
     $('#save'+sid).addClass('fa-square');
 
-    /*var l_calss = $(element).attr('class').split(' ').pop();
+    var l_calss = $(element).attr('class').split(' ').pop();
     var id = l_calss.substr(l_calss.lastIndexOf('s') + 1);
     var A_STATUS = $('#act' + id).attr("for");
-    var A_REMARK = $('#remark' + id).val();*/
-    //alert(A_STATUS + " - " + A_REMARK)
+    var A_REMARK = $('#remark' + id).val();
+
     var C_STATUS = $(element).val();
+
+    if(CLIENT_STATUTORY_ID == null){
+        CLIENT_STATUTORY_ID = UNIT_CS_ID[U_ID].client_statutory_id;
+        UNIT_TEXT = UNIT_CS_ID[U_ID].unit_code+' - '+UNIT_CS_ID[U_ID].u_name;
+    }
+
     SELECTED_COMPLIANCE[C_ID] = {
         'u_id' : parseInt(U_ID),
         'c_id' : parseInt(C_ID),
-        'c_status' : parseInt(C_STATUS),
-        'act_id' : parseInt(A_ID)
-        /*'act_status' : A_STATUS,
-        'act_remarks' : A_REMARK*/
+        'c_status' : C_STATUS,
+        'act_id' : A_ID,
+        'act_status' : A_STATUS,
+        'act_remarks' : A_REMARK,
+        'client_statutory_id' : CLIENT_STATUTORY_ID,
+        'u_name' : UNIT_TEXT
     }
-    //console.log(SELECTED_COMPLIANCE)
+    console.log(SELECTED_COMPLIANCE)
 }
 
 function compliancestatusMulti(element, C_ID, U_ID, A_ID) {
@@ -777,10 +797,22 @@ function loadSingleUnitCompliances() {
                 actstatus(this, value.level_1_s_id);
             });
 
-        count = actCount;
-        LastAct = value.level_1_s_name;
-        LastSubAct = "";
-        actCount = actCount + 1;
+            /*ACT_MAP[A_ID] = {
+
+            };*/
+            /*SELECTED_COMPLIANCE[C_ID] = {
+                'u_id' : parseInt(U_ID),
+                'c_id' : parseInt(C_ID),
+                'c_status' : parseInt(C_STATUS),
+                'act_id' : parseInt(A_ID)
+                'act_status' : A_STATUS,
+                'act_remarks' : A_REMARK
+            }*/
+
+            count = actCount;
+            LastAct = value.level_1_s_name;
+            LastSubAct = "";
+            actCount = actCount + 1;
         }
 
         if(LastSubAct != value.map_text){
@@ -1222,6 +1254,7 @@ function validateFirstTab()  {
         AssignStatutoryList.empty();
         SingleAssignStatutoryList.empty();
         SELECTED_COMPLIANCE = {};
+        ACT_MAP = {};
         callAPI(API_Wizard2);
         isShowMore = true;
         return true;
@@ -1293,6 +1326,7 @@ function EditAssignedStatutory(u_id, d_id){
     AssignStatutoryList.empty();
     SingleAssignStatutoryList.empty();
     SELECTED_COMPLIANCE = {};
+    ACT_MAP = {};
     mirror.getAssignedStatutoriesById(u_id, d_id, (sno-1),function(error, data) {
         if (error == null) {
             isShowMore = true;
