@@ -1918,7 +1918,7 @@ function initClientMirror() {
             'GetLegalEntityWiseReportFilters',
             {
                 'country_id': country_id,
-                'legal_entity_id' : le_id,
+                'legal_entity_id' : le_id
             }
         ];
         callerName = 'client_reports';
@@ -1927,8 +1927,8 @@ function initClientMirror() {
 
     function getLegalEntityWiseReport(
         country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
-        compliance_id, frequency_id, user_type_id, user_id, from_date, to_date,
-        task_status_id, csv, from_count, page_count
+        compliance_id, frequency_id, user_type, user_id, from_date, to_date,
+        task_status, csv, from_count, page_count, callback
     ){
         var request = [
             'GetLegalEntityWiseReport',
@@ -1940,11 +1940,11 @@ function initClientMirror() {
                 'statutory_mapping': statutory_mapping,
                 'compliance_id': compliance_id,
                 'frequency_id': frequency_id,
-                'user_type_id': user_type_id,
+                'user_type': user_type,
                 'user_id': user_id,
                 'due_from_date': from_date,
                 'due_to_date': to_date,
-                'task_status_id': task_status_id,
+                'task_status': task_status,
                 'csv': csv,
                 'from_count': from_count,
                 'page_count': page_count
@@ -2095,7 +2095,7 @@ function initClientMirror() {
         getUnitClosureUnitList: getUnitClosureUnitList,
         saveUnitClosureData: saveUnitClosureData,
         getLegalEntityWiseReportFilters: getLegalEntityWiseReportFilters,
-        getLegalEntityWiseReport: getLegalEntityWiseReport
+        getLegalEntityWiseReport: getLegalEntityWiseReport,
         getReviewSettingsFilters: getReviewSettingsFilters,
     };
 }
