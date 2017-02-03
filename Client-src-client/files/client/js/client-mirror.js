@@ -1953,6 +1953,18 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+    function getReviewSettingsFilters(le_id, callback) {
+        var request = [
+            'GetReviewSettingsFilters',
+            {
+                "le_id": le_id
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2084,6 +2096,7 @@ function initClientMirror() {
         saveUnitClosureData: saveUnitClosureData,
         getLegalEntityWiseReportFilters: getLegalEntityWiseReportFilters,
         getLegalEntityWiseReport: getLegalEntityWiseReport
+        getReviewSettingsFilters: getReviewSettingsFilters,
     };
 }
 var client_mirror = initClientMirror();

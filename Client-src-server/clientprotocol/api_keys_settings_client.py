@@ -195,7 +195,6 @@ api_params = {
     "units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
     "unit_closure_legal_entities": make_vector_type_field(module="clientcore", klass_name="UnitClosureLegalEntity"),
     "unit_closure_units": make_vector_type_field(module="clientcore", klass_name="UnitClosure_Units"),
-
     "assign_unit_infos": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
@@ -207,5 +206,7 @@ api_params = {
     "compliance_user_type": make_vector_type_field(module="clientreport", klass_name="ComplianceUserType"),
     "compliance_task_status": make_vector_type_field(module="clientreport", klass_name="ComplianceTaskStatus"),
     "compliance_users": make_vector_type_field(module="clientreport", klass_name="ComplianceUsers"),
-    "legal_entities_compliances": make_vector_type_field(module="clientreport", klass_name="LegalEntityWiseReport")
+    "legal_entities_compliances": make_vector_type_field(module="clientreport", klass_name="LegalEntityWiseReport"),
+    "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
+    "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
 }

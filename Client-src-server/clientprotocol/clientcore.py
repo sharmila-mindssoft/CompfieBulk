@@ -3993,6 +3993,7 @@ class UnitClosure_Units(object):
             "validity_days": self.validity_days,
         }
 
+
 class LegalEntityInfo(object):
     def __init__(self, legal_entity_id, legal_entity_name, country_id, business_group_id, business_group_name):
         self.legal_entity_id = legal_entity_id

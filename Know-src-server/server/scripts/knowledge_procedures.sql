@@ -8751,3 +8751,63 @@ END //
 
 DELIMITER ;
 
+--
+-- legal entity master data
+--
+
+DROP PROCEDURE IF EXISTS `sp_get_le_master_info`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_le_master_info`(
+    in cid int(11), le_id int(11)
+)
+BEGIN
+    IF le_id is null then
+        select distinct c.country_id, c.country_name from tbl_countries c inner join tbl_legal_entities as le
+        on le.country_id = c.country_id where client_id = cid;
+
+        select distinct d.domain_id, d.domain_name from tbl_domains d inner join tbl_legal_entity_domains as le
+        on le.domain_id = d.domain_id
+        inner join tbl_legal_entities as l on l.legal_entity_id = le.legal_entity_id
+        where client_id = cid;
+
+        select distinct d.domain_id, d.country_id from tbl_domain_countries d
+        inner join tbl_legal_entity_domains as le
+        on le.domain_id = d.domain_id
+        inner join tbl_legal_entities as l on l.legal_entity_id = le.legal_entity_id
+        where client_id = cid;
+
+        select distinct o.organisation_id, o.organisation_name, o.country_id, o.domain_id , is_active
+            from tbl_organisation as o
+            inner join tbl_legal_entities as le on o.country_id = le.country_id
+            inner join tbl_legal_entity_domains as led
+            on o.domain_id = led.domain_id where client_id = cid;
+
+    ELSE
+        select distinct c.country_id, c.country_name from tbl_countries c inner join tbl_legal_entities as le
+        on le.country_id = c.country_id where  client_id = cid and le.legal_entity_id = le_id;
+
+        select distinct d.domain_id, d.domain_name from tbl_domains d inner join tbl_legal_entity_domains as le
+        on le.domain_id = d.domain_id
+        inner join tbl_legal_entities as l on l.legal_entity_id = le.legal_entity_id
+        where  client_id = cid and le.legal_entity_id = le_id;
+
+        select distinct d.domain_id, d.country_id from tbl_domain_countries d
+        inner join tbl_legal_entity_domains as le
+        on le.domain_id = d.domain_id
+        inner join tbl_legal_entities as l on l.legal_entity_id = le.legal_entity_id
+        where client_id = cid and le.legal_entity_id = le_id;
+
+        select distinct o.organisation_id, o.organisation_name, o.country_id, o.domain_id , is_active
+            from tbl_organisation as o
+            inner join tbl_legal_entities as le on o.country_id = le.country_id
+            inner join tbl_legal_entity_domains as led on o.domain_id = led.domain_id
+            where client_id = cid and le.legal_entity_id = le_id;
+
+    END IF ;
+
+END //
+
+DELIMITER ;
+
