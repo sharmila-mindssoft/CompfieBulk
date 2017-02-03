@@ -4648,6 +4648,37 @@ END //
 
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientstatutories_compliance_count`(
+    IN unit_id int(11), domainid int(11)
+)
+BEGIN
+
+    select @gid := geography_id from tbl_units where unit_id = unitid;
+    -- total compliances
+
+    select count(distinct t1.compliance_id) as total
+    from tbl_compliances as t1
+    inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
+    inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_units as t4 on t4.country_id = t1.country_id
+    inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+    and t5.organisation_id = t2.organisation_id
+    left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and IFNULL(t6.is_approved, 0) != 5
+     and t3.geography_id IN
+     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+        (select parent_ids from tbl_geographies where geography_id = @gid)));
+
+END //
+DELIMITER ;
+
 
 DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_new`;
 
@@ -4704,24 +4735,6 @@ BEGIN
         (select parent_ids from tbl_geographies where geography_id = @gid)))
     order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
     limit fromcount, tocount;
-
-    -- total compliances
-    select count(distinct t1.compliance_id) as total
-    from tbl_compliances as t1
-    inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
-    inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-    inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
-    inner join tbl_units as t4 on t4.country_id = t1.country_id
-    inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
-    and t5.organisation_id = t2.organisation_id
-    left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
-    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
-     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
-     and IFNULL(t6.is_approved, 0) != 5
-     and t3.geography_id IN
-     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-        (select parent_ids from tbl_geographies where geography_id = @gid)))
-    order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id;
 
 END //
 

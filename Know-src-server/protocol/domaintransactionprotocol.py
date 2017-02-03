@@ -155,6 +155,33 @@ class GetAssignedStatutoryWizardTwoData(Request):
             "rcount": self.rcount
         }
 
+class GetAssignedStatutoryWizardTwoCount(Request):
+    def __init__(
+        self, unit_ids, domain_id,
+        rcount
+    ):
+        self.unit_ids = unit_ids
+        self.domain_id = domain_id
+        self.rcount = rcount
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "unit_ids", "d_id", "rcount"
+        ])
+        domain_id = data.get("d_id")
+        unit_ids = data.get("unit_ids")
+        rcount = data.get("rcount")
+        return GetAssignedStatutoryWizardTwoCount(
+            unit_ids, domain_id, rcount
+        )
+
+    def to_inner_structure(self):
+        return {
+            "unit_ids": self.unit_ids,
+            "d_id": self.domain_id,
+            "rcount": self.rcount
+        }
 
 class SaveAssignedStatutory(Request):
     def __init__(
@@ -304,6 +331,7 @@ def _init_Request_class_map():
         GetAssignedStatutoriesById,
         GetAssignedStatutoryWizardOneData,
         GetAssignedStatutoryWizardTwoData,
+        GetAssignedStatutoryWizardTwoCount,
         SaveAssignedStatutory,
         GetAssignedStatutoryWizardOneUnits,
         ApproveAssignedStatutory
@@ -604,48 +632,64 @@ class ApplicableUnit(object):
 
 
 class GetAssignedStatutoryWizardTwoDataSuccess(Response):
-    def __init__(self, statutories_for_assigning, total):
+    def __init__(self, statutories_for_assigning):
         self.statutories_for_assigning = statutories_for_assigning
-        self.total = total
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "statutories_for_assigning", "total_records"
+            "statutories_for_assigning"
         ])
         statutories_for_assigning = data.get("statutories_for_assigning")
-        total = data.get("total")
         return GetAssignedStatutoryWizardTwoDataSuccess(
-            statutories_for_assigning, total
+            statutories_for_assigning
         )
 
     def to_inner_structure(self):
         return {
             "statutories_for_assigning": self.statutories_for_assigning,
-            "total_records": self.total
         }
 
-
-class GetAssignedStatutoryWizardTwoMultipleDataSuccess(Response):
-    def __init__(self, statutories_for_assigning, total):
-        self.statutories_for_assigning = statutories_for_assigning
+class GetAssignedStatutoryWizardTwoCountSuccess(Response):
+    def __init__(self, total, unit_total):
         self.total = total
+        self.unit_total = unit_total
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "statutories_for_multiple", "total_records"
+            "total_records", "unit_total"
+        ])
+        total = data.get("total_records")
+        unit_total = data.get("unit_total")
+        return GetAssignedStatutoryWizardTwoCountSuccess(
+            total, unit_total
+        )
+
+    def to_inner_structure(self):
+        return {
+            "total_records": self.total,
+            "unit_total": self.unit_total
+        }
+
+
+class GetAssignedStatutoryWizardTwoMultipleDataSuccess(Response):
+    def __init__(self, statutories_for_assigning):
+        self.statutories_for_assigning = statutories_for_assigning
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "statutories_for_multiple"
         ])
         statutories_for_assigning = data.get("statutories_for_multiple")
-        total = data.get("total")
         return GetAssignedStatutoryWizardTwoMultipleDataSuccess(
-            statutories_for_assigning, total
+            statutories_for_assigning
         )
 
     def to_inner_structure(self):
         return {
             "statutories_for_multiple": self.statutories_for_assigning,
-            "total_records": self.total
         }
 
 class SaveAssignedStatutorySuccess(Response):
@@ -679,6 +723,7 @@ def _init_Response_class_map():
         GetAssignedStatutoriesSuccess, GetAssignedStatutoriesByIdSuccess,
         GetAssignedStatutoryWizardOneDataSuccess,
         GetAssignedStatutoryWizardTwoDataSuccess,
+        GetAssignedStatutoryWizardTwoCountSuccess,
         GetAssignedStatutoryWizardTwoMultipleDataSuccess,
         SaveAssignedStatutorySuccess,
         GetAssignedStatutoryWizardOneUnitsSuccess,

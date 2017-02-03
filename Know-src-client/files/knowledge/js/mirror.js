@@ -2568,6 +2568,20 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function getAssignStatutoryWizardTwoCount(
+        domain_id, unit_ids, rcount, callback
+    ) {
+        callerName = 'domain_transaction';
+        var request = [
+            "GetAssignedStatutoryWizardTwoCount", {
+                "d_id": domain_id,
+                "unit_ids": unit_ids,
+                "rcount": rcount
+            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     function saveComplianceStatus(client_id, legal_entity_id, unit_id,
         domain_id, compliance_id, compliance_status,
         level_1_id, status, remarks, client_statutory_id,
@@ -2906,6 +2920,7 @@ function initMirror() {
         getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
         getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
         getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,
+        getAssignStatutoryWizardTwoCount: getAssignStatutoryWizardTwoCount,
         saveAssignedStatutory: saveAssignedStatutory,
         //submitAssignedStatutory: submitAssignedStatutory,
         getAssignedStatutories: getAssignedStatutories,
