@@ -2165,10 +2165,4 @@ $(document).ready(function(){
     loadItemsPerPage();
     initialize();
 
-
-    // $(window).scroll(function(){
-    //     if ($(window).scrollTop() == $(document).height() - $(window).height()){
-    //         _fetchback.getMoreMappedList();
-    //     }
-    // });
 });
