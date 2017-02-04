@@ -2010,7 +2010,7 @@ function pageControls() {
         _on_current_page = 1;
         x = 1;
         j = 1;
-        _fetchback.createPageView();
+        // _fetchback.createPageView();
         _fetchback.getMappedList();
         searchStatus.removeClass();
         searchStatus.addClass('fa');
