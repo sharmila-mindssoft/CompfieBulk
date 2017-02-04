@@ -2568,14 +2568,25 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function getAssignStatutoryWizardTwoCount(
+        domain_id, unit_ids, callback
+    ) {
+        callerName = 'domain_transaction';
+        var request = [
+            "GetAssignedStatutoryWizardTwoCount", {
+                "d_id": domain_id,
+                "unit_ids": unit_ids            }
+        ];
+        apiRequest(callerName, request, callback);
+    }
+
     function saveComplianceStatus(client_id, legal_entity_id, unit_id,
         domain_id, compliance_id, compliance_status,
         level_1_id, status, remarks, client_statutory_id,
         unit_name, domain_name
     ) {
         return {
-            "ct_id": client_id,
-            "le_id": legal_entity_id,
+           
             "u_id": unit_id,
             "d_id": domain_id,
             "comp_id": compliance_id,
@@ -2590,13 +2601,17 @@ function initMirror() {
     }
 
     function saveAssignedStatutory(
-        compliances_applicablity_status, submission_type, callback
+        compliances_applicablity_status, submission_type, client_id, legal_entity_id, domain_id, domain_name, callback
     ) {
         callerName = 'domain_transaction';
         var request = [
             "SaveAssignedStatutory", {
                 "compliances_applicablity_status": compliances_applicablity_status,
-                "submission_status": submission_type
+                "submission_status": submission_type,
+                "ct_id": client_id,
+                "le_id": legal_entity_id,
+                "d_id": domain_id,
+                "d_name": domain_name
             }
         ];
         apiRequest(callerName, request, callback);
@@ -2906,6 +2921,7 @@ function initMirror() {
         getAssignStatutoryWizardOneData: getAssignStatutoryWizardOneData,
         getAssignStatutoryWizardOneDataUnits: getAssignStatutoryWizardOneDataUnits,
         getAssignStatutoryWizardTwoData: getAssignStatutoryWizardTwoData,
+        getAssignStatutoryWizardTwoCount: getAssignStatutoryWizardTwoCount,
         saveAssignedStatutory: saveAssignedStatutory,
         //submitAssignedStatutory: submitAssignedStatutory,
         getAssignedStatutories: getAssignedStatutories,
