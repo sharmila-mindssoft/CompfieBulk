@@ -12,7 +12,8 @@ __all__ = [
     "save_statutory_compliances",
     "get_assigned_compliance_by_id",
     "get_assigned_statutories_to_approve",
-    "save_approve_statutories"
+    "save_approve_statutories",
+    "get_complinaces_count_to_assign"
 ]
 
 #
@@ -132,27 +133,68 @@ def get_statutories_units(db, request, user_id):
         data_list
     )
 
+def get_complinaces_count_to_assign(db, request, user_id):
+    unit_ids = request.unit_ids
+    domain_id = request.domain_id
+    tots = []
+    for u in unit_ids :
+        print u
+        result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_count", [u, domain_id], 2)
+
+        print result[1][0]["total"]
+        tots.append(int(result[1][0]["total"]))
+    return sum(tots), max(tots)
+
 def get_compliances_to_assign(db, request, user_id):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
     rcount = request.rcount
-    show_count = 50
+    if len(unit_ids) > 1 :
+        show_count = 50
+    else:
+        show_count = 50
     results = []
-    totals = []
     for u in unit_ids :
-        data, total = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
+        data = get_compliances_to_assign_byid(db, u, domain_id, user_id, rcount, show_count)
         results.extend(data)
-        totals.append(total)
 
     results.sort(key=lambda x : (x.level_one_name, x.compliance_id))
-    return results, max(totals)
+
+    if len(unit_ids) > 1 :
+        final = []
+        app_units = []
+        comp_id = None
+        for r in results :
+
+            if comp_id == r.compliance_id or comp_id is None :
+                app_units.append(domaintransactionprotocol.ApplicableUnit(
+                        r.unit_id, r.compliance_status, r.is_saved
+                    ))
+            else :
+                if r.compliance_id != comp_id and comp_id is not None:
+                    final.append(domaintransactionprotocol.AssignStatutoryComplianceMultiple(
+                        r.level_one_id, r.level_one_name, r.mapping_text, r.statutory_provision,
+                        r.compliance_id, r.document_name, r.compliance_name, r.description, r.organizations,
+                        r.level_one_status, r.level_one_remarks, app_units
+                    ))
+                    app_units = []
+
+                    app_units.append(domaintransactionprotocol.ApplicableUnit(
+                        r.unit_id, r.compliance_status, r.is_saved
+                    ))
+
+            comp_id = r.compliance_id
+
+    else :
+        final = results
+
+    return final
 
 def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, show_count):
-    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, from_count, show_count], 5)
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, from_count, show_count], 4)
     statu = result[1]
     organisation = result[2]
     assigned_new_compliance = result[3]
-    total_comp_list = result[4]
 
     def organisation_list(map_id) :
         org_list = []
@@ -214,14 +256,15 @@ def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, 
 
     data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
 
-    total_comp = 0
-    for t in total_comp_list :
-        total_comp = t["total"]
-
-    return data_list, total_comp
+    return data_list
 
 def save_client_statutories(db, request, user_id):
     status = request.submission_type
+    client_id = request.client_id
+    legal_entity_id = request.legal_entity_id
+    domain_name = request.domain_name
+    domain_id = request.domain_id
+
     comps = request.compliances_applicablity_status
     q = "INSERT INTO tbl_client_statutories(client_id, unit_id, status)" + \
         " values (%s, %s, %s)"
@@ -234,7 +277,7 @@ def save_client_statutories(db, request, user_id):
             continue
 
         if c.client_statutory_id is None :
-            csid = db.execute_insert(q, [c.client_id, c.unit_id, status])
+            csid = db.execute_insert(q, [client_id, c.unit_id, status])
             if csid is False :
                 raise process_error("E088")
         else :
@@ -244,11 +287,10 @@ def save_client_statutories(db, request, user_id):
 
         saved_unit.append(c.unit_id)
         save_statutory_compliances(
-            db, comps,
+            db, client_id, legal_entity_id, domain_id, comps,
             c.unit_id, status, user_id, csid
         )
         unit_name = c.unit_name
-        domain_name = c.domain_name
 
         msg = "Statutories has been assigned for following unit(s) %s in %s domain " % (
             unit_name, domain_name
@@ -258,7 +300,9 @@ def save_client_statutories(db, request, user_id):
     return True
 
 
-def save_statutory_compliances(db, data, unit_id, status, user_id, csid):
+def save_statutory_compliances(
+    db, client_id, legal_entity_id, domain_id, data, unit_id, status, user_id, csid
+):
     value_list = []
     for r in data :
         if r.unit_id == unit_id :
@@ -267,7 +311,7 @@ def save_statutory_compliances(db, data, unit_id, status, user_id, csid):
                 remarks = ''
             value_list.append(
                 (
-                    csid, r.client_id, r.legal_entity_id, unit_id, r.domain_id,
+                    csid, client_id, legal_entity_id, unit_id, domain_id,
                     r.level_1_id, r.status, str(remarks),
                     r.compliance_id, r.compliance_status, status,
                     user_id, get_date_time(), status
@@ -303,11 +347,10 @@ def get_assigned_compliance_by_id(db, request, user_id):
     rcount = request.rcount
     show_count = 10
 
-    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, rcount, show_count], 5)
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, rcount, show_count], 4)
     statu = result[1]
     organisation = result[2]
     assigned_new_compliance = result[3]
-    total_comp_list = result[4]
 
     def organisation_list(map_id) :
         org_list = []
@@ -368,11 +411,7 @@ def get_assigned_compliance_by_id(db, request, user_id):
 
     data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
 
-    total_comp = 0
-    for t in total_comp_list :
-        total_comp = t["total"]
-
-    return data_list, total_comp
+    return data_list
 
 
 #

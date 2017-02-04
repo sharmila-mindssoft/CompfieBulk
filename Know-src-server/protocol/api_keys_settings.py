@@ -474,6 +474,7 @@ api_params = {
     "client_group_master" : {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "ClientGroupMaster"},
     "level_1_statutories_list": {'type': 'VECTOR_TYPE_STRING', 'length': 100000, 'validation_method': is_alpha_numeric, 'is_optional': False},
     "statutories_for_assigning": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignStatutoryCompliance"},
+    "statutories_for_multiple": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignStatutoryComplianceMultiple"},
     "category_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "cat_id": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
     "domain_id_optional": {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': True},
@@ -636,6 +637,8 @@ api_params = {
     'service_provider_name': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'contact_person': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'statutory_nature': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
+    "applicable_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "ApplicableUnit"},
+
 
 
 
@@ -697,6 +700,7 @@ api_params["org_id"] = api_params.get("industry_id")
 api_params["org_name"] = api_params.get("industry_name")
 api_params["rcount"] = api_params.get("total_records")
 api_params["count"] = api_params.get("total_records")
+api_params["unit_total"] = api_params.get("total_records")
 api_params["days_left"] = api_params.get("total_records")
 api_params["allow_enable"] = api_params.get("is_active")
 api_params["is_file_removed"] = api_params.get("is_active")
@@ -722,3 +726,5 @@ api_params['format_file_name'] = api_params.get('file_name')
 api_params['file_names'] = api_params.get('file_name')
 api_params['download_url'] = api_params.get('url')
 
+api_params['is_new_data'] = api_params.get('is_active')
+api_params['is_new_domain'] = api_params.get('is_active')

@@ -10,8 +10,8 @@ from server.clientdatabase.general import (
     get_user_company_details,
     get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_units_for_user,
-    get_client_users, get_client_level_1_statutoy,
+    get_divisions_for_user, get_units_for_user, get_acts_for_user, 
+    get_client_users, get_client_level_1_statutoy, 
     get_service_providers, get_client_compliances
     )
 
@@ -536,17 +536,16 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
 
     domain_list = get_domains_for_user(db, session_user)
     unit_list = get_units_for_user(db, session_user)
-    acts = get_acts_for_user(db, session_user)
-    #level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
-    #compliances_list = get_client_compliances(db, session_user)
-    #users_list = get_client_users(db)
+    acts_list = get_acts_for_user(db, session_user)
+    compliances_list = get_client_compliances(db, session_user)
+    users_list = get_client_users(db)
 
     return clientreport.GetReassignedHistoryReportFiltersSuccess(
         domains=domain_list,
         units=unit_list,
-        #level_1_statutories=level_1_statutories_list,
-        #compliances=compliances_list,
-        #users=users_list
+        acts=acts_list,
+        compliances=compliances_list,
+        legal_entity_users=users_list
     )
 
 def get_reassignedhistory_report(db, request, session_user, client_id):

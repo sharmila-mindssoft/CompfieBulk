@@ -1788,21 +1788,30 @@ class GetComplianceActivityReportSuccess(Response):
 #         }
 
 class GetReassignedHistoryReportFiltersSuccess(Response):
-    def __init__(self, domains, units):
+    def __init__(self, domains, units, acts, compliances, legal_entity_users):
         self.domains = domains
         self.units = units
+        self.acts = acts
+        self.compliances = compliances
+        self.legal_entity_users = legal_entity_users
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domains", "units"])
+        data = parse_dictionary(data, ["domains", "units", "acts", "compliances", "legal_entity_users"])
         domains = data.get("domains")
         units = data.get("units")
-        return GetReassignedHistoryReportFiltersSuccess(domains, units)
+        acts = data.get("acts")
+        compliances = data.get("compliances")
+        legal_entity_users = data.get("legal_entity_users")
+        return GetReassignedHistoryReportFiltersSuccess(domains, units, acts, compliances, legal_entity_users)
 
     def to_inner_structure(self):
         return {
             "domains": self.domains,
             "units": self.units,
+            "acts": self.acts,
+            "compliances": self.compliances,
+            "legal_entity_users": self.legal_entity_users,
         }
 
 class GetReassignedHistoryReportSuccess(Response):
@@ -1824,7 +1833,6 @@ class GetReassignedHistoryReportSuccess(Response):
             "statutory_wise_compliances": to_structure_VectorType_RecordType_clientreport_StatutoryReassignCompliance(self.statutory_wise_compliances),
             "total": to_structure_UnsignedIntegerType_32(self.total)
         }
-
 
 #
 # Statutory Notificaiton List

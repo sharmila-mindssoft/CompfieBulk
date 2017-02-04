@@ -146,7 +146,6 @@ api_params = {
     "business_group_id": make_int_field(is_optional=True),
     "unit_code": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
     "unit_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
-    "address": make_text_field(is_optional=True),
     "country_id": make_int_field(is_optional=True),
     "domain_id": make_int_field(length=10000),
     "is_closed": make_bool_field(),
@@ -186,6 +185,13 @@ api_params = {
     'from_count': make_int_field(is_optional=False),
     'page_count': make_int_field(is_optional=False),
     'total_count': make_int_field(is_optional=False),
+=======
+    "act": make_text_field(is_optional=True),
+    "c_task": make_text_field(is_optional=True),
+    "user_id": make_int_field(),
+    "employee_code": make_text_field(is_optional=True),
+    "employee_name": make_string_field(),
+>>>>>>> Boginaathan/phase2
 
     "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
@@ -193,9 +199,16 @@ api_params = {
     "le_infos": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
     "div_infos": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
     "units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
+<<<<<<< HEAD
     "unit_closure_legal_entities": make_vector_type_field(module="clientcore", klass_name="UnitClosureLegalEntity"),
     "unit_closure_units": make_vector_type_field(module="clientcore", klass_name="UnitClosure_Units"),
 
+=======
+    "acts": make_vector_type_field(module="clientcore", klass_name="ClientAct"),
+    "compliances": make_vector_type_field(module="clientcore", klass_name="ComplianceFilter"),
+    "legal_entity_users": make_vector_type_field(module="clientcore", klass_name="LegalEntityUser"),
+    
+>>>>>>> Boginaathan/phase2
     "assign_unit_infos": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
