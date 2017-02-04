@@ -40,7 +40,7 @@ def process_domain_transaction_request(request, db):
         request_frame
     ) is domaintransactionprotocol.GetAssignedStatutoryWizardTwoCount:
 
-        result = process_get_compliances_toassign(
+        result = process_get_compliance_count(
             db, request_frame, user_id
         )
 
@@ -84,7 +84,7 @@ def process_get_compliance_count(db, request, user_id):
     return domaintransactionprotocol.GetAssignedStatutoryWizardTwoCountSuccess(total_comp, unit_total)
 
 def process_get_compliances_toassign(db, request, user_id):
-    data, total = get_compliances_to_assign(db, request, user_id)
+    data = get_compliances_to_assign(db, request, user_id)
     unit_ids = request.unit_ids
     if len(unit_ids) > 1 :
         return domaintransactionprotocol.GetAssignedStatutoryWizardTwoMultipleDataSuccess(data)

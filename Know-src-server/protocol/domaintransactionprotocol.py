@@ -157,30 +157,26 @@ class GetAssignedStatutoryWizardTwoData(Request):
 
 class GetAssignedStatutoryWizardTwoCount(Request):
     def __init__(
-        self, unit_ids, domain_id,
-        rcount
+        self, unit_ids, domain_id
     ):
         self.unit_ids = unit_ids
         self.domain_id = domain_id
-        self.rcount = rcount
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "unit_ids", "d_id", "rcount"
+            "unit_ids", "d_id"
         ])
         domain_id = data.get("d_id")
         unit_ids = data.get("unit_ids")
-        rcount = data.get("rcount")
         return GetAssignedStatutoryWizardTwoCount(
-            unit_ids, domain_id, rcount
+            unit_ids, domain_id
         )
 
     def to_inner_structure(self):
         return {
             "unit_ids": self.unit_ids,
-            "d_id": self.domain_id,
-            "rcount": self.rcount
+            "d_id": self.domain_id
         }
 
 class SaveAssignedStatutory(Request):
@@ -290,7 +286,7 @@ class SaveComplianceStatus(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "u_id"
+            "u_id",
             "comp_id", "comp_status",
             "level_1_s_id",
             "a_status", "remarks", "client_statutory_id",

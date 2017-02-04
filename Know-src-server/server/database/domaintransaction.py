@@ -138,8 +138,11 @@ def get_complinaces_count_to_assign(db, request, user_id):
     domain_id = request.domain_id
     tots = []
     for u in unit_ids :
-        result = db.call_proc("sp_clientstatutories_compliance_count", [u.unit_id, domain_id])
-        tots.append(int(result[0]["total"]))
+        print u
+        result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_count", [u, domain_id], 2)
+
+        print result[1][0]["total"]
+        tots.append(int(result[1][0]["total"]))
     return sum(tots), max(tots)
 
 def get_compliances_to_assign(db, request, user_id):
