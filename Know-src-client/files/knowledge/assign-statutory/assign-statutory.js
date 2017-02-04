@@ -1028,6 +1028,7 @@ function loadMultipleUnitCompliances() {
             var actHeadingRow = $('.mul-act-heading');
             var clone = actHeadingRow.clone();
 
+            //$('tr', clone).addClass('act' + actCount);
             $('.panel-title span', clone).text(value.level_1_s_name);
             $('.change_status', clone).attr('id', 'act' + actCount);
             $('.change_status', clone).addClass(' ' + actCount);
@@ -1048,24 +1049,12 @@ function loadMultipleUnitCompliances() {
             } else {
                 $('#act' + actCount).html('<img src="images/tick1bold.png">').attr('for', '1');
             }
-            
-            temp1 = temp1 + clone.html();
-            //$('.tbody-assignstatutory').append(clone);
 
-            /*$('#act'+actCount).click(function() {
-                alert('hi');
-                if($(this).attr('for') == "1") {
-                  $(this).html('<img src="images/deletebold.png">').attr('for','2');
-                } else if($(this).attr('for') == "2") {
-                  $(this).html('<img src="images/iconminusactive.png">').attr('for','3');
-                } else {
-                  $(this).html('<img src="images/tick1bold.png">').attr('for','1');
-                }
-                mactstatus(this);
-            });*/
+            temp1 = temp1 + clone.html();
 
             var complianceHeadingRow = $('.mul-compliance-heading');
             var clone1 = complianceHeadingRow.clone();
+            $('tr', clone1).addClass('act' + actCount);
             temp1 = temp1 + clone1.html();
             count = actCount;
             LastAct = value.level_1_s_name;
@@ -1075,7 +1064,8 @@ function loadMultipleUnitCompliances() {
         applcount = 0;
         var complianceDetailtableRow = $('.mul-compliance-details');
         var clone2 = complianceDetailtableRow.clone();
-
+        
+        $('tr', clone2).addClass('act' + actCount);
         $('.sno', clone2).text(sno);
         $('.statutoryprovision', clone2).text(value.s_provision);
         $('.compliancetask', clone2).text(value.comp_name);
@@ -1093,6 +1083,7 @@ function loadMultipleUnitCompliances() {
 
         var unitRow = $('.mul-unit-head');
         var clone5 = unitRow.clone();
+        $('tr', clone5).addClass('act' + actCount);
         $('.sub-tick', clone5).attr('id', 'sub-tick-' + sno);
         $('.sub-tick', clone5).attr('name', 'sub-check-' + sno);
         $('.sub-tick', clone5).on('click', function() {
@@ -1124,6 +1115,7 @@ function loadMultipleUnitCompliances() {
         $.each(applUnits, function(key1, value1) {
             var unitRow = $('.mul-unit-row');
             var clone4 = unitRow.clone();
+            $('tr', clone4).addClass('act' + actCount);
             var combineId = value.comp_id + '#' + value.level_1_s_id + '#' + value.u_id;
             $('.combineid-class', clone4).attr('id', 'combineid' + statutoriesCount);
             $('.combineid-class', clone4).val(combineId);
