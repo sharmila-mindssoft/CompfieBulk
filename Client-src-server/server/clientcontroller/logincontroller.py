@@ -249,6 +249,7 @@ def user_login_response(db, data, client_id, ip):
     menu = process_user_forms(
         db, forms
     )
+
     return clientlogin.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
