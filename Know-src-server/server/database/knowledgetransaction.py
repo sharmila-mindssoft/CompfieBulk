@@ -1254,7 +1254,7 @@ def statutory_mapping_master(db, user_id):
         approval_status, duration
     )
 
-def statutory_mapping_list(db, user_id, approve_status, rcount):
+def statutory_mapping_list(db, user_id, approve_status, rcount, page_limit):
 
     def return_compliance(mapping_id, comp_info):
         compliances = []
@@ -1304,7 +1304,7 @@ def statutory_mapping_list(db, user_id, approve_status, rcount):
         return statutory
 
     fromcount = rcount
-    tocount = 1000
+    tocount = page_limit
     result = db.call_proc_with_multiresult_set(
         'sp_tbl_statutory_mapping_list',
         [user_id, approve_status, fromcount, tocount], 5

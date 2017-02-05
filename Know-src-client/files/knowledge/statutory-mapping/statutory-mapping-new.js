@@ -1,17 +1,4 @@
 
-// MASTER DATA
-var FREQUENCY_INFO;
-var DURATION_INFO;
-var REPEATSTYPE_INFO;
-var APPROVALSTATUS_INFO;
-var COUNTY_INFO;
-var DOMAIN_INFO;
-var ORGANISATION_INFO;
-var NATURE_INFO;
-var STATUTORY_INFO;
-var STATUTORY_LEVEL_INFO;
-var GEOGRAPHY_INFO;
-var GEOGRAPHY_LEVEL_INFO;
 var isAuthenticate;
 var compliance_edit = false;
 
@@ -19,8 +6,6 @@ var CURRENT_TAB = 1;
 IS_EDIT = false;
 IS_SAVE = false;
 
-// controls
-Spin_pan = $('.loading-indicator-spin');
 // password popup
 
 var CurrentPassword = $('#current-password');
@@ -93,24 +78,7 @@ _fetchback = null;
 _listPage = null;
 _viewPage = null;
 
-possibleFailure = function(err, extra_details) {
-    if (err == "StatutoryNameAlreadyExists") {
-        displayMessage(msg.statutoryname_exists);
-    }
-    else if ( err == "ComplianceNameAlreadyExists") {
-        displayMessage(msg.compliancename_exists + extra_details);
-    }
-    else if (err == "TransactionExists") {
-        displayMessage(msg.transaction_exists);
-    }
-    else if (err == "InvalidPassword") {
-        displayMessage("Invalid password");
-    }
-    else {
-        displayMessage(err);
-    }
-    hideLoader();
-};
+
 //
 // render list, select and multiselect box with data
 //
@@ -2037,8 +2005,13 @@ function pageControls() {
 
         $(event.target).parent().addClass('active');
         approveStatusText.text($(event.target).text());
-        ap_status = $(event.target).parent().val();
-        _fetchback.getMappedList(ap_status, 0);
+        _renderinput.show_map_count = 0;
+        _renderinput.mapping_id = [];
+        _on_current_page = 1;
+        x = 1;
+        j = 1;
+        // _fetchback.createPageView();
+        _fetchback.getMappedList();
         searchStatus.removeClass();
         searchStatus.addClass('fa');
         searchStatus.text('All');
@@ -2157,7 +2130,17 @@ function pageControls() {
         }
     });
 
+    $('#items_per_page').on('change', function(e) {
+        // t_this.perPage = parseInt($(this).val());
+        // t_this._sno = 0;
+        _on_current_page = 1;
+        _fetchback.createPageView();
+        _fetchback.getMappedList();
+    });
+
+
 }
+
 function remove_temp_file(edit_id) {
     _renderinput.form_data.delete('file' + edit_id);
     $.each(_renderinput.uploaded_files_fcids, function(k, v){
@@ -2179,11 +2162,7 @@ function initialize() {
 
 $(document).ready(function(){
     $('html').offset().top;
+    loadItemsPerPage();
     initialize();
 
-    $(window).scroll(function(){
-        if ($(window).scrollTop() == $(document).height() - $(window).height()){
-            _fetchback.getMoreMappedList();
-        }
-    });
 });
