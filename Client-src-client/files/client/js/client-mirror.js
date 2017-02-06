@@ -1914,6 +1914,7 @@ function initClientMirror() {
 
     /* Legal entity wise report - updated*/
     function getLegalEntityWiseReportFilters(country_id, le_id, callback) {
+        console.log(country_id+' - '+le_id);
         var request = [
             'GetLegalEntityWiseReportFilters',
             {
