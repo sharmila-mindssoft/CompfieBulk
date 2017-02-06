@@ -47,7 +47,9 @@ __all__ = [
     "reassign_compliance",
     "save_assigned_compliance",
     "reject_compliance_concurrence",
-    "concur_compliance"
+    "concur_compliance",
+    "get_review_settings_frequency",
+    "get_domains_for_legalentity"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -58,7 +60,7 @@ def get_statutory_settings(db, legal_entity_id, session_user):
     user_id = int(session_user)
     where_qry = " WHERE t1.legal_entity_id = %s and t2.is_closed = 0 "
     condition_val = [legal_entity_id]
-    if cat_id > 3 :
+    if cat_id > 3:
         where_qry += " WHERE t1.unit_id in ( " + \
             " select unit_id from tbl_user_units where user_id LIKE %s) " + \
             " AND t1.domain_id in (select domain_id from tbl_user_domains " + \
@@ -2318,3 +2320,51 @@ def update_user_settings(db, new_units):
             db.bulk_insert(
                 tblUserCountries, country_columns, country_values_list
             )
+
+
+def get_review_settings_frequency(db, session_user):
+    query = "SELECT frequency_id, frequency from tbl_compliance_frequency " + \
+            "where frequency_id in (3,4)"
+    rows = db.select_all(query)
+    return return_get_review_settings_frequency(rows)
+
+
+def return_get_review_settings_frequency(frequency):
+    results = []
+    for f in frequency:
+        print f
+        f_obj = clientcore.ComplianceFrequency(
+                int(f["frequency_id"]),
+                f["frequency"]
+                )
+        results.append(f_obj)
+    return results
+
+
+def get_domains_for_legalentity(db, request, session_user):
+    le_id = request.legal_entity_id
+    cat_id = get_user_category(db, session_user)
+    where_qry = " WHERE t02.legal_entity_id = %s "
+    condition_val = [le_id]
+
+    if cat_id > 2:
+        where_qry += "AND t02.user_id = %s "
+        condition_val.extend([session_user])
+    query = "SELECT t01.domain_id, t01.domain_name, t02.legal_entity_id, t01.is_active " + \
+            "FROM tbl_domains t01  " + \
+            "INNER JOIN tbl_user_domains t02 on t01.domain_id = t02.domain_id %s"
+    query = query % (where_qry)
+    if condition_val is None:
+        rows = db.select_all(query)
+    else:
+        rows = db.select_all(query, condition_val)
+    return return_get_domains_for_legalentity(rows)
+
+
+def return_get_domains_for_legalentity(domains):
+    results = []
+    for d in domains:
+        results.append(clientcore.Domain(
+            d["domain_id"], d["domain_name"], d["legal_entity_id"], bool(d["is_active"])
+        ))
+    return results

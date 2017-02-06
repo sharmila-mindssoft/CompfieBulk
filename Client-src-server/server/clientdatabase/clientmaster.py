@@ -1260,7 +1260,7 @@ def get_unit_closure_units_list(db, request):
     query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.postal_code, " + \
             "(select business_group_name from tbl_business_groups where " + \
             "business_group_id = t1.business_group_id) as business_group_name, " + \
-            "(select legal_entity_name from tbl_legal_entity where " + \
+            "(select legal_entity_name from tbl_legal_entities where " + \
             "legal_entity_id = t1.legal_entity_id) as legal_entity_name, " + \
             "(select division_name from tbl_divisions where " + \
             "division_id = t1.division_id) as division_name, " + \
@@ -1271,7 +1271,8 @@ def get_unit_closure_units_list(db, request):
             "DATEDIFF(NOW(), t1.closed_on) else 0 end) as validity_days, " + \
             "t1.legal_entity_id from tbl_units as t1 where t1.legal_entity_id = %s " + \
             "order by t1.unit_name; "
-    result = db.execute(query, [le_id, ])
+    result = db.select_all(query, [le_id])
+
     units_list = []
     for row in result:
         units_list.append(clientcore.UnitClosure_Units(
@@ -1290,9 +1291,10 @@ def is_invalid_id(db, check_mode, val):
     if check_mode == "unit_id":
         params = [val, ]
         q = "select count(*) as unit_id_cnt from tbl_units where unit_id = %s "
-        rows = db.execute(q, params)
+        rows = db.select_all(q, params)
+        print rows
         for d in rows:
-            if(int(d["unit_id_cnt"]) > 0):
+            if(d["unit_id_cnt"] > 0):
                 return True
             else:
                 return False
@@ -1306,12 +1308,14 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
     if action_mode == "close":
         print "save"
         values = [1, current_time_stamp, user_id, remarks]
-        condition_val = [unit_id, ]
+        condition_val = "unit_id= %s"
+        values.append(unit_id)
         result = db.update(tblUnits, columns, values, condition_val)
     elif action_mode == "reactive":
         values = [0, current_time_stamp, user_id, remarks]
-        condition_val = [unit_id, ]
+        condition_val = "unit_id= %s"
+        values.append(unit_id)
         result = db.update(tblUnits, columns, values, condition_val)
-
+    print "result"
     print result
     return result
