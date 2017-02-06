@@ -121,6 +121,8 @@ class CompanyManager(object) :
             assert r is not None
             self._servers = {}
             for company in r.companies:
+                if company.is_group is False:
+                    continue
                 self._servers[company.company_id] = company
             self._server_added_callback(self._servers)
         else :
