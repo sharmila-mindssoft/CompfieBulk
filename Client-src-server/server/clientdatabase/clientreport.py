@@ -68,7 +68,10 @@ __all__ = [
     "process_legal_entity_wise_report",
     "get_task_for_le_domain",
     "process_domain_wise_report",
-    "process_unit_wise_report"
+    "process_unit_wise_report",
+    "get_service_providers_list",
+    "get_service_provider_user_list",
+    "process_service_provider_wise_report"
 ]
 
 
@@ -3256,3 +3259,200 @@ def process_unit_wise_report(db, request):
             datetime_to_string(row["completion_date"]), url, row["domain_name"]
         ))
     return unit_report
+
+
+###############################################################################################
+# Objective: To get the service provider details from master
+# Parameter: request object
+# Result: list of service providers
+###############################################################################################
+def get_service_providers_list(db):
+    query = "select concat(short_name,' - ',service_provider_name) as sp_name, " + \
+            "service_provider_id as sp_id from tbl_service_providers"
+    result = db.select_all(query, None)
+    print "sp list"
+    print result
+    sp_details = []
+
+    for row in result:
+        sp_details.append(clientreport.ServiceProviders(
+            row["sp_id"], row["sp_name"]
+        ))
+    return sp_details
+
+###############################################################################################
+# Objective: To get the lists of users under service provider
+# Parameter: request object
+# Result: list of users under service provider
+##############################################################################################
+def get_service_provider_user_list(db, country_id, legal_entity_id):
+    query = "select t1.domain_id, t1.unit_id, t1.compliance_id, t2.service_provider_id as sp_id, " + \
+            "t2.user_id, concat(t2.employee_code,' - ',t2.employee_name) as username " + \
+            "from tbl_assign_compliances as t1 inner join tbl_users as t2 " + \
+            "on (t2.user_id=t1.assignee or t2.user_id=t1.concurrence_person or " + \
+            "t2.user_id=t1.approval_person) where t1.legal_entity_id = %s and t1.country_id = %s "
+
+    result = db.select_all(query, [legal_entity_id, country_id])
+    sp_user_details = []
+
+    for row in result:
+        sp_id_optional = row["sp_id"]
+        sp_user_details.append(clientreport.ServiceProvidersUsers(
+            row["domain_id"], row["unit_id"], row["compliance_id"], sp_id_optional,
+            row["user_id"], row["username"]
+        ))
+    return sp_user_details
+
+
+###############################################################################################
+# Objective: To get the compliance list under filtered data
+# Parameter: request object
+# Result: list of compliance grouped by unit and act
+###############################################################################################
+def process_service_provider_wise_report(db , request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    from_clause = None
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    sp_id = request.sp_id
+    domain_id = request.domain_id
+    stat_map = request.statutory_mapping
+    due_from = request.due_from_date
+    due_to = request.due_to_date
+    task_status = request.task_status
+    if task_status == "All":
+        task_status = '%'
+
+    select_qry = "select t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+        "(select concat(unit_code,'-',unit_name,',',geography_name,',',address,',',postal_code)" + \
+        "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
+        "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
+        "frequency_id = t3.frequency_id) as frequency_name, (select " + \
+        "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
+        "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size "
+    from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
+        "on (t1.completed_by=t4.user_id or t1.concurred_by=t4.user_id or t1.approved_by=t4.user_id) " + \
+        "left join tbl_compliance_activity_log as t2 " + \
+        "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
+        "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
+    where_clause = "t3.country_id = %s and t3.domain_id = %s "
+    condition_val.extend([country_id, domain_id])
+    if request.statutory_mapping is not None:
+        stat_map = '%'+stat_map+'%'
+        where_clause = where_clause + "and t3.statutory_mapping like %s "
+        condition_val.append(stat_map)
+
+    if task_status == "Complied":
+        where_clause = where_clause + "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+    elif task_status == "Delayed Compliance":
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+    elif task_status == "Inprogress":
+        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+    elif task_status == "Not Complied":
+        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+
+    if due_from is not None and due_to is not None:
+        where_clause = where_clause + " and t1.due_date between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        where_clause = where_clause + " and t1.due_date between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        where_clause = where_clause + " and t1.due_date < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    compliance_id = request.compliance_id
+    if int(compliance_id) > 0:
+        where_clause = where_clause + "and t1.compliance_id = %s "
+        condition_val.append(compliance_id)
+
+    unit_id = request.unit_id
+    if int(unit_id) > 0:
+        where_clause = where_clause + "and t1.unit_id = %s "
+        condition_val.append(unit_id)
+
+    user_id = request.user_id
+    if int(user_id) > 0:
+        where_clause = where_clause + "and t4.user_id = %s "
+        condition_val.append(user_id)
+
+    where_clause = where_clause + "and t4.service_provider_id = %s and t1.legal_entity_id = %s " + \
+        "order by t1.due_date desc limit %s, %s;"
+    condition_val.extend([sp_id, legal_entity_id, int(request.from_count), int(request.page_count)])
+    query = select_qry + from_clause + where_clause
+    print "qry"
+    print query
+    result = db.select_all(query, condition_val)
+    sp_report = []
+    for row in result:
+        task_status = None
+        activity_status = None
+        statutory_mapping = json.loads(row["statutory_mapping"])
+        if statutory_mapping[0].find(">>") >= 0:
+            statutory_mapping = statutory_mapping[0].split(">>")[0]
+        else:
+            statutory_mapping = str(statutory_mapping)[3:-2]
+
+        # Find task status
+        if (row["approve_status"] == 1):
+            if (str(row["due_date"]) > str(row["completion_date"])):
+                task_status = "Complied"
+            else:
+                task_status = "Delayed Compliance"
+        else:
+            if (str(row["due_date"]) > str(datetime.datetime.now())):
+                task_status = "In Progress"
+            else:
+                task_status = "Not Complied"
+
+        # Find Activity Status
+        print row["activity_date"]
+        if row["activity_date"] is None:
+            print row["approve_status"]
+            if row["approve_status"] == "0":
+                activity_status = "Pending"
+            elif row["approve_status"] == "1":
+                activity_status = "Approved"
+            elif row["approve_status"] == "2":
+                activity_status = "Rejected"
+        else:
+            activity_status = "Submitted"
+
+        document_name = row["documents"]
+        compliance_task = row["compliance_task"]
+        if document_name == "None":
+            document_name = None
+        if document_name:
+            name = "%s - %s" % (
+                document_name, compliance_task
+            )
+        else:
+            name = compliance_task
+
+        format_file = row["format_file"]
+        format_file_size = row["format_file_size"]
+        if format_file_size is not None:
+            format_file_size = int(format_file_size)
+        if format_file:
+            url = "%s/%s" % (
+                CLIENT_DOCS_DOWNLOAD_URL, format_file
+            )
+        else:
+            url = None
+
+        sp_report.append(clientreport.LegalEntityWiseReport(
+            row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
+            row["compliance_id"], row["unit_name"], statutory_mapping, row["compliance_task"],
+            row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
+            activity_status, datetime_to_string(row["activity_date"]), name,
+            datetime_to_string(row["completion_date"]), url
+        ))
+    return sp_report
