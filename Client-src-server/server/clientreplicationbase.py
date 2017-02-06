@@ -1,5 +1,10 @@
 import time
-from tornado.httpclient import HTTPRequest
+import threading
+import base64
+import random
+import string
+# from tornado.httpclient import HTTPRequest
+import requests
 import json
 import traceback
 from replication.protocol import (
@@ -12,6 +17,13 @@ from server.clientdatabase.general import (
     update_traild_id, reset_domain_trail_id
 )
 import logger
+
+'''
+    Replication has been splitted into two process as
+      master replication which will replicate all master data to group db.
+      compliance replication which will replicate all client-specific compliance data to le db.
+
+'''
 
 
 #
@@ -27,12 +39,11 @@ __all__ = [
 
 class ClientReplicationManager(object) :
     def __init__(
-        self, io_loop, knowledge_server_address,
-        http_client, timeout_seconds, replication_added_callback
+        self, knowledge_server_address,
+        timeout_seconds, replication_added_callback
     ) :
-        self._io_loop = io_loop
         self._knowledge_server_address = knowledge_server_address
-        self._http_client = http_client
+        # self._http_client = http_client
         self._timeout_seconds = timeout_seconds
         self._first_time = True
         self._replication_added_callback = replication_added_callback
@@ -41,48 +52,68 @@ class ClientReplicationManager(object) :
         self._poll_url = "http://%s:%s/knowledge/client-list" % (ip, port)
         # print
         # print self._poll_url
-        body = json.dumps(
-            GetClientChanges().to_structure()
+        self._request_body = json.dumps(
+            GetClientChanges().to_structure(), indent=2
         )
+        print self._request_body
         # print body
-        request = HTTPRequest(
-            self._poll_url, method="POST", body=body,
-            headers={"Content-Type": "application/json"},
-            request_timeout=10
-        )
-        self._request_body = request
+        # request = HTTPRequest(
+        #     self._poll_url, method="POST", body=body,
+        #     headers={"Content-Type": "application/json"},
+        #     request_timeout=10
+        # )
 
     def _start(self):
-        self._io_loop.add_callback(self._poll)
+        self._poll()
+        # self._io_loop.add_callback(self._poll)
 
     def _poll(self) :
         # self._http_client.fetch(self._request_body, self._poll_response)
 
         def on_timeout():
-            self._http_client.fetch(self._request_body, self._poll_response)
+            req_data = self._request_body
+            print req_data
+            key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+            req_data = base64.b64encode(req_data)
+            print req_data
+            print " ----"
+            req_data = key+req_data
+
+            response = requests.post(self._poll_url, data=req_data)
+
+            data = response.text[6:]
+            print data
+            data = str(data).decode('base64')
+            self._poll_response(data, response.status_code)
+            t = threading.Timer(self._timeout_seconds, on_timeout)
+            t.daemon = True
+            t.start()
+
+            # self._http_client.fetch(self._request_body, self._poll_response)
 
         if self._first_time:
             self._first_time = False
             on_timeout()
-            return
-        self._io_loop.add_timeout(
-            time.time() + self._timeout_seconds, on_timeout
-        )
+            # return
+        # self._io_loop.add_timeout(
+        #     time.time() + self._timeout_seconds, on_timeout
+        # )
 
-    def _poll_response(self, response) :
+    def _poll_response(self, response, status_code) :
         # print response.error
         # print response.body
         err = "knowledge server poll for client-list "
-        if not response.error :
+        if status_code == 200 :
             r = None
             try :
                 r = Response.parse_structure(
-                    json.loads(response.body)
+                    json.loads(response)
                 )
             except Exception, e :
                 print err, e
                 self._poll()
                 return
+
             assert r is not None
             self._clients = {}
             for client in r.clients :
@@ -91,6 +122,7 @@ class ClientReplicationManager(object) :
 
         else :
             pass
+            print err, response
 
         self._poll()
 
@@ -101,12 +133,12 @@ class ClientReplicationManager(object) :
 
 class ReplicationBase(object):
     def __init__(
-        self, io_loop, knowledge_server_address, http_client,
+        self, knowledge_server_address,
         db
     ) :
-        self._io_loop = io_loop
+        # self._io_loop = io_loop
         self._knowledge_server_address = knowledge_server_address
-        self._http_client = http_client
+        # self._http_client = http_client
         self._db = db
         self._received_count = None
         self._temp_count = 0
@@ -117,8 +149,8 @@ class ReplicationBase(object):
         self._load_columns_count()
         self._countries = []
         self._domains = []
-        self._get_client_countries()
-        self._get_client_domains()
+        # self._get_client_countries()
+        # self._get_client_domains()
         self._type = None
 
     def _load_auto_id_columns(self):
@@ -127,61 +159,63 @@ class ReplicationBase(object):
             "tbl_business_groups": "business_group_id",
             "tbl_legal_entities": "legal_entity_id",
             "tbl_divisions": "division_id",
+            "tbl_categories": "category_id",
             "tbl_units": "unit_id",
-            "tbl_client_configurations": "client_config_id",
-            "tbl_compliances": "compliance_id",
-            "tbl_client_statutories": "client_statutory_id",
-            "tbl_client_compliances": "client_compliance_id",
-            "tbl_statutory_notifications_log": "statutory_notification_id",
-            "tbl_statutory_notifications_units": "statutory_notification_unit_id",
+            # "tbl_client_configurations": "client_config_id",
+            # "tbl_compliances": "compliance_id",
+            # "tbl_client_statutories": "client_statutory_id",
+            # "tbl_client_compliances": "client_compliance_id",
+            # "tbl_statutory_notifications_log": "statutory_notification_id",
+            # "tbl_statutory_notifications_units": "statutory_notification_unit_id",
             "tbl_countries": "country_id",
             "tbl_domains": "domain_id"
         }
 
     def _load_columns_count(self):
         self._columns_count = {
-            "tbl_client_groups": 11,
+            "tbl_client_groups": 5,
             "tbl_business_groups": 2,
-            "tbl_legal_entities": 3,
+            "tbl_legal_entities": 10,
             "tbl_divisions": 4,
-            "tbl_units": 13,
-            "tbl_client_configurations": 5,
-            "tbl_compliances": 17,
-            "tbl_client_statutories": 5,
-            "tbl_client_compliances": 10,
-            "tbl_statutory_notifications_log": 8,
-            "tbl_statutory_notifications_units": 6,
+            "tbl_categories": 5,
+            "tbl_units": 11,
+            # "tbl_client_configurations": 5,
+            # "tbl_compliances": 17,
+            # "tbl_client_statutories": 5,
+            # "tbl_client_compliances": 10,
+            # "tbl_statutory_notifications_log": 8,
+            # "tbl_statutory_notifications_units": 6,
             "tbl_countries": 2,
             "tbl_domains": 2
         }
 
-    def _get_client_countries(self):
-        country_list = None
-        self._db.begin()
-        try:
-            country_list = get_countries(self._db)
-            for c in country_list :
-                self._countries.append(int(c.country_id))
-            self._db.commit()
-        except Exception, e :
-            print e,
-            self._countries = None
-            self._db.rollback()
-        assert self._countries is not None
+    # def _get_client_countries(self):
+    #     country_list = None
+    #     self._db.begin()
+    #     try:
+    #         country_list = get_countries(self._db)
+    #         for c in country_list :
+    #             self._countries.append(int(c.country_id))
+    #         self._db.commit()
+    #     except Exception, e :
+    #         print e,
+    #         self._countries = None
+    #         self._db.rollback()
+    #     assert self._countries is not None
 
-    def _get_client_domains(self):
-        domain_list = None
-        self._db.begin()
-        try:
-            domain_list = get_domains(self._db)
-            for d in domain_list :
-                self._domains.append(int(d.domain_id))
-            self._db.commit()
-        except Exception, e :
-            print e,
-            self._domains = None
-            self._db.rollback()
-        assert self._domains is not None
+    # def _get_client_domains(self):
+    #     domain_list = None
+    #     self._db.begin()
+    #     try:
+    #         domain_list = get_domains(self._db)
+    #         for d in domain_list :
+    #             self._domains.append(int(d.domain_id))
+    #         self._db.commit()
+    #     except Exception, e :
+    #         print e,
+    #         self._domains = None
+    #         self._db.rollback()
+    #     assert self._domains is not None
 
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
@@ -317,12 +351,12 @@ class ReplicationBase(object):
 
 class ReplicationManagerWithBase(ReplicationBase):
     def __init__(
-        self, io_loop, knowledge_server_address,
-        http_client, db, client_id
+        self, knowledge_server_address,
+        db, client_id
     ) :
         super(ReplicationManagerWithBase, self).__init__(
-            io_loop, knowledge_server_address,
-            http_client, db
+            knowledge_server_address,
+            db
         )
         self._get_received_count()
         self._client_id = client_id
@@ -348,6 +382,7 @@ class ReplicationManagerWithBase(ReplicationBase):
         print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
 
         def on_timeout():
+            print "-1-1-1"
             print time.time()
             if self._stop:
                 return
@@ -356,27 +391,32 @@ class ReplicationManagerWithBase(ReplicationBase):
                 GetChanges(
                     self._client_id,
                     self._received_count
-                ).to_structure()
+                ).to_structure(), indent=2
             )
-            request = HTTPRequest(
-                self._poll_url, method="POST", body=body,
-                headers={"Content-Type": "application/json"},
-                request_timeout=10
-            )
-            self._http_client.fetch(request, self._poll_response)
-        self._io_loop.add_timeout(
-            time.time() + 3, on_timeout
-        )
+            key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+            req_data = base64.b64encode(body)
+            req_data = key+req_data
 
-    def _poll_response(self, response) :
+            response = requests.post(self._poll_url, data=req_data)
+
+            data = response.text[6:]
+            data = str(data).decode('base64')
+            print data
+            self._poll_response(data, response.status_code)
+
+        t = threading.Timer(3, on_timeout)
+        t.daemon = True
+        t.start()
+
+    def _poll_response(self, response, status_code) :
         if self._stop:
             return
         err = "knowledge server poll error:"
-        if not response.error :
+        if status_code == 200 :
             r = None
             try:
                 r = Response.parse_structure(
-                    json.loads(response.body)
+                    json.loads(response)
                 )
 
             except Exception, e:
@@ -384,13 +424,14 @@ class ReplicationManagerWithBase(ReplicationBase):
                 self._poll()
                 return
             if type(r) is InvalidReceivedCount:
-                # print "InvalidReceivedCount sent %s"
+                print "InvalidReceivedCount sent"
                 self._poll()
                 return
             assert r is not None
             self._parse_data(r.changes)
             print len(r.changes)
             if len(r.changes) > 0 :
+                print len(r.changes)
                 self._poll()
             else :
                 return
@@ -435,9 +476,9 @@ class ReplicationManagerWithBase(ReplicationBase):
 
     def start(self):
         self._stop = False
-        print "poll started for ", self._client_id
-        self._io_loop.add_callback(self._poll)
-        self._io_loop.add_callback(self._poll_for_del)
+        print "poll started for ----------- ", self._client_id
+        self._poll()
+        # self._io_loop.add_callback(self._poll_for_del)
 
 
 class DomainReplicationManager(ReplicationBase):

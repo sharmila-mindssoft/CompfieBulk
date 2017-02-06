@@ -59,14 +59,12 @@ CREATE TABLE `tbl_client_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_business_groups` (
   `business_group_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `business_group_name` varchar(100) NOT NULL,
   PRIMARY KEY (`business_group_id`),
-  UNIQUE KEY(`business_group_id`, `client_id`)
+  UNIQUE KEY(`business_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entities` (
   `legal_entity_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_name` varchar(100) DEFAULT NULL,
@@ -83,7 +81,7 @@ CREATE TABLE `tbl_legal_entities` (
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`legal_entity_id`),
-  UNIQUE KEY(`legal_entity_id`, `client_id`)
+  UNIQUE KEY(`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entity_domains` (
   `legal_entity_id` int(11) NOT NULL,
@@ -94,23 +92,21 @@ CREATE TABLE `tbl_legal_entity_domains` (
   UNIQUE KEY(`legal_entity_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_divisions` (
-  `client_id` int(11) NOT NULL,
   `division_id` int(11) NOT NULL,
   `division_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`division_id`),
-  UNIQUE KEY(`division_id`, `client_id`)
+  UNIQUE KEY(`division_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_categories` (
   `category_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `category_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `division_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`category_id`),
-  UNIQUE KEY(`category_id`, `client_id`, `legal_entity_id`)
+  UNIQUE KEY(`category_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_configuration` (
   `client_id` int(11) NOT NULL,

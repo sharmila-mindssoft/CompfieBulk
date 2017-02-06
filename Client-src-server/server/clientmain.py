@@ -183,17 +183,17 @@ class API(object):
             def client_added(clients):
                 for c, client in clients.iteritems():
                     _client_id = client.client_id
+                    print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
                     _domain_id = client.domain_id
                     print "client added"
-                    client_db = self._databases.get(_client_id)
+                    db_cons = self._group_databases.get(_client_id).get_connection()
+                    client_db = Database(db_cons)
                     if client_db is not None :
                         if is_new_data is True and is_new_domain is False :
                             rep_man = ReplicationManagerWithBase(
-                                self._io_loop,
                                 self._knowledge_server_address,
-                                self._http_client,
                                 client_db,
                                 _client_id
                             )
@@ -216,15 +216,13 @@ class API(object):
                                 domain_rep_man.start()
                                 d_rep_man[_client_id] = domain_rep_man
 
-            # _client_manager = ClientReplicationManager(
-            #     self._io_loop,
-            #     self._knowledge_server_address,
-            #     self._http_client,
-            #     60,
-            #     client_added
-            # )
+            _client_manager = ClientReplicationManager(
+                self._knowledge_server_address,
+                6000,
+                client_added
+            )
             # replication start
-            # _client_manager._start()
+            _client_manager._start()
 
         except Exception, e :
             logger.logClientApi(e, "Server added")

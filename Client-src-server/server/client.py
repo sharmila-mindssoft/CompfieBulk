@@ -46,8 +46,7 @@ class CompanyManager(object) :
         self._request_body = json.dumps(
             GetCompanyServerDetails().to_structure(), indent=2
         )
-        print self._request_body
-        self._request_body = self._request_body
+        # print self._request_body
         self._poll()
 
     def _poll(self) :
@@ -58,13 +57,10 @@ class CompanyManager(object) :
             req_data = key+req_data
             # req_data = json.dumps(key+req_data)
             response = requests.post(self._poll_url, data=req_data)
-            print response.text
 
             data = response.text[6:]
-            print data
             data = str(data).decode('base64')
             # data = json.loads(data)
-            print data
             # data = json.dumps(key+data)
             self._poll_response(data, response.status_code)
 
@@ -72,7 +68,6 @@ class CompanyManager(object) :
             t = threading.Timer(self._timeout_seconds, on_timeout)
             t.daemon = True
             t.start()
-            print t
         if self._first_time :
             self._first_time = False
             on_timeout()
@@ -80,7 +75,6 @@ class CompanyManager(object) :
     def _poll_response(self, response, status_code) :
         # print response.body
         err = "knowledge server poll error:"
-        print response
         if status_code == 200:
             r = None
             try:

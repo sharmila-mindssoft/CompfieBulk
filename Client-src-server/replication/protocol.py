@@ -14,6 +14,29 @@ from replication.to_structure import (
     to_structure_VectorType_RecordType_protocol_Client
 )
 
+
+class Request(object):
+    def to_structure(self):
+        name = type(self).__name__
+        inner = self.to_inner_structure()
+        return [name, inner]
+
+    def to_inner_structure(self):
+        raise NotImplementedError
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_static_list(data, 2)
+        name, data = data
+        if _Request_class_map.get(name) is None:
+            msg = "invalid request: " + name
+            raise ValueError(msg)
+        return _Request_class_map[name].parse_inner_structure(data)
+
+    @staticmethod
+    def parse_inner_structure(data):
+        raise NotImplementedError
+
 #
 # Change
 #
@@ -116,12 +139,11 @@ class GetClientChanges(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, [])
+        data = parse_dictionary(data)
         return GetClientChanges()
 
     def to_structure(self):
-        return {
-        }
+        return {}
 
 class GetDomainChanges(object):
     def __init__(self, client_id, domain_id, received_count, actual_count):
@@ -154,6 +176,15 @@ class GetDomainChanges(object):
             "actual_count": to_structure_SignedIntegerType_64(self.actual_count)
         }
 
+
+def _init_Request_class_map():
+    classes = [GetClientChanges]
+    class_map = {}
+    for c in classes:
+        class_map[c.__name__] = c
+    return class_map
+
+_Request_class_map = _init_Request_class_map()
 
 
 #

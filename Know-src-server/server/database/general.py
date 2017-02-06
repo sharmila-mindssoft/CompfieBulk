@@ -49,17 +49,12 @@ def get_trail_log(db, client_id, received_count):
     query += "  audit_trail_id, tbl_name, tbl_auto_id,"
     query += "  column_name, value, client_id, action"
     query += " from tbl_audit_log WHERE audit_trail_id > %s "
-    query += " AND (client_id = 0 OR client_id= %s) LIMIT 100;"
+    query += " AND (client_id= %s) LIMIT 100;"
 
     rows = db.select_all(query, [received_count, client_id])
-    results = []
-    if rows:
-        columns = [
-            "audit_trail_id", "tbl_name", "tbl_auto_id",
-            "column_name", "value", "client_id", "action"
-        ]
-        results = convert_to_dict(rows, columns)
-    if len(results) == 0:
+    print rows
+    results = rows
+    if len(rows) == 0:
         update_client_replication_status(db, client_id, received_count)
     return return_changes(results)
 
@@ -75,7 +70,7 @@ def get_trail_log_for_domain(
     q_rows = db.select_all(q, [received_count, actual_count, domain_id])
     auto_id = []
     for r in q_rows:
-        auto_id.append(str(r[0]))
+        auto_id.append(str(r["tbl_audit_id"]))
 
     rows = None
     if len(auto_id) > 0:
@@ -89,13 +84,8 @@ def get_trail_log_for_domain(
             received_count,
             ','.join(auto_id)
         ])
-    results = []
-    if rows:
-        columns = [
-            "audit_trail_id", "tbl_name", "tbl_auto_id",
-            "column_name", "value", "client_id", "action"
-        ]
-        results = convert_to_dict(rows, columns)
+    results = rows
+
     if len(results) == 0:
         update_client_replication_status(
             db, client_id, 0, type="domain_trail_id"
