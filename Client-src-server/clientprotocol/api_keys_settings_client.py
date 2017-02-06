@@ -183,6 +183,7 @@ api_params = {
     "completion_date": make_text_field(is_optional=True),
     "user_id": make_int_field(),
     "url": make_text_field(is_optional=True),
+    "domain_name": make_string_field(),
 
     'csv': make_bool_field(is_optional=False),
     'from_count': make_int_field(is_optional=False),
@@ -212,4 +213,5 @@ api_params = {
     "legal_entities_compliances": make_vector_type_field(module="clientreport", klass_name="LegalEntityWiseReport"),
     "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
     "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
+    "unit_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
 }
