@@ -1587,11 +1587,12 @@ function initMirror() {
         apiRequest('knowledge_transaction', request, callback);
     }
 
-    function getStatutoryMappings(approval_status, rcount, callback) {
+    function getStatutoryMappings(approval_status, rcount, page_limit, callback) {
         var request = [
             'GetStatutoryMappings', {
                 "approval_status_id": parseInt(approval_status),
-                "rcount": parseInt(rcount)
+                "rcount": parseInt(rcount),
+                "page_limit": parseInt(page_limit)
             }
         ];
         apiRequest('knowledge_transaction', request, callback);

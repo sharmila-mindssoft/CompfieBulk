@@ -5067,38 +5067,6 @@ BEGIN
     if approvestatus = 6 then
         set approvestatus = '%';
     end if;
-    -- select  t1.statutory_mapping_id, t1.country_id, t1.domain_id, t1.statutory_nature_id,
-    --         t1.is_active, t1.is_approved, t1.remarks,
-    --         (select country_name from tbl_countries where country_id = t1.country_id) as country_name,
-    --         (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
-    --         (select statutory_nature_name from tbl_statutory_natures where statutory_nature_id = t1.statutory_nature_id) as nature
-    --         ,t2.statutory_mapping_id as c_statutory_mapping_id, t2.compliance_id, t2.compliance_task, t2.document_name,
-    --         t2.is_active as c_is_active, t2.is_approved as c_is_approved, t2.remarks as c_remarks
-    -- from    tbl_statutory_mappings as t1
-    -- inner join tbl_compliances t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-    -- where   t1.statutory_mapping_id in (select statutory_mapping_id from (SELECT t.statutory_mapping_id,
-    --         @rownum := @rownum + 1 AS num
-    --         FROM (select distinct t1.statutory_mapping_id from tbl_statutory_mappings as t1
-    --               inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
-    --         inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
-    --         t3.country_id = t1.country_id
-    --         where t3.user_id = userid and t2.is_approved like approvestatus
-    --         order by statutory_mapping_id) t,
-    --         (SELECT @rownum := 0) r) as cnt
-    -- where   cnt.num between fromcount and tocount)
-    -- order by country_name, domain_name, t1.statutory_mapping, compliance_id ;
-
-    -- select t1.statutory_mapping_id, t1.country_id, t1.domain_id, t1.statutory_nature_id,
-    -- t1.is_active, t1.is_approved, t1.remarks,
-    -- (select country_name from tbl_countries where country_id = t1.country_id) as country_name,
-    -- (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
-    -- (select statutory_nature_name from tbl_statutory_natures where statutory_nature_id = t1.statutory_nature_id) as nature
-    -- from tbl_statutory_mappings as t1
-    -- inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
-    -- t3.country_id = t1.country_id
-    -- where t3.user_id = userid
-    -- order by country_name, domain_name, t1.statutory_mapping;
-
 
     select t1.statutory_mapping_id, t2.country_id, t2.domain_id, t2.statutory_nature_id, t1.compliance_id, t1.compliance_task, t1.document_name,
     t1.is_active as c_is_active, t1.is_approved as c_is_approved, t1.remarks,
