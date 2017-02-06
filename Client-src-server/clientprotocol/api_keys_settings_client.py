@@ -184,11 +184,14 @@ api_params = {
     "user_id": make_int_field(),
     "url": make_text_field(is_optional=True),
     "domain_name": make_string_field(),
+    "sp_name": make_text_field(is_optional=True),
+    "sp_id_optional": make_int_field(is_optional=True),
 
     'csv': make_bool_field(is_optional=False),
     'from_count': make_int_field(is_optional=False),
     'page_count': make_int_field(is_optional=False),
     'total_count': make_int_field(is_optional=False),
+    "link": make_text_field(length=500, is_optional=True),
 
     "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
@@ -214,4 +217,7 @@ api_params = {
     "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
     "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "unit_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
+    "sp_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviders"),
+    "sp_users_list": make_vector_type_field(module="clientreport", klass_name="ServiceProvidersUsers"),
+    "sp_compliances": make_vector_type_field(module="clientreport", klass_name="LegalEntityWiseReport"),
 }
