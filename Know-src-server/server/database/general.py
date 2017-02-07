@@ -125,9 +125,7 @@ def get_servers(db):
         " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
         " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
         " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
-    print query
     rows = db.select_all(query)
-    print rows
     return return_companies(rows)
 
 
@@ -141,16 +139,13 @@ def get_group_servers(db):
         " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
         " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
         " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
-    print query
     rows = db.select_all(query)
-    print rows
     return return_companies(rows)
 
 
 def return_companies(data):
     results = []
     for d in data:
-        print d
         database_ip = IPAddress(
             d["database_ip"],
             int(d["database_port"])
@@ -205,7 +200,7 @@ def update_client_replication_status(
     if type is None:
         q = "update tbl_client_replication_status set is_new_data = 0 " + \
             " where client_id = %s"
-        remove_trail_log(db, client_id, received_count)
+        # remove_trail_log(db, client_id, received_count)
     else:
         q = "update tbl_client_replication_status set is_new_domain = 0, " + \
             " domain_id = '' where client_id = %s"
