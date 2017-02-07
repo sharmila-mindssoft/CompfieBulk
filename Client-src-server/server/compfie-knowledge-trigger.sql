@@ -1508,9 +1508,9 @@ DELIMITER ;
 -- Triggers `tbl_client_compliances`
 -- -------------------
 
-DROP TRIGGER IF EXISTS `after_tbl_client_compliances_insert`;
+DROP TRIGGER IF EXISTS `after_tbl_client_compliances_update`;
 DELIMITER //
-CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client_compliances`
+CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client_compliances`
  FOR EACH ROW BEGIN
     SET @action = 0;
 
@@ -1522,7 +1522,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'legal_entity_id',
                     NEW.legal_entity_id,
@@ -1536,7 +1536,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    new.client_id,
+                    new.legal_entity_id,
                     NEW.client_compliance_id,
                     'unit_id',
                     NEW.unit_id,
@@ -1550,7 +1550,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    new.client_id,
+                    new.legal_entity_id,
                     NEW.client_compliance_id,
                     'domain_id',
                     NEW.domain_id,
@@ -1564,7 +1564,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    new.client_id,
+                    new.legal_entity_id,
                     NEW.client_compliance_id,
                     'statutory_applicable_status',
                     NEW.statutory_applicable_status,
@@ -1578,7 +1578,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'remarks',
                     NEW.remarks,
@@ -1591,7 +1591,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'compliance_id',
                     NEW.compliance_id,
@@ -1604,7 +1604,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'compliance_applicable_status',
                     NEW.compliance_applicable_status,
@@ -1617,7 +1617,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'is_new',
                     1,
@@ -1630,7 +1630,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'is_submitted',
                     NEW.is_submitted,
@@ -1643,7 +1643,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'submitted_by',
                     NEW.submitted_by,
@@ -1656,7 +1656,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'submitted_on',
                     NEW.submitted_on,
@@ -1668,7 +1668,7 @@ CREATE TRIGGER `after_tbl_client_compliances_insert` AFTER UPDATE ON `tbl_client
                                  column_name,
                                  value,
                                  tbl_name)
-            SELECT @action, new.client_id, NEW.client_compliance_id,
+            SELECT @action, new.legal_entity_id, NEW.client_compliance_id,
               'statutory_name', case parent_names when '' then statutory_name else concat(parent_names, ' >> ', statutory_name) end as statutory_name,
               'tbl_client_compliances'
               FROM tbl_statutories
@@ -1727,7 +1727,7 @@ CREATE TRIGGER `after_tbl_statutory_mappings_update` AFTER UPDATE ON `tbl_statut
   SELECT @action, 0, compliance_id, 'statutory_mapping', NEW.statutory_mapping, 'tbl_compliances'  FROM tbl_compliances WHERE statutory_mapping_id=NEW.statutory_mapping_id;
     UPDATE tbl_client_replication_status set is_new_data = 1 where
     is_group = 0 and
-    client_id in (select legal_entity_id from tbl_legal_entity_domains where domain_id = OLD.domain_id);
+    client_id in (select distinct legal_entity_id from tbl_legal_entity_domains where domain_id = OLD.domain_id);
   END IF;
 END
 //
@@ -1759,7 +1759,7 @@ CREATE TRIGGER `after_tbl_countries_update` AFTER UPDATE ON `tbl_countries`
                 );
     END IF;
     UPDATE tbl_client_replication_status set is_new_data = 1 where
-    client_id in (select legal_entity_id from tbl_legal_entities where country_id = NEW.country_id);
+    client_id in (select distinct legal_entity_id from tbl_legal_entities where country_id = NEW.country_id);
 END
 //
 DELIMITER ;
@@ -1790,7 +1790,7 @@ CREATE TRIGGER `after_tbl_domains_update` AFTER UPDATE ON `tbl_domains`
                 );
     UPDATE tbl_client_replication_status set is_new_data = 1 where
     client_id in (
-        select legal_entity_id from tbl_legal_entity_domains where domain_id = new.domain_id
+        select distinct legal_entity_id from tbl_legal_entity_domains where domain_id = new.domain_id
     );
     END IF;
 END
@@ -1830,10 +1830,81 @@ CREATE TRIGGER `after_tbl_statutories_update` AFTER UPDATE ON `tbl_statutories`
 
         UPDATE tbl_client_replication_status set is_new_data = 1 where
         is_group = 0 and
-        client_id in (select legal_entity_id from tbl_client_compliances
+        client_id in (select distinct legal_entity_id from tbl_client_compliances
                       where statutory_id = new.statutory_id);
 
     END IF;
+
+END //
+
+DELIMITER ;
+
+
+
+DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_statutory_notifications` AFTER UPDATE ON `tbl_statutory_notifications`
+ FOR EACH ROW BEGIN
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+        VALUES (0,
+                0,
+                NEW.notification_id,
+                'notification_text',
+                NEW.notification_text,
+                'tbl_statutory_notifications');
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+        VALUES (0,
+                0,
+                NEW.notification_id,
+                'compliance_id',
+                NEW.compliance_id,
+                'tbl_statutory_notifications');
+
+
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+        VALUES (0,
+                0,
+                NEW.notification_id,
+                'created_by',
+                NEW.created_by,
+                'tbl_statutory_notifications');
+
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+        VALUES (0,
+                0,
+                NEW.notification_id,
+                'created_on',
+                NEW.created_on,
+                'tbl_statutory_notifications');
+
+        UPDATE tbl_client_replication_status set is_new_data = 1 where
+        is_group = 0 and
+        client_id in (select distinct legal_entity_id from tbl_client_compliances
+                      where compliance_id = new.compliance_id);
 
 END //
 
