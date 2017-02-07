@@ -123,6 +123,11 @@ CLIENT_TEMPLATE_PATHS = [
         "files/client/service-provider-wise-compliance/serviceproviderwisecompliance.html",
         None, {}
     ),
+     (
+        "/user-wise-report",
+        "files/client/user-wise-report/user_wise_report.html",
+        None, {}
+    ),
     (
         "/user-wise-compliance",
         "files/client/user-wise-compliance/user-wise-compliance.html",
