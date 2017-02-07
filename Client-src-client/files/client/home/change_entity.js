@@ -1,26 +1,27 @@
-var USER_LE;
-function getLegalEntity(LE_ID, LE_NAME){
-    var sEntity = [];
 
+function getLegalEntityChange(LE_ID, LE_NAME){
+    var sEntity = [];
     if(LE_ID != 'all'){
         sEntity.push(parseInt(LE_ID))
     }else{
+        var USER_LE = client_mirror.getUserLegalEntity();
         $.each(USER_LE, function(key, value) {
             sEntity.push(value.le_id);
         });
     }
     window.sessionStorage.selectedEntity = sEntity;
     window.sessionStorage.selectedEntityName = LE_NAME;
-    location.href='/home';
+    location.reload();
 }
-function loadLegalEntityList(){
+
+function loadLegalEntityListChange(){
     var LC = '';
     var LC_COUNT = 1;
-    $('.tbody-legal-panel').empty();
+    var USER_LE = client_mirror.getUserLegalEntity();
+    $('.tbody-legal-panel-change').empty();
     $.each(USER_LE, function(key, value) {
-
-        if(LC != value.c_id){         
-            var countrytableRow = $('#act-templates .p-head');
+        if(LC != value.c_id){
+            var countrytableRow = $('#le-templates-change .p-head');
             var clone = countrytableRow.clone();
             $('.acc-title', clone).attr('id', 'heading'+LC_COUNT);
             $('.panel-title a span', clone).text(value.c_name);
@@ -28,24 +29,16 @@ function loadLegalEntityList(){
             $('.panel-title a', clone).attr('aria-controls', 'collapse'+LC_COUNT);
             $('.coll-title', clone).attr('id', 'collapse'+LC_COUNT);
             $('.coll-title', clone).attr('aria-labelledb', 'heading'+LC_COUNT);
-            $('.tbody-legal-panel').append(clone);
+            $('.tbody-legal-panel-change').append(clone);
 	        LC = value.c_id;
 	        LC_COUNT++;
         }
-
-        var LERow = $('#le-values .table-le-values .row-le-values');
+        var LERow = $('#le-values-change .table-le-values .row-le-values');
         var clone2 = LERow.clone();
         $('.le_name', clone2).text(value.le_name);
         $(clone2).on('click', function() {
-            getLegalEntity(value.le_id, value.le_name);
+            getLegalEntityChange(value.le_id, value.le_name);
         });
-        $('#collapse' + (LC_COUNT-1) + ' .tbody-le-list').append(clone2);
+        $('#collapse' + (LC_COUNT-1) + ' .tbody-le-list-change').append(clone2);
     });
 }
-
-$(document).ready(function () {
-  if (!client_mirror.verifyLoggedIn())
-    return;
-  USER_LE = client_mirror.getUserLegalEntity();
-  loadLegalEntityList();
-});

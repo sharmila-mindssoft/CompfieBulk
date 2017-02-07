@@ -36,12 +36,25 @@ function initSession(userProfile, shortName) {
 }
 function setLandingPage(userProfile) {
   menus = userProfile.menu;
+  user_entities = userProfile.entity_info;
   //legal_entity_list = userProfile.entity_info;
   //window.sessionStorage.available_legal_entities = userProfile.entity_info;
   if ('Home' in menus) {
     landingPage = '/dashboard';  // landingPage = "/home";
   } else {
-    landingPage = '/home';
+    if(user_entities.length > 1){
+      landingPage = '/welcome';
+    }else{
+      var selected_entity = [];
+      var selected_entity_name = '';
+      $.each(user_entities, function(key, value) {
+        selected_entity.push(value.le_id);
+        selected_entity_name = value.le_name;
+      });
+      window.sessionStorage.selectedEntity = selected_entity;
+      window.sessionStorage.selectedEntityName = selected_entity_name;
+      landingPage = '/home';
+    }
   }
 
 }

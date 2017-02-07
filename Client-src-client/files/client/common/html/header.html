@@ -1,40 +1,19 @@
 <div class="toplogobar">
+  
+  <div class="legal_entity_selection">
+
+      <div style="margin-right: 5px; padding-top: 2px;" class="pull-right thememodalbox c-pointer change-le-icon">
+          <a><i class="fa fa-gears fa fa-1-5x" data-toggle="tooltip" data-placement="left" title="Click here to Change Legal Entity" data-original-title="Tooltip on top"></i></a>
+      </div>
+
+      <div class="pull-right selected_le_name" style="margin-right: 10px; color: #561B8B; font-size: 14px;">
+      </div>
+  </div>
+
   <div class="toplogobar-logo"> <span><img src="/images/logo.png" alt="compfie" height="36"></span> </div>
-  <!--div class="toplogobar-actions">
-    <div id="theme-setting"> <a href="#"><i class="fa fa-gears fa fa-2x"></i></a>
-      <ul>
-        <li><span>Skin</span>
-          <ul class="colors" data-target="body" data-prefix="skin-">
-            <li class="active"><a class="blue" href="#"></a></li>
-            <li><a class="red" href="#"></a></li>
-            <li><a class="green" href="#"></a></li>
-            <li><a class="orange" href="#"></a></li>
-            <li><a class="yellow" href="#"></a></li>
-          </ul>
-        </li>
-        <li> <span>Navbar</span>
-          <ul class="colors" data-target="#navbar" data-prefix="navbar-">
-            <li class="active"><a class="blue" href="#"></a></li>
-            <li><a class="red" href="#"></a></li>
-            <li><a class="green" href="#"></a></li>
-            <li><a class="orange" href="#"></a></li>
-            <li><a class="yellow" href="#"></a></li>
-          </ul>
-        </li>
-        <li> <span>Sidebar</span>
-          <ul class="colors" data-target="#main-container" data-prefix="sidebar-">
-            <li class="active"><a class="blue" href="#"></a></li>
-            <li><a class="red" href="#"></a></li>
-            <li><a class="green" href="#"></a></li>
-            <li><a class="orange" href="#"></a></li>
-            <li><a class="yellow" href="#"></a></li>
-          </ul>
-        </li>
-        
-      </ul>
-    </div>
-  </div-->
+
 </div>
+
 <div class="topbar">
   <!-- LOGO -->
   <div class="topbar-left">
@@ -42,3 +21,17 @@
   </div>
   {% include "/files/client/nav-bar/nav-bar.html" %}
 </div>
+
+
+<script type="text/javascript"> 
+$(document).ready(function () {
+  if(window.sessionStorage.selectedEntityName != undefined){
+    $('.selected_le_name').text(window.sessionStorage.selectedEntityName);
+  }
+  var UL = client_mirror.getUserLegalEntity();
+  if(UL != undefined && UL.length <= 1){
+    $('.change-le-icon').html('');
+  }
+});
+</script>
+

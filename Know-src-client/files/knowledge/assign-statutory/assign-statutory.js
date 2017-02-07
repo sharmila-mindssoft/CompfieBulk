@@ -146,7 +146,7 @@ function callAPI(api_type) {
     } else if (api_type == API_Wizard2) {
         COMPLIANCES_LIST = [];
         displayLoader();
-        //showBreadCrumbText();
+        console.log('CCCC: ' + (sno - 1))
         mirror.getAssignStatutoryWizardTwoData(
             int(val_domain_id), ACTIVE_UNITS, (sno - 1),
             function(error, data) {
@@ -165,61 +165,13 @@ function callAPI(api_type) {
             }
         );
     } else if (api_type == SAVE_API || api_type == SUBMIT_API) {
-        //displayLoader();
         var submission_status;
         if (api_type == SAVE_API) {
             submission_status = 1;
         } else {
             submission_status = 2;
         }
-
         var checkSubmit = true;
-
-        /*        statutorysetting = [];
-                var d_text = DomainName.val();
-                var totalCompliance = 1;
-                var checkSubmit = true;
-                for(var i=1; i<=(actCount-1); i++){
-                    var aStatus = parseInt($('#act'+i).attr("for"));
-                    var remark = null;
-
-                    if(aStatus == 2 || aStatus==3){
-                        remark = $('#remark'+i).val().trim();
-                        if(remark==''){
-                            displayMessage(message.remarks_required);
-                            hideLoader();
-                            return false;
-                        }
-                    }
-
-                    var actComplianceCount = $('.statutoryclass'+i).length / 3;
-                    for(var j=1; j<=actComplianceCount; j++){
-                        var complianceStatusVal = 0;
-                        if($('input[name=statutory'+totalCompliance+']:checked').val() != undefined){
-                            complianceStatusVal = parseInt($('input[name=statutory'+totalCompliance+']:checked').val());
-                        }else{
-                            checkSubmit = false;
-                        }
-
-                        var combineidVal = $('#combineid'+totalCompliance).val().split('#');
-                        var comp_id = parseInt(combineidVal[0]);
-                        var level_1_s_id = parseInt(combineidVal[1]);
-                        var u_id = parseInt(combineidVal[2]);
-
-                        if(CLIENT_STATUTORY_ID == null){
-                            CLIENT_STATUTORY_ID = UNIT_CS_ID[u_id].client_statutory_id;
-                            DOMAIN_TEXT = DomainName.val();
-                            UNIT_TEXT = UNIT_CS_ID[u_id].unit_code+' - '+UNIT_CS_ID[u_id].u_name;
-                        }
-                        statutorysettingData = mirror.saveComplianceStatus(
-                            int(val_group_id), int(val_legal_entity_id), u_id,
-                            int(val_domain_id), comp_id, complianceStatusVal,
-                            level_1_s_id, aStatus, remark, CLIENT_STATUTORY_ID, UNIT_TEXT, DOMAIN_TEXT
-                        );
-                        statutorysetting.push(statutorysettingData);
-                        totalCompliance++;
-                    }
-                }*/
 
         if (submission_status == 2 && checkSubmit == false) {
             displayMessage(message.assigncompliance_submit_failure);
@@ -915,7 +867,7 @@ function subComplianceStatus(element) {
 
             var ID = combine_ids[3];
 
-            var A_STATUS = $('#act' + ID).attr("for");
+            var A_STATUS = parseInt($('#act' + ID).attr("for"));
             var A_REMARK = null;
             if (C_STATUS > 1 && $('#remark' + ID).val() != '') {
                 A_REMARK = $('#remark' + ID).val();
@@ -1422,7 +1374,13 @@ function showTab() {
                 function(error, data) {
                     if (error == null) {
                         totalRecord = data.total_records;
-                        if (data.unit_total <= 5000) {
+                        if (data.unit_total > 5000 && ACTIVE_UNITS.length > 1) {
+                            
+                            displayMessage(message.maximum_compliance_selection_reached);
+                            hideLoader();
+                            CURRENT_TAB -= 1;
+                            return false;
+                        } else {
                             callAPI(API_Wizard2);
                             hideall();
                             enabletabevent(2);
@@ -1434,14 +1392,12 @@ function showTab() {
                             SaveButton.show();
                             ShowMore.show();
                             showBreadCrumbText();
-                        } else {
-                            displayMessage(message.maximum_compliance_selection_reached);
-                            hideLoader();
-                            return false;
+                            
                         }
                     } else {
                         displayMessage(error);
                         hideLoader();
+                        CURRENT_TAB -= 1;
                         return false;
                     }
                 }
