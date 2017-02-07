@@ -638,8 +638,24 @@ class SavePastRecords(Request):
         }
 
 
+class GetReviewSettingsFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetReviewSettingsFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
+
+
 def _init_Request_class_map():
-    classes = [GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords]
+    classes = [GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords, GetReviewSettingsFilters]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -2097,5 +2113,24 @@ class ComplianceApplicability(object):
             "comp_remarks": self.compliance_remarks,
             "is_new": self.is_new,
             "d_name": self.domain_name
+        }
+
+
+class GetReviewSettingsFiltersSuccess(Response):
+    def __init__(self, compliance_frequency, domain_list):
+        self.compliance_frequency = compliance_frequency
+        self.domain_list = domain_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["compliance_frequency", "domain_list"])
+        compliance_frequency = data.get("compliance_frequency")
+        domain_list = data.get("domain_list")
+        return GetStatutorySettingsSuccess(compliance_frequency, domain_list)
+
+    def to_inner_structure(self):
+        return {
+            "compliance_frequency": self.compliance_frequency,
+            "domain_list": self.domain_list,
         }
 

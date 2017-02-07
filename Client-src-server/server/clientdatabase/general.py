@@ -14,58 +14,58 @@ from server.exceptionmessage import client_process_error
 from savetoknowledge import UpdateFileSpace
 
 __all__ = [
-    "get_client_user_forms",    
-    "get_countries_for_user",   
-    "get_domains_for_user",    
-    "get_business_groups_for_user",    
-    "get_legal_entities_for_user",    
-    "get_divisions_for_user",    
-    "get_group_name",    
-    "get_country_wise_domain_month_range",    
-    "get_units_for_user",    
-    "get_client_users",    
-    "get_user_domains",    
-    "get_user_countries",    
-    "verify_username",    
-    "verify_password",    
-    "get_countries",    
-    "get_domains",    
-    "is_primary_admin",    
-    "have_compliances",    
-    "is_seating_unit",    
-    "is_admin",    
-    "get_user_unit_ids",    
-    "is_two_levels_of_approval",    
-    "get_user_company_details",    
-    "get_client_level_1_statutoy",    
-    "get_service_providers",    
-    "get_client_compliances",    
-    "get_client_settings",    
-    "get_admin_info",    
-    "validate_compliance_due_date",    
-    "get_compliance_frequency",    
-    "get_users",    
-    "get_users_by_id",    
-    "get_users_by_unit_and_domain",    
-    "get_compliance_name_by_id",    
-    "is_space_available",    
-    "update_used_space",    
-    "save_compliance_activity",    
-    "save_compliance_notification",    
-    "get_email_id_for_users",    
-    "get_user_email_name",    
-    "calculate_due_date",    
-    "filter_out_due_dates",    
-    "convert_base64_to_file",    
-    "get_user_name_by_id",    
-    "get_form_ids_for_admin",    
-    "get_report_form_ids",    
-    "get_client_id_from_short_name",    
-    "validate_reset_token",    
-    "remove_session",    
-    "update_profile",    
-    "is_service_proivder_user",    
-    "convert_datetime_to_date",    
+    "get_client_user_forms",
+    "get_countries_for_user",
+    "get_domains_for_user",
+    "get_business_groups_for_user",
+    "get_legal_entities_for_user",
+    "get_divisions_for_user",
+    "get_group_name",
+    "get_country_wise_domain_month_range",
+    "get_units_for_user",
+    "get_client_users",
+    "get_user_domains",
+    "get_user_countries",
+    "verify_username",
+    "verify_password",
+    "get_countries",
+    "get_domains",
+    "is_primary_admin",
+    "have_compliances",
+    "is_seating_unit",
+    "is_admin",
+    "get_user_unit_ids",
+    "is_two_levels_of_approval",
+    "get_user_company_details",
+    "get_client_level_1_statutoy",
+    "get_service_providers",
+    "get_client_compliances",
+    "get_client_settings",
+    "get_admin_info",
+    "validate_compliance_due_date",
+    "get_compliance_frequency",
+    "get_users",
+    "get_users_by_id",
+    "get_users_by_unit_and_domain",
+    "get_compliance_name_by_id",
+    "is_space_available",
+    "update_used_space",
+    "save_compliance_activity",
+    "save_compliance_notification",
+    "get_email_id_for_users",
+    "get_user_email_name",
+    "calculate_due_date",
+    "filter_out_due_dates",
+    "convert_base64_to_file",
+    "get_user_name_by_id",
+    "get_form_ids_for_admin",
+    "get_report_form_ids",
+    "get_client_id_from_short_name",
+    "validate_reset_token",
+    "remove_session",
+    "update_profile",
+    "is_service_proivder_user",
+    "convert_datetime_to_date",
     "is_old_primary_admin"
     ]
 
@@ -73,7 +73,7 @@ __all__ = [
 def get_client_user_forms(db, user_id):
     # columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "
     # columns += "tf.form_url, tf.form_order, tf.parent_menu "
-    
+
     # tables = [tblForms, tblFormType]
     # aliases = ["tf",  "tft"]
     # joinConditions = ["tf.form_type_id = tft.form_type_id"]
@@ -151,14 +151,14 @@ def get_domains_for_user(db, user_id):
     if user_id != admin_id:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
         "t2.is_active FROM tbl_user_domains AS t1 " + \
-        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
-        rows = db.select_all(query)
-    else:
-        query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
-        "t2.is_active FROM tbl_user_domains AS t1 " + \
         "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
         "where t1.user_id = %s "
         rows = db.select_all(query,[user_id])
+    else:
+        query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
+        "t2.is_active FROM tbl_user_domains AS t1 " + \
+        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
+        rows = db.select_all(query)
     return return_domains(rows)
 
 
@@ -356,7 +356,7 @@ def return_units(units):
             results.append(clientcore.ClientUnit(
                 unit["unit_id"], division_id, category_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
-                unit["unit_name"], unit["address"], 
+                unit["unit_name"], unit["address"],
                 [int(x) for x in unit["domain_ids"].split(",")],
                 unit["country_id"],
                 bool(unit["is_closed"])
@@ -596,11 +596,11 @@ def get_country_info(db, user_id, user_category_id):
 def get_legal_entity_info(db, user_id, user_category_id):
     if user_category_id == 1 :
         q = "SELECT t1.legal_entity_id, t1.legal_entity_name, t1.client_id, " + \
-            "t1.business_group_id, t1.country_id, t2.country_name, " + \
+            "t1.business_group_id, t1.country_id, " + \
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
-            "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
-            "WHERE contract_to >= CURDATE() and is_closed = 0"
+            "WHERE contract_to >= date(now()) and is_closed = 0"
+            
         rows = db.select_all(q)
         #print "------------------ Admin ---------------"
     else :

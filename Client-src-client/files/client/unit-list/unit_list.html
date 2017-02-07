@@ -1,5 +1,7 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/jquery-ui.css">
 <div class="content-page">
 <div class="content">
 <div class="container">
@@ -23,59 +25,119 @@
                     <div class="col-sm-6">
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Country: </label>
+                           
                             <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">India</p>
-                            </div>
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="country-id" value="">
+                                                <div id="ac-country" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">RG Business Group</p>
-                            </div>
+
+                           
+
+                                <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="business-group" placeholder="Enter Business Group" tabindex="2">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="business-group-id" value="">
+                                                <div id="ac-business-group" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+
+
                         </div>
                        <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">RG Legal Entity</p>
-                            </div>
+
+                                <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="3">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="legal-entity-id" value="">
+                                                <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+
                         </div>
-                        <div class="form-group">
+
+                            <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Division: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Division" >
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
+
+
+
+                            
+                             <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="division" placeholder="Enter Division" tabindex="4">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="division-id" value="">
+                                                <div id="ac-division" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+
+
+
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Category: </label>
+
+                            
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Category" >
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="text" class="form-control input-sm" id="category" placeholder="Enter Category" tabindex="5">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="category-id" value="">
+                                                <div id="ac-category" class="ac-textbox default-display-none">
+                                                <ul class="hidemenu"></ul>
+                                                </div>
                             </div>
+
+
+
                         </div>
                     </div>
                     <div class="col-sm-6"> 
                         
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Unit: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Unit" >
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
+                             <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="unit" placeholder="Enter Unit" tabindex="6">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="category-id" value="">
+                                                <div id="ac-unit" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" >
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
+                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain" tabindex="7">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="domain-id" value="">
+                                                <div id="ac-domain" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
                         </div>
+
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Organization Type: </label>
-                            <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Organization Type">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Organization Type: </label>                        
+                             <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Organization Type" tabindex="8">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="organization-type-id" value="">
+                                                <div id="ac-organization-type" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Status:</label>
@@ -85,14 +147,18 @@
                                   <option>Active</option>
                                   <option>Closed</option>
                                 </select>
+
+                                <!--  <select class="form-control input-sm" id="status" tabindex="9">
+                             </select> -->
+
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <center>
                             <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="10" onclick="show_div()"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" type="button" id="export-button" tabindex="11"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -112,7 +178,8 @@
                 </script>
                 </div>
                 <div id="compliance_animation">
-                <div class="card-box details" style="display: none;">
+                <!-- <div class="card-box details" style="display: none;"> -->
+                <div id="report-view">
                 <div class="table-responsive">
                     <div class="col-sm-12">
                         <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
@@ -205,4 +272,7 @@
 </div>
 </div>
 </div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/unit-list/unit_list.js"></script>
+<script src="js/jquery-ui.js"></script>
 {% endblock %}

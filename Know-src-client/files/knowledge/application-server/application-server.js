@@ -6,6 +6,20 @@ var client_server_name = '';
 var ip = '';
 var port = '';
 
+var Key = {
+  LEFT:   37,
+  UP:     38,
+  RIGHT:  39,
+  DOWN:   40
+};
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function initialize(type_of_form){
     console.log("type:"+type_of_form)
     showPage(type_of_form);
@@ -21,10 +35,13 @@ function initialize(type_of_form){
         function onFailure(error) {
             displayMessage(error);
         }
+        displayLoader();
         mirror.getClientServerList(function (error, response) {
             if (error == null) {
+                hideLoader();
                 onSuccess(response);
             } else {
+                hideLoader();
                 onFailure(error);
             }
         });
@@ -162,12 +179,15 @@ function saveClientServer(){
         function onFailure(error) {
             displayMessage(error);
         }
+        displayLoader();
         mirror.saveClientServer(
             edit_id, client_server_name, ip, parseInt(port),
             function (error, response) {
             if (error == null) {
+                hideLoader();
                 onSuccess(response);
             } else {
+                hideLoader();
                 onFailure(error);
             }
         });
@@ -190,19 +210,20 @@ $(function () {
   initialize("list");
 
   //key press for IP address
-    $('#application-server-ip').on('keypress', function (e) {
+    db_server_ip.on('keypress', function (e) {
         var k = e.which || e.keyCode;
-        var ok = k >= 48 && k <= 57 || k == 46 || k == Key.LEFT ||
+        var ok = k >= 48 && k <= 57 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
                 k == Key.RIGHT;
+
       if (!ok){
           e.preventDefault();
       }
     });
 
     //key press for IP address
-    $('#application-server-port').on('keypress', function (e) {
+    db_server_port.on('keypress', function (e) {
         var k = e.which || e.keyCode;
-        var ok = k >= 48 && k <= 57 || k == Key.LEFT ||
+        var ok = k >= 48 && k <= 57 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
                 k == Key.RIGHT;
 
       if (!ok){

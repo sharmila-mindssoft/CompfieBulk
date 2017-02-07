@@ -259,13 +259,85 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         logger.logClientApi("GetClientDetailsReportData", "process end")
         logger.logClientApi("------", str(time.time()))
 
-    elif type(request) is clientreport.ExportToCSV:
+    # elif type(request) is clientreport.ExportToCSV:
+    #     logger.logClientApi(
+    #         "ExportToCSV  - " + str(client_id), "process begin"
+    #     )
+    #     logger.logClientApi("------", str(time.time()))
+    #     result = export_to_csv(db, request, session_user, client_id)
+    #     logger.logClientApi("ExportToCSV", "process end")
+    #     logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetLegalEntityWiseReportFilters:
         logger.logClientApi(
-            "ExportToCSV  - " + str(client_id), "process begin"
+            "GetLegalEntityWiseReportFilters  - " + str(client_id),
+            "process begin"
         )
         logger.logClientApi("------", str(time.time()))
-        result = export_to_csv(db, request, session_user, client_id)
-        logger.logClientApi("ExportToCSV", "process end")
+        result = get_legal_entity_wise_report_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetLegalEntityWiseReportFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetLegalEntityWiseReport:
+        logger.logClientApi(
+            "GetLegalEntityWiseReport  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_legal_entity_wise_report(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetLegalEntityWiseReport", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetDomainWiseReportFilters:
+        logger.logClientApi(
+            "GetDomainWiseReportFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_domain_wise_report_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetDomainWiseReportFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetDomainWiseReport:
+        logger.logClientApi(
+            "GetDomainWiseReport  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_domain_wise_report(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetDomainWiseReport", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetUnitWiseReportFilters:
+        logger.logClientApi(
+            "GetUnitWiseReportFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_unit_wise_report_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetUnitWiseReportFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetUnitWiseReport:
+        logger.logClientApi(
+            "GetUnitWiseReport  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_unit_wise_report(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetUnitWiseReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
     return result
@@ -509,7 +581,7 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
     #unit_ids = user_company_info[0]
     #country_list = get_countries_for_user(db, session_user)
     #legal_entities_list = get_legal_entities_for_user(db, request.legal_entity_id)
-    
+
     domain_list = get_domains_for_user(db, session_user)
     unit_list = get_units_for_user(db, session_user)
     acts_list = get_acts_for_user(db, session_user)
@@ -523,7 +595,7 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
         compliances=compliances_list,
         legal_entity_users=users_list
     )
-    
+
 def get_reassignedhistory_report(db, request, session_user, client_id):
     if not request.csv:
         country_id = request.country_id
@@ -758,3 +830,128 @@ def get_client_details_report_data(db, request, session_user, client_id):
 def export_to_csv(db, request, session_user, client_id):
     converter = ConvertJsonToCSV(db, request, session_user)
     return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
+
+
+###############################################################################################
+# Objective: To get the filters data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains domain list, compliances, units
+###############################################################################################
+
+def get_legal_entity_wise_report_filters(db, request, session_user, client_id):
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    domains_list = get_domains_for_le(db, legal_entity_id)
+    unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
+    act_list = get_acts_for_le_domain(db, legal_entity_id)
+    task_list = get_task_for_le_domain(db, legal_entity_id)
+    frequency_list = get_frequency_list(db)
+    compliance_user_type = get_compliance_user_type(db)
+    compliance_status = get_compiance_status(db)
+    compliance_user_list = get_compliance_user_list(db, country_id, legal_entity_id)
+    return clientreport.GetLegalEntityWiseReportFiltersSuccess(
+        domains=domains_list, unit_legal_entity=unit_list, act_legal_entity=act_list,
+        compliance_task_list=task_list, compliance_frequency_list=frequency_list,
+        compliance_user_type=compliance_user_type, compliance_task_status=compliance_status,
+        compliance_users=compliance_user_list
+    )
+
+###############################################################################################
+# Objective: To get legal entity wise compliances data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains compliance list with the status
+###############################################################################################
+def get_legal_entity_wise_report(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "LegalEntityWiseReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_legal_entity_wise_report(db, request)
+        return clientreport.GetLegalEntityWiseReportSuccess(legal_entities_compliances=result)
+
+###############################################################################################
+# Objective: To get the filters data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains domain list, compliances, units
+###############################################################################################
+
+def get_domain_wise_report_filters(db, request, session_user, client_id):
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    domains_list = get_domains_for_le(db, legal_entity_id)
+    unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
+    act_list = get_acts_for_le_domain(db, legal_entity_id)
+    task_list = get_task_for_le_domain(db, legal_entity_id)
+    frequency_list = get_frequency_list(db)
+    compliance_user_type = get_compliance_user_type(db)
+    compliance_status = get_compiance_status(db)
+    compliance_user_list = get_compliance_user_list(db, country_id, legal_entity_id)
+    return clientreport.GetDomainWiseReportFiltersSuccess(
+        domains=domains_list, unit_legal_entity=unit_list, act_legal_entity=act_list,
+        compliance_task_list=task_list, compliance_frequency_list=frequency_list,
+        compliance_user_type=compliance_user_type, compliance_task_status=compliance_status,
+        compliance_users=compliance_user_list
+    )
+
+###############################################################################################
+# Objective: To get legal entity wise compliances data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains compliance list with the status
+###############################################################################################
+def get_domain_wise_report(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "DomainWiseReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_domain_wise_report(db, request)
+        return clientreport.GetDomainWiseReportSuccess(legal_entities_compliances=result)
+
+
+###############################################################################################
+# Objective: To get the filters data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains domain list, compliances, units
+###############################################################################################
+
+def get_unit_wise_report_filters(db, request, session_user, client_id):
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    domains_list = get_domains_for_le(db, legal_entity_id)
+    unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
+    act_list = get_acts_for_le_domain(db, legal_entity_id)
+    task_list = get_task_for_le_domain(db, legal_entity_id)
+    frequency_list = get_frequency_list(db)
+    compliance_user_type = get_compliance_user_type(db)
+    compliance_status = get_compiance_status(db)
+    compliance_user_list = get_compliance_user_list(db, country_id, legal_entity_id)
+    return clientreport.GetUnitWiseReportFiltersSuccess(
+        domains=domains_list, unit_legal_entity=unit_list, act_legal_entity=act_list,
+        compliance_task_list=task_list, compliance_frequency_list=frequency_list,
+        compliance_user_type=compliance_user_type, compliance_task_status=compliance_status,
+        compliance_users=compliance_user_list
+    )
+
+###############################################################################################
+# Objective: To get unit wise compliances data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains compliance list with the status
+###############################################################################################
+def get_unit_wise_report(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "UnitWiseReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_unit_wise_report(db, request)
+        return clientreport.GetUnitWiseReportSuccess(unit_compliances=result)
