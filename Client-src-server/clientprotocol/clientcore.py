@@ -4013,19 +4013,20 @@ class UnitClosure_Units(object):
         }
 
 class LegalEntityInfo(object):
-    def __init__(self, legal_entity_id, legal_entity_name, country_id, business_group_id, business_group_name):
+    def __init__(self, legal_entity_id, legal_entity_name, country_id, business_group_id, business_group_name, country_name):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.country_id = country_id
         self.business_group_id = business_group_id
         self.business_group_name = business_group_name
+        self.country_name = country_name
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["le_id", "le_name", "country_id", "bg_id", "bg_name"])
+        data = parse_dictionary(data, ["le_id", "le_name", "country_id", "bg_id", "bg_name", "country_name"])
         return LegalEntityInfo(
             data.get("le_id"), data.get("le_name"), data.get("country_id"),
-            data.get("bg_id"), data.get("bg_name")
+            data.get("bg_id"), data.get("bg_name"), data.get("country_name")
         )
 
     def to_structure(self):
@@ -4034,7 +4035,8 @@ class LegalEntityInfo(object):
             "le_name": self.legal_entity_name,
             "c_id": self.country_id,
             "bg_id": self.business_group_id,
-            "bg_name": self.business_group_name
+            "bg_name": self.business_group_name,
+            "c_name" : self.country_name
         }
 
 class LegalEntityUser(object):
