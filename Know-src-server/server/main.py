@@ -233,14 +233,16 @@ class API(object):
             return self._send_response(str(e), 400)
 
     @csrf.exempt
-    @api_request(
-        DistributionRequest
-    )
+    @api_request(DistributionRequest)
     def handle_server_list(self, request, db):
         print request
-        return CompanyServerDetails(
-            gen.get_servers(db)
-        )
+        return CompanyServerDetails(gen.get_servers(db))
+
+    @csrf.exempt
+    @api_request(DistributionRequest)
+    def handle_group_server_list(self, request, db):
+        print request
+        return CompanyServerDetails(gen.get_group_servers(db))
 
     @csrf.exempt
     @api_request(GetClientChanges)
@@ -467,6 +469,7 @@ def run_server(port):
         # post urls
         api_urls_and_handlers = [
             ("/knowledge/server-list", api.handle_server_list),
+            ("/knowledge/group-server-list", api.handle_group_server_list),
             ("/knowledge/client-list", api.handle_client_list),
             ("/knowledge/replication", api.handle_replication),
             ("/knowledge/domain-replication", api.handle_domain_replication),

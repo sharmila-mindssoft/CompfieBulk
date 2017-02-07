@@ -37,7 +37,7 @@ class CompanyManager(object) :
         self._first_time = True
         self._token = None
         # self.get_token(ip, port)
-        self._poll_url = "http://%s:%s/knowledge/server-list" % (ip, port)
+        self._poll_url = "http://%s:%s/knowledge/group-server-list" % (ip, port)
         print self._poll_url
         # print self._poll_url
         body = json.dumps(
