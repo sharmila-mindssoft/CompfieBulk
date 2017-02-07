@@ -569,7 +569,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "t1.business_group_id, t1.country_id, " + \
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
-            "WHERE contract_to > now() and is_closed = 0"
+            "WHERE contract_to >= date(now()) and is_closed = 0"
         rows = db.select_all(q)
         #print "------------------ Admin ---------------"
     else :

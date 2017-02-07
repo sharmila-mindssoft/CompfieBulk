@@ -85,6 +85,12 @@ def process_client_transaction_requests(request, db, session_user, client_id):
         result = process_approve_compliance(
             db, request, session_user
         )
+
+    elif type(request) is clienttransactions.GetReviewSettingsFilters:
+        result = process_review_settings_filters(
+            db, request, session_user
+        )
+
     return result
 
 
@@ -364,3 +370,16 @@ def process_get_assignee_compliances(db, request, session_user):
 
 def process_reassign_compliance(db, request, session_user):
     return reassign_compliance(db, request, session_user)
+
+
+########################################################
+# To get the freqency and list of domains for based on
+# legal entity
+########################################################
+def process_review_settings_filters(db, request, session_user):
+    frequency_type = get_review_settings_frequency(db, session_user)
+    domains = get_domains_for_legalentity(db, request, session_user)
+    return clienttransactions.GetReviewSettingsFiltersSuccess(
+        compliance_frequency=frequency_type,
+        domain_list=domains
+    )

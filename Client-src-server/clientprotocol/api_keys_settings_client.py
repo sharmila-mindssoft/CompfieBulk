@@ -155,9 +155,33 @@ api_params = {
     "le_infos": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
     "div_infos": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
     "units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
-    
+
     "assign_unit_infos": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
-    "client_admin": make_int_field()
+    "client_admin": make_int_field(),
+
+    "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
+    "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
+    "frequency_id": make_int_field(),
+    "frequency": make_string_field(),
+    "rs_unit_list": make_vector_type_field(module="clientcore", klass_name="ReviewSettingsUnits"),
+    "u_code": make_string_field(),
+    "u_name": make_string_field(),
+    "g_name": make_string_field(),
+    "timeline":   make_string_field(),
+    "rs_compliance_list":  make_vector_type_field(module="clientcore", klass_name="ReviewSettingsCompliance"),
+    "r_every": make_int_field(),
+    "s_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
+    "trigger_before_days": make_int_field(),
+    "due_date": make_text_field(length=20),
+    "statu_date": make_int_field(),
+    "statu_month": make_int_field(),
+    "repeat_by": make_int_field(),
+    "unit_ids": make_vector_type_int(length=1000, is_optional=False),
+    "f_id": make_int_field(),
+    "sno": make_int_field(),
+    "month_from": make_int_field(),
+    "month_to": make_int_field(),
+
 }

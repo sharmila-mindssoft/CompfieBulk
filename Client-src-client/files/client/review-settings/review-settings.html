@@ -17,8 +17,8 @@
                     <div class="portlet-body">
                         <div id="basicwizard">
                             <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
-                                <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. Select Unit & Domain</a></li>
-                                <li><a href="#tab2" data-toggle="tab">2. Date Settings</a></li>
+                                <li class="tab-step-1 active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. Select Unit & Domain</a></li>
+                                <li class="tab-step-2 disabled"><a href="#tab2" data-toggle="tab">2. Date Settings</a></li>
                             </ul>
                             <div class="tab-content b-0 m-b-0 ">
                                 <div class="tab-pane m-t-0 fade active in " id="tab1">
@@ -29,15 +29,15 @@
                                             <div class="form-group has-feedback">
                                                 <label class="col-sm-4 control-label">Business Group:</label>
                                                 <div class="col-sm-6">
-                                                    <p class="form-control-static">RG Business Group</p>
+                                                    <p class="form-control-static business-group-name"></p>
+                                                     <select class="form-control business-group-select default-display-none">                                                      
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="form-group ">
                                                 <label class="col-md-4 control-label">Type: <span class="mandatory">*</span></label>
                                                 <div class="col-md-6">
-                                                    <select class="form-control input-sm" onchange="change_type(this.value)">
-                                                      <option value="1">Review</option>
-                                                      <option value="2">Flexi Review</option>
+                                                    <select class="form-control input-sm frequency-type">                                                      
                                                     </select>
                                                 </div>
                                             </div>
@@ -46,13 +46,15 @@
                                             <div class="form-group has-feedback">
                                                 <label class="col-sm-4 control-label">Legal Entity: </label>
                                                 <div class="col-sm-6">
-                                                    <p class="form-control-static">RG Legal Entity</p>
+                                                    <p class="form-control-static legal-entity-name"></p>
+                                                    <select class="form-control legal-entity-select default-display-none">                                                      
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="form-group has-feedback">
                                                 <label class="col-md-4 control-label">Domain: <span class="mandatory">*</span></label>
                                                 <div class="col-md-6">
-                                                    <input class="form-control input-sm" type="text" value="Labour Law">
+                                                    <input class="form-control input-sm domain" type="text" >
                                                     <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 </div>
                                             </div>
@@ -60,47 +62,39 @@
                                       </form>
                                     </div>
                                     <div class="form-group text-center m-b-20">
-                                        <button class="btn btn-primary waves-effect waves-light" type="button"> Show </button>
+                                        <button class="btn btn-primary waves-effect waves-light show-unit-button" type="button"> Show </button>
                                     </div>
                                     <hr class="m-t-5 m-b-10">
-                                    <h4 class="header-title p-l-7">Unit <span class="mandatory">*</span></h4>
-                                    <div class="row">
-                                        <div class="col-sm-12 scroll_box">
-                                            <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-border m-b-0" width="100%" cellspacing="0">
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            <div class="col-sm-6 no-padding-left">
-                                                                <div class="form-group has-feedback m-b-0">
-                                                                    <input class="form-control input-sm" placeholder="Enter Unit" type="text">
-                                                                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-sm-6 no-padding-right">
-                                                                <div class="checkbox checkbox-primary checkbox-white m-b-0 m-t-10 pull-right">
-                                                                    <input id="checkbox3" type="checkbox">
-                                                                    <label for="checkbox3"></label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="clearfix"></div>
-                                                            <ul class="list-unstyled ">
-                                                                <li class="heading">KG Autoparts </li>
-                                                                <li>VRM1001 - Corporate Office, 871, South street, Delhi</li>
-                                                                <li class="active">VRM1003 - Regional Office - South, 16, North Street, Mambalam, Chennai <i class="fa fa-check pull-right"></i></li>
-                                                                <li>VRM1004 - Branch Office - 1, 85, First Floor, Hani Complex, Bangalore</li>
-                                                                <li>VRM1005 - Branch Office - 2, KK nagar, Madurai</li>
-                                                                <li>VRM1006 - Branch Office - 3, 28,Ramnagar, Delhi</li>
-                                                                <li class="heading">KG Transports <i class="fa fa-check pull-right"></i> </li>
-                                                                <li class="active">VRM1007 - Branch Office - 4, 28 West Street, Hydrabad<i class="fa fa-check pull-right"></i></li>
-                                                                <li class="active">VRM1008 - Branch Office - 5, 12 RJ Complex, Main road, T.Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
-                                                                <li class="active">VRM1008 - Branch Office - 6, 13 CRP Complex, Anna Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
-                                                                <li class="active">VRM1008 - Branch Office - 7, 14 CRM Complex, Main road, KK.Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
-                                                            </ul>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                    <div class="step-1-unit-list default-display-none">
+                                      <h4 class="header-title p-l-7">Unit <span class="mandatory">*</span></h4>
+                                      <div class="row">
+                                          <div class="col-sm-12 scroll_box">
+                                              <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-border m-b-0" width="100%" cellspacing="0">
+                                                  <tbody>
+                                                      <tr>
+                                                          <td>
+                                                              <div class="col-sm-6 no-padding-left">
+                                                                  <div class="form-group has-feedback m-b-0">
+                                                                      <input class="form-control input-sm search-unit" placeholder="Enter Unit" type="text">
+                                                                      <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                                  </div>
+                                                              </div>
+                                                              <div class="col-sm-6 no-padding-right">
+                                                                  <div class="checkbox checkbox-primary checkbox-white m-b-0 m-t-10 pull-right">
+                                                                      <input id="checkbox3" type="checkbox" class="search-unit-selectall">
+                                                                      <label for="checkbox3"></label>
+                                                                  </div>
+                                                              </div>
+                                                              <div class="clearfix"></div>
+                                                              <ul class="list-unstyled unit-list">
+                                                                 
+                                                              </ul>
+                                                          </td>
+                                                      </tr>
+                                                  </tbody>
+                                              </table>
+                                          </div>
+                                      </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane m-t-0 fade" id="tab2">
@@ -108,10 +102,9 @@
                                       <form class="form-horizontal" role="form">
                                           <div class="col-lg-12 m-b-5">
                                               <div class="form-group m-b-0 pull-left">
-                                                  <label class="col-md-12 control-label">RG Business Group >> RG Legal Entity >> Review >> Labour Law </label>
+                                                  <label class="col-md-12 control-label breadcrumbs"></label>
                                               </div>
                                           </div>
-                                          <!-- end col -->
                                       </form>
                                       <div class="clear"></div>
                                   </div>
@@ -121,7 +114,7 @@
                                             <div class="form-group has-feedback m-b-0">
                                                 <label class="col-sm-4 control-label">Domain:</label>
                                                 <div class="col-sm-6">
-                                                    <p class="form-control-static">Labour Law</p>
+                                                    <p class="form-control-static domain-name-static"></p>
                                                 </div>
                                             </div>
                                         </div>
@@ -129,150 +122,17 @@
                                             <div class="form-group has-feedback m-b-0">
                                                 <label class="col-sm-4 control-label">Timeline: </label>
                                                 <div class="col-sm-6">
-                                                    <p class="form-control-static">April - March</p>
+                                                    <p class="form-control-static timeline-static"></p>
                                                 </div>
                                             </div>
                                         </div>
                                       </form>
                                     </div>
                                         <div class="panel-group col-lg-12 no-padding m-b-0" id="accordion" role="tablist" aria-multiselectable="true">
-                                            <div class="panel panel-default bx-shadow-none">
-                                                <div class="panel-heading p-0" role="tab" id="headingOne">
-                                                    <h4 class="panel-title">
-                                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5"> The Batteries Act </a>
-                                                    </h4>
-                                                </div>
-                                                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                                                    <div class="panel-body no-padding">
-                                                      <div class="dataTable_wrapper top-lightborder">
-                                                        <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
-                                                          <thead>
-                                                            <tr>
-                                                              <th width="1%">
-                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
-                                                                    <input id="checkbox1" type="checkbox">
-                                                                    <label for="checkbox1"></label>
-                                                                </div>
-                                                              </th>
-                                                              <th width="10%">Statutory Provision</th>
-                                                              <th width="15%">Compliance Task</th>
-                                                              <th width="8%">Repeats By</th>
-                                                              <th width="08%">Repeats Every <span class="mandatory">*</span></th>
-                                                              <th width="06%">Due Date <span class="mandatory">*</span></th>
-                                                              <th width="9%">Trigger Before (Days) <span class="mandatory">*</span></th>
-                                                              <th width="06%" class="text-center">Applicable Units</th>
-                                                            </tr>
-                                                          </thead>
-                                                          <tbody>
-                                                            <tr>
-                                                              <td>
-                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
-                                                                    <input id="checkbox2" type="checkbox" checked="">
-                                                                    <label for="checkbox2"></label>
-                                                                </div>
-                                                              </td>
-                                                              <td>Rule 4 (iii)</td>
-                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned"></i> FORM I - Half yearly returns Submission</td>
-                                                              <td>Every 2 Month(s)</td>
-                                                              <td><div class="col-sm-5 no-padding"><input class="form-control input-sm" value="2" type="text"></div>
-                                                              <div class="col-sm-7 no-padding review">
-                                                                <select class="form-control input-sm">
-                                                                    <option>Day(s)</option>
-                                                                    <option selected="selected">Month(s)</option>
-                                                                </select></div>
-                                                                <div class="col-sm-7 no-padding flexi_review" style="display:none;">
-                                                                <select class="form-control input-sm">
-                                                                    <option>Day(s)</option>
-                                                                    <option selected="selected">Month(s)</option>
-                                                                    <option>Year(s)</option>
-                                                                </select></div>
-                                                              </td>
-                                                              
-                                                              <td><input class="form-control input-sm" value="31-Dec-2016" type="text"></td>
-                                                              <td><div class="col-sm-6 no-padding-left"><input class="form-control input-sm" value="25" type="text"></div></td>
-                                                              <td class="text-center"><a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">3 / 3</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                              <td>
-                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
-                                                                    <input id="checkbox3" type="checkbox" checked="">
-                                                                    <label for="checkbox3"></label>
-                                                                </div>
-                                                              </td>
-                                                              <td>Rule 5 and Rule 6 (ii)</td>
-                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"></i> FORM II - Registration</td>
-                                                              <td>Every 2 Month(s)</td>
-                                                              <td><div class="col-sm-12 no-padding">Every 2 Month(s)</div></td>
-                                                              <td>&nbsp;</td>
-                                                              <td><p class="form-control-static">15</p></td>
-                                                              <td class="text-center"><a href="">3 / 3</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                              <td>
-                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
-                                                                    <input id="checkbox4" type="checkbox" checked="">
-                                                                    <label for="checkbox4"></label>
-                                                                </div>
-                                                              </td>
-                                                              <td>Rule 6(iii)</td>
-                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether undertaking submitted by importer to authority."></i> FORM III - Undertaking submission</td>
-                                                              <td>Every 2 Month(s)</td>
-                                                              <td><div class="col-sm-5 no-padding"><input class="form-control input-sm" value="2" type="text"></div>
-                                                              <div class="col-sm-7 no-padding review">
-                                                                <select class="form-control input-sm">
-                                                                    <option>Day(s)</option>
-                                                                    <option selected="selected">Month(s)</option>
-                                                                </select></div>
-                                                                <div class="col-sm-7 no-padding flexi_review" style="display:none;">
-                                                                <select class="form-control input-sm">
-                                                                    <option>Day(s)</option>
-                                                                    <option selected="selected">Month(s)</option>
-                                                                    <option>Year(s)</option>
-                                                                </select></div>
-                                                              </td>
-                                                              <td><input class="form-control input-sm" value="31-Dec-2016" type="text"></td>
-                                                              <td><div class="col-sm-6 no-padding-left"><input class="form-control input-sm" value="15" type="text"></div></td>
-                                                              <td class="text-center"><a href="">3 / 3</a></td>
-                                                            </tr>
-                                                            <tr>
-                                                              <td colspan="100%">
-                                                                <mark class="p-l-10 p-r-10">Tamilnadu State Act</mark>
-                                                              </td>
-                                                            </tr>
-                                                            <tr>
-                                                              <td>
-                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
-                                                                    <input id="checkbox5" type="checkbox">
-                                                                    <label for="checkbox5"></label>
-                                                                </div>
-                                                              </td>
-                                                              <td>Rule 7(iv)</td>
-                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM V - Dealer Half yearly returns</td>
-                                                              <td>Every 1 Year</td>
-                                                              <td><div class="col-sm-5 no-padding"><input class="form-control input-sm" value="2" type="text"></div>
-                                                              <div class="col-sm-7 no-padding review">
-                                                                <select class="form-control input-sm">
-                                                                    <option>Day(s)</option>
-                                                                    <option selected="selected">Month(s)</option>
-                                                                </select></div>
-                                                                <div class="col-sm-7 no-padding flexi_review" style="display:none;">
-                                                                <select class="form-control input-sm">
-                                                                    <option>Day(s)</option>
-                                                                    <option selected="selected">Month(s)</option>
-                                                                    <option>Year(s)</option>
-                                                                </select></div>
-                                                              </td>
-                                                              <td><input class="form-control input-sm" value="31-Dec-2016" type="text"></td>
-                                                              <td><div class="col-sm-6 no-padding-left"><input class="form-control input-sm" value="25" type="text"></div></td>
-                                                              <td class="text-center"><a href="">3 / 3</a></td>
-                                                            </tr>
-                                                          </tbody>
-                                                        </table>
-                                                      </div>
-                                                    </div>
-                                                </div>
+                                            <div class="panel panel-default bx-shadow-none accordion-div">
+                                                
                                             </div>
-                                            <div class="panel panel-default bx-shadow-none">
+                                           <!--  <div class="panel panel-default bx-shadow-none">
                                                 <div class="panel-heading p-5" role="tab" id="headingTwo">
                                                     <h4 class="panel-title">
                                                         <a class="collapsed" role="button" data-toggle="collapse"
@@ -406,8 +266,8 @@
                                                       </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="panel panel-default bx-shadow-none">
+                                            </div> -->
+                                            <!-- <div class="panel panel-default bx-shadow-none">
                                               <div class="panel-heading p-5" role="tab" id="headingTwo">
                                                     <h4 class="panel-title">
                                                         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree"> The Factories Act, 1948 </a>
@@ -537,17 +397,17 @@
                                                       </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
 
                                         <div class="clearfix"></div>
-                                    <p class="rpt-count">Selected Compliance: 3</p>
+                                    <p class="rpt-count">Selected Compliance: <span class="selected-count"></span></p>
                                 </div>
                                 <ul class="pager wizard m-b-0">
-                                    <li class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
-                                    <li class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
-                                    <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
-                                    <li class="finish pull-right"><a href="#" class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
+                                    <li class="previous disabled" id="previous-button"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                    <li class="next" id="next-button"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                    <li class="finish pull-right" id="submit-button"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
+                                    <li class="finish pull-right" id="save-button"><a href="#" class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
                                 </ul>
                             </div>
                         </div>
@@ -571,36 +431,97 @@
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Applicable Units</h4>
     <div class="custom-modal-text">
-        <form role="form">
-            <p class="form-control-static text-left">RG1001 - Corporate Office - 15/9, New Delhi, New Delhi, North Region, India</p>
-            <p class="form-control-static text-left">RG1002 - Regional Office - 24-1/4, South Delhi Municipal Corporation, Delhi</p>
-            <p class="form-control-static text-left">RG1003 - Branch Office - 12, KK nagar, Chennai, Tamil Nadu, South Region</p>
-        </form>
+        <div class="model-unit-list">
+        </div>
     </div>
 </div>
-<script src="/files/client/common/js/custombox/custombox.min.js"></script>
-
-<script>
-    var resizefunc = [];
-</script>
-<script src="/files/knowledge/common/js/wizard/jquery.bootstrap.wizard.js"></script>
+<div id="templates">
+  <p class="form-control-static text-left"></p>           
+  <ul class="unit-list-ul"> 
+    <li class="heading"></li>
+    <li></li>
+  </ul>
+  <table >
+    <tr class="table-no-record">
+      <td colspan="10" align="center"> No Records Found</td>
+    </tr>
+  </table>
+  <div class="panel-heading p-0" role="tab" id="headingOne">
+    <h4 class="panel-title">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 act-name"> </a>
+    </h4>
+  </div>
+  <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+    <div class="panel-body no-padding">
+      <div class="dataTable_wrapper top-lightborder">
+        <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+          <thead>
+            <tr>
+              <th width="1%">
+                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                    <input id="checkbox1" type="checkbox">
+                    <label for="checkbox1"></label>
+                </div>
+              </th>
+              <th width="10%">Statutory Provision</th>
+              <th width="15%">Compliance Task</th>
+              <th width="8%">Repeats By</th>
+              <th width="08%">Repeats Every <span class="mandatory">*</span></th>
+              <th width="06%">Due Date <span class="mandatory">*</span></th>
+              <th width="9%">Trigger Before (Days) <span class="mandatory">*</span></th>
+              <th width="06%" class="text-center">Applicable Units</th>
+            </tr>
+          </thead>
+          <tbody class="tbody-compliance-list"> 
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>   
+  <div class="div-compliance-list">               
+    <table>
+     <tr>
+        <td>
+          <div class="checkbox checkbox-primary m-b-0 m-t-0">
+              <input id="checkbox2" type="checkbox" checked="">
+              <label for="checkbox2"></label>
+          </div>
+        </td>
+        <td class="statutory-provision"> </td>
+        <td class="compliance-task"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i><span></span></td>
+        <td class="repeats-by"></td>
+        <td><div class="col-sm-5 no-padding"><input class="form-control input-sm" value="2" type="text"></div>
+          <div class="col-sm-7 no-padding review">
+          <select class="form-control input-sm">
+              <option>Day(s)</option>
+              <option selected="selected">Month(s)</option>
+          </select></div>
+          <div class="col-sm-7 no-padding flexi_review" style="display:none;">
+          <select class="form-control input-sm">
+              <option>Day(s)</option>
+              <option selected="selected">Month(s)</option>
+              <option>Year(s)</option>
+          </select></div>
+        </td>        
+        <td><input class="form-control input-sm due-date" value="31-Dec-2016" type="text"></td>
+        <td><div class="col-sm-6 no-padding-left"><input class="form-control input-sm trigger" value="25" type="text"></div></td>
+        <td class="text-center"><a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" class="applicable-count">3 / 3</a></td>
+      </tr>
+      <tr class="secondary-act">
+        <td colspan="100%">
+          <mark class="p-l-10 p-r-10 sec-act-name"></mark>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+<script type="text/javascript" src="/script/review-settings/review-settings.js"></script>
 <script type="text/javascript">
-var resizefunc = [];
-$(document).ready(function() {
-    $('#basicwizard').bootstrapWizard({'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'});
+    $(document).ready(function(){
+        $('#basicwizard .nav-tabs li a').click(function() {
+          return false;
+        });
+    });
+</script>
 
-    
-});
-</script>
-<script type="text/javascript">
-  function change_type(id) {
-    if(id == "1") {
-        $('.review').show();
-        $('.flexi_review').hide();
-    } else {
-        $('.review').hide();
-        $('.flexi_review').show();
-    }
-  }
-</script>
 {% endblock %}
