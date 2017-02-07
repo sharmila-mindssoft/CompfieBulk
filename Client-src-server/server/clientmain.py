@@ -80,7 +80,7 @@ class API(object):
         self._replication_managers = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            1000,
+            10000,
             self.server_added
         )
         print "Databases initialize"
@@ -131,6 +131,7 @@ class API(object):
         )
 
     def server_added(self, servers):
+        # server added should not be called in timeout function , pending : need to update from knowledge server.
 
         self._group_databases = {}
         self._le_databases = {}
@@ -192,14 +193,17 @@ class API(object):
                     client_db = Database(db_cons)
                     if client_db is not None :
                         if is_new_data is True and is_new_domain is False :
+                            # replication for group db only master data
                             rep_man = ReplicationManagerWithBase(
                                 self._knowledge_server_address,
                                 client_db,
                                 _client_id
                             )
+
                             if self._replication_managers.get(_client_id) is None :
                                 rep_man.start()
                                 self._replication_managers[_client_id] = rep_man
+
                         elif is_new_domain is True and _domain_id is not None :
                             d_rep_man = {}
                             domain_lst = _domain_id.strip().split(",")
