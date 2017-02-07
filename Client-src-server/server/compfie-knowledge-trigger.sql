@@ -1839,11 +1839,13 @@ END //
 
 DELIMITER ;
 
-
+--
+-- trigger for tbl_statutory_notifications
+--
 
 DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_insert`;
 DELIMITER //
-CREATE TRIGGER `after_tbl_statutory_notifications` AFTER UPDATE ON `tbl_statutory_notifications`
+CREATE TRIGGER `after_tbl_statutory_notifications_insert` AFTER UPDATE ON `tbl_statutory_notifications`
  FOR EACH ROW BEGIN
 
         INSERT INTO tbl_audit_log(action,
@@ -1908,4 +1910,131 @@ CREATE TRIGGER `after_tbl_statutory_notifications` AFTER UPDATE ON `tbl_statutor
 
 END //
 
+DELIMITER ;
+
+
+--
+-- trigger for tbl_validity_date_settings
+--
+
+
+DROP TRIGGER IF EXISTS `after_tbl_validity_date_settings_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_validity_date_settings_insert` AFTER INSERT ON `tbl_validity_date_settings`
+ FOR EACH ROW BEGIN
+   SET @action = 0;
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                0,
+                NEW.validity_date_id,
+                'country_id',
+                NEW.country_id,
+                'tbl_validity_date_settings');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                0,
+                NEW.validity_date_id,
+                'domain_id',
+                NEW.domain_id,
+                'tbl_validity_date_settings');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                0,
+                NEW.validity_date_id,
+                'days',
+                NEW.days,
+                'tbl_validity_date_settings');
+
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE  is_group = 1 and client_id  in (
+            select distinct t1.legal_entity_id from tbl_legal_entities as t1
+                inner join tbl_legal_entity_domains as t2 on t1.legal_entity_id = t2.legal_entity_id
+                where t1.country_id = new.country_id and t2.domain_id = new.domain_id
+        );
+
+
+END
+//
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `after_tbl_validity_date_settings_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_validity_date_settings_update` AFTER UPDATE ON `tbl_validity_date_settings`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+   SET @save = 0;
+   IF OLD.country_id <> NEW.country_id THEN
+   SET @save = 1;
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                0,
+                NEW.validity_date_id,
+                'country_id',
+                NEW.country_id,
+                'tbl_validity_date_settings');
+    END IF ;
+    IF OLD.domain_id <> NEW.domain_id THEN
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                0,
+                NEW.validity_date_id,
+                'domain_id',
+                NEW.domain_id,
+                'tbl_validity_date_settings');
+    END IF;
+    IF OLD.days <> NEW.days THEN
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                0,
+                NEW.validity_date_id,
+                'days',
+                NEW.days,
+                'tbl_validity_date_settings');
+
+   END IF;
+
+    IF @save = 1 THEN
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE  is_group = 1 and client_id  in (
+            select distinct t1.legal_entity_id from tbl_legal_entities as t1
+                inner join tbl_legal_entity_domains as t2 on t1.legal_entity_id = t2.legal_entity_id
+                where t1.country_id = new.country_id and t2.domain_id = new.domain_id
+        );
+    END IF;
+
+END
+//
 DELIMITER ;

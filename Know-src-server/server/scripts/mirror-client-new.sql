@@ -505,6 +505,13 @@ CREATE TABLE `tbl_calender_view` (
   `upcoming_count` int(11) DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `user_id`, `year`, `month`, `date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_validity_date_settings` (
+  `validity_date_id` int(11) NOT NULL AUTO_INCREMENT,
+  `country_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `days` int(11) NOT NULL,
+  PRIMARY KEY (`validity_date_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
 INSERT INTO tbl_user_category VALUES(3, "Legal Entity Admin");
