@@ -530,7 +530,7 @@ def get_forms_by_category(db, category_id):
 
 def get_user_forms(db, user_id):
     # except group admin forms
-    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu " + \
         "FROM tbl_forms as t1 " + \
         "INNER JOIN tbl_user_group_forms as t2 on t1.form_id = t2.form_id " + \
         "INNER JOIN tbl_users as t3 on t2.user_group_id = t3.user_group_id " + \
@@ -574,12 +574,12 @@ def get_legal_entity_info(db, user_id, user_category_id):
         #print "------------------ Admin ---------------"
     else :
         q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
-            "t1.client_id, t1.business_group_id, " + \
+            "t1.client_id, t1.business_group_id, t1.country_id, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
             "inner join tbl_user_domains as t2 on " + \
             "t1.legal_entity_id = t1.legal_entity_id " + \
-            "where contract_to > now() and is_closed = 0 and t2.user_id= %s"
+            "where contract_to > date(now()) and is_closed = 0 and t2.user_id= %s"
         rows = db.select_all(q, [user_id])
         #print "------------------ User ---------------"
 
