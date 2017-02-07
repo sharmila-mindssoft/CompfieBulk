@@ -163,7 +163,7 @@ def return_companies(data):
 
 def get_client_replication_list(db):
     q = "select client_id, is_new_data, is_new_domain, " + \
-        " domain_id from tbl_client_replication_status " + \
+        " domain_id, is_group from tbl_client_replication_status " + \
         " where is_new_data = 1"
     rows = db.select_all(q)
     return _return_clients(rows)
@@ -176,7 +176,8 @@ def _return_clients(data):
             int(d["client_id"]),
             bool(d["is_new_data"]),
             bool(d["is_new_domain"]),
-            d["domain_id"]
+            d["domain_id"],
+            bool(d["is_group"])
         ))
     return results
 

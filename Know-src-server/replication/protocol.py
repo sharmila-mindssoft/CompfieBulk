@@ -59,15 +59,16 @@ class Change(object):
         }
 
 class Client(object):
-    def __init__(self, client_id, is_new_data, is_new_domain, domain_id):
+    def __init__(self, client_id, is_new_data, is_new_domain, domain_id, is_group):
         self.client_id = client_id
         self.is_new_data = is_new_data
         self.is_new_domain = is_new_domain
         self.domain_id = domain_id
+        self.is_group = is_group
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "is_new_data", "is_new_domain", "domain_id"])
+        data = parse_dictionary(data, ["client_id", "is_new_data", "is_new_domain", "domain_id", "is_group"])
         client_id = data.get("client_id")
         client_id = parse_structure_SignedIntegerType_64(client_id)
         is_new_data = data.get("is_new_data")
@@ -76,14 +77,17 @@ class Client(object):
         is_new_domain = parse_structure_Bool(is_new_domain)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_OptionalType_Text(domain_id)
-        return Client(client_id, is_new_data, is_new_domain, domain_id)
+        is_group = data.get("is_group")
+        is_group = parse_structure_Bool(is_group)
+        return Client(client_id, is_new_data, is_new_domain, domain_id, is_group)
 
     def to_structure(self):
         return {
             "client_id": to_structure_SignedIntegerType_64(self.client_id),
             "is_new_data": to_structure_Bool(self.is_new_data),
             "is_new_domain": to_structure_Bool(self.is_new_domain),
-            "domain_id": to_structure_OptionalType_Text(self.domain_id)
+            "domain_id": to_structure_OptionalType_Text(self.domain_id),
+            "is_group": to_structure_Bool(self.is_group)
         }
 
 #
