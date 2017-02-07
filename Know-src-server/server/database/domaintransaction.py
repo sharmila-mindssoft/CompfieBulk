@@ -138,10 +138,8 @@ def get_complinaces_count_to_assign(db, request, user_id):
     domain_id = request.domain_id
     tots = []
     for u in unit_ids :
-        print u
         result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_count", [u, domain_id], 2)
 
-        print result[1][0]["total"]
         tots.append(int(result[1][0]["total"]))
     return sum(tots), max(tots)
 
@@ -164,19 +162,21 @@ def get_compliances_to_assign(db, request, user_id):
         final = []
         app_units = []
         comp_id = None
-        for r in results :
-
+        for res in range(len(results)) :
+            r = results[res]
             if comp_id == r.compliance_id or comp_id is None :
                 app_units.append(domaintransactionprotocol.ApplicableUnit(
                         r.unit_id, r.compliance_status, r.is_saved
                     ))
             else :
                 if r.compliance_id != comp_id and comp_id is not None:
+                    prev = results[res-1]
                     final.append(domaintransactionprotocol.AssignStatutoryComplianceMultiple(
-                        r.level_one_id, r.level_one_name, r.mapping_text, r.statutory_provision,
-                        r.compliance_id, r.document_name, r.compliance_name, r.description, r.organizations,
-                        r.level_one_status, r.level_one_remarks, app_units
+                        prev.level_one_id, prev.level_one_name, prev.mapping_text, prev.statutory_provision,
+                        prev.compliance_id, prev.document_name, prev.compliance_name, prev.description, prev.organizations,
+                        prev.level_one_status, prev.level_one_remarks, app_units
                     ))
+
                     app_units = []
 
                     app_units.append(domaintransactionprotocol.ApplicableUnit(
@@ -184,10 +184,14 @@ def get_compliances_to_assign(db, request, user_id):
                     ))
 
             comp_id = r.compliance_id
-
+            if res == len(results) - 1 and len(app_units) > 1 :
+                final.append(domaintransactionprotocol.AssignStatutoryComplianceMultiple(
+                    r.level_one_id, r.level_one_name, r.mapping_text, r.statutory_provision,
+                    r.compliance_id, r.document_name, r.compliance_name, r.description, r.organizations,
+                    r.level_one_status, r.level_one_remarks, app_units
+                ))
     else :
         final = results
-
     return final
 
 def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, show_count):
