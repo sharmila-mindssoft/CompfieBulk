@@ -173,15 +173,17 @@ api_params = {
     "rs_compliance_list":  make_vector_type_field(module="clientcore", klass_name="ReviewSettingsCompliance"),
     "r_every": make_int_field(),
     "s_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
-    "trigger_before_days": make_int_field(),
-    "due_date": make_text_field(length=20),
-    "statu_date": make_int_field(),
-    "statu_month": make_int_field(),
-    "repeat_by": make_int_field(),
+    "trigger_before_days": make_int_field(is_optional=True),
+    "due_date": make_text_field(length=20, is_optional=True),
+    "statu_date": make_int_field(is_optional=True),
+    "statu_month": make_int_field(is_optional=True),
+    "repeat_by": make_int_field(is_optional=True),
     "unit_ids": make_vector_type_int(length=1000, is_optional=False),
     "f_id": make_int_field(),
     "sno": make_int_field(),
     "month_from": make_int_field(),
     "month_to": make_int_field(),
+    "level_1_s_name": make_string_field(),
+
 
 }
