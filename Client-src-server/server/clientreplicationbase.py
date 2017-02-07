@@ -134,12 +134,13 @@ class ClientReplicationManager(object) :
 class ReplicationBase(object):
     def __init__(
         self, knowledge_server_address,
-        db
+        db, is_group
     ) :
         # self._io_loop = io_loop
         self._knowledge_server_address = knowledge_server_address
         # self._http_client = http_client
         self._db = db
+        self._is_group = is_group
         self._received_count = None
         self._temp_count = 0
         self._stop = False
@@ -150,7 +151,7 @@ class ReplicationBase(object):
         self._countries = []
         self._domains = []
         # self._get_client_countries()
-        # self._get_client_domains()
+        self._get_client_domains()
         self._type = None
 
     def _load_auto_id_columns(self):
@@ -162,13 +163,14 @@ class ReplicationBase(object):
             "tbl_categories": "category_id",
             "tbl_units": "unit_id",
             # "tbl_client_configurations": "client_config_id",
-            # "tbl_compliances": "compliance_id",
+            "tbl_compliances": "compliance_id",
             # "tbl_client_statutories": "client_statutory_id",
-            # "tbl_client_compliances": "client_compliance_id",
-            # "tbl_statutory_notifications_log": "statutory_notification_id",
+            "tbl_client_compliances": "client_compliance_id",
+            "tbl_statutory_notifications": "notification_id",
             # "tbl_statutory_notifications_units": "statutory_notification_unit_id",
             "tbl_countries": "country_id",
-            "tbl_domains": "domain_id"
+            "tbl_domains": "domain_id",
+            "tbl_validity_date_settings": "validity_date_id"
         }
 
     def _load_columns_count(self):
@@ -180,13 +182,14 @@ class ReplicationBase(object):
             "tbl_categories": 5,
             "tbl_units": 11,
             # "tbl_client_configurations": 5,
-            # "tbl_compliances": 17,
-            # "tbl_client_statutories": 5,
-            # "tbl_client_compliances": 10,
-            # "tbl_statutory_notifications_log": 8,
+            "tbl_compliances": 21,
+            "tbl_client_statutories": 5,
+            "tbl_client_compliances": 13,
+            "tbl_statutory_notifications": 5,
             # "tbl_statutory_notifications_units": 6,
             "tbl_countries": 2,
-            "tbl_domains": 2
+            "tbl_domains": 2,
+            "tbl_validity_date_settings": 4
         }
 
     # def _get_client_countries(self):
@@ -203,19 +206,23 @@ class ReplicationBase(object):
     #         self._db.rollback()
     #     assert self._countries is not None
 
-    # def _get_client_domains(self):
-    #     domain_list = None
-    #     self._db.begin()
-    #     try:
-    #         domain_list = get_domains(self._db)
-    #         for d in domain_list :
-    #             self._domains.append(int(d.domain_id))
-    #         self._db.commit()
-    #     except Exception, e :
-    #         print e,
-    #         self._domains = None
-    #         self._db.rollback()
-    #     assert self._domains is not None
+    def _get_client_domains(self):
+        print "---------------------------"
+        domain_list = None
+        self._db.begin()
+        try:
+            domain_list = get_domains(self._db)
+            print domain_list
+            for d in domain_list :
+                self._domains.append(int(d.get("domain_id")))
+                print self._domains
+                print "=-=-=-"
+            self._db.commit()
+        except Exception, e :
+            print e
+            self._domains = None
+            self._db.rollback()
+        # assert self._domains is not None
 
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
@@ -352,14 +359,15 @@ class ReplicationBase(object):
 class ReplicationManagerWithBase(ReplicationBase):
     def __init__(
         self, knowledge_server_address,
-        db, client_id
+        db, client_id, is_group
     ) :
         super(ReplicationManagerWithBase, self).__init__(
             knowledge_server_address,
-            db
+            db, is_group
         )
         self._get_received_count()
         self._client_id = client_id
+        self._is_group = is_group
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/knowledge/replication" % (ip, port)
         self._poll_old_data_url = "http://%s:%s/knowledge/delreplicated" % (ip, port)
@@ -390,7 +398,8 @@ class ReplicationManagerWithBase(ReplicationBase):
             body = json.dumps(
                 GetChanges(
                     self._client_id,
-                    self._received_count
+                    self._received_count,
+                    self._is_group
                 ).to_structure(), indent=2
             )
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))

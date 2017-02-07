@@ -248,6 +248,71 @@ class ClientDBBase(object):
         if values :
             self.bulk_insert(db_cur, 'tbl_organisation', columns, values)
 
+    def save_client_group(self, db_cur, data):
+        columns = ["client_id", "group_name", "short_name", "email_id", "total_view_licence"]
+        values = []
+        for d in data :
+            values.append((
+                d.get("client_id"), d.get("group_name"), d.get("short_name"),
+                d.get("email_id"), d.get("total_view_licence")
+            ))
+        if values :
+            self.bulk_insert(db_cur, "tbl_client_groups", columns, values)
+
+    def save_client_configuration(self, db_cur, data):
+        columns = ["client_id", "country_id", "domain_id", "month_from", "month_to"]
+        values = []
+        for d in data :
+            values.append((
+                d.get("client_id"), d.get("country_id"), d.get("domain_id"),
+                d.get("month_from"), d.get("month_to")
+            ))
+        if values :
+            self.bulk_insert(db_cur, "tbl_client_configuration", columns, values)
+
+    def save_legal_entity(self, db_cur, data):
+        columns = [
+            "legal_entity_id", "country_id", "business_group_id",
+            "legal_entity_name", "contract_from", "contract_to"
+            "logo", "logo_size", "file_space_limit", "total_licence"
+        ]
+        values = []
+        for d in data :
+            values.append((
+                d.get("legal_entity_id"), d.get("country_id"),
+                d.get("business_group_id"), d.get("legal_entity_name"),
+                d.get("contract_from"), d.get("contract_to"), d.get("logo"),
+                d.get("logo_size"), d.get("file_space_limit"), d.get("total_licence")
+            ))
+        if values :
+            self.bulk_insert(db_cur, "tbl_legal_entities", columns, values)
+
+    def save_legal_entity_domains(self, db_cur, data):
+        columns = [
+            "legal_entity_id", "domain_id", "activation_date",
+            "organisation_id", "count"
+        ]
+        values = []
+        for d in data :
+            values.append((
+                d.get("legal_entity_id"), d.get("domain_id"), d.get("activation_date"),
+                d.get("organisation_id"), d.get("count")
+            ))
+
+        if values :
+            self.bulk_insert(db_cur, "tbl_legal_entity_domains", columns, values)
+
+    def save_business_group(self, db_cur, data):
+        columns = ["business_group_id", "business_group_name"]
+        values = []
+        for d in data :
+            values.append(
+                (d.get("business_group_id"), d.get("business_group_name"))
+            )
+
+        if values :
+            self.bulk_insert(db_cur, 'tbl_business_groups', columns, values)
+
 class ClientGroupDBCreate(ClientDBBase):
     def __init__(
         self, db, client_id, short_name, email_id, database_ip, database_port,
@@ -424,7 +489,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 "trigger creation failed in client database "
             )
 
-    def _save_master_countries(self):
+    def _save_master_info(self):
         args = [self._client_id, None]
         m_info = self._db.call_proc_with_multiresult_set("sp_get_le_master_info", args, 4)
         country = m_info[0]
@@ -497,16 +562,26 @@ class ClientLEDBCreate(ClientDBBase):
                 self.delete_database()
             raise Exception(e)
 
-    def _save_master_countries(self):
+    def _save_master_info(self):
         args = [self._client_id, self._legal_entity_id]
-        m_info = self._db.call_proc_with_multiresult_set("sp_get_le_master_info", args, 4)
+        m_info = self._db.call_proc_with_multiresult_set("sp_get_le_master_info", args, 9)
         country = m_info[0]
         domain = m_info[1]
         domain_country = m_info[2]
         org_data = m_info[3]
+        client_data = m_info[4]
+        client_conf_data = m_info[5]
+        le_data = m_info[6]
+        le_domain_data = m_info[7]
+        bg_info = m_info[8]
         db_cur = self.db_con.cursor()
         self.save_country(db_cur, country)
         self.save_domain(db_cur, domain)
         self.save_domain_country(db_cur, domain_country)
         self.save_organisation(db_cur, org_data)
+        self.save_client_group(db_cur, client_data)
+        self.save_client_configuration(db_cur, client_conf_data)
+        self.save_legal_entity(db_cur, le_data)
+        self.save_legal_entity_domains(db_cur, le_domain_data)
+        self.save_business_group(db_cur, bg_info)
         self.db_con.commit()

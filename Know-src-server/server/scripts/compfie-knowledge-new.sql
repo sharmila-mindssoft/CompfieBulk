@@ -20,6 +20,7 @@ CREATE TABLE `tbl_audit_log` (
   `value` longtext,
   `audit_type` tinyint(4),
   `client_id` int(10),
+  `legal_entity_id` int(11),
   `action` varchar(20)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

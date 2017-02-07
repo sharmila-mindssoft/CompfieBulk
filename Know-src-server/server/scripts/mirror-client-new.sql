@@ -1,3 +1,7 @@
+CREATE TABLE `tbl_audit_log` (
+  `audit_trail_id` int(11) DEFAULT 0,
+  `domain_trail_id` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_category` (
   `user_category_id` int(11) NOT NULL,
   `user_category_name` varchar(50) DEFAULT NULL,
@@ -263,6 +267,7 @@ CREATE TABLE `tbl_users` (
   `user_category_id` int(11) NOT NULL,
   `client_id` int(11) DEFAULT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
+  `service_provider_id` int(11) DEFAULT NULL,
   `user_level` int(11) DEFAULT NULL,
   `user_group_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
@@ -512,6 +517,7 @@ CREATE TABLE `tbl_validity_date_settings` (
   `days` int(11) NOT NULL,
   PRIMARY KEY (`validity_date_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
 INSERT INTO tbl_user_category VALUES(3, "Legal Entity Admin");

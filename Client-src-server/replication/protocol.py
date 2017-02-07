@@ -42,7 +42,7 @@ class Request(object):
 #
 
 class Change(object):
-    def __init__(self, audit_trail_id, tbl_name, tbl_auto_id, column_name, value, client_id, action):
+    def __init__(self, audit_trail_id, tbl_name, tbl_auto_id, column_name, value, client_id, action, legal_entity_id):
         self.audit_trail_id = audit_trail_id
         self.tbl_name = tbl_name
         self.tbl_auto_id = tbl_auto_id
@@ -50,10 +50,11 @@ class Change(object):
         self.value = value
         self.client_id = client_id
         self.action = action
+        self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["audit_trail_id", "tbl_name", "tbl_auto_id", "column_name", "value", "client_id", "action"])
+        data = parse_dictionary(data, ["audit_trail_id", "tbl_name", "tbl_auto_id", "column_name", "value", "client_id", "action", "legal_entity_id"])
         audit_trail_id = data.get("audit_trail_id")
         audit_trail_id = parse_structure_SignedIntegerType_64(audit_trail_id)
         tbl_name = data.get("tbl_name")
@@ -68,7 +69,9 @@ class Change(object):
         client_id = parse_structure_SignedIntegerType_64(client_id)
         action = data.get("action")
         action = parse_structure_Text(action)
-        return Change(audit_trail_id, tbl_name, tbl_auto_id, column_name, value, client_id, action)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_SignedIntegerType_64(legal_entity_id)
+        return Change(audit_trail_id, tbl_name, tbl_auto_id, column_name, value, client_id, action, legal_entity_id)
 
     def to_structure(self):
         return {
@@ -79,18 +82,20 @@ class Change(object):
             "value": to_structure_OptionalType_Text(self.value),
             "client_id": to_structure_SignedIntegerType_64(self.client_id),
             "action": to_structure_Text(self.action),
+            "legal_entity_id": to_structure_SignedIntegerType_64(self.legal_entity_id)
         }
 
 class Client(object):
-    def __init__(self, client_id, is_new_data, is_new_domain, domain_id):
+    def __init__(self, client_id, is_new_data, is_new_domain, domain_id, is_group):
         self.client_id = client_id
         self.is_new_data = is_new_data
         self.is_new_domain = is_new_domain
         self.domain_id = domain_id
+        self.is_group = is_group
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "is_new_data", "is_new_domain", "domain_id"])
+        data = parse_dictionary(data, ["client_id", "is_new_data", "is_new_domain", "domain_id", "is_group"])
         client_id = data.get("client_id")
         client_id = parse_structure_SignedIntegerType_64(client_id)
         is_new_data = data.get("is_new_data")
@@ -99,14 +104,17 @@ class Client(object):
         is_new_domain = parse_structure_Bool(is_new_domain)
         domain_id = data.get("domain_id")
         domain_id = parse_structure_OptionalType_Text(domain_id)
-        return Client(client_id, is_new_data, is_new_domain, domain_id)
+        is_group = data.get("is_group")
+        is_group = parse_structure_Bool(is_group)
+        return Client(client_id, is_new_data, is_new_domain, domain_id, is_group)
 
     def to_structure(self):
         return {
             "client_id": to_structure_SignedIntegerType_64(self.client_id),
             "is_new_data": to_structure_Bool(self.is_new_data),
             "is_new_domain": to_structure_Bool(self.is_new_domain),
-            "domain_id": to_structure_OptionalType_Text(self.domain_id)
+            "domain_id": to_structure_OptionalType_Text(self.domain_id),
+            "is_group": to_structure_Bool(self.is_group)
         }
 
 #
@@ -114,23 +122,26 @@ class Client(object):
 #
 
 class GetChanges(object):
-    def __init__(self, client_id, received_count):
+    def __init__(self, client_id, received_count, is_group):
         self.client_id = client_id
         self.received_count = received_count
+        self.is_group = is_group
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["client_id", "received_count"])
+        data = parse_dictionary(data, ["client_id", "received_count", "is_group"])
         client_id = data.get("client_id")
         client_id = parse_structure_SignedIntegerType_64(client_id)
         received_count = data.get("received_count")
         received_count = parse_structure_SignedIntegerType_64(received_count)
-        return GetChanges(client_id, received_count)
+        is_group = data.get("is_group")
+        return GetChanges(client_id, received_count, is_group)
 
     def to_structure(self):
         return {
             "client_id": to_structure_SignedIntegerType_64(self.client_id),
             "received_count": to_structure_SignedIntegerType_64(self.received_count),
+            "is_group": to_structure_Bool(self.is_group)
         }
 
 class GetClientChanges(object):

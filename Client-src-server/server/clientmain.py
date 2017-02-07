@@ -77,7 +77,8 @@ class API(object):
         # self._http_client = http_client
         self._group_databases = {}
         self._le_databases = {}
-        self._replication_managers = {}
+        self._replication_managers_for_group = {}
+        self._replication_managers_for_le = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
             10000,
@@ -135,7 +136,8 @@ class API(object):
 
         self._group_databases = {}
         self._le_databases = {}
-        self._replication_managers = {}
+        self._replication_managers_for_group = {}
+        self._replication_managers_for_le = {}
         try:
 
             for company in servers:
@@ -189,38 +191,57 @@ class API(object):
                     print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
-                    _domain_id = client.domain_id
-                    print "client added"
-                    db_cons = self._group_databases.get(_client_id).get_connection()
-                    client_db = Database(db_cons)
-                    if client_db is not None :
-                        if is_new_data is True and is_new_domain is False :
-                            # replication for group db only master data
-                            rep_man = ReplicationManagerWithBase(
-                                self._knowledge_server_address,
-                                client_db,
-                                _client_id
-                            )
+                    # _domain_id = client.domain_id
 
-                            if self._replication_managers.get(_client_id) is None :
-                                rep_man.start()
-                                self._replication_managers[_client_id] = rep_man
-
-                        elif is_new_domain is True and _domain_id is not None :
-                            d_rep_man = {}
-                            domain_lst = _domain_id.strip().split(",")
-                            for d in domain_lst :
-                                domain_id = int(d)
-                                domain_rep_man = DomainReplicationManager(
-                                    self._io_loop,
+                    if client.is_group is True:
+                        print "client added"
+                        db_cons = self._group_databases.get(_client_id).get_connection()
+                        client_db = Database(db_cons)
+                        if client_db is not None :
+                            if is_new_data is True and is_new_domain is False :
+                                # replication for group db only master data
+                                rep_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
-                                    self._http_client,
                                     client_db,
                                     _client_id,
-                                    domain_id
+                                    client.is_group
                                 )
-                                domain_rep_man.start()
-                                d_rep_man[_client_id] = domain_rep_man
+
+                                if self._replication_managers_for_group.get(_client_id) is None :
+                                    rep_man.start()
+                                    self._replication_managers_for_group[_client_id] = rep_man
+                    else :
+                        db_cons = self._le_databases.get(_client_id).get_connection()
+                        le_db = Database(db_cons)
+                        if le_db is not None :
+                            if is_new_data is True and is_new_domain is False :
+                                # replication for group db only master data
+                                rep_man = ReplicationManagerWithBase(
+                                    self._knowledge_server_address,
+                                    le_db,
+                                    _client_id,
+                                    client.is_group
+                                )
+
+                                if self._replication_managers_for_le.get(_client_id) is None :
+                                    rep_man.start()
+                                    self._replication_managers_for_le[_client_id] = rep_man
+
+                            # if is_new_domain is True and _domain_id is not None :
+                            #     d_rep_man = {}
+                            #     domain_lst = _domain_id.strip().split(",")
+                            #     for d in domain_lst :
+                            #         domain_id = int(d)
+                            #         domain_rep_man = DomainReplicationManager(
+                            #             self._io_loop,
+                            #             self._knowledge_server_address,
+                            #             self._http_client,
+                            #             client_db,
+                            #             _client_id,
+                            #             domain_id
+                            #         )
+                            #         domain_rep_man.start()
+                            #         d_rep_man[_client_id] = domain_rep_man
 
             _client_manager = ClientReplicationManager(
                 self._knowledge_server_address,

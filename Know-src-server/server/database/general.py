@@ -44,12 +44,16 @@ def get_trail_id(db):
     return trail_id
 
 
-def get_trail_log(db, client_id, received_count):
+def get_trail_log(db, client_id, received_count, is_group):
     query = "SELECT "
     query += "  audit_trail_id, tbl_name, tbl_auto_id,"
-    query += "  column_name, value, client_id, action"
+    query += "  column_name, value, client_id, action, legal_entity_id"
     query += " from tbl_audit_log WHERE audit_trail_id > %s "
-    query += " AND (client_id= %s) LIMIT 100;"
+    if is_group :
+        query += " AND (client_id= %s) "
+    else :
+        query += " AND (legal_entity_id=0 or legal_entity_id= %s) "
+    query += " LIMIT 100;"
 
     rows = db.select_all(query, [received_count, client_id])
     print rows
@@ -76,7 +80,7 @@ def get_trail_log_for_domain(
     if len(auto_id) > 0:
         query = "SELECT "
         query += "  audit_trail_id, tbl_name, tbl_auto_id,"
-        query += "  column_name, value, client_id, action"
+        query += "  column_name, value, client_id, action, legal_entity_id"
         query += " from tbl_audit_log WHERE tbl_name = 'tbl_compliances' " + \
             " AND audit_trail_id> %s AND " + \
             " tbl_auto_id IN (%s) "
@@ -103,7 +107,8 @@ def return_changes(data):
             d["column_name"],
             d["value"],
             int(d["client_id"]),
-            d["action"]
+            d["action"],
+            d["legal_entity_id"]
         )
         results.append(change)
     return results

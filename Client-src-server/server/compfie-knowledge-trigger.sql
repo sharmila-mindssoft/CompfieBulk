@@ -9,48 +9,56 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
    SET @action = 0;
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                0,
                 NEW.client_id,
                 'group_name',
                 NEW.group_name,
                 'tbl_client_groups');
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                0,
                 NEW.client_id,
                 'short_name',
                 NEW.short_name,
                 'tbl_client_groups');
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                0,
                 NEW.client_id,
                 'email_id',
                 NEW.email_id,
                 'tbl_client_groups');
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                0,
                 NEW.client_id,
                 'total_view_licence',
                 NEW.total_view_licence,
@@ -72,12 +80,14 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
    SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                0,
                 NEW.client_id,
                 'group_name',
                 NEW.group_name,
@@ -89,12 +99,14 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
    SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                0,
                 NEW.client_id,
                 'short_name',
                 NEW.short_name,
@@ -106,12 +118,14 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
    SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                0,
                 NEW.client_id,
                 'email_id',
                 NEW.email_id,
@@ -123,12 +137,14 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
    SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                0,
                 NEW.client_id,
                 'total_view_licence',
                 NEW.total_view_licence,
@@ -157,12 +173,14 @@ CREATE TRIGGER `after_tbl_business_groups_insert` AFTER INSERT ON `tbl_business_
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                0,
                 NEW.business_group_id,
                 'business_group_name',
                 NEW.business_group_name,
@@ -186,12 +204,14 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                new.legal_entity_id,
                 NEW.legal_entity_id,
                 'legal_entity_name',
                 NEW.legal_entity_name,
@@ -199,12 +219,14 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                new.legal_entity_id,
                 NEW.legal_entity_id,
                 'country_id',
                 NEW.country_id,
@@ -212,12 +234,14 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'business_group_id',
                 NEW.business_group_id,
@@ -225,12 +249,14 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'contract_from',
                 NEW.contract_from,
@@ -238,12 +264,14 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'contract_to',
                 NEW.contract_to,
@@ -251,6 +279,7 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
@@ -258,18 +287,21 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
         VALUES (@action,
                 NEW.client_id,
                 NEW.legal_entity_id,
+                NEW.legal_entity_id,
                 'logo',
                 NEW.logo,
                 'tbl_legal_entities');
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'logo_size',
                 NEW.logo_size,
@@ -278,6 +310,7 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
@@ -285,18 +318,21 @@ CREATE TRIGGER `after_tbl_legal_entities_insert` AFTER INSERT ON `tbl_legal_enti
         VALUES (@action,
                 NEW.client_id,
                 NEW.legal_entity_id,
+                NEW.legal_entity_id,
                 'file_space_limit',
                 NEW.file_space_limit,
                 'tbl_legal_entities');
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'total_licence',
                 NEW.total_licence,
@@ -322,12 +358,14 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
    IF OLD.legal_entity_name <> NEW.legal_entity_name THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'legal_entity_name',
                 NEW.legal_entity_name,
@@ -337,12 +375,14 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
     IF OLD.business_group_id <> NEW.business_group_id THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'business_group_id',
                 NEW.business_group_id,
@@ -352,12 +392,14 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
     IF OLD.contract_from <> NEW.contract_from THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'contract_from',
                 NEW.contract_from,
@@ -367,12 +409,14 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
     IF OLD.contract_to <> NEW.contract_to THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'contract_to',
                 NEW.contract_to,
@@ -382,12 +426,14 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
     IF OLD.logo <> NEW.logo THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'logo',
                 NEW.logo,
@@ -397,12 +443,14 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
     IF OLD.logo_size <> NEW.logo_size THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'logo_size',
                 NEW.logo_size,
@@ -412,12 +460,14 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
     IF OLD.file_space_limit <> NEW.file_space_limit THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'file_space_limit',
                 NEW.file_space_limit,
@@ -427,12 +477,14 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
     IF OLD.total_licence <> NEW.total_licence THEN
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.legal_entity_id,
                 'total_licence',
                 NEW.total_licence,
@@ -442,12 +494,14 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
     IF OLD.total_licence <> NEW.total_licence THEN
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                new.legal_entity_id,
                 NEW.legal_entity_id,
                 'is_closed',
                 NEW.total_licence,
@@ -457,6 +511,9 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
 
     UPDATE tbl_client_replication_status set is_new_data = 1
     WHERE client_id = NEW.client_id and is_group = 1 ;
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.legal_entity_id and is_group = 0 ;
 
 END
 //
@@ -475,12 +532,14 @@ CREATE TRIGGER `after_tbl_divisions_insert` AFTER INSERT ON `tbl_divisions`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.division_id,
                 'division_name',
                 NEW.division_name,
@@ -488,12 +547,14 @@ CREATE TRIGGER `after_tbl_divisions_insert` AFTER INSERT ON `tbl_divisions`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.division_id,
                 'legal_entity_id',
                 NEW.legal_entity_id,
@@ -501,12 +562,14 @@ CREATE TRIGGER `after_tbl_divisions_insert` AFTER INSERT ON `tbl_divisions`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.division_id,
                 'business_group_id',
                 NEW.business_group_id,
@@ -514,6 +577,10 @@ CREATE TRIGGER `after_tbl_divisions_insert` AFTER INSERT ON `tbl_divisions`
 
     UPDATE tbl_client_replication_status set is_new_data = 1
     WHERE client_id = NEW.client_id and is_group = 1;
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.legal_entity_id and is_group = 0 ;
+
 END
 //
 DELIMITER ;
@@ -531,12 +598,14 @@ CREATE TRIGGER `after_tbl_categories_insert` AFTER INSERT ON `tbl_categories`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.category_id,
                 'category_name',
                 NEW.category_name,
@@ -544,12 +613,14 @@ CREATE TRIGGER `after_tbl_categories_insert` AFTER INSERT ON `tbl_categories`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.category_id,
                 'legal_entity_id',
                 NEW.legal_entity_id,
@@ -557,12 +628,14 @@ CREATE TRIGGER `after_tbl_categories_insert` AFTER INSERT ON `tbl_categories`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.category_id,
                 'business_group_id',
                 NEW.business_group_id,
@@ -570,12 +643,14 @@ CREATE TRIGGER `after_tbl_categories_insert` AFTER INSERT ON `tbl_categories`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.category_id,
                 'division_id',
                 NEW.division_id,
@@ -583,6 +658,10 @@ CREATE TRIGGER `after_tbl_categories_insert` AFTER INSERT ON `tbl_categories`
 
     UPDATE tbl_client_replication_status set is_new_data = 1
     WHERE client_id = NEW.client_id and is_group = 1;
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.legal_entity_id and is_group = 0 ;
+
 END
 //
 DELIMITER ;
@@ -600,12 +679,14 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'business_group_id',
                 NEW.business_group_id,
@@ -613,12 +694,14 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'legal_entity_id',
                 NEW.legal_entity_id,
@@ -626,12 +709,14 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'division_id',
                 NEW.division_id,
@@ -639,12 +724,14 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'category_id',
                 NEW.category_id,
@@ -652,12 +739,14 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'country_id',
                 NEW.country_id,
@@ -665,22 +754,26 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
-    SELECT @action, new.client_id, new.unit_id, 'geography_name',
+    SELECT @action, new.client_id,
+    NEW.legal_entity_id, new.unit_id, 'geography_name',
         parent_names, 'tbl_units' FROM tbl_geographies where geography_id = new.geography_id;
 
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'unit_code',
                 NEW.unit_code,
@@ -689,12 +782,14 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'unit_name',
                 NEW.unit_name,
@@ -703,12 +798,14 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'address',
                 NEW.address,
@@ -717,12 +814,14 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'postal_code',
                 NEW.postal_code,
@@ -731,6 +830,10 @@ CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
 
     UPDATE tbl_client_replication_status set is_new_data = 1
     WHERE client_id = NEW.client_id and is_group = 1;
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.legal_entity_id and is_group = 0 ;
+
 END
 //
 DELIMITER ;
@@ -745,22 +848,26 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
-  SELECT @action, NEW.client_id, NEW.unit_id, 'geography', parent_names, 'tbl_units'  FROM tbl_geographies WHERE geography_id=NEW.geography_id;
+  SELECT @action, NEW.client_id,
+  NEW.legal_entity_id, NEW.unit_id, 'geography', parent_names, 'tbl_units'  FROM tbl_geographies WHERE geography_id=NEW.geography_id;
    END IF;
 
    IF OLD.business_group_id <> NEW.business_group_id THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'business_group_id',
                 NEW.business_group_id,
@@ -770,12 +877,14 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    IF OLD.legal_entity_id <> NEW.legal_entity_id THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'legal_entity_id',
                 NEW.legal_entity_id,
@@ -785,12 +894,14 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    IF OLD.division_id <> NEW.division_id THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'division_id',
                 NEW.division_id,
@@ -801,12 +912,14 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    IF OLD.category_id <> NEW.category_id THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'category_id',
                 NEW.category_id,
@@ -816,12 +929,14 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    IF OLD.country_id <> NEW.country_id THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'country_id',
                 NEW.country_id,
@@ -831,12 +946,14 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    IF OLD.unit_code <> NEW.unit_code THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'unit_code',
                 NEW.unit_code,
@@ -846,12 +963,14 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    IF OLD.unit_name <> NEW.unit_name THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'unit_name',
                 NEW.unit_name,
@@ -861,12 +980,14 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    IF OLD.address <> NEW.address THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'address',
                 NEW.address,
@@ -876,12 +997,14 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
    IF OLD.postal_code <> NEW.postal_code THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
                 NEW.client_id,
+                NEW.legal_entity_id,
                 NEW.unit_id,
                 'postal_code',
                 NEW.postal_code,
@@ -891,6 +1014,10 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
 
     UPDATE tbl_client_replication_status set is_new_data = 1
     WHERE client_id = NEW.client_id and is_group = 1;
+
+    UPDATE tbl_client_replication_status set is_new_data = 1
+    WHERE client_id = NEW.legal_entity_id and is_group = 0 ;
+
 
 END
 //
@@ -908,23 +1035,25 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
-  SELECT @action, 0, NEW.compliance_id,
+  SELECT @action, 0, 0, NEW.compliance_id,
   'statutory_mapping', statutory_mapping,
   'tbl_compliances' FROM tbl_statutory_mappings
   WHERE statutory_mapping_id=NEW.statutory_mapping_id;
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'country_id',
                 NEW.country_id,
@@ -932,12 +1061,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'domain_id',
                 NEW.domain_id,
@@ -945,12 +1075,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'statutory_provision',
                 NEW.statutory_provision,
@@ -959,12 +1090,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'compliance_task',
                 NEW.compliance_task,
@@ -972,12 +1104,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'document_name',
                 NEW.document_name,
@@ -985,12 +1118,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'compliance_description',
                 NEW.compliance_description,
@@ -998,12 +1132,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'penal_consequences',
                 NEW.penal_consequences,
@@ -1011,12 +1146,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'reference_link',
                 NEW.reference_link,
@@ -1024,12 +1160,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'frequency_id',
                 NEW.frequency_id,
@@ -1037,12 +1174,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'statutory_dates',
                 NEW.statutory_dates,
@@ -1050,12 +1188,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'repeats_type_id',
                 NEW.repeats_type_id,
@@ -1064,12 +1203,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'duration_type_id',
                 NEW.duration_type_id,
@@ -1078,12 +1218,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'repeats_every',
                 NEW.repeats_every,
@@ -1092,12 +1233,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'duration',
                 NEW.duration,
@@ -1106,11 +1248,12 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
-        SELECT @action, 0, NEW.compliance_id,
+        SELECT @action, 0, 0, NEW.compliance_id,
            'statutory_nature', statutory_nature_name,
           'tbl_compliances' FROM tbl_statutory_natures
           WHERE statutory_nature_id in (
@@ -1120,12 +1263,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'is_active',
                 NEW.is_active,
@@ -1133,12 +1277,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'status_changed_on',
                 NEW.status_changed_on,
@@ -1148,12 +1293,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'format_file',
                 NEW.format_file,
@@ -1162,12 +1308,13 @@ CREATE TRIGGER `after_tbl_compliances_insert` AFTER INSERT ON `tbl_compliances`
 
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'format_file_size',
                 NEW.format_file_size,
@@ -1191,12 +1338,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'country_id',
                 NEW.country_id,
@@ -1207,12 +1355,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'domain_id',
                 NEW.domain_id,
@@ -1223,12 +1372,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
        set @issave = 1;
        INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'statutory_provision',
                 NEW.statutory_provision,
@@ -1239,12 +1389,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'compliance_task',
                 NEW.compliance_task,
@@ -1255,12 +1406,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'document_name',
                 NEW.document_name,
@@ -1271,12 +1423,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'compliance_description',
                 NEW.compliance_description,
@@ -1287,12 +1440,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'penal_consequences',
                 NEW.penal_consequences,
@@ -1303,12 +1457,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'reference_link',
                 NEW.reference_link,
@@ -1319,12 +1474,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'frequency_id',
                 NEW.frequency_id,
@@ -1335,12 +1491,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'statutory_dates',
                 NEW.statutory_dates,
@@ -1351,12 +1508,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'repeats_type_id',
                 NEW.repeats_type_id,
@@ -1367,12 +1525,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'duration_type_id',
                 NEW.duration_type_id,
@@ -1383,12 +1542,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'repeats_every',
                 NEW.repeats_every,
@@ -1399,12 +1559,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'duration',
                 NEW.duration,
@@ -1415,12 +1576,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'is_active',
                 NEW.is_active,
@@ -1431,12 +1593,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'status_changed_on',
                 NEW.status_changed_on,
@@ -1448,12 +1611,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'format_file',
                 NEW.format_file,
@@ -1464,12 +1628,13 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
         set @issave = 1;
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.compliance_id,
                 'format_file_size',
                 NEW.format_file_size,
@@ -1480,11 +1645,12 @@ CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
    IF @issave = 1 THEN
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
-        SELECT @action, 0, NEW.compliance_id,
+        SELECT @action, 0, 0, NEW.compliance_id,
            'statutory_nature', statutory_nature_name,
            'tbl_compliances' FROM tbl_statutory_natures
             WHERE statutory_nature_id in (
@@ -1517,11 +1683,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
     IF new.is_submitted = 1 then
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'legal_entity_id',
@@ -1531,11 +1699,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     new.legal_entity_id,
                     NEW.client_compliance_id,
                     'unit_id',
@@ -1545,11 +1715,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     new.legal_entity_id,
                     NEW.client_compliance_id,
                     'domain_id',
@@ -1559,11 +1731,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     new.legal_entity_id,
                     NEW.client_compliance_id,
                     'statutory_applicable_status',
@@ -1573,11 +1747,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'remarks',
@@ -1586,11 +1762,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'compliance_id',
@@ -1599,11 +1777,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'compliance_applicable_status',
@@ -1612,11 +1792,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'is_new',
@@ -1625,11 +1807,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'is_submitted',
@@ -1638,11 +1822,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'submitted_by',
@@ -1651,11 +1837,13 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
             VALUES (@action,
+                    NEW.client_id,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'submitted_on',
@@ -1664,11 +1852,12 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
-            SELECT @action, new.legal_entity_id, NEW.client_compliance_id,
+            SELECT @action, new.client_id, new.legal_entity_id, NEW.client_compliance_id,
               'statutory_name', case parent_names when '' then statutory_name else concat(parent_names, ' >> ', statutory_name) end as statutory_name,
               'tbl_client_compliances'
               FROM tbl_statutories
@@ -1695,11 +1884,14 @@ CREATE TRIGGER `after_tbl_geographies_update` AFTER UPDATE ON `tbl_geographies`
     IF OLD.parent_names <> NEW.parent_names THEN
         INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
-        SELECT @action, @client_id := client_id, unit_id, 'geography', NEW.parent_names, 'tbl_units'  FROM tbl_units WHERE geography_id=NEW.geography_id;
+        SELECT @action, @client_id := client_id, legal_entity_id,
+        unit_id, 'geography', NEW.parent_names, 'tbl_units'
+        FROM tbl_units WHERE geography_id=NEW.geography_id;
 
         UPDATE tbl_client_replication_status set is_new_data = 1
         WHERE client_id = @client_id and is_group = 1;
@@ -1720,11 +1912,12 @@ CREATE TRIGGER `after_tbl_statutory_mappings_update` AFTER UPDATE ON `tbl_statut
    IF OLD.statutory_mapping <> NEW.statutory_mapping THEN
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
-  SELECT @action, 0, compliance_id, 'statutory_mapping', NEW.statutory_mapping, 'tbl_compliances'  FROM tbl_compliances WHERE statutory_mapping_id=NEW.statutory_mapping_id;
+  SELECT @action, 0,0, compliance_id, 'statutory_mapping', NEW.statutory_mapping, 'tbl_compliances'  FROM tbl_compliances WHERE statutory_mapping_id=NEW.statutory_mapping_id;
     UPDATE tbl_client_replication_status set is_new_data = 1 where
     is_group = 0 and
     client_id in (select distinct legal_entity_id from tbl_legal_entity_domains where domain_id = OLD.domain_id);
@@ -1746,12 +1939,13 @@ CREATE TRIGGER `after_tbl_countries_update` AFTER UPDATE ON `tbl_countries`
    IF OLD.country_name <> NEW.country_name THEN
    INSERT INTO tbl_audit_log(action,
                             client_id,
+                            legal_entity_id,
                             tbl_auto_id,
                             column_name,
                             value,
                             tbl_name)
         VALUES (@action,
-                0,
+                0, 0,
                 NEW.country_id,
                 'country_name',
                 NEW.country_name,
@@ -1777,12 +1971,13 @@ CREATE TRIGGER `after_tbl_domains_update` AFTER UPDATE ON `tbl_domains`
    IF OLD.domain_name <> NEW.domain_name THEN
    INSERT INTO tbl_audit_log(action,
                             client_id,
+                            legal_entity_id,
                             tbl_auto_id,
                             column_name,
                             value,
                             tbl_name)
         VALUES (@action,
-                0,
+                0,0,
                 NEW.domain_id,
                 'domain_name',
                 NEW.domain_name,
@@ -1818,11 +2013,13 @@ CREATE TRIGGER `after_tbl_statutories_update` AFTER UPDATE ON `tbl_statutories`
     IF OLD.statutory_name <> NEW.statutory_name THEN
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
-        SELECT @action, client_id, client_compliance_id,
+        SELECT @action, client_id, legal_entity_id,
+            client_compliance_id,
             'statutory_name', @name
             'tbl_client_compliances'
             FROM tbl_client_compliances
@@ -1845,17 +2042,17 @@ DELIMITER ;
 
 DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_insert`;
 DELIMITER //
-CREATE TRIGGER `after_tbl_statutory_notifications_insert` AFTER UPDATE ON `tbl_statutory_notifications`
+CREATE TRIGGER `after_tbl_statutory_notifications_insert` AFTER INSERT ON `tbl_statutory_notifications`
  FOR EACH ROW BEGIN
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
-        VALUES (0,
-                0,
+        VALUES (0, 0, 0,
                 NEW.notification_id,
                 'notification_text',
                 NEW.notification_text,
@@ -1863,12 +2060,13 @@ CREATE TRIGGER `after_tbl_statutory_notifications_insert` AFTER UPDATE ON `tbl_s
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
         VALUES (0,
-                0,
+                0,0,
                 NEW.notification_id,
                 'compliance_id',
                 NEW.compliance_id,
@@ -1878,12 +2076,13 @@ CREATE TRIGGER `after_tbl_statutory_notifications_insert` AFTER UPDATE ON `tbl_s
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
         VALUES (0,
-                0,
+                0,0,
                 NEW.notification_id,
                 'created_by',
                 NEW.created_by,
@@ -1892,12 +2091,13 @@ CREATE TRIGGER `after_tbl_statutory_notifications_insert` AFTER UPDATE ON `tbl_s
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
+                                 legal_entity_id,
                                  tbl_auto_id,
                                  column_name,
                                  value,
                                  tbl_name)
         VALUES (0,
-                0,
+                0,0,
                 NEW.notification_id,
                 'created_on',
                 NEW.created_on,
@@ -1925,12 +2125,13 @@ CREATE TRIGGER `after_tbl_validity_date_settings_insert` AFTER INSERT ON `tbl_va
    SET @action = 0;
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0,0,
                 NEW.validity_date_id,
                 'country_id',
                 NEW.country_id,
@@ -1938,12 +2139,13 @@ CREATE TRIGGER `after_tbl_validity_date_settings_insert` AFTER INSERT ON `tbl_va
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0,0,
                 NEW.validity_date_id,
                 'domain_id',
                 NEW.domain_id,
@@ -1951,12 +2153,13 @@ CREATE TRIGGER `after_tbl_validity_date_settings_insert` AFTER INSERT ON `tbl_va
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0,0,
                 NEW.validity_date_id,
                 'days',
                 NEW.days,
@@ -1984,12 +2187,13 @@ CREATE TRIGGER `after_tbl_validity_date_settings_update` AFTER UPDATE ON `tbl_va
    SET @save = 1;
    INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0,0,
                 NEW.validity_date_id,
                 'country_id',
                 NEW.country_id,
@@ -1998,12 +2202,13 @@ CREATE TRIGGER `after_tbl_validity_date_settings_update` AFTER UPDATE ON `tbl_va
     IF OLD.domain_id <> NEW.domain_id THEN
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0,0,
                 NEW.validity_date_id,
                 'domain_id',
                 NEW.domain_id,
@@ -2013,12 +2218,13 @@ CREATE TRIGGER `after_tbl_validity_date_settings_update` AFTER UPDATE ON `tbl_va
 
     INSERT INTO tbl_audit_log(action,
                              client_id,
+                             legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
         VALUES (@action,
-                0,
+                0,0,
                 NEW.validity_date_id,
                 'days',
                 NEW.days,

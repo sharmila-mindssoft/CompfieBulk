@@ -205,6 +205,7 @@ CREATE TABLE `tbl_users` (
   `user_category_id` int(11) NOT NULL,
   `client_id` int(11) DEFAULT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
+  `service_provider_id` int(11) DEFAULT NULL,
   `user_level` int(11) DEFAULT NULL,
   `user_group_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,

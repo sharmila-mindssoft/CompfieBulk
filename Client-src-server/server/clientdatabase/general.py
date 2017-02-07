@@ -622,10 +622,14 @@ def get_domains(db):
     query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
         " t1.is_active FROM tbl_domains t1 "
     rows = db.select_all(query)
-    columns = ["domain_id", "domain_name", "is_active"]
-    result = convert_to_dict(rows, columns)
-    return return_domains(result)
+    return return_domains(rows)
 
+
+def get_le_domains(db):
+    query = "SELECT distinct t1.domain_id" + \
+        "  FROM tbl_legal_entity_domains t1 "
+    rows = db.select_all(query)
+    return rows
 
 def is_primary_admin(db, user_id):
     column = "count(1) as result"

@@ -257,8 +257,9 @@ class API(object):
 
         client_id = request.client_id
         received_count = request.received_count
+        is_group = request.is_group
         res = GetChangesSuccess(
-            gen.get_trail_log(db, client_id, received_count)
+            gen.get_trail_log(db, client_id, received_count, is_group)
         )
         return res
 
