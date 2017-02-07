@@ -1,89 +1,95 @@
 
-<script type="text/javascript">
-/*$('#theme-setting > a').click(function(){
-        $(this).next().animate({width:'toggle'}, 500, function(){
-            if($(this).is(":hidden")) {
-                $('#theme-setting > a > i').attr('class', 'fa fa-gears fa-2x');
-            } else {
-                $('#theme-setting > a > i').attr('class', 'fa fa-times fa-2x');
-            }
-        });
-        $(this).next().css('display', 'inline-block');
-    });
-    //Change skin and colors
-    $('#theme-setting ul.colors a').click(function(){
-        var parent_li = $(this).parent().get(0);
-        var parent_ul = $(parent_li).parent().get(0);
-        var target = $(parent_ul).data('target');
-        var prefix = $(parent_ul).data('prefix');
-        var color = $(this).attr('class');
-        var regx = new RegExp('\\b' + prefix + '.*\\b', 'g');
-        $(parent_ul).children('li').removeClass('active');
-        $(parent_li).addClass('active');
-        //Remove current skin class if it has
-        if ($(target).attr('class') != undefined) {
-            $(target).attr('class', $(target).attr('class').replace(regx, '').trim());
-        }
-        $(target).addClass(prefix + color)
-        if (target == 'body') {
-            var parent_ul_li = $(parent_ul).parent().get(0);
-            var next_li = $(parent_ul_li).nextAll('li:lt(2)');
-            $(next_li).find('li.active').removeClass('active');
-            $(next_li).find('a.' + color).parent().addClass('active');
-            //Remove static color class from Navbar & Sidebar 
-            $('.navbar').attr('class', $('#navbar').attr('class').replace(/\bnavbar-.*\b/g, '').trim());
-            $('.container').attr('class', $('#main-container').attr('class').replace(/\bsidebar-.*\b/g, '').trim());
-        }
-        $.cookie(prefix + 'color', color);
-    });
-    //Handel selected color
-    var theme_colors = ["blue", "red", "green", "orange", "yellow", "pink", "magenta", "gray", "black"];
-    $.each(theme_colors, function(k, v) {
-        if ($('body').hasClass('skin-' + v)) {
-            $('#theme-setting ul.colors > li').removeClass('active');
-            $('#theme-setting ul.colors > li:has(a.'+ v +')').addClass('active');
-        }
-    });
+<!-- Theme Modal -->
+<div id="theme-modal-change" class="modal-demo box-width-700">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Select Legal Entity </h4>
 
-    $.each(theme_colors, function(k, v) {
-        if ($('.navbar').hasClass('navbar-' + v)) {
-            $('#theme-setting ul[data-prefix="navbar-"] > li').removeClass('active');
-            $('#theme-setting ul[data-prefix="navbar-"] > li:has(a.'+ v +')').addClass('active');
-        }
+    <div class="custom-modal-text">
+        <div class="panel panel-default m-b-5" onclick="getLegalEntityChange('all', 'All Legal Entity')">
+            <div class="panel-heading p-r-10">
+                <h4 class="panel-title l-h p-r-5 c-pointer">
+                    <a>
+                        <p class="pull-left m-b-0">All Legal Entities</p>
+                        <i class="ti-angle-right fa-1-3x pull-right iarrow"></i>        
+                    </a>
+                    <div class="clear"></div>
+                </h4>
+            </div>
+        </div>
 
-        if ($('#main-container').hasClass('sidebar-' + v)) {
-            $('#theme-setting ul[data-prefix="sidebar-"] > li').removeClass('active');
-            $('#theme-setting ul[data-prefix="sidebar-"] > li:has(a.'+ v +')').addClass('active');
-        }
-    });
-    //Handle fixed navbar & sidebar
-    if ($('.sidebar').hasClass('sidebar-fixed')) {
-        $('#theme-setting > ul > li > a[data-target="sidebar"] > i').attr('class', 'fa fa-check-square-o green')
-    }
-    if ($('.navbar').hasClass('navbar-fixed')) {
-        $('#theme-setting > ul > li > a[data-target="navbar"] > i').attr('class', 'fa fa-check-square-o green')
-    }
-    $('#theme-setting > ul > li > a').click(function(){
-        var target = $(this).data('target');
-        var check = $(this).children('i');
-        if (check.hasClass('fa-square-o')) {
-            check.attr('class', 'fa fa-check-square-o green');
-            $('#' + target).addClass(target + '-fixed');
-            $.cookie(target + '-fixed', 'true');
-        } else {
-            check.attr('class', 'fa fa-square-o');
-            $('#' + target).removeClass(target + '-fixed');
-            $.cookie(target + '-fixed', 'false');
-        }
-        if (target == "sidebar") {
-            if (check.hasClass('fa-square-o')) {
-                $("#sidebar ul.nav-list").parent('.slimScrollDiv').replaceWith($("#sidebar ul.nav-list"));
-            }
-            scrollableSidebar();
-        }
-    });*/
-</script>
+        <div class="panel-group text-left m-b-10 tbody-legal-panel-change" id="accordion" style="height: 300px; overflow-y: auto;">
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+
+
+<div id="templates">
+  <div id="le-templates-change" class="default-display-none">
+      <div class="panel panel-default bx-shadow-none p-head">
+        <div class="panel-heading p-10 acc-title" role="tab">
+            <h4 class="m-b-0 m-t-0">
+              
+              <div class="panel-title">
+                <a role="button" data-toggle="collapse"
+                    data-parent="#accordion" 
+                    aria-expanded="true" >
+                    <span></span>
+                
+                    <div class="col-sm-4 pull-right m-t-m-5">
+                        <input class="form-control input-sm" placeholder="Legal Entity" type="text">
+                        <i class="fa fa-filter form-control-feedback l-h-34 fa-legal-filter" style="right: 10px;"></i>
+                    </div>
+                </a>
+              </div>
+              
+            </h4>
+        </div>
+        <div class="panel-collapse collapse in coll-title" role="tabpanel">
+            <div class="panel-body no-padding">
+                <div class="dataTable_wrapper">
+                    <table id="datatable-fixed-header" class="table dt-responsive table-list m-b-0 legal-table" width="100%" cellspacing="0">
+                        <tbody class="tbody-le-list-change">                               
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="le-values-change">
+        <table class="table-le-values">
+          <tr class="row-le-values">
+            <td colspan="100%" class="le_name">
+                
+            </td>
+          </tr>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript" src="/script/home/change_entity.js"></script>
+
 <script type="text/javascript"> 
+    $('.thememodalbox').click(function() {
+        Custombox.open({
+            target: '#theme-modal-change',
+            /*overlayClose: false,
+            escKey:false,*/
+            effect:'slit',
+            overlaySpeed:100,
+            overlayColor:'#36404a',
+            complete: function() {
+                loadLegalEntityListChange();
+            },
+        });
+
+        e.preventDefault();
+    });
+
     var resizefunc = []; 
 </script>
 <script src="/files/client/common/js/jquery.core.js"></script>

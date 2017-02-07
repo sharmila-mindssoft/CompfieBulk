@@ -49,12 +49,19 @@ function initClientMirror() {
         delete window.sessionStorage.CLIENT_NOTIFICATION_COUNT;
         delete window.sessionStorage.CLIENT_REMINDER_COUNT;
         delete window.sessionStorage.CLIENT_ESCALATION_COUNT;
+        delete window.sessionStorage.selectedEntity;
+        delete window.sessionStorage.selectedEntityName;
     }
 
     function getUserInfo() {
         var info = window.sessionStorage.userInfo;
         user = parseJSON(info);
         return user;
+    }
+
+    function getSelectedLegalEntity() {
+        var info = window.sessionStorage.selectedEntity;
+        return info;
     }
 
     function updateUserInfo(response) {
@@ -1968,6 +1975,7 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         getUserCountry: getUserCountry,
         getUserLegalEntity: getUserLegalEntity,
+        getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
         clientApiRequest: clientApiRequest,

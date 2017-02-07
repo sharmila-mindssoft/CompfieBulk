@@ -69,7 +69,7 @@ def verify_login(db, username, password):
 def clear_old_session(db, user_id, session_type_id, client_id=None):
     query = "DELETE FROM tbl_user_sessions " + \
         " WHERE user_id=%s and session_type_id=%s OR " + \
-        " last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE) "
+        " last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE) "
 
     db.execute(query, (
         user_id, session_type_id, int(SESSION_CUTOFF)

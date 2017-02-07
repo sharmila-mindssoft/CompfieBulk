@@ -1905,6 +1905,33 @@ class ClientUnit(object):
         }
 
 #
+# Acts
+#
+
+class ClientAct(object):
+    def __init__(
+        self, domain_id, act
+    ):
+        self.domain_id = domain_id
+        self.act = act
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["d_id", "act"])
+        domain_id = data.get("d_id")
+        act = data.get("act")
+        return Domain(
+            domain_id, act
+        )
+
+    def to_structure(self):
+        data = {
+            "d_id": self.domain_id,
+            "act": self.act,
+        }
+        return data
+
+#
 # UnitDetails
 #
 
@@ -3151,28 +3178,47 @@ class ClientLevelOneStatutory(object):
 #
 # Client Compliance Filter
 #
+# class ComplianceFilter(object):
+#     def __init__(self, compliance_id, compliance_name):
+#         self.compliance_id = compliance_id
+#         self.compliance_name = compliance_name
+
+#     @staticmethod
+#     def parse_structure(data):
+#         data = parse_dictionary(data, ["compliance_id", "compliance_name"])
+#         compliance_id = data.get("compliance_id")
+#         compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
+
+#         compliance_name = data.get("compliance_name")
+#         compliance_name = parse_structure_CustomTextType_500(compliance_name)
+
+#         return ComplianceFilter(compliance_id, compliance_name)
+
+#     def to_structure(self):
+#         return {
+#             "compliance_id": to_structure_UnsignedIntegerType_32(
+#                 self.compliance_id),
+#             "compliance_name": to_structure_CustomTextType_500(
+#                 self.compliance_name),
+#         }
+
+
 class ComplianceFilter(object):
-    def __init__(self, compliance_id, compliance_name):
-        self.compliance_id = compliance_id
-        self.compliance_name = compliance_name
+    def __init__(self, domain_id, compliance_task):
+        self.domain_id = domain_id
+        self.compliance_task = compliance_task
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "compliance_name"])
-        compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
-
-        compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_500(compliance_name)
-
-        return ComplianceFilter(compliance_id, compliance_name)
+        data = parse_dictionary(data, ["d_id", "c_task"])
+        domain_id = data.get("d_id")
+        compliance_task = data.get("c_task")
+        return ComplianceFilter(domain_id, compliance_task)
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_UnsignedIntegerType_32(
-                self.compliance_id),
-            "compliance_name": to_structure_CustomTextType_500(
-                self.compliance_name),
+            "d_id": self.domain_id,
+            "c_task": self.compliance_task,
         }
 
 
@@ -3810,7 +3856,6 @@ class ChildUsers(object):
             "employee_name": self.employee_name,
         }
 
-
 class DomainIndustryList(object):
     def __init__(self, domain_id, industry_id):
         self.domain_id = domain_id
@@ -3967,19 +4012,20 @@ class UnitClosure_Units(object):
 
 
 class LegalEntityInfo(object):
-    def __init__(self, legal_entity_id, legal_entity_name, country_id, business_group_id, business_group_name):
+    def __init__(self, legal_entity_id, legal_entity_name, country_id, business_group_id, business_group_name, country_name):
         self.legal_entity_id = legal_entity_id
         self.legal_entity_name = legal_entity_name
         self.country_id = country_id
         self.business_group_id = business_group_id
         self.business_group_name = business_group_name
+        self.country_name = country_name
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["le_id", "le_name", "country_id", "bg_id", "bg_name"])
+        data = parse_dictionary(data, ["le_id", "le_name", "country_id", "bg_id", "bg_name", "country_name"])
         return LegalEntityInfo(
             data.get("le_id"), data.get("le_name"), data.get("country_id"),
-            data.get("bg_id"), data.get("bg_name")
+            data.get("bg_id"), data.get("bg_name"), data.get("country_name")
         )
 
     def to_structure(self):
@@ -3988,9 +4034,9 @@ class LegalEntityInfo(object):
             "le_name": self.legal_entity_name,
             "c_id": self.country_id,
             "bg_id": self.business_group_id,
-            "bg_name": self.business_group_name
+            "bg_name": self.business_group_name,
+            "c_name" : self.country_name
         }
-
 
 #
 # Review Settings - Units List
@@ -4131,3 +4177,29 @@ class StatutoryDate(object):
             "trigger_before_days": self.trigger_before_days,
             "repeat_by": self.repeat_by
         }
+
+
+class LegalEntityUser(object):
+    def __init__(self, user_id, employee_code, employee_name, is_active):
+        self.user_id = user_id
+        self.employee_code = employee_code
+        self.employee_name = employee_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "employee_code", "employee_name", "is_active"])
+        user_id = data.get("user_id")
+        employee_code = data.get("employee_code")
+        employee_name = data.get("employee_name")
+        is_active = data.get("is_active")
+        return User(user_id, employee_code, employee_name, is_active)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "employee_code": self.employee_code,
+            "employee_name": self.employee_name,
+            "is_active": self.is_active
+        }
+
