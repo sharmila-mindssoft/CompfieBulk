@@ -59,7 +59,7 @@ def get_trail_log(db, client_id, received_count, is_group):
     print rows
     results = rows
     if len(rows) == 0:
-        update_client_replication_status(db, client_id, received_count)
+        update_client_replication_status(db, client_id, received_count, is_group)
     return return_changes(results)
 
 
@@ -200,16 +200,16 @@ def _return_clients(data):
 
 
 def update_client_replication_status(
-    db, client_id, received_count, type=None
+    db, client_id, received_count, is_group, type=None
 ):
     if type is None:
         q = "update tbl_client_replication_status set is_new_data = 0 " + \
-            " where client_id = %s"
+            " where client_id = %s and is_group = %s"
         # remove_trail_log(db, client_id, received_count)
     else:
         q = "update tbl_client_replication_status set is_new_domain = 0, " + \
-            " domain_id = '' where client_id = %s"
-    db.execute(q, [client_id])
+            " domain_id = '' where client_id = %s and is_group = %s"
+    db.execute(q, [client_id, is_group])
 
 
 def update_client_domain_status(db, client_id, domain_ids):

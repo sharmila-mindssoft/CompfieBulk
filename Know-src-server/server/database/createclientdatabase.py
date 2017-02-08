@@ -112,11 +112,16 @@ class ClientDBBase(object):
 
     def _grant_privileges(self, cursor):
         try:
+            q = "CREATE USER %s@%s IDENTIFIED BY %s;"
+            print q
+            print [self._db_username, str('%'), self._db_password]
+            cursor.execute(q, [self._db_username, str('%'), self._db_password])
+
             query = "GRANT SELECT, INSERT, UPDATE, " + \
-                " DELETE ON %s.* to '%s'@'%s' IDENTIFIED BY '%s';"
+                " DELETE ON %s.* to '%s'@'%s' ;"
             print query
             param = (
-                self._db_name, self._db_username, str('%'), self._db_password
+                self._db_name, self._db_username, str('%')
             )
             print param
             cursor.execute(query % param)

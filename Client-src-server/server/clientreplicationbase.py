@@ -180,7 +180,7 @@ class ReplicationBase(object):
             "tbl_legal_entities": 10,
             "tbl_divisions": 4,
             "tbl_categories": 5,
-            "tbl_units": 11,
+            "tbl_units": 12,
             # "tbl_client_configurations": 5,
             "tbl_compliances": 21,
             "tbl_client_statutories": 5,
@@ -413,7 +413,7 @@ class ReplicationManagerWithBase(ReplicationBase):
             print data
             self._poll_response(data, response.status_code)
 
-        t = threading.Timer(3, on_timeout)
+        t = threading.Timer(10, on_timeout)
         t.daemon = True
         t.start()
 

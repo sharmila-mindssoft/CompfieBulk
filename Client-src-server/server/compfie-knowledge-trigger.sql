@@ -348,7 +348,6 @@ END
 DELIMITER ;
 
 
-
 DROP TRIGGER IF EXISTS `after_tbl_legal_entities_update`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_entities`
@@ -676,6 +675,22 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_units_insert` AFTER INSERT ON `tbl_units`
  FOR EACH ROW BEGIN
    SET @action = 0;
+
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             legal_entity_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                NEW.legal_entity_id,
+                NEW.unit_id,
+                'client_id',
+                NEW.client_id,
+                'tbl_units');
+
 
    INSERT INTO tbl_audit_log(action,
                              client_id,

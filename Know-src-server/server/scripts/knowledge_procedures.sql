@@ -8826,12 +8826,12 @@ BEGIN
 
         select legal_entity_id, domain_id, activation_date,
         organisation_id, count from tbl_legal_entity_domains where
-            client_id = cid and legal_entity_id = le_id;
+            legal_entity_id = le_id;
 
 
         select b.business_group_id, b.business_group_name from tbl_business_groups as b
         inner join tbl_legal_entities as l on b.business_group_id = l.business_group_id
-        where l.legal_entity_id = le_id and l.client_id = cid;
+        where l.legal_entity_id = le_id;
 
 
     END IF ;

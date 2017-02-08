@@ -81,7 +81,7 @@ class API(object):
         self._replication_managers_for_le = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            10000,
+            100,
             self.server_added
         )
         print "Databases initialize"
@@ -133,7 +133,7 @@ class API(object):
 
     def server_added(self, servers):
         # server added should not be called in timeout function , pending : need to update from knowledge server.
-
+        print "**" * 100
         self._group_databases = {}
         self._le_databases = {}
         self._replication_managers_for_group = {}
@@ -141,6 +141,7 @@ class API(object):
         try:
 
             for company in servers:
+                company.to_structure()
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
@@ -195,7 +196,11 @@ class API(object):
 
                     if client.is_group is True:
                         print "client added"
-                        db_cons = self._group_databases.get(_client_id).get_connection()
+                        db_cons_info = self._group_databases.get(_client_id)
+                        if db_cons_info is None :
+                            continue
+                        db_cons = db_cons_info.get_connection()
+
                         client_db = Database(db_cons)
                         if client_db is not None :
                             if is_new_data is True and is_new_domain is False :
@@ -211,7 +216,10 @@ class API(object):
                                     rep_man.start()
                                     self._replication_managers_for_group[_client_id] = rep_man
                     else :
-                        db_cons = self._le_databases.get(_client_id).get_connection()
+                        db_cons_info = self._le_databases.get(_client_id)
+                        if db_cons_info is None :
+                            continue
+                        db_cons = db_cons_info.get_connection()
                         le_db = Database(db_cons)
                         if le_db is not None :
                             if is_new_data is True and is_new_domain is False :
