@@ -79,7 +79,13 @@ __all__ = [
     "get_domains_for_le_users",
     "get_units_for_le_users",
     "get_acts_for_le_users",
-    "process_user_wise_report"
+    "process_user_wise_report",
+    "get_divisions_for_unit_list",
+    "get_categories_for_unit_list",
+    "get_units_list",
+    "get_domains_organization_for_le",
+    "get_units_status",
+    "process_unit_list_report"
 ]
 
 
@@ -3817,3 +3823,245 @@ def process_user_wise_report(db, request):
             datetime_to_string(row["completion_date"]), url, row["domain_name"]
         ))
     return user_report
+
+###############################################################################################
+# Objective: To get the divisions list under legal entity and business group
+# Parameter: request object
+# Result: list of divisions from master
+###############################################################################################
+def get_divisions_for_unit_list(db, business_group_id, legal_entity_id):
+    query = "select division_id, division_name from tbl_divisions " + \
+        "where legal_entity_id = %s and business_group_id = %s"
+    result = db.select_all(query, [legal_entity_id, business_group_id])
+    divisions_list = []
+    for row in result:
+        divisions_list.append(clientreport.Divisions(
+            row["division_id"], row["division_name"]
+        ))
+    return divisions_list
+
+###############################################################################################
+# Objective: To get the categories list under legal entity and business group
+# Parameter: request object
+# Result: list of categories from master
+###############################################################################################
+def get_categories_for_unit_list(db, business_group_id, legal_entity_id):
+    query = "select division_id, category_id, category_name from tbl_categories " + \
+        "where legal_entity_id = %s and business_group_id = %s"
+    result = db.select_all(query, [legal_entity_id, business_group_id])
+    category_list = []
+    for row in result:
+        category_list.append(clientreport.Category(
+            row["division_id"], row["category_id"], row["category_name"]
+        ))
+    return category_list
+
+###############################################################################################
+# Objective: To get the units list under legal entity and business group and country
+# Parameter: request object
+# Result: list of units from master
+###############################################################################################
+def get_units_list(db, country_id, business_group_id, legal_entity_id):
+    query = "select unit_id, unit_code, unit_name, division_id, category_id from " + \
+        "tbl_units where business_group_id = %s and legal_entity_id =%s and country_id = %s"
+    result = db.select_all(query, [business_group_id, legal_entity_id, country_id])
+
+    query = "select t1.unit_id, t2.domain_id, t2.organisation_id " + \
+        "from tbl_units as t1 inner join tbl_units_organizations as t2 on " + \
+        "t2.unit_id = t1.unit_id where t1.business_group_id = %s and t1.legal_entity_id = %s and " + \
+        "t1.country_id = %s group by t1.unit_id, t2.domain_id, t2.organisation_id order by " + \
+        "t1.unit_id;"
+    result_1 = db.select_all(query, [business_group_id, legal_entity_id, country_id])
+
+    unit_list = []
+    for row in result:
+        unit_id = row["unit_id"]
+        unit_code = row["unit_code"]
+        unit_name = row["unit_name"]
+        division_id = row["division_id"]
+        category_id = row["category_id"]
+        d_ids = []
+        i_ids = []
+        for row_1 in result_1:
+            if unit_id == row_1["unit_id"]:
+                d_ids.append(int(row_1["domain_id"]))
+                i_ids.append(int(row_1["organisation_id"]))
+        unit_list.append(clientreport.UnitList(
+            unit_id, unit_code, unit_name, division_id, category_id, d_ids, i_ids
+        ))
+    return unit_list
+
+###############################################################################################
+# Objective: To get the domains and organization list under legal entity
+# Parameter: request object
+# Result: list of units from master
+###############################################################################################
+def get_domains_organization_for_le(db, legal_entity_id):
+    query = "select t1.domain_id, t2.domain_name, t1.organisation_id, t3.organisation_name " + \
+        "from tbl_legal_entity_domains as t1 inner join tbl_domains as t2 on " + \
+        "t2.domain_id = t1.domain_id inner join tbl_organisation as t3 on " + \
+        "t3.organisation_id = t1.organisation_id where t1.legal_entity_id = %s"
+    result = db.select_all(query, [legal_entity_id])
+    domain_organisation = []
+    for row in result:
+        domain_organisation.append(clientreport.DomainsOrganisation(
+            row["domain_id"], row["domain_name"], row["organisation_id"],
+            row["organisation_name"]
+        ))
+    return domain_organisation
+
+###############################################################################################
+# Objective: To get the status of the units
+# Parameter: request object
+# Result: list of status
+###############################################################################################
+def get_units_status(db):
+    status = ("Active", "Closed")
+    units_status = []
+    i = 0
+    for sts in status:
+        unit_status_name = clientreport.UnitStatus(
+            i, sts
+        )
+        units_status.append(unit_status_name)
+        i = i + 1
+    return units_status
+
+
+###############################################################################################
+# Objective: To get the unit details under filtered data
+# Parameter: request object
+# Result: list of units grouped by division
+###############################################################################################
+def process_unit_list_report(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    country_id = request.country_id
+    business_group_id = request.business_group_id
+    legal_entity_id = request.legal_entity_id
+    division_id = request.division_id
+    category_id = request.category_id
+    unit_id = request.unit_id
+    domain_id = request.domain_id
+    organisation_id = request.organisation_id
+
+    unit_status = request.unit_status
+
+    select_qry = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.postal_code, " + \
+        "t1.geography_name, t1.is_closed, t1.closed_on, t1.division_id, t1.category_id, (select  " + \
+        "division_name from tbl_divisions where division_id = t1.division_id) as division_name, " + \
+        "(select category_name from tbl_categories where category_id = t1.category_id) as " + \
+        "category_name from tbl_units as t1 where "
+    where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
+    condition_val.extend([legal_entity_id, country_id])
+
+    if int(business_group_id) > 0:
+        where_clause = where_clause + "and t1.business_group_id = %s "
+        condition_val.append(business_group_id)
+
+    if int(unit_id) > 0:
+        where_clause = where_clause + "and t1.unit_id = %s "
+        condition_val.append(unit_id)
+
+    if int(division_id) > 0:
+        where_clause = where_clause + "and t1.division_id = %s "
+        condition_val.append(division_id)
+
+    if int(category_id) > 0:
+        where_clause = where_clause + "and t1.category_id = %s "
+        condition_val.append(category_id)
+
+    if unit_status == "Active":
+        where_clause = where_clause + "and t1.is_closed = %s "
+        condition_val.append(0)
+    elif unit_status == "Closed":
+        where_clause = where_clause + "and t1.is_closed = %s "
+        condition_val.append(1)
+
+    where_clause = where_clause + "order by t1.closed_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result = db.select_all(query, condition_val)
+
+    # domains & organisations
+    select_qry = None
+    where_clause = None
+    condition_val = []
+    select_qry = "select t1.unit_id, t2.domain_id, t2.organisation_id, (select domain_name " + \
+        "from tbl_domains where domain_id = t2.domain_id) as domain_name, (select " + \
+        "organisation_name from tbl_organisation where organisation_id = t2.organisation_id) as " + \
+        "organisation_name from tbl_units as t1 inner join tbl_units_organizations as t2 on " + \
+        "t2.unit_id = t1.unit_id where "
+    where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
+    condition_val.extend([legal_entity_id, country_id])
+
+    if int(business_group_id) > 0:
+        where_clause = where_clause + "and t1.business_group_id = %s "
+        condition_val.append(business_group_id)
+
+    if int(unit_id) > 0:
+        where_clause = where_clause + "and t1.unit_id = %s "
+        condition_val.append(unit_id)
+
+    if int(division_id) > 0:
+        where_clause = where_clause + "and t1.division_id = %s "
+        condition_val.append(division_id)
+
+    if int(category_id) > 0:
+        where_clause = where_clause + "and t1.category_id = %s "
+        condition_val.append(category_id)
+
+    if int(domain_id) > 0:
+        where_clause = where_clause + "and t2.domain_id = %s "
+        condition_val.append(domain_id)
+
+    if int(organisation_id) > 0:
+        where_clause = where_clause + "and t2.organisation_id = %s "
+        condition_val.append(organisation_id)
+
+    if unit_status == "Active":
+        where_clause = where_clause + "and t1.is_closed = %s "
+        condition_val.append(0)
+    elif unit_status == "Closed":
+        where_clause = where_clause + "and t1.is_closed = %s "
+        condition_val.append(1)
+
+    where_clause = where_clause + "order by t1.closed_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result_1 = db.select_all(query, condition_val)
+    unit_report = []
+
+    for row in result:
+        unit_id = row["unit_id"]
+        unit_code = row["unit_code"]
+        unit_name = row["unit_name"]
+        geography_name = row["geography_name"]
+        address = row["address"]
+        postal_code = row["postal_code"]
+        division_name = row["division_name"]
+        if row["is_closed"] == "0":
+            unit_status = "Active"
+        else:
+            unit_status = "Closed"
+        d_i_names = []
+        if row["closed_on"] is None:
+            closed_date = datetime_to_string(row["closed_on"])
+        else:
+            closed_date = None
+        last = object()
+        for row_1 in result_1:
+            if unit_id == row_1["unit_id"]:
+                if last != (row_1["domain_name"]+" - "+row_1["organisation_name"]):
+                    last = row_1["domain_name"]+" - "+row_1["organisation_name"]
+                    d_i_names.append(row_1["domain_name"]+" - "+row_1["organisation_name"])
+        unit_report.append(clientreport.UnitListReport(
+            unit_id, unit_code, unit_name, geography_name, address, postal_code,
+            d_i_names, unit_status, closed_date, division_name
+        ))
+    return unit_report
