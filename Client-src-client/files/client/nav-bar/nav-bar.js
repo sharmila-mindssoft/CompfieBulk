@@ -122,7 +122,8 @@ function initializeNavBar() {
   $('.username', settingsMenuObject).text(user.employee_name);
   for (var form_key in settingsMenu) {
     var form = navBarItems["My Accounts"][form_key];
-    if (form.form_name != "Messages" &&  form.form_name != "Statutory Notification") {
+    if (form.form_name != "Reminders" &&  form.form_name != "Statutory Notification" &&  
+      form.form_name != "Escalations" &&  form.form_name != "Messages") {
       var item = getItemObject(form.form_url, form.form_name);
       $('ul', settingsMenuObject).append(item);
     }
@@ -155,11 +156,18 @@ function initializeNavBar() {
   $('.cssmenu .menu-ul').append(settingsMenuObject);
   for (var form_key in settingsMenu) {
     var form = navBarItems["My Accounts"][form_key];
-    if (form.form_name == "Messages") {
-
-    }
-    else if (form.form_name == "Statutory Notification") {
-  
+    if (form.form_name == "Reminders") {
+      var liObject = $('#nav-bar-templates .reminders li').clone();
+      $('.cssmenu .menu-ul').append(liObject);
+    }else if (form.form_name == "Statutory Notifications") {
+      var liObject = $('#nav-bar-templates .notifications li').clone();
+      $('.cssmenu .menu-ul').append(liObject);
+    }else if (form.form_name == "Escalations") {
+      var liObject = $('#nav-bar-templates .escalations li').clone();
+      $('.cssmenu .menu-ul').append(liObject);
+    }else if (form.form_name == "Messages") {
+      var liObject = $('#nav-bar-templates .messages li').clone();
+      $('.cssmenu .menu-ul').append(liObject);
     }
   }
 }

@@ -297,7 +297,7 @@ Auditpage.prototype.fetchData = function() {
                 if (response.audit_trail_details.length == 0) {
                     t_this.hidePageView();
                     a_page.hidePagePan();
-                    Export_btn.hide();
+                    //Export_btn.hide();
                     PaginationView.hide();
                     t_this.renderAuditData(t_this, t_this._auditData);
                 }
@@ -306,7 +306,7 @@ Auditpage.prototype.fetchData = function() {
                     if (t_this._sno == 0) {
                         t_this.createPageView(t_this, t_this._total_record);
                     }
-                    Export_btn.show();
+                    //Export_btn.show();
                     PaginationView.show();
                     t_this.renderAuditData(t_this, t_this._auditData);
                 }
@@ -555,7 +555,7 @@ initializeControlEvents = function(a_page){
 
     Show_btn.click(function(e) {
         a_page.resetFields();
-        Export_btn.hide();
+        //Export_btn.hide();
         is_valid = a_page.validateMandatory();
         if (is_valid == true) {
             a_page._on_current_page = 1;

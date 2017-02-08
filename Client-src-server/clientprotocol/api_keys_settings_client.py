@@ -147,10 +147,11 @@ api_params = {
 
     "unit_code": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
     "unit_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
-
+    "address": make_text_field(is_optional=True),
     "country_id": make_int_field(is_optional=True),
     "domain_id": make_int_field(length=10000),
     "is_closed": make_bool_field(),
+
     'postal_code': make_int_field(length=1000000, is_optional=False),
     'division_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'category_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
@@ -185,16 +186,26 @@ api_params = {
     "user_id": make_int_field(),
     "url": make_text_field(is_optional=True),
     "domain_name": make_string_field(),
+    "sp_name": make_text_field(is_optional=True),
+    "sp_id_optional": make_int_field(is_optional=True),
+    "sp_ass_id_optional": make_int_field(is_optional=True),
+    "sp_cc_id_optional": make_int_field(is_optional=True),
+    "sp_app_id_optional": make_int_field(is_optional=True),
+    "user_id_optional": make_int_field(is_optional=True),
+    'user_category_id': make_int_field(),
 
     'csv': make_bool_field(is_optional=False),
     'from_count': make_int_field(is_optional=False),
     'page_count': make_int_field(is_optional=False),
     'total_count': make_int_field(is_optional=False),
+
     "act": make_text_field(is_optional=True),
     "c_task": make_text_field(is_optional=True),
     "user_id": make_int_field(),
     "employee_code": make_text_field(is_optional=True),
     "employee_name": make_string_field(),
+    "link": make_text_field(length=500, is_optional=True),
+
 
     "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
@@ -225,6 +236,19 @@ api_params = {
     "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
     "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "unit_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
+
+    "sp_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviders"),
+    "sp_domains_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderDomains"),
+    "sp_unit_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderUnits"),
+    "sp_act_task_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderActList"),
+    "sp_users_list": make_vector_type_field(module="clientreport", klass_name="ServiceProvidersUsers"),
+    "sp_compliances": make_vector_type_field(module="clientreport", klass_name="LegalEntityWiseReport"),
+    "le_users_list": make_vector_type_field(module="clientreport", klass_name="LegalEntityUsers"),
+    "user_domains_list": make_vector_type_field(module="clientreport", klass_name="UserDomains"),
+    "users_units_list": make_vector_type_field(module="clientreport", klass_name="UserUnits"),
+    "user_act_task_list": make_vector_type_field(module="clientreport", klass_name="UsersActList"),
+    "user_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
+
     "frequency_id": make_int_field(),
     "frequency": make_string_field(),
     "rs_unit_list": make_vector_type_field(module="clientcore", klass_name="ReviewSettingsUnits"),
@@ -246,6 +270,4 @@ api_params = {
     "month_from": make_int_field(),
     "month_to": make_int_field(),
     "level_1_s_name": make_string_field(),
-
-
 }

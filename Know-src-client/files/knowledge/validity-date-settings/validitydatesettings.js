@@ -94,7 +94,7 @@ function loadValidityDatesList(){
     var tableRow4 = $('#no-record-templates .table-no-content .table-row-no-content');
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
-    $('.tbody-validity-config-list').append(clone);
+    $('.tbody-validity-config-list').append(clone4);
   }
 }
 

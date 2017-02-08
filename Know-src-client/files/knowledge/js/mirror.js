@@ -2966,6 +2966,9 @@ function initMirror() {
         getIPSettingsReportFilter: getIPSettingsReportFilter,
         getIPSettingsReport: getIPSettingsReport,
         getAllocateServerReportData: getAllocateServerReportData,
+        exportClientDetailsReportData: exportClientDetailsReportData,
+        exportAuditTrail: exportAuditTrail,
+        exportReassignUserReportData: exportReassignUserReportData
     };
 }
 var mirror = initMirror();

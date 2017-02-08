@@ -91,6 +91,9 @@ class ConvertJsonToCSV(object):
                 elif report_type == "UnitWiseReport":
                     self.generate_unit_wise_report(
                         db, request, session_user)
+                elif report_type == "ServiceProviderWiseReport":
+                    self.generate_service_provider_wise_compliance_report(
+                        db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
         self, db, request, session_user
@@ -1827,8 +1830,8 @@ class ConvertJsonToCSV(object):
             where_clause = where_clause + "and t1.compliance_id = %s "
             condition_val.append(compliance_id)
 
-        where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s order by t1.due_date desc limit %s, %s;"
-        condition_val.extend([legal_entity_id, unit_id, int(request.from_count), int(request.page_count)])
+        where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s order by t1.due_date desc;"
+        condition_val.extend([legal_entity_id, unit_id])
         query = select_qry + from_clause + where_clause
         print "qry"
         print query
@@ -1902,6 +1905,165 @@ class ConvertJsonToCSV(object):
 
             csv_values = [
                 row["domain_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
+                datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
+                activity_status, datetime_to_string(row["activity_date"]), name,
+                datetime_to_string(row["completion_date"]), url
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_service_provider_wise_compliance_report(
+        self, db, request, session_user
+    ):
+        where_clause = None
+        condition_val = []
+        select_qry = None
+        from_clause = None
+        country_id = request.country_id
+        legal_entity_id = request.legal_entity_id
+        sp_id = request.sp_id
+        domain_id = request.domain_id
+        stat_map = request.statutory_mapping
+        due_from = request.due_from_date
+        due_to = request.due_to_date
+        task_status = request.task_status
+        if task_status == "All":
+            task_status = '%'
+
+        select_qry = "select t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
+            "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+            "(select concat(unit_code,'-',unit_name,',',geography_name,',',address,',',postal_code)" + \
+            "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
+            "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
+            "frequency_id = t3.frequency_id) as frequency_name, (select " + \
+            "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
+            "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size "
+        from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
+            "on (t1.completed_by=t4.user_id or t1.concurred_by=t4.user_id or t1.approved_by=t4.user_id) " + \
+            "left join tbl_compliance_activity_log as t2 " + \
+            "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
+            "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
+        where_clause = "t3.country_id = %s and t3.domain_id = %s "
+        condition_val.extend([country_id, domain_id])
+        if request.statutory_mapping is not None:
+            stat_map = '%'+stat_map+'%'
+            where_clause = where_clause + "and t3.statutory_mapping like %s "
+            condition_val.append(stat_map)
+
+        if task_status == "Complied":
+            where_clause = where_clause + "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+        elif task_status == "Delayed Compliance":
+            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+        elif task_status == "Inprogress":
+            where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        elif task_status == "Not Complied":
+            where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+
+        if due_from is not None and due_to is not None:
+            where_clause = where_clause + " and t1.due_date between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            where_clause = where_clause + " and t1.due_date between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            where_clause = where_clause + " and t1.due_date < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
+
+        compliance_id = request.compliance_id
+        if int(compliance_id) > 0:
+            where_clause = where_clause + "and t1.compliance_id = %s "
+            condition_val.append(compliance_id)
+
+        unit_id = request.unit_id
+        if int(unit_id) > 0:
+            where_clause = where_clause + "and t1.unit_id = %s "
+            condition_val.append(unit_id)
+
+        user_id = request.user_id
+        if int(user_id) > 0:
+            where_clause = where_clause + "and t4.user_id = %s "
+            condition_val.append(user_id)
+
+        where_clause = where_clause + "and t4.service_provider_id = %s and t1.legal_entity_id = %s " + \
+            "order by t1.due_date desc;"
+        condition_val.extend([sp_id, legal_entity_id])
+        query = select_qry + from_clause + where_clause
+        print "qry"
+        print query
+        result = db.select_all(query, condition_val)
+
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "Unit Name", "Act", "Compliance Task", "Frequency", "Due Date",
+                "Compliance Task Status", "User Name", "Activity Status", "Activity Date",
+                "Uploaded Document", "Completion Date"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+
+        for row in result:
+            task_status = None
+            activity_status = None
+            statutory_mapping = json.loads(row["statutory_mapping"])
+            if statutory_mapping[0].find(">>") >= 0:
+                statutory_mapping = statutory_mapping[0].split(">>")[0]
+            else:
+                statutory_mapping = str(statutory_mapping)[3:-2]
+
+            # Find task status
+            if (row["approve_status"] == 1):
+                if (str(row["due_date"]) > str(row["completion_date"])):
+                    task_status = "Complied"
+                else:
+                    task_status = "Delayed Compliance"
+            else:
+                if (str(row["due_date"]) > str(datetime.datetime.now())):
+                    task_status = "In Progress"
+                else:
+                    task_status = "Not Complied"
+
+            # Find Activity Status
+            print row["activity_date"]
+            if row["activity_date"] is None:
+                print row["approve_status"]
+                if row["approve_status"] == "0":
+                    activity_status = "Pending"
+                elif row["approve_status"] == "1":
+                    activity_status = "Approved"
+                elif row["approve_status"] == "2":
+                    activity_status = "Rejected"
+            else:
+                activity_status = "Submitted"
+
+            document_name = row["documents"]
+            compliance_task = row["compliance_task"]
+            if document_name == "None":
+                document_name = None
+            if document_name:
+                name = "%s - %s" % (
+                    document_name, compliance_task
+                )
+            else:
+                name = compliance_task
+
+            format_file = row["format_file"]
+            format_file_size = row["format_file_size"]
+            if format_file_size is not None:
+                format_file_size = int(format_file_size)
+            if format_file:
+                url = "%s/%s" % (
+                    CLIENT_DOCS_DOWNLOAD_URL, format_file
+                )
+            else:
+                url = None
+
+            csv_values = [
+                row["unit_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
                 datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
                 activity_status, datetime_to_string(row["activity_date"]), name,
                 datetime_to_string(row["completion_date"]), url
