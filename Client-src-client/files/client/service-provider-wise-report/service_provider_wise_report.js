@@ -24,7 +24,7 @@ var acComplianceTask = $("#ac-compliance-task");
 
 var complianceFrequency = $("#compliance-frequency");
 var userType = $("#user-type");
-var users = $("#user");
+var user = $("#user");
 var userId = $("#user-id");
 var acUser = $("#ac-user");
 var fromDate = $("#from-date");
@@ -65,8 +65,11 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._countries;
+        if (countryList.length == 0 && text_val != '')
+            displayMessage(message.domainname_required);
         var condition_fields = ["is_active"];
         var condition_values = [true];
+        //alert(text_val +' - '+countryList.toSource() +' - '+)
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -77,8 +80,8 @@ function PageControls() {
         var legalEntityList = REPORT._entities;
         if (legalEntityList.length == 0 && text_val != '')
             displayMessage(message.domainname_required);
-        var condition_fields = ["c_id"];
-        var condition_values = [countryId.val()];
+        var condition_fields = ["is_active", "c_id"];
+        var condition_values = [true, countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -130,8 +133,8 @@ function PageControls() {
         }, condition_fields, condition_values);
     });
 
-    users.keyup(function(e) {
-        var text_val = users.val().trim();
+    user.keyup(function(e) {
+        var text_val = user.val().trim();
         var userList = REPORT._users;
         var condition_fields = ["is_active"];
         var condition_values = [true];
@@ -178,7 +181,7 @@ onLegalEntityAutoCompleteSuccess = function(REPORT, val) {
     legalEntityId.val(val[0]);
     legalEntity.focus();
     clearElement([domain, domainId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
-    REPORT.fetchDomainList(countryId.val(), val[0]);
+    REPORT.fetchDomainList(val[0]);
 }
 
 onDomainAutoCompleteSuccess = function(REPORT, val) {
@@ -186,6 +189,7 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domainId.val(val[0]);
     domain.focus();
     clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
+    REPORT.fetchUnitList(val[0]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
@@ -193,6 +197,7 @@ onUnitAutoCompleteSuccess = function(REPORT, val) {
     unitId.val(val[0]);
     unit.focus();
     clearElement([act, actId, complianceTask, complianceTaskId]);
+    REPORT.fetchActList(val[0]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
@@ -200,6 +205,7 @@ onActAutoCompleteSuccess = function(REPORT, val) {
     actId.val(val[0]);
     act.focus();
     clearElement([complianceTask, complianceTaskId]);
+    REPORT.fetchComplianceaskList(val[0]);
 }
 
 onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
@@ -209,9 +215,9 @@ onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
 }
 
 onUserAutoCompleteSuccess = function(REPORT, val) {
-    users.val(val[1]);
+    user.val(val[1]);
     userId.val(val[0]);
-    users.focus();
+    user.focus();
 }
 LegalEntityWiseReport = function() {
     this._countries = [];
@@ -242,7 +248,7 @@ LegalEntityWiseReport.prototype.loadSearch = function() {
     complianceTaskId.val('');
     complianceFrequency.empty();
     userType.empty();
-    users.val('');
+    user.val('');
     userId.val('');
     fromDate.val('');
     toDate.val('');
@@ -252,25 +258,49 @@ LegalEntityWiseReport.prototype.loadSearch = function() {
 
 LegalEntityWiseReport.prototype.fetchSearchList = function() {
     t_this = this;
-    t_this._countries = client_mirror.getUserCountry();
-    t_this._entities = client_mirror.getUserLegalEntity();
+    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"c_id":1,"le_name":"RG Legal Entity","is_active":true},{"le_id":2,"c_id":1,"le_name":"ABC Legal Entity","is_active":true}],"frequencies":[{"f_id":1,"f_name":"Periodical"},{"f_id":2,"f_name":"Review"},{"f_id":3,"f_name":"Flexi Review"},{"f_id":4,"f_name":"One Time"}],"user_type":[{"user_type_id":1,"user_type_name":"Assignee"},{"user_type_id":2,"user_type_name":"Concurrence"},{"user_type_id":3,"user_type_name":"Approval"}],"compliance_task_status":[{"comp_task_status_id":1,"comp_task_status":"Complied"},{"comp_task_status_id":2,"comp_task_status":"Delayed Compliances"},{"comp_task_status_id":3,"comp_task_status":"Inprogress"},{"comp_task_status_id":4,"comp_task_status":"Not Complied"}],"service_providers":[{"s_p_id":1,"s_p_name":"String","s_p_shrot":"short"}],"users":[{"u_id":1,"u_name":"Siva ","is_active":true},{"u_id":2,"u_name":"Hari","is_active":true}]}';
+    var object = jQuery.parseJSON(jsondata);
+    t_this._countries = object.countries;
+    t_this._entities = object.entities;
+    t_this._frequencies = object.frequencies;
+    t_this._userType = object.user_type;
+    t_this._users = object.users;
+    t_this._complianceTaskStatus = object.compliance_task_status;
+    t_this._serviceProviders = object.service_providers;
+
+    t_this.renderCountriesList(t_this._countries);
+    t_this.renderLegalEntityList(t_this._entities);
+    t_this.renderComplianceFrequencyList(t_this._frequencies);
+    t_this.renderUserTypeList(t_this._userType);
+    t_this.renderComplianceTaskStatusList(t_this._complianceTaskStatus);
 };
 
-LegalEntityWiseReport.prototype.fetchDomainList = function(c_id, le_id) {
+LegalEntityWiseReport.prototype.fetchDomainList = function(le_id) {
     t_this = this;
-    client_mirror.getLegalEntityWiseReportFilters(parseInt(c_id), parseInt(le_id), function(error, response) {
-        if (error == null) {
-            t_this._domains = response.domains;
-            t_this._units = response.unit_legal_entity;
-            t_this._acts = response.act_legal_entity;
-            t_this._compliance_task = response.compliance_task_status;
-            t_this._frequencies = response.compliance_frequency_list;
-            t_this._user_type = response.compliance_user_type;
-            t_this._users = response.compliance_users;
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
+    var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":2,"is_active":true},{"d_id":3,"d_name":"Employee Law","le_id":1,"is_active":true}]}';
+    var object = jQuery.parseJSON(jsondata);
+    t_this._domains = object.domains;
+};
+
+LegalEntityWiseReport.prototype.fetchUnitList = function(dom_id) {
+    t_this = this;
+    var jsondata = '{"units":[{"u_id":1,"u_name":"RG Madurai Unit","u_code":"RG1034","address":"12 RJ Complex, Main road, Madurai, 625022","d_id":1,"is_active":true},{"u_id":2,"u_name":"RG Dindugal Unit","u_code":"RG1035","address":"10 RG Complex, Main road, Dindugal, 623020","d_id":1,"is_active":true}]}';
+    var object = jQuery.parseJSON(jsondata);
+    t_this._units = object.units;
+};
+
+LegalEntityWiseReport.prototype.fetchActList = function(unit_id) {
+    t_this = this;
+    var jsondata = '{"acts":[{"act_id":1,"act_name":"The Batteries Act","u_id":1,"is_active":true},{"act_id":2,"act_name":"Indian Partnership Act, 1932","u_id":1,"is_active":true}]}';
+    var object = jQuery.parseJSON(jsondata);
+    t_this._acts = object.acts;
+};
+
+LegalEntityWiseReport.prototype.fetchComplianceaskList = function(act_id) {
+    t_this = this;
+    var jsondata = '{"compliance_task":[{"c_id":1,"c_task":"FORM I - Half yearly returns Submission","act_id":1,"is_active":true},{"c_id":2,"c_task":"FORM II - Registration","act_id":1,"is_active":true}]}';
+    var object = jQuery.parseJSON(jsondata);
+    t_this._compliance_task = object.compliance_task;
 };
 
 LegalEntityWiseReport.prototype.renderCountriesList = function(data) {
@@ -308,7 +338,7 @@ LegalEntityWiseReport.prototype.renderComplianceFrequencyList = function(data) {
 LegalEntityWiseReport.prototype.renderUserTypeList = function(data) {
     t_this = this;
     userType.empty();
-    var userTypeList = '<option value="-1">All</option>';
+    var userTypeList = '<option value="0">All</option>';
     $.each(data, function(i, e) {
         userTypeList = userTypeList + '<option value="' + e.user_type_id + '"> ' + e.user_type_name + ' </option>';
     });
@@ -318,7 +348,7 @@ LegalEntityWiseReport.prototype.renderUserTypeList = function(data) {
 LegalEntityWiseReport.prototype.renderComplianceTaskStatusList = function(data) {
     t_this = this;
     complianceTaskStatus.empty();
-    var complianceTaskStatusList = '<option value="-1">All</option>';
+    var complianceTaskStatusList = '<option value="0">All</option>';
     $.each(data, function(i, e) {
         complianceTaskStatusList = complianceTaskStatusList + '<option value="' + e.comp_task_status_id + '"> ' + e.comp_task_status + ' </option>';
     });
@@ -400,7 +430,7 @@ LegalEntityWiseReport.prototype.fetchReportValues = function() {
 };
 
 LegalEntityWiseReport.prototype.showReportValues = function() {
-    
+    alert('test');
     t_this = this;
     var data = t_this._report_data;
     clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
@@ -447,7 +477,7 @@ LegalEntityWiseReport.prototype.showReportValues = function() {
             } else {
                 $('.uploaded-document', clonethree).text('-');
             }
-
+            
             if (v.completion_date != "")
                 $('.completion-date', clonethree).text(v.completion_date);
             else

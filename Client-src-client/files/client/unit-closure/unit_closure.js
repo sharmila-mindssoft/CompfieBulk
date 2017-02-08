@@ -13,24 +13,6 @@ var Search_status_1 = $('#search-status-1');
 var Search_status_ul_1 = $('.search-status-list-1');
 var Search_status_li_1 = $('.search-status-li-1');
 
-function loadUnitClosureList() {
-    function onSuccess(data) {
-        LegalEntityList = data.unit_closure_legal_entities;
-        loadLegalEntities();
-    }
-
-    function onFailure(error) {
-        displayMessage(error);
-    }
-    client_mirror.getUnitClosureData(function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            onSuccess(response);
-        } else {
-            onFailure(error);
-        }
-    });
-}
 
 function loadLegalEntities(){
 	var obj_le = $(".le-drop-down option");
@@ -39,8 +21,8 @@ function loadLegalEntities(){
     clone_le.text("Select");
     leSelect.append(clone_le);
 	$.each(LegalEntityList, function(key, value) {
-        var lentityId = value.legal_entity_id;
-        var lentityName = value.legal_entity_name;
+        var lentityId = value.le_id;
+        var lentityName = value.le_name;
 
         var obj = $(".le-drop-down option");
         var clone = obj.clone();
@@ -52,7 +34,6 @@ function loadLegalEntities(){
 
 $('.btn-show').click(function() {
 	LegalEntityId = leSelect.val();
-    console.log("le:"+LegalEntityId)
 
 	if(LegalEntityId != ''){
 		function onSuccess(data) {
@@ -83,11 +64,19 @@ function LoadUnitClosureUnits(data){
         var tableRow = $('#templates .table-row');
         var clone = tableRow.clone();
         $('.sno', clone).text(j);
-        $('.Business-group', clone).text(val.business_group_name);
+        if(val.business_group_name == null || val.business_group_name == "")
+            $('.Business-group', clone).text("-");
+        else
+            $('.Business-group', clone).text(val.business_group_name);
         $('.legal-entity', clone).text(val.legal_entity_name);
-        $('.division-name', clone).text(val.division_name);
-        if(val.category_name == "---")
-            $('.category-name', clone).text();
+        if(val.division_name == "---" || val.division_name == null || val.division_name == "")
+        {
+            $('.division-name', clone).text("-");
+        }
+        else
+            $('.division-name', clone).text(val.division_name);
+        if(val.category_name == "---" || val.category_name == null || val.category_name == "")
+            $('.category-name', clone).text("-");
         else
             $('.category-name', clone).text(val.category_name);
         $('#unit_id', clone).addClass('-' + val.unit_id);
@@ -215,7 +204,6 @@ function processFilterSearch()
     var data_closure = -1;
 	searchList = [];
     i =0;
-    console.log("1:"+status_select,closure_select)
 	for(var v in unitClosureList)
 	{
         data_closure =-1;
@@ -223,7 +211,6 @@ function processFilterSearch()
         data_is_active = data.is_active;
 
         if((data_is_active == false) && (parseInt(data.validity_days) <= 30)){
-            console.log(data.unit_id)
             data_closure = 0;
             i++;
             //data_is_active = true;
@@ -231,7 +218,6 @@ function processFilterSearch()
 
 
 		if((data.validity_days < 30 && data.validity_days >= 0) && (data_is_active == true)){
-            console.log("1:"+data.validity_days)
             //data_is_active = false;
             data_closure = 2;
         }
@@ -240,8 +226,6 @@ function processFilterSearch()
             data_closure = 1;
             //data_is_active = false;
         }
-        console.log("2:"+data_closure)
-        console.log("3:"+(closure_select == data_closure));
         if(
         	((closure_select == 'all') || (closure_select == data_closure))
     	)
@@ -249,11 +233,9 @@ function processFilterSearch()
             if ((status_select == 'all') || (Boolean(parseInt(status_select)) == data_is_active))
             {
                 searchList.push(data);
-                console.log(searchList.length, data_closure, data.unit_id)
             }
         }
 	}
-	console.log(searchList.length)
 	LoadUnitClosureUnits(searchList);
 }
 
@@ -265,16 +247,8 @@ function renderSearch() {
       $(el).removeClass('active');
     });
     $(event.target).parent().addClass('active');
-
-    var currentClass = $(event.target).find('i').attr('class');
-    Search_status.removeClass();
-    if(currentClass != undefined){
-      Search_status.addClass(currentClass);
-      Search_status.text('');
-    }else{
-      Search_status.addClass('fa');
-      Search_status.text('All');
-    }
+    var currentClass = $(event.target).html();
+    Search_status.html(currentClass);
     processFilterSearch();
   });
 
@@ -284,25 +258,18 @@ function renderSearch() {
     });
     $(event.target).parent().addClass('active');
 
-    var currentClass = $(event.target).find('i').attr('class');
-    Search_status_1.removeClass();
-    if(currentClass != undefined){
-      Search_status_1.addClass(currentClass);
-      Search_status_1.text('');
-    }else{
-      Search_status_1.addClass('fa');
-      Search_status_1.text('All');
-    }
+    var currentClass = $(event.target).html();
+    Search_status_1.html(currentClass);
     processFilterSearch();
   });
 }
 
 // page load
 function initialize() {
-    console.log("initialize")
     clearMessage();
     $('.tbody-unit-closure-list').empty();
-    loadUnitClosureList();
+    LegalEntityList = user.entity_info;
+    loadLegalEntities();
 }
 
 Search_status.change(function() {

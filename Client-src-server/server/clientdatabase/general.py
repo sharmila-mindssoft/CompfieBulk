@@ -151,19 +151,15 @@ def get_domains_for_user(db, user_id):
     if user_id != admin_id:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
-            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  " + \
-            "WHERE t1.legal_entity_id = %s "
-        print "-------------------->"
-        print query
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+            "where t1.user_id = %s "
+
         rows = db.select_all(query, [user_id])
     else:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
-            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  "
-        print "-------------------->"
-        print query
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
         rows = db.select_all(query)
-
     return return_domains(rows)
 
 
