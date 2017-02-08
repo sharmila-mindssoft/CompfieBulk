@@ -120,7 +120,7 @@ function callAPI(api_type) {
             if (error == null) {
                 ASSIGNED_STATUTORIES = data.assigned_statutories;
                 loadAssignedStatutories();
-                hideLoader();
+                
             } else {
                 displayMessage(error);
                 hideLoader();
@@ -146,7 +146,6 @@ function callAPI(api_type) {
     } else if (api_type == API_Wizard2) {
         COMPLIANCES_LIST = [];
         displayLoader();
-        console.log('CCCC: ' + (sno - 1))
         mirror.getAssignStatutoryWizardTwoData(
             int(val_domain_id), ACTIVE_UNITS, (sno - 1),
             function(error, data) {
@@ -165,15 +164,41 @@ function callAPI(api_type) {
             }
         );
     } else if (api_type == SAVE_API || api_type == SUBMIT_API) {
+
+        //check request is save or submit
         var submission_status;
         if (api_type == SAVE_API) {
             submission_status = 1;
         } else {
             submission_status = 2;
         }
-        var checkSubmit = true;
 
-        if (submission_status == 2 && checkSubmit == false) {
+        //check all compliance is selected before submit
+        var checkSubmit = false;
+        if($('.comp:checked').length == (statutoriesCount - 1)){
+            checkSubmit = true;
+        }
+
+        //check remark validation
+        for(var i=1; i<=(actCount-1); i++){
+            var aStatus = parseInt($('#act'+i).attr("for"));
+            var remark = null;
+            if(aStatus == 2 || aStatus==3){
+                remark = $('#remark'+i).val().trim();
+                if(remark==''){
+                    displayMessage(message.remarks_required);
+                    hideLoader();
+                    return false;
+                }
+            }
+        }
+
+        if (submission_status == 1 && selected_compliances_list.length == 0) {
+            displayMessage(message.nocompliance_selected_forassign);
+            hideLoader();
+            return false;
+        }
+        else if (submission_status == 2 && checkSubmit == false) {
             displayMessage(message.assigncompliance_submit_failure);
             hideLoader();
             return false;
@@ -184,7 +209,7 @@ function callAPI(api_type) {
                     value
                 );
             });
-
+        
             mirror.saveAssignedStatutory(selected_compliances_list, submission_status, int(val_group_id), int(val_legal_entity_id),
                 int(val_domain_id), DomainName.val(),
                 function(error, data) {
@@ -290,6 +315,7 @@ function pageControls() {
                 onAutoCompleteSuccess(GroupName, GroupId, val);
             });
     });
+
     BusinessGroupName.keyup(function(e) {
 
         if (GroupId.val() != '') {
@@ -1224,8 +1250,14 @@ function loadMultipleUnitCompliances() {
         SaveButton.hide();
         $(".total_count_view").hide();
     } else {
-        SubmitButton.show();
         SaveButton.show();
+        if (totalRecord == (sno - 1)) {
+            SubmitButton.show();
+            ShowMore.hide();
+        } else {
+            SubmitButton.hide();
+            ShowMore.show();
+        }
         $(".total_count").text('Showing 1 to ' + (sno - 1) + ' of ' + totalRecord + ' entries');
         $(".total_count_view").show();
     }
@@ -1300,12 +1332,13 @@ function loadAssignedStatutories() {
                 UNIT_TEXT = value.u_name;
                 DOMAIN_TEXT = value.d_name;
                 ACTIVE_UNITS = [value.u_id];
-                EditAssignedStatutory(value.u_id, value.d_id);
+                EditAssignedStatutory();
             });
         }
 
         AssignedStatutoryList.append(clone);
     });
+    hideLoader();
 }
 
 function validateFirstTab() {
@@ -1375,7 +1408,6 @@ function showTab() {
                     if (error == null) {
                         totalRecord = data.total_records;
                         if (data.unit_total > 5000 && ACTIVE_UNITS.length > 1) {
-                            
                             displayMessage(message.maximum_compliance_selection_reached);
                             hideLoader();
                             CURRENT_TAB -= 1;
@@ -1392,7 +1424,6 @@ function showTab() {
                             SaveButton.show();
                             ShowMore.show();
                             showBreadCrumbText();
-                            
                         }
                     } else {
                         displayMessage(error);
@@ -1407,7 +1438,7 @@ function showTab() {
 };
 
 
-function EditAssignedStatutory(u_id, d_id) {
+function EditAssignedStatutory() {
     displayLoader();
     $(".total_count_view").hide();
     LastAct = '';
@@ -1421,31 +1452,31 @@ function EditAssignedStatutory(u_id, d_id) {
     SingleAssignStatutoryList.empty();
     SELECTED_COMPLIANCE = {};
     ACT_MAP = {};
-    mirror.getAssignedStatutoriesById(u_id, d_id, (sno - 1), function(error, data) {
-        if (error == null) {
-            AssignStatutoryView.hide();
-            AssignStatutoryAdd.show();
-            COMPLIANCES_LIST = data.statutories_for_assigning;
-            totalRecord = data.total_records;
 
-            $('.statutory_mapping_tab li').removeClass('active');
-            $('.tab-pane').removeClass('active in');
-            $('#tab1').hide();
-            SaveButton.hide();
-            NextButton.hide();
-            $('.tab-step-2 a').attr('href', '#tab2');
-            $('.tab-step-2').addClass('active')
-            $('#tab2').addClass('active in');
-            $('#tab2').show();
-            SubmitButton.show();
-            PreviousButton.hide();
-            showBreadCrumbText();
-            loadSingleUnitCompliances();
-        } else {
-            displayMessage(error);
-            hideLoader();
+    mirror.getAssignStatutoryWizardTwoCount(
+        int(val_domain_id), ACTIVE_UNITS,
+        function(error, data) {
+            if (error == null) {
+                totalRecord = data.total_records;
+                AssignStatutoryView.hide();
+                AssignStatutoryAdd.show();
+                $('.statutory_mapping_tab li').removeClass('active');
+                $('.tab-pane').removeClass('active in');
+                $('#tab1').hide();
+                PreviousButton.hide();
+                NextButton.hide();
+                $('.tab-step-2 a').attr('href', '#tab2');
+                $('.tab-step-2').addClass('active')
+                $('#tab2').addClass('active in');
+                $('#tab2').show();
+                showBreadCrumbText();
+                callAPI(API_Wizard2);
+            } else {
+                displayMessage(error);
+                hideLoader();
+            }
         }
-    });
+    );
 }
 
 function initialize() {
