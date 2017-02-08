@@ -2089,6 +2089,48 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    /* User Wise report - updated*/
+    function getUserWiseReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetUserWiseReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUserWiseReport(
+        country_id, legal_entity_id, user_id, domain_id, unit_id, statutory_mapping,
+        compliance_id, frequency_id, user_type, from_date, to_date,
+        task_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetUserWiseReport',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'user_id': user_id,
+                'domain_id': domain_id,
+                'unit_id': unit_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'frequency_id': frequency_id,
+                'user_type': user_type,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
