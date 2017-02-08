@@ -364,6 +364,30 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         logger.logClientApi("GetServiceProviderWiseReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
+    elif type(request) is clientreport.GetUserWiseReportFilters:
+        logger.logClientApi(
+            "GetUserWiseReportFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_user_wise_report_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetUserWiseReportFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetUserWiseReport:
+        logger.logClientApi(
+            "GetUserWiseReport  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_user_wise_report(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetUserWiseReport", "process end")
+        logger.logClientApi("------", str(time.time()))
+
     return result
 
 
@@ -991,15 +1015,14 @@ def get_service_provider_wise_report_filters(db, request, session_user, client_i
     country_id = request.country_id
     legal_entity_id = request.legal_entity_id
     sp_list = get_service_providers_list(db)
-    domains_list = get_domains_for_le(db, legal_entity_id)
-    unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
-    act_list = get_acts_for_le_domain(db, legal_entity_id)
-    task_list = get_task_for_le_domain(db, legal_entity_id)
+    sp_domains_list = get_domains_for_sp_users(db, legal_entity_id)
+    sp_unit_list = get_units_for_sp_users(db, country_id, legal_entity_id)
+    sp_act_task_list = get_acts_for_sp_users(db, legal_entity_id, country_id)
     compliance_status = get_compiance_status(db)
     sp_user_list = get_service_provider_user_list(db, country_id, legal_entity_id)
     return clientreport.GetServiceProviderWiseReportFiltersSuccess(
-        domains=domains_list, unit_legal_entity=unit_list, act_legal_entity=act_list,
-        compliance_task_list=task_list, sp_list=sp_list,
+        sp_domains_list=sp_domains_list, sp_unit_list=sp_unit_list,
+        sp_act_task_list=sp_act_task_list, sp_list=sp_list,
         compliance_task_status=compliance_status, sp_users_list=sp_user_list
     )
 
@@ -1019,3 +1042,45 @@ def get_service_provider_wise_report(db, request, session_user, client_id):
     else:
         result = process_service_provider_wise_report(db, request)
         return clientreport.GetServiceProviderWiseReportSuccess(sp_compliances=result)
+
+
+###############################################################################################
+# Objective: To get the filters data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains users lits, domain list, compliances, units
+###############################################################################################
+
+def get_user_wise_report_filters(db, request, session_user, client_id):
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    le_users_list = get_le_users_list(db)
+    user_domains_list = get_domains_for_le_users(db, legal_entity_id)
+    users_units_list = get_units_for_le_users(db, country_id, legal_entity_id)
+    user_act_task_list = get_acts_for_le_users(db, legal_entity_id, country_id)
+    frequency_list = get_frequency_list(db)
+    compliance_user_type = get_compliance_user_type(db)
+    compliance_status = get_compiance_status(db)
+    return clientreport.GetUserWiseReportFiltersSuccess(
+        le_users_list=le_users_list, user_domains_list=user_domains_list,
+        users_units_list=users_units_list,
+        user_act_task_list=user_act_task_list,
+        compliance_frequency_list=frequency_list,
+        compliance_user_type=compliance_user_type, compliance_task_status=compliance_status
+    )
+
+###############################################################################################
+# Objective: To get unit wise compliances data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains compliance list with the status
+###############################################################################################
+def get_user_wise_report(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "UserWiseReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_user_wise_report(db, request)
+        return clientreport.GetUserWiseReportSuccess(user_compliances=result)
