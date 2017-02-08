@@ -14,58 +14,58 @@ from server.exceptionmessage import client_process_error
 from savetoknowledge import UpdateFileSpace
 
 __all__ = [
-    "get_client_user_forms",    
-    "get_countries_for_user",   
-    "get_domains_for_user",    
-    "get_business_groups_for_user",    
-    "get_legal_entities_for_user",    
-    "get_divisions_for_user",    
-    "get_group_name",    
-    "get_country_wise_domain_month_range",    
-    "get_units_for_user",    
-    "get_client_users",    
-    "get_user_domains",    
-    "get_user_countries",    
-    "verify_username",    
-    "verify_password",    
-    "get_countries",    
-    "get_domains",    
-    "is_primary_admin",    
-    "have_compliances",    
-    "is_seating_unit",    
-    "is_admin",    
-    "get_user_unit_ids",    
-    "is_two_levels_of_approval",    
-    "get_user_company_details",    
-    "get_client_level_1_statutoy",    
-    "get_service_providers",    
-    "get_client_compliances",    
-    "get_client_settings",    
-    "get_admin_info",    
-    "validate_compliance_due_date",    
-    "get_compliance_frequency",    
-    "get_users",    
-    "get_users_by_id",    
-    "get_users_by_unit_and_domain",    
-    "get_compliance_name_by_id",    
-    "is_space_available",    
-    "update_used_space",    
-    "save_compliance_activity",    
-    "save_compliance_notification",    
-    "get_email_id_for_users",    
-    "get_user_email_name",    
-    "calculate_due_date",    
-    "filter_out_due_dates",    
-    "convert_base64_to_file",    
-    "get_user_name_by_id",    
-    "get_form_ids_for_admin",    
-    "get_report_form_ids",    
-    "get_client_id_from_short_name",    
-    "validate_reset_token",    
-    "remove_session",    
-    "update_profile",    
-    "is_service_proivder_user",    
-    "convert_datetime_to_date",    
+    "get_client_user_forms",
+    "get_countries_for_user",
+    "get_domains_for_user",
+    "get_business_groups_for_user",
+    "get_legal_entities_for_user",
+    "get_divisions_for_user",
+    "get_group_name",
+    "get_country_wise_domain_month_range",
+    "get_units_for_user",
+    "get_client_users",
+    "get_user_domains",
+    "get_user_countries",
+    "verify_username",
+    "verify_password",
+    "get_countries",
+    "get_domains",
+    "is_primary_admin",
+    "have_compliances",
+    "is_seating_unit",
+    "is_admin",
+    "get_user_unit_ids",
+    "is_two_levels_of_approval",
+    "get_user_company_details",
+    "get_client_level_1_statutoy",
+    "get_service_providers",
+    "get_client_compliances",
+    "get_client_settings",
+    "get_admin_info",
+    "validate_compliance_due_date",
+    "get_compliance_frequency",
+    "get_users",
+    "get_users_by_id",
+    "get_users_by_unit_and_domain",
+    "get_compliance_name_by_id",
+    "is_space_available",
+    "update_used_space",
+    "save_compliance_activity",
+    "save_compliance_notification",
+    "get_email_id_for_users",
+    "get_user_email_name",
+    "calculate_due_date",
+    "filter_out_due_dates",
+    "convert_base64_to_file",
+    "get_user_name_by_id",
+    "get_form_ids_for_admin",
+    "get_report_form_ids",
+    "get_client_id_from_short_name",
+    "validate_reset_token",
+    "remove_session",
+    "update_profile",
+    "is_service_proivder_user",
+    "convert_datetime_to_date",
     "is_old_primary_admin"
     ]
 
@@ -73,7 +73,7 @@ __all__ = [
 def get_client_user_forms(db, user_id):
     # columns = "tf.form_id, tf.form_type_id, tft.form_type, tf.form_name, "
     # columns += "tf.form_url, tf.form_order, tf.parent_menu "
-    
+
     # tables = [tblForms, tblFormType]
     # aliases = ["tf",  "tft"]
     # joinConditions = ["tf.form_type_id = tft.form_type_id"]
@@ -150,15 +150,20 @@ def get_domains_for_user(db, user_id):
     admin_id = get_admin_id(db)
     if user_id != admin_id:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
-        "t2.is_active FROM tbl_user_domains AS t1 " + \
-        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
-        rows = db.select_all(query)
+            "t2.is_active FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  " + \
+            "WHERE t1.legal_entity_id = %s "
+        print "-------------------->"
+        print query
+        rows = db.select_all(query, [user_id])
     else:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
-        "t2.is_active FROM tbl_user_domains AS t1 " + \
-        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
-        "where t1.user_id = %s "
-        rows = db.select_all(query,[user_id])
+            "t2.is_active FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  "
+        print "-------------------->"
+        print query
+        rows = db.select_all(query)
+
     return return_domains(rows)
 
 
@@ -356,7 +361,7 @@ def return_units(units):
             results.append(clientcore.ClientUnit(
                 unit["unit_id"], division_id, category_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
-                unit["unit_name"], unit["address"], 
+                unit["unit_name"], unit["address"],
                 [int(x) for x in unit["domain_ids"].split(",")],
                 unit["country_id"],
                 bool(unit["is_closed"])
@@ -461,7 +466,7 @@ def return_units_assign(units):
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
         "t1.employee_code, t1.is_active from tbl_users as t1 " + \
-        "inner join tbl_user_domains as t2 ON t2.user_id = t1.user_id " 
+        "inner join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
     rows = db.select_all(query)
     return return_client_users(rows)
 
@@ -560,7 +565,7 @@ def get_forms_by_category(db, category_id):
 
 def get_user_forms(db, user_id):
     # except group admin forms
-    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu " + \
         "FROM tbl_forms as t1 " + \
         "INNER JOIN tbl_user_group_forms as t2 on t1.form_id = t2.form_id " + \
         "INNER JOIN tbl_users as t3 on t2.user_group_id = t3.user_group_id " + \
@@ -595,7 +600,7 @@ def get_country_info(db, user_id, user_category_id):
 
 def get_legal_entity_info(db, user_id, user_category_id):
     if user_category_id == 1 :
-        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, t1.client_id, " + \
+        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, " + \
             "t1.business_group_id, t1.country_id, t2.country_name, " + \
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
@@ -606,7 +611,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
         # print "------------------ Admin ---------------"
     else :
         q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
-            "t1.client_id, t1.business_group_id, t3.country_name, " + \
+            "t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
             "inner join tbl_user_domains as t2 on " + \
@@ -654,10 +659,14 @@ def get_domains(db):
     query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
         " t1.is_active FROM tbl_domains t1 "
     rows = db.select_all(query)
-    columns = ["domain_id", "domain_name", "is_active"]
-    result = convert_to_dict(rows, columns)
-    return return_domains(result)
+    return return_domains(rows)
 
+
+def get_le_domains(db):
+    query = "SELECT distinct t1.domain_id" + \
+        "  FROM tbl_legal_entity_domains t1 "
+    rows = db.select_all(query)
+    return rows
 
 def is_primary_admin(db, user_id):
     column = "count(1) as result"
@@ -1848,7 +1857,7 @@ def get_trail_id(db, type=None):
         query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id " + \
             " from tbl_audit_log;"
     row = db.select_one(query)
-    trail_id = row[0]
+    trail_id = row.get("audit_trail_id")
     return trail_id
 
 

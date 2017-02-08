@@ -142,11 +142,13 @@ function FetchBack() {
                     displayMessage(status);
                 }
                 else {
+                    _listPage.clearList();
                     STATU_MAPPINGS = response.statu_mappings;
                     if (STATU_MAPPINGS.length == 0) {
                         _fetchback.hidePagePan();
                         PaginationView.hide();
                         _fetchback.hidePageView();
+                        _listPage.mapping_id = [];
                     }
                     else {
                         STATU_TOTALS = response.total_records;
@@ -158,8 +160,8 @@ function FetchBack() {
                             PaginationView.show();
                             _listPage.mapping_id = [];
                         }
-                        _listPage.renderList(response.statu_mappings, STATU_TOTALS);
                     }
+                    _listPage.renderList(response.statu_mappings, STATU_TOTALS);
 
                 }
                 hideLoader();
