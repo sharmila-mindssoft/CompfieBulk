@@ -600,7 +600,7 @@ def get_country_info(db, user_id, user_category_id):
 
 def get_legal_entity_info(db, user_id, user_category_id):
     if user_category_id == 1 :
-        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, t1.client_id, " + \
+        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, " + \
             "t1.business_group_id, t1.country_id, t2.country_name, " + \
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
@@ -611,7 +611,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
         # print "------------------ Admin ---------------"
     else :
         q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
-            "t1.client_id, t1.business_group_id, t1.country_id, t3.country_name, " + \
+            "t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
             "inner join tbl_user_domains as t2 on " + \
