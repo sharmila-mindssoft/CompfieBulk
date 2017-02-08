@@ -743,7 +743,7 @@ class Database(object):
 
     def clear_session(self, session_cutouff):
         q = "delete from tbl_user_sessions where " + \
-            " last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE)"
+            " last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE)"
         self.execute(q, [session_cutouff])
 
     def reconnect(self):

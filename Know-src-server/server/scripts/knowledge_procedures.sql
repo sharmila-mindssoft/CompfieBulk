@@ -4653,7 +4653,7 @@ DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_count`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_clientstatutories_compliance_count`(
-    IN unit_id int(11), domainid int(11)
+    IN unitid int(11), domainid int(11)
 )
 BEGIN
 

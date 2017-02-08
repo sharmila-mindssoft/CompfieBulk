@@ -49,12 +49,19 @@ function initClientMirror() {
         delete window.sessionStorage.CLIENT_NOTIFICATION_COUNT;
         delete window.sessionStorage.CLIENT_REMINDER_COUNT;
         delete window.sessionStorage.CLIENT_ESCALATION_COUNT;
+        delete window.sessionStorage.selectedEntity;
+        delete window.sessionStorage.selectedEntityName;
     }
 
     function getUserInfo() {
         var info = window.sessionStorage.userInfo;
         user = parseJSON(info);
         return user;
+    }
+
+    function getSelectedLegalEntity() {
+        var info = window.sessionStorage.selectedEntity;
+        return info;
     }
 
     function updateUserInfo(response) {
@@ -1923,6 +1930,33 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getReviewSettingsUnitFilters(le_id, d_id, callback) {
+        var request = [
+            'GetReviewSettingsUnitFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id
+            }
+        ];
+        callerName = 'client_transaction';        
+        clientApiRequest(callerName, request, callback);
+    }
+    
+    function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback){
+        var request = [
+            'GetReviewSettingsComplianceFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id,
+                "unit_ids": units,                 
+                "f_id": f_type,
+                "sno": sno,
+            }
+        ];
+        callerName = 'client_transaction';        
+        clientApiRequest(callerName, request, callback);
+    }
+
 
     return {
         log: log,
@@ -1941,6 +1975,7 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         getUserCountry: getUserCountry,
         getUserLegalEntity: getUserLegalEntity,
+        getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
         clientApiRequest: clientApiRequest,
@@ -2054,6 +2089,8 @@ function initClientMirror() {
         getUnitClosureUnitList: getUnitClosureUnitList,
         saveUnitClosureData: saveUnitClosureData,
         getReviewSettingsFilters: getReviewSettingsFilters,
+        getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
+        getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
     };
 }
 var client_mirror = initClientMirror();

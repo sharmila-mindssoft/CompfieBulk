@@ -654,8 +654,55 @@ class GetReviewSettingsFilters(Request):
         }
 
 
+class GetReviewSettingsUnitFilters(Request):
+    def __init__(self, legal_entity_id, domain_id):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id"])
+        legal_entity_id = data.get("le_id")
+        domain_id = data.get("d_id")
+        return GetReviewSettingsUnitFilters(legal_entity_id, domain_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id
+        }
+
+
+class GetReviewSettingsComplianceFilters(Request):
+    def __init__(self, legal_entity_id, domain_id, unit_ids, f_id, sno):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.unit_ids = unit_ids
+        self.f_id = f_id
+        self.sno = sno
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "unit_ids", "f_id", "sno"])
+        legal_entity_id = data.get("le_id")
+        domain_id = data.get("d_id")
+        unit_ids = data.get("unit_ids")
+        f_id = data.get("f_id")
+        sno = data.get("sno")
+        return GetReviewSettingsComplianceFilters(legal_entity_id, domain_id, unit_ids, f_id, sno)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id,
+            "unit_ids": self.unit_ids,
+            "f_id": self.f_id,
+            "sno": self.sno
+        }
+
+
 def _init_Request_class_map():
-    classes = [GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords, GetReviewSettingsFilters]
+    classes = [GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords, GetReviewSettingsFilters, GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -2126,11 +2173,46 @@ class GetReviewSettingsFiltersSuccess(Response):
         data = parse_dictionary(data, ["compliance_frequency", "domain_list"])
         compliance_frequency = data.get("compliance_frequency")
         domain_list = data.get("domain_list")
-        return GetStatutorySettingsSuccess(compliance_frequency, domain_list)
+        return GetReviewSettingsFiltersSuccess(compliance_frequency, domain_list)
 
     def to_inner_structure(self):
         return {
             "compliance_frequency": self.compliance_frequency,
             "domain_list": self.domain_list,
+        }
+
+
+class GetReviewSettingsUnitFiltersSuccess(Response):
+    def __init__(self, rs_unit_list):
+        self.rs_unit_list = rs_unit_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["rs_unit_list"])
+        rs_unit_list = data.get("rs_unit_list")
+        return GetReviewSettingsUnitFiltersSuccess(rs_unit_list)
+
+    def to_inner_structure(self):
+        return {
+            "rs_unit_list": self.rs_unit_list
+        }
+
+
+class GetReviewSettingsComplianceFiltersSuccess(Response):
+    def __init__(self, timeline, rs_compliance_list):
+        self.timeline = timeline
+        self.rs_compliance_list = rs_compliance_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["timeline", "rs_compliance_list"])
+        timeline = data.get("timeline")
+        rs_compliance_list = data.get("rs_compliance_list")
+        return GetReviewSettingsComplianceFiltersSuccess(timeline, rs_compliance_list)
+
+    def to_inner_structure(self):
+        return {
+            "timeline": self.timeline,
+            "rs_compliance_list": self.rs_compliance_list
         }
 
