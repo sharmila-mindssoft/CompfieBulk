@@ -143,7 +143,12 @@ class CompanyManager(object) :
         return company_id
 
     def _get_company_id_from_url(self, url):
+        print url
         for company_id, company in self._servers.iteritems():
+            if company.is_group is False :
+                continue
+
+            print company.short_url
             if company.short_url == url:
                 return company_id
         return 0

@@ -115,6 +115,7 @@ function initializeNavBar() {
 
 
   var user = client_mirror.getUserInfo();
+  console.log(user);
   // console.log(navBarItems["My Accounts"])
   var settingsMenu = navBarItems["My Accounts"];
   var settingsMenuObject = $('#nav-bar-templates .settings-menu .dropdown').clone();

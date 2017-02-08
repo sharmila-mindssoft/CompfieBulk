@@ -154,9 +154,10 @@ def return_companies(data):
             int(d["server_port"])
         )
         is_group = bool(d["is_group"])
-        if is_group is True :
+
+        if is_group is True:
             company_id = d["client_id"]
-        else :
+        else:
             company_id = d["legal_entity_id"]
         results.append(Company(
             int(company_id),

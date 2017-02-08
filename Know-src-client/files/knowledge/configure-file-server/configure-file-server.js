@@ -7,7 +7,21 @@ var file_server_port = $('#file-server-port');
 
 var btnSubmit = $('.btn-submit');
 var btnCancel = $('.btn-cancel');
-var btnAdd = $('.btn-file-server-add')
+var btnAdd = $('.btn-file-server-add');
+
+var Key = {
+  LEFT:   37,
+  UP:     38,
+  RIGHT:  39,
+  DOWN:   40
+};
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
 
 function initialize(type_of_form){
 	showPage(type_of_form);
@@ -21,10 +35,13 @@ function initialize(type_of_form){
     function onFailure(error) {
         displayMessage(error);
     }
+    displayLoader();
     mirror.getFileServerList(function (error, response) {
         if (error == null) {
+            hideLoader();
             onSuccess(response);
         } else {
+            hideLoader();
             onFailure(error);
         }
     });
@@ -159,12 +176,15 @@ function saveFileServer(){
         function onFailure(error) {
             displayMessage(error);
         }
+        displayLoader();
         mirror.fileServerEntry(
             edit_id, file_server_name.val(), file_server_ip.val(), parseInt(file_server_port.val()),
             function (error, response) {
             if (error == null) {
+                hideLoader();
                 onSuccess(response);
             } else {
+                hideLoader();
                 onFailure(error);
             }
         });
@@ -187,9 +207,9 @@ $(function () {
   initialize("list");
 
   //key press for IP address
-    file_server_ip.on('keypress', function (e) {
+    db_server_ip.on('keypress', function (e) {
         var k = e.which || e.keyCode;
-        var ok = k >= 48 && k <= 57 || k == 46 || k == Key.LEFT ||
+        var ok = k >= 48 && k <= 57 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
                 k == Key.RIGHT;
 
       if (!ok){
@@ -198,9 +218,9 @@ $(function () {
     });
 
     //key press for IP address
-    file_server_port.on('keypress', function (e) {
+    db_server_port.on('keypress', function (e) {
         var k = e.which || e.keyCode;
-        var ok = k >= 48 && k <= 57 || k == Key.LEFT ||
+        var ok = k >= 48 && k <= 57 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
                 k == Key.RIGHT;
 
       if (!ok){

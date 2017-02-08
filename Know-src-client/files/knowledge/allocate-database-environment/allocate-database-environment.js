@@ -17,6 +17,13 @@ var le_file_server_name = $('#le-file-server-name');
 var btn_cancel = $('.btn-cancel');
 var btn_submit = $('#submit');
 
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function initialize(){
     clearMessage();
     edit_id = null;
@@ -30,11 +37,14 @@ function initialize(){
     function onFailure(error) {
         displayMessage(error);
     }
+    displayLoader();
     mirror.getAllocatedDBEnv(function (error, response) {
     	console.log(error,response);
         if (error == null) {
+        	hideLoader();
             onSuccess(response);
         } else {
+        	hideLoader();
             onFailure(error);
         }
     });
@@ -100,13 +110,16 @@ btn_submit.click(function(){
             displayMessage(error);
         }
         console.log(edit_id,client_ids, legal_entity_ids);
+        displayLoader();
     	mirror.saveDBEnv(edit_id, client_id, legal_entity_id, parseInt($('#application_id').val()),
     		parseInt($('#database_server_id').val()), parseInt($('#le_database_server_id').val()),
     		parseInt($('#le_file_server_id').val()), client_ids, legal_entity_ids, function (error, response) {
             if (error == null) {
+            	hideLoader();
         		displaySuccessMessage(message.allocated_db_env);
                 onSuccess(response);
             } else {
+            	hideLoader();
                 onFailure(error);
             }
         });

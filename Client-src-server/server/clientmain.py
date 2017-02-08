@@ -178,6 +178,8 @@ class API(object):
                                 continue
 
             print "after connection created"
+            print self._group_databases
+            print self._le_databases
             # After database connection client poll for replication
 
             def client_added(clients):
@@ -275,6 +277,7 @@ class API(object):
             request_data = request_data_type.parse_structure(
                 actual_data
             )
+            print company_id
             if is_group is False :
                 company_id = request_data.request.legal_entity_id
 
