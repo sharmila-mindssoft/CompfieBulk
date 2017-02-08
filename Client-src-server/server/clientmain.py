@@ -81,7 +81,7 @@ class API(object):
         self._replication_managers_for_le = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            100,
+            5000,
             self.server_added
         )
         print "Databases initialize"
@@ -253,7 +253,7 @@ class API(object):
 
             _client_manager = ClientReplicationManager(
                 self._knowledge_server_address,
-                6000,
+                500,
                 client_added
             )
             # replication start

@@ -648,10 +648,14 @@ def get_countries(db):
 
 
 def get_domains(db):
-    query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
-        " t1.is_active FROM tbl_domains t1 "
+    query = "SELECT distinct t1.domain_id " + \
+        " FROM tbl_domains t1 "
+
     rows = db.select_all(query)
-    return return_domains(rows)
+    d_id = []
+    for r in rows :
+        d_id.append(r.get("domain_id"))
+    return d_id
 
 
 def get_le_domains(db):
