@@ -388,6 +388,30 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         logger.logClientApi("GetUserWiseReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
+    elif type(request) is clientreport.GetUnitListReportFilters:
+        logger.logClientApi(
+            "GetUnitListReportFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_unit_list_report_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetUnitListReportFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetUnitListReport:
+        logger.logClientApi(
+            "GetUnitListReport  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_unit_list_report(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetUnitListReport", "process end")
+        logger.logClientApi("------", str(time.time()))
+
     return result
 
 
@@ -1084,3 +1108,40 @@ def get_user_wise_report(db, request, session_user, client_id):
     else:
         result = process_user_wise_report(db, request)
         return clientreport.GetUserWiseReportSuccess(user_compliances=result)
+
+
+###############################################################################################
+# Objective: To get the filters data under selected legal entity, country and business group
+# Parameter: request object and the client id
+# Result: list of record sets which contains division, category, unit, domain and organization
+###############################################################################################
+def get_unit_list_report_filters(db, request, session_user, client_id):
+    country_id = request.country_id
+    business_group_id = request.business_group_id
+    legal_entity_id = request.legal_entity_id
+    divsions_list = get_divisions_for_unit_list(db, business_group_id, legal_entity_id)
+    categories_list = get_categories_for_unit_list(db, business_group_id, legal_entity_id)
+    units_list = get_units_list(db, country_id, business_group_id, legal_entity_id)
+    domains_organisation_list = get_domains_organization_for_le(db, legal_entity_id)
+    unit_status_list = get_units_status(db)
+    return clientreport.GetUnitListReportFiltersSuccess(
+        divisions=divsions_list, categories=categories_list, units_list=units_list,
+        domains_organisations_list=domains_organisation_list, unit_status_list=unit_status_list
+    )
+
+###############################################################################################
+# Objective: To get unit details under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains units and its status
+###############################################################################################
+def get_unit_list_report(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "UnitListReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_unit_list_report(db, request)
+        return clientreport.GetunitListReportSuccess(unit_list_report=result)
