@@ -2138,6 +2138,33 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getReviewSettingsUnitFilters(le_id, d_id, callback) {
+        var request = [
+            'GetReviewSettingsUnitFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id
+            }
+        ];
+        callerName = 'client_transaction';        
+        clientApiRequest(callerName, request, callback);
+    }
+    
+    function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback){
+        var request = [
+            'GetReviewSettingsComplianceFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id,
+                "unit_ids": units,                 
+                "f_id": f_type,
+                "sno": sno,
+            }
+        ];
+        callerName = 'client_transaction';        
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2272,7 +2299,9 @@ function initClientMirror() {
         getLegalEntityWiseReport: getLegalEntityWiseReport,
         getReviewSettingsFilters: getReviewSettingsFilters,
         getDomainWiseReportFilters: getDomainWiseReportFilters,
-        getDomainWiseReport: getDomainWiseReport
+        getDomainWiseReport: getDomainWiseReport,
+        getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
+        getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
     };
 }
 var client_mirror = initClientMirror();

@@ -91,6 +91,16 @@ def process_client_transaction_requests(request, db, session_user, client_id):
             db, request, session_user
         )
 
+    elif type(request) is clienttransactions.GetReviewSettingsUnitFilters:
+        result = process_review_settings_unit_filters(
+            db, request, session_user
+        )
+
+    elif type(request) is clienttransactions.GetReviewSettingsComplianceFilters:
+        result = process_review_settings_compliance_filters(
+            db, request, session_user
+        )
+
     return result
 
 
@@ -383,3 +393,26 @@ def process_review_settings_filters(db, request, session_user):
         compliance_frequency=frequency_type,
         domain_list=domains
     )
+
+
+########################################################
+# To get the unit list for based on legal entity, domain
+########################################################
+def process_review_settings_unit_filters(db, request, session_user):
+    units = get_review_settings_units(db, request, session_user)
+    return clienttransactions.GetReviewSettingsUnitFiltersSuccess(
+        rs_unit_list=units
+    )
+
+
+#####################################################################
+# To get the compliance list for based on legal entity, domain, units
+#####################################################################
+def process_review_settings_compliance_filters(db, request, session_user):
+    timeline = get_review_settings_timeline(db, request, session_user)
+    compliances = get_review_settings_compliance(db, request, session_user)
+    return clienttransactions.GetReviewSettingsComplianceFiltersSuccess(
+        rs_compliance_list=compliances,
+        timeline=timeline
+    )
+
