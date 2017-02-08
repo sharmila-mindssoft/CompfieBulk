@@ -649,10 +649,8 @@ class Database(object):
 
     def increment(self, table, column, condition, value=1, condition_val=None):
         rows = self.get_data(table, column, condition, condition_val)
-        print rows
-        print column
-        currentValue = int(rows[column[0]][column[0]]) if(
-            rows[column[0]][column[0]] is not None) else 0
+        currentValue = int(rows[0][column[0]]) if(
+            rows[0][column[0]] is not None) else 0
         if currentValue is not None:
             newValue = int(currentValue) + value
         else:
@@ -740,7 +738,7 @@ class Database(object):
             user_id = row["user_id"]
             self.update_session_time(session_token)
         return user_id
-        
+
     def update_session_time(self, session_token):
         q = '''
             update tbl_user_sessions set last_accessed_time = now()
