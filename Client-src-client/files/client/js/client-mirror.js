@@ -2131,6 +2131,45 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    /* Unit List report - updated*/
+    function getUnitListReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetUnitListReportFilters',
+            {
+                'country_id': country_id,
+                'business_group_id': business_group_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUnitListReport(
+        country_id, business_group_id, legal_entity_id, division_id, category_id,
+        unit_id, domain_id, organisation_id, unit_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetUnitListReport',
+            {
+                'country_id': country_id,
+                'business_group_id': business_group_id,
+                'legal_entity_id' : legal_entity_id,
+                'division_id': division_id,
+                'category_id': category_id,
+                'unit_id': unit_id,
+                'domain_id': domain_id,
+                'organisation_id': organisation_id,
+                'unit_status': unit_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2264,7 +2303,15 @@ function initClientMirror() {
         getLegalEntityWiseReport: getLegalEntityWiseReport,
         getReviewSettingsFilters: getReviewSettingsFilters,
         getDomainWiseReportFilters: getDomainWiseReportFilters,
-        getDomainWiseReport: getDomainWiseReport
+        getDomainWiseReport: getDomainWiseReport,
+        getUnitWiseReportFilters: getUnitWiseReportFilters,
+        getUnitWiseReport: getUnitWiseReport,
+        getServiceProviderWiseReportFilters: getServiceProviderWiseReportFilters,
+        getServiceProviderWiseReport: getServiceProviderWiseReport,
+        getUserWiseReportFilters: getUserWiseReportFilters,
+        getUserWiseReport: getUserWiseReport,
+        getUnitListReportFilters: getUnitListReportFilters,
+        getUnitListReport: getUnitListReport
     };
 }
 var client_mirror = initClientMirror();
