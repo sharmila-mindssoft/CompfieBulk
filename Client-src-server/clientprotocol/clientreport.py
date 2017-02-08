@@ -1491,6 +1491,86 @@ class GetUserWiseReport(Request):
             "page_count": self.page_count
         }
 
+class GetUnitListReportFilters(Request):
+    def __init__(self, country_id, business_group_id, legal_entity_id):
+        self.country_id = country_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "business_group_id", "legal_entity_id"])
+        country_id = data.get("country_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        return GetUnitListReportFilters(country_id, business_group_id, legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+        }
+
+class GetUnitListReport(Request):
+    def __init__(
+        self, country_id, business_group_id, legal_entity_id, division_id,
+        category_id, unit_id, domain_id, organisation_id, unit_status,
+        csv, from_count, page_count
+    ):
+        self.country_id = country_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id
+        self.category_id = category_id
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.organisation_id = organisation_id
+        self.unit_status = unit_status
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "business_group_id", "legal_entity_id", "division_id",
+            "category_id", "unit_id", "domain_id", "organisation_id", "unit_status",
+            "csv", "from_count", "page_count"
+        ])
+        country_id = data.get("country_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        division_id = data.get("division_id")
+        category_id = data.get("category_id")
+        unit_id = data.get("unit_id")
+        domain_id = data.get("domain_id")
+        organisation_id = data.get("organisation_id")
+        unit_status = data.get("unit_status")
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetUnitListReport(
+            country_id, business_group_id, legal_entity_id, division_id, category_id,
+            unit_id, domain_id, organisation_id, unit_status, csv, from_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+            "division_id": self.division_id,
+            "category_id": self.category_id,
+            "unit_id": self.unit_id,
+            "domain_id": self.domain_id,
+            "organisation_id": self.organisation_id,
+            "unit_status": self.unit_status,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
+
 def _init_Request_class_map():
     classes = [
         GetComplianceDetailsReportFilters, GetComplianceDetailsReport,
@@ -1506,7 +1586,8 @@ def _init_Request_class_map():
         GetActivityLogReport, GetLoginTrace, GetLegalEntityWiseReportFilters,
         GetLegalEntityWiseReport, GetDomainWiseReportFilters, GetDomainWiseReport,
         GetUnitWiseReportFilters, GetUnitWiseReport, GetServiceProviderWiseReportFilters,
-        GetServiceProviderWiseReport, GetUserWiseReportFilters, GetUserWiseReport
+        GetServiceProviderWiseReport, GetUserWiseReportFilters, GetUserWiseReport,
+        GetUnitListReportFilters, GetUnitListReport
     ]
     class_map = {}
     for c in classes:
@@ -2612,6 +2693,57 @@ class GetUserWiseReportSuccess(Response):
             "user_compliances" : self.user_compliances
         }
 
+class GetUnitListReportFiltersSuccess(Response):
+    def __init__(
+        self, divisions, categories, units_list, domains_organisations_list,
+        unit_status_list
+    ):
+        self.divisions = divisions
+        self.categories = categories
+        self.units_list = units_list
+        self.domains_organisations_list = domains_organisations_list
+        self.unit_status_list = unit_status_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "divisions", "categories", "units_list", "domains_organisations_list",
+            "unit_status_list"
+        ])
+        divisions = data.get("divisions")
+        categories = data.get("categories")
+        units_list = data.get("units_list")
+        domains_organisations_list = data.get("domains_organisations_list")
+        unit_status_list = data.get("unit_status_list")
+        return (
+            divisions, categories, units_list, domains_organisations_list, unit_status_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "divisions": self.divisions,
+            "categories": self.categories,
+            "units_list": self.units_list,
+            "domains_organisations_list": self.domains_organisations_list,
+            "unit_status_list": self.unit_status_list
+        }
+
+class GetunitListReportSuccess(Response):
+    def __init__(self, unit_list_report):
+        self.unit_list_report = unit_list_report
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["unit_list_report"])
+        unit_list_report = data.get("unit_list_report")
+        return GetunitListReportSuccess(unit_list_report)
+
+    def to_inner_structure(self):
+        return {
+            "unit_list_report" : self.unit_list_report
+        }
+
+
 class ExportToCSVSuccess(Response):
     def __init__(self, link):
         self.link = link
@@ -2654,7 +2786,9 @@ def _init_Response_class_map():
         GetServiceProviderWiseReportFiltersSuccess,
         GetServiceProviderWiseReportSuccess,
         GetUserWiseReportFiltersSuccess,
-        GetUserWiseReportSuccess
+        GetUserWiseReportSuccess,
+        GetUnitListReportFiltersSuccess,
+        GetunitListReportSuccess
     ]
     class_map = {}
     for c in classes:
@@ -4305,6 +4439,197 @@ class UsersActList(object):
             "approval_person": self.approval_person,
             "compliance_task": self.compliance_task,
             "statutory_mapping": self.statutory_mapping
+        }
+
+#
+# Unit List - Divisions
+#
+
+class Divisions(object):
+    def __init__(self, division_id, division_name):
+        self.division_id = division_id
+        self.division_name = division_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["division_id", "division_name"])
+        division_id = data.get("division_id")
+        division_name = data.get("division_name")
+        return Divisions(division_id, division_name)
+
+    def to_structure(self):
+        return {
+            "division_id": self.division_id,
+            "division_name": self.division_name,
+        }
+
+#
+# Unit List - Categories
+#
+
+class Category(object):
+    def __init__(self, division_id, category_id, category_name):
+        self.division_id = division_id
+        self.category_id = category_id
+        self.category_name = category_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["division_id", "category_id", "category_name"])
+        division_id = data.get("division_id")
+        category_id = data.get("category_id")
+        category_name = data.get("category_name")
+        return Category(division_id, category_id, category_name)
+
+    def to_structure(self):
+        return {
+            "division_id": self.division_id,
+            "category_id": self.category_id,
+            "category_name": self.category_name
+        }
+
+#
+# Unit List - Units
+#
+
+class UnitList(object):
+    def __init__(self, unit_id, unit_code, unit_name, division_id, category_id, d_ids, i_ids):
+        self.unit_id = unit_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.division_id = division_id
+        self.category_id = category_id
+        self.d_ids = d_ids
+        self.i_ids = i_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "unit_id", "unit_code", "unit_name", "division_id", "category_id", "d_ids", "i_ids"
+        ])
+        unit_id = data.get("unit_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        division_id = data.get("division_id")
+        category_id = data.get("category_id")
+        d_ids = data.get("d_ids")
+        i_ids = data.get("i_ids")
+        return UnitList(unit_id, unit_code, unit_name, division_id, category_id, d_ids, i_ids)
+
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "division_id": self.division_id,
+            "category_id": self.category_id,
+            "d_ids": self.d_ids,
+            "i_ids": self.i_ids
+        }
+
+#
+# Unit List - Domains and Organisation
+#
+
+class DomainsOrganisation(object):
+    def __init__(self, domain_id, domain_name, organisation_id, organisation_name):
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.organisation_id = organisation_id
+        self.organisation_name = organisation_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "domain_id", "domain_name", "organisation_id", "organisation_name"
+        ])
+        domain_id = data.get("domain_id")
+        domain_name = data.get("domain_name")
+        organisation_id = data.get("organisation_id")
+        organisation_name = data.get("organisation_name")
+        return DomainsOrganisation(
+            domain_id, domain_name, organisation_id, organisation_name
+        )
+
+    def to_structure(self):
+        return {
+            "domain_id": self.domain_id,
+            "domain_name": self.domain_name,
+            "organisation_id": self.organisation_id,
+            "organisation_name": self.organisation_name
+        }
+
+#
+# Unit Status
+#
+
+class UnitStatus(object):
+    def __init__(self, unit_status_id, unit_status):
+        self.unit_status_id = unit_status_id
+        self.unit_status = unit_status
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_status_id", "unit_status"])
+        unit_status_id = data.get("unit_status_id")
+        unit_status = data.get("unit_status")
+        return UnitStatus(unit_status_id, unit_status)
+
+    def to_structure(self):
+        return {
+            "unit_status_id": self.unit_status_id,
+            "unit_status": self.unit_status,
+        }
+
+class UnitListReport(object):
+    def __init__(
+        self, unit_id, unit_code, unit_name, geography_name, address, postal_code,
+        d_i_names, unit_status, closed_on, division_name
+    ):
+        self.unit_id = unit_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.geography_name = geography_name
+        self.address = address
+        self.postal_code = postal_code
+        self.d_i_names = d_i_names
+        self.unit_status = unit_status
+        self.closed_on = closed_on
+        self.division_name = division_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "unit_id", "unit_code", "unit_name", "geography_name", "address", "postal_code",
+            "d_i_names", "unit_status", "closed_on", "division_name"
+        ])
+        unit_id = data.get("unit_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        geography_name = data.get("geography_name")
+        address = data.get("address")
+        postal_code = data.get("postal_code")
+        d_i_names = data.get("d_i_names")
+        unit_status = data.get("unit_status")
+        closed_on = data.get("closed_on")
+        division_name = data.get("division_name")
+        return UnitListReport(
+            unit_id, unit_code, unit_name, geography_name, address, postal_code,
+            d_i_names, unit_status, closed_on, division_name
+        )
+
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit_code": self.unit_code,
+            "unit_name": self.unit_name,
+            "geography_name": self.geography_name,
+            "address": self.address,
+            "postal_code": self.postal_code,
+            "d_i_names": self.d_i_names,
+            "unit_status": self.unit_status,
+            "closed_on": self.closed_on,
+            "division_name": self.division_name
         }
 
 #
