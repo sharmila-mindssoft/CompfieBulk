@@ -599,14 +599,6 @@ def get_country_info(db, user_id, user_category_id):
 
 def get_legal_entity_info(db, user_id, user_category_id):
     if user_category_id == 1 :
-<<<<<<< HEAD
-        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, t1.client_id, " + \
-            "t1.business_group_id, t1.country_id, " + \
-            "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
-            "FROM tbl_legal_entities as t1 " + \
-            "WHERE contract_to >= date(now()) and is_closed = 0"
-            
-=======
         q = "SELECT t1.legal_entity_id, t1.legal_entity_name, " + \
             "t1.business_group_id, t1.country_id, t2.country_name, " + \
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
@@ -614,7 +606,6 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
             "WHERE contract_to >= CURDATE() and is_closed = 0"
 
->>>>>>> Kodee/phase2
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :
