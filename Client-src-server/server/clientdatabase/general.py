@@ -150,14 +150,18 @@ def get_domains_for_user(db, user_id):
     admin_id = get_admin_id(db)
     if user_id != admin_id:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
-        "t2.is_active FROM tbl_user_domains AS t1 " + \
-        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
-        "where t1.user_id = %s "
-        rows = db.select_all(query,[user_id])
+            "t2.is_active FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  " + \
+            "WHERE t1.legal_entity_id = %s "
+        print "-------------------->"
+        print query
+        rows = db.select_all(query, [user_id])
     else:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
-        "t2.is_active FROM tbl_user_domains AS t1 " + \
-        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
+            "t2.is_active FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  "
+        print "-------------------->"
+        print query
         rows = db.select_all(query)
     return return_domains(rows)
 
@@ -461,7 +465,7 @@ def return_units_assign(units):
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
         "t1.employee_code, t1.is_active from tbl_users as t1 " + \
-        "inner join tbl_user_domains as t2 ON t2.user_id = t1.user_id " 
+        "inner join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
     rows = db.select_all(query)
     return return_client_users(rows)
 
@@ -560,7 +564,7 @@ def get_forms_by_category(db, category_id):
 
 def get_user_forms(db, user_id):
     # except group admin forms
-    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu " + \
         "FROM tbl_forms as t1 " + \
         "INNER JOIN tbl_user_group_forms as t2 on t1.form_id = t2.form_id " + \
         "INNER JOIN tbl_users as t3 on t2.user_group_id = t3.user_group_id " + \
@@ -595,17 +599,28 @@ def get_country_info(db, user_id, user_category_id):
 
 def get_legal_entity_info(db, user_id, user_category_id):
     if user_category_id == 1 :
+<<<<<<< HEAD
         q = "SELECT t1.legal_entity_id, t1.legal_entity_name, t1.client_id, " + \
             "t1.business_group_id, t1.country_id, " + \
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
             "WHERE contract_to >= date(now()) and is_closed = 0"
             
+=======
+        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, " + \
+            "t1.business_group_id, t1.country_id, t2.country_name, " + \
+            "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
+            "FROM tbl_legal_entities as t1 " + \
+            "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
+            "WHERE contract_to >= CURDATE() and is_closed = 0"
+
+>>>>>>> Kodee/phase2
         rows = db.select_all(q)
-        #print "------------------ Admin ---------------"
+        # print "------------------ Admin ---------------"
     else :
         q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
-            "t1.client_id, t1.business_group_id, t3.country_name, " + \
+            "t1.business_group_id, t1.country_id, t3.country_name, " + \
+            "t1.client_id, t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
             "inner join tbl_user_domains as t2 on " + \
@@ -613,7 +628,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "inner join tbl_countries t3 on t1.country_id = t3.country_id " + \
             "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
         rows = db.select_all(q, [user_id])
-        #print "------------------ User ---------------"
+        # print "------------------ User ---------------"
     le_list = []
     for r in rows :
         le_list.append(clientcore.LegalEntityInfo(
@@ -653,10 +668,14 @@ def get_domains(db):
     query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
         " t1.is_active FROM tbl_domains t1 "
     rows = db.select_all(query)
-    columns = ["domain_id", "domain_name", "is_active"]
-    result = convert_to_dict(rows, columns)
-    return return_domains(result)
+    return return_domains(rows)
 
+
+def get_le_domains(db):
+    query = "SELECT distinct t1.domain_id" + \
+        "  FROM tbl_legal_entity_domains t1 "
+    rows = db.select_all(query)
+    return rows
 
 def is_primary_admin(db, user_id):
     column = "count(1) as result"
@@ -1847,7 +1866,7 @@ def get_trail_id(db, type=None):
         query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id " + \
             " from tbl_audit_log;"
     row = db.select_one(query)
-    trail_id = row[0]
+    trail_id = row.get("audit_trail_id")
     return trail_id
 
 

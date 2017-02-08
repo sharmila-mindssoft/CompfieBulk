@@ -8813,6 +8813,27 @@ BEGIN
             inner join tbl_legal_entity_domains as led on o.domain_id = led.domain_id
             where client_id = cid and le.legal_entity_id = le_id;
 
+        select client_id, group_name, short_name, email_id, total_view_licence from
+            tbl_client_groups where client_id = cid;
+
+        select client_id, country_id, domain_id, month_from, month_to
+            from tbl_client_configuration where client_id = cid;
+
+        select client_id, legal_entity_id, legal_entity_name, country_id,
+            business_group_id, contract_from, contract_to, logo,
+            logo_size, file_space_limit, total_licence from
+                tbl_legal_entities where client_id = cid and legal_entity_id = le_id;
+
+        select legal_entity_id, domain_id, activation_date,
+        organisation_id, count from tbl_legal_entity_domains where
+            legal_entity_id = le_id;
+
+
+        select b.business_group_id, b.business_group_name from tbl_business_groups as b
+        inner join tbl_legal_entities as l on b.business_group_id = l.business_group_id
+        where l.legal_entity_id = le_id;
+
+
     END IF ;
 
 END //

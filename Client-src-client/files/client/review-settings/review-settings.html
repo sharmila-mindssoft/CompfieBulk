@@ -56,6 +56,10 @@
                                                 <div class="col-md-6">
                                                     <input class="form-control input-sm domain" type="text" >
                                                     <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                    <input type="hidden" id="domain-id" value="">
+                                                    <div id="ac-domain" class="ac-textbox default-display-none">
+                                                      <ul class="hidemenu"></ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -401,13 +405,12 @@
                                         </div>
 
                                         <div class="clearfix"></div>
-                                    <p class="rpt-count">Selected Compliance: <span class="selected-count"></span></p>
+                                    <p class="rpt-count total_count_view">Selected Compliance: <span class="selected-count"></span></p>
                                 </div>
                                 <ul class="pager wizard m-b-0">
-                                    <li class="previous disabled" id="previous-button"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
-                                    <li class="next" id="next-button"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
-                                    <li class="finish pull-right" id="submit-button"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
-                                    <li class="finish pull-right" id="save-button"><a href="#" class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li>
+                                    <li id="previous-button" class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                    <li id="next-button" class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                    <li id="submit-button" class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -435,23 +438,24 @@
         </div>
     </div>
 </div>
-<div id="templates">
+
+<div id="templates" class="default-display-none">
   <p class="form-control-static text-left"></p>           
   <ul class="unit-list-ul"> 
     <li class="heading"></li>
-    <li></li>
+    <li class="unit-names"></li>
   </ul>
-  <table >
-    <tr class="table-no-record">
+  <table class="table-no-record">
+    <tr>
       <td colspan="10" align="center"> No Records Found</td>
     </tr>
   </table>
   <div class="panel-heading p-0" role="tab" id="headingOne">
     <h4 class="panel-title">
-        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 act-name"> </a>
+        <a role="button" data-toggle="collapse" data-parent="#accordion"  aria-expanded="true"  class="p-5 act-name"> </a>
     </h4>
   </div>
-  <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+  <div class="panel-collapse coll-title collapse in" role="tabpanel">
     <div class="panel-body no-padding">
       <div class="dataTable_wrapper top-lightborder">
         <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
@@ -480,7 +484,14 @@
   </div>   
   <div class="div-compliance-list">               
     <table>
-     <tr>
+      <tr class="sub-title-row">
+        <td colspan="100%">
+            <div class="col-sm-2 no-padding">
+                <mark class="p-l-10 p-r-10 sub-title"></mark>
+            </div>
+        </td>
+      </tr>
+     <tr class="compliance-details">
         <td>
           <div class="checkbox checkbox-primary m-b-0 m-t-0">
               <input id="checkbox2" type="checkbox" checked="">
@@ -503,8 +514,8 @@
               <option>Year(s)</option>
           </select></div>
         </td>        
-        <td><input class="form-control input-sm due-date" value="31-Dec-2016" type="text"></td>
-        <td><div class="col-sm-6 no-padding-left"><input class="form-control input-sm trigger" value="25" type="text"></div></td>
+        <td><input class="form-control input-sm due-date" value="" type="text"></td>
+        <td><div class="col-sm-6 no-padding-left"><input class="form-control input-sm trigger" value="" type="text"></div></td>
         <td class="text-center"><a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" class="applicable-count">3 / 3</a></td>
       </tr>
       <tr class="secondary-act">

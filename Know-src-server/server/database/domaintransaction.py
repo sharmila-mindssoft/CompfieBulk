@@ -148,7 +148,7 @@ def get_compliances_to_assign(db, request, user_id):
     domain_id = request.domain_id
     rcount = request.rcount
     if len(unit_ids) > 1 :
-        show_count = 20
+        show_count = 50
     else:
         show_count = 50
     results = []
@@ -444,7 +444,8 @@ def save_approve_statutories(db, request, user_id):
     if reason is None :
         reason = ''
 
-    q = "update tbl_client_statutories set reason = %s, status = %s where unit_id = %s and client_statutory_id = %s"
+    q = "update tbl_client_statutories set reason = %s, status = %s where" + \
+    " unit_id = %s and client_statutory_id = %s"
     params = [reason, s_s, unit_id, client_statutory_id]
     db.execute(q, params)
 
@@ -452,7 +453,8 @@ def save_approve_statutories(db, request, user_id):
 
         for c in compliance_ids :
             # reject selected compliances
-            q1 = "UPDATE tbl_client_compliances set is_approved=%s, approved_by=%s, approved_on=%s" + \
+            q1 = "UPDATE tbl_client_compliances set is_approved=%s, approved_by=%s, "+ \
+            " approved_on=%s" + \
                 " where unit_id = %s and domain_id = %s and compliance_id = %s"
             db.execute(q1, [4, user_id, get_date_time(), unit_id, domain_id, c])
 
@@ -462,12 +464,16 @@ def save_approve_statutories(db, request, user_id):
 
     else :
         # is_approve = 5 when the compliance is applicable or not applicable
-        q1 = "UPDATE tbl_client_compliances set is_approved=%s where compliance_applicable_status != 3 and client_statutory_id = %s"
-        db.execute(q1, [5, client_statutory_id])
+        q1 = "UPDATE tbl_client_compliances set is_submitted=%s, submitted_by=%s, " + \
+            " submitted_on=%s, is_approved=%s where compliance_applicable_status != 3 " + \
+            " and client_statutory_id = %s"
+        db.execute(q1, [1, user_id, get_date_time(), 5, client_statutory_id])
 
         # is_approve = 3 when the compliance is not at all applicable because it has to reshow domain users
-        q1 = "UPDATE tbl_client_compliances set is_approved=%s where compliance_applicable_status = 3 and client_statutory_id = %s"
-        db.execute(q1, [3, client_statutory_id])
+        q1 = "UPDATE tbl_client_compliances set is_approved=%s, " + \
+            " approved_by=%s, approved_on=%s  where " + \
+            " compliance_applicable_status = 3 and client_statutory_id = %s"
+        db.execute(q1, [3, user_id, get_date_time(), client_statutory_id])
 
         msg = "Assgined statutories has been approved for unit %s in %s domain " % (
             unit_name, domain_name

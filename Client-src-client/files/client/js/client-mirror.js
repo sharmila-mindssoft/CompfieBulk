@@ -1984,7 +1984,6 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-
     function getDomainWiseReport(
         country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
         compliance_id, frequency_id, user_type, user_id, from_date, to_date,
@@ -2053,6 +2052,32 @@ function initClientMirror() {
             }
         ];
         callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    function getReviewSettingsUnitFilters(le_id, d_id, callback) {
+        var request = [
+            'GetReviewSettingsUnitFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id
+            }
+        ];
+        callerName = 'client_transaction';        
+        clientApiRequest(callerName, request, callback);
+    }
+    
+    function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback){
+        var request = [
+            'GetReviewSettingsComplianceFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id,
+                "unit_ids": units,                 
+                "f_id": f_type,
+                "sno": sno,
+            }
+        ];
+        callerName = 'client_transaction';        
         clientApiRequest(callerName, request, callback);
     }
 
@@ -2189,8 +2214,13 @@ function initClientMirror() {
         getLegalEntityWiseReportFilters: getLegalEntityWiseReportFilters,
         getLegalEntityWiseReport: getLegalEntityWiseReport,
         getReviewSettingsFilters: getReviewSettingsFilters,
+<<<<<<< HEAD
         getDomainWiseReportFilters: getDomainWiseReportFilters,
         getDomainWiseReport: getDomainWiseReport
+=======
+        getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
+        getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
+>>>>>>> Kodee/phase2
     };
 }
 var client_mirror = initClientMirror();
