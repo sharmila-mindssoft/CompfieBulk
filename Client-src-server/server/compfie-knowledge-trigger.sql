@@ -1161,8 +1161,55 @@ DELIMITER ;
 
 
 -- ------------------
--- Triggers `tbl_client_compliances`
+-- Triggers `tbl_client_statutories` `tbl_client_compliances`
 -- -------------------
+DROP TRIGGER IF EXISTS `after_tbl_client_statutories_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client_statutories`
+ FOR EACH ROW BEGIN
+    SET @action = 0;
+    set @legal_entity_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id);
+    set @domain_id = (select domain_id from tbl_client_compliances where client_statutory_id = new.client_statutory_id);
+
+    IF new.status = 3 then
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    0,
+                    @legal_entity_id,
+                    NEW.client_statutory_id,
+                    'unit_id',
+                    NEW.unit_id,
+                    'tbl_client_statutories');
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    0,
+                    @legal_entity_id,
+                    NEW.client_statutory_id,
+                    'domain_id',
+                    @domain_id,
+                    'tbl_client_statutories');
+
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE client_id = @legal_entity_id and is_group = 0;
+    END IF ;
+
+END
+//
+DELIMITER ;
+
 
 DROP TRIGGER IF EXISTS `after_tbl_client_compliances_update`;
 DELIMITER //

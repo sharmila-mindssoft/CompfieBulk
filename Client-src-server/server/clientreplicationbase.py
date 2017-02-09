@@ -166,7 +166,7 @@ class ReplicationBase(object):
             "tbl_units_organizations": "unit_id",
             "tbl_client_configuration": "client_id",
             "tbl_compliances": "compliance_id",
-            # "tbl_client_statutories": "client_statutory_id",
+            "tbl_client_statutories": "client_statutory_id",
             "tbl_client_compliances": "client_compliance_id",
             "tbl_statutory_notifications": "notification_id",
             # "tbl_statutory_notifications_units": "statutory_notification_unit_id",
@@ -188,7 +188,7 @@ class ReplicationBase(object):
             "tbl_units": 12,
             "tbl_units_organizations": 3,
             "tbl_compliances": 22,
-            "tbl_client_statutories": 5,
+            "tbl_client_statutories": 3,
             "tbl_client_compliances": 13,
             "tbl_statutory_notifications": 5,
             # "tbl_statutory_notifications_units": 6,
@@ -274,7 +274,6 @@ class ReplicationBase(object):
         elif tbl_name == "tbl_client_groups" :
             query += " ON DUPLICATE KEY UPDATE client_id = values(client_id) ;"
         elif tbl_name == "tbl_legal_entities" :
-
             query += " ON DUPLICATE KEY UPDATE legal_entity_id = values(legal_entity_id) ;"
         elif tbl_name == "tbl_units":
             query += " ON DUPLICATE KEY UPDATE unit_id = values(unit_id) ;"
