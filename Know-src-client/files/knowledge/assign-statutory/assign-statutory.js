@@ -120,7 +120,7 @@ function callAPI(api_type) {
             if (error == null) {
                 ASSIGNED_STATUTORIES = data.assigned_statutories;
                 loadAssignedStatutories();
-                
+
             } else {
                 displayMessage(error);
                 hideLoader();
@@ -192,7 +192,12 @@ function callAPI(api_type) {
                 }
             }
         }
-
+        var selected_compliances_list = [];
+        $.each(SELECTED_COMPLIANCE, function(key, value) {
+            selected_compliances_list.push(
+                value
+            );
+        });
         if (submission_status == 1 && selected_compliances_list.length == 0) {
             displayMessage(message.nocompliance_selected_forassign);
             hideLoader();
@@ -203,13 +208,7 @@ function callAPI(api_type) {
             hideLoader();
             return false;
         } else {
-            var selected_compliances_list = [];
-            $.each(SELECTED_COMPLIANCE, function(key, value) {
-                selected_compliances_list.push(
-                    value
-                );
-            });
-        
+
             mirror.saveAssignedStatutory(selected_compliances_list, submission_status, int(val_group_id), int(val_legal_entity_id),
                 int(val_domain_id), DomainName.val(),
                 function(error, data) {
@@ -579,7 +578,7 @@ function loadUnits() {
 }
 
 function activateUnit(element) {
-     
+
     var chkstatus = $(element).attr('class');
     var chkid = $(element).attr('id');
     if (chkstatus == 'active') {
@@ -597,7 +596,7 @@ function activateUnit(element) {
             ACTIVE_UNITS.push(parseInt(chkid));
         }
     }
-    
+
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
 
@@ -707,7 +706,7 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     alert($('#act' + id).attr("for"))*/
     var A_STATUS = $('#act' + combine_ids[2]).attr("for");
     var A_REMARK = null;
-    
+
     var C_STATUS = parseInt($(element).val());
     if (C_STATUS > 1 && $('#remark' + combine_ids[2]).val() != '') {
         A_REMARK = $('#remark' + combine_ids[2]).val();
@@ -1045,7 +1044,7 @@ function loadSingleUnitCompliances() {
             compliancestatus(this, value.comp_id, value.u_id, value.level_1_s_id);
         });
 
-        
+
         $('#collapse' + count + ' .tbody-compliance-list').append(clone2);
 
         if (value.comp_status > 0) {
@@ -1123,7 +1122,7 @@ function loadMultipleUnitCompliances() {
         applcount = 0;
         var complianceDetailtableRow = $('.mul-compliance-details');
         var clone2 = complianceDetailtableRow.clone();
-        
+
         $('tr', clone2).addClass('act' + count);
         $('.sno', clone2).text(sno);
         $('.statutoryprovision', clone2).text(value.s_provision);
@@ -1144,13 +1143,13 @@ function loadMultipleUnitCompliances() {
         $('tr', clone5).addClass('act' + count);
         $('.sub-tick', clone5).attr('id', 'sub-tick-' + sno);
         $('.sub-tick', clone5).attr('name', 'sub-check-' + sno);
-        
+
         $('.sub-untick', clone5).attr('id', 'sub-untick-' + sno);
         $('.sub-untick', clone5).attr('name', 'sub-check-' + sno);
-        
+
         $('.sub-minus', clone5).attr('id', 'sub-minus-' + sno);
         $('.sub-minus', clone5).attr('name', 'sub-check-' + sno);
-        
+
         temp1 = temp1 + clone5.html();
 
         $(':checkbox').on('change', function() {
@@ -1196,7 +1195,7 @@ function loadMultipleUnitCompliances() {
             $('.compliance-ck-box-3', clone4).attr('id', 'minus' + statutoriesCount);
             $('.compliance-ck-box-3', clone4).addClass('minus' + count + ' sub-minus-' + (sno - 1));
             $('.compliance-label-3', clone4).attr('for', 'minus' + statutoriesCount);
-            
+
             if(value1.comp_status > 0){
                 if(value1.comp_status == 1){
                     $('.compliance-ck-box-1', clone4).attr('checked', true);
@@ -1210,7 +1209,7 @@ function loadMultipleUnitCompliances() {
             $('.remarks').on('input', function(e) {
                 this.value = isCommon($(this));
             });
-    
+
             temp = temp + clone4.html();
             statutoriesCount++;
         });

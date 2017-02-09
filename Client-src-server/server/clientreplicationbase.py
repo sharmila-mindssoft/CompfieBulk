@@ -159,37 +159,43 @@ class ReplicationBase(object):
             "tbl_client_groups": "client_id",
             "tbl_business_groups": "business_group_id",
             "tbl_legal_entities": "legal_entity_id",
+            "tbl_legal_entity_domains": "legal_entity_id",
             "tbl_divisions": "division_id",
             "tbl_categories": "category_id",
             "tbl_units": "unit_id",
-            # "tbl_client_configurations": "client_config_id",
+            "tbl_units_organizations": "unit_id",
+            "tbl_client_configuration": "client_id",
             "tbl_compliances": "compliance_id",
-            # "tbl_client_statutories": "client_statutory_id",
+            "tbl_client_statutories": "client_statutory_id",
             "tbl_client_compliances": "client_compliance_id",
             "tbl_statutory_notifications": "notification_id",
             # "tbl_statutory_notifications_units": "statutory_notification_unit_id",
             "tbl_countries": "country_id",
             "tbl_domains": "domain_id",
-            "tbl_validity_date_settings": "validity_date_id"
+            "tbl_validity_date_settings": "validity_date_id",
+            "tbl_mapped_industries": "statutory_mapping_id"
         }
 
     def _load_columns_count(self):
         self._columns_count = {
             "tbl_client_groups": 5,
+            "tbl_client_configuration": 5,
             "tbl_business_groups": 2,
             "tbl_legal_entities": 10,
+            "tbl_legal_entity_domains": 5,
             "tbl_divisions": 4,
             "tbl_categories": 5,
             "tbl_units": 12,
-            # "tbl_client_configurations": 5,
-            "tbl_compliances": 21,
-            "tbl_client_statutories": 5,
+            "tbl_units_organizations": 3,
+            "tbl_compliances": 22,
+            "tbl_client_statutories": 3,
             "tbl_client_compliances": 13,
             "tbl_statutory_notifications": 5,
             # "tbl_statutory_notifications_units": 6,
             "tbl_countries": 2,
             "tbl_domains": 2,
-            "tbl_validity_date_settings": 4
+            "tbl_validity_date_settings": 4,
+            "tbl_mapped_industries": 2
         }
 
     # def _get_client_countries(self):
@@ -208,15 +214,15 @@ class ReplicationBase(object):
 
     def _get_client_domains(self):
         print "---------------------------"
-        domain_list = None
         self._db.begin()
         try:
-            domain_list = get_domains(self._db)
-            print domain_list
-            for d in domain_list :
-                self._domains.append(int(d.get("domain_id")))
-                print self._domains
-                print "=-=-=-"
+            self._domains = get_domains(self._db)
+            self._domains
+
+            # for d in domain_list :
+            #     self._domains.append(int(d.get("domain_id")))
+            #     print self._domains
+            #     print "=-=-=-"
             self._db.commit()
         except Exception, e :
             print e
@@ -255,13 +261,25 @@ class ReplicationBase(object):
                     domain_id = int(x.value)
             val = str(values)[1:-1]
 
-        query = "INSERT INTO %s (%s, %s) VALUES(%s, %s);" % (
-            tbl_name,
-            auto_id,
-            ",".join(i_column),
-            changes[0].tbl_auto_id,
-            val
-        )
+        query = "INSERT INTO %s (%s, %s) VALUES(%s, %s)" % (
+                tbl_name,
+                auto_id,
+                ",".join(i_column),
+                changes[0].tbl_auto_id,
+                val
+            )
+
+        if tbl_name == "tbl_compliances" :
+            query += " ON DUPLICATE KEY UPDATE compliance_id = values(compliance_id) ;"
+        elif tbl_name == "tbl_client_groups" :
+            query += " ON DUPLICATE KEY UPDATE client_id = values(client_id) ;"
+        elif tbl_name == "tbl_legal_entities" :
+            query += " ON DUPLICATE KEY UPDATE legal_entity_id = values(legal_entity_id) ;"
+        elif tbl_name == "tbl_units":
+            query += " ON DUPLICATE KEY UPDATE unit_id = values(unit_id) ;"
+        else :
+            query += ""
+
         try :
             print domain_id, self._domains
             print tbl_name
@@ -270,6 +288,13 @@ class ReplicationBase(object):
                 self._db.execute(query)
             elif tbl_name == "tbl_compliances" and domain_id in self._domains :
                 self._db.execute(query)
+
+            # if tbl_name == "tbl_legal_entities" :
+            #     self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [auto_id])
+            # elif tbl_name == "tbl_client_groups" :
+            #     self._db.execute("delete from tbl_client_configuration")
+            # elif tbl_name == "tbl_units" :
+            #     self._db.execute("delete from tbl_units_organizations where unit_id = %s", [auto_id])
 
         except Exception, e:
             pass

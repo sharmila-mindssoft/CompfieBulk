@@ -18,7 +18,6 @@ CREATE TABLE `tbl_audit_log` (
   `tbl_auto_id` int(10),
   `column_name` varchar(100),
   `value` longtext,
-  `audit_type` tinyint(4),
   `client_id` int(10),
   `legal_entity_id` int(11),
   `action` varchar(20)

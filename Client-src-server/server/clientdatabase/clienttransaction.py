@@ -53,17 +53,86 @@ __all__ = [
     "get_domains_for_legalentity",
     "get_review_settings_timeline",
     "get_review_settings_compliance",
+
+    "get_user_based_legal_entity", "get_user_based_division",
+    "get_user_based_category",
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
+def get_user_based_legal_entity(db, user_id, user_category):
 
-def get_statutory_settings(db, legal_entity_id, session_user):
-    cat_id = get_user_category(db, session_user)
+    q = "select t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id " + \
+        " from tbl_legal_entities t1"
+
+    if user_category == 1 :
+        rows = db.select_all(q, None)
+    else :
+        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+        rows = db.select_all(q, [user_id])
+
+    results = []
+    for legal_entity in rows:
+        b_group_id = None
+        if legal_entity["business_group_id"] > 0:
+            b_group_id = int(legal_entity["business_group_id"])
+        results.append(clientcore.ClientLegalEntity(
+            legal_entity["legal_entity_id"],
+            legal_entity["legal_entity_name"],
+            b_group_id
+        ))
+    return results
+
+def get_user_based_division(db, user_id, user_category):
+
+    q = "select t1.division_id, t1.division_name, t1.legal_entity_id, t1.business_group_id " + \
+        " from tbl_divisions t1"
+
+    if user_category == 1 :
+        rows = db.select_all(q, None)
+    else :
+        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+        rows = db.select_all(q, [user_id])
+
+    results = []
+    for division in rows:
+        division_obj = clientcore.ClientDivision(
+            division["division_id"], division["division_name"],
+            division["legal_entity_id"], division["business_group_id"]
+        )
+        results.append(division_obj)
+    return results
+
+
+def get_user_based_category(db, user_id, user_category):
+
+    q = "select t1.category_id, t1.category_name, t1.division_id, t1.legal_entity_id, t1.business_group_id " + \
+        " from tbl_categories t1"
+
+    if user_category == 1 :
+        rows = db.select_all(q, None)
+    else :
+        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+        rows = db.select_all(q, [user_id])
+
+    results = []
+    for c in rows:
+        c = clientcore.Category(
+            c["category_id"], c["category_name"], c["division_id"], c["legal_entity_id"],
+            c["business_group_id"]
+        )
+        results.append(c)
+    return results
+
+def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
+    user_cat_id = get_user_category(db, session_user)
     user_id = int(session_user)
     where_qry = " WHERE t1.legal_entity_id = %s and t2.is_closed = 0 "
     condition_val = [legal_entity_id]
-    if cat_id > 3:
+    if user_cat_id > 3:
         where_qry += " WHERE t1.unit_id in ( " + \
             " select unit_id from tbl_user_units where user_id LIKE %s) " + \
             " AND t1.domain_id in (select domain_id from tbl_user_domains " + \
@@ -91,6 +160,7 @@ def get_statutory_settings(db, legal_entity_id, session_user):
         " INNER JOIN tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id %s" + \
         " ORDER BY t1.unit_id "
     query = query % (where_qry)
+    print query
     if condition_val is None:
         rows = db.select_all(query)
     else:
