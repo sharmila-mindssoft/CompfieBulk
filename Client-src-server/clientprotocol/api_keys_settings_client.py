@@ -90,6 +90,7 @@ api_params = {
     "le_name": make_string_field(),
     "bg_name": make_string_field(is_optional=True),
     "bg_id": make_int_field(is_optional=True),
+    "cat_id": make_int_field(is_optional=True),
     "usr_id": make_int_field(),
     "email_id": make_string_field(validfun=allow_specialchar),
     "emp_name": make_string_field(is_optional=True),
@@ -117,7 +118,7 @@ api_params = {
     "d_ids": make_vector_type_int(),
     "d_name": make_string_field(),
     "d_names": make_vector_type_string(),
-    "div_id": make_int_field(),
+    "div_id": make_int_field(is_optional=True),
     "div_name": make_string_field(is_optional=True),
     "is_closed": make_bool_field(),
     "is_new": make_bool_field(),
@@ -211,7 +212,7 @@ api_params = {
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "bg_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
     "le_infos": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
-    "div_infos": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
+    "div_infos": make_vector_type_field(module="clientcore", klass_name="ClientDivision", is_optional=True),
     "units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
     "acts": make_vector_type_field(module="clientcore", klass_name="ClientAct"),
     "compliances": make_vector_type_field(module="clientcore", klass_name="ComplianceFilter"),
@@ -270,4 +271,6 @@ api_params = {
     "month_from": make_int_field(),
     "month_to": make_int_field(),
     "level_1_s_name": make_string_field(),
+
+    "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True)
 }

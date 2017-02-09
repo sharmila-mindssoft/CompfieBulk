@@ -724,7 +724,7 @@ class Database(object):
         return True
 
     def validate_session_token(self, session_token):
-        query = "SELECT t01.user_id FROM tbl_user_sessions t01 " + \
+        query = "SELECT t01.user_id, t02.user_category_id FROM tbl_user_sessions t01 " + \
             " LEFT JOIN tbl_user_login_details t02 ON t01.user_id = t02.user_id " + \
             " and is_active = 1 " + \
             " WHERE  session_token=%s"
@@ -734,10 +734,12 @@ class Database(object):
         row = self.select_one(query, param)
         #print row
         user_id = None
+        user_cat_id = None
         if row:
             user_id = row["user_id"]
+            user_cat_id = row["user_category_id"]
             self.update_session_time(session_token)
-        return user_id
+        return user_id, user_cat_id
 
     def update_session_time(self, session_token):
         q = '''
