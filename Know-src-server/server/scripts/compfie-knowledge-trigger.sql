@@ -1226,7 +1226,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'legal_entity_id',
@@ -1242,7 +1242,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     new.legal_entity_id,
                     NEW.client_compliance_id,
                     'unit_id',
@@ -1258,7 +1258,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     new.legal_entity_id,
                     NEW.client_compliance_id,
                     'domain_id',
@@ -1274,7 +1274,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     new.legal_entity_id,
                     NEW.client_compliance_id,
                     'statutory_applicable_status',
@@ -1290,7 +1290,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'remarks',
@@ -1305,7 +1305,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'compliance_id',
@@ -1320,7 +1320,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'compliance_applicable_status',
@@ -1335,7 +1335,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'is_new',
@@ -1350,7 +1350,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'is_submitted',
@@ -1365,7 +1365,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'submitted_by',
@@ -1380,7 +1380,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  value,
                                  tbl_name)
             VALUES (@action,
-                    NEW.client_id,
+                    0,
                     NEW.legal_entity_id,
                     NEW.client_compliance_id,
                     'submitted_on',

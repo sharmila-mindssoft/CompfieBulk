@@ -763,49 +763,54 @@ class Response(object):
         raise NotImplementedError
 
 class UnitStatutoryCompliances(object):
-    def __init__(self, unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, is_closed, is_new):
+    def __init__(
+        self, unit_id, unit_name, address, domain_name,
+        is_new, is_locked, allow_unlock,
+        updated_by, updated_on
+    ):
         self.unit_id = unit_id
         self.unit_name = unit_name
         self.address = address
-        self.country_name = country_name
-        self.domain_names = domain_names
-        self.business_group_name = business_group_name
-        self.legal_entity_name = legal_entity_name
-        self.division_name = division_name
-        self.is_closed = is_closed
+        self.domain_name = domain_name
         self.is_new = is_new
+        self.is_locked = is_locked
+        self.allow_unlock = allow_unlock
+        self.updated_by = updated_by
+        self.updated_on = updated_on
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "u_id", "u_name", "address", "c_name", "d_names",
-            "bg_name", "le_name", "div_name",
-            "is_closed", "is_new"
+            "u_id", "u_name", "address", "c_name", "d_name",
+            "is_new", "is_locked", "allow_unlock",
+            "usr_by", "usr_on"
         ])
         unit_id = data.get("u_id")
         unit_name = data.get("u_name")
         address = data.get("address")
-        country_name = data.get("c_name")
-        domain_names = data.get("d_names")
-        business_group_name = data.get("bg_name")
-        legal_entity_name = data.get("le_name")
-        division_name = data.get("div_name")
-        is_closed = data.get("is_closed")
+        domain_name = data.get("d_name")
         is_new = data.get("is_new")
-        return UnitStatutoryCompliances(unit_id, unit_name, address, country_name, domain_names, business_group_name, legal_entity_name, division_name, is_closed, is_new)
+        is_locked = data.get("is_locked")
+        allow_unlock = data.get("allow_unlock")
+        updated_by = data.get("usr_by")
+        updated_on = data.get("usr_on")
+        return UnitStatutoryCompliances(
+            unit_id, unit_name, address, domain_name,
+            is_new, is_locked, allow_unlock,
+            updated_by, updated_on
+        )
 
     def to_structure(self):
         return {
             "u_id": self.unit_id,
             "u_name": self.unit_name,
             "address": self.address,
-            "c_name": self.country_name,
-            "d_names": self.domain_names,
-            "bg_name": self.business_group_name,
-            "le_name": self.legal_entity_name,
-            "div_name": self.division_name,
-            "is_closed": self.is_closed,
-            "is_new": self.is_new
+            "d_names": self.domain_name,
+            "is_new": self.is_new,
+            "is_locked": self.is_locked,
+            "allow_unlock": self.allow_unlock,
+            "usr_by": self.updated_by,
+            "usr_on": self.updated_on
         }
 
 class GetStatutorySettingsFiltersSuccess(Response):

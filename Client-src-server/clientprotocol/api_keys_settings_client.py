@@ -290,5 +290,10 @@ api_params = {
     "month_to": make_int_field(),
     "level_1_s_name": make_string_field(),
 
-    "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True)
+    "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True),
+    "usr_by": make_text_field(is_optional=True),
+    "usr_on": make_text_field(is_optional=True),
+    "is_locked": make_bool_field(),
+    "allow_unlock": make_bool_field(),
+    "is_new": make_bool_field()
 }
