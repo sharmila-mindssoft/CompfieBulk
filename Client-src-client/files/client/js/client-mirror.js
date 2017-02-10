@@ -2132,7 +2132,7 @@ function initClientMirror() {
     }
 
     /* Unit List report - updated*/
-    function getUnitListReportFilters(country_id, le_id, callback) {
+    function getUnitListReportFilters(country_id, business_group_id, le_id, callback) {
         var request = [
             'GetUnitListReportFilters',
             {
@@ -2161,6 +2161,41 @@ function initClientMirror() {
                 'domain_id': domain_id,
                 'organisation_id': organisation_id,
                 'unit_status': unit_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Statutory Notifications List report - updated*/
+    function getStatutoryNotificationsListReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetStatutoryNotificationsListReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function GetStatutoryNotificationsListReportData(
+        country_id, legal_entity_id, domain_id, statutory_mapping, from_date,
+        to_date, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetStatutoryNotificationsListReportData',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'domain_id': domain_id,
+                'statutory_mapping': statutory_mapping,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
                 'csv': csv,
                 'from_count': from_count,
                 'page_count': page_count
@@ -2311,7 +2346,9 @@ function initClientMirror() {
         getUserWiseReportFilters: getUserWiseReportFilters,
         getUserWiseReport: getUserWiseReport,
         getUnitListReportFilters: getUnitListReportFilters,
-        getUnitListReport: getUnitListReport
+        getUnitListReport: getUnitListReport,
+        getStatutoryNotificationsListReportFilters: getStatutoryNotificationsListReportFilters,
+        GetStatutoryNotificationsListReportData: GetStatutoryNotificationsListReportData
     };
 }
 var client_mirror = initClientMirror();
