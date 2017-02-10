@@ -412,6 +412,30 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         logger.logClientApi("GetUnitListReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
+    elif type(request) is clientreport.GetStatutoryNotificationsListReportFilters:
+        logger.logClientApi(
+            "GetStatutoryNotificationsListReportFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_statutory_notifications_list_report_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetStatutoryNotificationsListReportFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetStatutoryNotificationsListReportData:
+        logger.logClientApi(
+            "GetStatutoryNotificationsListReportData  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_statutory_notification_list_report(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetStatutoryNotificationsListReportData", "process end")
+        logger.logClientApi("------", str(time.time()))
+
     return result
 
 
@@ -916,7 +940,7 @@ def get_legal_entity_wise_report_filters(db, request, session_user, client_id):
     legal_entity_id = request.legal_entity_id
     domains_list = get_domains_for_le(db, legal_entity_id)
     unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
-    act_list = get_acts_for_le_domain(db, legal_entity_id)
+    act_list = get_acts_for_le_domain(db, legal_entity_id, country_id)
     task_list = get_task_for_le_domain(db, legal_entity_id)
     frequency_list = get_frequency_list(db)
     compliance_user_type = get_compliance_user_type(db)
@@ -957,7 +981,7 @@ def get_domain_wise_report_filters(db, request, session_user, client_id):
     legal_entity_id = request.legal_entity_id
     domains_list = get_domains_for_le(db, legal_entity_id)
     unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
-    act_list = get_acts_for_le_domain(db, legal_entity_id)
+    act_list = get_acts_for_le_domain(db, legal_entity_id, country_id)
     task_list = get_task_for_le_domain(db, legal_entity_id)
     frequency_list = get_frequency_list(db)
     compliance_user_type = get_compliance_user_type(db)
@@ -999,7 +1023,7 @@ def get_unit_wise_report_filters(db, request, session_user, client_id):
     legal_entity_id = request.legal_entity_id
     domains_list = get_domains_for_le(db, legal_entity_id)
     unit_list = get_units_for_le_domain(db, country_id, legal_entity_id)
-    act_list = get_acts_for_le_domain(db, legal_entity_id)
+    act_list = get_acts_for_le_domain(db, legal_entity_id, country_id)
     task_list = get_task_for_le_domain(db, legal_entity_id)
     frequency_list = get_frequency_list(db)
     compliance_user_type = get_compliance_user_type(db)
@@ -1145,3 +1169,35 @@ def get_unit_list_report(db, request, session_user, client_id):
     else:
         result = process_unit_list_report(db, request)
         return clientreport.GetunitListReportSuccess(unit_list_report=result)
+
+###############################################################################################
+# Objective: To get domains and acts under legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains domains and acts
+###############################################################################################
+def get_statutory_notifications_list_report_filters(db, request, session_user, client_id):
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    domain_list = get_domains_for_le(db, legal_entity_id)
+    act_list = get_acts_for_le_domain(db, legal_entity_id, country_id)
+    return clientreport.GetStatutoryNotificationsListReportFilterSuccess(
+        domains=domain_list, act_legal_entity=act_list
+    )
+
+
+###############################################################################################
+# Objective: To get statutory notification list under domain and legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains act and compliance tasks
+###############################################################################################
+def get_statutory_notification_list_report(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "StatutoryNotificationListReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_statutory_notification_list_report(db, request)
+        return clientreport.GetStatutoryNotificationReportDataSuccess(stat_notf_list_report=result)
