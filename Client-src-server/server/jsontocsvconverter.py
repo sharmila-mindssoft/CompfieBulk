@@ -100,6 +100,9 @@ class ConvertJsonToCSV(object):
                 elif report_type == "UnitListReport":
                     self.generate_unit_list_report(
                         db, request, session_user)
+                elif report_type == "StatutoryNotificationListReport":
+                    self.generate_stat_notf_list_report(
+                        db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
         self, db, request, session_user
@@ -2398,5 +2401,71 @@ class ConvertJsonToCSV(object):
             csv_values = [
                 unit_id, unit_code, unit_name, d_i_names, geography_name, address, postal_code,
                 division_name, unit_status, closed_date,
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_stat_notf_list_report(
+        self, db, request, session_user
+    ):
+        where_clause = None
+        condition_val = []
+        select_qry = None
+        country_id = request.country_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.domain_id
+        statutory_mapping = request.statutory_mapping
+        due_from = request.due_from_date
+        due_to = request.due_to_date
+
+        select_qry = "select t1.compliance_id, t2.statutory_mapping, t2.compliance_description, " + \
+            "t2.compliance_task, t3.notification_text, t3.created_on from tbl_client_compliances as t1 " + \
+            "inner join tbl_compliances as t2 on t2.compliance_id = t1.compliance_id inner join " + \
+            "tbl_statutory_notifications as t3 on t3.compliance_id = t2.compliance_id where "
+        where_clause = "t1.legal_entity_id = %s and t1.domain_id = %s and t2.country_id = %s "
+        condition_val.extend([legal_entity_id, domain_id, country_id])
+
+        if statutory_mapping is not None:
+            statutory_mapping = '%'+statutory_mapping+'%'
+            where_clause = where_clause + "and t2.statutory_mapping like %s "
+            condition_val.append(statutory_mapping)
+
+        if due_from is not None and due_to is not None:
+            where_clause = where_clause + " and t3.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            where_clause = where_clause + " and t3.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            where_clause = where_clause + " and t3.created_on < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
+
+        where_clause = where_clause + "group by t1.compliance_id order by t3.created_on desc limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+        query = select_qry + where_clause
+        print "qry"
+        print query
+        result = db.select_all(query, condition_val)
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "Compliance ID", "Act", "Compliance Task", "Compliance Description",
+                "Date", "Notification Content"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        for row in result:
+            stat_map = json.loads(row["statutory_mapping"])
+            if stat_map[0].find(">>") >= 0:
+                stat_map = stat_map[0].split(">>")[0]
+            else:
+                stat_map = str(stat_map)[3:-2]
+            csv_values = [
+                row["compliance_id"], stat_map, row["compliance_task"], row["compliance_description"],
+                datetime_to_string(row["created_on"]), row["notification_text"]
             ]
             self.write_csv(None, csv_values)
