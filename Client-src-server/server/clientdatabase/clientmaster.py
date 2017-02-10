@@ -51,7 +51,11 @@ __all__ = [
     "get_unit_closure_legal_entities",
     "get_unit_closure_units_list",
     "save_unit_closure_data",
-    "is_invalid_id"
+    "is_invalid_id",
+    "get_service_providers_list",
+    "get_service_providers_user_list",
+    "get_service_provider_status",
+    "get_service_provider_details_report_data"
 ]
 
 ############################################################################
@@ -1319,3 +1323,177 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
     print "result"
     print result
     return result
+
+
+###############################################################################################
+# Objective: To get the service provider details from master
+# Parameter: request object
+# Result: list of service providers
+###############################################################################################
+def get_service_providers_list(db):
+    query = "select concat(short_name,' - ',service_provider_name) as sp_name, " + \
+            "service_provider_id as sp_id from tbl_service_providers"
+    result = db.select_all(query, None)
+    print "sp list"
+    print result
+    sp_details = []
+
+    for row in result:
+        sp_details.append(clientmasters.ServiceProviders(
+            row["sp_id"], row["sp_name"]
+        ))
+    return sp_details
+
+###############################################################################################
+# Objective: To get the users list with its service providers
+# Parameter: request object
+# Result: list of users under service providers
+###############################################################################################
+def get_service_providers_user_list(db):
+    query = "select service_provider_id, user_id, concat(employee_code,' - ',employee_name) as " + \
+        "user_name from tbl_users order by employee_name;"
+
+    result = db.select_all(query, None)
+    sp_user_details = []
+
+    for row in result:
+        sp_id_optional = row["service_provider_id"]
+        sp_user_details.append(clientmasters.ServiceProviderUsers(
+            sp_id_optional, row["user_id"], row["user_name"]
+        ))
+    return sp_user_details
+
+###############################################################################################
+# Objective: To get the service provider status
+# Parameter: request object
+# Result: list of service provider status
+###############################################################################################
+def get_service_provider_status(db):
+    status = ("Active", "Inactive", "Blocked")
+    sp_status = []
+    i = 0
+    for sts in status:
+        s_p_status = clientmasters.ServiceProvidersStatus(
+            i, sts
+        )
+        sp_status.append(s_p_status)
+        i = i + 1
+    return sp_status
+
+###############################################################################################
+# Objective: To get the service providerand the user details
+# Parameter: request object
+# Result: list of service provider and user details
+###############################################################################################
+def get_service_provider_details_report_data(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    sp_id = request.sp_id
+    user_id = request.user_id
+    s_p_status = request.s_p_status
+
+    select_qry = "select t1.service_provider_id, t1.short_name, t1.service_provider_name, " + \
+        "t1.contact_no, t1.email_id, t1.address, t1.contract_from, t1.contract_to, t1.is_active, " + \
+        "t1.status_changed_on, t1.is_blocked, t1.blocked_on from tbl_service_providers as t1 "
+
+    if (int(sp_id) > 0 or s_p_status != "All"):
+        where_clause = "where "
+        if int(sp_id) > 0:
+            where_clause = where_clause + "t1.service_provider_id = %s "
+            condition_val.append(sp_id)
+
+        if s_p_status == "Active":
+            where_clause = where_clause + "and t1.is_active = %s "
+            condition_val.append(1)
+        elif s_p_status == "Inactive":
+            where_clause = where_clause + "and t1.is_active = %s "
+            condition_val.append(0)
+        elif s_p_status == "Blocked":
+            where_clause = where_clause + "and t1.is_blocked = %s "
+            condition_val.append(1)
+
+    if where_clause is None:
+        where_clause = "order by t1.service_provider_name ASC limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+    else:
+        where_clause = where_clause + "order by t1.service_provider_name ASC limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result_sp = db.select_all(query, condition_val)
+
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    select_qry = "select t1.service_provider_id, t1.user_id, t1.employee_name, " + \
+        "t1.contact_no, t1.email_id, t1.is_active, (select count(*) from " + \
+        "tbl_user_units where user_id = t1.user_id) as unit_cnt, t1.status_changed_on from tbl_users as t1 "
+
+    if (int(sp_id) > 0 or int(user_id) > 0):
+        where_clause = "where "
+        if int(sp_id) > 0:
+            where_clause = where_clause + "t1.service_provider_id = %s "
+            condition_val.append(sp_id)
+
+        if int(user_id) > 0:
+            where_clause = where_clause + "t1.user_id = %s "
+            condition_val.append(user_id)
+
+    if where_clause is None:
+        where_clause = "order by t1.employee_name ASC;"
+    else:
+        where_clause = where_clause + "order by t1.employee_name ASC;"
+
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result_users = db.select_all(query, condition_val)
+    print result_users
+    sp_details = []
+
+    for row in result_sp:
+        sp_id = row["service_provider_id"]
+        sp_name = row["short_name"]+' - '+row["service_provider_name"]
+        con_no = row["contact_no"]
+        email_id = row["email_id"]
+        address = row["address"]
+        contract_period = datetime_to_string(row["contract_from"])+" to "+datetime_to_string(row["contract_to"])
+        if row["is_blocked"] == 1:
+            s_p_status = "Blocked"
+            sp_status_date = datetime_to_string(row["blocked_on"])
+        elif row["is_active"] == 1:
+            s_p_status = "Active"
+            sp_status_date = datetime_to_string(row["status_changed_on"])
+        elif row["is_active"] == 0:
+            s_p_status = "Inactive"
+            sp_status_date = datetime_to_string(row["status_changed_on"])
+        unit_count = 0
+        for row_1 in result_users:
+            print row_1["service_provider_id"]
+            if sp_id == row_1["service_provider_id"]:
+                print "unit_count"
+                print row_1["unit_cnt"]
+                unit_count = int(unit_count) + int(row_1["unit_cnt"])
+        sp_details.append(clientmasters.ServiceProvidersDetailsList(
+            sp_id, sp_name, con_no, email_id, address, contract_period,
+            s_p_status, sp_status_date, unit_count
+        ))
+
+        for row_1 in result_users:
+            if sp_id == row_1["service_provider_id"]:
+                employee_name = row_1["employee_name"]
+                mob_no = row_1["contact_no"]
+                user_email_id = row_1["email_id"]
+                if row_1["is_active"] == 1:
+                    user_status = "Active"
+                    user_status_date = datetime_to_string(row_1["status_changed_on"])
+                elif row_1["is_active"] == 0:
+                    user_status = "Inactive"
+                    user_status_date = datetime_to_string(row_1["status_changed_on"])
+                sp_details.append(clientmasters.ServiceProvidersDetailsList(
+                    sp_id, employee_name, mob_no, user_email_id, None, None,
+                    user_status, user_status_date, row_1["unit_cnt"]
+                ))
+    return sp_details
