@@ -403,10 +403,9 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-
         print field_name, val
+        print param, val, field_name
 
-        # print param, val, field_name
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
         # print field_name, param, val
@@ -456,13 +455,12 @@ def to_structure_dictionary_values(x):
                 val = to_RecordType(
                     param.get('module_name'), param.get('class_name'), val
                 )
-
         elif _type == 'ENUM_TYPE':
             assert _module_name is not None
             assert _class_name is not None
             val = to_EnumType(_module_name, _class_name, val)
         else:
-            print field_name, param, val
+            # print field_name, param, val
             val = parse_values(field_name, param, val)
         if(
             val is not None and _validation_method is not None and

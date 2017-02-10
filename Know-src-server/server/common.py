@@ -192,11 +192,10 @@ def new_uuid():
 # and numbers
 ########################################################
 def generate_special_random(length=10):
-    characters = string.ascii_uppercase + string.ascii_lowercase
-    char = ''.join(
-        random.SystemRandom().choice(characters) for _ in range(length-3)
-    )
-    char += ''.join(random.SystemRandom().choice(string.digits) for _ in range(1))
+    characters = string.ascii_uppercase
+    char = ''.join(random.SystemRandom().choice(characters) for _ in range(4))
+    char += ''.join(random.SystemRandom().choice(string.ascii_lowercase) for _ in range(2))
+    char += ''.join(random.SystemRandom().choice(string.digits) for _ in range(2))
     char += ''.join(random.SystemRandom().choice('#$@!') for _ in range(2))
     return char
 

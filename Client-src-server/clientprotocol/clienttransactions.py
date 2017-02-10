@@ -13,7 +13,6 @@ from clientprotocol.parse_structure import (
     parse_structure_CustomTextType_50,
     parse_structure_VariantType_clienttransactions_Request,
     parse_structure_VectorType_SignedIntegerType_8,
-    parse_structure_VectorType_CustomTextType_50,
     parse_structure_VectorType_RecordType_core_ClientDivision,
     parse_structure_VectorType_RecordType_core_StatutoryDate,
     parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE,
@@ -23,12 +22,9 @@ from clientprotocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_ClientLegalEntity,
     parse_structure_VectorType_RecordType_core_Domain,
     parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    parse_structure_CustomIntegerType_1_10,
     parse_structure_CustomTextType_20,
     parse_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability,
-    parse_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances,
     parse_structure_Bool,
-    parse_structure_OptionalType_Bool,
     parse_structure_OptionalType_CustomTextType_500,
     parse_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
     parse_structure_VectorType_RecordType_core_ComplianceFrequency,
@@ -72,7 +68,6 @@ from clientprotocol.to_structure import (
     to_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE,
     to_structure_CustomTextType_50,
     to_structure_VariantType_clienttransactions_Request,
-    to_structure_VectorType_SignedIntegerType_8,
     to_structure_VectorType_CustomTextType_50,
     to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_StatutoryDate,
@@ -83,11 +78,9 @@ from clientprotocol.to_structure import (
     to_structure_VectorType_RecordType_core_ClientLegalEntity,
     to_structure_VectorType_RecordType_core_Domain,
     to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_CustomIntegerType_1_10, to_structure_CustomTextType_20,
+    to_structure_CustomTextType_20,
     to_structure_VectorType_RecordType_clienttransactions_ComplianceApplicability,
-    to_structure_VectorType_RecordType_clienttransactions_UnitStatutoryCompliances,
     to_structure_Bool,
-    to_structure_OptionalType_Bool,
     to_structure_OptionalType_CustomTextType_500,
     to_structure_VectorType_RecordType_clienttransactions_UpdateStatutoryCompliance,
     to_structure_UnsignedIntegerType_32,
@@ -153,18 +146,37 @@ class Request(object):
 #
 # Statutory Settings Request
 #
-class GetStatutorySettings(Request):
-    def __init__(self, legal_entity_id):
-        self.legal_entity_id = legal_entity_id
+class GetStatutorySettingsFilters(Request):
+    def __init__(self):
+        pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id"])
-        return GetStatutorySettings(data.get("le_id"))
+        data = parse_dictionary(data)
+        return GetStatutorySettingsFilters()
 
     def to_inner_structure(self):
         return {
-            "le_id": self.legal_entity_id
+        }
+
+class GetStatutorySettings(Request):
+    def __init__(self, legal_entity_id, division_id, category_id):
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id
+        self.category_id = category_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "div_id", "cat_id"])
+        return GetStatutorySettings(
+            data.get("le_id"), data.get("div_id"), data.get("cat_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "div_id": self.division_id,
+            "cat_id": self.category_id
         }
 
 class GetSettingsCompliances(Request):
@@ -526,8 +538,10 @@ class GetComplianceApprovalList(Request):
         }
 
 class ApproveCompliance(Request):
-    def __init__(self, compliance_history_id, approval_status, remarks,
-        next_due_date, validity_date):
+    def __init__(
+        self, compliance_history_id, approval_status, remarks,
+        next_due_date, validity_date
+    ):
         self.compliance_history_id = compliance_history_id
         self.approval_status = approval_status
         self.remarks = remarks
@@ -580,8 +594,10 @@ class GetPastRecordsFormData(Request):
         }
 
 class GetStatutoriesByUnit(Request):
-    def __init__(self, unit_id, domain_id, level_1_statutory_name,
-        compliance_frequency, country_id, start_count):
+    def __init__(
+        self, unit_id, domain_id, level_1_statutory_name,
+        compliance_frequency, country_id, start_count
+    ):
         self.unit_id = unit_id
         self.domain_id = domain_id
         self.level_1_statutory_name = level_1_statutory_name
@@ -638,8 +654,79 @@ class SavePastRecords(Request):
         }
 
 
+class GetReviewSettingsFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetReviewSettingsFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
+
+
+class GetReviewSettingsUnitFilters(Request):
+    def __init__(self, legal_entity_id, domain_id):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id"])
+        legal_entity_id = data.get("le_id")
+        domain_id = data.get("d_id")
+        return GetReviewSettingsUnitFilters(legal_entity_id, domain_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id
+        }
+
+
+class GetReviewSettingsComplianceFilters(Request):
+    def __init__(self, legal_entity_id, domain_id, unit_ids, f_id, sno):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.unit_ids = unit_ids
+        self.f_id = f_id
+        self.sno = sno
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "unit_ids", "f_id", "sno"])
+        legal_entity_id = data.get("le_id")
+        domain_id = data.get("d_id")
+        unit_ids = data.get("unit_ids")
+        f_id = data.get("f_id")
+        sno = data.get("sno")
+        return GetReviewSettingsComplianceFilters(legal_entity_id, domain_id, unit_ids, f_id, sno)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id,
+            "unit_ids": self.unit_ids,
+            "f_id": self.f_id,
+            "sno": self.sno
+        }
+
+
 def _init_Request_class_map():
-    classes = [GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords]
+    classes = [
+        GetStatutorySettingsFilters,
+        GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings,
+        GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance,
+        GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance,
+        GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData,
+        GetStatutoriesByUnit, SavePastRecords, GetReviewSettingsFilters,
+        GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -719,6 +806,27 @@ class UnitStatutoryCompliances(object):
             "div_name": self.division_name,
             "is_closed": self.is_closed,
             "is_new": self.is_new
+        }
+
+class GetStatutorySettingsFiltersSuccess(Response):
+    def __init__(self, le_info, div_info, cat_info):
+        self.le_info = le_info
+        self.div_info = div_info
+        self.cat_info = cat_info
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_infos", "div_infos", "cat_info"])
+
+        return GetStatutorySettingsFiltersSuccess(
+            data.get("le_infos"), data.get("div_infos"), data.get("cat_info")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_infos": self.le_info,
+            "div_infos": self.div_info,
+            "cat_info": self.cat_info
         }
 
 class GetStatutorySettingsSuccess(Response):
@@ -1203,7 +1311,8 @@ def _init_Response_class_map():
         ApprovalPersonNotBelongToUnit, GetUserwiseCompliancesSuccess, ReassignComplianceSuccess,
         GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess,
         GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed,
-        GetAssigneeCompliancesSuccess, ComplianceUpdateFailed
+        GetAssigneeCompliancesSuccess, ComplianceUpdateFailed,
+        GetStatutorySettingsFiltersSuccess
     ]
     class_map = {}
     for c in classes:
@@ -2097,5 +2206,59 @@ class ComplianceApplicability(object):
             "comp_remarks": self.compliance_remarks,
             "is_new": self.is_new,
             "d_name": self.domain_name
+        }
+
+
+class GetReviewSettingsFiltersSuccess(Response):
+    def __init__(self, compliance_frequency, domain_list):
+        self.compliance_frequency = compliance_frequency
+        self.domain_list = domain_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["compliance_frequency", "domain_list"])
+        compliance_frequency = data.get("compliance_frequency")
+        domain_list = data.get("domain_list")
+        return GetReviewSettingsFiltersSuccess(compliance_frequency, domain_list)
+
+    def to_inner_structure(self):
+        return {
+            "compliance_frequency": self.compliance_frequency,
+            "domain_list": self.domain_list,
+        }
+
+
+class GetReviewSettingsUnitFiltersSuccess(Response):
+    def __init__(self, rs_unit_list):
+        self.rs_unit_list = rs_unit_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["rs_unit_list"])
+        rs_unit_list = data.get("rs_unit_list")
+        return GetReviewSettingsUnitFiltersSuccess(rs_unit_list)
+
+    def to_inner_structure(self):
+        return {
+            "rs_unit_list": self.rs_unit_list
+        }
+
+
+class GetReviewSettingsComplianceFiltersSuccess(Response):
+    def __init__(self, timeline, rs_compliance_list):
+        self.timeline = timeline
+        self.rs_compliance_list = rs_compliance_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["timeline", "rs_compliance_list"])
+        timeline = data.get("timeline")
+        rs_compliance_list = data.get("rs_compliance_list")
+        return GetReviewSettingsComplianceFiltersSuccess(timeline, rs_compliance_list)
+
+    def to_inner_structure(self):
+        return {
+            "timeline": self.timeline,
+            "rs_compliance_list": self.rs_compliance_list
         }
 

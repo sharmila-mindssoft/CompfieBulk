@@ -9,7 +9,7 @@ var acLegalEntity = $("#ac-legal-entity");
 
 var domain = $("#domain");
 var domainId = $("#domain-id");
-var acDomain = $("#ac-domain");
+var acDomain = $("#ac-domain"); 
 
 var unit = $("#unit");
 var unitId = $("#unit-id");
@@ -93,7 +93,7 @@ function PageControls() {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
         var condition_fields = ["is_active", "le_id"];
-        var condition_values = [true, 1];
+        var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
             onDomainAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -104,9 +104,9 @@ function PageControls() {
         var unitList = REPORT._units;
         if (unitList.length == 0 && text_val != '')
             displayMessage(message.domainname_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
-        commonAutoComplete(e, acUnit, unitId, text_val, unitList, "u_name", "u_id", function(val) {
+        var condition_fields = ["d_ids"];
+        var condition_values = [domainId.val()];
+        commonAutoComplete(e, acUnit, unitId, text_val, unitList, "unit_name", "unit_id", function(val) {
             onUnitAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -116,9 +116,9 @@ function PageControls() {
         var actList = REPORT._acts;
         if (actList.length == 0)
             displayMessage(message.act_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
-        commonAutoComplete(e, acAct, actId, text_val, actList, "act_name", "act_id", function(val) {
+        var condition_fields = ["d_id"];
+        var condition_values = [domainId.val()];
+        commonAutoComplete(e, acAct, actId, text_val, actList, "act", "act", function(val) {
             onActAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -128,9 +128,9 @@ function PageControls() {
         var complianceTaskList = REPORT._compliance_task;
         if (complianceTaskList.length == 0)
             displayMessage(message.complianceTask_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "c_id", function(val) {
+        var condition_fields = ["d_id"];
+        var condition_values = [domainId.val()];
+        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "c_task", function(val) {
             onComplianceTaskAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -140,18 +140,18 @@ function PageControls() {
         var userList = REPORT._users;
         var condition_fields = ["is_active"];
         var condition_values = [true];
-        commonAutoComplete(e, acUsers, usersId, text_val, userList, "u_name", "u_id", function(val) {
+        commonAutoComplete(e, acUsers, usersId, text_val, userList, "employee_name", "user_id", function(val) {
             onUserAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
 
     showButton.click(function() {
-        //if (REPORT.validate()) {
+        if (REPORT.validate()) {
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
             REPORT.showReportValues();
-        //}
+        }
     });
 
     exportButton.click(function() {
@@ -170,7 +170,7 @@ clearElement = function(arr) {
         });
     }
 }
-// on success auto complete to set the value corresponding  
+// on success auto complete to set the value corresponding
 onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
     countryId.val(val[0]);
@@ -198,7 +198,6 @@ onUnitAutoCompleteSuccess = function(REPORT, val) {
     unitId.val(val[0]);
     unit.focus();
     clearElement([act, actId, complianceTask, complianceTaskId]);
-    REPORT.fetchActList(val[0]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
@@ -206,7 +205,6 @@ onActAutoCompleteSuccess = function(REPORT, val) {
     actId.val(val[0]);
     act.focus();
     clearElement([complianceTask, complianceTaskId]);
-    REPORT.fetchComplianceaskList(val[0]);
 }
 
 onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
@@ -250,25 +248,13 @@ ReassignHistory.prototype.fetchDomainList = function(le_id) {
         if (error == null) {
             t_this._domains = response.domains;
             t_this._units = response.units;
-
+            t_this._acts = response.acts;
+            t_this._compliance_task = response.compliances;
+            t_this._users = response.legal_entity_users;
         } else {
             t_this.possibleFailures(error);
         }
     });
-};
-
-ReassignHistory.prototype.fetchActList = function(unit_id) {
-    t_this = this;
-    var jsondata = '{"acts":[{"act_id":1,"act_name":"The Batteries Act","u_id":1,"is_active":true},{"act_id":2,"act_name":"Indian Partnership Act, 1932","u_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._acts = object.acts;
-};
-
-ReassignHistory.prototype.fetchComplianceaskList = function(act_id) {
-    t_this = this;
-    var jsondata = '{"compliance_task":[{"c_id":1,"c_task":"FORM I - Half yearly returns Submission","act_id":1,"is_active":true},{"c_id":2,"c_task":"FORM II - Registration","act_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._compliance_task = object.compliance_task;
 };
 
 ReassignHistory.prototype.validate = function() {
@@ -416,4 +402,5 @@ $(document).ready(function() {
     PageControls();
     // To store values in object & search list element 
     REPORT.loadSearch();
+
 });

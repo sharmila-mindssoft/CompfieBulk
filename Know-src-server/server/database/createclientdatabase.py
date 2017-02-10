@@ -47,9 +47,9 @@ class ClientDBBase(object):
         return str(message)
         # raise ValueError(message)
 
-    def db_create_name(self):
+    def db_create_name(self, db_id):
         return "%s_%s_%s" % (
-            self._db_prefix, self._short_name.lower(), self._client_id
+            self._db_prefix, self._short_name.lower(), db_id
         )
 
     def db_create_username(self):
@@ -59,7 +59,6 @@ class ClientDBBase(object):
         return generate_special_random()
 
     def get_db_constrains(self):
-        self._db_name = self.db_create_name()
         self._db_username = self.db_create_username()
         self._db_password = self.db_create_password()
         return True
@@ -113,11 +112,16 @@ class ClientDBBase(object):
 
     def _grant_privileges(self, cursor):
         try:
+            q = "CREATE USER %s@%s IDENTIFIED BY %s;"
+            print q
+            print [self._db_username, str('%'), self._db_password]
+            cursor.execute(q, [self._db_username, str('%'), self._db_password])
+
             query = "GRANT SELECT, INSERT, UPDATE, " + \
-                " DELETE ON %s.* to '%s'@'%s' IDENTIFIED BY '%s';"
+                " DELETE ON %s.* to '%s'@'%s' ;"
             print query
             param = (
-                self._db_name, self._db_username, str('%'), self._db_password
+                self._db_name, self._db_username, str('%')
             )
             print param
             cursor.execute(query % param)
@@ -183,6 +187,137 @@ class ClientDBBase(object):
         print "inside process begin"
         return self.prepare_db_constrains()
 
+    def bulk_insert(self, cursor, table, columns, valueList):
+        stringValue = []
+        for i in range(len(columns)):
+            stringValue.append('%s')
+
+        if type(columns) is list:
+            columns = ", ".join(columns)
+        query = "INSERT INTO %s (%s) " % (table, columns)
+        query += " VALUES (%s) " % (",".join(stringValue))
+
+        try:
+            assert cursor is not None
+            cursor.executemany(query, valueList)
+            cursor.nextset()
+            return True
+        except Exception, e:
+            print e
+            logger.logKnowledgeApi("bulk_insert", query)
+            logger.logKnowledgeApi("bulk_insert", e)
+            return False
+
+    def save_country(self, db_cur, data):
+        columns = ["country_id", "country_name"]
+        values = []
+        for d in data :
+            values.append(
+                (d.get("country_id"), d.get("country_name"))
+            )
+
+        if values :
+            self.bulk_insert(db_cur, 'tbl_countries', columns, values)
+
+    def save_domain(self, db_cur, data):
+        columns = ["domain_id", "domain_name"]
+        values = []
+        for d in data :
+            values.append(
+                (d.get("domain_id"), d.get("domain_name"))
+            )
+
+        if values :
+            self.bulk_insert(db_cur, 'tbl_domains', columns, values)
+
+    def save_domain_country(self, db_cur, data):
+
+        columns = ["domain_id", "country_id"]
+        values = []
+        for d in data :
+            values.append(
+                (d.get("domain_id"), d.get("country_id"))
+            )
+
+        if values :
+            self.bulk_insert(db_cur, 'tbl_domain_countries', columns, values)
+
+    def save_organisation(self, db_cur, data):
+        columns = ["organisation_id", "organisation_name", "country_id", "domain_id", "is_active"]
+        values = []
+        for d in data :
+            values.append(
+                (d.get("organisation_id"), d.get("organisation_name"), d.get("country_id"), d.get("domain_id"), d.get("is_active"))
+            )
+
+        if values :
+            self.bulk_insert(db_cur, 'tbl_organisation', columns, values)
+
+    def save_client_group(self, db_cur, data):
+        columns = ["client_id", "group_name", "short_name", "email_id", "total_view_licence"]
+        values = []
+        for d in data :
+            values.append((
+                d.get("client_id"), d.get("group_name"), d.get("short_name"),
+                d.get("email_id"), d.get("total_view_licence")
+            ))
+        if values :
+            self.bulk_insert(db_cur, "tbl_client_groups", columns, values)
+
+    def save_client_configuration(self, db_cur, data):
+        columns = ["client_id", "country_id", "domain_id", "month_from", "month_to"]
+        values = []
+        for d in data :
+            values.append((
+                d.get("client_id"), d.get("country_id"), d.get("domain_id"),
+                d.get("month_from"), d.get("month_to")
+            ))
+        if values :
+            self.bulk_insert(db_cur, "tbl_client_configuration", columns, values)
+
+    def save_legal_entity(self, db_cur, data):
+        columns = [
+            "legal_entity_id", "country_id", "business_group_id",
+            "legal_entity_name", "contract_from", "contract_to"
+            "logo", "logo_size", "file_space_limit", "total_licence"
+        ]
+        values = []
+        for d in data :
+            values.append((
+                d.get("legal_entity_id"), d.get("country_id"),
+                d.get("business_group_id"), d.get("legal_entity_name"),
+                d.get("contract_from"), d.get("contract_to"), d.get("logo"),
+                d.get("logo_size"), d.get("file_space_limit"), d.get("total_licence")
+            ))
+        if values :
+            self.bulk_insert(db_cur, "tbl_legal_entities", columns, values)
+
+    def save_legal_entity_domains(self, db_cur, data):
+        columns = [
+            "legal_entity_id", "domain_id", "activation_date",
+            "organisation_id", "count"
+        ]
+        values = []
+        for d in data :
+            values.append((
+                d.get("legal_entity_id"), d.get("domain_id"), d.get("activation_date"),
+                d.get("organisation_id"), d.get("count")
+            ))
+
+        if values :
+            self.bulk_insert(db_cur, "tbl_legal_entity_domains", columns, values)
+
+    def save_business_group(self, db_cur, data):
+        columns = ["business_group_id", "business_group_name"]
+        values = []
+        for d in data :
+            values.append(
+                (d.get("business_group_id"), d.get("business_group_name"))
+            )
+
+        if values :
+            self.bulk_insert(db_cur, 'tbl_business_groups', columns, values)
+
 class ClientGroupDBCreate(ClientDBBase):
     def __init__(
         self, db, client_id, short_name, email_id, database_ip, database_port,
@@ -194,6 +329,8 @@ class ClientGroupDBCreate(ClientDBBase):
         )
         self._db_prefix = CLIENT_GROUP_PREFIX
         self._db_file_path = "scripts/mirror-client-group.sql"
+        self._db_name = self.db_create_name(client_id)
+        self.db_con = None
 
     def _create_database(self):
         db_con = None
@@ -217,6 +354,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 self._host, self._username, self._password, self._db_name,
                 self._port
             )
+            self.db_con = db_con
             db_cursor = db_con.cursor()
             logger.logGroup("_create_database", "client connection success")
 
@@ -356,11 +494,24 @@ class ClientGroupDBCreate(ClientDBBase):
                 "trigger creation failed in client database "
             )
 
+    def _save_master_info(self):
+        args = [self._client_id, None]
+        m_info = self._db.call_proc_with_multiresult_set("sp_get_le_master_info", args, 4)
+        country = m_info[0]
+        domain = m_info[1]
+        domain_country = m_info[2]
+        org_data = m_info[3]
+        db_cur = self.db_con.cursor()
+        self.save_country(db_cur, country)
+        self.save_domain(db_cur, domain)
+        self.save_domain_country(db_cur, domain_country)
+        self.save_organisation(db_cur, org_data)
+        self.db_con.commit()
 
 class ClientLEDBCreate(ClientDBBase):
     def __init__(
         self, db, client_id, short_name, email_id, database_ip, database_port,
-        database_username, database_password
+        database_username, database_password, legal_entity_id
     ):
         super(ClientLEDBCreate, self).__init__(
             db, client_id, short_name, email_id, database_ip, database_port,
@@ -368,6 +519,9 @@ class ClientLEDBCreate(ClientDBBase):
         )
         self._db_prefix = CLIENT_LE_DB_PREFIX
         self._db_file_path = "scripts/mirror-client-new.sql"
+        self._legal_entity_id = legal_entity_id
+        self._db_name = self.db_create_name(legal_entity_id)
+        self.db_con = None
 
     def _create_database(self):
         db_con = None
@@ -378,6 +532,7 @@ class ClientLEDBCreate(ClientDBBase):
             main_con = self._mysql_server_connect(
                 self._host, self._username, self._password, self._port
             )
+
             print "main_con success"
             logger.logGroup("_create_database", "main connection success")
             main_cursor = main_con.cursor()
@@ -391,6 +546,7 @@ class ClientLEDBCreate(ClientDBBase):
                 self._host, self._username, self._password, self._db_name,
                 self._port
             )
+            self.db_con = db_con
             db_cursor = db_con.cursor()
             logger.logGroup("_create_database", "client connection success")
 
@@ -410,3 +566,27 @@ class ClientLEDBCreate(ClientDBBase):
             if not self._is_db_failed :
                 self.delete_database()
             raise Exception(e)
+
+    def _save_master_info(self):
+        args = [self._client_id, self._legal_entity_id]
+        m_info = self._db.call_proc_with_multiresult_set("sp_get_le_master_info", args, 9)
+        country = m_info[0]
+        domain = m_info[1]
+        domain_country = m_info[2]
+        org_data = m_info[3]
+        client_data = m_info[4]
+        client_conf_data = m_info[5]
+        le_data = m_info[6]
+        le_domain_data = m_info[7]
+        bg_info = m_info[8]
+        db_cur = self.db_con.cursor()
+        self.save_country(db_cur, country)
+        self.save_domain(db_cur, domain)
+        self.save_domain_country(db_cur, domain_country)
+        self.save_organisation(db_cur, org_data)
+        self.save_client_group(db_cur, client_data)
+        self.save_client_configuration(db_cur, client_conf_data)
+        self.save_legal_entity(db_cur, le_data)
+        self.save_legal_entity_domains(db_cur, le_domain_data)
+        self.save_business_group(db_cur, bg_info)
+        self.db_con.commit()

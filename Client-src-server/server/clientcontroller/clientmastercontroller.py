@@ -98,31 +98,13 @@ def process_client_master_requests(request, db, session_user, client_id):
         result = process_get_audit_trails(db, request, session_user)
 
     elif type(request) is clientmasters.GetUnitClosureData:
-        logger.logClientApi(
-            "GetUnitClosureData - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_unit_closure_data(db, request, session_user)
-        logger.logClientApi("GetUnitClosureData", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.GetUnitClosureUnitData:
-        logger.logClientApi(
-            "GetUnitClosureUnitData - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_get_unit_closure_unit_data(db, request, session_user)
-        logger.logClientApi("GetUnitClosureUnitData", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientmasters.SaveUnitClosureData:
-        logger.logClientApi(
-            "SaveUnitClosureData - " + str(client_id), "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
         result = process_save_unit_closure_unit_data(db, request, session_user)
-        logger.logClientApi("SaveUnitClosureData", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     return result
 

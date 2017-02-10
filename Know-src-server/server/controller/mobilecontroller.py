@@ -191,7 +191,7 @@ def approve_statutory_mapping_list(db, user_id):
             u_on = datetime_to_string_time(m["updated_on"])
 
         map_text = json.loads(m["statutory_mapping"])
-        map_text = " >> ".join(map_text)
+        map_text = ", ".join(map_text)
 
         statutory_dates = m["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)

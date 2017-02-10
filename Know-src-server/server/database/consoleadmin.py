@@ -1,4 +1,4 @@
-from server.exceptionmessage import process_error, fetch_error, fetch_run_error
+from server.exceptionmessage import process_error, fetch_run_error
 from protocol import consoleadmin
 from forms import *
 from tables import *
@@ -394,6 +394,7 @@ def create_db_process(db, client_database_id, client_id, legal_entity_id, db_ser
             )
             is_db_created = create_db.begin_process()
             if is_db_created[0] is True :
+                create_db._save_master_info()
                 save_db_name(is_db_created[1], is_db_created[2], is_db_created[3], True)
         else :
             create_db = ClientLEDBCreate(
@@ -401,10 +402,13 @@ def create_db_process(db, client_database_id, client_id, legal_entity_id, db_ser
                 _db_info.get("database_ip"),
                 _db_info.get("database_port"),
                 _db_info.get("database_username"),
-                _db_info.get("database_password")
+                _db_info.get("database_password"),
+                legal_entity_id
             )
             is_db_created = create_db.begin_process()
             if is_db_created[0] is True :
+                print "save process"
+                create_db._save_master_info()
                 save_db_name(is_db_created[1], is_db_created[2], is_db_created[3], False)
 
     # db information for both client and legal entity

@@ -37,7 +37,7 @@ class CompanyManager(object) :
         self._first_time = True
         self._token = None
         # self.get_token(ip, port)
-        self._poll_url = "http://%s:%s/knowledge/server-list" % (ip, port)
+        self._poll_url = "http://%s:%s/knowledge/group-server-list" % (ip, port)
         print self._poll_url
         # print self._poll_url
         body = json.dumps(
@@ -121,6 +121,8 @@ class CompanyManager(object) :
             assert r is not None
             self._servers = {}
             for company in r.companies:
+                if company.is_group is False:
+                    continue
                 self._servers[company.company_id] = company
             self._server_added_callback(self._servers)
         else :
@@ -143,7 +145,12 @@ class CompanyManager(object) :
         return company_id
 
     def _get_company_id_from_url(self, url):
+        print url
         for company_id, company in self._servers.iteritems():
+            if company.is_group is False :
+                continue
+
+            print company.short_url
             if company.short_url == url:
                 return company_id
         return 0

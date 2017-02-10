@@ -75,58 +75,58 @@ function initialize()
 }
 
 ExportButton.click(function () {
-	if($('#datatable-responsive').find('tbody').find('tr').length > 0){
-		csv = true;
-		var category_val = $('#usercategory').val();
-		var user_id = $('#manager-id').val();
-		var group_id_none = $('#group-id').val();
-		categoryName = $('#usercategory option:selected').text();
-		if(group_id_none == '')
-	  	{
-	  		group_id_none = 0;
-	  	}
-	  	var u_m_none = null;
-	  	if(categoryName == "Techno Manager" || categoryName == "Techno Executive"){
-	    	displayLoader();
-	    	mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
-	    		if (error == null) {
-		        onSuccess(response);
-		        hideLoader();
-		      } else {
-		        onFailure(error);
-		        hideLoader();
-		      }
-		    });
-	    }else{
-	    	var bg_id_none = null;
-			if(BusinessGroup.val() != '')
-			{
-				bg_id_none = BusinessGroup.val();
+	//if($('#datatable-responsive').find('tbody').find('tr').length > 0){
+	csv = true;
+	var category_val = $('#usercategory').val();
+	var user_id = $('#manager-id').val();
+	var group_id_none = $('#group-id').val();
+	categoryName = $('#usercategory option:selected').text();
+	if(group_id_none == '')
+  	{
+  		group_id_none = 0;
+  	}
+  	var u_m_none = null;
+  	if(categoryName == "Techno Manager" || categoryName == "Techno Executive"){
+    	displayLoader();
+    	mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
+    		if (error == null) {
+	        onSuccess(response);
+	        hideLoader();
+	      } else {
+	        onFailure(error);
+	        hideLoader();
+	      }
+	    });
+    }else{
+    	var bg_id_none = null;
+		if(BusinessGroup.val() != '')
+		{
+			bg_id_none = BusinessGroup.val();
+		}
+		u_m_none = bg_id_none +","+LegalEntity.val()+","+Domain.val();
+		function onSuccess(data) {
+			if (csv) {
+				var download_url = data.link;
+				window.open(download_url, '_blank');
 			}
-			u_m_none = bg_id_none +","+LegalEntity.val()+","+Domain.val();
-			function onSuccess(data) {
-				if (csv) {
-					var download_url = data.link;
-					window.open(download_url, '_blank');
-				}
-			}
-			function onFailure(error) {
-				displayMessage(error);
-			}
-			displayLoader();
-			mirror.exportReassignUserDomainReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
-	    		if (error == null) {
-		        onSuccess(response);
-		        hideLoader();
-		      } else {
-		        onFailure(error);
-		        hideLoader();
-		      }
-		    });
-	    }
-	}else{
+		}
+		function onFailure(error) {
+			displayMessage(error);
+		}
+		displayLoader();
+		mirror.exportReassignUserReportData(parseInt(category_val), parseInt(user_id), parseInt(group_id_none), u_m_none, csv, function (error, response) {
+    		if (error == null) {
+	        onSuccess(response);
+	        hideLoader();
+	      } else {
+	        onFailure(error);
+	        hideLoader();
+	      }
+	    });
+    }
+	/*}else{
 		displayMessage(message.export_empty);
-	}
+	}*/
 });
 
 $('.btn-show').click(function () {
@@ -182,11 +182,11 @@ $('.btn-show').click(function () {
       		totalRecord = getTechnoRecordLength("domain");
 			processPaging();
 		}
-		if(totalRecord > 0){
+		/*if(totalRecord > 0){
 			ExportButton.show();
 		}else{
 			ExportButton.hide();
-		}
+		}*/
     }
     function onFailure(error) {
       displayMessage(error);
@@ -644,11 +644,9 @@ function bindReassignedDomainData(data, j, tbodyClass, rowClass)
 	$('.country-name', clone).text(val.unit_code);
 
     var titleText = val.address+","+val.postal_code;
+    $('.unit-name', clone).addClass("unit-name-"+val.unit_id);
 	$('.unit-name', clone).text(val.unit_name);
-	var unit_ctrl = '<span class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="' + titleText + '"></span>';
-	$('.unit-name').parent().prepend(unit_ctrl);
-    $('[data-toggle="tooltip"]').tooltip();
-    $('.unit-name', clone).addClass("-"+val.unit_id);
+	var unit_ctrl = null;
 	$('.unit-name', clone).on('click', function() { tree_open_close(this); });
 	$('.no-of-le', clone).text(val.geography_name);
 	$('.assigned-date', clone).text(val.unit_email_date);
@@ -656,6 +654,9 @@ function bindReassignedDomainData(data, j, tbodyClass, rowClass)
 	$('.remarks', clone).text(val.remarks);
 	tbodyClass.append(clone);
 	//bindReassignSubData(data, tbodyClass);
+	unit_ctrl = '<span class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="' + titleText + '"></span>&nbsp;';
+	$('.unit-name-'+val.unit_id).parent().prepend(unit_ctrl);
+    $('[data-toggle="tooltip"]').tooltip();
 }
 
 //Status Title

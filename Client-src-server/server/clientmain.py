@@ -47,13 +47,13 @@ def cors_handler(response):
 #
 
 def api_request(
-    request_data_type, need_client_id=False, is_group=False,
+    request_data_type, need_client_id=False, is_group=False, need_category=False
 ):
     def wrapper(f):
         @wraps(f)
         def wrapped(self):
             return self.handle_api_request(
-                f, request_data_type, need_client_id, is_group
+                f, request_data_type, need_client_id, is_group, need_category
             )
         return wrapped
     return wrapper
@@ -75,13 +75,13 @@ class API(object):
         self._address = address
         self._knowledge_server_address = knowledge_server_address
         # self._http_client = http_client
-        print self._knowledge_server_address
         self._group_databases = {}
         self._le_databases = {}
-        self._replication_managers = {}
+        self._replication_managers_for_group = {}
+        self._replication_managers_for_le = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            1000,
+            5000,
             self.server_added
         )
         print "Databases initialize"
@@ -132,20 +132,21 @@ class API(object):
         )
 
     def server_added(self, servers):
-
+        # server added should not be called in timeout function , pending : need to update from knowledge server.
+        print "**" * 100
         self._group_databases = {}
         self._le_databases = {}
-        self._replication_managers = {}
+        self._replication_managers_for_group = {}
+        self._replication_managers_for_le = {}
         try:
 
             for company in servers:
+                company.to_structure()
                 company_id = company.company_id
-                print company
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
                 print self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
-                    print company.to_structure()
                     if company.is_group is True:
                         if self._group_databases.get(company_id) is not None :
                             continue
@@ -180,56 +181,83 @@ class API(object):
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
 
-            print self._le_databases
-            print self._group_databases
             print "after connection created"
+            print self._group_databases
+            print self._le_databases
             # After database connection client poll for replication
 
             def client_added(clients):
                 for c, client in clients.iteritems():
                     _client_id = client.client_id
+                    print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
-                    _domain_id = client.domain_id
-                    print "client added"
-                    client_db = self._databases.get(_client_id)
-                    if client_db is not None :
-                        if is_new_data is True and is_new_domain is False :
-                            rep_man = ReplicationManagerWithBase(
-                                self._io_loop,
-                                self._knowledge_server_address,
-                                self._http_client,
-                                client_db,
-                                _client_id
-                            )
-                            if self._replication_managers.get(_client_id) is None :
-                                rep_man.start()
-                                self._replication_managers[_client_id] = rep_man
-                        elif is_new_domain is True and _domain_id is not None :
-                            d_rep_man = {}
-                            domain_lst = _domain_id.strip().split(",")
-                            for d in domain_lst :
-                                domain_id = int(d)
-                                domain_rep_man = DomainReplicationManager(
-                                    self._io_loop,
+                    # _domain_id = client.domain_id
+
+                    if client.is_group is True:
+                        print "client added"
+                        db_cons_info = self._group_databases.get(_client_id)
+                        if db_cons_info is None :
+                            continue
+                        db_cons = db_cons_info.get_connection()
+
+                        client_db = Database(db_cons)
+                        if client_db is not None :
+                            if is_new_data is True and is_new_domain is False :
+                                # replication for group db only master data
+                                rep_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
-                                    self._http_client,
                                     client_db,
                                     _client_id,
-                                    domain_id
+                                    client.is_group
                                 )
-                                domain_rep_man.start()
-                                d_rep_man[_client_id] = domain_rep_man
 
-            # _client_manager = ClientReplicationManager(
-            #     self._io_loop,
-            #     self._knowledge_server_address,
-            #     self._http_client,
-            #     60,
-            #     client_added
-            # )
+                                if self._replication_managers_for_group.get(_client_id) is None :
+                                    rep_man.start()
+                                    self._replication_managers_for_group[_client_id] = rep_man
+                    else :
+                        db_cons_info = self._le_databases.get(_client_id)
+                        if db_cons_info is None :
+                            continue
+                        db_cons = db_cons_info.get_connection()
+                        le_db = Database(db_cons)
+                        if le_db is not None :
+                            if is_new_data is True and is_new_domain is False :
+                                # replication for group db only master data
+                                rep_man = ReplicationManagerWithBase(
+                                    self._knowledge_server_address,
+                                    le_db,
+                                    _client_id,
+                                    client.is_group
+                                )
+
+                                if self._replication_managers_for_le.get(_client_id) is None :
+                                    rep_man.start()
+                                    self._replication_managers_for_le[_client_id] = rep_man
+
+                            # if is_new_domain is True and _domain_id is not None :
+                            #     d_rep_man = {}
+                            #     domain_lst = _domain_id.strip().split(",")
+                            #     for d in domain_lst :
+                            #         domain_id = int(d)
+                            #         domain_rep_man = DomainReplicationManager(
+                            #             self._io_loop,
+                            #             self._knowledge_server_address,
+                            #             self._http_client,
+                            #             client_db,
+                            #             _client_id,
+                            #             domain_id
+                            #         )
+                            #         domain_rep_man.start()
+                            #         d_rep_man[_client_id] = domain_rep_man
+
+            _client_manager = ClientReplicationManager(
+                self._knowledge_server_address,
+                500,
+                client_added
+            )
             # replication start
-            # _client_manager._start()
+            _client_manager._start()
 
         except Exception, e :
             logger.logClientApi(e, "Server added")
@@ -276,13 +304,11 @@ class API(object):
                 self._send_response("Invalid json format", 300)
 
             company_id = int(data[0])
-            print company_id
-            print "-" * 10
-            print is_group
             actual_data = data[1]
             request_data = request_data_type.parse_structure(
                 actual_data
             )
+            print company_id
             if is_group is False :
                 company_id = request_data.request.legal_entity_id
 
@@ -294,29 +320,22 @@ class API(object):
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
             return str(e)
-        print request_data, company_id
         return request_data, company_id
 
     def _validate_user_session(self, session):
         session_token = session.split('-')
         client_id = int(session_token[0])
-        print self._group_databases
         _group_db_cons = self._group_databases.get(client_id).get_connection()
-        print client_id
-        print _group_db_cons
         _group_db = Database(_group_db_cons)
-        print "----"
-        print _group_db
         try :
             _group_db.begin()
-            session_user = _group_db.validate_session_token(session)
-            print session_user
+            session_user, session_category = _group_db.validate_session_token(session)
             _group_db.commit()
             _group_db_cons.close()
             if session_user is None :
-                return False, False
+                return False, False, None
             else :
-                return session_user, client_id
+                return session_user, client_id, session_category
         except Exception, e :
             print e
             _group_db.rollback()
@@ -325,7 +344,7 @@ class API(object):
 
     def handle_api_request(
         self, unbound_method,
-        request_data_type, need_client_id, is_group
+        request_data_type, need_client_id, is_group, need_category
     ):
         def respond(response_data):
             return self._send_response(
@@ -345,15 +364,12 @@ class API(object):
         # validate session token
         if need_client_id is False :
             session = request_data.session_token
-            print session
-            session_user, client_id = self._validate_user_session(session)
+            session_user, client_id, session_category = self._validate_user_session(session)
             if session_user is False :
                 return respond(clientlogin.InvalidSessionToken())
         else :
             session_user = None
         # request process in controller
-        print "in handle api"
-        print is_group
         if is_group :
             print "Group DB"
             db_cons = self._group_databases.get(company_id)
@@ -361,7 +377,6 @@ class API(object):
             print "LE Db"
             db_cons = self._le_databases.get(company_id)
 
-        print company_id
         if db_cons is None:
             print 'connection pool is none'
             self._send_response("Company not found", 404)
@@ -376,6 +391,10 @@ class API(object):
             if need_client_id :
                 response_data = unbound_method(
                     self, request_data, _db, company_id, ip_address
+                )
+            elif need_category :
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, session_category
                 )
             else :
                 response_data = unbound_method(
@@ -409,8 +428,12 @@ class API(object):
     def handle_client_masters(self, request, db, session_user, client_id, le_id):
         return controller.process_client_master_requests(request, db, session_user, client_id)
 
+    @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
+    def handle_client_master_filters(self, request, db, session_user, session_category):
+        return controller.process_client_master_filters_request(request, db, session_user, session_category)
+
     @api_request(clienttransactions.RequestFormat)
-    def handle_client_transaction(self, request, db, session_user, client_id):
+    def handle_client_transaction(self, request, db, session_user, client_id, le_id):
         return controller.process_client_transaction_requests(request, db, session_user, client_id)
 
     @api_request(clientreport.RequestFormat)
@@ -418,23 +441,23 @@ class API(object):
         return controller.process_client_report_requests(request, db, session_user, client_id, le_id)
 
     @api_request(dashboard.RequestFormat)
-    def handle_client_dashboard(self, request, db, session_user, client_id):
+    def handle_client_dashboard(self, request, db, session_user, client_id, le_id):
         return controller.process_client_dashboard_requests(request, db)
 
     @api_request(clientadminsettings.RequestFormat)
-    def handle_client_admin_settings(self, request, db, session_user, client_id):
+    def handle_client_admin_settings(self, request, db, session_user, client_id, le_id):
         return controller.process_client_admin_settings_requests(request, db)
 
     @api_request(general.RequestFormat)
-    def handle_general(self, request, db, session_user, client_id):
+    def handle_general(self, request, db, session_user, client_id, le_id):
         return controller.process_general_request(request, db)
 
     @api_request(clientuser.RequestFormat)
-    def handle_client_user(self, request, db, session_user, client_id):
+    def handle_client_user(self, request, db, session_user, client_id, le_id):
         return controller.process_client_user_request(request, db)
 
     @api_request(clientmobile.RequestFormat)
-    def handle_mobile_request(self, request, db, session_user, client_id):
+    def handle_mobile_request(self, request, db, session_user, client_id, le_id):
         return mobilecontroller.process_client_mobile_request(request, db)
 
 
@@ -471,6 +494,7 @@ def run_server(address, knowledge_server_address):
             ("/api/isalive", handle_isalive),
             ("/api/login", api.handle_login),
             ("/api/client_masters", api.handle_client_masters),
+            ("/api/client_master_filters", api.handle_client_master_filters),
             ("/api/client_transaction", api.handle_client_transaction),
             ("/api/client_reports", api.handle_client_reports),
             ("/api/client_dashboard", api.handle_client_dashboard),

@@ -1,3 +1,7 @@
+CREATE TABLE `tbl_audit_log` (
+  `audit_trail_id` int(11) DEFAULT 0,
+  `domain_trail_id` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_category` (
   `user_category_id` int(11) NOT NULL,
   `user_category_name` varchar(50) DEFAULT NULL,
@@ -59,14 +63,12 @@ CREATE TABLE `tbl_client_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_business_groups` (
   `business_group_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `business_group_name` varchar(100) NOT NULL,
   PRIMARY KEY (`business_group_id`),
-  UNIQUE KEY(`business_group_id`, `client_id`)
+  UNIQUE KEY(`business_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entities` (
   `legal_entity_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_name` varchar(100) DEFAULT NULL,
@@ -83,7 +85,7 @@ CREATE TABLE `tbl_legal_entities` (
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`legal_entity_id`),
-  UNIQUE KEY(`legal_entity_id`, `client_id`)
+  UNIQUE KEY(`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entity_domains` (
   `legal_entity_id` int(11) NOT NULL,
@@ -94,23 +96,21 @@ CREATE TABLE `tbl_legal_entity_domains` (
   UNIQUE KEY(`legal_entity_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_divisions` (
-  `client_id` int(11) NOT NULL,
   `division_id` int(11) NOT NULL,
   `division_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`division_id`),
-  UNIQUE KEY(`division_id`, `client_id`)
+  UNIQUE KEY(`division_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_categories` (
   `category_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `category_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `division_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`category_id`),
-  UNIQUE KEY(`category_id`, `client_id`, `legal_entity_id`)
+  UNIQUE KEY(`category_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_configuration` (
   `client_id` int(11) NOT NULL,
@@ -178,7 +178,6 @@ CREATE TABLE `tbl_mapped_industries` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_compliances` (
   `client_compliance_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) DEFAULT NULL,
@@ -201,6 +200,17 @@ CREATE TABLE `tbl_client_compliances` (
   `submitted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`),
   UNIQUE KEY(`unit_id`, `domain_id`, `compliance_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_client_statutories`(
+    `client_statutory_id` int(11) NOT NULL,
+    `unit_id` int(11) NOT NULL,
+    `domain_id` int(11) NOT NULL,
+    `updated_by` int(11) DEFAULT NULL,
+    `updated_on` timestamp NULL DEFAULT NULL,
+    `is_locked` tinyint(4) DEFAULT '0',
+    `locked_on` timestamp NULL DEFAULT NULL,
+    `locked_by` int(11) DEFAULT NULL,
+    UNIQUE KEY(`unit_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_statutory_notifications` (
   `notification_id` int(11) NOT NULL,
@@ -267,6 +277,7 @@ CREATE TABLE `tbl_users` (
   `user_category_id` int(11) NOT NULL,
   `client_id` int(11) DEFAULT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
+  `service_provider_id` int(11) DEFAULT NULL,
   `user_level` int(11) DEFAULT NULL,
   `user_group_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
@@ -509,6 +520,14 @@ CREATE TABLE `tbl_calender_view` (
   `upcoming_count` int(11) DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `user_id`, `year`, `month`, `date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_validity_date_settings` (
+  `validity_date_id` int(11) NOT NULL AUTO_INCREMENT,
+  `country_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
+  `days` int(11) NOT NULL,
+  PRIMARY KEY (`validity_date_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
 INSERT INTO tbl_user_category VALUES(3, "Legal Entity Admin");

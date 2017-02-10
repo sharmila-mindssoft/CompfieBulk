@@ -49,12 +49,19 @@ function initClientMirror() {
         delete window.sessionStorage.CLIENT_NOTIFICATION_COUNT;
         delete window.sessionStorage.CLIENT_REMINDER_COUNT;
         delete window.sessionStorage.CLIENT_ESCALATION_COUNT;
+        delete window.sessionStorage.selectedEntity;
+        delete window.sessionStorage.selectedEntityName;
     }
 
     function getUserInfo() {
         var info = window.sessionStorage.userInfo;
         user = parseJSON(info);
         return user;
+    }
+
+    function getSelectedLegalEntity() {
+        var info = window.sessionStorage.selectedEntity;
+        return info;
     }
 
     function updateUserInfo(response) {
@@ -1924,6 +1931,254 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {}
         });
     }
+
+    /* Legal entity wise report - updated*/
+    function getLegalEntityWiseReportFilters(country_id, le_id, callback) {
+        console.log(country_id+' - '+le_id);
+        var request = [
+            'GetLegalEntityWiseReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getLegalEntityWiseReport(
+        country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
+        compliance_id, frequency_id, user_type, user_id, from_date, to_date,
+        task_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetLegalEntityWiseReport',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'domain_id': domain_id,
+                'unit_id': unit_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'frequency_id': frequency_id,
+                'user_type': user_type,
+                'user_id': user_id,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    function getReviewSettingsFilters(le_id, callback) {
+        var request = [
+            'GetReviewSettingsFilters',
+            {
+                "le_id": le_id
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Domain Wise report - updated*/
+    function getDomainWiseReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetDomainWiseReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getDomainWiseReport(
+        country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
+        compliance_id, frequency_id, user_type, user_id, from_date, to_date,
+        task_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetDomainWiseReport',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'domain_id': domain_id,
+                'unit_id': unit_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'frequency_id': frequency_id,
+                'user_type': user_type,
+                'user_id': user_id,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Domain Wise report - updated*/
+    function getUnitWiseReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetUnitWiseReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUnitWiseReport(
+        country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
+        compliance_id, frequency_id, user_type, user_id, from_date, to_date,
+        task_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetUnitWiseReport',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'unit_id': unit_id,
+                'domain_id': domain_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'frequency_id': frequency_id,
+                'user_type': user_type,
+                'user_id': user_id,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Service Provider Wise report - updated*/
+    function getServiceProviderWiseReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetServiceProviderWiseReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getServiceProviderWiseReport(
+        country_id, legal_entity_id, sp_id, domain_id, unit_id, statutory_mapping,
+        compliance_id, user_id, from_date, to_date,
+        task_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetServiceProviderWiseReport',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'sp_id': sp_id,
+                'domain_id': domain_id,
+                'unit_id': unit_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'user_id': user_id,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* User Wise report - updated*/
+    function getUserWiseReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetUserWiseReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUserWiseReport(
+        country_id, legal_entity_id, user_id, domain_id, unit_id, statutory_mapping,
+        compliance_id, frequency_id, user_type, from_date, to_date,
+        task_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetUserWiseReport',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'user_id': user_id,
+                'domain_id': domain_id,
+                'unit_id': unit_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'frequency_id': frequency_id,
+                'user_type': user_type,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getReviewSettingsUnitFilters(le_id, d_id, callback) {
+        var request = [
+            'GetReviewSettingsUnitFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback){
+        var request = [
+            'GetReviewSettingsComplianceFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id,
+                "unit_ids": units,
+                "f_id": f_type,
+                "sno": sno,
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -1941,6 +2196,7 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         getUserCountry: getUserCountry,
         getUserLegalEntity: getUserLegalEntity,
+        getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
         clientApiRequest: clientApiRequest,
@@ -2052,7 +2308,15 @@ function initClientMirror() {
         uploadFormatFile: uploadFormatFile,
         getUnitClosureData: getUnitClosureData,
         getUnitClosureUnitList: getUnitClosureUnitList,
-        saveUnitClosureData: saveUnitClosureData
+        saveUnitClosureData: saveUnitClosureData,
+        getLegalEntityWiseReportFilters: getLegalEntityWiseReportFilters,
+        getLegalEntityWiseReport: getLegalEntityWiseReport,
+        getReviewSettingsFilters: getReviewSettingsFilters,
+
+        getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
+        getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
+        getDomainWiseReportFilters: getDomainWiseReportFilters,
+        getDomainWiseReport: getDomainWiseReport
     };
 }
 var client_mirror = initClientMirror();

@@ -139,6 +139,7 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
+        print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -158,6 +159,7 @@ class API(object):
             data = request.data[5:]
             data = data.decode('base64')
             data = json.loads(data)
+            print data
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -200,6 +202,7 @@ class API(object):
             elif type(request_data) is str:
                 raise ValueError(request_data)
 
+
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
             _db.begin()
@@ -232,14 +235,16 @@ class API(object):
             return self._send_response(str(e), 400)
 
     @csrf.exempt
-    @api_request(
-        DistributionRequest
-    )
+    @api_request(DistributionRequest)
     def handle_server_list(self, request, db):
         print request
-        return CompanyServerDetails(
-            gen.get_servers(db)
-        )
+        return CompanyServerDetails(gen.get_servers(db))
+
+    @csrf.exempt
+    @api_request(DistributionRequest)
+    def handle_group_server_list(self, request, db):
+        print request
+        return CompanyServerDetails(gen.get_group_servers(db))
 
     @csrf.exempt
     @api_request(GetClientChanges)
@@ -254,8 +259,9 @@ class API(object):
 
         client_id = request.client_id
         received_count = request.received_count
+        is_group = request.is_group
         res = GetChangesSuccess(
-            gen.get_trail_log(db, client_id, received_count)
+            gen.get_trail_log(db, client_id, received_count, is_group)
         )
         return res
 
@@ -466,6 +472,7 @@ def run_server(port):
         # post urls
         api_urls_and_handlers = [
             ("/knowledge/server-list", api.handle_server_list),
+            ("/knowledge/group-server-list", api.handle_group_server_list),
             ("/knowledge/client-list", api.handle_client_list),
             ("/knowledge/replication", api.handle_replication),
             ("/knowledge/domain-replication", api.handle_domain_replication),

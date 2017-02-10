@@ -20,7 +20,7 @@ __all__ = [
     "get_trail_id",
     "get_trail_log",
     "get_trail_log_for_domain",
-    "remove_trail_log", "get_servers",
+    "remove_trail_log", "get_servers", "get_group_servers",
     "get_client_replication_list",
     "update_client_replication_status",
     "update_client_domain_status", "get_user_forms",
@@ -44,23 +44,22 @@ def get_trail_id(db):
     return trail_id
 
 
-def get_trail_log(db, client_id, received_count):
+def get_trail_log(db, client_id, received_count, is_group):
     query = "SELECT "
     query += "  audit_trail_id, tbl_name, tbl_auto_id,"
-    query += "  column_name, value, client_id, action"
+    query += "  column_name, value, client_id, action, legal_entity_id"
     query += " from tbl_audit_log WHERE audit_trail_id > %s "
-    query += " AND (client_id = 0 OR client_id= %s) LIMIT 100;"
+    if is_group :
+        query += " AND (client_id= %s) "
+    else :
+        query += " AND (legal_entity_id=0 or legal_entity_id= %s) "
+    query += " LIMIT 100;"
 
     rows = db.select_all(query, [received_count, client_id])
-    results = []
-    if rows:
-        columns = [
-            "audit_trail_id", "tbl_name", "tbl_auto_id",
-            "column_name", "value", "client_id", "action"
-        ]
-        results = convert_to_dict(rows, columns)
-    if len(results) == 0:
-        update_client_replication_status(db, client_id, received_count)
+    print rows
+    results = rows
+    if len(rows) == 0:
+        update_client_replication_status(db, client_id, received_count, is_group)
     return return_changes(results)
 
 
@@ -75,13 +74,13 @@ def get_trail_log_for_domain(
     q_rows = db.select_all(q, [received_count, actual_count, domain_id])
     auto_id = []
     for r in q_rows:
-        auto_id.append(str(r[0]))
+        auto_id.append(str(r["tbl_audit_id"]))
 
     rows = None
     if len(auto_id) > 0:
         query = "SELECT "
         query += "  audit_trail_id, tbl_name, tbl_auto_id,"
-        query += "  column_name, value, client_id, action"
+        query += "  column_name, value, client_id, action, legal_entity_id"
         query += " from tbl_audit_log WHERE tbl_name = 'tbl_compliances' " + \
             " AND audit_trail_id> %s AND " + \
             " tbl_auto_id IN (%s) "
@@ -89,13 +88,8 @@ def get_trail_log_for_domain(
             received_count,
             ','.join(auto_id)
         ])
-    results = []
-    if rows:
-        columns = [
-            "audit_trail_id", "tbl_name", "tbl_auto_id",
-            "column_name", "value", "client_id", "action"
-        ]
-        results = convert_to_dict(rows, columns)
+    results = rows
+
     if len(results) == 0:
         update_client_replication_status(
             db, client_id, 0, type="domain_trail_id"
@@ -113,7 +107,8 @@ def return_changes(data):
             d["column_name"],
             d["value"],
             int(d["client_id"]),
-            d["action"]
+            d["action"],
+            d["legal_entity_id"]
         )
         results.append(change)
     return results
@@ -135,9 +130,21 @@ def get_servers(db):
         " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
         " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
         " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
-    print query
     rows = db.select_all(query)
-    print rows
+    return return_companies(rows)
+
+
+def get_group_servers(db):
+
+    query = "select t2.database_ip, t2.database_port, ct1.database_username, ct1.database_password," + \
+        " ct1.database_name , t1.client_id, t1.legal_entity_id, t4.short_name, " + \
+        " t3.machine_id, t3.machine_name, t3.ip as server_ip, t3.port as server_port, ct1.is_group " + \
+        " from tbl_client_database as t1 " + \
+        " inner join tbl_client_database_info as ct1 on t1.client_database_id = ct1.client_database_id and ct1.is_group = 1 " + \
+        " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
+        " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
+        " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
+    rows = db.select_all(query)
     return return_companies(rows)
 
 
@@ -152,31 +159,31 @@ def return_companies(data):
             d["server_ip"],
             int(d["server_port"])
         )
+        is_group = bool(d["is_group"])
+
+        if is_group is True:
+            company_id = d["client_id"]
+        else:
+            company_id = d["legal_entity_id"]
         results.append(Company(
-            int(d["client_id"]),
+            int(company_id),
             d["short_name"],
             d["database_username"],
             d["database_password"],
             d["database_name"],
             database_ip,
             company_server_ip,
-            bool(d["is_group"])
+            is_group
         ))
     return results
 
 
 def get_client_replication_list(db):
     q = "select client_id, is_new_data, is_new_domain, " + \
-        " domain_id from tbl_client_replication_status " + \
+        " domain_id, is_group from tbl_client_replication_status " + \
         " where is_new_data = 1"
     rows = db.select_all(q)
-    results = []
-    if rows:
-        column = [
-            "client_id", "is_new_data", "is_new_domain", "domain_id"
-        ]
-        results = convert_to_dict(rows, column)
-    return _return_clients(results)
+    return _return_clients(rows)
 
 
 def _return_clients(data):
@@ -186,22 +193,23 @@ def _return_clients(data):
             int(d["client_id"]),
             bool(d["is_new_data"]),
             bool(d["is_new_domain"]),
-            d["domain_id"]
+            d["domain_id"],
+            bool(d["is_group"])
         ))
     return results
 
 
 def update_client_replication_status(
-    db, client_id, received_count, type=None
+    db, client_id, received_count, is_group, type=None
 ):
     if type is None:
         q = "update tbl_client_replication_status set is_new_data = 0 " + \
-            " where client_id = %s"
-        remove_trail_log(db, client_id, received_count)
+            " where client_id = %s and is_group = %s"
+        # remove_trail_log(db, client_id, received_count)
     else:
         q = "update tbl_client_replication_status set is_new_domain = 0, " + \
-            " domain_id = '' where client_id = %s"
-    db.execute(q, [client_id])
+            " domain_id = '' where client_id = %s and is_group = %s"
+    db.execute(q, [client_id, is_group])
 
 
 def update_client_domain_status(db, client_id, domain_ids):

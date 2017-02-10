@@ -389,61 +389,61 @@ function hideLoader() {
 }
 
 $(function() {
-    $(":input").attr('autocomplete', 'off');
+    $( ":input" ).attr('autocomplete','off');
 
     //sort
     $('.sort').click(function(event) {
-        var table = $(this).closest("table");
-        var tbody = table.find('tbody');
-        var col_num = $(this).closest("th").index();
-        if ($(this).hasClass("asc")) {
-            $(this).addClass("desc");
-            $(this).removeClass("asc");
-        } else {
-            $(this).addClass("asc");
-            $(this).removeClass("desc");
-        }
+      var table = $(this).closest("table");
+      var tbody = table.find('tbody');
+      var col_num = $(this).closest("th").index();
+      if($(this).hasClass("asc")) {
+          $(this).addClass("desc");
+          $(this).removeClass("asc");
+      } else {
+          $(this).addClass("asc");
+          $(this).removeClass("desc");
+      }
 
-        function extract_value(tr) {
-            var td = $(tr).find('td')[col_num];
-            var sort_value = $(td).html();
-            var data_sort_value = $(td).attr('data-sort-value');
-            if (typeof data_sort_value !== "undefined") {
-                sort_value = data_sort_value;
-            }
-            return sort_value;
-        }
+      function extract_value(tr) {
+          var td = $(tr).find('td')[col_num];
+          var sort_value = $(td).html();
+          var data_sort_value = $(td).attr('data-sort-value');
+          if (typeof data_sort_value !== "undefined") {
+              sort_value = data_sort_value;
+          }
+          return sort_value;
+      }
 
-        var allTrs = tbody.find('tr');
-        tbody.find('tr').remove();
+      var allTrs = tbody.find('tr');
+      tbody.find('tr').remove();
 
-        allTrs.sort(function(tr_a, tr_b) {
-            var aval = extract_value(tr_a);
-            var bval = extract_value(tr_b);
-            if (isNaN(aval) || isNaN(bval)) {
-                return aval.localeCompare(bval);
-            } else {
-                aval = parseFloat(aval);
-                bval = parseFloat(bval);
-                return (aval > bval ? 1 : (bval > aval) ? -1 : 0);
-            }
-        });
+      allTrs.sort(function(tr_a, tr_b) {
+          var aval = extract_value(tr_a);
+          var bval = extract_value(tr_b);
+          if (isNaN(aval) || isNaN(bval)) {
+              return aval.localeCompare(bval);
+          } else {
+              aval = parseFloat(aval);
+              bval = parseFloat(bval);
+              return (aval > bval ? 1 : (bval > aval) ? -1 : 0);
+          }
+      });
 
-        if ($(this).hasClass("asc")) {
-            for (var i = allTrs.length - 1; i >= 0; i--) {
-                $(allTrs[i]).appendTo(tbody);
-            };
-        } else {
-            for (var i = 0; i < allTrs.length; i++) {
-                $(allTrs[i]).appendTo(tbody);
-            };
-        }
-        table.find("th span.none-sort-sno").each(function(i) {
-            var th_index = $(this).parent().index();
-            var rows = table.children("tbody").children("tr");
-            rows.each(function(index, tr) {
-                $(tr).children().eq(th_index).html(index + 1);
-            });
-        });
-    });
+      if ($(this).hasClass("asc")) {
+          for (var i = allTrs.length - 1; i >= 0; i--) {
+              $(allTrs[i]).appendTo(tbody);
+          };
+      } else {
+          for (var i = 0; i < allTrs.length; i++) {
+              $(allTrs[i]).appendTo(tbody);
+          };
+      }
+      table.find("th span.none-sort-sno").each(function(i) {
+          var th_index = $(this).parent().index();
+          var rows = table.children("tbody").children("tr");
+          rows.each(function(index, tr) {
+              $(tr).children().eq(th_index).html(index+1);
+          });
+      });
+  });
 });
