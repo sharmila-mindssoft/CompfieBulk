@@ -159,6 +159,7 @@ class API(object):
             data = request.data[5:]
             data = data.decode('base64')
             data = json.loads(data)
+            print data
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -200,6 +201,7 @@ class API(object):
 
             elif type(request_data) is str:
                 raise ValueError(request_data)
+
 
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)

@@ -67,8 +67,8 @@ CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_grou
                     NEW.total_view_licence,
                     'tbl_client_groups');
 
-        UPDATE tbl_client_replication_status set is_new_data = 1
-        WHERE client_id = NEW.client_id and is_group = 1;
+        INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group)
+        values(new.client_id, 0, 1);
 
     END IF;
 

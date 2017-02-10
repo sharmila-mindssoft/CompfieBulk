@@ -210,7 +210,7 @@ function callAPI(api_type) {
         } else {
 
             mirror.saveAssignedStatutory(selected_compliances_list, submission_status, int(val_group_id), int(val_legal_entity_id),
-                int(val_domain_id), DomainName.val(),
+                int(val_domain_id), DomainName.val(), ACTIVE_UNITS,
                 function(error, data) {
                     if (error == null) {
                         if (submission_status == 1) {
