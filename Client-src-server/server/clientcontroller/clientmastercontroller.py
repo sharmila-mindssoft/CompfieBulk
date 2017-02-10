@@ -101,6 +101,14 @@ def process_client_master_requests(request, db, session_user, client_id):
     elif type(request) is clientmasters.SaveUnitClosureData:
         result = process_save_unit_closure_unit_data(db, request, session_user)
 
+    elif type(request) is clientmasters.GetServiceProviderDetailsReportFilters:
+        result = get_service_provider_details_report_filter_data(
+            db, request, session_user)
+
+    elif type(request) is clientmasters.GetServiceProviderDetailsReport:
+        result = get_service_provider_details_report(
+            db, request, session_user
+        )
     return result
 
 
@@ -563,3 +571,30 @@ def process_save_unit_closure_unit_data(db, request, session_user):
                 return clientmasters.SaveUnitClosureSuccess()
         else:
             return clientmasters.InvalidPassword()
+
+
+###############################################################################################
+# Objective: To get service providers and its users list
+# Parameter: request object and the client id
+# Result: list of record sets which contains service providers and users its
+###############################################################################################
+def get_service_provider_details_report_filter_data(db, request, session_user):
+    service_providers_list = get_service_providers_list(db)
+    service_providers_users_list = get_service_providers_user_list(db)
+    service_providers_status_list = get_service_provider_status(db)
+    return clientmasters.GetServiceProviderDetailsFilterSuccess(
+        sp_list=service_providers_list,
+        sp_user_list=service_providers_users_list,
+        sp_status_list=service_providers_status_list
+    )
+
+###############################################################################################
+# Objective: To get service providers details and user details
+# Parameter: request object and the client id
+# Result: list of record sets which contains service providers details
+###############################################################################################
+def get_service_provider_details_report(db, request, session_user):
+    service_providers_status_list = get_service_provider_details_report_data(db, request)
+    return clientmasters.GetServiceProviderDetailsReportSuccess(
+        sp_details_list=service_providers_status_list
+    )
