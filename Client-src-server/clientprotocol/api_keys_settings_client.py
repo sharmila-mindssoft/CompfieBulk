@@ -58,6 +58,7 @@ api_params = {
 
     'login_type': make_enum_type("clientcore", "SESSION_TYPE"),
     'username': make_text_field(length=100),
+    'user_name': make_text_field(length=100, is_optional=True),
     'password': make_text_field(length=100),
     'short_name': make_text_field(length=50),
     'ip': make_text_field(length=50),
@@ -92,6 +93,7 @@ api_params = {
     "bg_id": make_int_field(is_optional=True),
     "usr_id": make_int_field(),
     "email_id": make_string_field(validfun=allow_specialchar),
+    "user_email_id": make_string_field(validfun=allow_specialchar),
     "emp_name": make_string_field(is_optional=True),
     "emp_code": make_string_field(is_optional=True),
     "con_no": make_string_field(is_optional=True),
@@ -201,6 +203,13 @@ api_params = {
     "compliance_description": make_text_field(length=500),
     "notification_text": make_text_field(length=500),
     "created_on": make_text_field(is_optional=True),
+    "s_p_status_id": make_int_field(is_optional=True),
+    "s_p_status": make_string_field(),
+    "contract_period": make_text_field(is_optional=True),
+    "sp_status_date": make_text_field(is_optional=True),
+    "user_status": make_string_field(),
+    "user_status_date": make_text_field(is_optional=True),
+    "unit_count": make_int_field(is_optional=True),
 
     'csv': make_bool_field(is_optional=False),
     'from_count': make_int_field(is_optional=False),
@@ -232,7 +241,7 @@ api_params = {
     "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
     "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "unit_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
-    "sp_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviders"),
+    "sp_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProviders"),
     "sp_domains_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderDomains"),
     "sp_unit_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderUnits"),
     "sp_act_task_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderActList"),
@@ -250,4 +259,7 @@ api_params = {
     "unit_status_list": make_vector_type_field(module="clientreport", klass_name="UnitStatus"),
     "unit_list_report": make_vector_type_field(module="clientreport", klass_name="UnitListReport"),
     "stat_notf_list_report": make_vector_type_field(module="clientreport", klass_name="StatutoryNotificationReport"),
+    "sp_user_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProviderUsers"),
+    "sp_status_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProvidersStatus"),
+    "sp_details_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProvidersDetailsList")
 }
