@@ -210,6 +210,21 @@ class ChangeServiceProviderStatus(Request):
             "active": to_structure_Bool(self.is_active),
         }
 
+########################################################
+# Get User Management List
+# class GetUserManagementList(Request):
+#     def __init__(self):
+#         pass
+
+#     @staticmethod
+#     def parse_inner_structure(data):
+#         data = parse_dictionary(data)
+#         return GetUserManagementList()
+
+#     def to_inner_structure(self):
+#         return {
+#         }
+
 class GetUserPrivileges(Request):
     def __init__(self):
         pass
