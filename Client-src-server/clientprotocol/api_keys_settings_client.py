@@ -198,6 +198,9 @@ api_params = {
     "user_id_optional": make_int_field(is_optional=True),
     'user_category_id': make_int_field(),
     "i_ids": make_vector_type_int(),
+    "compliance_description": make_text_field(length=500),
+    "notification_text": make_text_field(length=500),
+    "created_on": make_text_field(is_optional=True),
 
     'csv': make_bool_field(is_optional=False),
     'from_count': make_int_field(is_optional=False),
@@ -245,5 +248,6 @@ api_params = {
     "units_list": make_vector_type_field(module="clientreport", klass_name="UnitList"),
     "domains_organisations_list": make_vector_type_field(module="clientreport", klass_name="DomainsOrganisation"),
     "unit_status_list": make_vector_type_field(module="clientreport", klass_name="UnitStatus"),
-    "unit_list_report": make_vector_type_field(module="clientreport", klass_name="UnitListReport")
+    "unit_list_report": make_vector_type_field(module="clientreport", klass_name="UnitListReport"),
+    "stat_notf_list_report": make_vector_type_field(module="clientreport", klass_name="StatutoryNotificationReport"),
 }
