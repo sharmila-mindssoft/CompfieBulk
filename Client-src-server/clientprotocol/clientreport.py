@@ -1571,6 +1571,72 @@ class GetUnitListReport(Request):
             "page_count": self.page_count
         }
 
+class GetStatutoryNotificationsListReportFilters(Request):
+    def __init__(self, country_id, legal_entity_id):
+        self.country_id = country_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "legal_entity_id"])
+        country_id = data.get("country_id")
+        legal_entity_id = data.get("legal_entity_id")
+        return GetStatutoryNotificationsListReportFilters(country_id, legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id,
+        }
+
+class GetStatutoryNotificationsListReportData(Request):
+    def __init__(
+        self, country_id, legal_entity_id, domain_id, statutory_mapping,
+        due_from_date, due_to_date, csv, from_count, page_count
+    ):
+        self.country_id = country_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.statutory_mapping = statutory_mapping
+        self.due_from_date = due_from_date
+        self.due_to_date = due_to_date
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "legal_entity_id", "domain_id", "statutory_mapping",
+            "due_from_date", "due_to_date", "csv", "from_count", "page_count"
+        ])
+        country_id = data.get("country_id")
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id")
+        statutory_mapping = data.get("statutory_mapping")
+        due_from_date = data.get("due_from_date")
+        due_to_date = data.get("due_to_date")
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetStatutoryNotificationsListReportData(
+            country_id, legal_entity_id, domain_id, statutory_mapping,
+            due_from_date, due_to_date, csv, from_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "statutory_mapping": self.statutory_mapping,
+            "due_from_date": self.due_from_date,
+            "due_to_date": self.due_to_date,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
+
 def _init_Request_class_map():
     classes = [
         GetComplianceDetailsReportFilters, GetComplianceDetailsReport,
@@ -1587,7 +1653,8 @@ def _init_Request_class_map():
         GetLegalEntityWiseReport, GetDomainWiseReportFilters, GetDomainWiseReport,
         GetUnitWiseReportFilters, GetUnitWiseReport, GetServiceProviderWiseReportFilters,
         GetServiceProviderWiseReport, GetUserWiseReportFilters, GetUserWiseReport,
-        GetUnitListReportFilters, GetUnitListReport
+        GetUnitListReportFilters, GetUnitListReport, GetStatutoryNotificationsListReportFilters,
+        GetStatutoryNotificationsListReportData
     ]
     class_map = {}
     for c in classes:
@@ -2743,6 +2810,40 @@ class GetunitListReportSuccess(Response):
             "unit_list_report" : self.unit_list_report
         }
 
+class GetStatutoryNotificationsListReportFilterSuccess(Response):
+    def __init__(self, domains, act_legal_entity):
+        self.domains = domains
+        self.act_legal_entity = act_legal_entity
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domains", "act_legal_entity"])
+        domains = data.get("domains")
+        act_legal_entity = data.get("act_legal_entity")
+        return GetStatutoryNotificationsListReportFilterSuccess(
+            domains, act_legal_entity
+        )
+
+    def to_inner_structure(self):
+        return {
+            "domains": self.domains,
+            "act_legal_entity": self.act_legal_entity
+        }
+
+class GetStatutoryNotificationReportDataSuccess(Response):
+    def __init__(self, stat_notf_list_report):
+        self.stat_notf_list_report = stat_notf_list_report
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["stat_notf_list_report"])
+        stat_notf_list_report = data.get("stat_notf_list_report")
+        return GetStatutoryNotificationReportDataSuccess(stat_notf_list_report)
+
+    def to_inner_structure(self):
+        return {
+            "stat_notf_list_report" : self.stat_notf_list_report
+        }
 
 class ExportToCSVSuccess(Response):
     def __init__(self, link):
@@ -2788,7 +2889,9 @@ def _init_Response_class_map():
         GetUserWiseReportFiltersSuccess,
         GetUserWiseReportSuccess,
         GetUnitListReportFiltersSuccess,
-        GetunitListReportSuccess
+        GetunitListReportSuccess,
+        GetStatutoryNotificationsListReportFilterSuccess,
+        GetStatutoryNotificationReportDataSuccess
     ]
     class_map = {}
     for c in classes:
@@ -4630,6 +4733,50 @@ class UnitListReport(object):
             "unit_status": self.unit_status,
             "closed_on": self.closed_on,
             "division_name": self.division_name
+        }
+
+#
+# Statutory Notification List
+#
+
+class StatutoryNotificationReport(object):
+    def __init__(
+        self, compliance_id, compliance_task, compliance_description,
+        created_on, notification_text, statutory_mapping
+    ):
+        self.compliance_id = compliance_id
+        self.compliance_task = compliance_task
+        self.compliance_description = compliance_description
+        self.created_on = created_on
+        self.notification_text = notification_text
+        self.statutory_mapping = statutory_mapping
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "compliance_id", "compliance_task", "compliance_description",
+            "created_on", "notification_text", "statutory_mapping"
+        ])
+        compliance_id = data.get("compliance_id")
+        compliance_task = data.get("compliance_task")
+        compliance_description = data.get("compliance_description")
+        created_on = data.get("created_on")
+        notification_text = data.get("notification_text")
+        statutory_mapping = data.get("statutory_mapping")
+
+        return StatutoryNotificationReport(
+            compliance_id, compliance_task, compliance_description,
+            created_on, notification_text, statutory_mapping
+        )
+
+    def to_structure(self):
+        return {
+            "compliance_id": self.compliance_id,
+            "compliance_task": self.compliance_task,
+            "compliance_description": self.compliance_description,
+            "created_on": self.created_on,
+            "notification_text": self.notification_text,
+            "statutory_mapping": self.statutory_mapping
         }
 
 #
