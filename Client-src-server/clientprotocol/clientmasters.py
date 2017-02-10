@@ -627,6 +627,46 @@ class SaveUnitClosureData(Request):
         }
         return data
 
+class GetServiceProviderDetailsReportFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetServiceProviderDetailsReportFilters()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetServiceProviderDetailsReport(Request):
+    def __init__(self, sp_id, user_id, s_p_status, from_count, page_count):
+        self.sp_id = sp_id
+        self.user_id = user_id
+        self.s_p_status = s_p_status
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["sp_id", "user_id", "s_p_status", "from_count", "page_count"])
+        sp_id = data.get("sp_id")
+        user_id = data.get("user_id")
+        s_p_status = data.get("s_p_status")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetServiceProviderDetailsReport(sp_id, user_id, s_p_status, from_count, page_count)
+
+    def to_inner_structure(self):
+        return {
+            "sp_id": self.sp_id,
+            "user_id": self.user_id,
+            "s_p_status": self.s_p_status,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
+
 def _init_Request_class_map():
     classes = [
         GetServiceProviders, ChangeClientUserStatus, ChangeAdminStatus,
@@ -634,7 +674,8 @@ def _init_Request_class_map():
         GetUserPrivileges, SaveUserPrivileges, UpdateUserPrivileges,
         ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser,
         UpdateClientUserStatus, GetUnits, CloseUnit, GetAuditTrails,
-        GetUnitClosureData, SaveUnitClosureData, GetUnitClosureUnitData
+        GetUnitClosureData, SaveUnitClosureData, GetUnitClosureUnitData,
+        GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport
     ]
     class_map = {}
     for c in classes:
@@ -1279,6 +1320,42 @@ class InvalidUnitId(Response):
         return {
         }
 
+class GetServiceProviderDetailsFilterSuccess(Response):
+    def __init__(self, sp_list, sp_user_list, sp_status_list):
+        self.sp_list = sp_list
+        self.sp_user_list = sp_user_list
+        self.sp_status_list = sp_status_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["sp_list", "sp_user_list", "sp_status_list"])
+        sp_list = data.get("sp_list")
+        sp_user_list = data.get("sp_user_list")
+        sp_status_list = data.get("sp_status_list")
+        return GetServiceProviderDetailsFilterSuccess(sp_list, sp_user_list, sp_status_list)
+
+    def to_inner_structure(self):
+        return {
+            "sp_list": self.sp_list,
+            "sp_user_list": self.sp_user_list,
+            "sp_status_list": self.sp_status_list
+        }
+
+class GetServiceProviderDetailsReportSuccess(Response):
+    def __init__(self, sp_details_list):
+        self.sp_details_list = sp_details_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["sp_details_list"])
+        sp_details_list = data.get("sp_details_list")
+        return GetServiceProviderDetailsReportSuccess(sp_details_list)
+
+    def to_inner_structure(self):
+        return {
+            "sp_details_list" : self.sp_details_list
+        }
+
 def _init_Response_class_map():
     classes = [
         GetServiceProvidersSuccess, SaveServiceProviderSuccess,
@@ -1294,7 +1371,9 @@ def _init_Response_class_map():
         InvalidServiceProviderId, EmailIdAlreadyExists, CannotChangePrimaryAdminStatus ,
         CannotPromoteServiceProvider, ReassignCompliancesBeforeDeactivate,
         CannotChangeStatusOfContractExpiredSP, CannotCloseUnit, GetUnitClosureUnitDataSuccess,
-        GetUnitClosureDataSuccess, SaveUnitClosureSuccess, InvalidUnitId
+        GetUnitClosureDataSuccess, SaveUnitClosureSuccess, InvalidUnitId,
+        GetServiceProviderDetailsFilterSuccess,
+        GetServiceProviderDetailsReportSuccess
     ]
     class_map = {}
     for c in classes:
@@ -1334,6 +1413,124 @@ class AuditTrail(object):
             "date": to_structure_CustomTextType_20(self.date)
         }
 
+#
+# Service Provider List
+#
+class ServiceProviders(object):
+    def __init__(self, sp_id, sp_name):
+        self.sp_id = sp_id
+        self.sp_name = sp_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["sp_id", "sp_name"])
+        sp_id = data.get("sp_id")
+        sp_name = data.get("sp_name")
+        return ServiceProviders(sp_id, sp_name)
+
+    def to_structure(self):
+        return {
+            "sp_id": self.sp_id,
+            "sp_name": self.sp_name,
+        }
+
+#
+# Service Provider - Users List
+#
+class ServiceProviderUsers(object):
+    def __init__(self, sp_id_optional, user_id, user_name):
+        self.sp_id_optional = sp_id_optional
+        self.user_id = user_id
+        self.user_name = user_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["sp_id_optional", "user_id", "user_name"])
+        sp_id_optional = data.get("sp_id_optional")
+        user_id = data.get("user_id")
+        user_name = data.get("user_name")
+        return ServiceProviderUsers(sp_id_optional, user_id, user_name)
+
+    def to_structure(self):
+        data = {
+            "sp_id_optional": self.sp_id_optional,
+            "user_id": self.user_id,
+            "user_name": self.user_name
+        }
+        return to_structure_dictionary_values(data)
+
+#
+# Service Provider - status List
+#
+class ServiceProvidersStatus(object):
+    def __init__(self, s_p_status_id, s_p_status):
+        self.s_p_status_id = s_p_status_id
+        self.s_p_status = s_p_status
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["s_p_status_id", "s_p_status"])
+        s_p_status_id = data.get("s_p_status_id")
+        s_p_status = data.get("s_p_status")
+        return ServiceProvidersStatus(s_p_status_id, s_p_status)
+
+    def to_structure(self):
+        return {
+            "s_p_status_id": self.s_p_status_id,
+            "s_p_status": self.s_p_status,
+        }
+
+
+#
+# Service Provider - Details
+#
+class ServiceProvidersDetailsList(object):
+    def __init__(
+        self, sp_id, sp_name, con_no, email_id, address, contract_period,
+        s_p_status, sp_status_date, unit_count
+    ):
+        self.sp_id = sp_id
+        self.sp_name = sp_name
+        self.con_no = con_no
+        self.email_id = email_id
+        self.address = address
+        self.contract_period = contract_period
+        self.s_p_status = s_p_status
+        self.sp_status_date = sp_status_date
+        self.unit_count = unit_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "sp_id", "sp_name", "con_no", "email_id", "address", "contract_period",
+            "s_p_status", "sp_status_date", "unit_count"
+        ])
+        sp_id = data.get("sp_id")
+        sp_name = data.get("sp_name")
+        con_no = data.get("con_no")
+        email_id = data.get("email_id")
+        address = data.get("address")
+        contract_period = data.get("contract_period")
+        s_p_status = data.get("s_p_status")
+        sp_status_date = data.get("sp_status_date")
+        unit_count = data.get("unit_count")
+        return ServiceProvidersDetailsList(
+            sp_id, sp_name, con_no, email_id, address, contract_period, s_p_status,
+            sp_status_date, unit_count
+        )
+
+    def to_structure(self):
+        return {
+            "sp_id": self.sp_id,
+            "sp_name": self.sp_name,
+            "con_no": self.con_no,
+            "email_id": self.email_id,
+            "address": self.address,
+            "contract_period": self.contract_period,
+            "s_p_status": self.s_p_status,
+            "sp_status_date": self.sp_status_date,
+            "unit_count": self.unit_count
+        }
 
 
 #
