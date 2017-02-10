@@ -1,6 +1,6 @@
 import time
 from server.jsontocsvconverter import ConvertJsonToCSV
-from clientprotocol import (clientcore, clientreport, clientlogin)
+from clientprotocol import (clientcore, clientreport)
 from server import logger
 from server.constants import RECORD_DISPLAY_COUNT
 
