@@ -1637,6 +1637,7 @@ class GetStatutoryNotificationsListReportData(Request):
             "page_count": self.page_count
         }
 
+
 def _init_Request_class_map():
     classes = [
         GetComplianceDetailsReportFilters, GetComplianceDetailsReport,
@@ -2845,6 +2846,8 @@ class GetStatutoryNotificationReportDataSuccess(Response):
             "stat_notf_list_report" : self.stat_notf_list_report
         }
 
+
+
 class ExportToCSVSuccess(Response):
     def __init__(self, link):
         self.link = link
@@ -2891,7 +2894,7 @@ def _init_Response_class_map():
         GetUnitListReportFiltersSuccess,
         GetunitListReportSuccess,
         GetStatutoryNotificationsListReportFilterSuccess,
-        GetStatutoryNotificationReportDataSuccess
+        GetStatutoryNotificationReportDataSuccess,
     ]
     class_map = {}
     for c in classes:
