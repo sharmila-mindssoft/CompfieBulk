@@ -85,7 +85,8 @@ __all__ = [
     "get_units_list",
     "get_domains_organization_for_le",
     "get_units_status",
-    "process_unit_list_report"
+    "process_unit_list_report",
+    "process_statutory_notification_list_report"
 ]
 
 
@@ -2591,13 +2592,13 @@ def get_units_for_le_domain(db, country_id, legal_entity_id):
 # Parameter: request object
 # Result: list of acts under the selected legal entity
 ###############################################################################################
-def get_acts_for_le_domain(db, legal_entity_id):
+def get_acts_for_le_domain(db, legal_entity_id, country_id):
     query = "select t1.legal_entity_id, t1.domain_id, t1.unit_id, t2.compliance_id, " + \
             "t2.statutory_mapping, t2.compliance_task, t2.frequency_id from " + \
             "tbl_client_compliances as t1 inner join tbl_compliances as t2 " + \
-            "on t2.compliance_id = t1.compliance_id and t2.domain_id = t1.domain_id " + \
-            "where t1.legal_entity_id = %s"
-    result = db.select_all(query, [legal_entity_id])
+            "on t2.compliance_id = t1.compliance_id and t2.domain_id = t1.domain_id and " + \
+            "t2.country_id = %s where t1.legal_entity_id = %s"
+    result = db.select_all(query, [country_id, legal_entity_id])
     print "acts"
     print result
     print len(result)
@@ -2818,17 +2819,21 @@ def process_legal_entity_wise_report(db, request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -2998,17 +3003,21 @@ def process_domain_wise_report(db, request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3183,17 +3192,21 @@ def process_unit_wise_report(db, request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3455,17 +3468,21 @@ def process_service_provider_wise_report(db , request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3728,17 +3745,21 @@ def process_user_wise_report(db, request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -4065,3 +4086,72 @@ def process_unit_list_report(db, request):
             d_i_names, unit_status, closed_date, division_name
         ))
     return unit_report
+
+
+###############################################################################################
+# Objective: To get the Compliance details under filtered data
+# Parameter: request object
+# Result: list of compliances and acts
+###############################################################################################
+def process_statutory_notification_list_report(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    domain_id = request.domain_id
+    statutory_mapping = request.statutory_mapping
+    due_from = request.due_from_date
+    due_to = request.due_to_date
+
+    select_qry = "select t1.compliance_id, t2.statutory_mapping, t2.compliance_description, " + \
+        "t2.compliance_task, t3.notification_text, t3.created_on from tbl_client_compliances as t1 " + \
+        "inner join tbl_compliances as t2 on t2.compliance_id = t1.compliance_id inner join " + \
+        "tbl_statutory_notifications as t3 on t3.compliance_id = t2.compliance_id where "
+    where_clause = "t1.legal_entity_id = %s and t1.domain_id = %s and t2.country_id = %s "
+    condition_val.extend([legal_entity_id, domain_id, country_id])
+
+    if statutory_mapping is not None:
+        statutory_mapping = '%'+statutory_mapping+'%'
+        where_clause = where_clause + "and t2.statutory_mapping like %s "
+        condition_val.append(statutory_mapping)
+    if due_from is not None and due_to is not None:
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    where_clause = where_clause + "group by t1.compliance_id order by t3.created_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result = db.select_all(query, condition_val)
+    statutory_notification = []
+
+    for row in result:
+        stat_map = json.loads(row["statutory_mapping"])
+        if stat_map[0].find(">>") >= 0:
+            stat_map = stat_map[0].split(">>")[0]
+        else:
+            stat_map = str(stat_map)[3:-2]
+        print "mapped"
+        statutory_notification.append(clientreport.StatutoryNotificationReport(
+            row["compliance_id"], row["compliance_task"], row["compliance_description"],
+            datetime_to_string(row["created_on"]), row["notification_text"],
+            statutory_mapping=stat_map
+        ))
+    return statutory_notification
