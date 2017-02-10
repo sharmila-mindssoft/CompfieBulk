@@ -42,6 +42,11 @@ def process_client_master_requests(request, db, session_user, client_id):
             db, request, session_user
         )
 
+    # elif type(request) is clientmasters.GetUserManagementList:
+    #     result = process_get_user_management_list(
+    #         db, request, session_user
+    #     )
+
     elif type(request) is clientmasters.GetUserPrivileges:
         result = process_get_user_privileges(
             db, request, session_user
@@ -195,6 +200,11 @@ def process_change_service_provider_status(
     ):
         return clientmasters.ChangeServiceProviderStatusSuccess()
 
+########################################################
+# Get User Management List
+########################################################
+def process_get_user_management_list(db, request, session_user):
+    return null
 
 ########################################################
 # To get all client forms to load in User privilege form
