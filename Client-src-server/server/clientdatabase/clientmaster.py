@@ -315,6 +315,32 @@ def update_service_provider_status(
     db.save_activity(session_user, 2, action)
 
     return result
+##############################################################################
+# Get Users list according to the country, business group and Legal Entity
+# Parameter(s) - Object of database, country id, business group id and legal entity id 
+# Return Type - Row
+##############################################################################
+# def getUserManagement_list(db, c_id, b_g_id, le_id):
+
+#     q = "Select T01.country_id, T01.country_name, T02.legal_entity_id, T02.legal_entity_name, " + \
+#         "T02.contract_from, T02.contract_to,T02.total_licence, T02.used_licence, " + \
+#         "T02.client_id, T03.business_group_id, T03.business_group_name, " + \
+#         "T04.user_id,T04.user_category_id, T04.user_group_id, T04.employee_code, " + \
+#         "T04.employee_name, T04.contact_no, T04.mobile_no, T04.email_id, T04.is_active, " + \
+#         "T04.is_disable, T04.reason, T05.username, '' As resend_email" + \
+#         "From tbl_countries AS T01 " + \
+#         "INNER JOIN  tbl_legal_entities AS T02 " + \
+#         "ON T01.country_id = T02.country_id " + \
+#         "LEFT  JOIN  tbl_business_groups AS T03 " + \
+#         "ON T03.client_id = T02.client_id " + \
+#         "INNER JOIN  tbl_users AS T04 " + \
+#         "LEFT JOIN  tbl_user_login_details AS T05 " + \
+#         "ON T04.user_id = T05.user_id " + \
+#         "Where T01.country_id like %s AND IFNULL(T02.business_group_id,'') like %s " + \
+#         "AND T02.legal_entity_id like %s AND T04.user_category_id != 1"
+
+#     row = db.select_all(q, c_id, b_g_id, le_id)
+#     return row
 
 ##############################################################################
 # To Get list of all forms
