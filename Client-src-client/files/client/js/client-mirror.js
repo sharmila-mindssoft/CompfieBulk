@@ -2205,6 +2205,34 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    /* Service Provider Details report - updated*/
+    function getServiceProviderDetailsReportFilters(callback) {
+        var request = [
+            'GetServiceProviderDetailsReportFilters',
+            {
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getServiceProviderDetailsReport(
+        sp_id, user_id, s_p_status, callback
+    ){
+        var request = [GetServiceProviderDetailsReport
+            'GetServiceProviderDetailsReport',
+            {
+                'sp_id': sp_id,
+                'user_id' : user_id,
+                's_p_status': s_p_status,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2348,7 +2376,9 @@ function initClientMirror() {
         getUnitListReportFilters: getUnitListReportFilters,
         getUnitListReport: getUnitListReport,
         getStatutoryNotificationsListReportFilters: getStatutoryNotificationsListReportFilters,
-        GetStatutoryNotificationsListReportData: GetStatutoryNotificationsListReportData
+        GetStatutoryNotificationsListReportData: GetStatutoryNotificationsListReportData,
+        GetServiceProviderDetailsReportFilters: GetServiceProviderDetailsReportFilters,
+        GetServiceProviderDetailsReport: GetServiceProviderDetailsReport
     };
 }
 var client_mirror = initClientMirror();
