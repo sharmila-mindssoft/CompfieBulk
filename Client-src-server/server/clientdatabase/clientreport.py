@@ -1,7 +1,7 @@
 import datetime
 from server.clientdatabase.tables import *
 from clientprotocol import (
-    clientcore, clientreport
+    clientcore, clientreport, clientmasters
 )
 import json
 from server.common import (
@@ -69,7 +69,6 @@ __all__ = [
     "get_task_for_le_domain",
     "process_domain_wise_report",
     "process_unit_wise_report",
-    "get_service_providers_list",
     "get_domains_for_sp_users",
     "get_units_for_sp_users",
     "get_acts_for_sp_users",
@@ -3286,26 +3285,6 @@ def process_unit_wise_report(db, request):
             datetime_to_string(row["completion_date"]), url, row["domain_name"]
         ))
     return unit_report
-
-
-###############################################################################################
-# Objective: To get the service provider details from master
-# Parameter: request object
-# Result: list of service providers
-###############################################################################################
-def get_service_providers_list(db):
-    query = "select concat(short_name,' - ',service_provider_name) as sp_name, " + \
-            "service_provider_id as sp_id from tbl_service_providers"
-    result = db.select_all(query, None)
-    print "sp list"
-    print result
-    sp_details = []
-
-    for row in result:
-        sp_details.append(clientreport.ServiceProviders(
-            row["sp_id"], row["sp_name"]
-        ))
-    return sp_details
 
 ###############################################################################################
 # Objective: To get the domains list with user id under selected legal entity
