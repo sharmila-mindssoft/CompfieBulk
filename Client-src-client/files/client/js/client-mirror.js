@@ -77,14 +77,17 @@ function initClientMirror() {
         else
             return null;
     }
-    function getUserCountry(){
+
+    function getUserCountry() {
         var info = getUserInfo();
         return info.country_info;
     }
+
     function getUserLegalEntity() {
         var info = getUserInfo();
         return info.entity_info;
     }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -789,7 +792,7 @@ function initClientMirror() {
         var request = [
             'GetReassignedHistoryReportFilters',
             {
-                'le_id' : le_id
+                'le_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -1069,6 +1072,7 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
+
     // Service Providers
     function getServiceProviders(callback) {
         callerName = 'client_masters';
@@ -1079,27 +1083,37 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getSaveServiceProviderDict(serviceProviderDetail) {
-        add = serviceProviderDetail[1];
-        if (add == '') {
-            add = null;
-        }
-        result = {
-            's_name': serviceProviderDetail[0],
-            'add': add,
-            'c_from': serviceProviderDetail[2],
-            'c_to': serviceProviderDetail[3],
-            'c_person': serviceProviderDetail[4],
-            'c_no': serviceProviderDetail[5]
-        };
-        return result;
-    }
+    // function getSaveServiceProviderDict(serviceProviderDetail) {
+    //     add = serviceProviderDetail[1];
+    //     if (add == '') {
+    //         add = null;
+    //     }
+    //     result = {
+    //         's_name': serviceProviderDetail[0],
+    //         'add': add,
+    //         'c_from': serviceProviderDetail[2],
+    //         'c_to': serviceProviderDetail[3],
+    //         'c_person': serviceProviderDetail[4],
+    //         'c_no': serviceProviderDetail[5]
+    //     };
+    //     return result;
+    // }
 
-    function saveServiceProvider(serviceProviderDetail, callback) {
+    function saveServiceProvider(s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address, callback) {
         callerName = 'client_masters';
         var request = [
             'SaveServiceProvider',
-            serviceProviderDetail
+            {
+                "s_p_name": s_p_name,
+                "s_p_short": s_p_short,
+                "cont_from": cont_from,
+                "cont_to": cont_to,
+                "cont_person": cont_person,
+                "cont_no": cont_no,
+                "mob_no": mob_no,
+                "e_id": e_id,
+                "address": address
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -1513,7 +1527,7 @@ function initClientMirror() {
         }
     }
     /* Compliance Approal */
-    function getComplianceApprovalList(start_count, callback) { 
+    function getComplianceApprovalList(start_count, callback) {
         var request = [
             'GetComplianceApprovalList',
             { 'start_count': start_count }
@@ -1744,7 +1758,7 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-    
+
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -1855,7 +1869,7 @@ function initClientMirror() {
         }
     }
 
-    function getUnitClosureData(callback){
+    function getUnitClosureData(callback) {
         var request = [
             'GetUnitClosureData',
             {}
@@ -1864,7 +1878,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUnitClosureUnitList(le_id, callback){
+    function getUnitClosureUnitList(le_id, callback) {
         var request = [
             'GetUnitClosureUnitData',
             {
@@ -1876,17 +1890,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function saveUnitClosureData(password, remarks, unit_id, action_mode, callback)
-    {
+    function saveUnitClosureData(password, remarks, unit_id, action_mode, callback) {
         callerName = 'client_masters';
         var request = [
-          'SaveUnitClosureData',
-          {
-            "password": password,
-            "closed_remarks": remarks,
-            "unit_id": unit_id,
-            "grp_mode": action_mode
-          }
+            'SaveUnitClosureData',
+            {
+                "password": password,
+                "closed_remarks": remarks,
+                "unit_id": unit_id,
+                "grp_mode": action_mode
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -1944,7 +1957,7 @@ function initClientMirror() {
         updateClientUserGroup: updateClientUserGroup,
         changeClientUserGroupStatus: changeClientUserGroupStatus,
         getClientUserGroups: getClientUserGroups,
-        getSaveServiceProviderDict: getSaveServiceProviderDict,
+        //getSaveServiceProviderDict: getSaveServiceProviderDict,
         saveServiceProvider: saveServiceProvider,
         getUpdateServiceProviderDict: getUpdateServiceProviderDict,
         updateServiceProvider: updateServiceProvider,
