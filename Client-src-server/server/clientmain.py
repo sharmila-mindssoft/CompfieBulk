@@ -23,7 +23,7 @@ import mobilecontroller as mobilecontroller
 from server.client import CompanyManager
 from server.clientreplicationbase import (
     ClientReplicationManager, ReplicationManagerWithBase,
-    DomainReplicationManager
+    # DomainReplicationManager
 )
 from server.constants import SESSION_CUTOFF
 import logger
@@ -342,6 +342,24 @@ class API(object):
             _group_db_cons.close()
             raise Exception(e)
 
+    def _validate_user_password(self, session, user_id, usr_pwd):
+        session_token = session.split('-')
+        client_id = int(session_token[0])
+        _group_db_cons = self._group_databases.get(client_id).get_connection()
+        _group_db = Database(_group_db_cons)
+        is_valid = False
+        try :
+            _group_db.begin()
+            is_valid = _group_db.verify_password(user_id, usr_pwd)
+            _group_db.commit()
+            _group_db_cons.close()
+        except Exception, e :
+            print e
+            _group_db.rollback()
+            _group_db_cons.close()
+            raise Exception(e)
+        return is_valid
+
     def handle_api_request(
         self, unbound_method,
         request_data_type, need_client_id, is_group, need_category
@@ -367,6 +385,11 @@ class API(object):
             session_user, client_id, session_category = self._validate_user_session(session)
             if session_user is False :
                 return respond(clientlogin.InvalidSessionToken())
+
+            if hasattr(request_data.request, "password") :
+                if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
+                    return respond(clientlogin.InvalidCurrentPassword())
+
         else :
             session_user = None
         # request process in controller

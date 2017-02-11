@@ -125,12 +125,7 @@ def process_get_statutory_compliance(db, session_user, request):
 
 
 def process_update_statutory_settings(db, request, session_user):
-    password = request.password
-    if verify_password(db, password, session_user):
-        return update_statutory_settings(db, request, session_user)
-    else:
-        return clientmasters.InvalidPassword()
-
+    return update_statutory_settings(db, request, session_user)
 
 def process_get_assign_compliance_form_data(db, session_user):
     countries = get_countries_for_user(db, session_user)
