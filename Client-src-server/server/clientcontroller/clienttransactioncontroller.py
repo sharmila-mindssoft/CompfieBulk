@@ -14,7 +14,8 @@ from server.clientdatabase.general import (
 
 
 __all__ = [
-    "process_client_transaction_requests"
+    "process_client_transaction_requests",
+    "process_client_master_filters_request"
 ]
 
 
@@ -24,6 +25,7 @@ __all__ = [
 ########################################################
 def process_client_transaction_requests(request, db, session_user, client_id):
     request = request.request
+    print type(request)
 
     if type(request) is clienttransactions.GetStatutorySettings:
         result = process_get_statutory_settings(db, request, session_user)
@@ -103,10 +105,11 @@ def process_client_transaction_requests(request, db, session_user, client_id):
 
     return result
 
-
 def process_get_statutory_settings(db, request, session_user):
     le_id = request.legal_entity_id
-    return get_statutory_settings(db, le_id, session_user)
+    div_id = request.division_id
+    cat_id = request.category_id
+    return get_statutory_settings(db, le_id, div_id, cat_id, session_user)
 
 
 def process_get_statutory_compliance(db, session_user, request):
@@ -416,3 +419,24 @@ def process_review_settings_compliance_filters(db, request, session_user):
         timeline=timeline
     )
 
+##################################################################
+# Master filters
+##################################################################
+
+def process_client_master_filters_request(request, db, session_user, session_category):
+    request = request.request
+
+    if type(request) is clienttransactions.GetStatutorySettingsFilters:
+        result = process_get_statu_settings_filters(db, session_user, session_category)
+
+    return result
+
+
+def process_get_statu_settings_filters(db, session_user, session_category):
+    le_info = get_user_based_legal_entity(db, session_user, session_category)
+    div_info = get_user_based_division(db, session_user, session_category)
+    cat_info = get_user_based_category(db, session_user, session_category)
+
+    return clienttransactions.GetStatutorySettingsFiltersSuccess(
+        le_info, div_info, cat_info
+    )

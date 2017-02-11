@@ -9,7 +9,7 @@ var acLegalEntity = $("#ac-legal-entity");
 
 var domain = $("#domain");
 var domainId = $("#domain-id");
-var acDomain = $("#ac-domain");
+var acDomain = $("#ac-domain"); 
 
 var unit = $("#unit");
 var unitId = $("#unit-id");

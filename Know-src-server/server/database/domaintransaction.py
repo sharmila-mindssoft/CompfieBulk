@@ -13,7 +13,9 @@ __all__ = [
     "get_assigned_compliance_by_id",
     "get_assigned_statutories_to_approve",
     "save_approve_statutories",
-    "get_complinaces_count_to_assign"
+    "get_complinaces_count_to_assign",
+    "get_assigne_statu_compliance_to_approve"
+
 ]
 
 #
@@ -196,6 +198,7 @@ def get_compliances_to_assign(db, request, user_id):
 
 def get_compliances_to_assign_byid(db, unit_id, domain_id, user_id, from_count, show_count):
     result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_new", [unit_id, domain_id, from_count, show_count], 4)
+    print [unit_id, domain_id, from_count, show_count]
     statu = result[1]
     organisation = result[2]
     assigned_new_compliance = result[3]
@@ -268,14 +271,15 @@ def save_client_statutories(db, request, user_id):
     legal_entity_id = request.legal_entity_id
     domain_name = request.domain_name
     domain_id = request.domain_id
+    unit_ids = request.unit_ids
 
     comps = request.compliances_applicablity_status
     q = "INSERT INTO tbl_client_statutories(client_id, unit_id, status)" + \
         " values (%s, %s, %s)"
 
     saved_unit = []
-
     for c in comps :
+        print c.client_statutory_id
 
         if c.unit_id in saved_unit :
             continue
@@ -285,8 +289,8 @@ def save_client_statutories(db, request, user_id):
             if csid is False :
                 raise process_error("E088")
         else :
-            q1 = "UPDATE tbl_client_statutories set status = %s where client_statutory_id = %s"
-            db.execute(q1, [status, c.client_statutory_id])
+
+            db.execute(q1_update, [status, c.client_statutory_id])
             csid = c.client_statutory_id
 
         saved_unit.append(c.unit_id)
@@ -300,6 +304,16 @@ def save_client_statutories(db, request, user_id):
             unit_name, domain_name
         )
         save_messages(db, cat_domain_manager, "Assign Statutory", msg, "", user_id, c.unit_id)
+
+    if status == 2 :
+        for u in unit_ids :
+            q1_cs_update = "UPDATE tbl_client_statutories set status = %s where " + \
+                " client_statutory_id in ( select client_statutory_id from tbl_client_compliances " + \
+                "  where unit_id = %s and domain_id = %s )"
+            db.execute(q1_cs_update, [status, u, domain_id])
+
+            q1_cc_update = "UPDATE tbl_client_compliances set is_approved = %s where is_approved = 1 and unit_id = %s and domain_id = %s"
+            db.execute(q1_cc_update, [status, u, domain_id])
 
     return True
 
@@ -426,7 +440,89 @@ def get_assigned_statutories_to_approve(db, request, user_id):
     result = db.call_proc(
         "sp_clientstatutories_approvelist", [user_id]
     )
-    return return_assigned_statutories(result)
+
+    fn = domaintransactionprotocol.AssignedStatutoriesApprove
+    data_list = []
+    for d in result :
+        is_edit = True if d.get("is_edit") > 0 else False
+        is_edit = True if d["status"] == 4 else is_edit
+        c_name = "%s - %s" % (d["unit_code"], d["unit_name"])
+        data_list.append(fn(
+            d["country_name"], d["client_id"], d["group_name"],
+            d["business_group_name"], d["legal_entity_name"],
+            d["division_name"], c_name, d["geography_name"],
+            d["unit_id"], d["domain_id"], d["domain_name"], d["category_name"],
+            core.ASSIGN_STATUTORY_APPROVAL_STATUS().value(d["status"]),
+            d["status"], d["client_statutory_id"], d["legal_entity_id"], d["reason"],
+            is_edit, d["rcount"]
+        ))
+
+    return data_list
+
+
+def get_assigne_statu_compliance_to_approve(db, request, user_id):
+    unit_id = request.unit_id
+    domain_id = request.domain_id
+    from_count = request.rcount
+    show_count = 50
+
+    result = db.call_proc_with_multiresult_set("sp_clientstatutories_compliance_to_approve", [unit_id, domain_id, from_count, show_count], 4)
+    print "sp_clientstatutories_compliance_to_approve"
+    print [unit_id, domain_id, from_count, show_count]
+    print result
+    statu = result[1]
+    organisation = result[2]
+    assigned_new_compliance = result[3]
+
+    def organisation_list(map_id) :
+        org_list = []
+        for o in organisation :
+            if o.get("statutory_mapping_id") == map_id :
+                org_list.append(o["organisation_name"])
+        return org_list
+
+    def status_list(map_id):
+        level_1_id = None
+        map_text = None
+        level_1_s_name = None
+        for s in statu :
+            if s["statutory_mapping_id"] == map_id :
+                if s["parent_ids"] == '' or s["parent_ids"] == 0 or s["parent_ids"] == '0,':
+                    level_1_id = s["statutory_id"]
+                    map_text = s["statutory_name"]
+                    level_1_s_name = map_text
+                else :
+                    names = [x.strip() for x in s["parent_names"].split('>>') if x != '']
+                    ids = [int(y) for y in s["parent_ids"].split(',') if y != '']
+                    level_1_id = ids[0]
+                    level_1_s_name = names[0]
+                    if len(names) > 1 :
+                        map_text = names[1]
+                    else :
+                        map_text = ''
+
+        return level_1_id, level_1_s_name, map_text
+
+    data_list = []
+    for r in assigned_new_compliance :
+        map_id = r["statutory_mapping_id"]
+        orgs = organisation_list(map_id)
+        level_1, level_1_name, map_text = status_list(map_id)
+
+        if map_text == level_1_name :
+            map_text = ""
+
+        data_list.append(domaintransactionprotocol.AssignStatutoryCompliance(
+            level_1, level_1_name, map_text,
+            r["statutory_provision"], r["compliance_id"], r["document_name"],
+            r["compliance_task"], r["compliance_description"], orgs,
+            r["statutory_applicable_status"], r["remarks"], r["compliance_applicable_status"], r["is_approved"],
+            unit_id
+        ))
+
+    data_list.sort(key=lambda x : (x.mapping_text, x.compliance_id))
+    return data_list
+
 
 def save_approve_statutories(db, request, user_id):
     unit_id = request.unit_id

@@ -1921,6 +1921,7 @@ function initClientMirror() {
 
     /* Legal entity wise report - updated*/
     function getLegalEntityWiseReportFilters(country_id, le_id, callback) {
+        console.log(country_id+' - '+le_id);
         var request = [
             'GetLegalEntityWiseReportFilters',
             {
@@ -2146,22 +2147,22 @@ function initClientMirror() {
                 "d_id": d_id
             }
         ];
-        callerName = 'client_transaction';        
+        callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
-    
+
     function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback){
         var request = [
             'GetReviewSettingsComplianceFilters',
             {
                 "le_id": le_id,
                 "d_id": d_id,
-                "unit_ids": units,                 
+                "unit_ids": units,
                 "f_id": f_type,
                 "sno": sno,
             }
         ];
-        callerName = 'client_transaction';        
+        callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
 
@@ -2298,10 +2299,11 @@ function initClientMirror() {
         getLegalEntityWiseReportFilters: getLegalEntityWiseReportFilters,
         getLegalEntityWiseReport: getLegalEntityWiseReport,
         getReviewSettingsFilters: getReviewSettingsFilters,
-        getDomainWiseReportFilters: getDomainWiseReportFilters,
-        getDomainWiseReport: getDomainWiseReport,
+
         getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
         getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
+        getDomainWiseReportFilters: getDomainWiseReportFilters,
+        getDomainWiseReport: getDomainWiseReport
     };
 }
 var client_mirror = initClientMirror();

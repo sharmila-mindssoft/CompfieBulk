@@ -56,7 +56,7 @@ CREATE TABLE `tbl_domain_countries` (
   UNIQUE KEY (`country_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_organisation` (
-  `organisation_id` int(11) NOT NULL AUTO_INCREMENT,
+  `organisation_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `organisation_name` varchar(50) NOT NULL,
@@ -158,7 +158,7 @@ CREATE TABLE `tbl_units_organizations` (
   UNIQUE KEY (`unit_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_groups` (
-  `user_group_id` int(11) NOT NULL,
+  `user_group_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) DEFAULT NULL,
   `user_group_name` varchar(50) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
@@ -177,7 +177,7 @@ CREATE TABLE `tbl_user_group_forms` (
   UNIQUE KEY (`user_group_id`, `form_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_service_providers` (
-  `service_provider_id` int(11) NOT NULL ,
+  `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
   `address` varchar(500) DEFAULT NULL,
   `short_name` varchar(20) DEFAULT NULL,

@@ -90,6 +90,7 @@ api_params = {
     "le_name": make_string_field(),
     "bg_name": make_string_field(is_optional=True),
     "bg_id": make_int_field(is_optional=True),
+    "cat_id": make_int_field(is_optional=True),
     "usr_id": make_int_field(),
     "email_id": make_string_field(validfun=allow_specialchar),
     "emp_name": make_string_field(is_optional=True),
@@ -117,7 +118,7 @@ api_params = {
     "d_ids": make_vector_type_int(),
     "d_name": make_string_field(),
     "d_names": make_vector_type_string(),
-    "div_id": make_int_field(),
+    "div_id": make_int_field(is_optional=True),
     "div_name": make_string_field(is_optional=True),
     "is_closed": make_bool_field(),
     "is_new": make_bool_field(),
@@ -144,16 +145,14 @@ api_params = {
     "legal_entity_id": make_int_field(length=10000, is_optional=True),
     'legal_entity_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
     "business_group_id": make_int_field(is_optional=True),
+
     "unit_code": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
     "unit_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
     "address": make_text_field(is_optional=True),
     "country_id": make_int_field(is_optional=True),
     "domain_id": make_int_field(length=10000),
     "is_closed": make_bool_field(),
-    "act": make_text_field(is_optional=True),
-    "c_task": make_text_field(is_optional=True),
-    "employee_code": make_text_field(is_optional=True),
-    "employee_name": make_string_field(),
+
     'postal_code': make_int_field(length=1000000, is_optional=False),
     'division_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'category_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
@@ -200,17 +199,25 @@ api_params = {
     'from_count': make_int_field(is_optional=False),
     'page_count': make_int_field(is_optional=False),
     'total_count': make_int_field(is_optional=False),
+
+    "act": make_text_field(is_optional=True),
+    "c_task": make_text_field(is_optional=True),
+    "user_id": make_int_field(),
+    "employee_code": make_text_field(is_optional=True),
+    "employee_name": make_string_field(),
     "link": make_text_field(length=500, is_optional=True),
+
 
     "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "bg_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
     "le_infos": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
-    "div_infos": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
+    "div_infos": make_vector_type_field(module="clientcore", klass_name="ClientDivision", is_optional=True),
     "units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
     "acts": make_vector_type_field(module="clientcore", klass_name="ClientAct"),
     "compliances": make_vector_type_field(module="clientcore", klass_name="ComplianceFilter"),
     "legal_entity_users": make_vector_type_field(module="clientcore", klass_name="LegalEntityUser"),
+
     "unit_closure_legal_entities": make_vector_type_field(module="clientcore", klass_name="UnitClosureLegalEntity"),
     "unit_closure_units": make_vector_type_field(module="clientcore", klass_name="UnitClosure_Units"),
 
@@ -230,6 +237,7 @@ api_params = {
     "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
     "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "unit_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
+
     "sp_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviders"),
     "sp_domains_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderDomains"),
     "sp_unit_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderUnits"),
@@ -263,4 +271,18 @@ api_params = {
     "month_from": make_int_field(),
     "month_to": make_int_field(),
     "level_1_s_name": make_string_field(),
+
+    "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True),
+    "usr_by": make_text_field(is_optional=True),
+    "usr_on": make_text_field(is_optional=True),
+    "is_locked": make_bool_field(),
+    "allow_unlock": make_bool_field(),
+    "is_new": make_bool_field(),
+    "c_c_id": make_int_field(),
+    "a_status": make_bool_field(),
+    "n_a_remarks": make_text_field(is_optional=True),
+    "c_o_status": make_bool_field(),
+    "c_remarks": make_text_field(is_optional=True),
+    "update_statutories": make_vector_type_field(module="clienttransactions", klass_name="UpdateStatutoryCompliance")
+
 }

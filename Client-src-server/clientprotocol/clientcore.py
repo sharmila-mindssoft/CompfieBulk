@@ -1716,14 +1716,13 @@ class Division(object):
 class Category(object):
     def __init__(
         self, category_id, category_name, division_id, legal_entity_id,
-        business_group_id, client_id
+        business_group_id
     ):
         self.category_id = category_id
         self.category_name = category_name
         self.division_id = division_id
         self.legal_entity_id = legal_entity_id
         self.business_group_id = business_group_id
-        self.client_id = client_id
 
     @staticmethod
     def parse_structure(data):
@@ -1731,17 +1730,15 @@ class Category(object):
             data, [
                 "category_id", "category_name", "division_id",
                 "legal_entity_id", "business_group_id",
-                "client_id"
             ])
         category_id = data.get("category_id")
         category_name = data.get("category_name")
         division_id = data.get("division_id")
         legal_entity_id = data.get("legal_entity_id")
         business_group_id = data.get("business_group_id")
-        client_id = data.get("client_id")
         return Category(
             category_id, category_name, division_id, legal_entity_id,
-            business_group_id, client_id
+            business_group_id
         )
 
     def to_structure(self):
@@ -1751,7 +1748,6 @@ class Category(object):
             "division_id": self.division_id,
             "legal_entity_id": self.legal_entity_id,
             "business_group_id": self.business_group_id,
-            "client_id": self.client_id
         }
 
 
@@ -4228,4 +4224,3 @@ class LegalEntityUser(object):
             "employee_name": self.employee_name,
             "is_active": self.is_active
         }
-

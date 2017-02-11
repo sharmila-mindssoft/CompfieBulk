@@ -54,7 +54,7 @@ AssignStatutoryList.empty();
 
 
 function loadCompliances() {
-    
+
     $.each(COMPLIANCES_LIST, function(key, value) {
         if(LastAct != value.level_1_s_name){
             var acttableRow = $('#act-templates .p-head');
@@ -67,7 +67,7 @@ function loadCompliances() {
 
             $('.coll-title', clone).attr('id', 'collapse'+actCount);
             $('.coll-title', clone).attr('aria-labelledb', 'heading'+actCount);
-            
+
            	if(value.a_status == 2){
                 $('.act-status', clone).html('<img src="images/deletebold.png">');
                 $('.remarks', clone).val(value.remarks);
@@ -94,7 +94,7 @@ function loadCompliances() {
             $(' #collapse'+count+' .tbody-compliance-list').append(clone3);
             LastSubAct = value.map_text;
         }
-        
+
         var complianceDetailtableRow = $('#statutory-value .table-statutory-values .compliance-details');
         var clone2 = complianceDetailtableRow.clone();
 
@@ -104,7 +104,7 @@ function loadCompliances() {
         $('.org-name', clone2).attr('title', 'Organizations: ' + value.org_names);
         $('.compliancedescription', clone2).text(value.descrip);
         $('.rejected', clone2).on('click', function (event) {
-        	if($(event.target).hasClass("text-muted") || 
+        	if($(event.target).hasClass("text-muted") ||
         		$(event.target).find('i').hasClass("text-muted")){
         		$(this).html('<i class="fa fa-square text-warning c-pointer"></i>');
         		REJ_COMP.push(value.comp_id);
@@ -122,7 +122,7 @@ function loadCompliances() {
         }else{
             $('.minus', clone2).html('<img src="images/iconminusactive.png">');
         }
-       
+
         $(' #collapse'+count+' .tbody-compliance-list').append(clone2);
         statutoriesCount++;
     });
@@ -151,8 +151,8 @@ function ifNullReturnHyphen(value){
 
 function callAPI(){
     displayLoader();
-    mirror.getAssignStatutoryWizardTwoData(
-        DOMAIN_ID, [UNIT_ID], (statutoriesCount - 1),
+    mirror.getAssignedStatutoriesComplianceToApprove(
+        DOMAIN_ID, UNIT_ID, (statutoriesCount - 1),
         function(error, data) {
         if (error == null) {
             COMPLIANCES_LIST = data.statutories_for_assigning;
@@ -168,18 +168,7 @@ function callAPI(){
 
 function EditAssignedStatutory(u_id, d_id){
     displayLoader();
-    mirror.getAssignStatutoryWizardTwoCount(
-        d_id, [u_id],
-        function(error, data) {
-            if (error == null) {
-                totalRecord = data.total_records;
-                callAPI();
-            } else {
-                displayMessage(error);
-                hideLoader();
-            }
-        }
-    );
+    callAPI();
 }
 
 //validate
@@ -223,9 +212,10 @@ function loadAssignedStatutories(){
         $(TblCat, clone).text(ifNullReturnHyphen(value.cat_name));
         $(TblUnit, clone).text(value.u_name);
         $(TblDomain, clone).text(value.d_name);
-        
+
         $('.view-icon', clone).on('click', function () {
             displayLoader();
+            totalRecord = value.total_count;
             ApprovalStatus.val('');
             $('#reason').val('');
             LastAct='';
@@ -244,7 +234,7 @@ function loadAssignedStatutories(){
             DOMAIN_TEXT = value.d_name;
             EditAssignedStatutory(value.u_id, value.d_id);
         });
-        AssignedStatutoryList.append(clone);       
+        AssignedStatutoryList.append(clone);
     });
     hideLoader();
 }
@@ -290,7 +280,7 @@ SubmitButton.click(function(){
 	        },
 	        close: function() {
 	            if (isAuthenticate) {
-	                mirror.approveAssignedStatutory(UNIT_ID, DOMAIN_ID, CLIENT_STATUTORY_ID, REJ_COMP, 
+	                mirror.approveAssignedStatutory(UNIT_ID, DOMAIN_ID, CLIENT_STATUTORY_ID, REJ_COMP,
 				    parseInt(approval_status), reason, UNIT_TEXT, DOMAIN_TEXT,
 				        function(error, data) {
 				            if (error == null) {
@@ -324,7 +314,7 @@ function initialize() {
     AssignStatutoryAdd.hide();
     mirror.getAssignedStatutoriesForApprove(function(error, data) {
         if (error == null) {
-            ASSIGNED_STATUTORIES = data.assigned_statutories;
+            ASSIGNED_STATUTORIES = data.assigned_statutories_approve;
             loadAssignedStatutories();
         } else {
             displayMessage(error);

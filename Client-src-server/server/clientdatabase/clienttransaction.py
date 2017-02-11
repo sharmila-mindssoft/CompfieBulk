@@ -53,50 +53,125 @@ __all__ = [
     "get_domains_for_legalentity",
     "get_review_settings_timeline",
     "get_review_settings_compliance",
+
+    "get_user_based_legal_entity", "get_user_based_division",
+    "get_user_based_category",
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
+def get_user_based_legal_entity(db, user_id, user_category):
 
-def get_statutory_settings(db, legal_entity_id, session_user):
-    cat_id = get_user_category(db, session_user)
-    user_id = int(session_user)
-    where_qry = " WHERE t1.legal_entity_id = %s and t2.is_closed = 0 "
-    condition_val = [legal_entity_id]
-    if cat_id > 3:
-        where_qry += " WHERE t1.unit_id in ( " + \
-            " select unit_id from tbl_user_units where user_id LIKE %s) " + \
-            " AND t1.domain_id in (select domain_id from tbl_user_domains " + \
-            " where user_id LIKE %s) "
-        condition_val.extend([user_id, user_id])
+    q = "select t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id " + \
+        " from tbl_legal_entities t1"
 
-    query = "SELECT distinct  " + \
-        " t3.country_id, t1.domain_id, t1.unit_id,t2.unit_name, " + \
-        " (select business_group_name from tbl_business_groups " + \
-        " where business_group_id = t2.business_group_id " + \
-        " ) business_group_name, t3.legal_entity_name," + \
-        " (select division_name from tbl_divisions " + \
-        " where division_id = t2.division_id)division_name, " + \
-        " t2.address, t2.postal_code, t2.unit_code, " + \
-        " (select country_name from tbl_countries " + \
-        " where country_id = t3.country_id )country_name, " + \
-        " (select domain_name from tbl_domains " + \
-        " where domain_id = t1.domain_id)domain_name, " + \
-        " t2.is_closed,  " + \
-        " (select is_new from tbl_client_compliances " + \
-        " where unit_id = t1.unit_id order by is_new limit 1) as is_new " + \
-        " FROM tbl_client_compliances t1 " + \
-        " INNER JOIN tbl_units t2 " + \
-        " ON t1.unit_id = t2.unit_id " + \
-        " INNER JOIN tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id %s" + \
-        " ORDER BY t1.unit_id "
-    query = query % (where_qry)
-    if condition_val is None:
-        rows = db.select_all(query)
-    else:
-        rows = db.select_all(query, condition_val)
+    if user_category == 1 :
+        rows = db.select_all(q, None)
+    else :
+        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+        rows = db.select_all(q, [user_id])
 
-    return return_statutory_settings(rows)
+    results = []
+    for legal_entity in rows:
+        b_group_id = None
+        if legal_entity["business_group_id"] > 0:
+            b_group_id = int(legal_entity["business_group_id"])
+        results.append(clientcore.ClientLegalEntity(
+            legal_entity["legal_entity_id"],
+            legal_entity["legal_entity_name"],
+            b_group_id
+        ))
+    return results
+
+def get_user_based_division(db, user_id, user_category):
+
+    q = "select t1.division_id, t1.division_name, t1.legal_entity_id, t1.business_group_id " + \
+        " from tbl_divisions t1"
+
+    if user_category == 1 :
+        rows = db.select_all(q, None)
+    else :
+        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+        rows = db.select_all(q, [user_id])
+
+    results = []
+    for division in rows:
+        division_obj = clientcore.ClientDivision(
+            division["division_id"], division["division_name"],
+            division["legal_entity_id"], division["business_group_id"]
+        )
+        results.append(division_obj)
+    return results
+
+
+def get_user_based_category(db, user_id, user_category):
+
+    q = "select t1.category_id, t1.category_name, t1.division_id, t1.legal_entity_id, t1.business_group_id " + \
+        " from tbl_categories t1"
+
+    if user_category == 1 :
+        rows = db.select_all(q, None)
+    else :
+        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+        rows = db.select_all(q, [user_id])
+
+    results = []
+    for c in rows:
+        c = clientcore.Category(
+            c["category_id"], c["category_name"], c["division_id"], c["legal_entity_id"],
+            c["business_group_id"]
+        )
+        results.append(c)
+    return results
+
+def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
+    user_cat_id = get_user_category(db, session_user)
+
+    if user_cat_id <= 3 :
+        query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.postal_code,  " + \
+            " t1.geography_name, t1.address , t2.domain_id, t3.domain_name, " + \
+            " (select count(compliance_id) from tbl_client_compliances where " +\
+            " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
+            " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id) is_new, " + \
+            " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
+            " t2.updated_on, t2.is_locked, " + \
+            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
+            " from tbl_units as t1 " + \
+            " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
+            " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
+            " WHERE t1.is_closed=0 and t1.legal_entity_id = %s and " + \
+            " IF (%s IS NOT NULL, IFNULL(t1.division_id, 0) = %s, 1) and" + \
+            " IF (%s IS NOT NULL, IFNULL(t1.category_id, 0) = %s, 1)"
+        param = [legal_entity_id, div_id, div_id, cat_id, cat_id]
+    else :
+        query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.postal_code,  " + \
+            " t1.geography_name, t1.address , t2.domain_id, t3.domain_name, " + \
+            " (select count(compliance_id) from tbl_client_compliances where " +\
+            " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
+            " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id) is_new, " + \
+            " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
+            " t2.updated_on, t2.is_locked, " + \
+            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
+            " from tbl_units as t1 " + \
+            " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
+            " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
+            " inner join tbl_user_units as t4 on t4.unit_id = t1.unit_id " + \
+            " inner join tbl_user_domains as t5 on t4.user_id = t5.user_id and t5.domain_id = t2.domain_id" + \
+            " WHERE t1.is_closed=0 and t1.legal_entity_id = %s and " + \
+            " t4.user_id = %s and" + \
+            " IF (%s IS NOT NULL, IFNULL(t1.division_id, 0) = %s, 1) and" + \
+            " IF (%s IS NOT NULL, IFNULL(t1.category_id, 0) = %s, 1)"
+        param = [legal_entity_id, session_user, div_id, div_id, cat_id, cat_id]
+
+    query += " ORDER BY t1.unit_code, t1.unit_name, t3.domain_name"
+    print query
+    print param
+    rows = db.select_all(query, param)
+
+    return return_statutory_settings(rows, user_cat_id)
 
 
 def return_compliance_for_statutory_settings(
@@ -193,7 +268,7 @@ def return_compliance_for_statutory_settings(
     return statutory_wise_compliances, total
 
 
-def return_statutory_settings(data):
+def return_statutory_settings(data, session_category):
     unit_wise_statutories = {}
     for d in data:
         domain_name = d["domain_name"]
@@ -203,6 +278,11 @@ def return_statutory_settings(data):
             d["address"],
             d["postal_code"]
         )
+        locked_cat = d["locked_user_category"]
+        if locked_cat is not None and locked_cat < session_category:
+            allow_nlock = True
+        else :
+            allow_nlock = False
 
         unit_statutories = unit_wise_statutories.get(unit_id)
         if unit_statutories is None:
@@ -212,13 +292,12 @@ def return_statutory_settings(data):
                 unit_id,
                 unit_name,
                 address,
-                d["country_name"],
-                [domain_name],
-                d["business_group_name"],
-                d["legal_entity_name"],
-                d["division_name"],
-                bool(d["is_closed"]),
-                not bool(d["is_new"])
+                domain_name,
+                bool(d["is_new"]),
+                bool(d["is_locked"]),
+                allow_nlock,
+                d["updatedby"],
+                d["updated_on"]
             )
         else:
             domain_list = unit_statutories.domain_names
