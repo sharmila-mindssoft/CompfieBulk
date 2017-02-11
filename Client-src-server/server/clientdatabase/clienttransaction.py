@@ -143,8 +143,8 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
             " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
             " WHERE t1.is_closed=0 and t1.legal_entity_id = %s and " + \
-            " IF (%s is not null, IFNULL(t1.division_id, 0) = %s, 1)" + \
-            " IF (%s is not null, IFNULL(t1.category_id, 0) = %s, 1)"
+            " IF (%s IS NOT NULL, IFNULL(t1.division_id, 0) = %s, 1) and" + \
+            " IF (%s IS NOT NULL, IFNULL(t1.category_id, 0) = %s, 1)"
         param = [legal_entity_id, div_id, div_id, cat_id, cat_id]
     else :
         query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.postal_code,  " + \
@@ -161,20 +161,17 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " inner join tbl_user_units as t4 on t4.unit_id = t1.unit_id " + \
             " inner join tbl_user_domains as t5 on t4.user_id = t5.user_id and t5.domain_id = t2.domain_id" + \
             " WHERE t1.is_closed=0 and t1.legal_entity_id = %s and " + \
-            " t4.user_id = %s" + \
-            " IF (%s is not null, IFNULL(t1.division_id, 0) = %s, 1)" + \
-            " IF (%s is not null, IFNULL(t1.category_id, 0) = %s, 1)"
+            " t4.user_id = %s and" + \
+            " IF (%s IS NOT NULL, IFNULL(t1.division_id, 0) = %s, 1) and" + \
+            " IF (%s IS NOT NULL, IFNULL(t1.category_id, 0) = %s, 1)"
         param = [legal_entity_id, session_user, div_id, div_id, cat_id, cat_id]
 
     query += " ORDER BY t1.unit_code, t1.unit_name, t3.domain_name"
     print query
     print param
-    if condition_val is None:
-        rows = db.select_all(query, param)
-    else:
-        rows = db.select_all(query, condition_val)
+    rows = db.select_all(query, param)
 
-    return return_statutory_settings(rows)
+    return return_statutory_settings(rows, user_cat_id)
 
 
 def return_compliance_for_statutory_settings(

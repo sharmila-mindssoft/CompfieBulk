@@ -25,6 +25,7 @@ __all__ = [
 ########################################################
 def process_client_transaction_requests(request, db, session_user, client_id):
     request = request.request
+    print type(request)
 
     if type(request) is clienttransactions.GetStatutorySettings:
         result = process_get_statutory_settings(db, request, session_user)
