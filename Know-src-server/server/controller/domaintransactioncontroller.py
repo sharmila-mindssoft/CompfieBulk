@@ -107,7 +107,7 @@ def process_get_assigned_compliance_byid(db, request, user_id):
 def process_get_assigned_statutory_approve_list(db, request, user_id):
     data = get_assigned_statutories_to_approve(db, request, user_id)
     print data
-    return domaintransactionprotocol.GetAssignedStatutoriesSuccess(
+    return domaintransactionprotocol.GetAssignedStatutoriesApproveSuccess(
         data
     )
 

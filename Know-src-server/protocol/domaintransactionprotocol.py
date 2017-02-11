@@ -398,15 +398,30 @@ class GetAssignedStatutoriesSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
+        data = parse_dictionary(data, ["assigned_statutories"])
+        assigned_statutories = data.get("assigned_statutories")
+        return GetAssignedStatutoriesSuccess(assigned_statutories)
+
+    def to_inner_structure(self):
+        return {
+            "assigned_statutories": self.assigned_statutories,
+        }
+
+
+class GetAssignedStatutoriesApproveSuccess(Response):
+    def __init__(self, assigned_statutories):
+        self.assigned_statutories = assigned_statutories
+
+    @staticmethod
+    def parse_inner_structure(data):
         data = parse_dictionary(data, ["assigned_statutories_approve"])
         assigned_statutories = data.get("assigned_statutories_approve")
-        return GetAssignedStatutoriesSuccess(assigned_statutories)
+        return GetAssignedStatutoriesApproveSuccess(assigned_statutories)
 
     def to_inner_structure(self):
         return {
             "assigned_statutories_approve": self.assigned_statutories,
         }
-
 
 class GetAssignedStatutoriesByIdSuccess(Response):
     def __init__(self, level_1_statutories_list, statutories_for_assigning):
@@ -740,7 +755,7 @@ class ApproveAssignedStatutorySuccess(Response):
 
 def _init_Response_class_map():
     classes = [
-        GetAssignedStatutoriesSuccess, GetAssignedStatutoriesByIdSuccess,
+        GetAssignedStatutoriesSuccess, GetAssignedStatutoriesApproveSuccess, GetAssignedStatutoriesByIdSuccess,
         GetAssignedStatutoryWizardOneDataSuccess,
         GetAssignedStatutoryWizardTwoDataSuccess,
         GetAssignedStatutoryWizardTwoCountSuccess,
