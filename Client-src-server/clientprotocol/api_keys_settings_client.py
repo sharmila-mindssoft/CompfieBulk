@@ -182,8 +182,8 @@ api_params = {
     "s_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "trigger_before_days": make_int_field(is_optional=True),
     "due_date": make_text_field(length=20, is_optional=True),
-    "statu_date": make_int_field(is_optional=True),
-    "statu_month": make_int_field(is_optional=True),
+    "statutory_date": make_int_field(is_optional=True),
+    "statutory_month": make_int_field(is_optional=True),
     "repeat_by": make_int_field(is_optional=True),
     "unit_ids": make_vector_type_int(length=1000, is_optional=False),
     "f_id": make_int_field(),
@@ -191,6 +191,5 @@ api_params = {
     "month_from": make_int_field(),
     "month_to": make_int_field(),
     "level_1_s_name": make_string_field(),
-
-
+    "repeats_type_id": make_int_field(),
 }

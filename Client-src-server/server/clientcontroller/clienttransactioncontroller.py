@@ -101,6 +101,11 @@ def process_client_transaction_requests(request, db, session_user, client_id):
             db, request, session_user
         )
 
+    elif type(request) is clienttransactions.saveReviewSettingsCompliance:
+        result = process_save_review_settings_compliance(
+            db, request, session_user
+        )
+
     return result
 
 
@@ -416,3 +421,10 @@ def process_review_settings_compliance_filters(db, request, session_user):
         timeline=timeline
     )
 
+
+#####################################################################
+# To save the  review settings compliance list
+#####################################################################
+def process_save_review_settings_compliance(db, request, session_user):
+    save_review_settings_compliance(db, request, session_user)
+    return clienttransactions.SaveReviewSettingsComplianceSuccess()

@@ -701,8 +701,49 @@ class GetReviewSettingsComplianceFilters(Request):
         }
 
 
+class saveReviewSettingsCompliance(Request):
+    def __init__(
+        self, legal_entity_id, domain_id, f_id, unit_ids, compliance_id, repeat_by,
+        repeat_type_id, due_date, trigger_before_days, old_repeat_by,
+        old_repeat_type_id, old_due_date, old_trigger_before_days
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.f_id = f_id
+        self.unit_ids = unit_ids
+        self.compliance_id = compliance_id
+        self.repeat_by = repeat_by
+        self.repeat_type_id = repeat_type_id
+        self.due_date = due_date
+        self.trigger_before_days = trigger_before_days
+        self.old_repeat_by = old_repeat_by
+        self.old_repeat_type_id = old_repeat_type_id
+        self.old_due_date = old_due_date
+        self.old_trigger_before_days = old_trigger_before_days
+
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "unit_ids", "f_id", "comp_id", "r_every",
+            ])
+        legal_entity_id = data.get("le_id")
+        domain_id = data.get("d_id")
+        f_id = data.get("f_id")
+        unit_ids = data.get("unit_ids")
+        sno = data.get("sno")
+        return GetReviewSettingsComplianceFilters(legal_entity_id, domain_id, unit_ids, f_id, sno)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id,
+            "unit_ids": self.unit_ids,
+            "f_id": self.f_id,
+            "sno": self.sno
+        }
+
 def _init_Request_class_map():
-    classes = [GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords, GetReviewSettingsFilters, GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters]
+    classes = [GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings, GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance, GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance, GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData, GetStatutoriesByUnit, SavePastRecords, GetReviewSettingsFilters, GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters, saveReviewSettingsCompliance]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c

@@ -2417,12 +2417,14 @@ def get_review_settings_compliance(db, request, session_user):
     where_qry = "WHERE t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and t01.unit_id in (%s) "
     condition_val = [f_type, le_id, d_id, unit_ids]
 
-    query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision, t03.repeats_every, " + \
-            " t02.statutory_dates, t03.trigger_before_days, t03.due_date, group_concat(t01.unit_id) " + \
-            " as unit_ids, t02.statutory_mapping from tbl_client_compliances as t01 " + \
+    query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision, " + \
+            " ifnull(t03.repeats_every, t02.repeats_every) as repeats_every, " + \
+            " ifnull(t03.repeats_type_id, t02.repeats_type_id) as repeats_type_id, " + \
+            " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates, " + \
+            " group_concat(t01.unit_id) as unit_ids, t02.statutory_mapping from tbl_client_compliances as t01 " + \
             " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id " + \
             " inner join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s " + \
-            "  group by t01.unit_id"
+            " group by t01.unit_id"
 
     query = query % (where_qry)
     if condition_val is None:
@@ -2460,8 +2462,8 @@ def return_review_settings_compliance(data):
         results.append(
             clientcore.ReviewSettingsCompliance(
                 d["compliance_id"], d["compliance_task"], d["statutory_provision"],
-                d["repeats_every"], date_list, d["trigger_before_days"],
-                d["due_date"],  unit_ids, level_1_statutory_name
+                d["repeats_every"], d['repeats_type_id'], date_list,
+                unit_ids, level_1_statutory_name
             )
         )
     return results
@@ -2481,3 +2483,8 @@ def get_review_settings_timeline(db, request, session_user):
     print results
     return results
 
+
+def save_review_settings_compliance(db, request, session_user):
+    result = db.insert(
+        tblComplianceDates, columns, values
+    )
