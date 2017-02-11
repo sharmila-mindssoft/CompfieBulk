@@ -715,7 +715,7 @@ def get_user_category(db, user_id):
     q = "select user_category_id from tbl_users where user_id = %s"
     row = db.select_one(q, [user_id])
     if row :
-        return row["user-category_id"]
+        return row["user_category_id"]
     else :
         return None
 

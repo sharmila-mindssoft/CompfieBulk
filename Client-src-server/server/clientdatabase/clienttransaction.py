@@ -4,6 +4,7 @@ import json
 from server.emailcontroller import EmailHandler
 from server import logger
 from server.clientdatabase.tables import *
+from server.clientdatabase.clientforms import *
 from clientprotocol import (
     clienttransactions, clientcore
 )
@@ -56,6 +57,7 @@ __all__ = [
 
     "get_user_based_legal_entity", "get_user_based_division",
     "get_user_based_category",
+    "update_new_statutory_settings_lock"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -143,8 +145,8 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
             " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
             " WHERE t1.is_closed=0 and t1.legal_entity_id = %s and " + \
-            " IF (%s is not null, IFNULL(t1.division_id, 0) = %s, 1)" + \
-            " IF (%s is not null, IFNULL(t1.category_id, 0) = %s, 1)"
+            " IF (%s IS NOT NULL, IFNULL(t1.division_id, 0) = %s, 1) and" + \
+            " IF (%s IS NOT NULL, IFNULL(t1.category_id, 0) = %s, 1)"
         param = [legal_entity_id, div_id, div_id, cat_id, cat_id]
     else :
         query = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.postal_code,  " + \
@@ -161,20 +163,17 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " inner join tbl_user_units as t4 on t4.unit_id = t1.unit_id " + \
             " inner join tbl_user_domains as t5 on t4.user_id = t5.user_id and t5.domain_id = t2.domain_id" + \
             " WHERE t1.is_closed=0 and t1.legal_entity_id = %s and " + \
-            " t4.user_id = %s" + \
-            " IF (%s is not null, IFNULL(t1.division_id, 0) = %s, 1)" + \
-            " IF (%s is not null, IFNULL(t1.category_id, 0) = %s, 1)"
+            " t4.user_id = %s and" + \
+            " IF (%s IS NOT NULL, IFNULL(t1.division_id, 0) = %s, 1) and" + \
+            " IF (%s IS NOT NULL, IFNULL(t1.category_id, 0) = %s, 1)"
         param = [legal_entity_id, session_user, div_id, div_id, cat_id, cat_id]
 
     query += " ORDER BY t1.unit_code, t1.unit_name, t3.domain_name"
     print query
     print param
-    if condition_val is None:
-        rows = db.select_all(query, param)
-    else:
-        rows = db.select_all(query, condition_val)
+    rows = db.select_all(query, param)
 
-    return return_statutory_settings(rows)
+    return return_statutory_settings(rows, user_cat_id)
 
 
 def return_compliance_for_statutory_settings(
@@ -188,7 +187,7 @@ def return_compliance_for_statutory_settings(
         " t1.not_opted_remarks, " + \
         " t2.compliance_task, t2.document_name, t2.statutory_mapping, " + \
         " t2.statutory_provision, t2.compliance_description, " + \
-        " t1.is_new, " + \
+        " t1.is_new, if(is_submitted = 0, is_saved, 0) as save_status," + \
         " (select domain_name from tbl_domains " + \
         " where domain_id = t2.domain_id) as domain_name, " + \
         " (select count(tc1.client_compliance_id) " + \
@@ -263,8 +262,9 @@ def return_compliance_for_statutory_settings(
             bool(r["compliance_applicable_status"]),
             bool(compliance_opted),
             compliance_remarks,
-            not bool(r["is_new"]),
-            r["domain_name"]
+            bool(r["is_new"]),
+            r["domain_name"],
+            bool(r["save_status"])
         )
 
         statutory_wise_compliances.append(compliance)
@@ -321,12 +321,14 @@ def return_statutory_settings(data, session_category):
 def update_statutory_settings(db, data, session_user):
     unit_id = data.unit_id
     unit_name = data.unit_name
+    domain_id = data.domain_id
+    le_id = data.legal_entity_id
     statutories = data.statutories
+    submit_status = data.s_s
     updated_on = get_date_time()
     value_list = []
     for s in statutories:
         client_compliance_id = s.client_compliance_id
-        client_statutory_id = s.client_statutory_id
         statutory_opted_status = int(s.applicable_status)
         not_applicable_remarks = s.not_applicable_remarks
         if not_applicable_remarks is None:
@@ -337,46 +339,64 @@ def update_statutory_settings(db, data, session_user):
         if remarks is None:
             remarks = ""
         value = (
-            client_compliance_id, client_statutory_id, compliance_id,
+            client_compliance_id, le_id,
+            unit_id, domain_id,
+            compliance_id,
             statutory_opted_status, not_applicable_remarks,
             opted_status, remarks,
-            int(session_user), str(updated_on)
+            int(session_user), str(updated_on), 0,
+            1, int(session_user), updated_on, 0
         )
         value_list.append(value)
 
-    execute_bulk_insert(db, value_list)
-    update_new_statutory_settings(db, unit_id)
+    execute_bulk_insert(db, value_list, submit_status)
+    update_new_statutory_settings(db, unit_id, domain_id, session_user)
     action = "Statutory settings updated for unit - %s " % (unit_name)
-    db.save_activity(session_user, 6, action)
+    db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
     SaveOptedStatus(data)
 
     return clienttransactions.UpdateStatutorySettingsSuccess()
 
 
-def execute_bulk_insert(db, value_list):
+def execute_bulk_insert(db, value_list, s_status):
     table = "tbl_client_compliances"
     column = [
-        "client_compliance_id", "client_statutory_id",
-        "compliance_id",
-        "statutory_opted", "not_applicable_remarks",
-        "compliance_opted", "compliance_remarks",
-        "updated_by", "updated_on"
+        "client_compliance_id", "legal_entity_id",
+        "unit_id", "domain_id", "compliance_id",
+        "statutory_opted_status", "remarks",
+        "compliance_opted_status", "not_opted_remarks",
+        "opted_by", "opted_on", "is_new",
     ]
     update_column = [
-        "client_statutory_id", "compliance_id",
-        "statutory_opted", "not_applicable_remarks",
-        "compliance_opted", "compliance_remarks",
-        "updated_by", "updated_on"
+        "client_compliance_id", "legal_entity_id",
+        "unit_id", "domain_id",
+        "compliance_id",
+        "statutory_opted_status", "remarks",
+        "compliance_opted_status", "not_opted_remarks",
+        "opted_by", "opted_on", "is_new"
     ]
+    if s_status == 1 :
+        c = ["is_saved", "saved_by", "saved_on", "is_submitted"]
+        column.extend(c)
+        update_column.extend(c)
+    else :
+        c = ["is_submitted", "submitted_by", "submitted_on", "is_saved"]
+        column.extend(c)
+        update_column.extend(c)
 
     db.on_duplicate_key_update(
         table, ",".join(column), value_list, update_column
     )
 
 
-def update_new_statutory_settings(db, unit_id):
-    q = "Update tbl_client_statutories set is_new=1 where unit_id = %s"
-    db.execute(q, [unit_id])
+def update_new_statutory_settings(db, unit_id, domain_id, user_id):
+    q = "Update tbl_client_statutories set updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"
+    db.execute(q, [user_id, get_date_time(), unit_id, domain_id])
+
+def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user_id):
+    q = "Update tbl_client_statutories set is_locked=%s, locked_on=%s , locked_by =%s where unit_id = %s and domain_id = %s"
+    db.execute(q, [int(lock_status), get_date_time(), user_id, unit_id, domain_id])
+    return True
 
 
 def get_units_for_assign_compliance(db, session_user, is_closed=None):

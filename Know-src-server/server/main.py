@@ -202,7 +202,6 @@ class API(object):
             elif type(request_data) is str:
                 raise ValueError(request_data)
 
-
             _db_con = self._con_pool.get_connection()
             _db = Database(_db_con)
             _db.begin()

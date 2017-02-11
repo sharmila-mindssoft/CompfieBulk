@@ -25,6 +25,7 @@ __all__ = [
 ########################################################
 def process_client_transaction_requests(request, db, session_user, client_id):
     request = request.request
+    print type(request)
 
     if type(request) is clienttransactions.GetStatutorySettings:
         result = process_get_statutory_settings(db, request, session_user)
@@ -34,6 +35,11 @@ def process_client_transaction_requests(request, db, session_user, client_id):
 
     elif type(request) is clienttransactions.UpdateStatutorySettings:
         result = process_update_statutory_settings(
+            db, request, session_user
+        )
+
+    elif type(request) is clienttransactions.ChangeStatutorySettingsLock:
+        result = process_update_statutory_settings_lock(
             db, request, session_user
         )
 
@@ -124,11 +130,14 @@ def process_get_statutory_compliance(db, session_user, request):
 
 
 def process_update_statutory_settings(db, request, session_user):
-    password = request.password
-    if verify_password(db, password, session_user):
-        return update_statutory_settings(db, request, session_user)
-    else:
-        return clientmasters.InvalidPassword()
+    return update_statutory_settings(db, request, session_user)
+
+def process_update_statutory_settings_lock(db, request, session_user):
+    unit_id = request.unit_id
+    domain_id = request.domain_id
+    lock = request.lock
+    if (update_new_statutory_settings_lock(db, unit_id, domain_id, lock, session_user)) :
+        return clienttransactions.ChangeStatutorySettingsLockSuccess()
 
 
 def process_get_assign_compliance_form_data(db, session_user):
