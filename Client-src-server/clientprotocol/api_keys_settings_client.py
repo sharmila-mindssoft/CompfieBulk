@@ -241,8 +241,7 @@ api_params = {
     "remarks": make_string_field(is_optional=True),
     "is_blocked": make_bool_field(),
     "unblock_days": make_int_field(),
-    
-}
+
 
     "unit_legal_entity": make_vector_type_field(module="clientreport", klass_name="UnitLegalEntity"),
     "act_legal_entity": make_vector_type_field(module="clientreport", klass_name="ActLegalEntity"),
