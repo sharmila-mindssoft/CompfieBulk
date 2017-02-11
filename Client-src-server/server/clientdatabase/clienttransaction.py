@@ -57,6 +57,7 @@ __all__ = [
 
     "get_user_based_legal_entity", "get_user_based_division",
     "get_user_based_category",
+    "update_new_statutory_settings_lock"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -389,8 +390,13 @@ def execute_bulk_insert(db, value_list, s_status):
 
 
 def update_new_statutory_settings(db, unit_id, domain_id, user_id):
-    q = "Update tbl_client_statutories set updated_by, updated_on where unit_id = %s and domain_id = %s"
+    q = "Update tbl_client_statutories set updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"
     db.execute(q, [user_id, get_date_time(), unit_id, domain_id])
+
+def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user_id):
+    q = "Update tbl_client_statutories set is_locked=%s, locked_on=%s , locked_by =%s where unit_id = %s and domain_id = %s"
+    db.execute(q, [int(lock_status), get_date_time(), user_id, unit_id, domain_id])
+    return True
 
 
 def get_units_for_assign_compliance(db, session_user, is_closed=None):

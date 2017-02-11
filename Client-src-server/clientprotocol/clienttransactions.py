@@ -179,6 +179,31 @@ class GetStatutorySettings(Request):
             "cat_id": self.category_id
         }
 
+class ChangeStatutorySettingsLock(Request):
+    def __init__(self, legal_entity_id, domain_id, unit_id, lock, password):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id
+        self.lock = lock
+        self.password = password
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "u_id", "lock", "password"])
+        return ChangeStatutorySettingsLock(
+            data.get("le_id"), data.get("d_id"), data.get("u_id"),
+            data.get("lock"), data.get("password")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id,
+            "u_id": self.unit_id,
+            "lock": self.lock,
+            "password": self.password
+        }
+
 class GetSettingsCompliances(Request):
     def __init__(self, legal_entity_id, unit_id, record_count):
         self.legal_entity_id = legal_entity_id
@@ -724,7 +749,7 @@ class GetReviewSettingsComplianceFilters(Request):
 
 def _init_Request_class_map():
     classes = [
-        GetStatutorySettingsFilters,
+        GetStatutorySettingsFilters, ChangeStatutorySettingsLock,
         GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings,
         GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance,
         GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance,
@@ -1313,6 +1338,20 @@ class SavePastRecordsFailed(Response):
             "error" : to_structure_Text(self.error)
         }
 
+
+class ChangeStatutorySettingsLockSuccess(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [])
+        return ChangeStatutorySettingsLockSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
@@ -1322,7 +1361,7 @@ def _init_Response_class_map():
         GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess,
         GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed,
         GetAssigneeCompliancesSuccess, ComplianceUpdateFailed,
-        GetStatutorySettingsFiltersSuccess
+        GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess
     ]
     class_map = {}
     for c in classes:

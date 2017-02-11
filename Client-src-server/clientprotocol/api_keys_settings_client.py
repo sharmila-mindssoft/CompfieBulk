@@ -277,6 +277,7 @@ api_params = {
     "usr_on": make_text_field(is_optional=True),
     "is_locked": make_bool_field(),
     "allow_unlock": make_bool_field(),
+    "lock": make_bool_field(),
     "is_new": make_bool_field(),
     "c_c_id": make_int_field(),
     "a_status": make_bool_field(),
