@@ -90,88 +90,88 @@ function initialize() {
   });
 }
 ExportButton.click(function () {
-  if($('.tbody-clientdetails-list').find('tr').length > 0){
-      csv = true;
-      var countries = parseInt($('#country-id').val());
-      var groupid = parseInt($('#group-id').val());
-      var bgroups = $('#businessgroupid').val();
-      if (bgroups != '') {
-        var businessgroupid = bgroups;
+  //if($('.tbody-clientdetails-list').find('tr').length > 0){
+    csv = true;
+    var countries = parseInt($('#country-id').val());
+    var groupid = parseInt($('#group-id').val());
+    var bgroups = $('#businessgroupid').val();
+    if (bgroups != '') {
+      var businessgroupid = bgroups;
+    } else {
+      var businessgroupid = '%';
+    }
+
+    var legalentity = $('#legalentityid').val();
+    if (legalentity != '') {
+      var lentityid = parseInt(legalentity);
+    } else {
+      var lentityid = 0;
+    }
+
+    var units = $('#unitid').val();
+    if (units != '') {
+      var unitid = units;
+    } else {
+      var unitid = '%';
+    }
+
+    var domains = $('#domainid').val();
+    if (domains != '') {
+      var domainid = domains;
+    } else {
+      var domainid = '%';
+    }
+
+    var orgtype = $('#orgtypeid').val();
+    if (orgtype != '') {
+      var orgtypeid = orgtype;
+    } else {
+      var orgtypeid = '%'
+    }
+
+    if($('#from-date').val() == ''){
+      var from_date = '%';
+    }else{
+      var from_date = $('#from-date').val();
+    }
+
+    if($('#to-date').val() == ''){
+      var to_date = '%';
+    }else{
+      var to_date = $('#to-date').val();
+    }
+
+    var status = $('#unit-status').val();
+    if(status == -1){
+      var unit_status = '%';
+    }
+    else{
+      var unit_status = parseInt(status);
+    }
+    var u_m_none = businessgroupid + ","+unitid+","+domainid+","+orgtypeid+","+from_date+","+to_date+","+unit_status;
+    function onSuccess(data) {
+      if (csv) {
+        var download_url = data.link;
+        window.open(download_url, '_blank');
+      }
+    }
+    function onFailure(error) {
+      displayMessage(error);
+    }
+    displayLoader();
+    mirror.exportClientDetailsReportData(countries, groupid, lentityid, csv, u_m_none, function (error, response) {
+      if (error == null) {
+        onSuccess(response);
+        hideLoader();
       } else {
-        var businessgroupid = '%';
+        onFailure(error);
+        hideLoader();
       }
-
-      var legalentity = $('#legalentityid').val();
-      if (legalentity != '') {
-        var lentityid = parseInt(legalentity);
-      } else {
-        var lentityid = 0;
-      }
-
-      var units = $('#unitid').val();
-      if (units != '') {
-        var unitid = units;
-      } else {
-        var unitid = '%';
-      }
-
-      var domains = $('#domainid').val();
-      if (domains != '') {
-        var domainid = domains;
-      } else {
-        var domainid = '%';
-      }
-
-      var orgtype = $('#orgtypeid').val();
-      if (orgtype != '') {
-        var orgtypeid = orgtype;
-      } else {
-        var orgtypeid = '%'
-      }
-
-      if($('#from-date').val() == ''){
-        var from_date = '%';
-      }else{
-        var from_date = $('#from-date').val();
-      }
-
-      if($('#to-date').val() == ''){
-        var to_date = '%';
-      }else{
-        var to_date = $('#to-date').val();
-      }
-
-      var status = $('#unit-status').val();
-      if(status == -1){
-        var unit_status = '%';
-      }
-      else{
-        var unit_status = parseInt(status);
-      }
-      var u_m_none = businessgroupid + ","+unitid+","+domainid+","+orgtypeid+","+from_date+","+to_date+","+unit_status;
-      function onSuccess(data) {
-        if (csv) {
-          var download_url = data.link;
-          window.open(download_url, '_blank');
-        }
-      }
-      function onFailure(error) {
-        displayMessage(error);
-      }
-      displayLoader();
-      mirror.exportClientDetailsReportData(countries, groupid, lentityid, csv, u_m_none, function (error, response) {
-        if (error == null) {
-          onSuccess(response);
-          hideLoader();
-        } else {
-          onFailure(error);
-          hideLoader();
-        }
-      });
-  }
-  else{
+    });
+ // }
+  /*else{
     displayMessage(message.export_empty);
-  }
+  }*/
 });
 
 $('#show-button').click(function () {
@@ -271,11 +271,11 @@ function loadunitdetailsreport() {
   }
   matchedUnits = unit_details;
   totalRecord = unit_details.length;
-  if(totalRecord > 0){
+  /*if(totalRecord > 0){
     ExportButton.show();
   }else{
     ExportButton.hide();
-  }
+  }*/
   processPaging();
   //loadClientDetailsList(unit_details);
 }

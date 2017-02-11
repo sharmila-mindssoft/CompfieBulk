@@ -921,14 +921,7 @@ function initMirror() {
       apiRequest("techno_report", request, callback);
     }
 
-    function getAssignedStatutoriesForApprove(callback){
-      callerName = 'domain_transaction';
-      var request = [
-          "GetAssignedStatutoriesForApprove",
-          {}
-        ];
-      apiRequest(callerName, request, callback);
-    }
+
     function getUserId() {
         var info = getUserInfo();
         if (info !== null)
@@ -2581,13 +2574,34 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
+    function getAssignedStatutoriesForApprove(callback){
+      callerName = 'domain_transaction';
+      var request = [
+          "GetAssignedStatutoriesForApprove",
+          {}
+        ];
+      apiRequest(callerName, request, callback);
+    }
+    function getAssignedStatutoriesComplianceToApprove(domain_id, unit_id, rcount, callback){
+      callerName = 'domain_transaction';
+      var request = [
+          "GetAssignedStatutoriesToApprove",
+          {
+            "d_id": domain_id,
+            "u_id": unit_id,
+            "rcount": rcount
+          }
+        ];
+      apiRequest(callerName, request, callback);
+    }
+
     function saveComplianceStatus(client_id, legal_entity_id, unit_id,
         domain_id, compliance_id, compliance_status,
         level_1_id, status, remarks, client_statutory_id,
         unit_name, domain_name
     ) {
         return {
-           
+
             "u_id": unit_id,
             "d_id": domain_id,
             "comp_id": compliance_id,
@@ -2602,7 +2616,8 @@ function initMirror() {
     }
 
     function saveAssignedStatutory(
-        compliances_applicablity_status, submission_type, client_id, legal_entity_id, domain_id, domain_name, callback
+        compliances_applicablity_status, submission_type, client_id,
+        legal_entity_id, domain_id, domain_name, unit_ids, callback
     ) {
         callerName = 'domain_transaction';
         var request = [
@@ -2612,7 +2627,8 @@ function initMirror() {
                 "ct_id": client_id,
                 "le_id": legal_entity_id,
                 "d_id": domain_id,
-                "d_name": domain_name
+                "d_name": domain_name,
+                "unit_ids": unit_ids
             }
         ];
         apiRequest(callerName, request, callback);
@@ -2952,6 +2968,7 @@ function initMirror() {
         getAssignedStatutoriesList: getAssignedStatutoriesList,
         getComplianceStatutoriesList: getComplianceStatutoriesList,
         getAssignedStatutoriesForApprove: getAssignedStatutoriesForApprove,
+        getAssignedStatutoriesComplianceToApprove: getAssignedStatutoriesComplianceToApprove,
         approveAssignedStatutory: approveAssignedStatutory,
         technoManagerInfo: technoManagerInfo,
         technoExecutiveInfo: technoExecutiveInfo,
@@ -2966,6 +2983,9 @@ function initMirror() {
         getIPSettingsReportFilter: getIPSettingsReportFilter,
         getIPSettingsReport: getIPSettingsReport,
         getAllocateServerReportData: getAllocateServerReportData,
+        exportClientDetailsReportData: exportClientDetailsReportData,
+        exportAuditTrail: exportAuditTrail,
+        exportReassignUserReportData: exportReassignUserReportData
     };
 }
 var mirror = initMirror();

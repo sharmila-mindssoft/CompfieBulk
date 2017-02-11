@@ -159,6 +159,7 @@ class API(object):
             data = request.data[5:]
             data = data.decode('base64')
             data = json.loads(data)
+            print data
             request_data = request_data_type.parse_structure(
                 data
             )

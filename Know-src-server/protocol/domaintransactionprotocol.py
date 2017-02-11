@@ -79,6 +79,27 @@ class GetAssignedStatutoriesById(Request):
         }
 
 
+class GetAssignedStatutoriesToApprove(Request):
+    def __init__(self, unit_id, domain_id, rcount):
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.rcount = rcount
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["u_id", "d_id", "rcount"])
+        unit_id = data.get("u_id")
+        domain_id = data.get("d_id")
+        rcount = data.get("rcount")
+        return GetAssignedStatutoriesToApprove(unit_id, domain_id, rcount)
+
+    def to_inner_structure(self):
+        return {
+            "u_id": self.unit_id,
+            "d_id": self.domain_id,
+            "rcount": self.rcount
+        }
+
 class GetAssignedStatutoryWizardOneData(Request):
     def __init__(self):
         pass
@@ -182,7 +203,7 @@ class GetAssignedStatutoryWizardTwoCount(Request):
 class SaveAssignedStatutory(Request):
     def __init__(
         self, compliances_applicablity_status, submission_type,
-        client_id, legal_entity_id, domain_id, domain_name
+        client_id, legal_entity_id, domain_id, domain_name, unit_ids
     ):
         self.compliances_applicablity_status = compliances_applicablity_status
         self.submission_type = submission_type
@@ -190,6 +211,7 @@ class SaveAssignedStatutory(Request):
         self.legal_entity_id = legal_entity_id
         self.domain_id = domain_id
         self.domain_name = domain_name
+        self.unit_ids = unit_ids
 
     @staticmethod
     def parse_inner_structure(data):
@@ -198,14 +220,14 @@ class SaveAssignedStatutory(Request):
                 "compliances_applicablity_status",
                 "submission_status",
                 "ct_id", "le_id", "d_id",
-                "d_name"
+                "d_name", "unit_ids"
             ]
         )
         return SaveAssignedStatutory(
             data.get("compliances_applicablity_status"),
             data.get("submission_status"),
             data.get("ct_id"), data.get("le_id"), data.get("d_id"),
-            data.get("d_name")
+            data.get("d_name"), data.get("unit_ids")
         )
 
     def to_inner_structure(self):
@@ -215,7 +237,8 @@ class SaveAssignedStatutory(Request):
             "ct_id": self.client_id,
             "le_id": self.legal_entity_id,
             "d_id": self.domain_id,
-            "d_name": self.domain_name
+            "d_name": self.domain_name,
+            "unit_ids": self.unit_ids
         }
 
 
@@ -326,6 +349,7 @@ def _init_Request_class_map():
         GetAssignedStatutoriesForApprove,
         GetAssignedStatutoriesById,
         GetAssignedStatutoryWizardOneData,
+        GetAssignedStatutoriesToApprove,
         GetAssignedStatutoryWizardTwoData,
         GetAssignedStatutoryWizardTwoCount,
         SaveAssignedStatutory,
@@ -383,6 +407,21 @@ class GetAssignedStatutoriesSuccess(Response):
             "assigned_statutories": self.assigned_statutories,
         }
 
+
+class GetAssignedStatutoriesApproveSuccess(Response):
+    def __init__(self, assigned_statutories):
+        self.assigned_statutories = assigned_statutories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["assigned_statutories_approve"])
+        assigned_statutories = data.get("assigned_statutories_approve")
+        return GetAssignedStatutoriesApproveSuccess(assigned_statutories)
+
+    def to_inner_structure(self):
+        return {
+            "assigned_statutories_approve": self.assigned_statutories,
+        }
 
 class GetAssignedStatutoriesByIdSuccess(Response):
     def __init__(self, level_1_statutories_list, statutories_for_assigning):
@@ -716,7 +755,7 @@ class ApproveAssignedStatutorySuccess(Response):
 
 def _init_Response_class_map():
     classes = [
-        GetAssignedStatutoriesSuccess, GetAssignedStatutoriesByIdSuccess,
+        GetAssignedStatutoriesSuccess, GetAssignedStatutoriesApproveSuccess, GetAssignedStatutoriesByIdSuccess,
         GetAssignedStatutoryWizardOneDataSuccess,
         GetAssignedStatutoryWizardTwoDataSuccess,
         GetAssignedStatutoryWizardTwoCountSuccess,
@@ -851,6 +890,99 @@ class AssignedStatutories(object):
             "le_id": self.legal_entity_id,
             "reason": self.reason,
             "is_editable": self.is_editable
+        }
+
+class AssignedStatutoriesApprove(object):
+    def __init__(
+        self, country_name,
+        client_id, group_name, business_group_name,
+        legal_entity_name, division_name, unit_code_with_name,
+        geography_name, unit_id, domain_id, domain_name, category_name,
+        approve_status, approved_status_id, client_statutory_id,
+        legal_entity_id, reason, is_editable, total_count
+    ):
+        self.country_name = country_name
+        self.client_id = client_id
+        self.group_name = group_name
+        self.business_group_name = business_group_name
+        self.legal_entity_name = legal_entity_name
+        self.division_name = division_name
+        self.unit_code_with_name = unit_code_with_name
+        self.geography_name = geography_name
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.category_name = category_name
+        self.submission_status = approve_status
+        self.approved_status_id = approved_status_id
+        self.client_statutory_id = client_statutory_id
+        self.legal_entity_id = legal_entity_id
+        self.reason = reason
+        self.is_editable = is_editable
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "c_name", "ct_id", "grp_name", "b_grp_name",
+            "l_e_name", "div_name",
+            "u_id", "u_name", "g_name", "d_id",
+            "d_name", "cat_name", "approval_status_text", "a_s_id",
+            "client_statutory_id", "le_id", "reason",
+            "is_editable", "total_count"
+        ])
+        country_name = data.get("c_name")
+        client_id = data.get("ct_id")
+        group_name = data.get("grp_name")
+        business_group_name = data.get("b_grp_name")
+        legal_entity_name = data.get("l_e_name")
+        division_name = data.get("div_name")
+        unit_id = data.get("u_id")
+        unit_code_with_name = data.get("u_name")
+        geography_name = data.get("g_name")
+        domain_id = data.get("d_id")
+        domain_name = data.get("d_name")
+        category_name = data.get("cat_name")
+        submission_status = data.get("approval_status_text")
+        approved_status_id = data.get("a_s_id")
+        client_statutory_id = data.get("client_statutory_id")
+        legal_entity_id = data.get("le_id")
+        reason = data.get("reason")
+        is_editable = data.get("is_editable")
+        total_count = data.get("total_count")
+        return AssignedStatutories(
+            country_name,
+            client_id, group_name, business_group_name,
+            legal_entity_name, division_name,
+            unit_code_with_name, geography_name, unit_id, domain_id,
+            domain_name, category_name,
+            submission_status, approved_status_id,
+            client_statutory_id, legal_entity_id,
+            reason, is_editable, total_count
+        )
+
+    def to_structure(self):
+        return {
+
+            "c_name": self.country_name,
+            "ct_id": self.client_id,
+            "grp_name": self.group_name,
+            "b_grp_name": self.business_group_name,
+            "l_e_name": self.legal_entity_name,
+            "div_name": self.division_name,
+            "u_id": self.unit_id,
+            "u_name": self.unit_code_with_name,
+            "g_name": self.geography_name,
+            "d_id": self.domain_id,
+            "d_name": self.domain_name,
+            "cat_name": self.category_name,
+            "approval_status_text": self.submission_status,
+            "a_s_id": self.approved_status_id,
+            "client_statutory_id": self.client_statutory_id,
+            "le_id": self.legal_entity_id,
+            "reason": self.reason,
+            "is_editable": self.is_editable,
+            "total_count": self.total_count
         }
 
 class LegalentityDomains(object):

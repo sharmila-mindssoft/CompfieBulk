@@ -23,24 +23,52 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: </label>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
                             <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">India</p>
-                            </div>
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="country-id" value="">
+                                                <div id="ac-country" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
                         </div>
                         
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity:
+                            <span class="mandatory">*</span></label>
+
                             <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">RG Legal Entity</p>
-                            </div>
+                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="2">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="legal-entity-id" value="">
+                                                <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
+
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">User: <span class="mandatory">*</span></label>
+
+
+
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" class="form-control input-sm" placeholder="Enter User" value="EMP1002 - Rajkumar">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                             </div>
+
+                            <div class="col-sm-6 has-feedback">
+                                <input type="text" id="user" class="form-control input-sm"  placeholder="Enter User" tabindex="3">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="user-id" value="">
+                                <div id="ac-user" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                            </div>
+
+
+
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: </label>

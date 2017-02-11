@@ -1597,6 +1597,7 @@ def _init_Response_class_map():
         SaveValidityDateSettingsFailure, UserReplacementSuccess, 
         CannotDisableUserTransactionExists, CannotRemoveUserTransactionExists,
         CheckUserMappingsSuccess
+
     ]
     class_map = {}
     for c in classes:

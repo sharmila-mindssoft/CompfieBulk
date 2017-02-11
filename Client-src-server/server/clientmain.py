@@ -23,7 +23,7 @@ import mobilecontroller as mobilecontroller
 from server.client import CompanyManager
 from server.clientreplicationbase import (
     ClientReplicationManager, ReplicationManagerWithBase,
-    DomainReplicationManager
+    # DomainReplicationManager
 )
 from server.constants import SESSION_CUTOFF
 import logger
@@ -47,13 +47,13 @@ def cors_handler(response):
 #
 
 def api_request(
-    request_data_type, need_client_id=False, is_group=False,
+    request_data_type, need_client_id=False, is_group=False, need_category=False
 ):
     def wrapper(f):
         @wraps(f)
         def wrapped(self):
             return self.handle_api_request(
-                f, request_data_type, need_client_id, is_group
+                f, request_data_type, need_client_id, is_group, need_category
             )
         return wrapped
     return wrapper
@@ -81,7 +81,7 @@ class API(object):
         self._replication_managers_for_le = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
-            100,
+            5000,
             self.server_added
         )
         print "Databases initialize"
@@ -253,7 +253,7 @@ class API(object):
 
             _client_manager = ClientReplicationManager(
                 self._knowledge_server_address,
-                6000,
+                500,
                 client_added
             )
             # replication start
@@ -329,22 +329,40 @@ class API(object):
         _group_db = Database(_group_db_cons)
         try :
             _group_db.begin()
-            session_user = _group_db.validate_session_token(session)
+            session_user, session_category = _group_db.validate_session_token(session)
             _group_db.commit()
             _group_db_cons.close()
             if session_user is None :
-                return False, False
+                return False, False, None
             else :
-                return session_user, client_id
+                return session_user, client_id, session_category
         except Exception, e :
             print e
             _group_db.rollback()
             _group_db_cons.close()
             raise Exception(e)
 
+    def _validate_user_password(self, session, user_id, usr_pwd):
+        session_token = session.split('-')
+        client_id = int(session_token[0])
+        _group_db_cons = self._group_databases.get(client_id).get_connection()
+        _group_db = Database(_group_db_cons)
+        is_valid = False
+        try :
+            _group_db.begin()
+            is_valid = _group_db.verify_password(user_id, usr_pwd)
+            _group_db.commit()
+            _group_db_cons.close()
+        except Exception, e :
+            print e
+            _group_db.rollback()
+            _group_db_cons.close()
+            raise Exception(e)
+        return is_valid
+
     def handle_api_request(
         self, unbound_method,
-        request_data_type, need_client_id, is_group
+        request_data_type, need_client_id, is_group, need_category
     ):
         def respond(response_data):
             return self._send_response(
@@ -364,9 +382,14 @@ class API(object):
         # validate session token
         if need_client_id is False :
             session = request_data.session_token
-            session_user, client_id = self._validate_user_session(session)
+            session_user, client_id, session_category = self._validate_user_session(session)
             if session_user is False :
                 return respond(clientlogin.InvalidSessionToken())
+
+            if hasattr(request_data.request, "password") :
+                if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
+                    return respond(clientlogin.InvalidCurrentPassword())
+
         else :
             session_user = None
         # request process in controller
@@ -391,6 +414,10 @@ class API(object):
             if need_client_id :
                 response_data = unbound_method(
                     self, request_data, _db, company_id, ip_address
+                )
+            elif need_category :
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, session_category
                 )
             else :
                 response_data = unbound_method(
@@ -423,6 +450,10 @@ class API(object):
     @api_request(clientmasters.RequestFormat, is_group=True)
     def handle_client_masters(self, request, db, session_user, client_id, le_id):
         return controller.process_client_master_requests(request, db, session_user, client_id)
+
+    @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
+    def handle_client_master_filters(self, request, db, session_user, session_category):
+        return controller.process_client_master_filters_request(request, db, session_user, session_category)
 
     @api_request(clienttransactions.RequestFormat)
     def handle_client_transaction(self, request, db, session_user, client_id, le_id):
@@ -486,6 +517,7 @@ def run_server(address, knowledge_server_address):
             ("/api/isalive", handle_isalive),
             ("/api/login", api.handle_login),
             ("/api/client_masters", api.handle_client_masters),
+            ("/api/client_master_filters", api.handle_client_master_filters),
             ("/api/client_transaction", api.handle_client_transaction),
             ("/api/client_reports", api.handle_client_reports),
             ("/api/client_dashboard", api.handle_client_dashboard),

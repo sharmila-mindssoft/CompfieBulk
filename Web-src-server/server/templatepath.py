@@ -123,9 +123,19 @@ CLIENT_TEMPLATE_PATHS = [
         "files/client/service-provider-wise-compliance/serviceproviderwisecompliance.html",
         None, {}
     ),
+     (
+        "/user-wise-report",
+        "files/client/user-wise-report/user_wise_report.html",
+        None, {}
+    ),
     (
         "/user-wise-compliance",
         "files/client/user-wise-compliance/user-wise-compliance.html",
+        None, {}
+    ),
+    (
+        "/service-provider-wise-report",
+        "files/client/service-provider-wise-report/service_provider_wise_report.html",
         None, {}
     ),
     (
@@ -165,7 +175,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/unit-list",
-        "files/client/unit-list/risk-report.html",
+        "files/client/unit-list/unit_list.html",
         None, {}
     ),
     (

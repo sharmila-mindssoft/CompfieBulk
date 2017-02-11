@@ -487,6 +487,7 @@ api_params = {
     "compliances_applicablity_status": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "SaveComplianceStatus"},
     "level_1_statutory_wise_compliances": {},
     "assigned_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignedStatutories"},
+    "assigned_statutories_approve": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignedStatutoriesApprove"},
     "unit_code_with_name": {'type': 'TEXT', 'length': 150, 'validation_method': None, 'is_optional': False},
     "submission_status": {'type': 'INT', 'length': 4, 'validation_method': None, 'is_optional': True},
     "s_s": {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},

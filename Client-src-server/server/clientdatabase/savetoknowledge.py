@@ -1,3 +1,4 @@
+import MySQLdb as mysql
 from server.dbase import Database
 from server.exceptionmessage import client_process_error
 from server.constants import (
@@ -18,12 +19,12 @@ class KnowledgedbConnect(object):
         self._k_db = None
 
     def get_knowledge_connect(self):
-        self._k_db = Database(
-            KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT,
-            KNOWLEDGE_DB_USERNAME, KNOWLEDGE_DB_PASSWORD,
-            KNOWLEDGE_DATABASE_NAME
+        conn = mysql.connect(
+            host=KNOWLEDGE_DB_HOST, port=KNOWLEDGE_DB_PORT,
+            user=KNOWLEDGE_DB_USERNAME, passwd=KNOWLEDGE_DB_PASSWORD,
+            db=KNOWLEDGE_DATABASE_NAME
         )
-        self._k_db.connect()
+        self._k_db = Database(conn)
 
 
 class UpdateFileSpace(KnowledgedbConnect):
@@ -43,7 +44,8 @@ class UpdateFileSpace(KnowledgedbConnect):
     def procee_update_space(self):
         try:
             self.get_knowledge_connect()
-            self._k_db.begin()
+            # self._k_db.begin()
+            self._k_db._cursor = self._k_db._connection.cursor()
             self._update_space()
             self._k_db.commit()
             self._k_db.close()
@@ -214,7 +216,7 @@ class SaveOptedStatus(KnowledgedbConnect):
     def _update_opted_status(self):
         statutories = self._statu_data.statutories
         for s in statutories:
-            client_statutory_id = s.client_statutory_id
+            client_compliance_id = s.client_compliance_id
             statutory_opted_status = int(s.applicable_status)
             not_applicable_remarks = s.not_applicable_remarks
             if not_applicable_remarks is None:
@@ -225,31 +227,33 @@ class SaveOptedStatus(KnowledgedbConnect):
             if remarks is None:
                 remarks = ""
             q = "UPDATE tbl_client_compliances SET " + \
-                " statutory_opted = %s, " + \
-                " not_applicable_remarks = %s, " + \
-                " compliance_opted = %s, " + \
-                " compliance_remarks = %s " + \
-                " WHERE client_statutory_id = %s AND " + \
+                " statutory_opted_status = %s, " + \
+                " remarks = %s, " + \
+                " compliance_opted_status = %s, " + \
+                " not_opted_remarks = %s " + \
+                " WHERE client_compliance_id = %s AND " + \
                 " compliance_id = %s"
             self._k_db.execute(q, [
                 statutory_opted_status,
                 not_applicable_remarks,
                 opted_status,
                 remarks,
-                client_statutory_id,
+                client_compliance_id,
                 compliance_id
             ])
 
     def process_opted_status(self):
         try:
             self.get_knowledge_connect()
-            self._k_db.begin()
+            # self._k_db.begin()
+            self._k_db._cursor = self._k_db._connection.cursor()
             self._update_opted_status()
-            self._k_db.commit()
-            self._k_db.close()
+            self._k_db._cursor.close()
+            self._k_db._connection.commit()
         except Exception, e:
             print e
-            self._k_db.rollback()
+            self._k_db._cursor.close()
+            self._k_db._connection.rollback()
             raise client_process_error("E026")
 
 

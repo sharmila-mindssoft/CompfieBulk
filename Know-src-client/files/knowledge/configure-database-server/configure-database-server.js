@@ -14,6 +14,20 @@ var db_server_port = $('#db-server-port');
 var db_server_uname = $('#db-server-username');
 var db_server_pwd = $('#db-server-pwd');
 
+var Key = {
+  LEFT:   37,
+  UP:     38,
+  RIGHT:  39,
+  DOWN:   40
+};
+
+function displayLoader() {
+  $('.loading-indicator-spin').show();
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+
 function initialize(type_of_form){
     showPage(type_of_form);
     clearFields();
@@ -26,11 +40,14 @@ function initialize(type_of_form){
         function onFailure(error) {
             displayMessage(error);
         }
+        displayLoader();
         mirror.getDatabaseServerList(function (error, response) {
             console.log(error, response)
             if (error == null) {
+                hideLoader();
                 onSuccess(response);
             } else {
+                hideLoader();
                 onFailure(error);
             }
         });
@@ -216,12 +233,15 @@ function saveDBServer(){
         function onFailure(error) {
             displayMessage(error);
         }
+        displayLoader();
         mirror.saveDBServer(
             edit_id, db_server_name, ip, parseInt(port), username, password,
             function (error, response) {
             if (error == null) {
+                hideLoader();
                 onSuccess(response);
             } else {
+                hideLoader();
                 onFailure(error);
             }
         });
@@ -247,7 +267,7 @@ $(function () {
   //key press for IP address
     db_server_ip.on('keypress', function (e) {
         var k = e.which || e.keyCode;
-        var ok = k >= 48 && k <= 57 || k == 46 || k == Key.LEFT ||
+        var ok = k >= 48 && k <= 57 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
                 k == Key.RIGHT;
 
       if (!ok){
@@ -258,7 +278,7 @@ $(function () {
     //key press for IP address
     db_server_port.on('keypress', function (e) {
         var k = e.which || e.keyCode;
-        var ok = k >= 48 && k <= 57 || k == Key.LEFT ||
+        var ok = k >= 48 && k <= 57 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
                 k == Key.RIGHT;
 
       if (!ok){

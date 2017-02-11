@@ -178,7 +178,6 @@ CREATE TABLE `tbl_mapped_industries` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_compliances` (
   `client_compliance_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) DEFAULT NULL,
@@ -200,7 +199,18 @@ CREATE TABLE `tbl_client_compliances` (
   `submitted_by` int(11) DEFAULT NULL,
   `submitted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`),
-  UNIQUE KEY(`unit_id`, `domain_id`, `compliance_id`)
+  UNIQUE KEY(`client_compliance_id`, `legal_entity_id`, `unit_id`, `domain_id`, `compliance_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_client_statutories`(
+    `client_statutory_id` int(11) NOT NULL,
+    `unit_id` int(11) NOT NULL,
+    `domain_id` int(11) NOT NULL,
+    `updated_by` int(11) DEFAULT NULL,
+    `updated_on` timestamp NULL DEFAULT NULL,
+    `is_locked` tinyint(4) DEFAULT '0',
+    `locked_on` timestamp NULL DEFAULT NULL,
+    `locked_by` int(11) DEFAULT NULL,
+    UNIQUE KEY(`unit_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_statutory_notifications` (
   `notification_id` int(11) NOT NULL,
