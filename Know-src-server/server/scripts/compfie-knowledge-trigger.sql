@@ -4,73 +4,75 @@
 --
 
 DROP TRIGGER IF EXISTS `after_tbl_client_groups_update`;
+DROP TRIGGER IF EXISTS `after_tbl_client_groups_insert`;
+
 DELIMITER //
-CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_groups`
+CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_groups`
  FOR EACH ROW BEGIN
    SET @action = 0;
    SET @save = 0;
-   IF NEW.is_approved = 1 THEN
-        INSERT INTO tbl_audit_log(action,
+
+    INSERT INTO tbl_audit_log(action,
+                         client_id,
+                         legal_entity_id,
+                         tbl_auto_id,
+                         column_name,
+                         value,
+                         tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                0,
+                NEW.client_id,
+                'group_name',
+                NEW.group_name,
+                'tbl_client_groups');
+
+   INSERT INTO tbl_audit_log(action,
                              client_id,
                              legal_entity_id,
                              tbl_auto_id,
                              column_name,
                              value,
                              tbl_name)
-            VALUES (@action,
-                    NEW.client_id,
-                    0,
-                    NEW.client_id,
-                    'group_name',
-                    NEW.group_name,
-                    'tbl_client_groups');
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    NEW.client_id,
-                    0,
-                    NEW.client_id,
-                    'short_name',
-                    NEW.short_name,
-                    'tbl_client_groups');
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    NEW.client_id,
-                    0,
-                    NEW.client_id,
-                    'email_id',
-                    NEW.email_id,
-                    'tbl_client_groups');
-       INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    NEW.client_id,
-                    0,
-                    NEW.client_id,
-                    'total_view_licence',
-                    NEW.total_view_licence,
-                    'tbl_client_groups');
+        VALUES (@action,
+                NEW.client_id,
+                0,
+                NEW.client_id,
+                'short_name',
+                NEW.short_name,
+                'tbl_client_groups');
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             legal_entity_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                0,
+                NEW.client_id,
+                'email_id',
+                NEW.email_id,
+                'tbl_client_groups');
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             legal_entity_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                0,
+                NEW.client_id,
+                'total_view_licence',
+                NEW.total_view_licence,
+                'tbl_client_groups');
 
-        INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group)
-        values(new.client_id, 0, 1);
+    INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group)
+    values(new.client_id, 0, 1);
 
-    END IF;
 
 END
 //
@@ -192,7 +194,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
  FOR EACH ROW BEGIN
    SET @action = 0;
 
-    IF NEW.is_approved = 1 THEN
+    IF OLD.is_approved <> NEW.is_approved and NEW.is_approved = 1 THEN
         INSERT INTO tbl_audit_log(action,
                                  client_id,
                                  legal_entity_id,
@@ -577,7 +579,7 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
  FOR EACH ROW BEGIN
    SET @action = 0;
 
-   IF NEW.is_approved = 1 THEN
+   IF OLD.is_approved <> NEW.is_approved and NEW.is_approved = 1 THEN
         INSERT INTO tbl_audit_log(action,
                              client_id,
                              legal_entity_id,
@@ -815,7 +817,7 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
  FOR EACH ROW BEGIN
     SET @action = 0;
-   IF NEW.is_approved = 2 or NEW.is_approved = 3 THEN
+   IF NEW.is_approved <> old.is_approved and (NEW.is_approved = 2 or NEW.is_approved = 3) THEN
         INSERT INTO tbl_audit_log(action,
                              client_id,
                              legal_entity_id,
@@ -1171,7 +1173,7 @@ CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client
     set @legal_entity_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id);
     set @domain_id = (select domain_id from tbl_client_compliances where client_statutory_id = new.client_statutory_id);
 
-    IF new.status = 3 then
+    IF old.status <> new.status and new.status = 3 then
         INSERT INTO tbl_audit_log(action,
                                  client_id,
                                  legal_entity_id,
