@@ -1,6 +1,6 @@
 # from flaskext.mysql import MySQL
 import logger
-from server.common import (convert_to_dict, get_date_time)
+from server.common import (convert_to_dict, get_date_time, encrypt)
 from server.exceptionmessage import fetch_error, process_procedure_error
 
 class BaseDatabase(object):
@@ -602,7 +602,7 @@ class Database(object):
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
-        print query
+        # print query
         return self.execute(query)
 
     ########################################################
@@ -895,3 +895,17 @@ class Database(object):
         m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
         for u in user_ids :
             self.execute(m2 , [msg_id, u])
+
+    ##########################################################
+    #  verify password
+    ##########################################################
+
+    def verify_password(db, user_id, password):
+        ec_password = encrypt(password)
+        q = "SELECT username from tbl_user_login_details where user_id = %s and password = %s"
+        #print q
+        data_list = db.select_one(q, [user_id, ec_password])
+        if data_list is None:
+            return False
+        else:
+            return True

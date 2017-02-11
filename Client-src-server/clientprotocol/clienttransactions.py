@@ -179,6 +179,31 @@ class GetStatutorySettings(Request):
             "cat_id": self.category_id
         }
 
+class ChangeStatutorySettingsLock(Request):
+    def __init__(self, legal_entity_id, domain_id, unit_id, lock, password):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id
+        self.lock = lock
+        self.password = password
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "u_id", "lock", "password"])
+        return ChangeStatutorySettingsLock(
+            data.get("le_id"), data.get("d_id"), data.get("u_id"),
+            data.get("lock"), data.get("password")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id,
+            "u_id": self.unit_id,
+            "lock": self.lock,
+            "password": self.password
+        }
+
 class GetSettingsCompliances(Request):
     def __init__(self, legal_entity_id, unit_id, record_count):
         self.legal_entity_id = legal_entity_id
@@ -266,22 +291,34 @@ class UpdateStatutoryCompliance(object):
 
 
 class UpdateStatutorySettings(Request):
-    def __init__(self, password, unit_name, unit_id, statutories, legal_entity_id):
+    def __init__(
+        self, password, unit_name, unit_id, statutories,
+        legal_entity_id, s_s, domain_id
+    ):
         self.password = password
         self.unit_name = unit_name
         self.unit_id = unit_id
         self.statutories = statutories
         self.legal_entity_id = legal_entity_id
+        self.s_s = s_s
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["password", "u_name", "u_id", "update_statutories", "le_id"])
+        data = parse_dictionary(data, [
+            "password", "u_name", "u_id", "update_statutories", "le_id", "s_s", "d_id"
+        ])
         password = data.get("password")
         unit_name = data.get("u_name")
         unit_id = data.get("u_id")
         statutories = data.get("update_statutories")
         legal_entity_id = data.get("le_id")
-        return UpdateStatutorySettings(password, unit_name, unit_id, statutories, legal_entity_id)
+        s_s = data.get("s_s")
+        domain_id = data.get("d_id")
+        return UpdateStatutorySettings(
+            password, unit_name, unit_id, statutories, legal_entity_id, s_s,
+            domain_id
+        )
 
     def to_inner_structure(self):
         return {
@@ -289,7 +326,9 @@ class UpdateStatutorySettings(Request):
             "u_name": self.unit_name,
             "u_id": self.unit_id,
             "update_statutories": self.statutories,
-            "le_id": self.legal_entity_id
+            "le_id": self.legal_entity_id,
+            "s_s": self.s_s,
+            "d_id": self.domain_id
         }
 
 
@@ -710,7 +749,7 @@ class GetReviewSettingsComplianceFilters(Request):
 
 def _init_Request_class_map():
     classes = [
-        GetStatutorySettingsFilters,
+        GetStatutorySettingsFilters, ChangeStatutorySettingsLock,
         GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings,
         GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance,
         GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance,
@@ -1299,6 +1338,20 @@ class SavePastRecordsFailed(Response):
             "error" : to_structure_Text(self.error)
         }
 
+
+class ChangeStatutorySettingsLockSuccess(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [])
+        return ChangeStatutorySettingsLockSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
@@ -1308,7 +1361,7 @@ def _init_Response_class_map():
         GetComplianceApprovalListSuccess, ApproveComplianceSuccess, GetPastRecordsFormDataSuccess,
         GetStatutoriesByUnitSuccess, SavePastRecordsSuccess, SavePastRecordsFailed,
         GetAssigneeCompliancesSuccess, ComplianceUpdateFailed,
-        GetStatutorySettingsFiltersSuccess
+        GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess
     ]
     class_map = {}
     for c in classes:
@@ -2136,7 +2189,7 @@ class ComplianceApplicability(object):
         compliance_id,
         compliance_name, description, statutory_provision,
         compliance_applicable_status, compliance_opted_status,
-        compliance_remarks, is_new, domain_name
+        compliance_remarks, is_new, domain_name, is_saved
     ):
         self.level_1_statutory_name = level_1_statutory_name
         self.applicable_status = applicable_status
@@ -2152,6 +2205,7 @@ class ComplianceApplicability(object):
         self.compliance_remarks = compliance_remarks
         self.is_new = is_new
         self.domain_name = domain_name
+        self.is_saved = is_saved
 
     @staticmethod
     def parse_structure(data):
@@ -2159,7 +2213,7 @@ class ComplianceApplicability(object):
             "lone_statu_name", "app_status", "opt_status", "not_app_remarks",
             "c_comp_id", "comp_id", "comp_name", "descp", "s_prov",
             "comp_app_status", "comp_opt_status", "comp_remarks", "is_new",
-            "d_name"
+            "d_name", "is_saved"
         ])
         level_1_statutory_name = data.get("lone_statu_name")
         applicable_status = data.get("app_status")
@@ -2175,6 +2229,7 @@ class ComplianceApplicability(object):
         compliance_remarks = data.get("comp_remarks")
         is_new = data.get("is_new")
         domain_name = data.get("d_name")
+        is_saved = data.get("is_saved")
         return ComplianceApplicability(
             level_1_statutory_name, applicable_status, opted_status,
             not_applicable_remarks,
@@ -2183,7 +2238,7 @@ class ComplianceApplicability(object):
             description, statutory_provision,
             compliance_applicable_status, compliance_opted_status,
             compliance_remarks, is_new,
-            domain_name
+            domain_name, is_saved
         )
 
     def to_structure(self):
@@ -2201,7 +2256,8 @@ class ComplianceApplicability(object):
             "comp_opt_status": self.compliance_opted_status,
             "comp_remarks": self.compliance_remarks,
             "is_new": self.is_new,
-            "d_name": self.domain_name
+            "d_name": self.domain_name,
+            "is_saved": self.is_saved
         }
 
 
