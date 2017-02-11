@@ -8,7 +8,8 @@ CREATE TABLE `tbl_client_replication_status` (
   `is_new_data` tinyint(2) DEFAULT '1',
   `is_new_domain` tinyint(2) DEFAULT '0',
   `domain_id` varchar(50) DEFAULT NULL,
-  `is_group` tinyint(2) DEFAULT '0'
+  `is_group` tinyint(2) DEFAULT '0',
+  UNIQUE KEY(`client_id`, `is_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_audit_log`;
