@@ -118,7 +118,7 @@ function callAPI(api_type) {
         displayLoader();
         mirror.getAssignedStatutories(function(error, data) {
             if (error == null) {
-                ASSIGNED_STATUTORIES = data.assigned_statutories;
+                ASSIGNED_STATUTORIES = data.assigned_statutories_approve;
                 loadAssignedStatutories();
 
             } else {
