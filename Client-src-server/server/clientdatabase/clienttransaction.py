@@ -167,10 +167,10 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
         param = [legal_entity_id, session_user, div_id, div_id, cat_id, cat_id]
 
     query += " ORDER BY t1.unit_code, t1.unit_name, t3.domain_name"
-    print query
-    print param
+    # print query
+    # print param
     rows = db.select_all(query, param)
-
+    # print rows
     return return_statutory_settings(rows, user_cat_id)
 
 
