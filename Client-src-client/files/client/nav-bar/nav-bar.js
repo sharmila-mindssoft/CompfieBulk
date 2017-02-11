@@ -119,7 +119,7 @@ function initializeNavBar() {
   // console.log(navBarItems["My Accounts"])
   var settingsMenu = navBarItems["My Accounts"];
   var settingsMenuObject = $('#nav-bar-templates .settings-menu .dropdown').clone();
-  $('.username', settingsMenuObject).text(user.employee_name);
+  $('.username', settingsMenuObject).text(user.emp_name);
   for (var form_key in settingsMenu) {
     var form = navBarItems["My Accounts"][form_key];
     if (form.form_name != "Reminders" &&  form.form_name != "Statutory Notification" &&  

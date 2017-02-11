@@ -25,7 +25,7 @@ function initClientMirror() {
 
     function initSession(userProfile, shortName) {
         // console.log(toJSON(userProfile))
-        window.sessionStorage.userInfo = toJSON(userProfile);
+        window.sessionStorage.userInfo = userProfile;
         window.localStorage.shortName = shortName;
     }
 
@@ -60,7 +60,7 @@ function initClientMirror() {
     }
 
     function getSelectedLegalEntity() {
-        var info = window.sessionStorage.selectedEntity;
+        var info = parseJSON(window.sessionStorage.selectedEntity);
         return info;
     }
 
