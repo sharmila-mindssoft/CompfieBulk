@@ -186,7 +186,7 @@ def return_compliance_for_statutory_settings(
         " t1.not_opted_remarks, " + \
         " t2.compliance_task, t2.document_name, t2.statutory_mapping, " + \
         " t2.statutory_provision, t2.compliance_description, " + \
-        " t1.is_new, " + \
+        " t1.is_new, if(is_submitted = 0, is_saved, 0) as save_status," + \
         " (select domain_name from tbl_domains " + \
         " where domain_id = t2.domain_id) as domain_name, " + \
         " (select count(tc1.client_compliance_id) " + \
@@ -262,7 +262,8 @@ def return_compliance_for_statutory_settings(
             bool(compliance_opted),
             compliance_remarks,
             bool(r["is_new"]),
-            r["domain_name"]
+            r["domain_name"],
+            bool(r["save_status"])
         )
 
         statutory_wise_compliances.append(compliance)

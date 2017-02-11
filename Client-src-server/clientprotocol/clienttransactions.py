@@ -2150,7 +2150,7 @@ class ComplianceApplicability(object):
         compliance_id,
         compliance_name, description, statutory_provision,
         compliance_applicable_status, compliance_opted_status,
-        compliance_remarks, is_new, domain_name
+        compliance_remarks, is_new, domain_name, is_saved
     ):
         self.level_1_statutory_name = level_1_statutory_name
         self.applicable_status = applicable_status
@@ -2166,6 +2166,7 @@ class ComplianceApplicability(object):
         self.compliance_remarks = compliance_remarks
         self.is_new = is_new
         self.domain_name = domain_name
+        self.is_saved = is_saved
 
     @staticmethod
     def parse_structure(data):
@@ -2173,7 +2174,7 @@ class ComplianceApplicability(object):
             "lone_statu_name", "app_status", "opt_status", "not_app_remarks",
             "c_comp_id", "comp_id", "comp_name", "descp", "s_prov",
             "comp_app_status", "comp_opt_status", "comp_remarks", "is_new",
-            "d_name"
+            "d_name", "is_saved"
         ])
         level_1_statutory_name = data.get("lone_statu_name")
         applicable_status = data.get("app_status")
@@ -2189,6 +2190,7 @@ class ComplianceApplicability(object):
         compliance_remarks = data.get("comp_remarks")
         is_new = data.get("is_new")
         domain_name = data.get("d_name")
+        is_saved = data.get("is_saved")
         return ComplianceApplicability(
             level_1_statutory_name, applicable_status, opted_status,
             not_applicable_remarks,
@@ -2197,7 +2199,7 @@ class ComplianceApplicability(object):
             description, statutory_provision,
             compliance_applicable_status, compliance_opted_status,
             compliance_remarks, is_new,
-            domain_name
+            domain_name, is_saved
         )
 
     def to_structure(self):
@@ -2215,7 +2217,8 @@ class ComplianceApplicability(object):
             "comp_opt_status": self.compliance_opted_status,
             "comp_remarks": self.compliance_remarks,
             "is_new": self.is_new,
-            "d_name": self.domain_name
+            "d_name": self.domain_name,
+            "is_saved": self.is_saved
         }
 
 

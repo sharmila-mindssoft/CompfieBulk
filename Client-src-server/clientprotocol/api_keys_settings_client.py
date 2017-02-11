@@ -285,5 +285,6 @@ api_params = {
     "c_remarks": make_text_field(is_optional=True),
     "update_statutories": make_vector_type_field(module="clienttransactions", klass_name="UpdateStatutoryCompliance"),
     "s_s": make_int_field(),
+    "is_saved": make_bool_field(),
 
 }
