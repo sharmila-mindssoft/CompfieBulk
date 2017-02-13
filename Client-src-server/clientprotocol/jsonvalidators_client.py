@@ -403,10 +403,10 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        # print param, val, field_name
+        #print param, val, field_name
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
-        # print field_name, param, val
+        print field_name, param, val
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')

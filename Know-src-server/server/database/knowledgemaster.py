@@ -757,25 +757,17 @@ def update_statutory(
             pids.append(0)
             pids = tuple(pids)
 
-            # q = "Update tbl_statutories , " + \
-            #     "(select p.statutory_id, (select  group_concat(p1.statutory_name SEPARATOR '>>')  " + \
-            #     "from tbl_statutories as p1 where statutory_id in %s )  as names from tbl_statutories as p  " + \
-            #     " where p.statutory_id = %s) as B " + \
-            #     " set tbl_statutories.parent_names = B.names  " + \
-            #     " where tbl_statutories.statutory_id = B.statutory_id  and tbl_statutories.statutory_id = %s "
-            # print q
-
             q = "Update tbl_statutories as A inner join ( " + \
                 " select p.statutory_id, (select " + \
                 " group_concat(p1.statutory_name SEPARATOR '>>') " + \
-                " from tbl_statutories as p1 where statutory_id in (%s)) " + \
+                " from tbl_statutories as p1 where statutory_id in (" + row["parent_ids"] + ")) " + \
                 " as names from tbl_statutories as p " + \
                 " where p.statutory_id = %s " + \
                 " ) as B on A.statutory_id = B.statutory_id " + \
                 " set A.parent_names = B.names " + \
                 " where A.statutory_id = %s "
 
-            db.execute(q, [row["parent_ids"], row["statutory_id"], row["statutory_id"]])
+            db.execute(q, [row["statutory_id"], row["statutory_id"]])
             action = "statutory name %s updated in child rows." % name
             db.save_activity(updated_by, frmStatutoryMapping, action)
         return True

@@ -11,8 +11,8 @@
 
         <div class="collapse navbar-collapse cssmenu" id="myNavbar">
             <ul class="nav navbar-nav navbar-right pull-right menu-ul">
-                <li><a class="home-menu" href="/client/home">HOME</a></li>
-                <li><a class="home-menu" href="/client/dashboard">DASHBOARD</a></li>
+                <li><a class="home-menu" href="/home">HOME</a></li>
+                <li><a class="home-menu" href="/dashboard">DASHBOARD</a></li>
             </ul>
 
         </div>
@@ -39,35 +39,17 @@
             </li>
         </ul>
 
-        <ul class="messages">
-            <li class="dropdown user-box message-menu">
-                <a class="dropdown-toggle waves-effect waves-light profile p-l-10 p-r-10 mlink" data-toggle="dropdown" aria-expanded="false"> <i class="zmdi zmdi-email load-msg" title="Messages"></i> </a>
+        <ul class="reminders">
+            <li class="dropdown user-box reminder-menu">
+                <a class="dropdown-toggle waves-effect waves-light profile p-l-10 p-r-10 mlink" data-toggle="dropdown" aria-expanded="false"> <i class="zmdi zmdi-timer c-pointer" title="Reminders"></i> </a>
                     <div class="noti-dot">
                         <span class="dot-single"></span>
                         <span class="pulse-single"></span>
                     </div>
-                <ul class="dropdown-menu msg-items-ul"></ul>
+                <ul class="dropdown-menu reminder-items-ul"></ul>
             </li>
         </ul>
-
-        <ul class="messages-list" style="width: 200px;">
-            <li style="width: 200px; white-space:normal;">
-                <a class="mlink">
-                  <div> <strong class="msg-heading"></strong> </div>
-                  <div class="msg-content"> </div>
-                </a>
-            </li>
-            <li class="divider"></li>
-        </ul>
-
-        <ul class="messages-read-all" style="width: 200px;">
-            <li>
-               <a class="text-center mlink" > <strong>Read More</strong>
-               <i class="fa fa-angle-right"></i>
-               </a>
-            </li>
-        </ul>
-
+        
         <ul class="notifications">
             <li class="dropdown user-box notification-menu">
                 <a class="dropdown-toggle waves-effect waves-light profile p-l-10 p-r-10 slink" data-toggle="dropdown" aria-expanded="false"> <i class="zmdi zmdi-notifications-none load-statu" title="Statutory Notifications"></i> </a>
@@ -79,24 +61,27 @@
             </li>
         </ul>
 
-        <ul class="notifications-list" style="width: 200px;">
-            <li style="width: 200px; white-space:normal;">
-                <a class="slink">
-                  <div> <strong class="statu-heading"></strong> </div>
-                  <div class="statu-content"> </div>
-                </a>
-            </li>
-            <li class="divider"></li>
-        </ul>
-
-        <ul class="notifications-read-all" style="width: 200px;">
-            <li>
-               <a class="text-center slink"> <strong>Read More</strong>
-               <i class="fa fa-angle-right"></i>
-               </a>
+        <ul class="escalations">
+            <li class="dropdown user-box escalation-menu">
+                <a class="dropdown-toggle waves-effect waves-light profile p-l-10 p-r-10 mlink" data-toggle="dropdown" aria-expanded="false"> <i class="zmdi zmdi-flash c-pointer" title="Escalations"></i> </a>
+                    <div class="noti-dot">
+                        <span class="dot-single"></span>
+                        <span class="pulse-single"></span>
+                    </div>
+                <ul class="dropdown-menu escalation-items-ul"></ul>
             </li>
         </ul>
 
+        <ul class="messages">
+            <li class="dropdown user-box message-menu">
+                <a class="dropdown-toggle waves-effect waves-light profile p-l-10 p-r-10 mlink" data-toggle="dropdown" aria-expanded="false"> <i class="zmdi zmdi-email load-msg" title="Messages"></i> </a>
+                    <div class="noti-dot">
+                        <span class="dot-single"></span>
+                        <span class="pulse-single"></span>
+                    </div>
+                <ul class="dropdown-menu msg-items-ul"></ul>
+            </li>
+        </ul>
     </div>
 
 </div>

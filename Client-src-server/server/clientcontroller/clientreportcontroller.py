@@ -340,6 +340,54 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         logger.logClientApi("GetUnitWiseReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
+    elif type(request) is clientreport.GetServiceProviderWiseReportFilters:
+        logger.logClientApi(
+            "GetServiceProviderWiseReportFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_service_provider_wise_report_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetServiceProviderWiseReportFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetServiceProviderWiseReport:
+        logger.logClientApi(
+            "GetServiceProviderWiseReport  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_service_provider_wise_report(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetServiceProviderWiseReport", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetUserWiseReportFilters:
+        logger.logClientApi(
+            "GetUserWiseReportFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_user_wise_report_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetUserWiseReportFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetUserWiseReport:
+        logger.logClientApi(
+            "GetUserWiseReport  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_user_wise_report(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetUserWiseReport", "process end")
+        logger.logClientApi("------", str(time.time()))
+
     return result
 
 
@@ -598,23 +646,29 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
 
 def get_reassignedhistory_report(db, request, session_user, client_id):
     if not request.csv:
-        country_id = request.country_id
-        domain_id = request.domain_id
-        level_1_statutory_id = request.level_1_statutory_id
+        country_id = request.c_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
         unit_id = request.unit_id
+        act = request.act
         compliance_id = request.compliance_id
-        user_id = request.user_id
+        usr_id = request.usr_id
         from_date = request.from_date
         to_date = request.to_date
-        from_count = request.record_count
-        to_count = 200
-        reassigned_history_list, total = report_reassigned_history(
-            db, country_id, domain_id, level_1_statutory_id,
-            unit_id, compliance_id, user_id, from_date, to_date, session_user,
-            from_count, to_count
+        csv = request.csv
+        f_count = request.f_count
+        t_count = request.t_count
+
+        reassigned_history_list = report_reassigned_history(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, usr_id, from_date, to_date, session_user, f_count, t_count
+        )
+        total_count = report_reassigned_history_total(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, usr_id, from_date, to_date, session_user
         )
         return clientreport.GetReassignedHistoryReportSuccess(
-            reassigned_history_list, total
+            reassigned_history_list, total_count
         )
     else:
         converter = ConvertJsonToCSV(
@@ -955,3 +1009,83 @@ def get_unit_wise_report(db, request, session_user, client_id):
     else:
         result = process_unit_wise_report(db, request)
         return clientreport.GetUnitWiseReportSuccess(unit_compliances=result)
+
+
+###############################################################################################
+# Objective: To get the filters data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains service provider list, domain list, compliances.
+###############################################################################################
+def get_service_provider_wise_report_filters(db, request, session_user, client_id):
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    sp_list = get_service_providers_list(db)
+    sp_domains_list = get_domains_for_sp_users(db, legal_entity_id)
+    sp_unit_list = get_units_for_sp_users(db, country_id, legal_entity_id)
+    sp_act_task_list = get_acts_for_sp_users(db, legal_entity_id, country_id)
+    compliance_status = get_compiance_status(db)
+    sp_user_list = get_service_provider_user_list(db, country_id, legal_entity_id)
+    return clientreport.GetServiceProviderWiseReportFiltersSuccess(
+        sp_domains_list=sp_domains_list, sp_unit_list=sp_unit_list,
+        sp_act_task_list=sp_act_task_list, sp_list=sp_list,
+        compliance_task_status=compliance_status, sp_users_list=sp_user_list
+    )
+
+###############################################################################################
+# Objective: To get unit wise compliances data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains compliance list with the status
+###############################################################################################
+def get_service_provider_wise_report(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "ServiceProviderWiseReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_service_provider_wise_report(db, request)
+        return clientreport.GetServiceProviderWiseReportSuccess(sp_compliances=result)
+
+
+###############################################################################################
+# Objective: To get the filters data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains users lits, domain list, compliances, units
+###############################################################################################
+
+def get_user_wise_report_filters(db, request, session_user, client_id):
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    le_users_list = get_le_users_list(db)
+    user_domains_list = get_domains_for_le_users(db, legal_entity_id)
+    users_units_list = get_units_for_le_users(db, country_id, legal_entity_id)
+    user_act_task_list = get_acts_for_le_users(db, legal_entity_id, country_id)
+    frequency_list = get_frequency_list(db)
+    compliance_user_type = get_compliance_user_type(db)
+    compliance_status = get_compiance_status(db)
+    return clientreport.GetUserWiseReportFiltersSuccess(
+        le_users_list=le_users_list, user_domains_list=user_domains_list,
+        users_units_list=users_units_list,
+        user_act_task_list=user_act_task_list,
+        compliance_frequency_list=frequency_list,
+        compliance_user_type=compliance_user_type, compliance_task_status=compliance_status
+    )
+
+###############################################################################################
+# Objective: To get unit wise compliances data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains compliance list with the status
+###############################################################################################
+def get_user_wise_report(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "UserWiseReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_user_wise_report(db, request)
+        return clientreport.GetUserWiseReportSuccess(user_compliances=result)

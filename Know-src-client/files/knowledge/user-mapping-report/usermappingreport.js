@@ -452,14 +452,17 @@ function resetfilter(evt)
 
 ExportButton.click(function() {
   //alert("x");
-    if(mappedUserList.length > 0){
+  csv = true;
+  sno = 0;
+  loadusermappingdetails();
+    /*if(mappedUserList.length > 0){
       csv = true;
       sno = 0;
       loadusermappingdetails();
     }
     else{
       displayMessage(message.export_empty);
-    }
+    }*/
 
 });
 $('#show-button').click(function () {
@@ -528,12 +531,12 @@ function processPaging(){
     var clone4 = tableRow4.clone();
     $('.no_records', clone4).text('No Records Found');
     $('.tbody-usermappingdetails-list').append(clone4);
-    ExportButton.hide();
+    //ExportButton.hide();
     PaginationView.hide();
 
   } else {
     if(sno==0){
-      ExportButton.show();
+      //ExportButton.show();
       createPageView(totalRecord);
     }
     PaginationView.show();

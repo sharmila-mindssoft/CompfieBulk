@@ -19,7 +19,7 @@ from server.clientdatabase.general import (
     is_admin, calculate_due_date, filter_out_due_dates,
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
-    get_user_category
+    get_user_category,
 )
 from server.exceptionmessage import client_process_error
 from server.clientdatabase.savetoknowledge import *
@@ -49,18 +49,90 @@ __all__ = [
     "reject_compliance_concurrence",
     "concur_compliance",
     "get_review_settings_frequency",
-    "get_domains_for_legalentity"
+    "get_review_settings_units",
+    "get_domains_for_legalentity",
+    "get_review_settings_timeline",
+    "get_review_settings_compliance",
+
+    "get_user_based_legal_entity", "get_user_based_division",
+    "get_user_based_category",
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
+def get_user_based_legal_entity(db, user_id, user_category):
 
-def get_statutory_settings(db, legal_entity_id, session_user):
-    cat_id = get_user_category(db, session_user)
+    q = "select t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id " + \
+        " from tbl_legal_entities t1"
+
+    if user_category == 1 :
+        rows = db.select_all(q, None)
+    else :
+        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+        rows = db.select_all(q, [user_id])
+
+    results = []
+    for legal_entity in rows:
+        b_group_id = None
+        if legal_entity["business_group_id"] > 0:
+            b_group_id = int(legal_entity["business_group_id"])
+        results.append(clientcore.ClientLegalEntity(
+            legal_entity["legal_entity_id"],
+            legal_entity["legal_entity_name"],
+            b_group_id
+        ))
+    return results
+
+def get_user_based_division(db, user_id, user_category):
+
+    q = "select t1.division_id, t1.division_name, t1.legal_entity_id, t1.business_group_id " + \
+        " from tbl_divisions t1"
+
+    if user_category == 1 :
+        rows = db.select_all(q, None)
+    else :
+        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+        rows = db.select_all(q, [user_id])
+
+    results = []
+    for division in rows:
+        division_obj = clientcore.ClientDivision(
+            division["division_id"], division["division_name"],
+            division["legal_entity_id"], division["business_group_id"]
+        )
+        results.append(division_obj)
+    return results
+
+
+def get_user_based_category(db, user_id, user_category):
+
+    q = "select t1.category_id, t1.category_name, t1.division_id, t1.legal_entity_id, t1.business_group_id " + \
+        " from tbl_categories t1"
+
+    if user_category == 1 :
+        rows = db.select_all(q, None)
+    else :
+        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+        rows = db.select_all(q, [user_id])
+
+    results = []
+    for c in rows:
+        c = clientcore.Category(
+            c["category_id"], c["category_name"], c["division_id"], c["legal_entity_id"],
+            c["business_group_id"]
+        )
+        results.append(c)
+    return results
+
+def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
+    user_cat_id = get_user_category(db, session_user)
     user_id = int(session_user)
     where_qry = " WHERE t1.legal_entity_id = %s and t2.is_closed = 0 "
     condition_val = [legal_entity_id]
-    if cat_id > 3:
+    if user_cat_id > 3:
         where_qry += " WHERE t1.unit_id in ( " + \
             " select unit_id from tbl_user_units where user_id LIKE %s) " + \
             " AND t1.domain_id in (select domain_id from tbl_user_domains " + \
@@ -88,6 +160,7 @@ def get_statutory_settings(db, legal_entity_id, session_user):
         " INNER JOIN tbl_legal_entities as t3 on t1.legal_entity_id = t3.legal_entity_id %s" + \
         " ORDER BY t1.unit_id "
     query = query % (where_qry)
+    print query
     if condition_val is None:
         rows = db.select_all(query)
     else:
@@ -2368,3 +2441,113 @@ def return_get_domains_for_legalentity(domains):
             d["domain_id"], d["domain_name"], d["legal_entity_id"], bool(d["is_active"])
         ))
     return results
+
+
+def get_review_settings_units(db, request, session_user):
+    le_id = request.legal_entity_id
+    d_id = request.domain_id
+    cat_id = get_user_category(db, session_user)
+
+    where_qry = "WHERE t1.legal_entity_id = %s and t2.domain_id = %s"
+    condition_val = [le_id, d_id]
+    if cat_id > 2:
+        where_qry += "AND t2.user_id = %s "
+        condition_val.extend([session_user])
+    query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.geography_name, " + \
+            "(SELECT division_name from tbl_divisions where division_id = t1.division_id) " + \
+            "as division_name " + \
+            "FROM tbl_units as t1 " + \
+            "INNER JOIN tbl_user_domains t2 on t2.legal_entity_id = t1.legal_entity_id " + \
+            "INNER JOIN tbl_user_units t3 on t3.unit_id = t1.unit_id %s " + \
+            "GROUP BY t1.unit_id"
+    query = query % (where_qry)
+    if condition_val is None:
+        rows = db.select_all(query)
+    else:
+        rows = db.select_all(query, condition_val)
+    return return_get_review_settings_units(rows)
+
+
+def return_get_review_settings_units(units):
+    results = []
+    for u in units:
+        results.append(clientcore.ReviewSettingsUnits(
+            u["unit_id"], u["unit_name"], u["unit_code"], u["address"],
+            u["geography_name"], u["division_name"]
+        ))
+    return results
+
+
+def get_review_settings_compliance(db, request, session_user):
+    le_id = request.legal_entity_id
+    d_id = request.domain_id
+    unit_ids = 1  # tuple(request.unit_ids)
+    f_type = request.f_id
+
+    where_qry = "WHERE t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and t01.unit_id in (%s) "
+    condition_val = [f_type, le_id, d_id, unit_ids]
+
+    query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision, t03.repeats_every, " + \
+            " t02.statutory_dates, t03.trigger_before_days, t03.due_date, group_concat(t01.unit_id) " + \
+            " as unit_ids, t02.statutory_mapping from tbl_client_compliances as t01 " + \
+            " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id " + \
+            " inner join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s " + \
+            "  group by t01.unit_id"
+
+    query = query % (where_qry)
+    if condition_val is None:
+        rows = db.select_all(query)
+    else:
+        rows = db.select_all(query, condition_val)
+
+    # rows = db.select_all(query, condition_val)
+    # results = convert_to_dict(rows, [
+    #     "compliance_id", "compliance_task", "compliance_id", "statutory_provision", "repeats_every",
+    #     "statutory_dates", "statutory_date", "trigger_before_days", "due_date", "units"
+    # ])
+    print rows
+    return return_review_settings_compliance(rows)
+
+
+def return_review_settings_compliance(data):
+    results = []
+    for d in data:
+        statutory_dates = d["statutory_dates"]
+        if statutory_dates is not None :
+            statutory_dates = json.loads(statutory_dates)
+        date_list = []
+        for date in statutory_dates:
+            s_date = clientcore.StatutoryDate(
+                date["statutory_date"],
+                date["statutory_month"],
+                date["trigger_before_days"],
+                date.get("repeat_by")
+            )
+            date_list.append(s_date)
+        unit_ids = [int(x) for x in d["unit_ids"].split(',')]
+        statutories = d["statutory_mapping"].split(">>")
+        level_1_statutory_name = statutories[0].strip()
+        results.append(
+            clientcore.ReviewSettingsCompliance(
+                d["compliance_id"], d["compliance_task"], d["statutory_provision"],
+                d["repeats_every"], date_list, d["trigger_before_days"],
+                d["due_date"],  unit_ids, level_1_statutory_name
+            )
+        )
+    return results
+
+
+def get_review_settings_timeline(db, request, session_user):
+    d_id = request.domain_id
+    columns = ["month_from", "month_to"]
+    condition = "domain_id = %s"
+    condition_val = [d_id]
+    order = ""
+    rows = db.get_data(
+        "tbl_client_configuration", columns, condition, condition_val, order
+    )
+    for m in rows:
+        results = "%s - %s" % (db.string_full_months.get(int(m["month_from"])), db.string_full_months.get(int(m["month_to"])))
+    print results
+    return results
+

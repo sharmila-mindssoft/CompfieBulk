@@ -69,7 +69,7 @@ def verify_login(db, username, password):
 def clear_old_session(db, user_id, session_type_id, client_id=None):
     query = "DELETE FROM tbl_user_sessions " + \
         " WHERE user_id=%s and session_type_id=%s OR " + \
-        " last_accessed_time < DATE_SUB(NOW(),INTERVAL %s MINUTE) "
+        " last_accessed_time < DATE_SUB(current_ist_datetime(),INTERVAL %s MINUTE) "
 
     db.execute(query, (
         user_id, session_type_id, int(SESSION_CUTOFF)
@@ -168,10 +168,10 @@ def update_password(db, password, user_id):
         "sp_tbl_user_login_details_update",
         (user_id, encrypt(password)), 1
     )
-    
+
     if len(result) == 0:
         raise fetch_error()
-    
+
     employee_name = result[0][0]["username"]
     action = "\"%s\" has updated his/her password" % (employee_name)
     db.save_activity(user_id, 0, action)

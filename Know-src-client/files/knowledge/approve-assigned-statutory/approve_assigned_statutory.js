@@ -3,6 +3,7 @@ var CancelButton = $('#btn-user-cancel');
 var AssignStatutoryView = $("#assignstatutory-view");
 var AssignStatutoryAdd = $("#assignstatutory-add");
 var SubmitButton = $("#btn-submit");
+var ShowMore = $(".btn-showmore");
 var PasswordSubmitButton = $('#password-submit');
 
 var AssignStatutoryList = $(".tbody-assignstatutory");
@@ -42,7 +43,6 @@ var CLIENT_STATUTORY_ID = null;
 var UNIT_TEXT = null;
 var DOMAIN_TEXT = null;
 
-var isShowMore = false;
 var LastAct='';
 var LastSubAct='';
 var statutoriesCount = 1;
@@ -71,11 +71,11 @@ function loadCompliances() {
            	if(value.a_status == 2){
                 $('.act-status', clone).html('<img src="images/deletebold.png">');
                 $('.remarks', clone).val(value.remarks);
-                $('.remarks', clone).show();
+                $('.r-view', clone).show();
             }else if(value.a_status == 3){
             	$('.act-status', clone).html('<img src="images/iconminusactive.png">');
                 $('.remarks', clone).val(value.remarks);
-                $('.remarks', clone).show();
+                $('.r-view', clone).show();
             }else{
                 $('.act-status', clone).html('<img src="images/tick1bold.png">');
             }
@@ -126,9 +126,18 @@ function loadCompliances() {
         $(' #collapse'+count+' .tbody-compliance-list').append(clone2);
         statutoriesCount++;
     });
-    $(".total_count").text(totalRecord);
+
+    if (totalRecord == (statutoriesCount - 1)) {
+        SubmitButton.show();
+        $(".action-view").show();
+        ShowMore.hide();
+    } else {
+        SubmitButton.hide();
+        $(".action-view").hide();
+        ShowMore.show();
+    }
+    $(".total_count").text('Showing 1 to ' + (statutoriesCount - 1) + ' of ' + totalRecord + ' entries');
     $(".total_count_view").show();
-    isShowMore = true;
     hideLoader();
 }
 
@@ -141,36 +150,36 @@ function ifNullReturnHyphen(value){
 }
 
 function callAPI(){
-    isShowMore = false;
     displayLoader();
-    mirror.getAssignedStatutoriesById(UNIT_ID, DOMAIN_ID, (statutoriesCount-1), function(error, data) {
+    mirror.getAssignStatutoryWizardTwoData(
+        DOMAIN_ID, [UNIT_ID], (statutoriesCount - 1),
+        function(error, data) {
         if (error == null) {
             COMPLIANCES_LIST = data.statutories_for_assigning;
-            totalRecord = data.total_records;
             AssignStatutoryView.hide();
             AssignStatutoryAdd.show();
             loadCompliances();
-            
         } else {
             displayMessage(error);
             hideLoader();
         }
     });
 }
+
 function EditAssignedStatutory(u_id, d_id){
-    mirror.getAssignedStatutoriesById(u_id, d_id, (statutoriesCount-1), function(error, data) {
-        if (error == null) {
-            COMPLIANCES_LIST = data.statutories_for_assigning;
-            totalRecord = data.total_records;
-            AssignStatutoryView.hide();
-            AssignStatutoryAdd.show();
-            loadCompliances();
-            
-        } else {
-            displayMessage(error);
-            hideLoader();
+    displayLoader();
+    mirror.getAssignStatutoryWizardTwoCount(
+        d_id, [u_id],
+        function(error, data) {
+            if (error == null) {
+                totalRecord = data.total_records;
+                callAPI();
+            } else {
+                displayMessage(error);
+                hideLoader();
+            }
         }
-    });
+    );
 }
 
 //validate
@@ -183,11 +192,13 @@ function validateAuthentication() {
     } else {
         validateMaxLength('password', password, "Password");
     }
+    displayLoader();
     mirror.verifyPassword(password, function(error, response) {
         if (error == null) {
             isAuthenticate = true;
             Custombox.close();
         } else {
+            hideLoader();
             displayMessage(error);
             CurrentPassword.val('');
             CurrentPassword.focus();
@@ -223,7 +234,6 @@ function loadAssignedStatutories(){
             actCount = 1;
             count = 1;
             AssignStatutoryList.empty();
-            isShowMore = false;
             $(".total_count_view").hide();
 
         	REJ_COMP = [];
@@ -236,6 +246,7 @@ function loadAssignedStatutories(){
         });
         AssignedStatutoryList.append(clone);       
     });
+    hideLoader();
 }
 
 ApprovalStatus.on('change', function() {
@@ -246,18 +257,25 @@ ApprovalStatus.on('change', function() {
     }
 });
 
-SubmitButton.click(function(){
+ShowMore.click(function() {
+    callAPI();
+});
 
+SubmitButton.click(function(){
+    displayLoader();
     var approval_status = ApprovalStatus.val();
     var reason = $('#reason').val().trim();
 
      if (approval_status.length <= 0) {
+        hideLoader();
         displayMessage(message.action_required);
         return false;
     } else if (approval_status == 4 && REJ_COMP.length == 0) {
+        hideLoader();
         displayMessage(message.no_compliance_to_reject);
         return false;
     } else if (approval_status == 4 && reason.trim().length <= 0) {
+        hideLoader();
         displayMessage(message.reason_required);
         return false;
     } else {
@@ -268,6 +286,7 @@ SubmitButton.click(function(){
 	            CurrentPassword.focus();
                 CurrentPassword.val('');
 	            isAuthenticate = false;
+                hideLoader();
 	        },
 	        close: function() {
 	            if (isAuthenticate) {
@@ -275,11 +294,11 @@ SubmitButton.click(function(){
 				    parseInt(approval_status), reason, UNIT_TEXT, DOMAIN_TEXT,
 				        function(error, data) {
 				            if (error == null) {
-                                isShowMore = false;
                                 $(".total_count_view").hide();
 				                displaySuccessMessage(message.action_success);
 				                initialize();
 				            } else {
+                                hideLoader();
 				                displayMessage(error);
 				            }
 				        }
@@ -297,10 +316,10 @@ PasswordSubmitButton.click(function() {
 CancelButton.click(function() {
     AssignStatutoryView.show();
     AssignStatutoryAdd.hide();
-    isShowMore = false;
 });
 
 function initialize() {
+    displayLoader();
     AssignStatutoryView.show();
     AssignStatutoryAdd.hide();
     mirror.getAssignedStatutoriesForApprove(function(error, data) {
@@ -309,25 +328,14 @@ function initialize() {
             loadAssignedStatutories();
         } else {
             displayMessage(error);
+            hideLoader();
         }
     });
-}
-
-function showmoreRecord(){
-    if(statutoriesCount <= totalRecord && isShowMore){
-        callAPI();
-    }
 }
 
 $(function() {
     initialize();
     $(document).find('.js-filtertable').each(function(){
         $(this).filtertable().addFilter('.js-filter');
-    });
-
-    $(window).scroll(function(){
-        if ($(window).scrollTop() == $(document).height() - $(window).height()){
-            showmoreRecord();
-        }
     });
 });

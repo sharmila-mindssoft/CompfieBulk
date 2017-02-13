@@ -49,12 +49,19 @@ function initClientMirror() {
         delete window.sessionStorage.CLIENT_NOTIFICATION_COUNT;
         delete window.sessionStorage.CLIENT_REMINDER_COUNT;
         delete window.sessionStorage.CLIENT_ESCALATION_COUNT;
+        delete window.sessionStorage.selectedEntity;
+        delete window.sessionStorage.selectedEntityName;
     }
 
     function getUserInfo() {
         var info = window.sessionStorage.userInfo;
         user = parseJSON(info);
         return user;
+    }
+
+    function getSelectedLegalEntity() {
+        var info = window.sessionStorage.selectedEntity;
+        return info;
     }
 
     function updateUserInfo(response) {
@@ -171,6 +178,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
+        //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -796,19 +804,21 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
+    function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, csv, callback) {
         var request = [
             'GetReassignedHistoryReport', {
-                'country_id': country_id,
-                'domain_id': domain_id,
-                'unit_id': unit_id,
-                'level_1_statutory_id': level_1_statutory_id,
-                'compliance_id': compliance_id,
-                'user_id': user_id,
+                'c_id': c_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'unit_id': u_id,
+                'act': act,
+                'compliance_id': compliance_task_id,
+                'usr_id': usr_id,
                 'from_date': from_date,
                 'to_date': to_date,
                 'csv': csv,
-                'record_count': record_count
+                'f_count': 1,
+                't_count': 50,
             }
         ];
         callerName = 'client_reports';
@@ -1977,7 +1987,6 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-
     function getDomainWiseReport(
         country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
         compliance_id, frequency_id, user_type, user_id, from_date, to_date,
@@ -2048,6 +2057,114 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+    /* Service Provider Wise report - updated*/
+    function getServiceProviderWiseReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetServiceProviderWiseReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getServiceProviderWiseReport(
+        country_id, legal_entity_id, sp_id, domain_id, unit_id, statutory_mapping,
+        compliance_id, user_id, from_date, to_date,
+        task_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetServiceProviderWiseReport',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'sp_id': sp_id,
+                'domain_id': domain_id,
+                'unit_id': unit_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'user_id': user_id,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* User Wise report - updated*/
+    function getUserWiseReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetUserWiseReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUserWiseReport(
+        country_id, legal_entity_id, user_id, domain_id, unit_id, statutory_mapping,
+        compliance_id, frequency_id, user_type, from_date, to_date,
+        task_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetUserWiseReport',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'user_id': user_id,
+                'domain_id': domain_id,
+                'unit_id': unit_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'frequency_id': frequency_id,
+                'user_type': user_type,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    function getReviewSettingsUnitFilters(le_id, d_id, callback) {
+        var request = [
+            'GetReviewSettingsUnitFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback){
+        var request = [
+            'GetReviewSettingsComplianceFilters',
+            {
+                "le_id": le_id,
+                "d_id": d_id,
+                "unit_ids": units,
+                "f_id": f_type,
+                "sno": sno,
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
 
     return {
         log: log,
@@ -2066,6 +2183,7 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         getUserCountry: getUserCountry,
         getUserLegalEntity: getUserLegalEntity,
+        getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
         clientApiRequest: clientApiRequest,
@@ -2181,8 +2299,14 @@ function initClientMirror() {
         getLegalEntityWiseReportFilters: getLegalEntityWiseReportFilters,
         getLegalEntityWiseReport: getLegalEntityWiseReport,
         getReviewSettingsFilters: getReviewSettingsFilters,
+        getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
+        getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
         getDomainWiseReportFilters: getDomainWiseReportFilters,
-        getDomainWiseReport: getDomainWiseReport
+        getDomainWiseReport: getDomainWiseReport,
+        getServiceProviderWiseReportFilters: getServiceProviderWiseReportFilters,
+        getServiceProviderWiseReport: getServiceProviderWiseReport,
+        getUserWiseReportFilters: getUserWiseReportFilters,
+        getUserWiseReport: getUserWiseReport
     };
 }
 var client_mirror = initClientMirror();
