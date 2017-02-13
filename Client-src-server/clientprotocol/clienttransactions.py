@@ -858,7 +858,7 @@ class UnitStatutoryCompliances(object):
     def __init__(
         self, unit_id, unit_name, address, domain_name,
         is_new, is_locked, allow_unlock,
-        updated_by, updated_on
+        updated_by, updated_on, r_count
     ):
         self.unit_id = unit_id
         self.unit_name = unit_name
@@ -869,13 +869,14 @@ class UnitStatutoryCompliances(object):
         self.allow_unlock = allow_unlock
         self.updated_by = updated_by
         self.updated_on = updated_on
+        self.r_count = r_count
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "u_id", "u_name", "address", "c_name", "d_name",
             "is_new", "is_locked", "allow_unlock",
-            "usr_by", "usr_on"
+            "usr_by", "usr_on", "r_count"
         ])
         unit_id = data.get("u_id")
         unit_name = data.get("u_name")
@@ -886,10 +887,11 @@ class UnitStatutoryCompliances(object):
         allow_unlock = data.get("allow_unlock")
         updated_by = data.get("usr_by")
         updated_on = data.get("usr_on")
+        r_count = data.get("r_count")
         return UnitStatutoryCompliances(
             unit_id, unit_name, address, domain_name,
             is_new, is_locked, allow_unlock,
-            updated_by, updated_on
+            updated_by, updated_on, r_count
         )
 
     def to_structure(self):
@@ -902,7 +904,8 @@ class UnitStatutoryCompliances(object):
             "is_locked": self.is_locked,
             "allow_unlock": self.allow_unlock,
             "usr_by": self.updated_by,
-            "usr_on": self.updated_on
+            "usr_on": self.updated_on,
+            "r_count": self.r_count
         }
 
 class GetStatutorySettingsFiltersSuccess(Response):
@@ -942,21 +945,18 @@ class GetStatutorySettingsSuccess(Response):
         }
 
 class GetSettingsCompliancesSuccess(Response):
-    def __init__(self, statutories, total_count):
+    def __init__(self, statutories):
         self.statutories = statutories
-        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["applicable_statu", "tot_count"])
+        data = parse_dictionary(data, ["applicable_statu"])
         statutories = data.get("applicable_statu")
-        total_count = data.get("tot_count")
-        return GetSettingsCompliancesSuccess(statutories, total_count)
+        return GetSettingsCompliancesSuccess(statutories)
 
     def to_inner_structure(self):
         return {
             "applicable_statu": self.statutories,
-            "tot_count": self.total_count
         }
 
 class UpdateStatutorySettingsSuccess(Response):

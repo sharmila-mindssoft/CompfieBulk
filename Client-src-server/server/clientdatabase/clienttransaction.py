@@ -198,8 +198,12 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
             " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id limit 1) is_new, " + \
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
-            " t2.updated_on, t2.is_locked, " + \
-            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
+            " Date(t2.updated_on)updated_on, t2.is_locked, " + \
+            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category, " + \
+            " (select count(tc1.client_compliance_id) " + \
+            " from tbl_client_compliances tc1 " + \
+            " where tc1.unit_id = t1.unit_id and tc1.domain_id = t2.domain_id " + \
+            " ) total " + \
             " from tbl_units as t1 " + \
             " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
             " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
@@ -216,6 +220,10 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " t2.updated_on, t2.is_locked, " + \
             " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
+            " (select count(tc1.client_compliance_id) " + \
+            " from tbl_client_compliances tc1 " + \
+            " where tc1.unit_id = t1.unit_id and tc1.domain_id = t2.domain_id " + \
+            " ) total " + \
             " from tbl_units as t1 " + \
             " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
             " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
@@ -248,11 +256,7 @@ def return_compliance_for_statutory_settings(
         " t2.statutory_provision, t2.compliance_description, " + \
         " t1.is_new, if(is_submitted = 0, is_saved, 0) as save_status," + \
         " (select domain_name from tbl_domains " + \
-        " where domain_id = t2.domain_id) as domain_name, " + \
-        " (select count(tc1.client_compliance_id) " + \
-        " from tbl_client_compliances tc1 " + \
-        " where tc1.unit_id = %s " + \
-        " ) total " + \
+        " where domain_id = t2.domain_id) as domain_name " + \
         " FROM tbl_client_compliances t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.compliance_id = t1.compliance_id " + \
@@ -262,14 +266,13 @@ def return_compliance_for_statutory_settings(
 
     rows = db.select_all(query, [
             unit_id,
-            unit_id,
             from_count,
             to_count
     ])
     statutory_wise_compliances = []
-    total = 0
+
     for r in rows:
-        total = r["total"]
+
         statutory_opted = r["statutory_opted_status"]
         if statutory_opted is None:
             statutory_opted = bool(r["statutory_applicable_status"])
@@ -327,7 +330,7 @@ def return_compliance_for_statutory_settings(
         )
 
         statutory_wise_compliances.append(compliance)
-    return statutory_wise_compliances, total
+    return statutory_wise_compliances
 
 
 def return_statutory_settings(data, session_category):
@@ -359,7 +362,8 @@ def return_statutory_settings(data, session_category):
                 bool(d["is_locked"]),
                 allow_nlock,
                 d["updatedby"],
-                d["updated_on"]
+                datetime_to_string(d["updated_on"]),
+                d["total"]
             )
         else:
             domain_list = unit_statutories.domain_names

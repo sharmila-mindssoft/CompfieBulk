@@ -131,11 +131,11 @@ def process_get_statutory_compliance(db, session_user, request):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     unit_id = request.unit_id
-    data, total_count = return_compliance_for_statutory_settings(
+    data = return_compliance_for_statutory_settings(
         db, unit_id, from_count, to_count
     )
     return clienttransactions.GetSettingsCompliancesSuccess(
-        data, total_count
+        data
     )
 
 
