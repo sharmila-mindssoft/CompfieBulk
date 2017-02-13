@@ -1312,12 +1312,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getStatutorySettingsCompliance(unitId, recordCount, callback) {
+    function getStatutorySettingsCompliance(legalEntityId, unitIds, recordCount, domainId, callback) {
         callerName = 'client_transaction';
         var request = [
             'GetSettingsCompliances', {
-                'unit_id': unitId,
-                'record_count': recordCount
+                'le_id': legalEntityId,
+                'u_ids': unitIds,
+                'r_count': recordCount,
+                'd_id': domainId
             }
         ];
         clientApiRequest(callerName, request, callback);

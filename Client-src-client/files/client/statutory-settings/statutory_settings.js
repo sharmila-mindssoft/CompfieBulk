@@ -121,16 +121,10 @@ function callAPI(api_type) {
         });
     } else if (api_type == API_Wizard1) {
         displayLoader();
-        mirror.getAssignStatutoryWizardOneData(function(error, data) {
+        client_mirror.getStatutorySettingsCompliance(parseInt(LegalEntityId.val()), ACTIVE_UNITS, 0, 1, function(error, data) {
             if (error == null) {
-                GroupName.focus();
-                GROUPS = data.grps;
-                BUSINESS_GROUPS = data.bgrps;
-                LEGAL_ENTITIES = data.lety;
-                DIVISIONS = data.divs;
-                CATEGORIES = data.cates;
-                DOMAINS = data.dms;
-                hideLoader();
+                COMPLIANCES_LIST = data.applicable_statu;
+                loadSingleUnitCompliances();
             } else {
                 displayMessage(error);
                 hideLoader();
@@ -142,7 +136,7 @@ function callAPI(api_type) {
         displayLoader();
         mirror.getAssignedStatutories(function(error, data) {
             if (error == null) {
-                ASSIGNED_STATUTORIES = data.assigned_statutories;
+                ASSIGNED_STATUTORIES = data.applicable_statu;
                 loadAssignedStatutories();
                 
             } else {
