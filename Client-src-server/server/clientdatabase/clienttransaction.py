@@ -381,7 +381,7 @@ def return_statutory_settings(data, session_category):
                 allow_nlock,
                 d["updatedby"],
                 datetime_to_string(d["updated_on"]),
-                d["total"]
+                d["total"], d["domain_id"]
             )
         else:
             domain_list = unit_statutories.domain_names
@@ -692,10 +692,12 @@ def total_compliance_for_units(db, unit_ids, domain_id):
 def get_assign_compliance_statutories_for_units(
     db, unit_ids, domain_id, session_user, from_count, to_count
 ):
-    if len(unit_ids) == 1:
-        unit_ids.append(0)
+
+    unit_ids = ",".join([str(x) for x in unit_ids])
     if session_user == get_admin_id(db):
         session_user = '%'
+
+    # applicable unit list
 
     qry_applicable = " SELECT distinct A.compliance_id, " + \
         " A.unit_id units FROM " + \
@@ -716,8 +718,10 @@ def get_assign_compliance_statutories_for_units(
         " '>>',  - 1) , A.compliance_id  "
 
     qry_applicable_val = [
-        ",".join([str(x) for x in unit_ids]), domain_id
+        unit_ids, domain_id
     ]
+
+    # compliance info for the selected units and domain
     query = " SELECT distinct " + \
         " t2.compliance_id, " + \
         " t2.domain_id, " + \
@@ -758,7 +762,7 @@ def get_assign_compliance_statutories_for_units(
     c_rows = db.select_all(qry_applicable, qry_applicable_val)
 
     rows = db.select_all(query, [
-        ",".join([str(x) for x in unit_ids]),
+        unit_ids,
         domain_id,
         from_count,
         to_count
@@ -775,14 +779,23 @@ def get_assign_compliance_statutories_for_units(
         else:
             applicable_units[c_id].append(int(r["units"]))
 
-    return return_assign_compliance_data(rows, applicable_units)
+    # updated statutory dates from review settings for the selected unit and domain
+    q = "select t1.unit_id, t1.domain_id, t1.statutory_date, t1.repeats_every, " + \
+        " (select repeat_type from tbl_compliance_repeat_type " + \
+        " where repeat_type_id = t1.repeats_type_id) repeat_type " + \
+        " FROM tbl_compliance_dates WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s"
+
+    nrows = db.select_all(q, [unit_ids, domain_id])
+
+    return return_assign_compliance_data(rows, applicable_units, nrows)
 
 
-def return_assign_compliance_data(result, applicable_units):
+def return_assign_compliance_data(result, applicable_units, nrow):
     level_1_wise = {}
     level_1_name = []
     for r in result:
         c_id = int(r["compliance_id"])
+
         mappings = json.loads(r["statutory_mapping"])
         maipping = mappings[0].split(">>")
         level_1 = maipping[0].strip()
