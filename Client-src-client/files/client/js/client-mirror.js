@@ -2170,7 +2170,6 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-<<<<<<< HEAD
     function saveReviewSettingsComplianceDict(
         compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days, 
         old_repeat_by, old_repeat_type_id, old_due_date, old_trigger_before_days
@@ -2202,8 +2201,6 @@ function initClientMirror() {
         clientApiRequest('client_transaction', request, callback);
     }
 
-
-=======
     function getStatutorySettingsFilters(callback) {
         var request = [
             'GetStatutorySettingsFilters',
@@ -2213,7 +2210,6 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
->>>>>>> Siva/phase2
     return {
         log: log,
         toJSON: toJSON,
