@@ -58,7 +58,9 @@ __all__ = [
     "get_user_based_legal_entity", "get_user_based_division",
     "get_user_based_category",
     "update_new_statutory_settings_lock",
-    "total_compliance_for_units"
+    "total_compliance_for_units",
+    "get_clien_users_by_unit_and_domain",
+    "get_approve_level"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -130,33 +132,33 @@ def get_user_based_category(db, user_id, user_category):
         results.append(c)
     return results
 
-def get_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
+def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
+    print [le_id, ",".join([str(x) for x in unit_ids]), domain_id]
     q = "select distinct t1.user_id from tbl_user_units as t1 " + \
         " inner join tbl_user_domains as t2 on t1.user_id = t2.user_id " + \
-        " where t1.legal_entity_id = %s t1.unit_ids in (%s) and t2.domain_id =  %s"
-    row = db.select_all(q, [le_id, ",".join([str(x) for x in unit_ids]), domain_id])
+        " where t1.legal_entity_id = %s and t2.domain_id =  %s and t1.unit_id in (%s)"
+    row = db.select_all(q, [le_id, domain_id, ",".join([str(x) for x in unit_ids])])
     user_ids = []
     for r in row :
         user_ids.append(r["user_id"])
 
-    q1 = "select distinct t1.user_id, t1.user_category_id, employee_code, employee_name, t1.user_group_id, t2.form_id, " + \
+    q1 = "select distinct t1.user_id, t1.user_category_id, employee_code, employee_name, t1.user_group_id, t2.form_id,  t1.user_level," + \
         "t1.seating_unit_id, t1.service_provider_id, t4.service_provider_name, t4.short_name," + \
-        "(select concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.seating_unit_id)suname, " + \
-        " (select service_) " + \
+        "(select concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.seating_unit_id)suname " + \
         "from tbl_users as t1 " + \
         "left join tbl_user_group_forms as t2 " + \
         "on t1.user_group_id = t2.user_group_id " + \
         "left join tbl_user_domains as t3 on " + \
         "t1.user_id = t3.user_id and t3.legal_entity_id = %s " + \
         " left join tbl_service_providers as t4" + \
-        " t1.service_provider_id = t4.service_provider_id " + \
+        " on t1.service_provider_id = t4.service_provider_id " + \
         "where t1.user_category_id = 1 or t2.form_id in (9, 35); "
 
     row1 = db.select_all(q1, [le_id])
     users = []
     for r in row1 :
         user_id = r["user_id"]
-        user_cat_id = r["uses_category_id"]
+        user_cat_id = r["user_category_id"]
         if user_cat_id > 3 and user_id not in user_ids :
             continue
 
@@ -167,12 +169,24 @@ def get_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         else:
             is_assignee = True
 
+        if user_cat_id == 1 :
+            is_approver = True
+
         users.append(clienttransactions.Users(
             user_id, r["employee_name"], r["employee_code"], user_cat_id,
             r["seating_unit_id"], r["suname"], is_assignee, is_approver,
-
+            r["user_level"], r["service_provider_id"], r["service_provider_name"],
+            r["short_name"]
         ))
+    return users
 
+def get_approve_level(db, le_id):
+    q = "select two_levels_of_approval from tbl_reminder_settings where legal_entity_id=%s"
+    row = db.select_one(q, [le_id])
+    if row :
+        return row.get("two_levels_of_approval")
+    else :
+        return False
 
 def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
     user_cat_id = get_user_category(db, session_user)
@@ -182,7 +196,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " t1.geography_name, t1.address , t2.domain_id, t3.domain_name, " + \
             " (select count(compliance_id) from tbl_client_compliances where " +\
             " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
-            " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id) is_new, " + \
+            " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id limit 1) is_new, " + \
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " t2.updated_on, t2.is_locked, " + \
             " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
@@ -198,7 +212,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " t1.geography_name, t1.address , t2.domain_id, t3.domain_name, " + \
             " (select count(compliance_id) from tbl_client_compliances where " +\
             " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
-            " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id) is_new, " + \
+            " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id limit 1) is_new, " + \
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " t2.updated_on, t2.is_locked, " + \
             " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
@@ -664,19 +678,17 @@ def get_assign_compliance_statutories_for_units(
     qry_applicable = " SELECT distinct A.compliance_id, " + \
         " B.unit_id units FROM " + \
         " tbl_client_compliances A " + \
-        " INNER JOIN tbl_client_statutories B " + \
-        " ON A.client_statutory_id = B.client_statutory_id " + \
         " INNER JOIN tbl_compliances C " + \
         " ON A.compliance_id = C.compliance_id " +\
-        " LEFT JOIN tbl_assigned_compliances AC " + \
+        " LEFT JOIN tbl_assign_compliances AC " + \
         " ON B.unit_id = AC.unit_id " + \
         " AND A.compliance_id = AC.compliance_id " + \
         " WHERE " + \
         " B.unit_id in %s " + \
-        " AND B.domain_id = %s " + \
-        " AND A.compliance_opted = 1 " + \
+        " AND A.domain_id = %s " + \
+        " AND A.compliance_opted_status = 1 " + \
         " AND C.is_active = 1 " + \
-        " AND B.is_new = 1 " + \
+        " AND A.is_new = 1 " + \
         " AND AC.compliance_id is null " + \
         " ORDER BY SUBSTRING_INDEX( " + \
         " SUBSTRING_INDEX(C.statutory_mapping, '>>', 1), " + \
@@ -711,13 +723,13 @@ def get_assign_compliance_statutories_for_units(
         " ON t2.client_statutory_id = t1.client_statutory_id " + \
         " INNER JOIN " + \
         " tbl_compliances t3 ON t2.compliance_id = t3.compliance_id " + \
-        " LEFT JOIN tbl_assigned_compliances AC " + \
+        " LEFT JOIN tbl_assign_compliances AC " + \
         " ON t2.compliance_id = AC.compliance_id " + \
         " and t1.unit_id = AC.unit_id " + \
         " WHERE t1.unit_id IN %s " + \
-        " AND t1.domain_id = %s " + \
-        " AND t1.is_new = 1 " + \
-        " AND t2.compliance_opted = 1 " + \
+        " AND t2.domain_id = %s " + \
+        " AND t2.is_new = 1 " + \
+        " AND t2.compliance_opted_status = 1 " + \
         " AND t3.is_active = 1 " + \
         " AND AC.compliance_id IS NULL " + \
         " ORDER BY SUBSTRING_INDEX( " + \
