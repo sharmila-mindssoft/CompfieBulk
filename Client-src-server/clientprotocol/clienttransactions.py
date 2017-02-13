@@ -1655,7 +1655,7 @@ class UNIT_WISE_STATUTORIES(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "compliance_id", "compliance_name", "description",
+            "comp_id", "comp_name", "descp"
             "frequency", "statutory_date", "due_date",
             "applicable_units", "summary",
             "repeats_every", "repeats_by"

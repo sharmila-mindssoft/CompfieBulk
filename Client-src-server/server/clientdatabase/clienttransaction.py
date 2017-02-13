@@ -756,17 +756,7 @@ def get_assign_compliance_statutories_for_units(
         else:
             applicable_units[c_id].append(int(r["units"]))
 
-    columns = [
-        "compliance_id", "domain_id",
-        "compliance_task",
-        "document_name", "compliance_description",
-        "statutory_mapping", "statutory_provision",
-        "statutory_dates", "frequency", "frequency_id",
-        "duration_type", "duration",
-        "repeat_type", "repeats_every", "repeats_type_id"
-    ]
-    result = convert_to_dict(rows, columns)
-    return return_assign_compliance_data(result, applicable_units, total)
+    return return_assign_compliance_data(rows, applicable_units, total)
 
 
 def return_assign_compliance_data(result, applicable_units, total):
