@@ -335,11 +335,11 @@ INSERT INTO tbl_forms VALUES(25, 3, 'Statutory Notification List', "/statutory-n
 INSERT INTO tbl_forms VALUES(26, 3, 'Service Provider Details', "/service-provider-details", 26, null);
 INSERT INTO tbl_forms VALUES(27, 3, 'Audit Trail', "/audit-trail", 27, null);
 INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 28, null);
-INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/view-profile", 29, null);
+INSERT INTO tbl_forms VALUES(29, 4, 'View Profile', "/view-profile", 29, null);
 INSERT INTO tbl_forms VALUES(30, 4, 'Client View Profile', "/client-view-profile", 30, null);
 INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 31, null);
 INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 32, null);
-INSERT INTO tbl_forms VALUES(33, 4, 'themes', "/themes", 33, null);
+INSERT INTO tbl_forms VALUES(33, 4, 'Themes', "/themes", 33, null);
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
 INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-details", 35, null);
 INSERT INTO tbl_forms VALUES(36, 4, 'Reminders', "/reminders", 36, null);

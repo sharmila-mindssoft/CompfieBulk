@@ -25,7 +25,7 @@ function initClientMirror() {
 
     function initSession(userProfile, shortName) {
         // console.log(toJSON(userProfile))
-        window.sessionStorage.userInfo = toJSON(userProfile);
+        window.sessionStorage.userInfo = userProfile;
         window.localStorage.shortName = shortName;
     }
 
@@ -60,7 +60,7 @@ function initClientMirror() {
     }
 
     function getSelectedLegalEntity() {
-        var info = window.sessionStorage.selectedEntity;
+        var info = parseJSON(window.sessionStorage.selectedEntity);
         return info;
     }
 
@@ -1299,11 +1299,15 @@ function initClientMirror() {
     //
     // Statutory settings
     //
-    function getStatutorySettings(callback) {
+    function getStatutorySettings(legalEntityId, divisionId, categoryId, callback) {
         callerName = 'client_transaction';
         var request = [
             'GetStatutorySettings',
-            {}
+            {
+                'le_id': legalEntityId,
+                'div_id': divisionId,
+                'cat_id': categoryId
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -2166,6 +2170,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+<<<<<<< HEAD
     function saveReviewSettingsComplianceDict(
         compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days, 
         old_repeat_by, old_repeat_type_id, old_due_date, old_trigger_before_days
@@ -2198,6 +2203,17 @@ function initClientMirror() {
     }
 
 
+=======
+    function getStatutorySettingsFilters(callback) {
+        var request = [
+            'GetStatutorySettingsFilters',
+            {}
+        ];
+        callerName = 'client_master_filters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+>>>>>>> Siva/phase2
     return {
         log: log,
         toJSON: toJSON,
@@ -2338,7 +2354,8 @@ function initClientMirror() {
         saveReviewSettingsCompliance : saveReviewSettingsCompliance,
 
         getDomainWiseReportFilters: getDomainWiseReportFilters,
-        getDomainWiseReport: getDomainWiseReport
+        getDomainWiseReport: getDomainWiseReport,
+        getStatutorySettingsFilters: getStatutorySettingsFilters,
 
     };
 }
