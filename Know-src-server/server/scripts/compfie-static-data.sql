@@ -1,4 +1,4 @@
-USE `compfie_knowledge_new`;
+USE `compfie_knowledge_new1`;
 
 -- DELETE FROM tbl_form_category;
 INSERT INTO tbl_user_category VALUES(1, "Compfie Admin");

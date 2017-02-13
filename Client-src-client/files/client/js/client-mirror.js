@@ -25,7 +25,7 @@ function initClientMirror() {
 
     function initSession(userProfile, shortName) {
         // console.log(toJSON(userProfile))
-        window.sessionStorage.userInfo = toJSON(userProfile);
+        window.sessionStorage.userInfo = userProfile;
         window.localStorage.shortName = shortName;
     }
 
@@ -60,7 +60,7 @@ function initClientMirror() {
     }
 
     function getSelectedLegalEntity() {
-        var info = window.sessionStorage.selectedEntity;
+        var info = parseJSON(window.sessionStorage.selectedEntity);
         return info;
     }
 
@@ -1299,11 +1299,15 @@ function initClientMirror() {
     //
     // Statutory settings
     //
-    function getStatutorySettings(callback) {
+    function getStatutorySettings(legalEntityId, divisionId, categoryId, callback) {
         callerName = 'client_transaction';
         var request = [
             'GetStatutorySettings',
-            {}
+            {
+                'le_id': legalEntityId,
+                'div_id': divisionId,
+                'cat_id': categoryId
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -2166,6 +2170,15 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getStatutorySettingsFilters(callback) {
+        var request = [
+            'GetStatutorySettingsFilters',
+            {}
+        ];
+        callerName = 'client_master_filters';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2303,7 +2316,8 @@ function initClientMirror() {
         getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
         getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
         getDomainWiseReportFilters: getDomainWiseReportFilters,
-        getDomainWiseReport: getDomainWiseReport
+        getDomainWiseReport: getDomainWiseReport,
+        getStatutorySettingsFilters: getStatutorySettingsFilters,
     };
 }
 var client_mirror = initClientMirror();
