@@ -123,7 +123,7 @@ CLIENT_TEMPLATE_PATHS = [
         "files/client/service-provider-wise-compliance/serviceproviderwisecompliance.html",
         None, {}
     ),
-     (
+    (
         "/user-wise-report",
         "files/client/user-wise-report/user_wise_report.html",
         None, {}
@@ -136,6 +136,11 @@ CLIENT_TEMPLATE_PATHS = [
     (
         "/service-provider-wise-report",
         "files/client/service-provider-wise-report/service_provider_wise_report.html",
+        None, {}
+    ),
+    (
+        "/statutory-notification-list",
+        "files/client/statutory-notification-list/statutory_notification_list.html",
         None, {}
     ),
     (
@@ -185,17 +190,17 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/service-provider-details",
-        "files/client/service-provider-details/service-provider-details.html",
+        "files/client/service-provider-details/service_provider_details.html",
         None, {}
     ),
     (
         "/audit-trail",
-        "files/client/audit-trail/audit-trail.html",
+        "files/client/audit-trail-client/audit_trail_client.html",
         None, {}
     ),
     (
         "/login-trace",
-        "files/client/login-trace/login-trace.html",
+        "files/client/login-trace/login_trace.html",
         None, {}
     ),
     # My Accounts ---------------------------------------------------------------------

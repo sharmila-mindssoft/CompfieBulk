@@ -1,5 +1,6 @@
-{% extends "files/client/common/html/container.html" %}
-{% block content %}
+{% extends "files/client/common/html/container.html" %}{% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/jquery-ui.css">
 <div class="content-page">
 <div class="content">
 <div class="container">
@@ -23,25 +24,30 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
+                            <label class=" col-sm-4 control-label">From Date: <span class="mandatory">*</span></label>
+
+                            
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="10-Jul-2016">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                                <input type="text" class="form-control input-sm from-date" placeholder="DD-MM-YYYY" id="from-date" tabindex="1">
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
+
                         </div>
                         <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
+                            <label class=" col-sm-4 control-label">To Date: <span class="mandatory">*</span></label>
+
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="20-Jul-2016">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                                <input type="text" class="form-control input-sm to-date" placeholder="DD-MM-YYYY" tabindex="2" id="to-date">
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
+
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter User">
+                                <input type="text" class="form-control input-sm" placeholder="Enter User" tabindex="3">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                             </div>
                         </div>
@@ -131,4 +137,7 @@
 </div>
 </div>
 </div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/login-trace/login_trace.js"></script>
+<script src="js/jquery-ui.js"></script>
 {% endblock %}

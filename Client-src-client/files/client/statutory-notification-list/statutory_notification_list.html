@@ -1,5 +1,7 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/jquery-ui.css">
 <div class="content-page">
 <div class="content">
 <div class="container">
@@ -22,42 +24,64 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: </label>
-                            <div class="col-sm-6">
-                                <p class="form-control-static">India</p>
-                            </div>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span> </label>
+                               <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="country-id" value="">
+                                                <div id="ac-country" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Domain" value="Labour Law">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
+                           
+                            <div class="col-sm-6 has-feedback">
+                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain" tabindex="2">
+                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="domain-id" value="">
+                                                <div id="ac-domain" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                                                </div>
+                                            </div>
                         </div>
+
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Act:</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Act">
+
+                            <div class="col-sm-6 has-feedback">
+                               <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act" tabindex="3">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="act-id" value="">
+                                                <div id="ac-act" class="ac-textbox default-display-none">
+                                                    <ul class="hidemenu"></ul>
+                            </div>
                             </div>
                         </div>
+
+
+
                     </div>
+
                     <div class="col-sm-6">
-                        <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date:</label>
+                         <div class="form-group has-feedback">
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: </label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                                <input type="text" class="form-control input-sm from-date" placeholder="DD-MM-YYYY" id="from-date" tabindex="4">
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
+
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">To Date:</label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                                <input type="text" class="form-control input-sm to-date" placeholder="DD-MM-YYYY" tabindex="5" id="to-date">
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-sm-12">
                         <center>
                             <div class="form-group m-b-0">
@@ -131,4 +155,7 @@
         <!-- end col -->
     </div>
 </div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/statutory-notification-list/statutory_notification_list.js"></script>
+<script src="js/jquery-ui.js"></script>
 {% endblock %}
