@@ -1,4 +1,4 @@
-from clientprotocol import (clienttransactions, clientmasters, clientcore)
+from clientprotocol import (clienttransactions, clientcore)
 from server.constants import RECORD_DISPLAY_COUNT
 
 from server.clientdatabase.clienttransaction import *
@@ -23,7 +23,7 @@ __all__ = [
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_transaction_requests(request, db, session_user, client_id):
+def process_client_transaction_requests(request, db, session_user, session_category):
     request = request.request
     print type(request)
 
@@ -46,24 +46,31 @@ def process_client_transaction_requests(request, db, session_user, client_id):
             db, request, session_user
         )
 
-    elif type(request) is clienttransactions.GetAssignCompliancesFormData:
-        result = process_get_assign_compliance_form_data(
-            db, session_user
-        )
+    elif type(request) is clienttransactions.GetAssignComplianceUnits :
+        result = process_get_assign_compliance_unit(db, request, session_user, session_category)
+
+    # elif type(request) is clienttransactions.GetAssignCompliancesFormData:
+    #     result = process_get_assign_compliance_form_data(
+    #         db, session_user
+    #     )
+
+    elif type(request) is clienttransactions.GetComplianceTotalToAssign:
+        # return unassigned compliance total for the selected unit and domain
+        result = process_get_compliance_total(db, request, session_user)
 
     elif type(request) is clienttransactions.GetComplianceForUnits:
         result = process_get_compliance_for_units(
             db, request, session_user
         )
-    elif type(request) is clienttransactions.SaveAssignedCompliance:
-        result = process_save_assigned_compliance(
-            db, request, session_user
-        )
+    # elif type(request) is clienttransactions.SaveAssignedCompliance:
+    #     result = process_save_assigned_compliance(
+    #         db, request, session_user
+    #     )
 
-    elif type(request) is clienttransactions.GetUserwiseCompliances:
-        result = process_get_user_wise_compliances(
-            db, session_user
-        )
+    # elif type(request) is clienttransactions.GetUserwiseCompliances:
+    #     result = process_get_user_wise_compliances(
+    #         db, session_user
+    #     )
 
     elif type(request) is clienttransactions.GetAssigneeCompliances:
         result = process_get_assignee_compliances(db, request, session_user)
@@ -147,31 +154,42 @@ def process_update_statutory_settings_lock(db, request, session_user):
     if (update_new_statutory_settings_lock(db, unit_id, domain_id, lock, session_user)) :
         return clienttransactions.ChangeStatutorySettingsLockSuccess()
 
+def process_get_assign_compliance_unit(db, request, session_user, session_category):
+    d_id = request.domain_id
+    units = get_units_to_assig(db, d_id, session_user, session_category)
+    comp_freq = get_review_settings_frequency(db)
+    return clienttransactions.GetAssignComplianceUnitsSuccess(units, comp_freq)
 
-def process_get_assign_compliance_form_data(db, session_user):
-    countries = get_countries_for_user(db, session_user)
-    domains = get_domains_for_user(db, session_user)
-    row = get_user_company_details(db, session_user)
-    business_group_ids = row[3]
-    business_groups = get_business_groups_for_user(
-        db, business_group_ids
-    )
-    legal_entity_ids = row[2]
-    legal_entities = get_legal_entities_for_user(
-        db, legal_entity_ids
-    )
-    division_ids = row[1]
-    divisions = get_divisions_for_user(db, division_ids)
-    units = get_units_to_assig(db, session_user)
-    users = get_users_for_seating_units(db, session_user)
-    two_level_approve = get_client_settings(db)
-    client_admin = get_admin_id(db)
-    return clienttransactions.GetAssignCompliancesFormDataSuccess(
-        countries, domains, business_groups, legal_entities,
-        divisions, units, users,
-        two_level_approve, client_admin
-    )
 
+# def process_get_assign_compliance_form_data(db, session_user):
+#     countries = get_countries_for_user(db, session_user)
+#     domains = get_domains_for_user(db, session_user)
+#     row = get_user_company_details(db, session_user)
+#     business_group_ids = row[3]
+#     business_groups = get_business_groups_for_user(
+#         db, business_group_ids
+#     )
+#     legal_entity_ids = row[2]
+#     legal_entities = get_legal_entities_for_user(
+#         db, legal_entity_ids
+#     )
+#     division_ids = row[1]
+#     divisions = get_divisions_for_user(db, division_ids)
+#     units = get_units_to_assig(db, session_user)
+#     users = get_users_for_seating_units(db, session_user)
+#     two_level_approve = get_client_settings(db)
+#     client_admin = get_admin_id(db)
+#     return clienttransactions.GetAssignCompliancesFormDataSuccess(
+#         countries, domains, business_groups, legal_entities,
+#         divisions, units, users,
+#         two_level_approve, client_admin
+#     )
+
+def process_get_compliance_total(db, request, session_user):
+    u_ids = request.unit_ids
+    d_id = request.domain_id
+    total = total_compliance_for_units(db, u_ids, d_id)
+    return clienttransactions.GetComplianceTotalToAssignSuccess(total)
 
 def process_get_compliance_for_units(db, request, session_user):
     unit_ids = request.unit_ids
@@ -454,6 +472,12 @@ def process_client_master_filters_request(request, db, session_user, session_cat
     if type(request) is clienttransactions.GetStatutorySettingsFilters:
         result = process_get_statu_settings_filters(db, session_user, session_category)
 
+    elif type(request) is clienttransactions.GetAssignCompliancesFormData :
+        result = process_get_assign_compliance_filters(db, session_user, session_category)
+
+    elif type(request) is clienttransactions.GetUserToAssignCompliance :
+        result = process_get_user_to_assign(db, request)
+
     return result
 
 
@@ -465,3 +489,20 @@ def process_get_statu_settings_filters(db, session_user, session_category):
     return clienttransactions.GetStatutorySettingsFiltersSuccess(
         le_info, div_info, cat_info
     )
+
+def process_get_assign_compliance_filters(db, session_user, session_category):
+    le_info = get_user_based_legal_entity(db, session_user, session_category)
+    div_info = get_user_based_division(db, session_user, session_category)
+    cat_info = get_user_based_category(db, session_user, session_category)
+    domains = get_domains_for_user(db, session_user, session_category)
+    return clienttransactions.GetAssignCompliancesFormDataSuccess(
+        le_info, div_info, cat_info, domains
+    )
+
+def process_get_user_to_assign(db, request):
+    unit_ids = request.unit_ids
+    domain_id = request.domain_id
+    le_id = request.legal_entity_id
+    users = get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id)
+    two_level = get_approve_level(db, le_id)
+    return clienttransactions.GetUserToAssignComplianceSuccess(users, two_level)

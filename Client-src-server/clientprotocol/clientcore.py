@@ -3649,34 +3649,6 @@ class AssignedLegalEntity(object):
             "employee_name": self.employee_name
         }
 
-
-class Client(object):
-    def __init__(
-        self, client_id, group_name, is_active
-    ):
-        self.client_id = client_id
-        self.group_name = group_name
-        self.is_active = is_active
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(
-            data, ["client_id", "group_name", "is_active"]
-        )
-        client_id = data.get("client_id")
-        group_name = data.get("group_name")
-        is_active = data.get("is_active")
-        return Client(
-            client_id, group_name, is_active
-        )
-
-    def to_structure(self):
-        return {
-            "client_id": self.client_id,
-            "group_name": self.group_name,
-            "is_active": self.is_active
-        }
-
 class Client(object):
     def __init__(
         self, client_id, group_name, is_active
