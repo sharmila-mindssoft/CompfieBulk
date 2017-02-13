@@ -550,7 +550,7 @@ def save_approve_statutories(db, request, user_id):
         for c in compliance_ids :
             # reject selected compliances
             q1 = "UPDATE tbl_client_compliances set is_approved=%s, approved_by=%s, "+ \
-            " approved_on=%s" + \
+                " approved_on=%s" + \
                 " where unit_id = %s and domain_id = %s and compliance_id = %s"
             db.execute(q1, [4, user_id, get_date_time(), unit_id, domain_id, c])
 

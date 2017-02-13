@@ -140,9 +140,9 @@ def return_countries(data):
 #     result = convert_to_dict(rows, columns)
 #     return return_domains(result)
 
-def get_domains_for_user(db, user_id):
-    admin_id = get_admin_id(db)
-    if user_id != admin_id:
+def get_domains_for_user(db, user_id, user_category):
+
+    if user_category > 1 :
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
@@ -151,7 +151,7 @@ def get_domains_for_user(db, user_id):
         rows = db.select_all(query, [user_id])
     else:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
-            "t2.is_active FROM tbl_user_domains AS t1 " + \
+            "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
         rows = db.select_all(query)
     return return_domains(rows)

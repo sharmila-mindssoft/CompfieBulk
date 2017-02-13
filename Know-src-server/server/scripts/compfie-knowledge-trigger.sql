@@ -1170,8 +1170,8 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client_statutories`
  FOR EACH ROW BEGIN
     SET @action = 0;
-    set @legal_entity_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id);
-    set @domain_id = (select domain_id from tbl_client_compliances where client_statutory_id = new.client_statutory_id);
+    set @legal_entity_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id limit 1);
+    set @domain_id = (select domain_id from tbl_client_compliances where client_statutory_id = new.client_statutory_id limit 1);
 
     IF old.status <> new.status and new.status = 3 then
         INSERT INTO tbl_audit_log(action,
