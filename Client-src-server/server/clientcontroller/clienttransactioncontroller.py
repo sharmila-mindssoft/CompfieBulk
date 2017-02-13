@@ -27,10 +27,10 @@ def process_client_transaction_requests(request, db, session_user, session_categ
     request = request.request
     print type(request)
 
-    if type(request) is clienttransactions.GetStatutorySettingsFilters:
-        result = process_client_master_filters_request(db, request, session_user)
+    # if type(request) is clienttransactions.GetStatutorySettingsFilters:
+    #     result = process_client_master_filters_request(db, request, session_user)
 
-    elif type(request) is clienttransactions.GetStatutorySettings:
+    if type(request) is clienttransactions.GetStatutorySettings:
         result = process_get_statutory_settings(db, request, session_user)
 
     elif type(request) is clienttransactions.GetSettingsCompliances:

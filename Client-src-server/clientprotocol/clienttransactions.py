@@ -866,7 +866,8 @@ class UnitStatutoryCompliances(object):
     def __init__(
         self, unit_id, unit_name, address, domain_name,
         is_new, is_locked, allow_unlock,
-        updated_by, updated_on, r_count
+        updated_by, updated_on, r_count,
+        domain_id
     ):
         self.unit_id = unit_id
         self.unit_name = unit_name
@@ -878,13 +879,14 @@ class UnitStatutoryCompliances(object):
         self.updated_by = updated_by
         self.updated_on = updated_on
         self.r_count = r_count
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "u_id", "u_name", "address", "c_name", "d_name",
             "is_new", "is_locked", "allow_unlock",
-            "usr_by", "usr_on", "r_count"
+            "usr_by", "usr_on", "r_count", "d_id"
         ])
         unit_id = data.get("u_id")
         unit_name = data.get("u_name")
@@ -896,10 +898,11 @@ class UnitStatutoryCompliances(object):
         updated_by = data.get("usr_by")
         updated_on = data.get("usr_on")
         r_count = data.get("r_count")
+        domain_id = data.get("d_id")
         return UnitStatutoryCompliances(
             unit_id, unit_name, address, domain_name,
             is_new, is_locked, allow_unlock,
-            updated_by, updated_on, r_count
+            updated_by, updated_on, r_count, domain_id
         )
 
     def to_structure(self):
@@ -913,7 +916,8 @@ class UnitStatutoryCompliances(object):
             "allow_unlock": self.allow_unlock,
             "usr_by": self.updated_by,
             "usr_on": self.updated_on,
-            "r_count": self.r_count
+            "r_count": self.r_count,
+            "d_id": self.domain_id
         }
 
 class GetStatutorySettingsFiltersSuccess(Response):
