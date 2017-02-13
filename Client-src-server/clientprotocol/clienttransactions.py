@@ -1685,11 +1685,11 @@ class UNIT_WISE_STATUTORIES(object):
 
     def to_structure(self):
         return {
-            "compliance_id": self.compliance_id,
-            "compliance_name": self.compliance_name,
-            "description": self.description,
-            "frequency": self.frequency,
-            "statutory_date": self.statutory_date,
+            "comp_id": self.compliance_id,
+            "comp_name": self.compliance_name,
+            "descp": self.description,
+            "freq": self.frequency,
+            "statu_dates": self.statutory_date,
             "due_date_list": self.due_date,
             "applicable_units": self.applicable_units,
             "summary": self.summary

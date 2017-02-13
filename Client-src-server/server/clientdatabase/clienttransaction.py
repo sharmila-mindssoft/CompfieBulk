@@ -10,7 +10,8 @@ from clientprotocol import (
 )
 from server.common import (
    get_date_time, string_to_datetime, datetime_to_string,
-   convert_to_dict, get_date_time_in_date, new_uuid
+   convert_to_dict, get_date_time_in_date, new_uuid,
+   make_summary
 )
 from server.clientdatabase.general import (
     calculate_ageing, get_user_unit_ids, get_admin_id,
@@ -679,13 +680,9 @@ def total_compliance_for_units(db, unit_ids, domain_id):
         " and t04.is_active = 1 " + \
         " and t03.compliance_id IS NULL "
 
-    print q
-
-    print ",".join([str(x) for x in unit_ids]), domain_id
     row = db.select_one(q, [
         ",".join([str(x) for x in unit_ids]), domain_id
     ])
-    print row
     if row:
         return row["ccount"]
     else:
@@ -713,7 +710,6 @@ def get_assign_compliance_statutories_for_units(
         " AND A.domain_id = %s " + \
         " AND A.compliance_opted_status = 1 " + \
         " AND C.is_active = 1 " + \
-        " AND A.is_new = 1 " + \
         " AND AC.compliance_id is null " + \
         " ORDER BY SUBSTRING_INDEX( " + \
         " SUBSTRING_INDEX(C.statutory_mapping, '>>', 1), " + \
@@ -750,7 +746,6 @@ def get_assign_compliance_statutories_for_units(
         " and t2.unit_id = AC.unit_id " + \
         " WHERE find_in_set(t2.unit_id, %s) " + \
         " AND t2.domain_id = %s " + \
-        " AND t2.is_new = 1 " + \
         " AND t2.compliance_opted_status = 1 " + \
         " AND t3.is_active = 1 " + \
         " AND AC.compliance_id IS NULL " + \
@@ -761,12 +756,14 @@ def get_assign_compliance_statutories_for_units(
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
     # total = total_compliance_for_units(db, unit_ids, domain_id)
     c_rows = db.select_all(qry_applicable, qry_applicable_val)
+
     rows = db.select_all(query, [
         ",".join([str(x) for x in unit_ids]),
         domain_id,
         from_count,
         to_count
     ])
+
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
 
     # temp = convert_to_dict(c_rows, ["compliance_id", "units"])
@@ -786,7 +783,8 @@ def return_assign_compliance_data(result, applicable_units):
     level_1_name = []
     for r in result:
         c_id = int(r["compliance_id"])
-        maipping = r["statutory_mapping"].split(">>")
+        mappings = json.loads(r["statutory_mapping"])
+        maipping = mappings[0].split(">>")
         level_1 = maipping[0].strip()
         c_units = applicable_units.get(c_id)
         if c_units is None:
@@ -804,41 +802,27 @@ def return_assign_compliance_data(result, applicable_units):
             name = r["compliance_task"]
         statutory_dates = r["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)
-
-        repeats_evey = repeats_by = None
-        if r["frequency_id"] in (2, 3):
-            summary = "Repeats every %s - %s" % (
-                r["repeats_every"], r["repeat_type"]
+        date_list = []
+        for date in statutory_dates:
+            s_date = clientcore.StatutoryDate(
+                date["statutory_date"],
+                date["statutory_month"],
+                date["trigger_before_days"],
+                date.get("repeat_by")
             )
-            repeats_evey = int(r["repeats_every"])
-            repeats_by = r["repeats_type_id"]
+            date_list.append(s_date)
 
-        elif r["frequency_id"] == 4:
-            summary = "To complete within %s - %s" % (
-                r["duration"], r["duration_type"]
-            )
-        else:
-            summary = None
+        summary, datas, trigger = make_summary(date_list, r["frequency_id"], r)
 
         due_date, due_date_list, date_list = set_new_due_date(
             statutory_dates, r["repeats_type_id"], c_id
-        )
-        print (
-            c_id,
-            name,
-            r["compliance_description"],
-            clientcore.COMPLIANCE_FREQUENCY(r["frequency"]),
-            date_list,
-            due_date_list,
-            unit_ids,
-            summary,
         )
 
         compliance = clienttransactions.UNIT_WISE_STATUTORIES(
             c_id,
             name,
             r["compliance_description"],
-            clientcore.COMPLIANCE_FREQUENCY(r["frequency"]),
+            r["frequency"],
             date_list,
             due_date_list,
             unit_ids,
@@ -2641,4 +2625,3 @@ def get_review_settings_timeline(db, request, session_user):
         results = "%s - %s" % (db.string_full_months.get(int(m["month_from"])), db.string_full_months.get(int(m["month_to"])))
     print results
     return results
-
