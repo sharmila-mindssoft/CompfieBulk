@@ -103,9 +103,9 @@ api_params = {
     "sp_id": make_int_field(),
     "s_u_id": make_int_field(is_optional=True),
     "s_u_name": make_string_field(is_optional=True),
-    "is_assignee": make_bool_field(),
-    "is_approver": make_bool_field(),
-    "is_concurrence": make_bool_field(),
+    "is_assignee": make_bool_field(is_optional=True),
+    "is_approver": make_bool_field(is_optional=True),
+    "is_concurrence": make_bool_field(is_optional=True),
 
     "u_id": make_int_field(),
     "u_ids": make_vector_type_int(is_optional=True),
@@ -287,5 +287,9 @@ api_params = {
     "update_statutories": make_vector_type_field(module="clienttransactions", klass_name="UpdateStatutoryCompliance"),
     "s_s": make_int_field(),
     "is_saved": make_bool_field(),
-
+    "assign_units": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
+    "comp_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
+    "usr_cat_id": make_int_field(),
+    "u_l": make_int_field(is_optional=True),
+    "sp_short_name": make_text_field(length=50, is_optional=True),
 }

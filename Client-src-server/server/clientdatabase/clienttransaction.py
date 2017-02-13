@@ -57,7 +57,8 @@ __all__ = [
 
     "get_user_based_legal_entity", "get_user_based_division",
     "get_user_based_category",
-    "update_new_statutory_settings_lock"
+    "update_new_statutory_settings_lock",
+    "total_compliance_for_units"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -128,6 +129,50 @@ def get_user_based_category(db, user_id, user_category):
         )
         results.append(c)
     return results
+
+def get_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
+    q = "select distinct t1.user_id from tbl_user_units as t1 " + \
+        " inner join tbl_user_domains as t2 on t1.user_id = t2.user_id " + \
+        " where t1.legal_entity_id = %s t1.unit_ids in (%s) and t2.domain_id =  %s"
+    row = db.select_all(q, [le_id, ",".join([str(x) for x in unit_ids]), domain_id])
+    user_ids = []
+    for r in row :
+        user_ids.append(r["user_id"])
+
+    q1 = "select distinct t1.user_id, t1.user_category_id, employee_code, employee_name, t1.user_group_id, t2.form_id, " + \
+        "t1.seating_unit_id, t1.service_provider_id, t4.service_provider_name, t4.short_name," + \
+        "(select concat(unit_code, ' - ', unit_name) from tbl_units where unit_id = t1.seating_unit_id)suname, " + \
+        " (select service_) " + \
+        "from tbl_users as t1 " + \
+        "left join tbl_user_group_forms as t2 " + \
+        "on t1.user_group_id = t2.user_group_id " + \
+        "left join tbl_user_domains as t3 on " + \
+        "t1.user_id = t3.user_id and t3.legal_entity_id = %s " + \
+        " left join tbl_service_providers as t4" + \
+        " t1.service_provider_id = t4.service_provider_id " + \
+        "where t1.user_category_id = 1 or t2.form_id in (9, 35); " + \
+
+    row1 = db.select_all(q1, [le_id])
+    users = []
+    for r in row1 :
+        user_id = r["user_id"]
+        user_cat_id = r["uses_category_id"]
+        if user_cat_id > 3 and user_id not in user_ids :
+            continue
+
+        is_assignee = False
+        is_approver = False
+        if r["form_id"] == 9 :
+            is_approver = True
+        else:
+            is_assignee = True
+
+        users.append(clienttransactions.Users(
+            user_id, r["employee_name"], r["employee_code"], user_cat_id,
+            r["seating_unit_id"], r["suname"], is_assignee, is_approver
+
+        ))
+
 
 def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
     user_cat_id = get_user_category(db, session_user)
@@ -428,69 +473,50 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None):
     return return_units_for_assign_compliance(result)
 
 
-def get_units_to_assig(db, session_user):
-    if session_user != get_admin_id(db):
-        qry = " AND t1.unit_id in (select distinct unit_id " + \
-            " from tbl_user_units where user_id = %s) "
-    else:
-        qry = None
-    query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, " + \
-        " t1.division_id, t1.legal_entity_id, t1.business_group_id, " + \
-        " t1.address, t1.country_id, domain_ids " + \
-        " FROM tbl_units t1 WHERE t1.is_closed = 0 " + \
-        " AND (select count(distinct t1.compliance_id) " + \
-        " from tbl_client_compliances t1 " + \
-        " inner join tbl_client_statutories t2 " + \
-        " on t1.client_statutory_id = t2.client_statutory_id " + \
-        " left join tbl_assigned_compliances t3 " + \
-        " on t3.unit_id = t2.unit_id " + \
-        " and t3.compliance_id = t1.compliance_id " + \
-        " inner join tbl_compliances t4 on " + \
-        " t4.compliance_id = t1.compliance_id and t4.is_active = 1 " + \
-        " where t3.compliance_id is null and t1.compliance_opted = 1 " + \
-        " and t2.unit_id = t1.unit_id) > 0 "
+def get_units_to_assig(db, domain_id, session_user, session_category):
 
-    if qry is not None:
-        query += qry
-        condition_val = [int(session_user)]
-        rows = db.select_all(query, condition_val)
-    else:
-        rows = db.select_all(query)
+    if session_category <= 3 :
 
-    columns = [
-        "unit_id", "unit_code", "unit_name",
-        "division_id", "legal_entity_id",
-        "business_group_id", "address", "country_id", "domain_ids"
-    ]
-    result = convert_to_dict(rows, columns)
-    return return_units_for_assign_compliance(result)
+        query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
+            "t2.ccount, t2.domain_id " + \
+            " from tbl_units t1 " + \
+            " left join  " + \
+            " (select count(t1.compliance_id) as ccount, t1.unit_id, t1.domain_id from tbl_client_compliances as t1 " + \
+            " left join tbl_assign_compliances as t2 on t1.compliance_id = t2.compliance_id  " + \
+            " and t1.unit_id = t2.unit_id group by t1.unit_id) as t2 " + \
+            " on t1.unit_id = t2.unit_id  " + \
+            " where t2.ccount > 0 and t2.domain_id = %s " + \
+            " order by t1.unit_code, t1.unit_name"
+        param = [domain_id]
+    else :
+        query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
+            "t2.ccount, t2.domain_id " + \
+            " from tbl_units t1 " + \
+            " left join  " + \
+            " (select count(t1.compliance_id) as ccount, t1.unit_id, t1.domain_id from tbl_client_compliances as t1 " + \
+            " left join tbl_assign_compliances as t2 on t1.compliance_id = t2.compliance_id  " + \
+            " and t1.unit_id = t2.unit_id group by t1.unit_id) as t2 " + \
+            " on t1.unit_id = t2.unit_id  " + \
+            " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id" + \
+            " inner join tbl_user_domains as t4 on t2.domain_id = t4.domain_id and t3.user_id = t4.user_id" + \
+            " where t2.ccount > 0 and t2.domain_id = %s and t4.user_id = %s" + \
+            " order by t1.unit_code, t1.unit_name"
+        param = [domain_id, session_user]
 
+    row = db.select_all(query, param)
+    return return_units_for_assign_compliance(row)
 
 def return_units_for_assign_compliance(result):
     unit_list = []
     for r in result:
         name = "%s - %s" % (r["unit_code"], r["unit_name"])
-        division_id = None
-        b_group_id = None
-        if r["division_id"] > 0:
-            division_id = r["division_id"]
-        if r["business_group_id"] > 0:
-            b_group_id = r["business_group_id"]
-
-        domain_ids = [int(x) for x in r["domain_ids"].split(',')]
         unit_list.append(
             clienttransactions.ASSIGN_COMPLIANCE_UNITS(
                 r["unit_id"], name,
-                r["address"],
-                division_id,
-                r["legal_entity_id"],
-                b_group_id,
-                r["country_id"],
-                domain_ids
+                r["address"], r["postal_code"]
             )
         )
     return unit_list
-
 
 def get_users_for_seating_units(db, session_user):
     columns = ["user_id", "domain_id"]
@@ -599,29 +625,30 @@ def get_users_for_seating_units(db, session_user):
 
 def total_compliance_for_units(db, unit_ids, domain_id):
     q = " select " + \
-        " count(distinct t01.compliance_id) " + \
+        " count(distinct t01.compliance_id) as ccount" + \
         " From " + \
         " tbl_client_compliances t01 " + \
         " inner join " + \
-        " tbl_client_statutories t02 ON " + \
-        " t01.client_statutory_id = t02.client_statutory_id " + \
-        " inner join " + \
         " tbl_compliances t04 ON t01.compliance_id = t04.compliance_id " + \
         " left join " + \
-        " tbl_assigned_compliances t03 ON t02.unit_id = t03.unit_id " + \
+        " tbl_assign_compliances t03 ON t01.unit_id = t03.unit_id " + \
         " and t01.compliance_id = t03.compliance_id " + \
         " where " + \
-        " t02.unit_id in %s " + \
-        " and t02.domain_id = %s " + \
-        " and t02.is_new = 1 " + \
-        " and t01.compliance_opted = 1 " + \
+        " t01.unit_id in (%s)" + \
+        " and t01.domain_id = %s " + \
+        " and t01.compliance_opted_status = 1 " + \
         " and t04.is_active = 1 " + \
         " and t03.compliance_id IS NULL "
+
+    print q
+
+    print ",".join([str(x) for x in unit_ids]), domain_id
     row = db.select_one(q, [
-        tuple(unit_ids), domain_id
+        ",".join([str(x) for x in unit_ids]), domain_id
     ])
+    print row
     if row:
-        return row[0]
+        return row["ccount"]
     else:
         return 0
 
@@ -2427,7 +2454,7 @@ def update_user_settings(db, new_units):
             )
 
 
-def get_review_settings_frequency(db, session_user):
+def get_review_settings_frequency(db):
     query = "SELECT frequency_id, frequency from tbl_compliance_frequency " + \
             "where frequency_id in (3,4)"
     rows = db.select_all(query)

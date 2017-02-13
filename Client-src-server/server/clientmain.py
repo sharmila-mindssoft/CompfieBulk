@@ -455,9 +455,9 @@ class API(object):
     def handle_client_master_filters(self, request, db, session_user, session_category):
         return controller.process_client_master_filters_request(request, db, session_user, session_category)
 
-    @api_request(clienttransactions.RequestFormat)
-    def handle_client_transaction(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_transaction_requests(request, db, session_user, client_id)
+    @api_request(clienttransactions.RequestFormat, need_category=True)
+    def handle_client_transaction(self, request, db, session_user, session_category):
+        return controller.process_client_transaction_requests(request, db, session_user, session_category)
 
     @api_request(clientreport.RequestFormat)
     def handle_client_reports(self, request, db, session_user, client_id, le_id):
