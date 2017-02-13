@@ -205,24 +205,29 @@ class ChangeStatutorySettingsLock(Request):
         }
 
 class GetSettingsCompliances(Request):
-    def __init__(self, legal_entity_id, unit_id, record_count):
+    def __init__(self, legal_entity_id, unit_id, domain_id, record_count):
         self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
         self.record_count = record_count
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "u_id", "r_count"])
+        data = parse_dictionary(data, ["le_id", "u_ids", "d_id", "r_count"])
         legal_entity_id = data.get("le_id")
-        unit_id = data.get("u_id")
+        unit_id = data.get("u_ids")
         record_count = data.get("r_count")
-        return GetSettingsCompliances(legal_entity_id, unit_id, record_count)
+        domain_id = data.get("d_id")
+        return GetSettingsCompliances(
+            legal_entity_id, unit_id, domain_id, record_count
+        )
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
-            "u_id": self.unit_id,
+            "u_ids": self.unit_id,
             "r_count": self.record_count,
+            "d_id": self.domain_id
         }
 
 class ApplicableCompliance(object):
@@ -253,7 +258,8 @@ class UpdateStatutoryCompliance(object):
     def __init__(
         self, client_compliance_id,
         applicable_status, not_applicable_remarks,
-        compliance_id, compliance_opted_status, compliance_remarks
+        compliance_id, compliance_opted_status, compliance_remarks,
+        unit_name, unit_id
     ):
         self.client_compliance_id = client_compliance_id
         self.applicable_status = applicable_status
@@ -261,12 +267,15 @@ class UpdateStatutoryCompliance(object):
         self.compliance_id = compliance_id
         self.compliance_opted_status = compliance_opted_status
         self.compliance_remarks = compliance_remarks
+        self.unit_name = unit_name
+        self.unit_id = unit_id
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "c_c_id", "a_status", "n_a_remarks",
-            "comp_id", "c_o_status", "c_remarks"
+            "comp_id", "c_o_status", "c_remarks",
+            "u_name", "u_id",
         ])
         client_compliance_id = data.get("c_c_id")
         applicable_status = data.get("a_status")
@@ -274,9 +283,12 @@ class UpdateStatutoryCompliance(object):
         compliance_id = data.get("comp_id")
         compliance_opted_status = data.get("c_o_status")
         compliance_remarks = data.get('c_remarks')
+        unit_name = data.get("u_name")
+        unit_id = data.get("u_id")
         return UpdateStatutoryCompliance(
             client_compliance_id, applicable_status, not_applicable_remarks,
-            compliance_id, compliance_opted_status, compliance_remarks
+            compliance_id, compliance_opted_status, compliance_remarks,
+            unit_name, unit_id
         )
 
     def to_structure(self):
@@ -286,18 +298,18 @@ class UpdateStatutoryCompliance(object):
             "n_a_remarks": self.not_applicable_remarks,
             "comp_id": self.compliance_id,
             "c_o_status": self.compliance_opted_status,
-            "c_remarks": self.compliance_remarks
+            "c_remarks": self.compliance_remarks,
+            "u_name": self.unit_name,
+            "u_id": self.unit_id,
         }
 
 
 class UpdateStatutorySettings(Request):
     def __init__(
-        self, password, unit_name, unit_id, statutories,
+        self, password, statutories,
         legal_entity_id, s_s, domain_id
     ):
         self.password = password
-        self.unit_name = unit_name
-        self.unit_id = unit_id
         self.statutories = statutories
         self.legal_entity_id = legal_entity_id
         self.s_s = s_s
@@ -306,25 +318,21 @@ class UpdateStatutorySettings(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "password", "u_name", "u_id", "update_statutories", "le_id", "s_s", "d_id"
+            "password", "update_statutories", "le_id", "s_s", "d_id"
         ])
         password = data.get("password")
-        unit_name = data.get("u_name")
-        unit_id = data.get("u_id")
         statutories = data.get("update_statutories")
         legal_entity_id = data.get("le_id")
         s_s = data.get("s_s")
         domain_id = data.get("d_id")
         return UpdateStatutorySettings(
-            password, unit_name, unit_id, statutories, legal_entity_id, s_s,
+            password, statutories, legal_entity_id, s_s,
             domain_id
         )
 
     def to_inner_structure(self):
         return {
             "password": self.password,
-            "u_name": self.unit_name,
-            "u_id": self.unit_id,
             "update_statutories": self.statutories,
             "le_id": self.legal_entity_id,
             "s_s": self.s_s,
@@ -945,18 +953,21 @@ class GetStatutorySettingsSuccess(Response):
         }
 
 class GetSettingsCompliancesSuccess(Response):
-    def __init__(self, statutories):
+    def __init__(self, statutories, total_record):
         self.statutories = statutories
+        self.total_record = total_record
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["applicable_statu"])
+        data = parse_dictionary(data, ["applicable_statu", "r_count"])
         statutories = data.get("applicable_statu")
-        return GetSettingsCompliancesSuccess(statutories)
+        total_record = data.get("r_count")
+        return GetSettingsCompliancesSuccess(statutories, total_record)
 
     def to_inner_structure(self):
         return {
             "applicable_statu": self.statutories,
+            "r_count": self.total_record
         }
 
 class UpdateStatutorySettingsSuccess(Response):
@@ -1674,11 +1685,11 @@ class UNIT_WISE_STATUTORIES(object):
 
     def to_structure(self):
         return {
-            "compliance_id": self.compliance_id,
-            "compliance_name": self.compliance_name,
-            "description": self.description,
-            "frequency": self.frequency,
-            "statutory_date": self.statutory_date,
+            "comp_id": self.compliance_id,
+            "comp_name": self.compliance_name,
+            "descp": self.description,
+            "freq": self.frequency,
+            "statu_dates": self.statutory_date,
             "due_date_list": self.due_date,
             "applicable_units": self.applicable_units,
             "summary": self.summary
@@ -2238,65 +2249,93 @@ class AssignedStatutory(object):
             "not_applicable_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks),
         }
 
-
-class ComplianceApplicability(object):
+class ComplianceUnitApplicability(object):
     def __init__(
         self,
-        level_1_statutory_name, applicable_status, opted_status, not_applicable_remarks,
-        client_compliance_id,
-        compliance_id,
-        compliance_name, description, statutory_provision,
+        unit_id, client_compliance_id,
         compliance_applicable_status, compliance_opted_status,
-        compliance_remarks, is_new, domain_name, is_saved
+        compliance_remarks, is_new, is_saved
     ):
-        self.level_1_statutory_name = level_1_statutory_name
-        self.applicable_status = applicable_status
-        self.opted_status = opted_status
-        self.not_applicable_remarks = not_applicable_remarks
+        self.unit_id = unit_id
         self.client_compliance_id = client_compliance_id
-        self.compliance_id = compliance_id
-        self.compliance_name = compliance_name
-        self.description = description
-        self.statutory_provision = statutory_provision
         self.compliance_applicable_status = compliance_applicable_status
         self.compliance_opted_status = compliance_opted_status
         self.compliance_remarks = compliance_remarks
         self.is_new = is_new
-        self.domain_name = domain_name
         self.is_saved = is_saved
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "lone_statu_name", "app_status", "opt_status", "not_app_remarks",
-            "c_comp_id", "comp_id", "comp_name", "descp", "s_prov",
+            "u_id", "c_comp_id",
             "comp_app_status", "comp_opt_status", "comp_remarks", "is_new",
-            "d_name", "is_saved"
+            "is_saved"
+        ])
+        unit_id = data.get("u_id")
+        client_compliance_id = data.get("c_comp_id")
+        compliance_applicable_status = data.get("comp_app_status")
+        compliance_opted_status = data.get("comp_opt_status")
+        compliance_remarks = data.get("comp_remarks")
+        is_new = data.get("is_new")
+        is_saved = data.get("is_saved")
+        return ComplianceUnitApplicability(
+            unit_id, client_compliance_id,
+            compliance_applicable_status, compliance_opted_status,
+            compliance_remarks, is_new,
+            is_saved
+        )
+
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "c_comp_id": self.client_compliance_id,
+            "comp_app_status": self.compliance_applicable_status,
+            "comp_opt_status": self.compliance_opted_status,
+            "comp_remarks": self.compliance_remarks,
+            "is_new": self.is_new,
+            "is_saved": self.is_saved
+        }
+
+
+class ComplianceApplicability(object):
+    def __init__(
+        self,
+        level_1_statutory_name, applicable_status, opted_status, not_applicable_remarks,
+        compliance_id, compliance_name, description, statutory_provision,
+        unit_wise_status
+    ):
+        self.level_1_statutory_name = level_1_statutory_name
+        self.applicable_status = applicable_status
+        self.opted_status = opted_status
+        self.not_applicable_remarks = not_applicable_remarks
+        self.compliance_id = compliance_id
+        self.compliance_name = compliance_name
+        self.description = description
+        self.statutory_provision = statutory_provision
+        self.unit_wise_status = unit_wise_status
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "lone_statu_name", "app_status", "opt_status", "not_app_remarks",
+            "comp_id", "comp_name", "descp", "s_prov",
+            "unit_wise_status"
         ])
         level_1_statutory_name = data.get("lone_statu_name")
         applicable_status = data.get("app_status")
         opted_status = data.get("opt_status")
         not_applicable_remarks = data.get("not_app_remarks")
-        client_compliance_id = data.get("c_comp_id")
         compliance_id = data.get("comp_id")
         compliance_name = data.get("comp_name")
         description = data.get("descp")
         statutory_provision = data.get("s_prov")
-        compliance_applicable_status = data.get("comp_app_status")
-        compliance_opted_status = data.get("comp_opt_status")
-        compliance_remarks = data.get("comp_remarks")
-        is_new = data.get("is_new")
-        domain_name = data.get("d_name")
-        is_saved = data.get("is_saved")
+        unit_wise_status = data.get("unit_wise_status")
         return ComplianceApplicability(
             level_1_statutory_name, applicable_status, opted_status,
             not_applicable_remarks,
-            client_compliance_id,
             compliance_id, compliance_name,
             description, statutory_provision,
-            compliance_applicable_status, compliance_opted_status,
-            compliance_remarks, is_new,
-            domain_name, is_saved
+            unit_wise_status
         )
 
     def to_structure(self):
@@ -2305,17 +2344,11 @@ class ComplianceApplicability(object):
             "app_status": self.applicable_status,
             "opt_status": self.opted_status,
             "not_app_remarks": self.not_applicable_remarks,
-            "c_comp_id": self.client_compliance_id,
             "comp_id": self.compliance_id,
             "comp_name": self.compliance_name,
             "descp": self.description,
             "s_prov": self.statutory_provision,
-            "comp_app_status": self.compliance_applicable_status,
-            "comp_opt_status": self.compliance_opted_status,
-            "comp_remarks": self.compliance_remarks,
-            "is_new": self.is_new,
-            "d_name": self.domain_name,
-            "is_saved": self.is_saved
+            "unit_wise_status": self.unit_wise_status
         }
 
 

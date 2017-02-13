@@ -10,7 +10,8 @@ from clientprotocol import (
 )
 from server.common import (
    get_date_time, string_to_datetime, datetime_to_string,
-   convert_to_dict, get_date_time_in_date, new_uuid
+   convert_to_dict, get_date_time_in_date, new_uuid,
+   make_summary
 )
 from server.clientdatabase.general import (
     calculate_ageing, get_user_unit_ids, get_admin_id,
@@ -136,7 +137,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
     print [le_id, ",".join([str(x) for x in unit_ids]), domain_id]
     q = "select distinct t1.user_id from tbl_user_units as t1 " + \
         " inner join tbl_user_domains as t2 on t1.user_id = t2.user_id " + \
-        " where t1.legal_entity_id = %s and t2.domain_id =  %s and t1.unit_id in (%s)"
+        " where t1.legal_entity_id = %s and t2.domain_id =  %s and find_in_set(t1.unit_id, %s)"
     row = db.select_all(q, [le_id, domain_id, ",".join([str(x) for x in unit_ids])])
     user_ids = []
     for r in row :
@@ -244,10 +245,17 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
 
 
 def return_compliance_for_statutory_settings(
-    db, unit_id,  from_count, to_count
+    db, unit_ids, domain_id,  from_count, to_count
 ):
+    q = "select count(t1.compliance_id)ccount from tbl_client_compliances as t1 " + \
+        " where find_in_set(t1.unit_id, %s) and t1.domain_id = %s"
+    row = db.select_one(q, [",".join([str(x) for x in unit_ids]), domain_id])
+    if row :
+        total = row.get("ccount")
+    else :
+        total = 0
     query = "SELECT t1.client_compliance_id, " + \
-        " t1.compliance_id, " + \
+        " t1.compliance_id, t1.client_compliance_id, " + \
         " t1.statutory_applicable_status, t1.statutory_opted_status, " + \
         " t1.remarks, " + \
         " t1.compliance_applicable_status, t1.compliance_opted_status, " + \
@@ -256,21 +264,23 @@ def return_compliance_for_statutory_settings(
         " t2.statutory_provision, t2.compliance_description, " + \
         " t1.is_new, if(is_submitted = 0, is_saved, 0) as save_status," + \
         " (select domain_name from tbl_domains " + \
-        " where domain_id = t2.domain_id) as domain_name " + \
+        " where domain_id = t2.domain_id) as domain_name, t1.unit_id " + \
         " FROM tbl_client_compliances t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.compliance_id = t1.compliance_id " + \
-        " WHERE t1.unit_id = %s" + \
-        " ORDER BY t2.domain_id, t2.statutory_mapping " + \
+        " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s " + \
+        " ORDER BY t2.statutory_mapping, t1.compliance_id " + \
         " limit %s, %s "
 
     rows = db.select_all(query, [
-            unit_id,
-            from_count,
-            to_count
+        ",".join([str(x) for x in unit_ids]),
+        domain_id,
+        from_count,
+        to_count
     ])
-    statutory_wise_compliances = []
 
+    compliance_id_wise = {}
+    print len(rows)
     for r in rows:
 
         statutory_opted = r["statutory_opted_status"]
@@ -311,26 +321,34 @@ def return_compliance_for_statutory_settings(
         else:
             name = r["compliance_task"]
 
-        compliance = clienttransactions.ComplianceApplicability(
-            statutory_name,
-            bool(r["statutory_applicable_status"]),
-            statutory_opted,
-            r["remarks"],
-            r["client_compliance_id"],
-            r["compliance_id"],
-            name,
-            r["compliance_description"],
-            provision,
-            bool(r["compliance_applicable_status"]),
-            bool(compliance_opted),
-            compliance_remarks,
-            bool(r["is_new"]),
-            r["domain_name"],
+        comp_id = int(r["compliance_id"])
+        unit_data = clienttransactions.ComplianceUnitApplicability(
+            r["unit_id"], r["client_compliance_id"], bool(r["compliance_applicable_status"]),
+            compliance_opted, compliance_remarks, bool(r["is_new"]),
             bool(r["save_status"])
         )
 
-        statutory_wise_compliances.append(compliance)
-    return statutory_wise_compliances
+        if compliance_id_wise.get(comp_id) is None :
+            compliance = clienttransactions.ComplianceApplicability(
+                statutory_name,
+                bool(r["statutory_applicable_status"]),
+                statutory_opted,
+                r["remarks"],
+                r["compliance_id"],
+                name,
+                r["compliance_description"],
+                provision,
+                [unit_data]
+            )
+            compliance_id_wise[comp_id] = compliance
+        else :
+            save_comp = compliance_id_wise.get(comp_id)
+            save_comp.unit_wise_status.append(unit_data)
+            compliance_id_wise[comp_id] = save_comp
+
+        print comp_id
+
+    return compliance_id_wise.values(), total
 
 
 def return_statutory_settings(data, session_category):
@@ -382,8 +400,7 @@ def return_statutory_settings(data, session_category):
 
 
 def update_statutory_settings(db, data, session_user):
-    unit_id = data.unit_id
-    unit_name = data.unit_name
+
     domain_id = data.domain_id
     le_id = data.legal_entity_id
     statutories = data.statutories
@@ -391,6 +408,8 @@ def update_statutory_settings(db, data, session_user):
     updated_on = get_date_time()
     value_list = []
     for s in statutories:
+        unit_id = s.unit_id
+        unit_name = s.unit_name
         client_compliance_id = s.client_compliance_id
         statutory_opted_status = int(s.applicable_status)
         not_applicable_remarks = s.not_applicable_remarks
@@ -412,10 +431,13 @@ def update_statutory_settings(db, data, session_user):
         )
         value_list.append(value)
 
+        action = "Statutory settings updated for unit - %s " % (unit_name)
+        db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
+
+        update_new_statutory_settings(db, unit_id, domain_id, session_user)
+
     execute_bulk_insert(db, value_list, submit_status)
-    update_new_statutory_settings(db, unit_id, domain_id, session_user)
-    action = "Statutory settings updated for unit - %s " % (unit_name)
-    db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
+
     SaveOptedStatus(data)
 
     return clienttransactions.UpdateStatutorySettingsSuccess()
@@ -652,19 +674,15 @@ def total_compliance_for_units(db, unit_ids, domain_id):
         " tbl_assign_compliances t03 ON t01.unit_id = t03.unit_id " + \
         " and t01.compliance_id = t03.compliance_id " + \
         " where " + \
-        " t01.unit_id in (%s)" + \
+        " find_in_set(t01.unit_id, %s)" + \
         " and t01.domain_id = %s " + \
         " and t01.compliance_opted_status = 1 " + \
         " and t04.is_active = 1 " + \
         " and t03.compliance_id IS NULL "
 
-    print q
-
-    print ",".join([str(x) for x in unit_ids]), domain_id
     row = db.select_one(q, [
         ",".join([str(x) for x in unit_ids]), domain_id
     ])
-    print row
     if row:
         return row["ccount"]
     else:
@@ -688,11 +706,10 @@ def get_assign_compliance_statutories_for_units(
         " ON A.unit_id = AC.unit_id " + \
         " AND A.compliance_id = AC.compliance_id " + \
         " WHERE " + \
-        " A.unit_id in (%s) " + \
+        " find_in_set(A.unit_id, %s) " + \
         " AND A.domain_id = %s " + \
         " AND A.compliance_opted_status = 1 " + \
         " AND C.is_active = 1 " + \
-        " AND A.is_new = 1 " + \
         " AND AC.compliance_id is null " + \
         " ORDER BY SUBSTRING_INDEX( " + \
         " SUBSTRING_INDEX(C.statutory_mapping, '>>', 1), " + \
@@ -727,9 +744,8 @@ def get_assign_compliance_statutories_for_units(
         " LEFT JOIN tbl_assign_compliances AC " + \
         " ON t2.compliance_id = AC.compliance_id " + \
         " and t2.unit_id = AC.unit_id " + \
-        " WHERE t2.unit_id IN (%s) " + \
+        " WHERE find_in_set(t2.unit_id, %s) " + \
         " AND t2.domain_id = %s " + \
-        " AND t2.is_new = 1 " + \
         " AND t2.compliance_opted_status = 1 " + \
         " AND t3.is_active = 1 " + \
         " AND AC.compliance_id IS NULL " + \
@@ -740,12 +756,14 @@ def get_assign_compliance_statutories_for_units(
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
     # total = total_compliance_for_units(db, unit_ids, domain_id)
     c_rows = db.select_all(qry_applicable, qry_applicable_val)
+
     rows = db.select_all(query, [
         ",".join([str(x) for x in unit_ids]),
         domain_id,
         from_count,
         to_count
     ])
+
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
 
     # temp = convert_to_dict(c_rows, ["compliance_id", "units"])
@@ -765,7 +783,8 @@ def return_assign_compliance_data(result, applicable_units):
     level_1_name = []
     for r in result:
         c_id = int(r["compliance_id"])
-        maipping = r["statutory_mapping"].split(">>")
+        mappings = json.loads(r["statutory_mapping"])
+        maipping = mappings[0].split(">>")
         level_1 = maipping[0].strip()
         c_units = applicable_units.get(c_id)
         if c_units is None:
@@ -783,41 +802,27 @@ def return_assign_compliance_data(result, applicable_units):
             name = r["compliance_task"]
         statutory_dates = r["statutory_dates"]
         statutory_dates = json.loads(statutory_dates)
-
-        repeats_evey = repeats_by = None
-        if r["frequency_id"] in (2, 3):
-            summary = "Repeats every %s - %s" % (
-                r["repeats_every"], r["repeat_type"]
+        date_list = []
+        for date in statutory_dates:
+            s_date = clientcore.StatutoryDate(
+                date["statutory_date"],
+                date["statutory_month"],
+                date["trigger_before_days"],
+                date.get("repeat_by")
             )
-            repeats_evey = int(r["repeats_every"])
-            repeats_by = r["repeats_type_id"]
+            date_list.append(s_date)
 
-        elif r["frequency_id"] == 4:
-            summary = "To complete within %s - %s" % (
-                r["duration"], r["duration_type"]
-            )
-        else:
-            summary = None
+        summary, datas, trigger = make_summary(date_list, r["frequency_id"], r)
 
         due_date, due_date_list, date_list = set_new_due_date(
             statutory_dates, r["repeats_type_id"], c_id
-        )
-        print (
-            c_id,
-            name,
-            r["compliance_description"],
-            clientcore.COMPLIANCE_FREQUENCY(r["frequency"]),
-            date_list,
-            due_date_list,
-            unit_ids,
-            summary,
         )
 
         compliance = clienttransactions.UNIT_WISE_STATUTORIES(
             c_id,
             name,
             r["compliance_description"],
-            clientcore.COMPLIANCE_FREQUENCY(r["frequency"]),
+            r["frequency"],
             date_list,
             due_date_list,
             unit_ids,
@@ -2620,4 +2625,3 @@ def get_review_settings_timeline(db, request, session_user):
         results = "%s - %s" % (db.string_full_months.get(int(m["month_from"])), db.string_full_months.get(int(m["month_to"])))
     print results
     return results
-

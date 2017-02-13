@@ -299,5 +299,6 @@ api_params = {
     "summary": make_text_field(is_optional=True),
     "due_date_list": make_vector_type_string(is_optional=True),
     "assign_statutory": make_map_type_vector_type(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES"),
-    "level_one_name": make_vector_type_string(length=150)
+    "level_one_name": make_vector_type_string(length=150),
+    "unit_wise_status": make_vector_type_field(module="clienttransactions", klass_name="ComplianceUnitApplicability")
 }
