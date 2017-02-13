@@ -100,7 +100,7 @@ api_params = {
     "address": make_text_field(is_optional=True),
     "menu":  make_map_type_vector_type("clientcore", "Form"),
     "user_level": make_int_field(is_optional=True),
-    "sp_id": make_int_field(),
+    "sp_id": make_int_field(is_optional=True),
     "s_u_id": make_int_field(is_optional=True),
     "s_u_name": make_string_field(is_optional=True),
     "is_assignee": make_bool_field(is_optional=True),
@@ -292,4 +292,7 @@ api_params = {
     "usr_cat_id": make_int_field(),
     "u_l": make_int_field(is_optional=True),
     "sp_short_name": make_text_field(length=50, is_optional=True),
+    "assign_users": make_vector_type_field(module="clienttransactions", klass_name="Users"),
+    "t_l_approve": make_bool_field(),
+
 }

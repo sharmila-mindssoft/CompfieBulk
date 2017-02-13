@@ -58,11 +58,10 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         # return unassigned compliance total for the selected unit and domain
         result = process_get_compliance_total(db, request, session_user)
 
-
-    # elif type(request) is clienttransactions.GetComplianceForUnits:
-    #     result = process_get_compliance_for_units(
-    #         db, request, session_user
-    #     )
+    elif type(request) is clienttransactions.GetComplianceForUnits:
+        result = process_get_compliance_for_units(
+            db, request, session_user
+        )
     # elif type(request) is clienttransactions.SaveAssignedCompliance:
     #     result = process_save_assigned_compliance(
     #         db, request, session_user
@@ -490,3 +489,6 @@ def process_get_user_to_assign(db, request):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
     le_id = request.legal_entity_id
+    users = get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id)
+    two_level = get_approve_level(db, le_id)
+    return clienttransactions.GetUserToAssignComplianceSuccess(users, two_level)

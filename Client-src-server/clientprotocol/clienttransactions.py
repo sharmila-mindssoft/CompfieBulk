@@ -380,7 +380,7 @@ class GetUserToAssignCompliance(Request):
         unit_ids = data.get("u_ids")
         domain_id = data.get("d_id")
         legal_entity_id = data.get("le_id")
-        return GetUserToAssignCompliance(unit_ids, domain_id, legal_entity_id)
+        return GetUserToAssignCompliance(legal_entity_id, unit_ids, domain_id)
 
     def to_inner_structure(self):
         return {

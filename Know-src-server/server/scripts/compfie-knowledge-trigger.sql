@@ -1396,7 +1396,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  column_name,
                                  value,
                                  tbl_name)
-            SELECT @action, new.client_id, new.legal_entity_id, NEW.client_compliance_id,
+            SELECT @action, 0, new.legal_entity_id, NEW.client_compliance_id,
               'statutory_name', case parent_names when '' then statutory_name else concat(parent_names, ' >> ', statutory_name) end as statutory_name,
               'tbl_client_compliances'
               FROM tbl_statutories
