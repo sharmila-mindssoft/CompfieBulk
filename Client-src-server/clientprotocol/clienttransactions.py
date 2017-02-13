@@ -667,6 +667,7 @@ class GetStatutoriesByUnit(Request):
             "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
         }
 
+
 class SavePastRecords(Request):
     def __init__(self, compliances):
         self.compliances = compliances

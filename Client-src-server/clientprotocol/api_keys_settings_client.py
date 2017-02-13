@@ -255,7 +255,7 @@ api_params = {
     "rs_unit_list": make_vector_type_field(module="clientcore", klass_name="ReviewSettingsUnits"),
     "u_code": make_string_field(),
     "u_name": make_string_field(),
-    "g_name": make_string_field(),
+    "g_name": make_text_field(),
     "timeline":   make_string_field(),
     "rs_compliance_list":  make_vector_type_field(module="clientcore", klass_name="ReviewSettingsCompliance"),
     "r_every": make_int_field(),

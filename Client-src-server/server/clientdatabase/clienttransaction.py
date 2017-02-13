@@ -2525,7 +2525,7 @@ def get_review_settings_compliance(db, request, session_user):
             " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates, " + \
             " group_concat(t01.unit_id) as unit_ids, t02.statutory_mapping from tbl_client_compliances as t01 " + \
             " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id " + \
-            " inner join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s " + \
+            " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s " + \
             " group by t01.unit_id"
 
     query = query % (where_qry)

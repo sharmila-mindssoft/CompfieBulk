@@ -94,7 +94,7 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
     NextButton.hide();
     PreviousButton.hide();
     SubmitButton.hide();
-    var userLegalentity = user.entity_info;
+    var userLegalentity = client_mirror.getSelectedLegalEntity();
     if(userLegalentity.length > 1){
         BusinessGroupName.hide();
         BusinessGroupSelect.show();
