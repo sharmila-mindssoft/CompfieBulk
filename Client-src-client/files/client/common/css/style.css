@@ -781,6 +781,9 @@ button.btn-success {
 #template {
     display: none;
 }
+#templates {
+    display: none;
+}
 .custombox-modal {
     width: 100%;
 }
