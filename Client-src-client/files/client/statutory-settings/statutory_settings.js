@@ -493,17 +493,28 @@ function validateAndShow() {
 function loadUnits() {
     StatutorySettingsList.empty();
     $.each(UNITS, function(key, value) {
+        var upd_by = '-';
+        if(value.usr_by != null){
+            upd_by = value.usr_by;
+        }
+        var upd_on = '-';
+        if(value.upd_on != null){
+            upd_on = value.usr_on;
+        }
+        
         var clone = StatutorySettingsRow.clone();
-        $('.tbl_unit', clone).text();
-        $('.tbl_location', clone).text();
-        $('.tbl_domain', clone).text();
+        if(value.is_new){
+            clone.addClass('new_row');
+        }
+        $('.tbl_unit', clone).text(value.u_name);
+        $('.tbl_location', clone).text(value.address);
+        $('.tbl_domain', clone).text(value.d_name);
         $('.tbl_no_of_compliance', clone).text();
-        $('.tbl_updated_by', clone).text();
-        $('.tbl_updated_on', clone).text();
+        $('.tbl_updated_by', clone).text(upd_by);
+        $('.tbl_updated_on', clone).text(upd_on);
         $('.tbl_lock', clone).text();
         StatutorySettingsList.append(clone);
     });
-    
 }
 
 /*

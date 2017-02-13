@@ -235,6 +235,29 @@
     padding-left: 5px;
     border-top: 1px dashed #ccc;
 }
+
+.new_row {
+  color: #4556c1 !important;
+}
+.new_row input {
+  color: #4556c1 !important;
+}
+.new_row .CaptionCont {
+  color: #4556c1 !important;
+}
+.new_row .ms-choice {
+  color: #4556c1 !important;
+}
+.new_row textarea {
+  color: #4556c1 !important;
+}
+.new_row td {
+  color: #4556c1 !important;
+}
+.new_row span {
+  color: #4556c1 !important;
+}
+
 .rejected_row {
   color: #e96154 !important;
 }
