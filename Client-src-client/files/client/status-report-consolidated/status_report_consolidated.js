@@ -145,12 +145,12 @@ function PageControls() {
     });
 
     showButton.click(function() {
-        if (REPORT.validate()) {
+        //if (REPORT.validate()) {
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
             REPORT.showReportValues();
-        }
+        //}
     });
 
     exportButton.click(function() {

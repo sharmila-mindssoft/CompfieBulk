@@ -3226,20 +3226,23 @@ class ClientLevelOneStatutory(object):
 
 
 class ComplianceFilter(object):
-    def __init__(self, domain_id, compliance_task):
+    def __init__(self, domain_id, compliance_id, compliance_task):
         self.domain_id = domain_id
+        self.compliance_id = compliance_id
         self.compliance_task = compliance_task
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["d_id", "c_task"])
+        data = parse_dictionary(data, ["d_id", "c_task", "compliance_id"])
         domain_id = data.get("d_id")
+        compliance_id = data.get("compliance_id")
         compliance_task = data.get("c_task")
-        return ComplianceFilter(domain_id, compliance_task)
+        return ComplianceFilter(domain_id, compliance_id, compliance_task)
 
     def to_structure(self):
         return {
             "d_id": self.domain_id,
+            "compliance_id": self.compliance_id,
             "c_task": self.compliance_task,
         }
 
@@ -4223,4 +4226,58 @@ class LegalEntityUser(object):
             "employee_code": self.employee_code,
             "employee_name": self.employee_name,
             "is_active": self.is_active
+        }
+
+class ReassignedHistoryReportSuccess(object):
+    def __init__(
+        self, country_id, legal_entity_id, domain_id, unit_id, act_name, compliance_id, compliance_task, 
+            old_user, new_user, assigned_on, remarks, due_date, unit
+    ):
+        self.country_id = country_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id
+        self.act_name = act_name
+        self.compliance_id = compliance_id
+        self.compliance_task = compliance_task
+        self.old_user = old_user
+        self.new_user = new_user
+        self.assigned_on = assigned_on
+        self.remarks = remarks
+        self.due_date = due_date
+        self.unit = unit
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["country_id", "legal_entity_id", "domain_id", "unit_id", "act_name", 
+            "compliance_id", "compliance_task", "old_user", "new_user", "assigned_on", "remarks", "due_date", "unit"])
+        country_id = data("country_id"),
+        legal_entity_id = data("legal_entity_id"),
+        domain_id = data("domain_id"),
+        unit_id = data("unit_id"),
+        act_name = data("act_name"),
+        compliance_id = data("compliance_id"),
+        compliance_task = data("compliance_task"),
+        old_user = data("old_user"),
+        new_user = data("new_user"),
+        assigned_on = data("assigned_on"),
+        remarks = data("remarks"),
+        due_date = data("due_date"),
+        unit = data("unit")
+        return ServiceProviders(country_id, legal_entity_id, domain_id, unit_id, act_name, compliance_id, compliance_task, 
+            old_user, new_user, assigned_on, remarks, due_date, unit)
+    def to_structure(self):
+        return {
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id,
+            "act_name": self.act_name,
+            "compliance_id": self.compliance_id,
+            "compliance_task": self.compliance_task,
+            "old_user": self.old_user,
+            "new_user": self.new_user,
+            "assigned_on": self.assigned_on,
+            "remarks": self.remarks,
+            "due_date": self.due_date,
+            "unit": self.unit
         }

@@ -646,23 +646,29 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
 
 def get_reassignedhistory_report(db, request, session_user, client_id):
     if not request.csv:
-        country_id = request.country_id
-        domain_id = request.domain_id
-        level_1_statutory_id = request.level_1_statutory_id
+        country_id = request.c_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
         unit_id = request.unit_id
+        act = request.act
         compliance_id = request.compliance_id
-        user_id = request.user_id
+        usr_id = request.usr_id
         from_date = request.from_date
         to_date = request.to_date
-        from_count = request.record_count
-        to_count = 200
-        reassigned_history_list, total = report_reassigned_history(
-            db, country_id, domain_id, level_1_statutory_id,
-            unit_id, compliance_id, user_id, from_date, to_date, session_user,
-            from_count, to_count
+        csv = request.csv
+        f_count = request.f_count
+        t_count = request.t_count
+
+        reassigned_history_list = report_reassigned_history(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, usr_id, from_date, to_date, session_user, f_count, t_count
+        )
+        total_count = report_reassigned_history_total(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, usr_id, from_date, to_date, session_user
         )
         return clientreport.GetReassignedHistoryReportSuccess(
-            reassigned_history_list, total
+            reassigned_history_list, total_count
         )
     else:
         converter = ConvertJsonToCSV(

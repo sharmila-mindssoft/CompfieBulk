@@ -178,6 +178,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
+        //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -803,19 +804,21 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getReassignedHistoryReport(country_id, domain_id, unit_id, level_1_statutory_id, compliance_id, user_id, from_date, to_date, csv, record_count, callback) {
+    function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, csv, callback) {
         var request = [
             'GetReassignedHistoryReport', {
-                'country_id': country_id,
-                'domain_id': domain_id,
-                'unit_id': unit_id,
-                'level_1_statutory_id': level_1_statutory_id,
-                'compliance_id': compliance_id,
-                'user_id': user_id,
+                'c_id': c_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'unit_id': u_id,
+                'act': act,
+                'compliance_id': compliance_task_id,
+                'usr_id': usr_id,
                 'from_date': from_date,
                 'to_date': to_date,
                 'csv': csv,
-                'record_count': record_count
+                'f_count': 1,
+                't_count': 50,
             }
         ];
         callerName = 'client_reports';

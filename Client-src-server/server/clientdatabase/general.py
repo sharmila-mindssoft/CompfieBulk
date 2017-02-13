@@ -862,13 +862,13 @@ def return_service_providers(service_providers):
 def get_client_compliances(db, user_id):
     admin_id = get_admin_id(db)
     if user_id != admin_id:
-        query = "SELECT distinct t1.domain_id, compliance_task " + \
+        query = "SELECT distinct t1.domain_id, t3.compliance_id, t3.compliance_task " + \
             "FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
             "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id "
         rows = db.select_all(query)
     else:
-        query = "SELECT distinct t1.domain_id, compliance_task " + \
+        query = "SELECT distinct t1.domain_id, t3.compliance_id, t3.compliance_task " + \
             "FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
             "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id " + \
@@ -881,7 +881,7 @@ def return_client_compliances(data):
     results = []
     for d in data:
         results.append(clientcore.ComplianceFilter(
-            d["domain_id"], d["compliance_task"]
+            d["domain_id"], d["compliance_id"], d["compliance_task"]
         ))
     return results
 
