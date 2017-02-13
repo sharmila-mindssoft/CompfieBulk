@@ -150,7 +150,7 @@ def get_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "t1.user_id = t3.user_id and t3.legal_entity_id = %s " + \
         " left join tbl_service_providers as t4" + \
         " t1.service_provider_id = t4.service_provider_id " + \
-        "where t1.user_category_id = 1 or t2.form_id in (9, 35); " + \
+        "where t1.user_category_id = 1 or t2.form_id in (9, 35); "
 
     row1 = db.select_all(q1, [le_id])
     users = []
@@ -169,7 +169,7 @@ def get_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
 
         users.append(clienttransactions.Users(
             user_id, r["employee_name"], r["employee_code"], user_cat_id,
-            r["seating_unit_id"], r["suname"], is_assignee, is_approver
+            r["seating_unit_id"], r["suname"], is_assignee, is_approver,
 
         ))
 
