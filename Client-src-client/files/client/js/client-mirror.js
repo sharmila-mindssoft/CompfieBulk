@@ -2330,17 +2330,16 @@ function initClientMirror() {
         saveUnitClosureData: saveUnitClosureData,
         getLegalEntityWiseReportFilters: getLegalEntityWiseReportFilters,
         getLegalEntityWiseReport: getLegalEntityWiseReport,
+        
         getReviewSettingsFilters: getReviewSettingsFilters,
-
         getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
         getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
-<<<<<<< HEAD
         saveReviewSettingsComplianceDict : saveReviewSettingsComplianceDict,
         saveReviewSettingsCompliance : saveReviewSettingsCompliance,
-=======
+
         getDomainWiseReportFilters: getDomainWiseReportFilters,
         getDomainWiseReport: getDomainWiseReport
->>>>>>> Usha/phase2
+
     };
 }
 var client_mirror = initClientMirror();
