@@ -18,7 +18,7 @@
                 </div>
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
-                    <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="form-horizontal group-border-dashed" action="#" novalidate="">
                         <div class="col-lg-6">
                        
                             <div class="form-group has-feedback">
@@ -227,7 +227,7 @@
                     </div>
 
                     <p>
-                    <button class="btn btn-primary waves-effect waves-light btn-edit" type="button"> Edit 
+                    <button class="btn btn-primary waves-effect waves-light btn-edit default-display-none" type="button"> Edit 
                     </button>
                    
                     <p>*  Statutes assigned to those units are marked in Black color</p>
@@ -244,26 +244,29 @@
 
 <!-- Modal -->
 <div id="custom-modal" class="modal-demo box-width-400">
-    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
     <div class="custom-modal-text">
-        <form role="form">
+        <div role="form">
             <div class="form-group">
-                <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control input-sm" id="exampleInputPassword" placeholder="Password">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
             </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light">Submit</button>
-        </form>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
     </div>
 </div>
 
 <div id="templates">
   <table class="table-statutorysettings">
       <tr class="table-row text-info">
-            <td>
-                <input type="checkbox" class="unit-checkbox checkbox-primary" />
+            <td class="text-center">
+                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                    <input type="checkbox" class="unit-checkbox">
+                    <label></label>
+                </div>
             </td>
             <td class="tbl_unit"> </td>
             <td class="tbl_location"></td>
@@ -273,7 +276,7 @@
             <td class="tbl_updated_on"></td>         
             <td class="tbl_lock icon-3x text-center">
             <span href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">
-            <i class="fa fa-lock c-pointer text-primary" data-toggle="tooltip" data-placement="top" title="Click here to Unlock"></i>
+            <i class="fa c-pointer text-primary" data-toggle="tooltip" data-placement="top" title="Click here to Unlock"></i>
             </span>
         </td>
       </tr>
@@ -494,7 +497,16 @@
       
     </table>
   </div>
+
+    <table class="table-no-record">
+        <tr>
+        <td colspan="8" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
 </div>
+
+
 
 <script type="text/javascript" src="/script/statutory-settings/statutory_settings.js"></script>
 <script type="text/javascript">

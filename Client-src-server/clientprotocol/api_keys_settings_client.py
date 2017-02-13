@@ -179,7 +179,6 @@ api_params = {
     "approver_name": make_text_field(is_optional=True),
     "due_from_date": make_text_field(is_optional=True),
     "due_to_date": make_text_field(is_optional=True),
-    "due_date": make_text_field(is_optional=True),
     "activity_date": make_text_field(is_optional=True),
     "activity_status": make_string_field(is_optional=True),
     "documents": make_text_field(is_optional=True),
@@ -294,5 +293,11 @@ api_params = {
     "sp_short_name": make_text_field(length=50, is_optional=True),
     "assign_users": make_vector_type_field(module="clienttransactions", klass_name="Users"),
     "t_l_approve": make_bool_field(),
-
+    "freq": make_text_field(),
+    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
+    "applicable_units": make_vector_type_int(),
+    "summary": make_text_field(is_optional=True),
+    "due_date_list": make_vector_type_string(is_optional=True),
+    "assign_statutory": make_map_type_vector_type(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES"),
+    "level_one_name": make_vector_type_string(length=150)
 }

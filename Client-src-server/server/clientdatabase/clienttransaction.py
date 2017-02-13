@@ -198,8 +198,12 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
             " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id limit 1) is_new, " + \
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
-            " t2.updated_on, t2.is_locked, " + \
-            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
+            " Date(t2.updated_on)updated_on, t2.is_locked, " + \
+            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category, " + \
+            " (select count(tc1.client_compliance_id) " + \
+            " from tbl_client_compliances tc1 " + \
+            " where tc1.unit_id = t1.unit_id and tc1.domain_id = t2.domain_id " + \
+            " ) total " + \
             " from tbl_units as t1 " + \
             " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
             " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
@@ -216,6 +220,10 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " t2.updated_on, t2.is_locked, " + \
             " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
+            " (select count(tc1.client_compliance_id) " + \
+            " from tbl_client_compliances tc1 " + \
+            " where tc1.unit_id = t1.unit_id and tc1.domain_id = t2.domain_id " + \
+            " ) total " + \
             " from tbl_units as t1 " + \
             " inner join tbl_client_statutories as t2 on t1.unit_id = t2.unit_id " + \
             " inner join tbl_domains as t3 on t2.domain_id = t3.domain_id " + \
@@ -248,11 +256,7 @@ def return_compliance_for_statutory_settings(
         " t2.statutory_provision, t2.compliance_description, " + \
         " t1.is_new, if(is_submitted = 0, is_saved, 0) as save_status," + \
         " (select domain_name from tbl_domains " + \
-        " where domain_id = t2.domain_id) as domain_name, " + \
-        " (select count(tc1.client_compliance_id) " + \
-        " from tbl_client_compliances tc1 " + \
-        " where tc1.unit_id = %s " + \
-        " ) total " + \
+        " where domain_id = t2.domain_id) as domain_name " + \
         " FROM tbl_client_compliances t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.compliance_id = t1.compliance_id " + \
@@ -262,14 +266,13 @@ def return_compliance_for_statutory_settings(
 
     rows = db.select_all(query, [
             unit_id,
-            unit_id,
             from_count,
             to_count
     ])
     statutory_wise_compliances = []
-    total = 0
+
     for r in rows:
-        total = r["total"]
+
         statutory_opted = r["statutory_opted_status"]
         if statutory_opted is None:
             statutory_opted = bool(r["statutory_applicable_status"])
@@ -327,7 +330,7 @@ def return_compliance_for_statutory_settings(
         )
 
         statutory_wise_compliances.append(compliance)
-    return statutory_wise_compliances, total
+    return statutory_wise_compliances
 
 
 def return_statutory_settings(data, session_category):
@@ -359,7 +362,8 @@ def return_statutory_settings(data, session_category):
                 bool(d["is_locked"]),
                 allow_nlock,
                 d["updatedby"],
-                d["updated_on"]
+                datetime_to_string(d["updated_on"]),
+                d["total"]
             )
         else:
             domain_list = unit_statutories.domain_names
@@ -676,15 +680,15 @@ def get_assign_compliance_statutories_for_units(
         session_user = '%'
 
     qry_applicable = " SELECT distinct A.compliance_id, " + \
-        " B.unit_id units FROM " + \
+        " A.unit_id units FROM " + \
         " tbl_client_compliances A " + \
         " INNER JOIN tbl_compliances C " + \
         " ON A.compliance_id = C.compliance_id " +\
         " LEFT JOIN tbl_assign_compliances AC " + \
-        " ON B.unit_id = AC.unit_id " + \
+        " ON A.unit_id = AC.unit_id " + \
         " AND A.compliance_id = AC.compliance_id " + \
         " WHERE " + \
-        " B.unit_id in %s " + \
+        " A.unit_id in (%s) " + \
         " AND A.domain_id = %s " + \
         " AND A.compliance_opted_status = 1 " + \
         " AND C.is_active = 1 " + \
@@ -695,11 +699,11 @@ def get_assign_compliance_statutories_for_units(
         " '>>',  - 1) , A.compliance_id  "
 
     qry_applicable_val = [
-        tuple(unit_ids), domain_id
+        ",".join([str(x) for x in unit_ids]), domain_id
     ]
     query = " SELECT distinct " + \
         " t2.compliance_id, " + \
-        " t1.domain_id, " + \
+        " t2.domain_id, " + \
         " t3.compliance_task, " + \
         " t3.document_name, " + \
         " t3.compliance_description, " + \
@@ -718,15 +722,12 @@ def get_assign_compliance_statutories_for_units(
         " t3.repeats_type_id " + \
         " FROM " + \
         " tbl_client_compliances t2  " + \
-        " INNER JOIN  " + \
-        " tbl_client_statutories t1 " + \
-        " ON t2.client_statutory_id = t1.client_statutory_id " + \
         " INNER JOIN " + \
         " tbl_compliances t3 ON t2.compliance_id = t3.compliance_id " + \
         " LEFT JOIN tbl_assign_compliances AC " + \
         " ON t2.compliance_id = AC.compliance_id " + \
-        " and t1.unit_id = AC.unit_id " + \
-        " WHERE t1.unit_id IN %s " + \
+        " and t2.unit_id = AC.unit_id " + \
+        " WHERE t2.unit_id IN (%s) " + \
         " AND t2.domain_id = %s " + \
         " AND t2.is_new = 1 " + \
         " AND t2.compliance_opted_status = 1 " + \
@@ -737,39 +738,29 @@ def get_assign_compliance_statutories_for_units(
         " '>>', - 1) , t2.compliance_id " + \
         " limit %s, %s "
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED ;")
-    total = total_compliance_for_units(db, unit_ids, domain_id)
+    # total = total_compliance_for_units(db, unit_ids, domain_id)
     c_rows = db.select_all(qry_applicable, qry_applicable_val)
     rows = db.select_all(query, [
-        tuple(unit_ids),
+        ",".join([str(x) for x in unit_ids]),
         domain_id,
         from_count,
         to_count
     ])
     db.execute("SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ ;")
 
-    temp = convert_to_dict(c_rows, ["compliance_id", "units"])
+    # temp = convert_to_dict(c_rows, ["compliance_id", "units"])
     applicable_units = {}
-    for r in temp:
+    for r in c_rows:
         c_id = int(r["compliance_id"])
         if applicable_units.get(c_id) is None:
             applicable_units[c_id] = [int(r["units"])]
         else:
             applicable_units[c_id].append(int(r["units"]))
 
-    columns = [
-        "compliance_id", "domain_id",
-        "compliance_task",
-        "document_name", "compliance_description",
-        "statutory_mapping", "statutory_provision",
-        "statutory_dates", "frequency", "frequency_id",
-        "duration_type", "duration",
-        "repeat_type", "repeats_every", "repeats_type_id"
-    ]
-    result = convert_to_dict(rows, columns)
-    return return_assign_compliance_data(result, applicable_units, total)
+    return return_assign_compliance_data(rows, applicable_units)
 
 
-def return_assign_compliance_data(result, applicable_units, total):
+def return_assign_compliance_data(result, applicable_units):
     level_1_wise = {}
     level_1_name = []
     for r in result:
@@ -811,6 +802,16 @@ def return_assign_compliance_data(result, applicable_units, total):
         due_date, due_date_list, date_list = set_new_due_date(
             statutory_dates, r["repeats_type_id"], c_id
         )
+        print (
+            c_id,
+            name,
+            r["compliance_description"],
+            clientcore.COMPLIANCE_FREQUENCY(r["frequency"]),
+            date_list,
+            due_date_list,
+            unit_ids,
+            summary,
+        )
 
         compliance = clienttransactions.UNIT_WISE_STATUTORIES(
             c_id,
@@ -821,13 +822,11 @@ def return_assign_compliance_data(result, applicable_units, total):
             due_date_list,
             unit_ids,
             summary,
-            repeats_evey,
-            repeats_by
         )
         compliance_list.append(compliance)
         level_1_wise[level_1] = compliance_list
     level_1_name = sorted(level_1_wise.keys())
-    return level_1_name, level_1_wise, total
+    return level_1_name, level_1_wise
 
 
 def save_assigned_compliance(db, request, session_user):

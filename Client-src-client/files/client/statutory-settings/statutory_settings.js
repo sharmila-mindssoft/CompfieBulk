@@ -6,7 +6,8 @@ var StatutorySettingsView = $("#statutorysettings-view");
 var StatutorySettingsAdd = $("#statutorysettings-add");
 var Show = $(".btn-show");
 var ShowMore = $(".btn-showmore");
-var EditButton = $('#btn-edit');
+var EditButton = $('.btn-edit');
+var PasswordSubmitButton = $('#password-submit');
 
 var SubmitButton = $("#btn-submit");
 var SaveButton = $("#btn-save");
@@ -37,6 +38,7 @@ var UnitRow = $("#templates .unit-row li");
 var UnitList = $(".unit-list");
 var SelectAll = $('#unit-checkbox-main');
 var SelectedUnitCount = $(".selected_checkbox_count");
+var SelectedUnitView = $(".selected_checkbox");
 
 var AssignStatutoryList = $(".tbody-assignstatutory");
 var SingleAssignStatutoryList = $(".tbody-single-assignstatutory");
@@ -101,6 +103,7 @@ AssignStatutoryList.empty();
 SingleAssignStatutoryList.empty();
 var SELECTED_COMPLIANCE = {};
 var ACT_MAP = {};
+var isAuthenticate;
 
 function callAPI(api_type) {
     if (api_type == API_FILTERS) {
@@ -111,6 +114,23 @@ function callAPI(api_type) {
                 CATEGORIES = data.cat_info;
                 //loadAssignedStatutories();
                 
+            } else {
+                displayMessage(error);
+                hideLoader();
+            }
+        });
+    } else if (api_type == API_Wizard1) {
+        displayLoader();
+        mirror.getAssignStatutoryWizardOneData(function(error, data) {
+            if (error == null) {
+                GroupName.focus();
+                GROUPS = data.grps;
+                BUSINESS_GROUPS = data.bgrps;
+                LEGAL_ENTITIES = data.lety;
+                DIVISIONS = data.divs;
+                CATEGORIES = data.cates;
+                DOMAINS = data.dms;
+                hideLoader();
             } else {
                 displayMessage(error);
                 hideLoader();
@@ -263,6 +283,30 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     ACTIVE_UNITS = [];*/
 }
 
+//validate
+function validateAuthentication() {
+    var password = CurrentPassword.val().trim();
+    if (password.length == 0) {
+        displayMessage(message.password_required);
+        CurrentPassword.focus();
+        return false;
+    } else {
+        validateMaxLength('password', password, "Password");
+    }
+    displayLoader();
+    mirror.verifyPassword(password, function(error, response) {
+        if (error == null) {
+            isAuthenticate = true;
+            Custombox.close();
+        } else {
+            hideLoader();
+            displayMessage(error);
+            CurrentPassword.val('');
+            CurrentPassword.focus();
+        }
+    });
+}
+
 function pageControls() {
     Show.click(function() {
         validateAndShow();
@@ -272,9 +316,9 @@ function pageControls() {
         ACTIVE_UNITS = [];
         //UNIT_CS_ID = {};
         if (UNITS.length > 0) {
-            $(".unit-checkbox").prop('checked', $(this).prop("checked"));
+            $(".tbody-statutorysettings-list .unit-checkbox").prop('checked', $(this).prop("checked"));
 
-            $('.unit-checkbox').each(function(index, el) {
+            $('.tbody-statutorysettings-list .unit-checkbox').each(function(index, el) {
                 if (ACTIVE_UNITS.length >= 20) {
                     displayMessage(message.maximum_units);
                     return false;
@@ -290,11 +334,10 @@ function pageControls() {
             });
             SelectedUnitCount.text(ACTIVE_UNITS.length);
         }
-
     });
 
     EditButton.click(function() {
-        reset();
+        //reset();
         $(".total_count_view").hide();
         $('.tbody-compliance-list').empty();
         ShowMore.hide();
@@ -395,10 +438,9 @@ function pageControls() {
         }, 500);
     });
 
-    /*$("#unit-checkbox-main").change(function() {
-        $(".unit-checkbox").prop('checked', $(this).prop("checked"));
-        SelectedUnitCount.text(ACTIVE_UNITS.length);
-    });*/
+    PasswordSubmitButton.click(function() {
+        validateAuthentication();
+    });
 }
 
 /*
@@ -472,6 +514,8 @@ function validateAndShow() {
     
 
     if (val_legal_entity_id.trim().length <= 0) {
+        SelectedUnitView.hide();
+        EditButton.hide();
         displayMessage(message.legalentity_required);
         return false;
     } else {
@@ -490,6 +534,51 @@ function validateAndShow() {
     }
 }
 
+function displayPopUp(UID){
+    Custombox.open({
+        target: '#custom-modal',
+        effect: 'contentscale',
+        complete: function() {
+            CurrentPassword.focus();
+            CurrentPassword.val('');
+            isAuthenticate = false;
+        },
+        close: function() {
+            if (isAuthenticate) {
+                mirror.approveAssignedStatutory(UNIT_ID, DOMAIN_ID, CLIENT_STATUTORY_ID, REJ_COMP,
+                parseInt(approval_status), reason, UNIT_TEXT, DOMAIN_TEXT,
+                    function(error, data) {
+                        if (error == null) {
+                            $(".total_count_view").hide();
+                            displaySuccessMessage(message.action_success);
+                            Show.trigger( "click" );
+                        } else {
+                            hideLoader();
+                            displayMessage(error);
+                        }
+                    }
+                );
+            }
+        },
+    });
+}
+
+function activateUnit(element) {
+    var chkid = $(element).val();
+    if ($(element).prop("checked")) {
+        if (ACTIVE_UNITS.length >= 20) {
+            displayMessage(message.maximum_units);
+            return false;
+        }else{
+            ACTIVE_UNITS.push(parseInt(chkid));
+        }
+    } else {
+        index = ACTIVE_UNITS.indexOf(parseInt(chkid));
+        ACTIVE_UNITS.splice(index, 1);
+    }
+    SelectedUnitCount.text(ACTIVE_UNITS.length);
+}
+
 function loadUnits() {
     StatutorySettingsList.empty();
     $.each(UNITS, function(key, value) {
@@ -501,20 +590,51 @@ function loadUnits() {
         if(value.upd_on != null){
             upd_on = value.usr_on;
         }
-        
+
         var clone = StatutorySettingsRow.clone();
         if(value.is_new){
             clone.addClass('new_row');
         }
+
+        $('.unit-checkbox', clone).attr('id', 'unit' + key);
+        $('.unit-checkbox', clone).val(value.u_id);
+
         $('.tbl_unit', clone).text(value.u_name);
         $('.tbl_location', clone).text(value.address);
         $('.tbl_domain', clone).text(value.d_name);
-        $('.tbl_no_of_compliance', clone).text();
+        $('.tbl_no_of_compliance', clone).text(value.r_count);
         $('.tbl_updated_by', clone).text(upd_by);
         $('.tbl_updated_on', clone).text(upd_on);
-        $('.tbl_lock', clone).text();
+        if(value.is_locked){
+            $('.tbl_lock').find('i').addClass('fa-lock');
+        }else{
+            $('.tbl_lock').find('i').addClass('fa-unlock');
+        }
+
+        $('.tbl_lock', clone).click(function() {
+            if(value.allow_unlock == false){
+                displayPopUp(value.u_id);
+            }
+        });
+
+        $('.unit-checkbox', clone).on('click', function(e) {
+            activateUnit(this);
+        });
+
         StatutorySettingsList.append(clone);
     });
+
+    if(UNITS.length == 0){
+        SelectedUnitView.hide();
+        EditButton.hide();
+        var no_record_row = $("#templates .table-no-record tr");
+        var clone = no_record_row.clone();
+        StatutorySettingsList.append(clone);
+    }else{
+        SelectedUnitView.show();
+        EditButton.show();
+    }
+   
 }
 
 /*
@@ -1435,7 +1555,13 @@ function loadEntityDetails(){
         BusinessGroupNameAC.show();
         LegalEntityNameLabel.hide();
         LegalEntityNameAC.show();
-        
+
+        var no_record_row = $("#templates .table-no-record tr");
+        var clone = no_record_row.clone();
+        StatutorySettingsList.append(clone);
+        SelectedUnitView.hide();
+        EditButton.hide();
+
     }else{
         var BG_NAME = '-';
         if(LEGAL_ENTITIES[0]["bg_name"] != null){
@@ -1456,13 +1582,16 @@ function loadEntityDetails(){
         BusinessGroupNameLabel.text(BG_NAME);
         LegalEntityId.val(LE_ID);
         BusinessGroupId.val(BG_ID);
+
+        Show.trigger( "click" );
     }
 
 }
 function initialize() {
+    pageControls();
     callAPI(API_FILTERS);
     loadEntityDetails();
-    pageControls();
+    
     //showList();
 }
 
