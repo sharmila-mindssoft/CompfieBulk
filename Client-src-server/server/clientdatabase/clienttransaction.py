@@ -730,7 +730,7 @@ def get_assign_compliance_statutories_for_units(
         " WHERE " + \
         " find_in_set(A.unit_id, %s) " + \
         " AND A.domain_id = %s " + \
-        " AND A.compliance_opted_status = 1 " + \
+        " AND A.compliance_opted_status = 1 AND A.is_submitted = 1 " + \
         " AND C.is_active = 1 " + \
         " AND AC.compliance_id is null " + \
         " ORDER BY SUBSTRING_INDEX( " + \
@@ -770,7 +770,7 @@ def get_assign_compliance_statutories_for_units(
         " and t2.unit_id = AC.unit_id " + \
         " WHERE find_in_set(t2.unit_id, %s) " + \
         " AND t2.domain_id = %s " + \
-        " AND t2.compliance_opted_status = 1 " + \
+        " AND t2.compliance_opted_status = 1 AND t2.is_submitted = 1" + \
         " AND t3.is_active = 1 " + \
         " AND AC.compliance_id IS NULL " + \
         " ORDER BY SUBSTRING_INDEX( " + \
