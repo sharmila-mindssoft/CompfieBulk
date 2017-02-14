@@ -210,6 +210,8 @@ api_params = {
     "user_status": make_string_field(),
     "user_status_date": make_text_field(is_optional=True),
     "unit_count": make_int_field(is_optional=True),
+    "form_id_optional": make_int_field(is_optional=True),
+    "action": make_text_field(length=500, is_optional=True),
 
     'csv': make_bool_field(is_optional=False),
     'from_count': make_int_field(is_optional=False),
@@ -261,5 +263,10 @@ api_params = {
     "stat_notf_list_report": make_vector_type_field(module="clientreport", klass_name="StatutoryNotificationReport"),
     "sp_user_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProviderUsers"),
     "sp_status_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProvidersStatus"),
-    "sp_details_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProvidersDetailsList")
+    "sp_details_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProvidersDetailsList"),
+    "audit_activities": make_vector_type_field(module="clientreport", klass_name="AuditTrailActivities"),
+    "audit_users_list": make_vector_type_field(module="clientmasters", klass_name="AuditTrailUsers"),
+    "audit_forms_list": make_vector_type_field(module="clientmasters", klass_name="AuditTrailForms"),
+    "log_trace_activities": make_vector_type_field(module="clientmasters", klass_name="LoginTraceActivities"),
+    "user_profile": make_vector_type_field(module="clientmasters", klass_name="UserProfile"),
 }
