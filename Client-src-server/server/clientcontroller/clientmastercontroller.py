@@ -1,5 +1,6 @@
 import collections
-from clientprotocol import (clientmasters, clientcore)
+from server.jsontocsvconverter import ConvertJsonToCSV
+from clientprotocol import (clientmasters, clientcore, clientreport)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
 from server.clientdatabase.general import (
@@ -109,6 +110,27 @@ def process_client_master_requests(request, db, session_user, client_id):
         result = get_service_provider_details_report(
             db, request, session_user
         )
+
+    elif type(request) is clientmasters.GetAuditTrailReportFilters:
+        result = get_audit_trail_report_filters(
+            db, request, session_user, client_id
+        )
+
+    elif type(request) is clientmasters.GetLogintraceReportFilters:
+        result = get_login_trace_report_filters(
+            db, request, session_user, client_id
+        )
+
+    elif type(request) is clientmasters.GetLoginTraceReportData:
+        result = get_login_trace_report_data(
+            db, request, session_user, client_id
+        )
+
+    elif type(request) is clientmasters.GetUserProfile:
+        result = get_user_profile(
+            db, request, session_user, client_id
+        )
+
     return result
 
 
@@ -598,3 +620,55 @@ def get_service_provider_details_report(db, request, session_user):
     return clientmasters.GetServiceProviderDetailsReportSuccess(
         sp_details_list=service_providers_status_list
     )
+
+
+###############################################################################################
+# Objective: To get users and forms list under legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains forms and users list
+###############################################################################################
+def get_audit_trail_report_filters(db, request, session_user, client_id):
+    legal_entity_id = request.legal_entity_id
+    audit_users_list = get_audit_users_list(db, legal_entity_id)
+    audit_forms_list = get_audit_forms_list(db)
+    return clientmasters.GetAuditTrailFilterSuccess(
+        audit_users_list=audit_users_list, audit_forms_list=audit_forms_list
+    )
+
+###############################################################################################
+# Objective: To get users list
+# Parameter: request object and the client id
+# Result: list of record sets which contains users list
+###############################################################################################
+def get_login_trace_report_filters(db, request, session_user, client_id):
+    audit_users_list = get_login_users_list(db)
+    return clientmasters.GetLoginTraceFilterSuccess(
+        audit_users_list=audit_users_list
+    )
+
+###############################################################################################
+# Objective: To get activity log of login under user
+# Parameter: request object and the client id
+# Result: list of record sets which contains activity log of login
+###############################################################################################
+def get_login_trace_report_data(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "LoginTraceReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_login_trace_report(db, request)
+        return clientmasters.GetLoginTraceReportDataSuccess(log_trace_activities=result)
+
+
+###############################################################################################
+# Objective: To get user details
+# Parameter: request object and the client id
+# Result: logged user details under the client
+###############################################################################################
+def get_user_profile(db, request, session_user, client_id):
+    result = get_user_info(db, session_user, client_id)
+    return clientmasters.GetUserProfileSuccess(user_profile=result)
