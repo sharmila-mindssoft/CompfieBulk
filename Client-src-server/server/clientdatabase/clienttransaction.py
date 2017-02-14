@@ -268,8 +268,8 @@ def return_compliance_for_statutory_settings(
         " FROM tbl_client_compliances t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.compliance_id = t1.compliance_id " + \
-        " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s " + \
-        " IF (%s IS NOT NULL, t2.frequency_id = %s, 1) and" + \
+        " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s and" + \
+        " IF (%s IS NOT NULL, t2.frequency_id = %s, 1)" + \
         " ORDER BY t2.statutory_mapping, t1.compliance_id " + \
         " limit %s, %s "
 

@@ -501,6 +501,17 @@ function int(val) {
         return null;
     }
 }
+function c_bool(val) {
+    try {
+        value = val.trim();
+        value = parseInt(value);
+        if(value == 1){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}
 
 function validateAndShow() {
     val_business_group_id = BusinessGroupId.val();
@@ -698,13 +709,10 @@ function actstatus(element) {
     var currentAction = '.comp' + $(element).val();
     $(currentAction).each(function() {
         var C_S_ID = null;
-        var A_STATUS;
         if (checkedVal > 1) {
             $(this).html('<img src="images/deletebold.png">').attr('for', '2');
-            A_STATUS = false;
         } else {
             $(this).html('<img src="images/tick-orange.png">').attr('for', '1');
-            A_STATUS = true;
         }
         var sid = $(this).val();
         $('#save' + sid).addClass('fa-square');
@@ -713,8 +721,8 @@ function actstatus(element) {
         SELECTED_COMPLIANCE[combine_ids[0]] = {
             'c_c_id': parseInt(combine_ids[2]),
             'comp_id': parseInt(combine_ids[0]),
-            'a_status': A_STATUS,
-            'c_o_status': A_STATUS,
+            'a_status': c_bool(checkedVal),
+            'c_o_status': c_bool(checkedVal),
             'n_a_remarks': A_REMARK,
             'c_remarks': null,
             'u_name': "UNIT_TEXT",
@@ -731,11 +739,6 @@ function remarkstatus(element) {
     if($(element).val() != ''){
         A_REMARK = $(element).val();
     }
-    if (A_STATUS > 1) {
-        A_STATUS = false;
-    } else {
-        A_STATUS = true;
-    }
 
     var currentAction = '.comp' + ID;
     $(currentAction).each(function() {
@@ -751,18 +754,14 @@ function remarkstatus(element) {
         }*/
 
         var C_STATUS = parseInt($(this).attr("for"));
-        if (C_STATUS > 1) {
-            C_STATUS = false;
-        } else {
-            C_STATUS = true;
-        }
+       
         
-        if (C_STATUS) {
+        if (C_STATUS > 1) {
             SELECTED_COMPLIANCE[combine_ids[0]] = {
                 'c_c_id': parseInt(combine_ids[2]),
                 'comp_id': parseInt(combine_ids[0]),
-                'a_status': A_STATUS,
-                'c_o_status': C_STATUS,
+                'a_status': c_bool(A_STATUS),
+                'c_o_status': c_bool(C_STATUS),
                 'n_a_remarks': A_REMARK,
                 'c_remarks': null,
                 'u_name': "UNIT_TEXT",
@@ -781,19 +780,9 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     var combine_ids = $('#combineid' + sid).val().split('#');
 
     var A_STATUS = $('#act' + combine_ids[3]).attr("for");
-    if (A_STATUS > 1) {
-        A_STATUS = false;
-    } else {
-        A_STATUS = true;
-    }
     var A_REMARK = null;
     
     var C_STATUS = parseInt($(element).attr("for"));
-    if (C_STATUS > 1) {
-        C_STATUS = false;
-    } else {
-        C_STATUS = true;
-    }
     if (C_STATUS > 1 && $('#remark' + combine_ids[3]).val() != '') {
         A_REMARK = $('#remark' + combine_ids[3]).val();
     }
@@ -801,8 +790,8 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     SELECTED_COMPLIANCE[combine_ids[0]] = {
         'c_c_id': parseInt(combine_ids[2]),
         'comp_id': parseInt(combine_ids[0]),
-        'a_status': A_STATUS,
-        'c_o_status': C_STATUS,
+        'a_status': c_bool(A_STATUS),
+        'c_o_status': c_bool(C_STATUS),
         'n_a_remarks': A_REMARK,
         'c_remarks': null,
         'u_name': "UNIT_TEXT",
