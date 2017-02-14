@@ -1637,6 +1637,50 @@ class GetStatutoryNotificationsListReportData(Request):
             "page_count": self.page_count
         }
 
+class GetAuditTrailReportData(Request):
+    def __init__(
+        self, legal_entity_id, user_id, form_id_optional, due_from_date, due_to_date,
+        csv, from_count, page_count
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.user_id = user_id
+        self.form_id_optional = form_id_optional
+        self.due_from_date = due_from_date
+        self.due_to_date = due_to_date
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "legal_entity_id", "user_id", "form_id_optional", "due_from_date", "due_to_date",
+            "csv", "from_count", "page_count"
+        ])
+        legal_entity_id = data.get("legal_entity_id")
+        user_id = data.get("user_id")
+        form_id_optional = data.get("form_id_optional")
+        due_from_date = data.get("due_from_date")
+        due_to_date = data.get("due_to_date")
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetAuditTrailReportData(
+            legal_entity_id, user_id, form_id_optional, due_from_date, due_to_date,
+            csv, from_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id,
+            "user_id": self.user_id,
+            "form_id_optional": self.form_id_optional,
+            "due_from_date": self.due_from_date,
+            "due_to_date": self.due_to_date,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
 
 def _init_Request_class_map():
     classes = [
@@ -1655,7 +1699,7 @@ def _init_Request_class_map():
         GetUnitWiseReportFilters, GetUnitWiseReport, GetServiceProviderWiseReportFilters,
         GetServiceProviderWiseReport, GetUserWiseReportFilters, GetUserWiseReport,
         GetUnitListReportFilters, GetUnitListReport, GetStatutoryNotificationsListReportFilters,
-        GetStatutoryNotificationsListReportData
+        GetStatutoryNotificationsListReportData, GetAuditTrailReportData
     ]
     class_map = {}
     for c in classes:
@@ -2846,7 +2890,20 @@ class GetStatutoryNotificationReportDataSuccess(Response):
             "stat_notf_list_report" : self.stat_notf_list_report
         }
 
+class GetAuditTrailReportDataSuccess(Response):
+    def __init__(self, audit_activities):
+        self.audit_activities = audit_activities
 
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["audit_activities"])
+        audit_activities = data.get("audit_activities")
+        return GetAuditTrailReportDataSuccess(audit_activities)
+
+    def to_inner_structure(self):
+        return {
+            "audit_activities" : self.audit_activities
+        }
 
 class ExportToCSVSuccess(Response):
     def __init__(self, link):
@@ -2895,6 +2952,7 @@ def _init_Response_class_map():
         GetunitListReportSuccess,
         GetStatutoryNotificationsListReportFilterSuccess,
         GetStatutoryNotificationReportDataSuccess,
+        GetAuditTrailReportDataSuccess
     ]
     class_map = {}
     for c in classes:
@@ -4780,6 +4838,39 @@ class StatutoryNotificationReport(object):
             "created_on": self.created_on,
             "notification_text": self.notification_text,
             "statutory_mapping": self.statutory_mapping
+        }
+
+#
+# Audit Trail Forms
+#
+
+class AuditTrailActivities(object):
+    def __init__(self, user_id, user_name, form_id, action, created_on):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.form_id = form_id
+        self.action = action
+        self.created_on = created_on
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "user_name", "form_id", "action," "created_on"
+        ])
+        user_id = data.get("user_id")
+        user_name = data.get("user_name")
+        form_id = data.get("form_id")
+        action = data.get("action")
+        created_on = data.get("created_on")
+        return AuditTrailActivities(user_id, user_name, form_id, action, created_on)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "form_id": self.form_id,
+            "action": self.action,
+            "created_on": self.created_on
         }
 
 #
