@@ -245,7 +245,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
 
 
 def return_compliance_for_statutory_settings(
-    db, unit_ids, domain_id,  from_count, to_count
+    db, unit_ids, domain_id, f_id, from_count, to_count
 ):
     q = "select count(t1.compliance_id)ccount from tbl_client_compliances as t1 " + \
         " where find_in_set(t1.unit_id, %s) and t1.domain_id = %s"
@@ -269,18 +269,19 @@ def return_compliance_for_statutory_settings(
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.compliance_id = t1.compliance_id " + \
         " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s " + \
+        " IF (%s IS NOT NULL, t2.frequency_id = %s, 1) and" + \
         " ORDER BY t2.statutory_mapping, t1.compliance_id " + \
         " limit %s, %s "
 
     rows = db.select_all(query, [
         ",".join([str(x) for x in unit_ids]),
         domain_id,
+        f_id, f_id,
         from_count,
         to_count
     ])
 
     compliance_id_wise = {}
-    print len(rows)
     for r in rows:
 
         statutory_opted = r["statutory_opted_status"]
