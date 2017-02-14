@@ -2166,6 +2166,193 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    /* Unit List report - updated*/
+    function getUnitListReportFilters(country_id, business_group_id, le_id, callback) {
+        var request = [
+            'GetUnitListReportFilters',
+            {
+                'country_id': country_id,
+                'business_group_id': business_group_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUnitListReport(
+        country_id, business_group_id, legal_entity_id, division_id, category_id,
+        unit_id, domain_id, organisation_id, unit_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetUnitListReport',
+            {
+                'country_id': country_id,
+                'business_group_id': business_group_id,
+                'legal_entity_id' : legal_entity_id,
+                'division_id': division_id,
+                'category_id': category_id,
+                'unit_id': unit_id,
+                'domain_id': domain_id,
+                'organisation_id': organisation_id,
+                'unit_status': unit_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Statutory Notifications List report - updated*/
+    function getStatutoryNotificationsListReportFilters(country_id, le_id, callback) {
+        var request = [
+            'GetStatutoryNotificationsListReportFilters',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getStatutoryNotificationsListReportData(
+        country_id, legal_entity_id, domain_id, statutory_mapping, from_date,
+        to_date, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetStatutoryNotificationsListReportData',
+            {
+                'country_id': country_id,
+                'legal_entity_id' : legal_entity_id,
+                'domain_id': domain_id,
+                'statutory_mapping': statutory_mapping,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Service Provider Details report - updated*/
+    function getServiceProviderDetailsReportFilters(callback) {
+        var request = [
+            'GetServiceProviderDetailsReportFilters',
+            {
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getServiceProviderDetailsReport(
+        sp_id, user_id, s_p_status, callback
+    ){
+        var request = [GetServiceProviderDetailsReport
+            'GetServiceProviderDetailsReport',
+            {
+                'sp_id': sp_id,
+                'user_id' : user_id,
+                's_p_status': s_p_status,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Audit Trail - updated*/
+    function getAuditTrailReportFilters(le_id, callback) {
+        var request = [
+            'GetAuditTrailReportFilters',
+            {
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getAuditTrailReportData(
+        le_id, user_id, form_id, from_date, to_date, csv, from_count, page_count, callback
+    ) {
+        var request = [
+            'GetAuditTrailReportData',
+            {
+                'legal_entity_id' : le_id,
+                'user_id' : user_id,
+                'form_id_optional' : form_id,
+                'due_from_date' : from_date,
+                'due_to_date' : to_date,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Login Trace - updated*/
+    function getLoginTraceReportFilters(callback) {
+        var request = [
+            'GetLogintraceReportFilters',
+            {
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getLoginTraceReportData(user_id, from_date, to_date, csv, from_count, page_count, callback) {
+        var request = [
+            'GetLoginTraceReportData',
+            {
+                'user_id' : user_id,
+                'due_from_date' : from_date,
+                'due_to_date' : to_date,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* View Profile */
+    function getUserProfile(callback) {
+        var request = [
+            'GetUserProfile',
+            {
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function updateUserProfile(user_id, emailId, c_no, m_no, address, callback) {
+        var request = [
+            'UpdateUserProfile',
+            {
+                'user_id': user_id,
+                'email_id': emailId,
+                'con_no': c_no,
+                'mob_no': m_no,
+                'address': address
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2303,10 +2490,24 @@ function initClientMirror() {
         getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
         getDomainWiseReportFilters: getDomainWiseReportFilters,
         getDomainWiseReport: getDomainWiseReport,
+        getUnitWiseReportFilters: getUnitWiseReportFilters,
+        getUnitWiseReport: getUnitWiseReport,
         getServiceProviderWiseReportFilters: getServiceProviderWiseReportFilters,
         getServiceProviderWiseReport: getServiceProviderWiseReport,
         getUserWiseReportFilters: getUserWiseReportFilters,
-        getUserWiseReport: getUserWiseReport
+        getUserWiseReport: getUserWiseReport,
+        getUnitListReportFilters: getUnitListReportFilters,
+        getUnitListReport: getUnitListReport,
+        getStatutoryNotificationsListReportFilters: getStatutoryNotificationsListReportFilters,
+        getStatutoryNotificationsListReportData: getStatutoryNotificationsListReportData,
+        getServiceProviderDetailsReportFilters: getServiceProviderDetailsReportFilters,
+        getServiceProviderDetailsReport: getServiceProviderDetailsReport,
+        getAuditTrailReportFilters: getAuditTrailReportFilters,
+        getAuditTrailReportData: getAuditTrailReportData,
+        getLoginTraceReportFilters: getLoginTraceReportFilters,
+        getLoginTraceReportData: getLoginTraceReportData,
+        getUserProfile: getUserProfile,
+        updateUserProfile: updateUserProfile
     };
 }
 var client_mirror = initClientMirror();

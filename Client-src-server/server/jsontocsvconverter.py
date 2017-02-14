@@ -9,7 +9,7 @@ import datetime
 from clientprotocol import (clientcore)
 from server.common import (
     string_to_datetime, datetime_to_string,
-    convert_to_dict
+    convert_to_dict, datetime_to_string_time
 )
 from server.clientdatabase.common import (
     get_country_domain_timelines
@@ -93,6 +93,21 @@ class ConvertJsonToCSV(object):
                         db, request, session_user)
                 elif report_type == "ServiceProviderWiseReport":
                     self.generate_service_provider_wise_compliance_report(
+                        db, request, session_user)
+                elif report_type == "UserWiseReport":
+                    self.generate_user_wise_compliance_report(
+                        db, request, session_user)
+                elif report_type == "UnitListReport":
+                    self.generate_unit_list_report(
+                        db, request, session_user)
+                elif report_type == "StatutoryNotificationListReport":
+                    self.generate_stat_notf_list_report(
+                        db, request, session_user)
+                elif report_type == "AuditTrailReport":
+                    self.generate_audit_trail_report(
+                        db, request, session_user)
+                elif report_type == "LoginTraceReport":
+                    self.generate_login_trace_report(
                         db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
@@ -2068,4 +2083,521 @@ class ConvertJsonToCSV(object):
                 activity_status, datetime_to_string(row["activity_date"]), name,
                 datetime_to_string(row["completion_date"]), url
             ]
+            self.write_csv(None, csv_values)
+
+    def generate_user_wise_compliance_report(
+        self, db, request, session_user
+    ):
+        where_clause = None
+        condition_val = []
+        select_qry = None
+        from_clause = None
+        country_id = request.country_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.domain_id
+
+        stat_map = request.statutory_mapping
+
+        user_type = request.user_type
+        user_id = request.user_id
+
+        due_from = request.due_from_date
+        due_to = request.due_to_date
+        task_status = request.task_status
+        if task_status == "All":
+            task_status = '%'
+
+        select_qry = "select t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
+            "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+            "(select concat(unit_code,'-',unit_name,',',geography_name,',',address,',',postal_code)" + \
+            "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
+            "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
+            "frequency_id = t3.frequency_id) as frequency_name, (select " + \
+            "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
+            "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
+            "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name "
+        from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
+            "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
+            "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
+        where_clause = "t3.country_id = %s "
+        condition_val.append(country_id)
+
+        if int(domain_id) > 0:
+            where_clause = where_clause + "and t3.domain_id = %s "
+            condition_val.append(domain_id)
+
+        if request.statutory_mapping is not None:
+            stat_map = '%'+stat_map+'%'
+            where_clause = where_clause + "and t3.statutory_mapping like %s "
+            condition_val.append(stat_map)
+
+        frequency_id = request.frequency_id
+        if int(request.frequency_id) > 0:
+            where_clause = where_clause + "and t3.frequency_id = %s "
+            condition_val.append(frequency_id)
+        print "u t"
+        print user_type
+        if user_type == "Assignee":
+            where_clause = where_clause + "and t1.completed_by = %s "
+            condition_val.append(user_id)
+        elif user_type == "Concurrence":
+            where_clause = where_clause + "and t1.concurred_by = %s "
+            condition_val.append(user_id)
+        elif user_type == "Approval":
+            where_clause = where_clause + "and t1.approved_by = %s "
+            condition_val.append(user_id)
+        elif user_type == "All":
+            where_clause = where_clause + "and %s in (t1.completed_by, t1.concurred_by, t1.approved_by) "
+            condition_val.append(user_id)
+
+        if task_status == "Complied":
+            where_clause = where_clause + "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+        elif task_status == "Delayed Compliance":
+            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+        elif task_status == "Inprogress":
+            where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        elif task_status == "Not Complied":
+            where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+
+        if due_from is not None and due_to is not None:
+            where_clause = where_clause + " and t1.due_date between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            where_clause = where_clause + " and t1.due_date between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            where_clause = where_clause + " and t1.due_date < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
+
+        compliance_id = request.compliance_id
+        if int(compliance_id) > 0:
+            where_clause = where_clause + "and t1.compliance_id = %s "
+            condition_val.append(compliance_id)
+
+        unit_id = request.unit_id
+        if int(unit_id) > 0:
+            where_clause = where_clause + "and t1.unit_id = %s "
+            condition_val.append(unit_id)
+
+        where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc;"
+        condition_val.append(legal_entity_id)
+        query = select_qry + from_clause + where_clause
+        print "qry"
+        print query
+        result = db.select_all(query, condition_val)
+        user_report = []
+
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "Domain Name", "Unit Name", "Act", "Compliance Task", "Frequency", "Due Date",
+                "Compliance Task Status", "User Name", "Activity Status", "Activity Date",
+                "Uploaded Document", "Completion Date"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+
+        for row in result:
+            task_status = None
+            activity_status = None
+            statutory_mapping = json.loads(row["statutory_mapping"])
+            if statutory_mapping[0].find(">>") >= 0:
+                statutory_mapping = statutory_mapping[0].split(">>")[0]
+            else:
+                statutory_mapping = str(statutory_mapping)[3:-2]
+
+            # Find task status
+            if (row["approve_status"] == 1):
+                if (str(row["due_date"]) > str(row["completion_date"])):
+                    task_status = "Complied"
+                else:
+                    task_status = "Delayed Compliance"
+            else:
+                if (str(row["due_date"]) > str(datetime.datetime.now())):
+                    task_status = "In Progress"
+                else:
+                    task_status = "Not Complied"
+
+            # Find Activity Status
+            print row["activity_date"]
+            if row["activity_date"] is None:
+                print row["approve_status"]
+                if row["approve_status"] == "0":
+                    activity_status = "Pending"
+                elif row["approve_status"] == "1":
+                    activity_status = "Approved"
+                elif row["approve_status"] == "2":
+                    activity_status = "Rejected"
+            else:
+                activity_status = "Submitted"
+
+            document_name = row["documents"]
+            compliance_task = row["compliance_task"]
+            if document_name == "None":
+                document_name = None
+            if document_name:
+                name = "%s - %s" % (
+                    document_name, compliance_task
+                )
+            else:
+                name = compliance_task
+
+            format_file = row["format_file"]
+            format_file_size = row["format_file_size"]
+            if format_file_size is not None:
+                format_file_size = int(format_file_size)
+            if format_file:
+                url = "%s/%s" % (
+                    CLIENT_DOCS_DOWNLOAD_URL, format_file
+                )
+            else:
+                url = None
+
+            csv_values = [
+                row["domain_name"], row["unit_name"], statutory_mapping, row["compliance_task"],
+                row["frequency_name"], datetime_to_string(row["due_date"]), task_status,
+                row["assignee_name"], activity_status, datetime_to_string(row["activity_date"]), name,
+                datetime_to_string(row["completion_date"]), url
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_unit_list_report(
+        self, db, request, session_user
+    ):
+        where_clause = None
+        condition_val = []
+        select_qry = None
+        country_id = request.country_id
+        business_group_id = request.business_group_id
+        legal_entity_id = request.legal_entity_id
+        division_id = request.division_id
+        category_id = request.category_id
+        unit_id = request.unit_id
+        domain_id = request.domain_id
+        organisation_id = request.organisation_id
+
+        unit_status = request.unit_status
+
+        select_qry = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.postal_code, " + \
+            "t1.geography_name, t1.is_closed, t1.closed_on, t1.division_id, t1.category_id, (select  " + \
+            "division_name from tbl_divisions where division_id = t1.division_id) as division_name, " + \
+            "(select category_name from tbl_categories where category_id = t1.category_id) as " + \
+            "category_name from tbl_units as t1 where "
+        where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
+        condition_val.extend([legal_entity_id, country_id])
+
+        if int(business_group_id) > 0:
+            where_clause = where_clause + "and t1.business_group_id = %s "
+            condition_val.append(business_group_id)
+
+        if int(unit_id) > 0:
+            where_clause = where_clause + "and t1.unit_id = %s "
+            condition_val.append(unit_id)
+
+        if int(division_id) > 0:
+            where_clause = where_clause + "and t1.division_id = %s "
+            condition_val.append(division_id)
+
+        if int(category_id) > 0:
+            where_clause = where_clause + "and t1.category_id = %s "
+            condition_val.append(category_id)
+
+        if unit_status == "Active":
+            where_clause = where_clause + "and t1.is_closed = %s "
+            condition_val.append(0)
+        elif unit_status == "Closed":
+            where_clause = where_clause + "and t1.is_closed = %s "
+            condition_val.append(1)
+
+        where_clause = where_clause + "order by t1.closed_on desc limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+        query = select_qry + where_clause
+        print "qry"
+        print query
+        result = db.select_all(query, condition_val)
+
+        # domains & organisations
+        select_qry = None
+        where_clause = None
+        condition_val = []
+        select_qry = "select t1.unit_id, t2.domain_id, t2.organisation_id, (select domain_name " + \
+            "from tbl_domains where domain_id = t2.domain_id) as domain_name, (select " + \
+            "organisation_name from tbl_organisation where organisation_id = t2.organisation_id) as " + \
+            "organisation_name from tbl_units as t1 inner join tbl_units_organizations as t2 on " + \
+            "t2.unit_id = t1.unit_id where "
+        where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
+        condition_val.extend([legal_entity_id, country_id])
+
+        if int(business_group_id) > 0:
+            where_clause = where_clause + "and t1.business_group_id = %s "
+            condition_val.append(business_group_id)
+
+        if int(unit_id) > 0:
+            where_clause = where_clause + "and t1.unit_id = %s "
+            condition_val.append(unit_id)
+
+        if int(division_id) > 0:
+            where_clause = where_clause + "and t1.division_id = %s "
+            condition_val.append(division_id)
+
+        if int(category_id) > 0:
+            where_clause = where_clause + "and t1.category_id = %s "
+            condition_val.append(category_id)
+
+        if int(domain_id) > 0:
+            where_clause = where_clause + "and t2.domain_id = %s "
+            condition_val.append(domain_id)
+
+        if int(organisation_id) > 0:
+            where_clause = where_clause + "and t2.organisation_id = %s "
+            condition_val.append(organisation_id)
+
+        if unit_status == "Active":
+            where_clause = where_clause + "and t1.is_closed = %s "
+            condition_val.append(0)
+        elif unit_status == "Closed":
+            where_clause = where_clause + "and t1.is_closed = %s "
+            condition_val.append(1)
+
+        where_clause = where_clause + "order by t1.closed_on desc limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+        query = select_qry + where_clause
+        print "qry"
+        print query
+        result_1 = db.select_all(query, condition_val)
+        unit_report = []
+
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "Unit Id", "Unit Code", "Unit Name", "Domain - Organization Type",
+                "Location", "Address", "Postal Code", "Division Name", "Status", "Date"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        for row in result:
+            unit_id = row["unit_id"]
+            unit_code = row["unit_code"]
+            unit_name = row["unit_name"]
+            geography_name = row["geography_name"]
+            address = row["address"]
+            postal_code = row["postal_code"]
+            division_name = row["division_name"]
+            if row["is_closed"] == "0":
+                unit_status = "Active"
+            else:
+                unit_status = "Closed"
+            d_i_names = []
+            if row["closed_on"] is None:
+                closed_date = datetime_to_string(row["closed_on"])
+            else:
+                closed_date = None
+            last = object()
+            for row_1 in result_1:
+                if unit_id == row_1["unit_id"]:
+                    if last != (row_1["domain_name"]+" - "+row_1["organisation_name"]):
+                        last = row_1["domain_name"]+" - "+row_1["organisation_name"]
+                        d_i_names.append(row_1["domain_name"]+" - "+row_1["organisation_name"])
+
+            csv_values = [
+                unit_id, unit_code, unit_name, d_i_names, geography_name, address, postal_code,
+                division_name, unit_status, closed_date,
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_stat_notf_list_report(
+        self, db, request, session_user
+    ):
+        where_clause = None
+        condition_val = []
+        select_qry = None
+        country_id = request.country_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.domain_id
+        statutory_mapping = request.statutory_mapping
+        due_from = request.due_from_date
+        due_to = request.due_to_date
+
+        select_qry = "select t1.compliance_id, t2.statutory_mapping, t2.compliance_description, " + \
+            "t2.compliance_task, t3.notification_text, t3.created_on from tbl_client_compliances as t1 " + \
+            "inner join tbl_compliances as t2 on t2.compliance_id = t1.compliance_id inner join " + \
+            "tbl_statutory_notifications as t3 on t3.compliance_id = t2.compliance_id where "
+        where_clause = "t1.legal_entity_id = %s and t1.domain_id = %s and t2.country_id = %s "
+        condition_val.extend([legal_entity_id, domain_id, country_id])
+
+        if statutory_mapping is not None:
+            statutory_mapping = '%'+statutory_mapping+'%'
+            where_clause = where_clause + "and t2.statutory_mapping like %s "
+            condition_val.append(statutory_mapping)
+
+        if due_from is not None and due_to is not None:
+            where_clause = where_clause + " and t3.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            where_clause = where_clause + " and t3.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            where_clause = where_clause + " and t3.created_on < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
+
+        where_clause = where_clause + "group by t1.compliance_id order by t3.created_on desc limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+        query = select_qry + where_clause
+        print "qry"
+        print query
+        result = db.select_all(query, condition_val)
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "Compliance ID", "Act", "Compliance Task", "Compliance Description",
+                "Date", "Notification Content"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        for row in result:
+            stat_map = json.loads(row["statutory_mapping"])
+            if stat_map[0].find(">>") >= 0:
+                stat_map = stat_map[0].split(">>")[0]
+            else:
+                stat_map = str(stat_map)[3:-2]
+            csv_values = [
+                row["compliance_id"], stat_map, row["compliance_task"], row["compliance_description"],
+                datetime_to_string(row["created_on"]), row["notification_text"]
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_audit_trail_report(
+        self, db, request, session_user
+    ):
+        where_clause = None
+        condition_val = []
+        select_qry = None
+        legal_entity_id = request.legal_entity_id
+        user_id = request.user_id
+        form_id = request.form_id_optional
+        due_from = request.due_from_date
+        due_to = request.due_to_date
+
+        select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
+            "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+            "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+        where_clause = "t1.form_id <> 0 and t1.legal_entity_id = %s "
+        condition_val.append(legal_entity_id)
+
+        if int(user_id) > 0:
+            where_clause = where_clause + "and t1.user_id = %s "
+            condition_val.append(user_id)
+        if int(form_id) > 0:
+            where_clause = where_clause + "and t1.form_id = %s "
+            condition_val.append(form_id)
+        if due_from is not None and due_to is not None:
+            due_from = string_to_datetime(due_from).date()
+            due_to = string_to_datetime(due_to).date()
+            where_clause = where_clause + " and t1.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            due_from = string_to_datetime(due_from).date()
+            where_clause = where_clause + " and t1.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            due_to = string_to_datetime(due_to).date()
+            where_clause = where_clause + " and t1.created_on < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
+
+        where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+        query = select_qry + where_clause
+        print "qry"
+        print query
+        result = db.select_all(query, condition_val)
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "User ID", "User Name", "Form Id", "Action", "Created On"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        for row in result:
+            csv_values = [
+                row["user_id"], row["user_name"], row["form_id"],
+                row["action"], datetime_to_string_time(row["created_on"])
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_login_trace_report(
+        self, db, request, session_user
+    ):
+        where_clause = None
+        condition_val = []
+        select_qry = None
+        user_id = request.user_id
+        due_from = request.due_from_date
+        due_to = request.due_to_date
+
+        select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
+            "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+            "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+        where_clause = "t1.form_id = 0 "
+
+        if int(user_id) > 0:
+            where_clause = where_clause + "and t1.user_id = %s "
+            condition_val.append(user_id)
+        if due_from is not None and due_to is not None:
+            due_from = string_to_datetime(due_from).date()
+            due_to = string_to_datetime(due_to).date()
+            where_clause = where_clause + " and t1.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            due_from = string_to_datetime(due_from).date()
+            where_clause = where_clause + " and t1.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            due_to = string_to_datetime(due_to).date()
+            where_clause = where_clause + " and t1.created_on < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
+
+        where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+        query = select_qry + where_clause
+        print "qry"
+        print query
+        result = db.select_all(query, condition_val)
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "Form ID", "Form Name", "Action", "Created On"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        for row in result:
+            if row["action"].find("Log In") >= 0:
+                csv_values = [
+                    row["form_id"], "Login",
+                    row["action"], datetime_to_string_time(row["created_on"])
+                ]
+            elif row["action"].find("Log Out") >= 0:
+                csv_values = [
+                    row["form_id"], "Logout",
+                    row["action"], datetime_to_string_time(row["created_on"])
+                ]
             self.write_csv(None, csv_values)
