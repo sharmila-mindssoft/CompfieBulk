@@ -9,7 +9,7 @@ import datetime
 from clientprotocol import (clientcore)
 from server.common import (
     string_to_datetime, datetime_to_string,
-    convert_to_dict
+    convert_to_dict, datetime_to_string_time
 )
 from server.clientdatabase.common import (
     get_country_domain_timelines
@@ -102,6 +102,12 @@ class ConvertJsonToCSV(object):
                         db, request, session_user)
                 elif report_type == "StatutoryNotificationListReport":
                     self.generate_stat_notf_list_report(
+                        db, request, session_user)
+                elif report_type == "AuditTrailReport":
+                    self.generate_audit_trail_report(
+                        db, request, session_user)
+                elif report_type == "LoginTraceReport":
+                    self.generate_login_trace_report(
                         db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
@@ -2468,4 +2474,130 @@ class ConvertJsonToCSV(object):
                 row["compliance_id"], stat_map, row["compliance_task"], row["compliance_description"],
                 datetime_to_string(row["created_on"]), row["notification_text"]
             ]
+            self.write_csv(None, csv_values)
+
+    def generate_audit_trail_report(
+        self, db, request, session_user
+    ):
+        where_clause = None
+        condition_val = []
+        select_qry = None
+        legal_entity_id = request.legal_entity_id
+        user_id = request.user_id
+        form_id = request.form_id_optional
+        due_from = request.due_from_date
+        due_to = request.due_to_date
+
+        select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
+            "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+            "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+        where_clause = "t1.form_id <> 0 and t1.legal_entity_id = %s "
+        condition_val.append(legal_entity_id)
+
+        if int(user_id) > 0:
+            where_clause = where_clause + "and t1.user_id = %s "
+            condition_val.append(user_id)
+        if int(form_id) > 0:
+            where_clause = where_clause + "and t1.form_id = %s "
+            condition_val.append(form_id)
+        if due_from is not None and due_to is not None:
+            due_from = string_to_datetime(due_from).date()
+            due_to = string_to_datetime(due_to).date()
+            where_clause = where_clause + " and t1.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            due_from = string_to_datetime(due_from).date()
+            where_clause = where_clause + " and t1.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            due_to = string_to_datetime(due_to).date()
+            where_clause = where_clause + " and t1.created_on < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
+
+        where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+        query = select_qry + where_clause
+        print "qry"
+        print query
+        result = db.select_all(query, condition_val)
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "User ID", "User Name", "Form Id", "Action", "Created On"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        for row in result:
+            csv_values = [
+                row["user_id"], row["user_name"], row["form_id"],
+                row["action"], datetime_to_string_time(row["created_on"])
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_login_trace_report(
+        self, db, request, session_user
+    ):
+        where_clause = None
+        condition_val = []
+        select_qry = None
+        user_id = request.user_id
+        due_from = request.due_from_date
+        due_to = request.due_to_date
+
+        select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
+            "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+            "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+        where_clause = "t1.form_id = 0 "
+
+        if int(user_id) > 0:
+            where_clause = where_clause + "and t1.user_id = %s "
+            condition_val.append(user_id)
+        if due_from is not None and due_to is not None:
+            due_from = string_to_datetime(due_from).date()
+            due_to = string_to_datetime(due_to).date()
+            where_clause = where_clause + " and t1.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.extend([due_from, due_to])
+        elif due_from is not None and due_to is None:
+            due_from = string_to_datetime(due_from).date()
+            where_clause = where_clause + " and t1.created_on between " + \
+                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            condition_val.append(due_from)
+        elif due_from is None and due_to is not None:
+            due_to = string_to_datetime(due_to).date()
+            where_clause = where_clause + " and t1.created_on < " + \
+                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            condition_val.append(due_to)
+
+        where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+        query = select_qry + where_clause
+        print "qry"
+        print query
+        result = db.select_all(query, condition_val)
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "Form ID", "Form Name", "Action", "Created On"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        for row in result:
+            if row["action"].find("Log In") >= 0:
+                csv_values = [
+                    row["form_id"], "Login",
+                    row["action"], datetime_to_string_time(row["created_on"])
+                ]
+            elif row["action"].find("Log Out") >= 0:
+                csv_values = [
+                    row["form_id"], "Logout",
+                    row["action"], datetime_to_string_time(row["created_on"])
+                ]
             self.write_csv(None, csv_values)
