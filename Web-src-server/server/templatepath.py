@@ -184,13 +184,13 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     # My Accounts ---------------------------------------------------------------------
     (
-        "/view-profile",
-        "files/client/view-profile/view-profile.html",
+        "/profile",
+        "files/client/profile/profile.html",
         None, {}
     ),
     (
-        "/client-view-profile",
-        "files/client/client-view-profile/client-view-profile.html",
+        "/profile",
+        "files/client/profile/profile.html",
         None, {}
     ),
     (
