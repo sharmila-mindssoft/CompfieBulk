@@ -436,6 +436,18 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         logger.logClientApi("GetStatutoryNotificationsListReportData", "process end")
         logger.logClientApi("------", str(time.time()))
 
+    elif type(request) is clientreport.GetAuditTrailReportData:
+        logger.logClientApi(
+            "GetAuditTrailReportData  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_audit_trail_report_data(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetAuditTrailReportData", "process end")
+        logger.logClientApi("------", str(time.time()))
+
     return result
 
 
@@ -1201,3 +1213,20 @@ def get_statutory_notification_list_report(db, request, session_user, client_id)
     else:
         result = process_statutory_notification_list_report(db, request)
         return clientreport.GetStatutoryNotificationReportDataSuccess(stat_notf_list_report=result)
+
+###############################################################################################
+# Objective: To get activity log under user and form
+# Parameter: request object and the client id
+# Result: list of record sets which contains activity log of forms
+###############################################################################################
+def get_audit_trail_report_data(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "AuditTrailReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_audit_trail_report(db, request)
+        return clientreport.GetAuditTrailReportDataSuccess(audit_activities=result)
