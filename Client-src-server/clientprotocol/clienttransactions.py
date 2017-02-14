@@ -205,11 +205,12 @@ class ChangeStatutorySettingsLock(Request):
         }
 
 class GetSettingsCompliances(Request):
-    def __init__(self, legal_entity_id, unit_id, domain_id, record_count):
+    def __init__(self, legal_entity_id, unit_id, domain_id, frequency_id, record_count):
         self.legal_entity_id = legal_entity_id
         self.unit_id = unit_id
         self.record_count = record_count
         self.domain_id = domain_id
+        self.frequency_id = frequency_id
 
     @staticmethod
     def parse_inner_structure(data):
@@ -218,8 +219,9 @@ class GetSettingsCompliances(Request):
         unit_id = data.get("u_ids")
         record_count = data.get("r_count")
         domain_id = data.get("d_id")
+        frequency_id = data.get("f_id")
         return GetSettingsCompliances(
-            legal_entity_id, unit_id, domain_id, record_count
+            legal_entity_id, unit_id, domain_id, frequency_id, record_count
         )
 
     def to_inner_structure(self):
@@ -227,7 +229,8 @@ class GetSettingsCompliances(Request):
             "le_id": self.legal_entity_id,
             "u_ids": self.unit_id,
             "r_count": self.record_count,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "f_id": self.frequency_id
         }
 
 class ApplicableCompliance(object):
