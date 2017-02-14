@@ -745,16 +745,39 @@ class GetUserProfile(Request):
         }
 
 class UpdateUserProfile(Request):
-    def __init__(self, user_id, email_id, con_no, mob_no, address):
+    def __init__(self, user_id, email_id, con_no, mob_no, address, emp_code, emp_name):
         self.user_id = user_id
         self.email_id = email_id
         self.con_no = con_no
         self.mob_no = mob_no
         self.address = address
+        self.emp_code = emp_code
+        self.emp_name = emp_name
 
     @staticmethod
     def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "email_id", "con_no", "mob_no", "address", "emp_code", "emp_name"
+        ])
+        user_id = data.get("user_id")
+        email_id = data.get("email_id")
+        con_no = data.get("con_no")
+        mob_no = data.get("mob_no")
+        address = data.get("address")
+        emp_code = data.get("emp_code")
+        emp_name = data.get("emp_name")
+        return UpdateUserProfile(user_id, email_id, con_no, mob_no, address, emp_code, emp_name)
 
+    def to_inner_structure(self):
+        return {
+            "user_id": self.user_id,
+            "email_id": self.email_id,
+            "con_no": self.con_no,
+            "mob_no": self.mob_no,
+            "address": self.address,
+            "emp_code": self.emp_code,
+            "emp_name": self.emp_name
+        }
 
 
 def _init_Request_class_map():
@@ -1515,6 +1538,19 @@ class GetUserProfileSuccess(Response):
             "user_profile" : self.user_profile
         }
 
+class UpdateUserProfileSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UpdateUserProfileSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Response_class_map():
     classes = [
         GetServiceProvidersSuccess, SaveServiceProviderSuccess,
@@ -1534,7 +1570,7 @@ def _init_Response_class_map():
         GetServiceProviderDetailsFilterSuccess,
         GetServiceProviderDetailsReportSuccess, GetAuditTrailFilterSuccess,
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
-        GetUserProfileSuccess
+        GetUserProfileSuccess, UpdateUserProfileSuccess
     ]
     class_map = {}
     for c in classes:
