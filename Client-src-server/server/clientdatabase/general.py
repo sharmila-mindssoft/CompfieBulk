@@ -1164,10 +1164,10 @@ def validate_compliance_due_date(db, request):
         param = [int(c.compliance_id)]
         row = db.select_one(q, param)
         if row:
-            comp_id = row[0]
-            task = row[1]
-            s_dates = json.loads(row[2])
-            repeats_type_id = row[3]
+            comp_id = row["compliance_id"]
+            task = row["compliance_task"]
+            s_dates = json.loads(row["statutory_dates"])
+            repeats_type_id = row["repeats_type_id"]
             due_date, due_date_list, date_list = set_new_due_date(
                 s_dates, repeats_type_id, comp_id
             )
@@ -1478,7 +1478,7 @@ def get_email_id_for_users(db, user_id):
     )
     row = db.select_one(q)
     if row:
-        return row[0], row[1]
+        return row["employee_name"], row["email_id"]
     else:
         return None
 

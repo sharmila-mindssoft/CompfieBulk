@@ -305,10 +305,12 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
+
+            print company_id
+            print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
             )
-            print company_id
             if is_group is False :
                 company_id = request_data.request.legal_entity_id
 

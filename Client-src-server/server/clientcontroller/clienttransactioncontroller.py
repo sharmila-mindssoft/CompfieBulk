@@ -62,10 +62,10 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_get_compliance_for_units(
             db, request, session_user
         )
-    # elif type(request) is clienttransactions.SaveAssignedCompliance:
-    #     result = process_save_assigned_compliance(
-    #         db, request, session_user
-    #     )
+    elif type(request) is clienttransactions.SaveAssignedCompliance:
+        result = process_save_assigned_compliance(
+            db, request, session_user
+        )
 
     # elif type(request) is clienttransactions.GetUserwiseCompliances:
     #     result = process_get_user_wise_compliances(

@@ -289,8 +289,7 @@ def save_client_statutories(db, request, user_id):
             if csid is False :
                 raise process_error("E088")
         else :
-
-            db.execute(q1_update, [status, c.client_statutory_id])
+            # db.execute(q1_update, [status, c.client_statutory_id])
             csid = c.client_statutory_id
 
         saved_unit.append(c.unit_id)
