@@ -667,6 +667,96 @@ class GetServiceProviderDetailsReport(Request):
             "page_count": self.page_count
         }
 
+class GetAuditTrailReportFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id"])
+        legal_entity_id = data.get("legal_entity_id")
+        return GetAuditTrailReportFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "legal_entity_id": self.legal_entity_id
+        }
+
+class GetLogintraceReportFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetLogintraceReportFilters()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetLoginTraceReportData(Request):
+    def __init__(
+        self, user_id, due_from_date, due_to_date, csv, from_count, page_count
+    ):
+        self.user_id = user_id
+        self.due_from_date = due_from_date
+        self.due_to_date = due_to_date
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "due_from_date", "due_to_date", "csv", "from_count", "page_count"
+        ])
+        user_id = data.get("user_id")
+        due_from_date = data.get("due_from_date")
+        due_to_date = data.get("due_to_date")
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetLoginTraceReportData(
+            user_id, due_from_date, due_to_date, csv, from_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "user_id": self.user_id,
+            "due_from_date": self.due_from_date,
+            "due_to_date": self.due_to_date,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
+
+class GetUserProfile(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetUserProfile()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class UpdateUserProfile(Request):
+    def __init__(self, user_id, email_id, con_no, mob_no, address):
+        self.user_id = user_id
+        self.email_id = email_id
+        self.con_no = con_no
+        self.mob_no = mob_no
+        self.address = address
+
+    @staticmethod
+    def parse_inner_structure(data):
+
+
+
 def _init_Request_class_map():
     classes = [
         GetServiceProviders, ChangeClientUserStatus, ChangeAdminStatus,
@@ -675,7 +765,9 @@ def _init_Request_class_map():
         ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser,
         UpdateClientUserStatus, GetUnits, CloseUnit, GetAuditTrails,
         GetUnitClosureData, SaveUnitClosureData, GetUnitClosureUnitData,
-        GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport
+        GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
+        GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
+        GetUserProfile, UpdateUserProfile
     ]
     class_map = {}
     for c in classes:
@@ -1356,6 +1448,73 @@ class GetServiceProviderDetailsReportSuccess(Response):
             "sp_details_list" : self.sp_details_list
         }
 
+class GetAuditTrailFilterSuccess(Response):
+    def __init__(self, audit_users_list, audit_forms_list):
+        self.audit_users_list = audit_users_list
+        self.audit_forms_list = audit_forms_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["audit_users_list", "audit_forms_list"])
+        audit_users_list = data.get("audit_users_list")
+        audit_forms_list = data.get("audit_forms_list")
+        return GetAuditTrailFilterSuccess(
+            audit_users_list, audit_forms_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "audit_users_list": self.audit_users_list,
+            "audit_forms_list": self.audit_forms_list
+        }
+
+class GetLoginTraceFilterSuccess(Response):
+    def __init__(self, audit_users_list):
+        self.audit_users_list = audit_users_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["audit_users_list"])
+        audit_users_list = data.get("audit_users_list")
+        return GetLoginTraceFilterSuccess(
+            audit_users_list
+        )
+
+    def to_inner_structure(self):
+        return {
+            "audit_users_list": self.audit_users_list
+        }
+
+class GetLoginTraceReportDataSuccess(Response):
+    def __init__(self, log_trace_activities):
+        self.log_trace_activities = log_trace_activities
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["log_trace_activities"])
+        log_trace_activities = data.get("log_trace_activities")
+        return GetLoginTraceReportDataSuccess(log_trace_activities)
+
+    def to_inner_structure(self):
+        return {
+            "log_trace_activities" : self.log_trace_activities
+        }
+
+class GetUserProfileSuccess(Response):
+    def __init__(self, user_profile):
+        self.user_profile = user_profile
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_profile"])
+        user_profile = data.get("user_profile")
+        return GetUserProfileSuccess(user_profile)
+
+    def to_inner_structure(self):
+        return {
+            "user_profile" : self.user_profile
+        }
+
 def _init_Response_class_map():
     classes = [
         GetServiceProvidersSuccess, SaveServiceProviderSuccess,
@@ -1373,7 +1532,9 @@ def _init_Response_class_map():
         CannotChangeStatusOfContractExpiredSP, CannotCloseUnit, GetUnitClosureUnitDataSuccess,
         GetUnitClosureDataSuccess, SaveUnitClosureSuccess, InvalidUnitId,
         GetServiceProviderDetailsFilterSuccess,
-        GetServiceProviderDetailsReportSuccess
+        GetServiceProviderDetailsReportSuccess, GetAuditTrailFilterSuccess,
+        GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
+        GetUserProfileSuccess
     ]
     class_map = {}
     for c in classes:
@@ -1532,6 +1693,147 @@ class ServiceProvidersDetailsList(object):
             "unit_count": self.unit_count
         }
 
+#
+# Audit Trail Users
+#
+
+class AuditTrailUsers(object):
+    def __init__(self, user_id, user_name, user_category_id, u_g_id):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.user_category_id = user_category_id
+        self.u_g_id = u_g_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "user_name", "user_category_id", "u_g_id"
+        ])
+        user_id = data.get("user_id")
+        user_name = data.get("user_name")
+        user_category_id = data.get("user_category_id")
+        u_g_id = data.get("u_g_id")
+        return AuditTrailUsers(user_id, user_name, user_category_id, u_g_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "user_category_id": self.user_category_id,
+            "u_g_id": self.u_g_id
+        }
+
+#
+# Audit Trail Forms
+#
+
+class AuditTrailForms(object):
+    def __init__(self, u_g_id, form_id, form_name):
+        self.u_g_id = u_g_id
+        self.form_id = form_id
+        self.form_name = form_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "u_g_id", "form_id", "form_name"
+        ])
+        u_g_id = data.get("u_g_id")
+        form_id = data.get("form_id")
+        form_name = data.get("form_name")
+        return AuditTrailForms(u_g_id, form_id, form_name)
+
+    def to_structure(self):
+        return {
+            "u_g_id": self.u_g_id,
+            "form_id": self.form_id,
+            "form_name": self.form_name,
+        }
+
+#
+# Login Trace Forms
+#
+
+class LoginTraceActivities(object):
+    def __init__(self, form_id, form_name, action, created_on):
+        self.form_id = form_id
+        self.form_name = form_name
+        self.action = action
+        self.created_on = created_on
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "form_id", "form_name", "action," "created_on"
+        ])
+        form_id = data.get("form_id")
+        form_name = data.get("form_name")
+        action = data.get("action")
+        created_on = data.get("created_on")
+        return LoginTraceActivities(form_id, form_name, action, created_on)
+
+    def to_structure(self):
+        return {
+            "form_id": self.form_id,
+            "form_name": self.form_name,
+            "action": self.action,
+            "created_on": self.created_on
+        }
+
+#
+# View Profile
+#
+
+class UserProfile(object):
+    def __init__(
+        self, user_id, user_name, emp_code, emp_name, short_name, email_id,
+        con_no, mob_no, u_g_name, address
+    ):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.emp_code = emp_code
+        self.emp_name = emp_name
+        self.short_name = short_name
+        self.email_id = email_id
+        self.con_no = con_no
+        self.mob_no = mob_no
+        self.u_g_name = u_g_name
+        self.address = address
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "user_name", "emp_code," "emp_name", "short_name",
+            "email_id", "con_no", "mob_no", "u_g_name", "address"
+        ])
+        user_id = data.get("user_id")
+        user_name = data.get("user_name")
+        emp_code = data.get("emp_code")
+        emp_name = data.get("emp_name")
+        short_name = data.get("short_name")
+        email_id = data.get("email_id")
+        con_no = data.get("con_no")
+        mob_no = data.get("mob_no")
+        u_g_name = data.get("u_g_name")
+        address = data.get("address")
+        return UserProfile(
+            user_id, user_name, emp_code, emp_name, short_name, email_id, con_no,
+            mob_no, u_g_name, address
+        )
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "emp_code": self.emp_code,
+            "emp_name": self.emp_name,
+            "short_name": self.short_name,
+            "email_id": self.email_id,
+            "con_no": self.con_no,
+            "mob_no": self.mob_no,
+            "u_g_name": self.u_g_name,
+            "address": self.address
+        }
 
 #
 # RequestFormat
