@@ -437,7 +437,7 @@ CREATE TABLE `tbl_compliance_activity_log` (
   `unit_id` int(11) DEFAULT NULL,
   `compliance_id` int(11) DEFAULT NULL,
   `compliance_history_id` int(11) DEFAULT NULL,
-  `activity_date` date DEFAULT NULL,
+  `activity_by` int(11) DEFAULT NULL,
   `activity_on` timestamp NULL DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`compliance_activity_id`)
