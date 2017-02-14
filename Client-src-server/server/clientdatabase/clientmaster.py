@@ -55,7 +55,12 @@ __all__ = [
     "get_service_providers_list",
     "get_service_providers_user_list",
     "get_service_provider_status",
-    "get_service_provider_details_report_data"
+    "get_service_provider_details_report_data",
+    "get_audit_users_list",
+    "get_audit_forms_list",
+    "get_login_users_list",
+    "process_login_trace_report",
+    "get_user_info"
 ]
 
 ############################################################################
@@ -1497,3 +1502,155 @@ def get_service_provider_details_report_data(db, request):
                     user_status, user_status_date, row_1["unit_cnt"]
                 ))
     return sp_details
+
+###############################################################################################
+# Objective: To get the list of users under legal entity
+# Parameter: request object
+# Result: list of users
+###############################################################################################
+def get_audit_users_list(db, legal_entity_id):
+    query = "select distinct(t2.user_id), t2.employee_code,t2.employee_name, " + \
+        "t2.user_category_id, t2.user_group_id from tbl_user_domains as t1 inner join tbl_users as t2 " + \
+        "on t2.user_id = t1.user_id or t2.user_category_id=1 where t1.legal_entity_id=%s " + \
+        "order by user_name asc;"
+    result = db.select_all(query, [legal_entity_id])
+    audit_users_list = []
+    for row in result:
+        u_g_id = row["user_group_id"]
+        if row["employee_code"] is None:
+            user_name = row["employee_name"]
+        else:
+            user_name = row["employee_code"]+' - '+row["employee_name"]
+        audit_users_list.append(clientmasters.AuditTrailUsers(
+            row["user_id"], user_name, row["user_category_id"], u_g_id
+        ))
+    return audit_users_list
+
+###############################################################################################
+# Objective: To get the list of forms under legal entity
+# Parameter: request object
+# Result: list of forms
+###############################################################################################
+def get_audit_forms_list(db):
+    query = "select t1.user_group_id as u_g_id, t1.form_id, t2.form_name from tbl_user_group_forms " + \
+        "as t1 inner join tbl_forms as t2 on t2.form_id = t1.form_id;"
+    result = db.select_all(query, None)
+    audit_forms_list = []
+    for row in result:
+        audit_forms_list.append(clientmasters.AuditTrailForms(
+            row["u_g_id"], row["form_id"], row["form_name"]
+        ))
+    return audit_forms_list
+
+###############################################################################################
+# Objective: To get the list of users
+# Parameter: request object
+# Result: list of users
+###############################################################################################
+def get_login_users_list(db):
+    query = "select user_id, employee_code,employee_name, " + \
+        "user_category_id, user_group_id from tbl_users order by user_name asc;"
+    result = db.select_all(query, None)
+    login_users_list = []
+    for row in result:
+        u_g_id = row["user_group_id"]
+        if row["employee_code"] is None:
+            user_name = row["employee_name"]
+        else:
+            user_name = row["employee_code"]+' - '+row["employee_name"]
+        login_users_list.append(clientmasters.AuditTrailUsers(
+            row["user_id"], user_name, row["user_category_id"], u_g_id
+        ))
+    return login_users_list
+
+
+###############################################################################################
+# Objective: To get the list of activities
+# Parameter: request object
+# Result: list of activities
+###############################################################################################
+def process_login_trace_report(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    user_id = request.user_id
+    due_from = request.due_from_date
+    due_to = request.due_to_date
+
+    select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
+        "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+        "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+    where_clause = "t1.form_id = 0 "
+
+    if int(user_id) > 0:
+        where_clause = where_clause + "and t1.user_id = %s "
+        condition_val.append(user_id)
+    if due_from is not None and due_to is not None:
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t1.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t1.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t1.created_on < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result = db.select_all(query, condition_val)
+    activity_list = []
+    for row in result:
+        if row["action"].find("Log In") >= 0:
+            activity_list.append(clientmasters.LoginTraceActivities(
+                row["form_id"], "Login",
+                row["action"], datetime_to_string_time(row["created_on"])
+            ))
+        elif row["action"].find("Log Out") >= 0:
+            activity_list.append(clientmasters.LoginTraceActivities(
+                row["form_id"], "Logout",
+                row["action"], datetime_to_string_time(row["created_on"])
+            ))
+    return activity_list
+
+
+###############################################################################################
+# Objective: To get the user details under client
+# Parameter: request object
+# Result: user information
+###############################################################################################
+def get_user_info(db, session_user, client_id):
+    user_id = session_user
+    query = "select t1.employee_name, (select short_name from tbl_client_groups where client_id = %s) as " + \
+        "short_name, t1.email_id, t1.contact_no, t1.mobile_no, t1.employee_code, (select username from " + \
+        "tbl_user_login_details where user_id = t1.user_id) as user_name, (select user_group_name from " + \
+        "tbl_user_groups where user_category_id = t1.user_category_id and user_group_id = t1.user_group_id) " + \
+        "as u_g_name, t1.address from tbl_users as t1 where t1.user_id = %s"
+    result = db.select_all(query, [client_id, user_id])
+    user_profile = []
+    for row in result:
+        user_name = row["user_name"]
+        emp_code = row["employee_code"]
+        emp_name = row["employee_name"]
+        short_name = row["short_name"]
+        email_id = row["email_id"]
+        con_no = row["contact_no"]
+        mob_no = row["mobile_no"]
+        u_g_name = row["user_group_name"]
+        address = row["address"]
+        user_profile.append(clientmasters.UserProfile(
+            user_id, user_name, emp_code, emp_name, short_name, email_id,
+            con_no, mob_no, u_g_name, address
+        ))
+    return user_profile
