@@ -2183,7 +2183,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function GetStatutoryNotificationsListReportData(
+    function getStatutoryNotificationsListReportData(
         country_id, legal_entity_id, domain_id, statutory_mapping, from_date,
         to_date, csv, from_count, page_count, callback
     ){
@@ -2227,6 +2227,91 @@ function initClientMirror() {
                 's_p_status': s_p_status,
                 'from_count': from_count,
                 'page_count': page_count
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Audit Trail - updated*/
+    function getAuditTrailReportFilters(le_id, callback) {
+        var request = [
+            'GetAuditTrailReportFilters',
+            {
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getAuditTrailReportData(
+        le_id, user_id, form_id, from_date, to_date, csv, from_count, page_count, callback
+    ) {
+        var request = [
+            'GetAuditTrailReportData',
+            {
+                'legal_entity_id' : le_id,
+                'user_id' : user_id,
+                'form_id_optional' : form_id,
+                'due_from_date' : from_date,
+                'due_to_date' : to_date,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* Login Trace - updated*/
+    function getLoginTraceReportFilters(callback) {
+        var request = [
+            'GetLogintraceReportFilters',
+            {
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getLoginTraceReportData(user_id, from_date, to_date, csv, from_count, page_count, callback) {
+        var request = [
+            'GetLoginTraceReportData',
+            {
+                'user_id' : user_id,
+                'due_from_date' : from_date,
+                'due_to_date' : to_date,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    /* View Profile */
+    function getUserProfile(callback) {
+        var request = [
+            'GetUserProfile',
+            {
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function updateUserProfile(user_id, emailId, c_no, m_no, address, callback) {
+        var request = [
+            'UpdateUserProfile',
+            {
+                'user_id': user_id,
+                'email_id': emailId,
+                'con_no': c_no,
+                'mob_no': m_no,
+                'address': address
             }
         ];
         callerName = 'client_masters';
@@ -2376,9 +2461,15 @@ function initClientMirror() {
         getUnitListReportFilters: getUnitListReportFilters,
         getUnitListReport: getUnitListReport,
         getStatutoryNotificationsListReportFilters: getStatutoryNotificationsListReportFilters,
-        GetStatutoryNotificationsListReportData: GetStatutoryNotificationsListReportData,
-        GetServiceProviderDetailsReportFilters: GetServiceProviderDetailsReportFilters,
-        GetServiceProviderDetailsReport: GetServiceProviderDetailsReport
+        getStatutoryNotificationsListReportData: getStatutoryNotificationsListReportData,
+        getServiceProviderDetailsReportFilters: getServiceProviderDetailsReportFilters,
+        getServiceProviderDetailsReport: getServiceProviderDetailsReport,
+        getAuditTrailReportFilters: getAuditTrailReportFilters,
+        getAuditTrailReportData: getAuditTrailReportData,
+        getLoginTraceReportFilters: getLoginTraceReportFilters,
+        getLoginTraceReportData: getLoginTraceReportData,
+        getUserProfile: getUserProfile,
+        updateUserProfile: updateUserProfile
     };
 }
 var client_mirror = initClientMirror();
