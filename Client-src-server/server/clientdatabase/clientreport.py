@@ -85,7 +85,8 @@ __all__ = [
     "get_domains_organization_for_le",
     "get_units_status",
     "process_unit_list_report",
-    "process_statutory_notification_list_report"
+    "process_statutory_notification_list_report",
+    "process_audit_trail_report"
 ]
 
 
@@ -4134,3 +4135,63 @@ def process_statutory_notification_list_report(db, request):
             statutory_mapping=stat_map
         ))
     return statutory_notification
+
+###############################################################################################
+# Objective: To get the list of activities
+# Parameter: request object
+# Result: list of activities
+###############################################################################################
+def process_audit_trail_report(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    legal_entity_id = request.legal_entity_id
+    user_id = request.user_id
+    form_id = request.form_id_optional
+    due_from = request.due_from_date
+    due_to = request.due_to_date
+
+    select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
+        "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+        "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+    where_clause = "t1.form_id <> 0 and t1.legal_entity_id = %s "
+    condition_val.append(legal_entity_id)
+
+    if int(user_id) > 0:
+        where_clause = where_clause + "and t1.user_id = %s "
+        condition_val.append(user_id)
+    if int(form_id) > 0:
+        where_clause = where_clause + "and t1.form_id = %s "
+        condition_val.append(form_id)
+    if due_from is not None and due_to is not None:
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t1.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t1.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t1.created_on < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result = db.select_all(query, condition_val)
+    activity_list = []
+    for row in result:
+        activity_list.append(clientreport.AuditTrailActivities(
+            row["user_id"], row["user_name"], row["form_id"],
+            row["action"], datetime_to_string_time(row["created_on"])
+        ))
+    return activity_list
