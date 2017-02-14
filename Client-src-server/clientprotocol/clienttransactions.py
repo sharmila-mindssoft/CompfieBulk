@@ -308,27 +308,29 @@ class UpdateStatutoryCompliance(object):
 class UpdateStatutorySettings(Request):
     def __init__(
         self, password, statutories,
-        legal_entity_id, s_s, domain_id
+        legal_entity_id, s_s, domain_id, unit_ids
     ):
         self.password = password
         self.statutories = statutories
         self.legal_entity_id = legal_entity_id
         self.s_s = s_s
         self.domain_id = domain_id
+        self.unit_ids = unit_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "password", "update_statutories", "le_id", "s_s", "d_id"
+            "password", "update_statutories", "le_id", "s_s", "d_id", "u_ids"
         ])
         password = data.get("password")
         statutories = data.get("update_statutories")
         legal_entity_id = data.get("le_id")
         s_s = data.get("s_s")
         domain_id = data.get("d_id")
+        unit_ids = data.get("u_ids")
         return UpdateStatutorySettings(
             password, statutories, legal_entity_id, s_s,
-            domain_id
+            domain_id, unit_ids
         )
 
     def to_inner_structure(self):
@@ -337,7 +339,8 @@ class UpdateStatutorySettings(Request):
             "update_statutories": self.statutories,
             "le_id": self.legal_entity_id,
             "s_s": self.s_s,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "u_ids": self.unit_ids
         }
 
 

@@ -407,6 +407,7 @@ def update_statutory_settings(db, data, session_user):
     le_id = data.legal_entity_id
     statutories = data.statutories
     submit_status = data.s_s
+    unit_ids = data.unit_ids
     updated_on = get_date_time()
     value_list = []
     for s in statutories:
@@ -438,7 +439,24 @@ def update_statutory_settings(db, data, session_user):
 
         update_new_statutory_settings(db, unit_id, domain_id, session_user)
 
-    execute_bulk_insert(db, value_list, submit_status)
+    if len(statutories) > 0 :
+        execute_bulk_insert(db, value_list, submit_status)
+
+    if submit_status == 2 :
+        q = "update tbl_client_compliances as A " + \
+            "inner join " + \
+            " (select client_compliance_id, IFNULL(compliance_opted_status, compliance_applicable_status) as client_opted, " + \
+            " IFNULL(statutory_opted_status, statutory_applicable_status) as statu_opted, " + \
+            " unit_id, domain_id from tbl_client_compliances) as B " + \
+            " on A.client_compliance_id = B.client_compliance_id " + \
+            " set A.statutory_opted_status = B.statu_opted, " + \
+            " A.compliance_opted_status = B.client_opted, A.is_saved = 0, A.is_submitted = 1, " + \
+            " A.submitted_by = %s , A.submitted_on = %s " + \
+            " where A.unit_id = %s and A.domain_id = %s "
+
+        print q
+        for u in unit_ids :
+            db.execute(q, [session_user, updated_on, u, domain_id])
 
     SaveOptedStatus(data)
 
@@ -992,14 +1010,14 @@ def save_assigned_compliance(db, request, session_user):
     )
     notify_assign_compliance.start()
 
-    # bg_task_start = threading.Thread(
-    #     target=self.start_new_task,
-    #     args=[
-    #         current_date.date(), country_id
-    #     ]
-    # )
-    # # print "bg_task_start begin"
-    # bg_task_start.start()
+    bg_task_start = threading.Thread(
+        target=self.start_new_task,
+        args=[
+            current_date.date(), country_id
+        ]
+    )
+    # print "bg_task_start begin"
+    bg_task_start.start()
     # self.start_new_task(current_date.date(), country_id)
 
     return clienttransactions.SaveAssignedComplianceSuccess()
