@@ -2219,7 +2219,7 @@ function initClientMirror() {
     function getServiceProviderDetailsReport(
         sp_id, user_id, s_p_status, callback
     ){
-        var request = [GetServiceProviderDetailsReport
+        var request = [
             'GetServiceProviderDetailsReport',
             {
                 'sp_id': sp_id,
@@ -2303,7 +2303,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function updateUserProfile(user_id, emailId, c_no, m_no, address, callback) {
+    function updateUserProfile(user_id, emailId, c_no, m_no, address, employee_code, employee_name, callback) {
         var request = [
             'UpdateUserProfile',
             {
@@ -2311,7 +2311,9 @@ function initClientMirror() {
                 'email_id': emailId,
                 'con_no': c_no,
                 'mob_no': m_no,
-                'address': address
+                'address': address,
+                'emp_code': employee_code,
+                'emp_name': employee_name
             }
         ];
         callerName = 'client_masters';
