@@ -131,6 +131,11 @@ def process_client_master_requests(request, db, session_user, client_id):
             db, request, session_user, client_id
         )
 
+    elif type(request) is clientmasters.UpdateUserProfile:
+        result = update_user_profile(
+            db, request, session_user, client_id
+        )
+
     return result
 
 
@@ -672,3 +677,13 @@ def get_login_trace_report_data(db, request, session_user, client_id):
 def get_user_profile(db, request, session_user, client_id):
     result = get_user_info(db, session_user, client_id)
     return clientmasters.GetUserProfileSuccess(user_profile=result)
+
+###############################################################################################
+# Objective: To update user details
+# Parameter: request object and the client id
+# Result: updates user details
+###############################################################################################
+def update_user_profile(db, request, session_user, client_id):
+    result = update_profile(db, session_user, request)
+    if result is True:
+        return clientmasters.UpdateUserProfileSuccess()
