@@ -60,7 +60,8 @@ __all__ = [
     "get_audit_forms_list",
     "get_login_users_list",
     "process_login_trace_report",
-    "get_user_info"
+    "get_user_info",
+    "update_profile"
 ]
 
 ############################################################################
@@ -1647,10 +1648,42 @@ def get_user_info(db, session_user, client_id):
         email_id = row["email_id"]
         con_no = row["contact_no"]
         mob_no = row["mobile_no"]
-        u_g_name = row["user_group_name"]
+        u_g_name = row["u_g_name"]
         address = row["address"]
         user_profile.append(clientmasters.UserProfile(
             user_id, user_name, emp_code, emp_name, short_name, email_id,
             con_no, mob_no, u_g_name, address
         ))
     return user_profile
+
+###############################################################################################
+# Objective: To update user details
+# Parameter: request object and the client id
+# Result: updates user details
+###############################################################################################
+def update_profile(db, session_user, request):
+    user_id = request.user_id
+    email_id = request.email_id
+    con_no = request.con_no
+    mob_no = request.mob_no
+    address = request.address
+    current_time_stamp = get_date_time()
+    columns = [
+        "email_id", "contact_no", "mobile_no", "address", "updated_on", "updated_by"
+    ]
+    values = [
+        email_id, con_no, mob_no, address, current_time_stamp, session_user
+    ]
+    condition = "user_id= %s "
+
+    values.append(user_id)
+    result1 = db.update(tblUsers, columns, values, condition)
+    if result1 is False:
+        raise client_process_error("E011")
+
+    action = "Updated user \"%s - %s\"" % (
+        request.emp_code, request.emp_name
+    )
+    db.save_activity(session_user, 4, action)
+
+    return True
