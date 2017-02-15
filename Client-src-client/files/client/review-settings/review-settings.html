@@ -192,7 +192,7 @@
     <div class="panel-collapse coll-title collapse in" role="tabpanel">
       <div class="panel-body no-padding">
         <div class="dataTable_wrapper top-lightborder">
-          <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+          <table  class="table table-striped dt-responsive nowrap no-bgheader no-border table-review-settings" cellspacing="0" width="100%">
             <thead>
               <tr>
                 <th width="1%">
@@ -237,26 +237,23 @@
           <input type="hidden" class="old-repeat-type-id" value="">
           <input type="hidden" class="old-due-date" value="">
           <input type="hidden" class="old-trigger" value="">
+          <input type="hidden" class="old-statu" value="">
         </td>
         <td class="statutory-provision"> </td>
         <td class="compliance-task"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i><span></span></td>
         <td class="repeats-by"></td>
-        <td><div class="col-sm-5 no-padding"><input class="form-control input-sm default-display-none repeat-every" value="2" type="text"></div>
-          <div class="col-sm-7 no-padding   review default-display-none">
-          <select class="form-control repeat-every-type input-sm">
+        <td class="repeat-every-div">
+          <div class="col-sm-5 no-padding"><input class="form-control input-sm default-display-none repeat-every" value="2" type="text"></div>
+          <div class="col-sm-7 no-padding review default-display-none">
+            <select class="form-control repeat-every-type input-sm p-l-5">
               <option value="1" selected="selected">Day(s)</option>
               <option value="2">Month(s)</option>
               <option value="3">Year(s)</option>
-          </select></div>
-          <!-- <div class="col-sm-7 no-padding flexi_review default-display-none" style="display:none;">
-              <select class="form-control input-sm">
-              <option>Day(s)</option>
-              <option selected="selected">Month(s)</option>
-              <option>Year(s)</option>
-          </select></div> -->
+            </select>
+          </div>     
         </td>        
-        <td><input class="form-control input-sm due-date default-display-none" readonly="readonly" value="" type="text"></td>
-        <td><div class="col-sm-6 no-padding-left"><input class="form-control input-sm trigger default-display-none" value="" type="text"></div></td>
+        <td class="due-date-div"></td>
+        <td class="trigger-div"></td>
         <td class="text-center"><a data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" class="applicable-count"></a></td>
       </tr>
       <tr class="secondary-act">
@@ -266,6 +263,13 @@
       </tr>
     </table>
   </div>
+  <div class="due-date-templates">
+    <div class="col-sm-12 no-padding-left"><input class="form-control input-sm due-date" readonly="readonly" value="" type="text"></div>
+  </div>
+  <div class="trigger-templates">
+    <div class="col-sm-8 no-padding-left"><input class="form-control input-sm trigger" maxlength="3" value="" type="text"></div>
+  </div>
+
 </div>
 <script type="text/javascript" src="/script/review-settings/review-settings.js"></script>
 <script type="text/javascript">

@@ -431,16 +431,31 @@ loadCompliances = function(){
                     $(".due-date", clone2).show();
                     $(".trigger", clone2).show();
                     $(".repeat-every", clone2).val(value.r_every);
-                    $('.repeat-every-type option[value='+sdates[0].repeats_type_id+']', clone2).attr('selected','selected');
-                    $(".due-date", clone2).val(value.due_date);
-                    $(".trigger", clone2).val(sdates[0].trigger_before_days);
+                    $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).attr('selected','selected');
+                    var sdates= value.s_dates;
+                    for(var i = 0; i<sdates.length; i++ ){
+                        // $(".due-date", clone2).val(value.due_date);
+                        // $(".trigger", clone2).val(sdates[0].trigger_before_days);    
+                        var ddRow = $('#templates .due-date-templates .col-sm-12');
+                        var ddclone = ddRow.clone();
+                        
+                        $(".due-date-div").append(ddclone);
+
+                        var trigRow = $('#templates .trigger-templates .col-sm-8');
+                        var trigclone = trigRow.clone();
+                        $('.trigger', trigclone).on('input', function(e) {
+                            this.value = isNumbers($(this));
+                        });
+                        $(".trigger-div").append(trigclone);
+                    }  
                     $('.due-date', clone2).datepicker({
-                      changeMonth: true,
-                      changeYear: true,
-                      numberOfMonths: 1,
-                      dateFormat: 'dd-M-yy',
-                      monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
-                    });
+                        changeMonth: true,
+                        changeYear: true,
+                        numberOfMonths: 1,
+                        dateFormat: 'dd-M-yy',
+                        monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
+                    });                  
+                   
                 }
                 else{
                     $(".repeat-every", clone2).hide();
@@ -494,19 +509,20 @@ SubmitButton.on("click", function(){
         return false;
     }else{
         var selected_compliances_list = [];
+        var c = 1;
         $.each($(".comp-checkbox:checked").closest("td").siblings("td"), function () {
+
         // $(".comp-checkbox:checked").each(function(e){
             var data = $(this).parents('tr:eq(0)');
             var compid = $(data).find(".compliance-id").val();
             var comtask = $(data).find(".compliance-task").text();
             var repeatevery = $(data).find(".repeat-every").val();
             var repeateverytype = $(data).find(".repeat-every-type").val();
-            var duedate = $(data).find(".due-date").val();
-            var trigger = $(data).find(".trigger").val();
             var old_repeat_by = $(data).find(".old_repeat_by").val();
             var old_repeat_type_id = $(data).find(".old_repeat_type_id").val();
             var old_due_date = $(data).find(".old_due_date").val();
             var old_trigger_before_days = $(data).find(".old_trigger_before_days").val();
+            var old_statu = $(data).find(".old-statu").val();
 
 
             console.log(repeatevery+"--"+repeateverytype+"--"+ duedate+"--"+ trigger+"--"+compid);
@@ -516,24 +532,72 @@ SubmitButton.on("click", function(){
                 displayMessage("Repeat Every Required for "+comtask);
                 return false;
             }
-            else if(duedate == ""){
-                console.log('displayMessage("Due Date Required for "+comtask);');
-                displayMessage("Due Date Required for "+comtask);
-                return false;
-            }
-            else if(trigger == ""){
-                console.log('displayMessage("Trigger Before Days Required for "+comtask);');
-                displayMessage("Trigger Before Days Required for "+comtask);
-                return false;
-            }            
-            else{                
+            else{ 
+                var eachloop = $(data).find(".due-date-div");
+                var duedate_input = $(data).find(".due-date-div .col-sm-12:nth-child("+c+") input");
+                var trigger_input = $(data).find(".trigger-div .col-sm-8:nth-child("+c+") input");
+                var duedate = duedate_input.val();
+                var trigger = trigger_input.val();
+                console.log(duedate+">>>>"+trigger);
+
+                if(duedate == ""){
+                    console.log('displayMessage("Due Date Required for "+comtask);');
+                    displayMessage("Due Date Required for "+comtask);
+                    return false;
+                }
+                if(trigger == ""){
+                    console.log('displayMessage("Trigger Before Days Required for "+comtask);');
+                    displayMessage("Trigger Before Days Required for "+comtask);
+                    return false;
+                }            
+                var months = {Jan:1, Feb:2, Mar:3, Apr:4, May:5, Jun:6, Jul:7, Aug:8, Sep:9, Oct:10, Nov:11, Dec:12 };
+                var statu_dates =[];
+                var old_statu_dates = ''; 
+                $.each(eachloop, function(k, val){
+                    var statu = {};                                      
+                    statu['statutory_date'] = null;
+                    statu['statutory_month'] = null;
+                    statu['trigger_before_days'] = null;
+                    statu['repeats_by'] = null;
+                    if(duedate != ''){
+                        var split_date = duedate.split("-");
+                        statu['statutory_date'] = split_date[0];
+                        statu['statutory_month'] = months.old_split_date[1];
+                    }
+                    if(trigger != ""){
+                        statu['trigger_before_days'] = trigger;   
+                    }
+                    statu_dates.push(statu);
+                });
+
+                
+
+
+                // var old_statu = {};       
+                // var old_statu_dates =[];
+                // old_statu['statutory_date'] = null;
+                // old_statu['statutory_month'] = null;
+                // old_statu['trigger_before_days'] = old_trigger_before_days;
+                // old_statu['repeats_by'] = null;
+                // if(old_due_date != ''){
+                //     var old_split_date = old_due_date.split("-");
+                //     console.log("months.old_split_date[1]---"+months.old_split_date[1]);
+                //     old_statu['statutory_date'] = old_split_date[0];
+                //     old_statu['statutory_month'] = months.old_split_date[1];
+                // }
+                // if(trigger != ''){
+                //     old_statu['trigger_before_days'] = old_trigger_before_days;   
+                // }
+                old_statu_dates = old_statu;
+
                 selected_compliances_list.push(
                     client_mirror.saveReviewSettingsComplianceDict(
                         parseInt(le_id), parseInt(d_id), parseInt(temp_ftype), ACTIVE_UNITS, parseInt(compid), parseInt(repeatevery), 
-                        parseInt(repeateverytype), duedate, parseInt(trigger), parseInt(old_repeat_by),
-                        parseInt(old_repeat_type_id), old_due_date, parseInt(old_trigger_before_days)
+                        parseInt(repeateverytype), duedate, trigger, statu_dates, parseInt(old_repeat_by),
+                        parseInt(old_repeat_type_id), old_due_date, old_statu_dates
                     )
                 );
+                c++;
             }
         });
         client_mirror.saveReviewSettingsCompliance(selected_compliances_list, function(error, response) {
@@ -549,6 +613,10 @@ SubmitButton.on("click", function(){
         });
     }
 });
+
+checkDateEndOfTheMonth = function(){
+
+}
 
 r_s_page = new ReviewSettingsPage();
 

@@ -824,3 +824,6 @@ button.btn-success {
 .applicable-count {
   cursor: pointer;
 }
+.table-review-settings td{
+  vertical-align: top !important;
+}

@@ -424,7 +424,7 @@ def process_reassign_compliance(db, request, session_user):
 # legal entity
 ########################################################
 def process_review_settings_filters(db, request, session_user):
-    frequency_type = get_review_settings_frequency(db, session_user)
+    frequency_type = get_review_settings_frequency(db)
     domains = get_domains_for_legalentity(db, request, session_user)
     return clienttransactions.GetReviewSettingsFiltersSuccess(
         compliance_frequency=frequency_type,
@@ -458,7 +458,8 @@ def process_review_settings_compliance_filters(db, request, session_user):
 # To save the  review settings compliance list
 #####################################################################
 def process_save_review_settings_compliance(db, request, session_user):
-    save_review_settings_compliance(db, request, session_user)
+    compliances = request.compliances
+    save_review_settings_compliance(db, compliances, session_user)
     return clienttransactions.SaveReviewSettingsComplianceSuccess()
 
 

@@ -54,7 +54,7 @@ __all__ = [
     "get_domains_for_legalentity",
     "get_review_settings_timeline",
     "get_review_settings_compliance",
-
+    "save_review_settings_compliance",
     "get_user_based_legal_entity", "get_user_based_division",
     "get_user_based_category",
     "update_new_statutory_settings_lock",
@@ -2562,7 +2562,7 @@ def get_review_settings_compliance(db, request, session_user):
             " ifnull(t03.repeats_every, t02.repeats_every) as repeats_every, " + \
             " ifnull(t03.repeats_type_id, t02.repeats_type_id) as repeats_type_id, " + \
             " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates, " + \
-            " group_concat(t01.unit_id) as unit_ids, t02.statutory_mapping from tbl_client_compliances as t01 " + \
+            " group_concat(DISTINCT t01.unit_id) as unit_ids, t02.statutory_mapping from tbl_client_compliances as t01 " + \
             " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id " + \
             " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s " + \
             " group by t01.unit_id"
@@ -2625,7 +2625,66 @@ def get_review_settings_timeline(db, request, session_user):
     return results
 
 
-def save_review_settings_compliance(db, request, session_user):
-    result = db.insert(
-        tblComplianceDates, columns, values
-    )
+def save_review_settings_compliance(db, compliances, session_user):
+    for c in compliances:
+        units = c["unit_id"]
+        for u in units:
+            for s_d in c.statu_dates:
+                statutory_dates.append(s_d.to_structure())
+            statutory_dates = json.dumps(statutory_dates)
+
+            for s_d1 in c.old_statu_dates:
+                old_statutory_dates.append(s_d1.to_structure())
+            old_statutory_dates = json.dumps(old_statutory_dates)
+            query = "select count(*) as count from tbl_compliance_dates " + \
+                    "where compliance_id = %s and domain_id = %s and unit_id = %s"
+            param = [c['compliance_id'], c['domain_id'], u]
+            rows = db.select_all(query, param)
+            print rows
+            if rows[0]['count'] > 0:
+                columns = [
+                    "frequency_id", "old_statutory_date", "old_repeats_type_id", "old_repeats_every",
+                    "repeats_type_id", "repeats_every", "statutory_date", "trigger_before_days", "due_date"
+                ]
+                values = [
+                    c["f_id"], old_statutory_dates, c["old_repeat_type_id"], c["old_repeat_by"],
+                    c["repeat_by"], c["repeat_type_id"], statutory_dates, c["trigger_before_days"],
+                    string_to_datetime(c["due_date"]).date(), c["complaince_id"], c["domain_id"],  u
+                ]
+                condition = "compliance_id = %s and  domain_id = %s and unit_id = %s "
+                result = db.update(
+                    tblComplianceDates, columns, values, condition
+                )
+                if result is False:
+                    raise client_process_error("E031")
+                status = "updated"
+            else:
+                columns = [
+                    "legal_entity_id", "compliance_id", "frequency_id", "unit_id", "domain_id",
+                    "old_statutory_date", "old_repeats_type_id", "old_repeats_every",
+                    "repeats_type_id", "repeats_every", "statutory_date", "trigger_before_days", "due_date"
+                ]
+                values = [
+                    c["legal_entity_id"], c["complaince_id"], c["f_id"], u, c["domain_id"],
+                    old_statutory_dates, c["old_repeat_type_id"], c["old_repeat_by"],
+                    c["repeat_by"], c["repeat_type_id"], statutory_dates, c["trigger_before_days"],
+                    string_to_datetime(c["due_date"]).date()
+                ]
+                result = db.insert(
+                    tblComplianceDates, columns, values
+                )
+                if result is False:
+                    raise client_process_error("E031")
+                status = "inserted"
+
+            unit_name = db.get_data(tblUnits, ['unit_name'], "unit_id = %s", [unit_id])
+            domain_name = db.get_data(tblDomains, ['domain_name'], "domain_id = %s", [c["domain_id"]])
+            frequency_name = db.get_data(tbl_compliance_frequency, ['frequency'], "frequency_id = %s", [c["f_id"]])
+            compliance_name = db.get_data(tblCompliances, ['compliance_name'], "compliance_id = %s", [c["complaince_id"]])
+
+            action = "Repeats every has been %s for following " + \
+                     "compliance in  %s - %s - %s and %s " % (
+                        status, unit_name, domain_name, frequency_name, compliance_name
+                        )
+            db.save_activity(session_user, frmReviewSettings, action, c["legal_entity_id"], unit_id)
+            return result

@@ -2171,8 +2171,8 @@ function initClientMirror() {
     }
 
     function saveReviewSettingsComplianceDict(
-        compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days, 
-        old_repeat_by, old_repeat_type_id, old_due_date, old_trigger_before_days
+        compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days,
+        statu_dates, old_repeat_by, old_repeat_type_id, old_due_date, statu_dates
     ){
         return {
             'comp_id': compliance_id,
@@ -2184,10 +2184,11 @@ function initClientMirror() {
             'repeat_type_id': repeat_type_id,
             'due_date': due_date,
             'trigger_before_days': trigger_before_days,
+            'statu_dates': statu_dates,
             'old_repeat_by': old_repeat_by,
             'old_repeat_type_id': old_repeat_type_id,
             'old_due_date': old_due_date,
-            'old_trigger_before_days': old_trigger_before_days,            
+            'old_statu_dates': old_statu_dates,         
         };
     }
 
