@@ -379,4 +379,9 @@ api_params = {
     "audit_forms_list": make_vector_type_field(module="clientmasters", klass_name="AuditTrailForms"),
     "log_trace_activities": make_vector_type_field(module="clientmasters", klass_name="LoginTraceActivities"),
     "user_profile": make_vector_type_field(module="clientmasters", klass_name="UserProfile"),
+    "T_0_to_30_days_count": make_int_field(length=10000),
+    "T_31_to_60_days_count": make_int_field(length=10000),
+    "T_61_to_90_days_count": make_int_field(length=10000),
+    "Above_90_days_count": make_int_field(length=10000),
+    "not_complied_type": make_enum_type(module="clientcore", klass_name="NOT_COMPLIED_TYPE"),
 }

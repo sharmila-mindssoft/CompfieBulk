@@ -269,20 +269,22 @@ class GetEscalationsChart(Request):
         }
 
 class GetNotCompliedChart(Request):
-    def __init__(self, country_ids, domain_ids, filter_type, filter_ids):
+    def __init__(self, country_ids, domain_ids, filter_type, filter_ids, legal_entity_id):
         self.country_ids = country_ids
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
+        self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_id"])
         country_ids = data.get("c_ids")
         domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
         filter_ids = data.get("filter_ids")
-        return GetNotCompliedChart(country_ids, domain_ids, filter_type, filter_ids)
+        legal_entity_id = data.get("le_id")
+        return GetNotCompliedChart(country_ids, domain_ids, filter_type, filter_ids, legal_entity_id)
 
     def to_inner_structure(self):
         return {
@@ -290,6 +292,7 @@ class GetNotCompliedChart(Request):
             "d_ids": self.domain_ids,
             "filter_type": self.filter_type,
             "filter_ids": self.filter_ids,
+            "le_id": self.legal_entity_id
         }
 
 
@@ -629,42 +632,40 @@ class GetComplianceApplicabilityStatusDrillDown(Request):
 class GetNotCompliedDrillDown(Request):
     def __init__(
         self, domain_ids,  filter_type, filter_ids, not_complied_type,
-        record_count
+        record_count, legal_entity_id
     ):
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
         self.not_complied_type = not_complied_type
         self.record_count = record_count
+        self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "domain_ids", "filter_type", "filter_ids", "not_complied_type",
-            "record_count"
+            "d_ids", "filter_type", "filter_ids", "not_complied_type",
+            "record_count", "le_id"
         ])
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
-        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_ids = data.get("filter_ids")
-        filter_ids = parse_structure_VectorType_SignedIntegerType_8(filter_ids)
         not_complied_type = data.get("not_complied_type")
-        not_complied_type = parse_structure_EnumType_core_NOT_COMPLIED_TYPE(not_complied_type)
         record_count = data.get("record_count")
-        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        legal_entity_id = data.get("le_id")
         return GetNotCompliedDrillDown(
             domain_ids, filter_type, filter_ids, not_complied_type,
-            record_count
+            record_count, legal_entity_id
         )
 
     def to_inner_structure(self):
         return {
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_ids": to_structure_VectorType_SignedIntegerType_8(self.filter_ids),
-            "not_complied_type": to_structure_EnumType_core_NOT_COMPLIED_TYPE(self.not_complied_type),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
+            "d_ids": self.domain_ids,
+            "filter_type": self.filter_type,
+            "filter_ids": self.filter_ids,
+            "not_complied_type": self.not_complied_type,
+            "record_count": self.record_count,
+            "le_id": self.legal_entity_id
         }
 
 class GetTrendChartDrillDownData(Request):
@@ -878,21 +879,17 @@ class GetNotCompliedChartSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["T_0_to_30_days_count", "T_31_to_60_days_count", "T_61_to_90_days_count", "Above_90_days_count"])
         T_0_to_30_days_count = data.get("T_0_to_30_days_count")
-        T_0_to_30_days_count = parse_structure_UnsignedIntegerType_32(T_0_to_30_days_count)
         T_31_to_60_days_count = data.get("T_31_to_60_days_count")
-        T_31_to_60_days_count = parse_structure_UnsignedIntegerType_32(T_31_to_60_days_count)
         T_61_to_90_days_count = data.get("T_61_to_90_days_count")
-        T_61_to_90_days_count = parse_structure_UnsignedIntegerType_32(T_61_to_90_days_count)
         Above_90_days_count = data.get("Above_90_days_count")
-        Above_90_days_count = parse_structure_UnsignedIntegerType_32(Above_90_days_count)
         return GetNotCompliedChartSuccess(T_0_to_30_days_count, T_31_to_60_days_count, T_61_to_90_days_count, Above_90_days_count)
 
     def to_inner_structure(self):
         return {
-            "T_0_to_30_days_count": to_structure_SignedIntegerType_8(self.T_0_to_30_days_count),
-            "T_31_to_60_days_count": to_structure_SignedIntegerType_8(self.T_31_to_60_days_count),
-            "T_61_to_90_days_count": to_structure_SignedIntegerType_8(self.T_61_to_90_days_count),
-            "Above_90_days_count": to_structure_SignedIntegerType_8(self.Above_90_days_count),
+            "T_0_to_30_days_count": self.T_0_to_30_days_count,
+            "T_31_to_60_days_count": self.T_31_to_60_days_count,
+            "T_61_to_90_days_count": self.T_61_to_90_days_count,
+            "Above_90_days_count": self.Above_90_days_count,
         }
 
 class GetTrendChartSuccess(Response):
@@ -1187,12 +1184,11 @@ class GetNotCompliedDrillDownSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["drill_down_data"])
         drill_down_data = data.get("drill_down_data")
-        drill_down_data = parse_structure_VectorType_RecordType_dashboard_DrillDownData(drill_down_data)
         return GetNotCompliedDrillDownSuccess(drill_down_data)
 
     def to_inner_structure(self):
         return {
-            "drill_down_data": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.drill_down_data),
+            "drill_down_data": self.drill_down_data,
         }
 
 class GetTrendChartDrillDownDataSuccess(Response):

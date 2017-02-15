@@ -1556,7 +1556,7 @@ def get_escalation_drill_down_data(
 #
 # Not Complied chart
 #
-def get_not_complied_chart(db, request, session_user, client_id):
+def get_not_complied_chart(db, request, session_user):
     user_id = int(session_user)
     country_ids = request.country_ids
     if len(country_ids) == 1:
@@ -1575,20 +1575,20 @@ def get_not_complied_chart(db, request, session_user, client_id):
         pass
 
     elif filter_type == "BusinessGroup":
-        filter_type_ids = "AND T4.business_group_id IN %s"
-        where_qry_val.append(tuple(_filter_ids))
+        filter_type_ids = "AND find_in_set(T4.business_group_id, %s)"
+        where_qry_val.append(",".join([str(x) for x in _filter_ids]))
 
     elif filter_type == "LegalEntity":
-        filter_type_ids = "AND T4.legal_entity_id IN %s"
-        where_qry_val.append(tuple(_filter_ids))
+        filter_type_ids = "AND find_in_set(T4.legal_entity_id, %s)"
+        where_qry_val.append(",".join([str(x) for x in _filter_ids]))
 
     elif filter_type == "Division":
-        filter_type_ids = "AND T4.division_id IN %s"
-        where_qry_val.append(tuple(_filter_ids))
+        filter_type_ids = "AND find_in_set(T4.division_id, %s)"
+        where_qry_val.append(",".join([str(x) for x in _filter_ids]))
 
     elif filter_type == "Unit":
-        filter_type_ids = "AND T4.unit_id IN %s"
-        where_qry_val.append(tuple(_filter_ids))
+        filter_type_ids = "AND find_in_set(T4.unit_id, %s)"
+        where_qry_val.append(",".join([str(x) for x in _filter_ids]))
 
     query = "SELECT T1.compliance_history_id, T1.unit_id, " + \
         " T1.compliance_id, T1.start_date, T1.due_date, " + \
@@ -1597,35 +1597,32 @@ def get_not_complied_chart(db, request, session_user, client_id):
         " INNER JOIN tbl_client_compliances T2 " + \
         " ON T1.compliance_id = T2.compliance_id " + \
         " INNER JOIN tbl_client_statutories T3 " + \
-        " ON T2.client_statutory_id = T3.client_statutory_id " + \
-        " AND T1.unit_id = T3.unit_id " + \
+        " ON T2.unit_id = T3.unit_id AND T2.domain_id = T3.domain_id  " + \
         " INNER JOIN tbl_units T4 " + \
         " ON T1.unit_id = T4.unit_id " + \
-        " WHERE T3.country_id IN %s " + \
-        " AND T3.domain_id IN %s " + \
+        " WHERE find_in_set(T4.country_id, %s) " + \
+        " AND find_in_set(T3.domain_id, %s) " + \
         " AND T1.due_date < CURDATE() " + \
         " AND IFNULL(T1.approve_status, 0) != 1 "
     query += filter_type_ids
-    param = [tuple(country_ids), tuple(domain_ids)]
+    param = [
+        ",".join([str(x) for x in country_ids]),
+        ",".join([str(y) for y in domain_ids])
+    ]
 
-    if is_primary_admin(db, user_id) is True:
-        query += ""
-    else:
-        query += " AND (T1.completed_by LIKE %s " + \
-            " OR T1.concurred_by LIKE %s " + \
-            " OR T1.approved_by LIKE %s) "
-        where_qry_val.extend([user_id, user_id, user_id])
+    # if is_primary_admin(db, user_id) is True:
+    #     query += ""
+    # else:
+    #     query += " AND (T1.completed_by LIKE %s " + \
+    #         " OR T1.concurred_by LIKE %s " + \
+    #         " OR T1.approved_by LIKE %s) "
+    #     where_qry_val.extend([user_id, user_id, user_id])
 
     param.extend(where_qry_val)
 
     order = "ORDER BY T1.due_date "
     rows = db.select_all("%s %s" % (query, order), param)
-    columns = [
-        "compliance_history_id", "unit_id", "compliance_id",
-        "start_date", "due_date", "business_group_id",
-        "legal_entity_id", "division_id"
-    ]
-    not_complied = convert_to_dict(rows, columns)
+    not_complied = rows
     current_date = datetime.datetime.today()
     below_30 = 0
     below_60 = 0
@@ -1674,7 +1671,7 @@ def get_not_complied_chart(db, request, session_user, client_id):
 
 
 def get_not_complied_drill_down(
-    db, request, session_user, client_id, from_count, to_count
+    db, request, session_user, from_count, to_count
 ):
     chart_type = "not_complied"
     compliance_status = "Not Complied"

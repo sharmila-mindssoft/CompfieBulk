@@ -69,18 +69,14 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
 
     elif type(request) is dashboard.GetNotCompliedChart:
-        logger.logClientApi("GetNotCompliedChart", "process begin")
         result = process_not_complied_chart(
-            db, request, session_user, client_id
+            db, request, session_user
         )
-        logger.logClientApi("GetNotCompliedChart", "process end")
 
     elif type(request) is dashboard.GetNotCompliedDrillDown:
-        logger.logClientApi("GetNotCompliedDrillDown", "process begin")
         result = process_not_complied_drill_down(
-            db, request, session_user, client_id
+            db, request, session_user
         )
-        logger.logClientApi("GetNotCompliedDrillDown", "process end")
 
     elif type(request) is dashboard.GetTrendChart:
         logger.logClientApi("GetTrendChart", "process begin")
@@ -292,16 +288,16 @@ def process_escalation_chart_drilldown(db, request, session_user):
     )
 
 
-def process_not_complied_chart(db, request, session_user, client_id):
-    return get_not_complied_chart(db, request, session_user, client_id)
+def process_not_complied_chart(db, request, session_user):
+    return get_not_complied_chart(db, request, session_user)
 
 
-def process_not_complied_drill_down(db, request, session_user, client_id):
+def process_not_complied_drill_down(db, request, session_user):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     result_list = get_not_complied_drill_down(
         db,
-        request, session_user, client_id,
+        request, session_user,
         from_count, to_count
     )
     return dashboard.GetNotCompliedDrillDownSuccess(result_list.values())
