@@ -252,7 +252,7 @@ class GetEscalationsChart(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_id"])
-        country_ids = data.get("c_id")
+        country_ids = data.get("c_ids")
         domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
         filter_ids = data.get("filter_ids")
@@ -546,40 +546,39 @@ class GetComplianceStatusDrillDownData(Request):
         }
 
 class GetEscalationsDrillDownData(Request):
-    def __init__(self, domain_ids, filter_type, filter_ids, year, record_count):
+    def __init__(self, domain_ids, filter_type, filter_ids, year, record_count, legal_entity_id):
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
         self.year = year
         self.record_count = record_count
+        self.legal_entity_id = legal_entity_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "domain_ids", "filter_type", "filter_ids", "year",
-            "record_count"
+            "d_ids", "filter_type", "filter_ids", "chart_year",
+            "record_count", "le_id"
         ])
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
-        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_ids = data.get("filter_ids")
-        filter_ids = parse_structure_VectorType_SignedIntegerType_8(filter_ids)
-        year = data.get("year")
-        year = parse_structure_UnsignedIntegerType_32(year)
+        year = data.get("chart_year")
         record_count = data.get("record_count")
-        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        legal_entity_id = data.get("le_id")
         return GetEscalationsDrillDownData(
-            domain_ids, filter_type, filter_ids, year, record_count
+            domain_ids, filter_type, filter_ids, year, record_count,
+            legal_entity_id
         )
 
     def to_inner_structure(self):
         return {
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_ids": to_structure_VectorType_SignedIntegerType_8(self.filter_ids),
-            "year": to_structure_SignedIntegerType_8(self.year),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
+            "d_ids": self.domain_ids,
+            "filter_type": self.filter_type,
+            "filter_ids": self.filter_ids,
+            "chart_year": self.year,
+            "record_count": self.record_count,
+            "le_id": self.legal_entity_id
         }
 
 class GetComplianceApplicabilityStatusDrillDown(Request):
@@ -1155,15 +1154,13 @@ class GetEscalationsDrillDownDataSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["delayed", "not_complied"])
         delayed = data.get("delayed")
-        delayed = parse_structure_VectorType_RecordType_dashboard_DrillDownData(delayed)
         not_complied = data.get("not_complied")
-        not_complied = parse_structure_VectorType_RecordType_dashboard_DrillDownData(not_complied)
         return GetEscalationsDrillDownDataSuccess(delayed, not_complied)
 
     def to_inner_structure(self):
         return {
-            "delayed": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.delayed),
-            "not_complied": to_structure_VectorType_RecordType_dashboard_DrillDownData(self.not_complied),
+            "delayed": self.delayed,
+            "not_complied": self.not_complied
         }
 
 class GetComplianceApplicabilityStatusDrillDownSuccess(Response):
@@ -1376,15 +1373,15 @@ class EscalationData(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["year", "delayed_compliance_count", "not_complied_count"])
-        year = data.get("year")
+        data = parse_dictionary(data, ["chart_year", "delayed_compliance_count", "not_complied_count"])
+        year = data.get("chart_year")
         delayed_compliance_count = data.get("delayed_compliance_count")
         not_complied_count = data.get("not_complied_count")
         return EscalationData(year, delayed_compliance_count, not_complied_count)
 
     def to_structure(self):
         return {
-            "year": self.year,
+            "chart_year": self.year,
             "delayed_compliance_count": self.delayed_compliance_count,
             "not_complied_count": self.not_complied_count,
         }

@@ -91,6 +91,7 @@ api_params = {
     "bg_name": make_string_field(is_optional=True),
     "bg_id": make_int_field(is_optional=True),
     "cat_id": make_int_field(is_optional=True),
+    "cat_name": make_text_field(is_optional=True),
     "usr_id": make_int_field(),
     "email_id": make_string_field(validfun=allow_specialchar),
     "emp_name": make_string_field(is_optional=True),
@@ -320,7 +321,7 @@ api_params = {
     "filter_id": make_int_field(),
     "from_date": make_text_field(is_optional=True),
     "to_date": make_text_field(is_optional=True),
-    "chart_year": make_int_field(),
+    "chart_year": make_int_field(length=10000),
     "chart_data": make_vector_type_field(module="dashboard", klass_name="ChartDataMap"),
     "filter_type_id": make_int_field(),
     "c_data": make_vector_type_field(module="clientcore", klass_name="NumberOfCompliances"),
@@ -337,5 +338,8 @@ api_params = {
     "assigned_date": make_text_field(),
     "status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "ageing": make_text_field(),
-    "es_chart_data": make_vector_type_field(module="dashboard", klass_name="EscalationData")
+    "es_chart_data": make_vector_type_field(module="dashboard", klass_name="EscalationData"),
+    "years": make_vector_type_int(length=10000),
+    "delayed": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
+    "not_complied": make_vector_type_field(module="dashboard", klass_name="DrillDownData")
 }

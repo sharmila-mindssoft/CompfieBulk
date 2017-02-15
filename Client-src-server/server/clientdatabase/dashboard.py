@@ -1522,7 +1522,7 @@ def calculate_year_wise_count(
 
 
 def get_escalation_drill_down_data(
-    db, request, session_user, client_id, from_count, to_count
+    db, request, session_user, from_count, to_count
 ):
     year = request.year
     year_info = get_client_domain_configuration(db)[0]

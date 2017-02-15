@@ -64,11 +64,9 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         result = process_escalation_chart(db, request, session_user)
 
     elif type(request) is dashboard.GetEscalationsDrillDownData:
-        logger.logClientApi("GetEscalationsDrillDownData", "process begin")
         result = process_escalation_chart_drilldown(
-            db, request, session_user, client_id
+            db, request, session_user
         )
-        logger.logClientApi("GetEscalationsDrillDownData", "process end")
 
     elif type(request) is dashboard.GetNotCompliedChart:
         logger.logClientApi("GetNotCompliedChart", "process begin")
@@ -280,12 +278,12 @@ def process_escalation_chart(db, request, session_user):
     return get_escalation_chart(db, request, session_user)
 
 
-def process_escalation_chart_drilldown(db, request, session_user, client_id):
+def process_escalation_chart_drilldown(db, request, session_user):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     result_list = get_escalation_drill_down_data(
         db,
-        request, session_user, client_id,
+        request, session_user,
         from_count, to_count
     )
     return dashboard.GetEscalationsDrillDownDataSuccess(
