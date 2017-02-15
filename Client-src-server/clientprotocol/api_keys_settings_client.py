@@ -315,4 +315,7 @@ api_params = {
     "d_months": make_map_type_vector_type(module="dashboard", klass_name="DomainWiseYearConfiguration"),
     "le_did_infos": make_vector_type_field(module="dashboard", klass_name="ClientLegalEntityInfo"),
     "d_info": make_vector_type_field(module="clientcore", klass_name="DomainInfo"),
+    "filter_type": make_enum_type(module="clientcore", klass_name="FILTER_TYPE"),
+    "filter_ids": make_vector_type_int(is_optional=True),
+    ""
 }

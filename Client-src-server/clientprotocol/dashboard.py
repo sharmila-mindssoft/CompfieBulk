@@ -207,17 +207,14 @@ class GetComplianceStatusChart(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_ids", "domain_ids",
+            "c_ids", "d_ids",
             "filter_type", "filter_ids",
             "from_date", "to_date",
             "chart_year"
         ])
-        country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        country_ids = data.get("c_ids")
+        domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
-        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_ids = data.get("filter_ids")
         filter_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(filter_ids)
         from_date = data.get("from_date")

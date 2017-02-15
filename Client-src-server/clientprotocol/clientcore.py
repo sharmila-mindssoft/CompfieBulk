@@ -299,7 +299,7 @@ class FILTER_TYPE(object):
     def values():
         return [
             "Group", "BusinessGroup", "LegalEntity",
-            "Division", "Unit", "Consolidated"
+            "Division", "Category", "Unit", "Consolidated"
         ]
 
     def value(self):
@@ -417,34 +417,6 @@ class APPLICABILITY_STATUS(object):
 
     def to_structure(self):
         return parse_enum(self._value, APPLICABILITY_STATUS.values())
-
-#
-# FORM_TYPE
-#
-
-class FORM_TYPE(object):
-    # IT = "IT"
-    # Knowledge = "Knowledge"
-    # Techno = "Techno"
-    # Client = "Client"
-    # ServiceProvider = "ServiceProvider"
-
-    def __init__(self, value):
-        self._value = value
-
-    @staticmethod
-    def values():
-        return ["IT", "Knowledge", "Techno", "Client", "ServiceProvider"]
-
-    def value(self):
-        return self._value
-
-    @staticmethod
-    def parse_structure(data):
-        return parse_enum(data, FORM_TYPE.values())
-
-    def to_structure(self):
-        return parse_enum(self._value, FORM_TYPE.values())
 
 #
 # REPEATS_TYPE
@@ -1758,14 +1730,14 @@ class Category(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "category_id", "category_name", "division_id",
-                "legal_entity_id", "business_group_id",
+                "cat_id", "cat_name", "div_id",
+                "le_id", "bg_id",
             ])
-        category_id = data.get("category_id")
-        category_name = data.get("category_name")
-        division_id = data.get("division_id")
-        legal_entity_id = data.get("legal_entity_id")
-        business_group_id = data.get("business_group_id")
+        category_id = data.get("cat_id")
+        category_name = data.get("cat_name")
+        division_id = data.get("div_id")
+        legal_entity_id = data.get("le_id")
+        business_group_id = data.get("bg_id")
         return Category(
             category_id, category_name, division_id, legal_entity_id,
             business_group_id
@@ -1773,11 +1745,11 @@ class Category(object):
 
     def to_structure(self):
         return {
-            "category_id": self.category_id,
-            "category_name": self.category_name,
-            "division_id": self.division_id,
-            "legal_entity_id": self.legal_entity_id,
-            "business_group_id": self.business_group_id,
+            "cat_id": self.category_id,
+            "cat_name": self.category_name,
+            "div_id": self.division_id,
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id,
         }
 
 
