@@ -51,7 +51,7 @@ __all__ = [
     "get_unit_closure_legal_entities",
     "get_unit_closure_units_list",
     "save_unit_closure_data",
-    "is_invalid_id"
+    "is_invalid_id"    
 ]
 
 ############################################################################
@@ -138,7 +138,7 @@ def save_service_provider(db, service_provider, session_user):
     columns = [
         "service_provider_name", "short_name", "contract_from", "contract_to",
         "contact_person", "contact_no", "mobile_no", "email_id", "address",
-        "created_on", "created_by", "updated_on", "updated_by"        
+        "created_on", "created_by", "updated_on", "updated_by"
     ]
     values = [
         service_provider.service_provider_name, service_provider.short_name,
@@ -154,6 +154,7 @@ def save_service_provider(db, service_provider, session_user):
     action = "Created Service Provider \"%s\"" % (
         service_provider.service_provider_name
     )
+    # Audit Log Entry
     # db.save_activity(session_user, 2, action)
     return service_provider_id
 
@@ -805,15 +806,15 @@ def save_user_countries(db, country_ids, user_id):
 #             - Returns RuntimeError if insertion fails
 ############################################################################
 def save_user_domains(db, domain_ids, user_id):
-    db.delete(tblUserDomains, "user_id = %s", [user_id])
-    domain_columns = ["user_id", "domain_id"]
+    for domain_id in domain_ids:
+        db.delete(tblUserDomains, "user_id = %s", [user_id])
+    domain_columns = ["user_id", "legal_entity_id", "domain_id"]
     domain_values_list = [
-        (user_id, int(domain_id)) for domain_id in domain_ids
+        (user_id, int(uid.legal_entity_id), int(uid.domain_id)) for uid in domain_ids
     ]
     res = db.bulk_insert(tblUserDomains, domain_columns, domain_values_list)
     if res is False:
         raise client_process_error("E009")
-
 
 ############################################################################
 # To Save User Units
@@ -822,15 +823,16 @@ def save_user_domains(db, domain_ids, user_id):
 #             - Returns RuntimeError if insertion fails
 ############################################################################
 def save_user_units(db, unit_ids, user_id):
+    print "line>>826"
     db.delete(tblUserUnits, "user_id = %s", [user_id])
-    unit_columns = ["user_id", "unit_id"]
+    unit_columns = ["user_id", "legal_entity_id", "unit_id"]
+    print "line>>829"
     unit_values_list = [
-        (user_id, int(unit_id)) for unit_id in unit_ids
+        (user_id, int(uid.legal_entity_id), int(uid.unit_id)) for uid in unit_ids
     ]
     res = db.bulk_insert(tblUserUnits, unit_columns, unit_values_list)
     if res is False:
         raise client_process_error("E010")
-
 
 ############################################################################
 # To Save User
@@ -844,17 +846,17 @@ def save_user(db, user, session_user, client_id):
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
     columns = [
-        "user_group_id", "email_id", "password", "employee_name",
-        "employee_code", "contact_no", "user_level",
-        "is_admin", "is_service_provider", "created_by", "created_on",
+        "user_category_id", "user_group_id", "email_id", "employee_name",
+        "employee_code", "contact_no", "mobile_no", "user_level",
+        "is_service_provider", "created_by", "created_on",
         "updated_by", "updated_on"
     ]
-    encrypted_password, password = generate_and_return_password()
+
     values = [
-        user.user_group_id, user.email_id,
-        encrypted_password, user.employee_name,
-        user.employee_code.replace(" ", ""), user.contact_no, user.user_level,
-        0, user.is_service_provider, session_user, current_time_stamp,
+        user.user_category, user.user_group_id, user.email_id,
+        user.employee_name, user.employee_code.replace(" ", ""),
+        user.contact_no, user.mobile_no, user.user_level,
+        user.is_service_provider, session_user, current_time_stamp,
         session_user, current_time_stamp
     ]
     if user.is_service_provider == 1:
@@ -868,23 +870,22 @@ def save_user(db, user, session_user, client_id):
     if user_id is False:
         raise client_process_error("E007")
 
-    save_user_countries(db, user.country_ids, user_id)
-    save_user_domains(db, user.domain_ids, user_id)
-    save_user_units(db, user.unit_ids, user_id)
-    # Save user into  knowledge db
-    SaveUsers(user, user_id, client_id)
+    save_user_domains(db, user.user_domain_ids, user_id)
+    save_user_units(db, user.user_unit_ids, user_id)
+
     action = "Created user \"%s - %s\"" % (
         user.employee_code, user.employee_name
     )
-    db.save_activity(session_user, 4, action)
-    short_name = get_short_name(db)
-    notify_user_thread = threading.Thread(
-        target=notify_user, args=[
-            short_name, user.email_id, password,
-            user.employee_name, user.employee_code
-        ]
-    )
-    notify_user_thread.start()
+    # Audit Log Entry
+    # db.save_activity(session_user, 4, action)
+    # short_name = get_short_name(db)
+    # notify_user_thread = threading.Thread(
+    #     target=notify_user, args=[
+    #         short_name, user.email_id, password,
+    #         user.employee_name, user.employee_code
+    #     ]
+    # )
+    # notify_user_thread.start()
     return True
 
 
