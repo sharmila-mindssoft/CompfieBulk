@@ -146,6 +146,7 @@ function callAPI(api_type) {
             submission_status = 2;
         }
 
+        var checkSubmit = true;
         //check all compliance is selected before submit
         /*var checkSubmit = false;
         if($('.comp:checked').length == (statutoriesCount - 1)){

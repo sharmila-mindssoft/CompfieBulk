@@ -1364,12 +1364,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssignComplianceForUnits(unitIds, domainId, recordCount, callback) {
+    function getAssignComplianceUnits(legalEntityId, domainId, callback) {
+        var request = [
+            'GetAssignComplianceUnits', {
+                'le_id': legalEntityId,
+                'd_id': domainId
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getAssignComplianceForUnits(legalEntityId, unitIds, domainId, recordCount, frequency_ids, callback) {
         var request = [
             'GetComplianceForUnits', {
+                'le_id': legalEntityId,
                 'u_ids': unitIds,
                 'd_id': domainId,
-                'record_count': recordCount
+                'r_count': recordCount,
+                "f_ids": frequency_ids
             }
         ];
         var callerName = 'client_transaction';
@@ -2274,6 +2287,7 @@ function initClientMirror() {
         updateStatutory: updateStatutory,
         updateStatutorySettings: updateStatutorySettings,
         getAssignComplianceFormData: getAssignComplianceFormData,
+        getAssignComplianceUnits: getAssignComplianceUnits,
         getAssignComplianceForUnits: getAssignComplianceForUnits,
         statutoryDates: statutoryDates,
         assignCompliances: assignCompliances,
