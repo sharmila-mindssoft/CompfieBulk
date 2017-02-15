@@ -261,19 +261,29 @@ serviceProviderPage.prototype.clearValues = function() {
     txtMobile2.val('');
     txtEmailID.val('');
     txtAddress.val('');
+    filterserviceProvider.val('');
+    filterContactPerson.val('');
+    filterContactNo.val('');
+    filterEmailID.val('');
+    filterRemarks.val('');
+
 };
 
 
 key_search = function(mainList) {
     key_one = filterserviceProvider.val().toLowerCase();
     key_two = filterContactPerson.val().toLowerCase();
+    key_three = filterContactNo.val().toLowerCase();
+    key_four = filterEmailID.val().toLowerCase();
+    key_five = filterRemarks.val().toLowerCase();
+
     //d_status = Search_status_ul.find('li.active').attr('value');
     var fList = [];
     for (var entity in mainList) {
         uGName = mainList[entity].s_p_name;
         cNames = mainList[entity].cont_person;
         //dStatus = mainList[entity].is_active;
-        if ((~uGName.toLowerCase().indexOf(key_one)) && (~cNames.toLowerCase().indexOf(key_two))) {
+        if ((~uGName.toLowerCase().indexOf(key_one)) && (~cNames.toLowerCase().indexOf(key_two)) && (~cNames.toLowerCase().indexOf(key_three)) && (~cNames.toLowerCase().indexOf(key_four)) && (~cNames.toLowerCase().indexOf(key_five))) {
             //if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
             fList.push(mainList[entity]);
             //}
@@ -340,6 +350,7 @@ PageControls = function() {
         sp_page.renderList(fList);
     });
 
+    //
     filterContactNo.keyup(function() {
         fList = key_search(sp_page._serviceProviderList);
         sp_page.renderList(fList);
