@@ -25,13 +25,12 @@
     <div id="sidebar-menu">
       <ul>
         <li class="text-muted menu-title">Chart List</li>
-        <li class="has_sub active"> <a href="/dashboard" class="waves-effect"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
-        <li class="has_sub"> <a href="/dashboard/escalation" class="waves-effect"><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
-        <li class="has_sub"> <a href="/dashboard/not-complied" class="waves-effect"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
-        <li class="has_sub"> <a href="/dashboard/assignee-wise" class="waves-effect"><i class="zmdi zmdi-card-travel"></i> <span> Assignee Wise Compliance</span> </a> </li>
-        <li class="has_sub"> <a href="/dashboard/trend-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
-        <!-- <li class="has_sub"> <a href="/dashboard/compliance-applicability" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li> -->
-        <li class="has_sub"> <a href="/dashboard/risk-chart" class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
+        <li class="has_sub compliance-status-tab active"> <a class="waves-effect"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
+        <li class="has_sub escalations-tab"> <a class="waves-effect "><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
+        <li class="has_sub not-complied-tab"> <a class="waves-effect"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
+        <li class="has_sub compliance-report-tab"> <a class="waves-effect"><i class="zmdi zmdi-card-travel"></i> <span> Assignee Wise Compliance</span> </a> </li>
+        <li class="has_sub trend-chart-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
+        <li class="has_sub risk-chart-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
       </ul>
       <div class="clearfix"></div>
     </div>
@@ -47,8 +46,8 @@
         <div class="col-sm-12 h4-title">
           <h4 class="page-title pull-left">Compliance Status </h4>
     		  <div class="pull-right">
-    		    <span>Contract Renewal : 20 Days Left</span>
-            <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-primary btn-trans" title="Filter">
+    		    <span class="contract_timer">Contract Renewal : 20 Days Left</span>
+            <a href="javascript:void(0);" class="btn btn-primary btn-trans" title="Export">
           <i class="fa fa-upload"></i> <small>Export</small>
                </a>
     			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
@@ -66,7 +65,7 @@
               <input type="button" id="viewasbar"   class="pull-right btn btn-info m-r-10" value="View as bar chart"/>
               <input type="button" id="back"  class="pull-right btn btn-info m-r-10" onClick="loadGroup()"  value="Back"/>
               <p id="year-para"> <span >Select Year:</span>
-                <select id="year" multiple="multiple" placeholder="Select Years" onchange="console.log($(this).children(':selected').length)" class="testSelAll2 input-box sumo2"  >
+                <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
                   <option value="2009" >2009</option>
                   <option value="2010" >2010</option>
                   <option value="2011" >2011</option>
@@ -96,22 +95,6 @@
               </div>
               
               <div id="container"></div>
-<!--div id="sliders" >
-    <table>
-        <tr>
-          <td>Alpha Angle</td>
-          <td><input id="alpha" type="range" min="0" max="45" value="15"/> <span id="alpha-value" class="value"></span></td>
-        </tr>
-        <tr>
-          <td>Beta Angle</td>
-          <td><input id="beta" type="range" min="-45" max="45" value="15"/> <span id="beta-value" class="value"></span></td>
-        </tr>
-        <tr>
-          <td>Depth</td>
-          <td><input id="depth" type="range" min="20" max="100" value="50"/> <span id="depth-value" class="value"></span></td>
-        </tr>
-    </table>
-</div-->
             </div>
           </div>
           <div class="clearfix"></div>
@@ -135,22 +118,14 @@
     <div class="form-group col-sm-12">
       <label class="control-label">Country</label>
 	  <div class="pull-right">
-      <select class="form-control input-sm" id="country" multiple="multiple">
-        <option selected="selected">India</option>
-        <option selected="selected">US</option>
-        <option selected="selected">Malaysia</option>
-        <option selected="selected">Singapore</option>
-        <option selected="selected">China</option>
+      <select class="form-control input-sm country-filter" id="country" multiple="multiple">
       </select>
 	  </div>
     </div>
     <div class="form-group col-sm-12">
       <label class="control-label">Domain</label>
 	  <div class="pull-right">
-      <select class="form-control input-sm pull-right" id="domain" multiple="multiple">
-        <option selected="selected">Finance Law</option>
-        <option selected="selected">Labour Law</option>
-        <option selected="selected">Industrial Law</option>
+      <select class="form-control input-sm pull-right domain-filter" id="domain" multiple="multiple">
       </select>
 	  </div>
     </div>
@@ -158,11 +133,11 @@
       <label class="control-label">Date</label>
       <div class="clear"></div>
       <div class="col-sm-5 no-padding">
-        <input class="form-control input-sm">
+        <input class="form-control input-sm" id="fromdate">
       </div>
       <div class="col-sm-2">to </div>
       <div class="col-sm-5 no-padding">
-        <input class="form-control input-sm">
+        <input class="form-control input-sm" id="todate">
       </div>
     </div>
     <div class="form-group col-sm-12 no-margin">
@@ -172,69 +147,47 @@
       </div>
     </div>
 
-    <div class="form-group col-sm-12 no-margin ">
+    <div class="form-group col-sm-12 no-margin business-group-selection">
       <div class="checkbox checkbox-primary no-bottom-margin ">
         <input id="radioBusinessGroup" type="checkbox">
         <label for="radioBusinessGroup"> Business Group </label>
       </div>
-      <select class="form-control input-sm hide-row textboxbusiness" multiple id="filter-business-group">
-        <option selected="selected">RG Business Group 1</option>
-        <option selected="selected">RG Business Group 2</option>
-        <option selected="selected">RG Business Group 2</option>
-        <option selected="selected">RG Business Group 3</option>
+      <select class="form-control input-sm hide-row textboxbusiness bg-filter" multiple id="filter-business-group">
       </select>
     </div>
-    <div class="form-group col-sm-12 no-margin">
+    <div class="form-group col-sm-12 no-margin legal-entity-selection">
       <div class="checkbox checkbox-primary no-bottom-margin ">
         <input id="radioLegalEntity" type="checkbox">
         <label for="radioLegalEntity"> Legal Entity </label>
       </div>
-      <select class="form-control input-sm hide-row textboxlegalentity" multiple id="filter-legal-entity">
-        <option selected="selected">RG Legal Entity 1</option>
-        <option selected="selected">RG Legal Entity 2</option>
-        <option selected="selected">RG Legal Entity 3</option>
+      <select class="form-control input-sm hide-row textboxlegalentity legal-entity-filter" multiple id="filter-legal-entity">
       </select>
     </div>
-    <div class="form-group col-sm-12 no-margin">
-      <div class="checkbox checkbox-primary no-bottom-margin ">
+    <div class="form-group col-sm-12 no-margin division-selection">
+      <div class="checkbox checkbox-primary no-bottom-margin  ">
         <input id="radioDivision" type="checkbox">
         <label for="radioDivision"> Division </label>
       </div>
-      <select class="form-control input-sm hide-row textboxdivision" multiple id="filter-division"> 
-        <option selected="selected">RG Division 1</option>
-        <option selected="selected">RG Division 2</option>
-        <option selected="selected">RG Division 3</option>
+      <select class="form-control input-sm hide-row textboxdivision division-filter" multiple id="filter-division"> 
       </select>
     </div>
-    <div class="form-group col-sm-12 no-margin">
+    <div class="form-group col-sm-12 no-margin category-selection">
       <div class="checkbox checkbox-primary no-bottom-margin ">
         <input id="radiocategorys" type="checkbox">
         <label for="radiocategorys"> Category </label>
       </div>
-      <select class="form-control input-sm hide-row textboxcategory" multiple id="filter-category">
-        <option selected="selected">RG Category 1</option>
-        <option selected="selected">RG Category 2</option>
-        <option selected="selected">RG Category 3</option>
+      <select class="form-control input-sm hide-row textboxcategory category-filter" multiple id="filter-category">
       </select>
     </div>
-    <div class="form-group col-sm-12 no-margin">
+    <div class="form-group col-sm-12 no-margin unit-selection">
       <div class="checkbox checkbox-primary no-bottom-margin">
         <input id="radioUnit" type="checkbox">
         <label for="radioUnit"> Unit </label>
       </div>
-      <select class="form-control input-sm hide-row textboxunit" multiple id="filter-unit">
-        
-          <option value="Branch Office - 1" selected="">Branch Office - 1</option>
-          <option value="Branch Office - 2" selected="">Branch Office - 2</option>
-          <option value="Branch Office - 3" selected="">Branch Office - 3</option>
-            <option value="Branch Office - 5">Branch Office - 5</option>
-            <option value="Branch Office - 6">Branch Office - 6</option>
-            <option value="Branch Office - 7">Branch Office - 7</option>
-            <option value="Branch Office - 8">Branch Office - 8</option>
-        
+      <select class="form-control input-sm hide-row textboxunit unit-filter" multiple id="filter-unit">
       </select>
     </div>
-    <div class="form-group col-sm-12">
+    <div class="form-group col-sm-12 consolidated-selection">
       <div class="checkbox checkbox-primary">
         <input id="radioConsolidated" type="checkbox">
         <label for="radioConsolidated">Consolidated</label>
@@ -249,13 +202,13 @@
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
-<!-- <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/highcharts-3d.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script> -->
-
 <script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
 <script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
+
+<script type="text/javascript" src="/files/client/dashboard/chart-home-chart.js"></script>
 <script src="/files/client/dashboard/dashboard.js"></script>
+
+
 <script type="text/javascript">
     $('#country').multiselect();
     $('#domain').multiselect();
