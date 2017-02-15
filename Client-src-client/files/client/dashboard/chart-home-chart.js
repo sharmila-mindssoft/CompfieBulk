@@ -946,7 +946,13 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
   loadCategories(isSelectAll);
   loadUnits(isSelectAll);
   if(selectedLegalentity.length == 1){
-    
+    $(".group-selection").hide();
+    $(".business-group-selection").hide();
+    $(".legal-entity-selection").hide();
+  }else{
+    $(".group-selection").show();
+    $(".business-group-selection").show();
+    $(".legal-entity-selection").show();
   }
 
   $('.bg-filter').multiselect({
