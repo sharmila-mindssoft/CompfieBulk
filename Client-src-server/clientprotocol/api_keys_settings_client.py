@@ -245,8 +245,6 @@ api_params = {
     "users_units_list": make_vector_type_field(module="clientreport", klass_name="UserUnits"),
     "user_act_task_list": make_vector_type_field(module="clientreport", klass_name="UsersActList"),
     "user_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
-
-    "frequency_id": make_int_field(),
     "frequency": make_string_field(),
     "rs_unit_list": make_vector_type_field(module="clientcore", klass_name="ReviewSettingsUnits"),
     "u_code": make_string_field(),
@@ -282,6 +280,15 @@ api_params = {
     'new_user': make_text_field(is_optional=True),
     'old_user': make_text_field(is_optional=True),
     'remarks': make_text_field(length=500, is_optional=True),
-    'assigned_on': make_text_field(length=20, is_optional=True),   
+    'assigned_on': make_text_field(length=20, is_optional=True), 
     'unit': make_text_field(is_optional=True),
+    'status_report_consolidated_list':make_vector_type_field(module="clientcore", klass_name="GetStatusReportConsolidatedSuccess", is_optional=True),\
+    'status_name': make_string_field(),
+    'compliance_activity_id': make_int_field(),
+    'compliance_history_id': make_int_field(),
+    'compliance_name': make_text_field(is_optional=True),
+    'activity_on': make_text_field(length=20, is_optional=True),
+    'uploaded_document': make_text_field(is_optional=True),
+    'user_name': make_text_field(is_optional=True),
+    
 }

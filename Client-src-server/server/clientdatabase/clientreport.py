@@ -27,6 +27,8 @@ __all__ = [
     "report_compliance_details",
     "report_reassigned_history",
     "report_reassigned_history_total",
+    "report_status_report_consolidated",
+    "report_status_report_consolidated_total",
     "get_delayed_compliances_with_count",
     "get_delayed_compliances_where_qry",
     "get_delayed_compliances_count",
@@ -53,9 +55,6 @@ __all__ = [
     "get_compliance_details_total_count",
     "get_compliance_details",
     "get_client_details_condition",
-    "get_where_query_for_reassigned_history_report",
-    "get_reassigned_history_report_count",
-    "get_reassigned_history_report_data",
     "get_service_provider_user_ids",
     "get_service_provider_user_unit_ids",
     "return_cmopliance_details_report",
@@ -943,36 +942,13 @@ def get_compliance_details(
     result = convert_to_dict(rows, columns)
     return result
 
-
+# Reassigned History Report Start
 def report_reassigned_history(
     db, country_id, legal_entity_id, domain_id, unit_id, 
     act, compliance_id, usr_id, from_date, to_date, session_user, f_count, t_count
 ):
-    # query = "select rc.reassign_history_id,com.domain_id,rc.unit_id,rc.compliance_id, " + \
-    #           "com.compliance_task, SUBSTRING_INDEX(com.statutory_mapping,'>>',1) as act_name, " + \
-    #                 "concat((select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_assignee),' / ', " + \
-    #                 "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_concurrer),' / ', " + \
-    #                 "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_approver)) as old_user, " + \
-    #           "concat((select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.assignee),' / ', " + \
-    #                 "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.concurrer),' / ', " + \
-    #                 "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.approver)) as new_user, " + \
-    #                 "rc.assigned_on,rc.remarks,ch.due_date, " + \
-    #                 "(select concat(unit_code,' - ',unit_name,' - ',address) from tbl_units where unit_id = rc.unit_id) as unit " + \
-    #         "from  tbl_reassigned_compliances_history as rc " + \
-    #         "inner join tbl_compliances as com on rc.compliance_id = com.compliance_id " + \
-    #         "left join tbl_compliance_history as ch on rc.compliance_id = ch.compliance_id " + \
-    #         "where  com.domain_id = %s and rc.unit_id = %s and  " + \
-    #           "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
-    #                 "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
-    #                 "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
-    #                 "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
-    #                 "or IF(%s IS NOT NULL,rc.old_approver = 1, 1) " + \
-    #                 "or IF(%s IS NOT NULL,rc.assignee = 1, 1) " + \
-    #                 "or IF(%s IS NOT NULL,rc.concurrer = 1, 1) " + \
-    #                 "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
-    #                 "and rc.assigned_on >= %s and rc.assigned_on <= %s " + \
-    #         "order by rc.reassign_history_id desc limit %s offset %s "
-
+    from_date = string_to_datetime(from_date)
+    to_date = string_to_datetime(to_date)
     query = "select t01.num, rc.reassign_history_id, com.domain_id, rc.unit_id,rc.compliance_id, " + \
               "com.compliance_task, SUBSTRING_INDEX(com.statutory_mapping,'>>',1) as act_name, " + \
                     "concat((select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_assignee),' / ', " + \
@@ -1043,6 +1019,8 @@ def report_reassigned_history_total(
     db, country_id, legal_entity_id, domain_id, unit_id, 
     act, compliance_id, usr_id, from_date, to_date, session_user
 ):
+    from_date = string_to_datetime(from_date)
+    to_date = string_to_datetime(to_date)
     query = "select count(*) as count from tbl_reassigned_compliances_history as rc " + \
             "inner join tbl_compliances as com on rc.compliance_id = com.compliance_id " + \
             "left join tbl_compliance_history as ch on rc.compliance_id = ch.compliance_id " + \
@@ -1063,135 +1041,134 @@ def report_reassigned_history_total(
             usr_id, usr_id, from_date, to_date
             ])
     return int(rows["count"])
+# Reassigned History Report End
 
 
-def get_where_query_for_reassigned_history_report(
-    db, c_id, le_id, d_id, u_id, u_name, act_name, 
-    compliance_id, due_date, assigned_date, assigned, reason, session_user
+# Status Report Consolidated Report Start
+def report_status_report_consolidated(
+    db, country_id, legal_entity_id, domain_id, unit_id, 
+    act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user, f_count, t_count
 ):
-    qry_where = ""
-    qry_where_val = []
-    admin_id = get_admin_id(db)
-    if u_id is not None:
-        qry_where += " And t1.unit_id = %s "
-        qry_where_val.append(u_id)   
+    from_date = string_to_datetime(from_date)
+    to_date = string_to_datetime(to_date)
+    query = "select t01.num,acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
+            "(select concat(unit_code,' - ',unit_name,' - ',address) from tbl_units where unit_id = ch.unit_id) as unit,ch.compliance_id, " + \
+            "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
+            "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
+            "SUBSTRING_INDEX(com.statutory_mapping,'>>',1) as act_name, acl.activity_on, ch.due_date,ch.completion_date, " + \
+            "(CASE WHEN (ch.due_date < ch.approved_on and ch.approve_status = 3) THEN 'Delayed Compliance' " + \
+            "WHEN (ch.due_date >= ch.approved_on and ch.approve_status = 3) THEN 'Complied' " + \
+            "WHEN (ch.due_date >= ch.approved_on and ch.approve_status < 3) THEN 'In Progress' " + \
+            "WHEN (ch.due_date < ch.approved_on and ch.approve_status < 3) THEN 'Not Complied' " + \
+            "WHEN (ch.approved_on IS NULL and ch.approve_status IS NULL) THEN 'In Progress' " + \
+            "ELSE 'In Progress' END) as task_status, " + \
+            "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as uploaded_document, " + \
+            "(CASE WHEN acl.activity_by = ch.approved_by THEN (CASE ch.approve_status WHEN 1 THEN 'Rectify' WHEN 2 THEN 'Rejected' ElSE 'Approved' END) " + \
+            "WHEN acl.activity_by = ch.concurred_by THEN (CASE ch.concurrence_status WHEN 1 THEN 'Concurred' ELSE 'Rejected' END) " + \
+            "WHEN acl.activity_by = ch.completed_by THEN 'Submitted' ELSE 1 END) as activity_status, " + \
+            "(CASE WHEN acl.activity_by = ch.approved_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.approval_person) " + \
+            "WHEN acl.activity_by = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
+            "WHEN acl.activity_by = ch.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE 1 END) as user_name " + \
+            "from tbl_compliance_history as ch " + \
+            "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+            "inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+            "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
+            "inner join (select compliance_id,unit_id,num from  " + \
+               "(select compliance_id,unit_id,@rownum := @rownum + 1 AS num  " + \
+               "from (select distinct t1.compliance_id,t1.unit_id from tbl_compliance_activity_log as t1 " + \
+                 "inner join tbl_compliance_history as t2 on t1.compliance_history_id = t2.compliance_history_id " + \
+                                "order by t1.unit_id,t1.compliance_id,t1.compliance_history_id asc,t1.compliance_activity_id desc) t, " + \
+               "(SELECT @rownum := 0) r) as cnt " + \
+               "where cnt.num between %s and %s order by cnt.unit_id, cnt.compliance_id) as t01  " + \
+                        "on acl.compliance_id = t01.compliance_id and acl.unit_id = t01.unit_id " + \
+            "where com.country_id = %s and ch.legal_entity_id = %s " + \
+            "and com.domain_id = %s " + \
+            "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+            "and IF(%s IS NOT NULL,SUBSTRING_INDEX(com.statutory_mapping,'>>',1) = %s,1) " + \
+            "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
+            "and IF(%s > 0, com.frequency_id = %s,1) " + \
+            "and (CASE %s WHEN 1 THEN ac.assignee = acl.activity_by " + \
+            "WHEN 2 THEN ac.concurrence_person = acl.activity_by WHEN 3 THEN ac.approval_person = acl.activity_by " + \
+            "ELSE 1 END) " + \
+            "and IF(%s IS NOT NULL, acl.activity_by = %s,1) " + \
+            "and acl.activity_on >= %s and acl.activity_on <= %s " + \
+            "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.approved_on and ch.approve_status = 3) THEN 'Delayed Compliance' " + \
+            "WHEN (ch.due_date >= ch.approved_on and ch.approve_status = 3) THEN 'Complied' " + \
+            "WHEN (ch.due_date >= ch.approved_on and ch.approve_status < 3) THEN 'In Progress' " + \
+            "WHEN (ch.due_date < ch.approved_on and ch.approve_status < 3) THEN 'Not Complied' " + \
+            "WHEN (ch.approved_on IS NULL and ch.approve_status IS NULL) THEN 'In Progress' " + \
+            "ELSE 'In Progress' END) = %s,1) " + \
+            "order by t01.num,acl.compliance_activity_id desc "
 
-    if compliance_id is not None:
-        qry_where += " AND t1.compliance_id = %s "
-        qry_where_val.append(compliance_id)
+    # print query;
 
-    if user_id is not None:
-        qry_where += " AND t1.assignee = %s "
-        qry_where_val.append(user_id)
+    rows = db.select_all(query, [
+            f_count, t_count, country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
+            compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, from_date, to_date, status_name, status_name
+            ])
+    print rows
 
-    if from_date is not None and to_date is not None:
-        start_date = string_to_datetime(from_date).date()
-        end_date = string_to_datetime(to_date).date()
-        qry_where += " AND t1.assigned_on between %s and %s "
-        qry_where_val.extend([start_date, end_date])
-
-    elif from_date is not None:
-        start_date = string_to_datetime(from_date).date()
-        from_date_cond = " AND t1.assigned_on > DATE_SUB( " + \
-            " '%s', INTERVAL 1 DAY)"
-        from_date_cond = from_date_cond % start_date
-        qry_where += from_date_cond
-
-    elif to_date is not None:
-        end_date = string_to_datetime(from_date).date()
-        to_date_cond = " AND t1.assigned_on < DATE_SUB( " + \
-            " '%s', INTERVAL 1 DAY)"
-        to_date_cond = to_date_cond % end_date
-        qry_where += to_date_cond
-
-    if session_user != admin_id:
-        qry_where += " AND t1.unit_id in " + \
-            " (select us.unit_id from tbl_user_units us where " + \
-            " us.user_id = %s)"
-        qry_where_val.append(int(session_user))
-        qry_where += " and t3.domain_id IN " + \
-            " (SELECT ud.domain_id FROM tbl_user_domains ud " + \
-            " where ud.user_id = %s)"
-        qry_where_val.append(int(session_user))
-    return qry_where, qry_where_val
+    return return_status_report_consolidated(
+        db, rows, country_id, legal_entity_id
+    )
 
 
-def get_reassigned_history_report_data(
-    db, country_id, domain_id, qry_where, qry_val,
-    from_count, to_count
+def return_status_report_consolidated(db, result, country_id, legal_entity_id):
+    compliances = []
+    for r in result:
+        # compliance_activity_id, compliance_history_id, legal_entity_id, unit_id, unit, compliance_id, compliance_name, frequency_name, act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name
+
+        compliance_activity_id = r["compliance_activity_id"]
+        compliance_history_id = r["compliance_history_id"]
+        legal_entity_id = r["legal_entity_id"]
+        unit_id = r["unit_id"]
+        unit = r["unit"]
+        compliance_id = r["compliance_id"]
+        compliance_name = r["compliance_name"]
+        frequency_name = r["frequency_name"]
+        act_name = r["act_name"]
+        activity_on = datetime_to_string(r["activity_on"])
+        due_date = datetime_to_string(r["due_date"])
+        completion_date = datetime_to_string(r["completion_date"])
+        task_status = r["task_status"]
+        uploaded_document = r["uploaded_document"]
+        activity_status = r["activity_status"]
+        user_name = r["user_name"]
+
+        compliance = clientcore.GetStatusReportConsolidatedSuccess(
+            compliance_activity_id, compliance_history_id, legal_entity_id, unit_id, unit, compliance_id, compliance_name, frequency_name, 
+            act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name
+        )
+        compliances.append(compliance)
+    return compliances
+
+def report_status_report_consolidated_total(
+    db, country_id, legal_entity_id, domain_id, unit_id, 
+    act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user
 ):
-    columns = [
-        "compliance_id", "compliance_id", "assignee", "reassigned_from", "reassigned_date",
-        "remarks", "due_date", "compliance_task",
-        "document_name", "unit_code", "unit_name", "address",
-        "assigneename", "oldassignee", "unit_id", "statutory_mapping"
-    ]
-    qry = " SELECT distinct t1.compliance_id, t1.assignee, " + \
-        " t1.reassigned_from, t1.reassigned_date," + \
-        "  t1.remarks, t2.due_date, t3.compliance_task, " + \
-        " t3.document_name, t4.unit_code, t4.unit_name, t4.address, " + \
-        " ifnull((select concat(a.employee_code, ' - ', a.employee_name) " + \
-        " from tbl_users a where a.user_id = t1.assignee), " + \
-        " 'Administrator') assigneename, " + \
-        " ifnull((select concat(a.employee_code, ' - ', a.employee_name) " + \
-        " from tbl_users a where a.user_id = t1.reassigned_from) , " + \
-        " 'Administrator')  oldassignee, " + \
-        " t1.unit_id, t3.statutory_mapping " + \
-        " FROM tbl_reassigned_compliances_history t1 " + \
-        " INNER JOIN tbl_assigned_compliances t2 " + \
-        " on t1.compliance_id = t2.compliance_id " + \
-        " AND t1.unit_id = t2.unit_id " + \
-        " INNEr JOIN tbl_compliances t3 " + \
-        " on t1.compliance_id = t3.compliance_id " + \
-        " INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id " + \
-        " WHERE t4.country_id = %s " + \
-        " AND t3.domain_id = %s "
-    order = " ORDER BY  SUBSTRING_INDEX( " + \
-        " SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1), " + \
-        " '>>', - 1), t1.unit_id,  t1.reassigned_date desc " + \
-        " limit %s, %s"
-    param = [country_id, domain_id]
-    if qry_where is not None:
-        qry += qry_where
-        param.extend(qry_val)
+    from_date = string_to_datetime(from_date)
+    to_date = string_to_datetime(to_date)
+    query = "select count(*) as count from tbl_reassigned_compliances_history as rc " + \
+            "inner join tbl_compliances as com on rc.compliance_id = com.compliance_id " + \
+            "left join tbl_compliance_history as ch on rc.compliance_id = ch.compliance_id " + \
+            "where  com.domain_id = %s and rc.unit_id = %s and  " + \
+              "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
+                    "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
+                    "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
+                    "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
+                    "or IF(%s IS NOT NULL,rc.old_approver = 1, 1) " + \
+                    "or IF(%s IS NOT NULL,rc.assignee = 1, 1) " + \
+                    "or IF(%s IS NOT NULL,rc.concurrer = 1, 1) " + \
+                    "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
+                    "and rc.assigned_on >= %s and rc.assigned_on <= %s "
 
-    param.extend([from_count, to_count])
-    rows = db.select_all(qry + order, param)
-    result = convert_to_dict(rows, columns)
-    return result
-
-
-def get_reassigned_history_report_count(
-    db, country_id, domain_id, qry_where, qry_val
-):
-    qry_count = "SELECT sum(t.c_count) from " + \
-        " (SELECT " + \
-        " count(distinct t1.compliance_id) c_count " + \
-        " FROM " + \
-        " tbl_reassigned_compliances_history t1 " + \
-        " INNER JOIN " + \
-        " tbl_assigned_compliances t2 " + \
-        " ON t1.compliance_id = t2.compliance_id " + \
-        " AND t1.unit_id = t2.unit_id " + \
-        " INNEr JOIN " + \
-        " tbl_compliances t3 ON t1.compliance_id = t3.compliance_id " + \
-        " INNER JOIN " + \
-        " tbl_units t4 ON t1.unit_id = t4.unit_id " + \
-        " WHERE " + \
-        " t4.country_id = %s AND t3.domain_id = %s "
-    group = "group by t1.unit_id) t "
-
-    param = [country_id, domain_id]
-    if qry_where is not None:
-        qry_count += qry_where
-        param.extend(qry_val)
-
-    rcount = db.select_one(qry_count + group, param)
-    if rcount[0]:
-        count = int(rcount[0])
-    else:
-        count = 0
-    return count
+    rows = db.select_one(query, [
+            domain_id, unit_id, act, act, compliance_id,
+            compliance_id, usr_id, usr_id, usr_id, usr_id,
+            usr_id, usr_id, from_date, to_date
+            ])
+    return int(rows["count"])
+# Status Report Consolidated Report End
 
 
 def get_delayed_compliances_where_qry(

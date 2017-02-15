@@ -178,7 +178,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        //alert(body.toSource());
+        alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -773,7 +773,6 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-
     function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId, legalEntityId, divisionId, unitId, level1Id, fromdate, todate, csv, callback) {
         callerName = 'client_reports';
         var request = [
@@ -792,7 +791,8 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-    /* Reassigned History Report */
+
+    // Reassigned History Report Start
     function getReassignedHistoryReportFilters(le_id, callback) {
         var request = [
             'GetReassignedHistoryReportFilters',
@@ -803,8 +803,8 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-
-    function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, csv, callback) {
+    
+    function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, callback) {
         var request = [
             'GetReassignedHistoryReport', {
                 'c_id': c_id,
@@ -817,13 +817,52 @@ function initClientMirror() {
                 'from_date': from_date,
                 'to_date': to_date,
                 'csv': csv,
-                'f_count': 1,
-                't_count': 50,
+                'f_count': f_count,
+                't_count': t_count
             }
         ];
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+    // Reassigned History Report End
+
+    // Status Report Consolidated Report Start
+    function getStatusReportConsolidatedFilters(le_id, callback) {
+        var request = [
+            'GetStatusReportConsolidatedFilters',
+            {
+                'le_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    
+
+    function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, callback) {
+        var request = [
+            'GetStatusReportConsolidated', {
+                'c_id': c_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'unit_id': u_id,
+                'act': act,
+                'compliance_id': compliance_task_id,
+                'frequency_id': comp_fre_id,
+                'user_type_id': user_type_id,
+                'status_name': comp_task_status_id,
+                'usr_id': usr_id,
+                'from_date': from_date,
+                'to_date': to_date,
+                'csv': csv,
+                'f_count': f_count,
+                't_count': t_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Status Report Consolidated Report End
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -2263,6 +2302,8 @@ function initClientMirror() {
         getRiskReport: getRiskReport,
         getReassignedHistoryReportFilters: getReassignedHistoryReportFilters,
         getReassignedHistoryReport: getReassignedHistoryReport,
+        getStatusReportConsolidatedFilters: getStatusReportConsolidatedFilters,
+        getStatusReportConsolidated: getStatusReportConsolidated,
         updateComplianceDetail: updateComplianceDetail,
         getLoginTrace: getLoginTrace,
         uploadFile: uploadFile,

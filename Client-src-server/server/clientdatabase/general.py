@@ -885,7 +885,6 @@ def return_client_compliances(data):
         ))
     return results
 
-
 def set_new_due_date(statutory_dates, repeats_type_id, compliance_id):
     due_date = None
     due_date_list = []
@@ -1194,8 +1193,8 @@ def get_compliance_frequency(db, condition="1"):
     for row in rows:
         compliance_frequency.append(
             clientcore.ComplianceFrequency(
-                row["frequency_id"],
-                clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
+                row["frequency_id"], row["frequency"]
+                #clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
                 )
             )
     return compliance_frequency

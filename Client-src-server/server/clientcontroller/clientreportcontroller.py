@@ -12,7 +12,8 @@ from server.clientdatabase.general import (
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_units_for_user, get_acts_for_user, 
     get_client_users, get_client_level_1_statutoy, 
-    get_service_providers, get_client_compliances
+    get_service_providers, get_client_compliances,
+    get_compliance_frequency
     )
 
 __all__ = [
@@ -169,7 +170,28 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         )
         logger.logClientApi("GetReassignedHistoryReport", "process end")
         logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetStatusReportConsolidatedFilters:
 
+        logger.logClientApi(
+            "GetStatusReportConsolidatedFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_status_report_consolidated_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetStatusReportConsolidatedFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetStatusReportConsolidated:
+        logger.logClientApi(
+            "GetStatusReportConsolidated  - " + str(client_id), "process begin"
+        ) 
+        logger.logClientApi("------", str(time.time()))
+        result = get_status_report_consolidated(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetStatusReportConsolidated", "process end")
+        logger.logClientApi("------", str(time.time()))
     elif type(request) is clientreport.GetLoginTrace:
         logger.logClientApi(
             "GetLoginTrace  - " + str(client_id), "process begin"
@@ -623,13 +645,8 @@ def get_risk_report_filters(db, request, session_user, client_id):
         level1_statutories=level_1_statutories_list
     )
 
-
+# Reassigned History Report Start
 def get_reassignedhistory_report_filters(db, request, session_user, client_id):
-    #user_company_info = get_user_company_details(db, session_user)
-    #unit_ids = user_company_info[0]
-    #country_list = get_countries_for_user(db, session_user)
-    #legal_entities_list = get_legal_entities_for_user(db, request.legal_entity_id)
-
     domain_list = get_domains_for_user(db, session_user)
     unit_list = get_units_for_user(db, session_user)
     acts_list = get_acts_for_user(db, session_user)
@@ -677,7 +694,65 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
+# Reassigned History Report End
 
+# Status Report Consolidated Report Start
+def get_status_report_consolidated_filters(db, request, session_user, client_id):
+    domain_list = get_domains_for_user(db, session_user)
+    unit_list = get_units_for_user(db, session_user)
+    acts_list = get_acts_for_user(db, session_user)
+    compliances_list = get_client_compliances(db, session_user)
+    compliance_frequency_list = get_compliance_frequency(db)
+    users_list = get_client_users(db)
+
+    return clientreport.GetStatusReportConsolidatedFiltersSuccess(
+        domains=domain_list,
+        units=unit_list,
+        acts=acts_list,
+        compliances=compliances_list,
+        compliance_frequency = compliance_frequency_list,
+        legal_entity_users=users_list
+    )
+
+def get_status_report_consolidated(db, request, session_user, client_id):
+    if not request.csv:
+        country_id = request.c_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
+        unit_id = request.unit_id
+        act = request.act
+        compliance_id = request.compliance_id
+        frequency_id = request.frequency_id
+        user_type_id = request.user_type_id
+        status_name = request.status_name
+        usr_id = request.usr_id
+        from_date = request.from_date
+        to_date = request.to_date
+        print to_date, from_date
+        print "----------------======================="
+        csv = request.csv
+        f_count = request.f_count
+        t_count = request.t_count
+
+        status_report_consolidated_list = report_status_report_consolidated(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user, f_count, t_count
+        )
+        total_count = report_status_report_consolidated_total(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user
+        )
+        return clientreport.GetStatusReportConsolidatedSuccess(
+            status_report_consolidated_list, total_count
+        )
+    else:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "Reassign"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+# Status Report Consolidated Report End
 
 def get_risk_report(db, request, session_user, client_id):
     country_id = request.country_id

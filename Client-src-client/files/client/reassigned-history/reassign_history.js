@@ -41,9 +41,14 @@ var domainName = $("#domain-name");
 var reportTableTbody = $("#report-table-tbody");
 var template = $("#template");
 var reportTable = $("#report-table");
-var totalRecord = $("#total-record");
-var treeShowHide = $(".row-three");
 var REPORT = null;
+
+var ItemsPerPage = $('#items_per_page');
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
+var on_current_page = 1;
+var f_count = 0;
 
 function PageControls() {
     // To call date picker function. assign to date field 
@@ -147,56 +152,39 @@ function PageControls() {
     });
 
     showButton.click(function() {
-        if (REPORT.validate()) {
-            reportView.show();
-            showAnimation(reportView);
-            var c_id = parseInt(countryId.val());
-            var le_id = parseInt(legalEntityId.val());
-            var d_id = parseInt(domainId.val());
-            var u_id = parseInt(unitId.val());
-            if (!u_id) u_id = null
-            var act = actId.val();
-            if (!act) act = null
-            var compliance_task_id = parseInt(complianceTaskId.val());
-            if (!compliance_task_id) compliance_task_id = null
-            var usr_id = parseInt(usersId.val());
-            if (!usr_id) usr_id = null
-            var from_date = fromDate.val();
-            var to_date = toDate.val();
-            var csv = false;
-            REPORT.fetchReportValues(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, csv);
-        }
+        var csv = false;
+        on_current_page = 1;
+        processSubmit(csv);
     });
 
     exportButton.click(function() {
-        if (REPORT.validate()) {
-            var c_id = parseInt(countryId.val());
-            var le_id = parseInt(legalEntityId.val());
-            var d_id = parseInt(domainId.val());
-            var u_id = parseInt(unitId.val());
-            if (!u_id) u_id = null
-            var act = actId.val();
-            if (!act) act = null
-            var compliance_task_id = parseInt(complianceTaskId.val());
-            if (!compliance_task_id) compliance_task_id = null
-            var usr_id = parseInt(usersId.val());
-            if (!usr_id) usr_id = null
-            var from_date = fromDate.val();
-            var to_date = toDate.val();
-            var csv = true;
-            REPORT.fetchReportValues(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, csv);
-        }
+        var csv = true;
+        processSubmit(csv);
     });
 
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        f_count = 0;
+        on_current_page = 1;
+        createPageView(t_this._total_count);
+        var csv = false;
+        processSubmit(csv);
+    });
+}
+
+processSubmit = function(csv) {
+    if (REPORT.validate()) {
+        REPORT.fetchReportValues(csv);
+    }
 }
 
 clearElement = function(arr) {
-        if (arr.length > 0) {
-            $.each(arr, function(i, element) {
-                element.val('');
-            });
-        }
+    if (arr.length > 0) {
+        $.each(arr, function(i, element) {
+            element.val('');
+        });
     }
+}
     // on success auto complete to set the value corresponding
 onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
@@ -354,19 +342,41 @@ showAnimation = function(element) {
         });
 }
 
-ReassignHistory.prototype.fetchReportValues = function(c_id, le_id, d_id, u_id, act, compliance_task_id, users_id, from_date, to_date, csv) {
+ReassignHistory.prototype.fetchReportValues = function(csv) {
     t_this = this;
     /*var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Aug-2016","assigned":"EMP0016 - Rajkumar / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Approved"},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Jun-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Assignee Re-deployed"},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Jan-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":""},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form B - Annual Returns Submission","due_date":"01-Sep-2016","assigned_date":"20-Aug-2016","assigned":"EEMP0016 -Rajkumar / EMP0013 - Suresh / EMP0014 -Praveen","reason":"Role Changed"},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form B - Annual Returns Submission","due_date":"01-Sep-2016","assigned_date":"01-Jan-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Assignee Re-deployed"}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._report_data = object.data_lists;*/
-    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, users_id, from_date, to_date, csv, function(error, response) {
+    var c_id = parseInt(countryId.val());
+    var le_id = parseInt(legalEntityId.val());
+    var d_id = parseInt(domainId.val());
+    var u_id = parseInt(unitId.val());
+    if (!u_id) u_id = null
+    var act = actId.val();
+    if (!act) act = null
+    var compliance_task_id = parseInt(complianceTaskId.val());
+    if (!compliance_task_id) compliance_task_id = null
+    var usr_id = parseInt(usersId.val());
+    if (!usr_id) usr_id = null
+    var from_date = fromDate.val();
+    var to_date = toDate.val();
+
+    var t_count = parseInt(ItemsPerPage.val());
+    if (on_current_page == 1) { f_count = 0 } else { f_count = (on_current_page - 1) * t_count; }
+
+    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, function(error, response) {
         if (error == null) {
             t_this._report_data = response.reassigned_history_list;
             t_this._total_count = response.total_count;
-            if (csv == false)
+            if (csv == false) {
+                reportView.show();
+                showAnimation(reportView);
                 REPORT.showReportValues();
-            else
+                if (f_count == 0)
+                    createPageView(t_this._total_count);
+            } else {
                 REPORT.exportReportValues();
+            }
         } else {
             t_this.possibleFailures(error);
         }
@@ -409,11 +419,11 @@ ReassignHistory.prototype.showReportValues = function() {
             $('.due-date', clonethree).text(v.due_date);
             $('.assigned-date', clonethree).text(v.assigned_on);
             $('.assigned', clonethree).text(v.new_user);
-            if (v.reason != "") { $('.reason', clonefour).text(v.remarks); } else { $('.reason', clonefour).text('-'); }
-            $(clonethree).on('click', function (e) {
-              treeShowHide(e, "tree"+v.compliance_id);
+            if (v.reason != "") { $('.reason', clonethree).text(v.remarks); } else { $('.reason', clonethree).text('-'); }
+            $(clonethree).on('click', function(e) {
+                treeShowHide(e, "tree" + v.compliance_id);
             });
-            $(clonethree).attr("id","tree"+v.compliance_id);
+            $(clonethree).attr("id", "tree" + v.compliance_id);
             reportTableTbody.append(clonethree);
             complianceid = v.compliance_id;
         } else {
@@ -423,10 +433,10 @@ ReassignHistory.prototype.showReportValues = function() {
                 $('.assigned-new', clonefive).text(v.new_user);
                 $('.reason-new', clonefive).text(v.remarks);
                 if (v.reason != "") { $('.reason-new', clonefive).text(v.remarks); } else { $('.reason-new', clonefive).text('-'); }
-                $('.tree'+v.compliance_id).append(clonefive);
+                $('.tree' + v.compliance_id).append(clonefive);
             } else {
                 var clonefour = $('#template #report-table .row-four').clone();
-                $(clonefour).addClass("tree"+v.compliance_id);
+                $(clonefour).addClass("tree" + v.compliance_id);
                 $('.assigned-date-new', clonefour).text(v.assigned_on);
                 $('.assigned-new', clonefour).text(v.new_user);
                 $('.reason-new', clonefour).text(v.remarks);
@@ -437,17 +447,47 @@ ReassignHistory.prototype.showReportValues = function() {
             }
         }
     });
-    var total = t_this._total_count;
-    totalRecord.html(total);
+    showPagePan(f_count, j, t_this._total_count);
 };
 
-treeShowHide = function(e, tree ) {
-    if($('.'+tree)) {
-        if($('.'+tree).is(":visible") == true)
-            $('.'+tree).hide();
+treeShowHide = function(e, tree) {
+    if ($('.' + tree)) {
+        if ($('.' + tree).is(":visible") == true)
+            $('.' + tree).hide();
         else
-            $('.'+tree).show();
+            $('.' + tree).show();
     }
+};
+
+showPagePan = function(start, end, total) {
+    var firstCount = parseInt(start) + 1;
+    var showText = 'Showing ' + firstCount + ' to ' + end + ' of ' + total + ' entries ';
+    CompliacneCount.text(showText);
+    PaginationView.show();
+};
+
+hidePagePan = function() {
+    CompliacneCount.text('');
+    PaginationView.hide();
+}
+
+createPageView = function(total_records) {
+    perPage = parseInt(ItemsPerPage.val());
+    Pagination.empty();
+    Pagination.removeData('twbs-pagination');
+    Pagination.unbind('page');
+
+    Pagination.twbsPagination({
+        totalPages: Math.ceil(total_records / perPage),
+        visiblePages: visiblePageCount,
+        onPageClick: function(event, page) {
+            cPage = parseInt(page);
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
+                processSubmit();
+            }
+        }
+    });
 };
 
 ReassignHistory.prototype.exportReportValues = function() {
@@ -470,5 +510,5 @@ $(document).ready(function() {
     PageControls();
     // To store values in object & search list element 
     REPORT.loadSearch();
-
+    loadItemsPerPage();
 });

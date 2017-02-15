@@ -52,7 +52,7 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Unit:</label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" id="unit" class="form-control input-sm" placeholder="Enter Unit"  tabindex="4">
+                                                <input type="text" id="unit" class="form-control input-sm" placeholder="Enter Unit" tabindex="4">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="unit-id" value="">
                                                 <div id="ac-unit" class="ac-textbox default-display-none">
@@ -63,7 +63,7 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act"  tabindex="5">
+                                                <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act" tabindex="5">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="act-id" value="">
                                                 <div id="ac-act" class="ac-textbox default-display-none">
@@ -74,7 +74,7 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" id="compliance-task" class="form-control input-sm" placeholder="Enter Compliance Task"  tabindex="6">
+                                                <input type="text" id="compliance-task" class="form-control input-sm" placeholder="Enter Compliance Task" tabindex="6">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="compliance-task-id" value="">
                                                 <div id="ac-compliance-task" class="ac-textbox default-display-none">
@@ -87,40 +87,39 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Frequency:</label>
                                             <div class="col-sm-6">
-                                                <select class="form-control input-sm" id="compliance-frequency"  tabindex="7">
+                                                <select class="form-control input-sm" id="compliance-frequency" tabindex="7">
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">User Type:</label>
                                             <div class="col-sm-6">
-                                                <select class="form-control input-sm" id="user-type"  tabindex="8">
+                                                <select class="form-control input-sm" id="user-type" tabindex="8">
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User"  tabindex="9">
+                                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="9">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="user-id" value="">
                                                 <div id="ac-user" class="ac-textbox default-display-none">
                                                     <ul class="hidemenu"></ul>
                                                 </div>
                                             </div>
-                                            </div>
-
+                                        </div>
                                         <div class="form-group has-feedback">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control input-sm from-date" id="from-date" placeholder="DD-MM-YYYY"  tabindex="10">
+                                                <input type="text" class="form-control input-sm from-date" id="from-date" placeholder="DD-MM-YYYY" tabindex="10">
                                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                             </div>
                                         </div>
                                         <div class="form-group has-feedback">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label ">To Date: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control input-sm to-date" id="to-date" placeholder="DD-MM-YYYY"  tabindex="11">
+                                                <input type="text" class="form-control input-sm to-date" id="to-date" placeholder="DD-MM-YYYY" tabindex="11">
                                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                             </div>
                                         </div>
@@ -128,7 +127,6 @@
                                             <label class="col-sm-4 control-label">Compliance Task Status:</label>
                                             <div class="col-sm-6">
                                                 <select class="form-control input-sm" id="compliance-task-status" tabindex="12">
-
                                                 </select>
                                             </div>
                                         </div>
@@ -179,7 +177,23 @@
                                         <tbody id="report-table-tbody">
                                         </tbody>
                                     </table>
-                                    <p class="rpt-count m-b-0">Total : <span id="total-record"></span> record(s)</p>
+                                    <table class="pagination-view">
+                                        <tr>
+                                            <td>
+                                                <span class="compliance_count"> </span>
+                                                <span class="divider-view"> | </span>
+                                                <span class="items-per-page">
+                                                    Show
+                                                    <select id="items_per_page"> </select>
+                                                    entries
+                                                </span>
+                                            </td>
+                                            <td style="width:650px;"></td>
+                                            <td style="text-align:right; padding-right:10px;">
+                                                <ul id="pagination-rpt"></ul>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
