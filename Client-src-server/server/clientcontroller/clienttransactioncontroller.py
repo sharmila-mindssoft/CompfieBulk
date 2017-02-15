@@ -163,7 +163,7 @@ def process_update_statutory_settings_lock(db, request, session_user):
 def process_get_assign_compliance_unit(db, request, session_user, session_category):
     d_id = request.domain_id
     units = get_units_to_assig(db, d_id, session_user, session_category)
-    comp_freq = get_review_settings_frequency(db)
+    comp_freq = get_all_frequency(db)
     return clienttransactions.GetAssignComplianceUnitsSuccess(units, comp_freq)
 
 

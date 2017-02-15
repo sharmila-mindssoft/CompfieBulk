@@ -1,5 +1,7 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<link href="/css/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
 <div class="content">
 <div class="container">
@@ -26,38 +28,38 @@
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Employee Name</label>
             <div class="col-sm-6 controls">
-              <p class="form-control-static">Rajendran</p>
+              <p class="form-control-static"><span class="emp-name"></span></p>
             </div>
           </div>
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Short Name</label>
             <div class="col-sm-6 controls">
-              <p class="form-control-static">rggroup</p>
+              <p class="form-control-static"><span class="short-name"></span></p>
             </div>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Designation</label>
             <div class="col-sm-6 controls">
-              <p class="form-control-static">Project Manager</p>
+              <p class="form-control-static"><span class="designation"></span></p>
             </div>
-          </div>
+          </div> -->
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Email ID <span class="mandatory">*</span></label>
             <div class="col-sm-6 controls">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="user@domain.com" value="rajendran@domain.com">
+              <input type="text" id="user_email_id" name="example-input-small" class="form-control input-sm" placeholder="user@domain.com">
             </div>
           </div>
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Contact No. <span class="mandatory">*</span></label>
             <div class="col-md-6">
             <div class="col-md-3 no-padding">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
+              <input type="text" id="c_intl_code" name="example-input-small" class="form-control input-sm" placeholder="+00">
             </div>
             <div class="col-md-3 no-padding">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="000" value="452">
+              <input type="text" id="c_local_code" name="example-input-small" class="form-control input-sm" placeholder="000">
             </div>
             <div class="col-md-6 no-padding">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="1234567" value="1234567">
+              <input type="text" id="contact_no" name="example-input-small" class="form-control input-sm" placeholder="1234567">
             </div>
             <span class="help-desk"><small>[+91 452 1234567]</small></span>
           </div>
@@ -66,10 +68,10 @@
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Mobile No. </label>
             <div class="col-md-6">
             <div class="col-md-3 no-padding">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
+              <input type="text" id="m_intl_code" name="example-input-small" class="form-control input-sm" placeholder="+00">
             </div>
             <div class="col-md-9 no-padding">
-              <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="9876543210" value="9876543210">
+              <input type="text" id="mobile_no" name="example-input-small" class="form-control input-sm" placeholder="9876543210">
             </div>
             <span class="help-desk"><small>[+91 9876543210]</small></span>
           </div>
@@ -79,25 +81,26 @@
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Employee ID</label>
             <div class="col-sm-6 controls">
-              <p class="form-control-static">EMP302</p>
+              <p class="form-control-static"><span class="emp-code"></span></p>
             </div>
           </div>
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">User ID</label>
             <div class="col-sm-6 controls">
-              <p class="form-control-static">clientExecutive</p>
+              <p class="form-control-static"><span class="user-name"></span></p>
             </div>
           </div>
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">User Group</label>
             <div class="col-sm-6 controls">
-              <p class="form-control-static">Admin</p>
+              <p class="form-control-static"><span class="user-group"></span></p>
             </div>
           </div>
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Address</label>
             <div class="col-sm-6 controls">
-              <textarea class="form-control input-sm" rows="2" placeholder="Enter Address">242, West Street, K.K. Nagar, Madurai, Tamil Nadu, India</textarea>
+              <textarea class="form-control input-sm" rows="2" placeholder="Enter Address" id="address">
+              </textarea>
             </div>
           </div>
         </div>
@@ -106,10 +109,11 @@
         </div>
         <div class="clear"></div>
       <div class="form-group text-center">
-          <button class="btn btn-primary waves-effect waves-light" type="button"> Submit </button>
-          <button class="btn btn-info waves-effect waves-light" type="button" onclick="location.href='/change-password-client'" > Change Password</button>
+          <button class="btn btn-primary waves-effect waves-light" type="button" id="btn_submit"> Submit </button>
+          <button class="btn btn-info waves-effect waves-light" type="button" id="btn_chg_pwd" onclick="location.href='/change-password'"> Change Password</button>
+          <!-- onclick="location.href='/change-password'" -->
       </div>
-    
+
     <!-- end col -->
   </div>
 </div>
@@ -117,4 +121,8 @@
 </div>
 </div>
 </div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/profile/profile.js"></script>
+<script src="/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
+<script src="/js/jquery.sweet-alert.init.js"></script>
 {% endblock %}
