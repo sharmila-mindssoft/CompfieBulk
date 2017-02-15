@@ -1,5 +1,5 @@
 
-from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list)
+from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
 from clientprotocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_Compliance,
     parse_structure_VectorType_RecordType_dashboard_CompliedMap,
@@ -142,6 +142,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -801,6 +803,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -822,8 +826,8 @@ class Response(object):
 class GetChartFiltersSuccess(Response):
     def __init__(
         self, countries, domains, business_groups,
-        legal_entities, divisions, units, domain_info,
-        group_name
+        legal_entities, divisions, units, domain_month,
+        group_name, categories
     ):
         self.countries = countries
         self.domains = domains
@@ -831,43 +835,42 @@ class GetChartFiltersSuccess(Response):
         self.legal_entities = legal_entities
         self.divisions = divisions
         self.units = units
-        self.domain_info = domain_info
+        self.domain_month = domain_month
         self.group_name = group_name
+        self.categories = categories
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "business_groups", "legal_entities", "divisions", "units" "domain_info"])
+        data = parse_dictionary(data, [
+            "countries", "d_info", "bg_groups",
+            "le_did_infos", "div_infos", "assign_units" "d_months", "g_name",
+            "cat_info"
+        ])
         countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
-        domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
-        legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
-        divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
-        units = data.get("units")
-        units = parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(units)
-        domain_info = data.get("domain_info")
-        domain_info = parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_DomainWiseYearConfiguration(domain_info)
-        group_name = data.get("group_name")
-        group_name = parse_structure_CustomTextType_50(group_name)
+        domains = data.get("d_info")
+        business_groups = data.get("bg_groups")
+        legal_entities = data.get("le_did_infos")
+        divisions = data.get("div_infos")
+        units = data.get("assign_units")
+        domain_month = data.get("d_months")
+        group_name = data.get("g_name")
+        cat_info = data.get("cat_info")
         return GetChartFiltersSuccess(
             countries, domains, business_groups, legal_entities,
-            divisions, units, domain_info, group_name
+            divisions, units, domain_month, group_name, cat_info
         )
 
     def to_inner_structure(self):
         return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
-            "units": to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS(self.units),
-            "domain_info": to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_DomainWiseYearConfiguration(self.domain_info),
-            "group_name": to_structure_CustomTextType_50(self.group_name)
+            "countries": self.countries,
+            "d_info": self.domains,
+            "bg_groups": self.business_groups,
+            "le_did_infos": self.legal_entities,
+            "div_infos": self.divisions,
+            "assign_units": self.units,
+            "d_months": self.domain_month,
+            "g_name": self.group_name,
+            "cat_info": self.categories
         }
 
 class GetComplianceStatusChartSuccess(Response):
@@ -2072,23 +2075,21 @@ class DomainWiseYearConfiguration(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["country_name", "domian_name", "period_from", "period_to"])
-        country_name = data.get("country_name")
-        country_name = parse_structure_CustomTextType_100(country_name)
-        domain_name = data.get("domain_name")
-        domain_name = parse_structure_CustomTextType_100(domain_name)
-        period_from = data.get("period_from")
-        period_from = parse_structure_CustomTextType_100(period_from)
-        period_to = data.get("period_to")
-        period_to = parse_structure_CustomTextType_100(period_to)
+        data = parse_dictionary(data, [
+            "c_name", "d_name", "m_name_from", "m_name_to"
+        ])
+        country_name = data.get("c_name")
+        domain_name = data.get("d_name")
+        period_from = data.get("m_nmae_from")
+        period_to = data.get("m_name_to")
         return DomainWiseYearConfiguration(country_name, domain_name, period_from, period_to)
 
     def to_structure(self):
         return {
-            "country_name": to_structure_CustomTextType_100(self.country_name),
-            "domain_name": to_structure_CustomTextType_100(self.domain_name),
-            "period_from": to_structure_CustomTextType_100(self.period_from),
-            "period_to": to_structure_CustomTextType_100(self.period_to)
+            "c_name": self.country_name,
+            "d_name": self.domain_name,
+            "m_name_from": self.period_from,
+            "m_name_to": self.period_to
         }
 
 class Compliance(object):
@@ -2172,3 +2173,34 @@ class Compliance(object):
             "download_url": to_structure_OptionalType_VectorType_CustomTextType_500(self.download_url),
             "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
         }
+
+
+class ClientLegalEntityInfo(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name, business_group_id, domain_ids
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.domain_ids = domain_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "le_id", "le_name", "bg_id"])
+        legal_entity_id = data.get("le_id")
+        legal_entity_name = data.get("le_name")
+        business_group_id = data.get("bg_id")
+        domain_ids = data.get("d_ids")
+        return ClientLegalEntityInfo(
+            legal_entity_id, legal_entity_name, business_group_id, domain_ids)
+
+    def to_structure(self):
+        data = {
+            "le_id": self.legal_entity_id,
+            "le_name": self.legal_entity_name,
+            "bg_id": self.business_group_id,
+            "d_ids": self.domain_ids
+        }
+        return to_structure_dictionary_values(data)

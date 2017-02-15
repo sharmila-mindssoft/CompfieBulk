@@ -53,29 +53,34 @@ class KnowledgeConnect(object):
     def get_client_db_list(self):
         try :
             self._k_db.begin()
-            query = "SELECT T1.client_id, T1.database_ip, T1.database_port, \
-                T1.database_username, T1.database_password, T1.database_name \
-                FROM tbl_client_database T1"
+            query = "select t1.client_id, t1.legal_entity_id, " + \
+                    " t2.database_username, t2.database_password, t2.database_name, " + \
+                    " t3.database_ip, t3.database_port " + \
+                    " from tbl_client_database as t1 " + \
+                    " inner join tbl_client_database_info as t2 " + \
+                    " on t1.client_database_id = t2.client_database_id and t2.is_group = 0 " + \
+                    " inner join tbl_database_server as t3 " + \
+                    " on t1.database_server_id = t3.database_server_id "
+
             logProcessInfo("client_db_list", str(query))
             rows = self._k_db.select_all(query)
             self._k_db.commit()
             if rows :
-                columns = [
-                    "client_id", "database_ip", "database_port", "database_username",
-                    "database_password", "database_name"
-                ]
-                result = convert_to_dict(rows, columns)
-                return result
+                return rows
             else :
-                return None
+                return []
 
         except Exception, e :
-            logProcessError("get_countries", str(e))
+            print e
+            logProcessError("get_clients", str(e))
             self._k_db.rollback()
-            logProcessError("get_countries", str(traceback.format_exc()))
+            logProcessError("get_clients", str(traceback.format_exc()))
 
 class AutoStart(Database):
-    def __init__(self, c_db_ip, c_db_username, c_db_password, c_db_name, c_db_port, client_id, current_date):
+    def __init__(
+        self, c_db_ip, c_db_username, c_db_password, c_db_name, c_db_port,
+        client_id, legal_entity_id, current_date
+    ):
         super(AutoStart, self).__init__(
             c_db_ip, c_db_port, c_db_username, c_db_password, c_db_name
         )
@@ -83,6 +88,7 @@ class AutoStart(Database):
         self._c_db_name = c_db_name
         self.connect()
         self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
         self.current_date = current_date
 
     def get_email_id_for_users(self, user_id):
@@ -90,41 +96,31 @@ class AutoStart(Database):
         logProcessInfo("user_email_id", q % (user_id))
         row = self.select_one(q, [user_id])
         if row :
-            return row[0], row[1]
+            return row["employee_name"], row["email_id"]
         else :
             return None
 
     def get_compliance_to_start(self):
-        query = "SELECT t1.country_id, t1.unit_id, t1.compliance_id, t1.statutory_dates, \
-            t1.trigger_before_days, t1.due_date, t1.validity_date,\
-            t2.document_name, t2.compliance_task, t2.frequency_id, t2.repeats_type_id,\
-            t2.repeats_every, (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date,\
-            t3.unit_id, t3.unit_code, t3.unit_name, t3.business_group_id,\
-            t3.legal_entity_id, t3.division_id, t2.domain_id, \
-            t1.assignee, t1.concurrence_person, t1.approval_person, \
-            t4.compliance_id \
-            from tbl_assigned_compliances t1\
-            INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id\
-            INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id\
-            LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id \
-                AND t4.compliance_id = t1.compliance_id AND t2.frequency_id = 1)\
-            WHERE (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= %s \
-            AND t1.is_active = 1 AND t2.is_active = 1 AND t2.frequency_id != 4 \
-            AND t4.compliance_id is null "
+        query = "SELECT t1.country_id, t1.unit_id, t1.compliance_id, t1.statutory_dates, " + \
+            " t1.trigger_before_days, t1.due_date, t1.validity_date, " + \
+            " t2.document_name, t2.compliance_task, t2.frequency_id, t2.repeats_type_id," + \
+            " t2.repeats_every, (t1.due_date - INTERVAL t1.trigger_before_days DAY) start_date," + \
+            " t3.unit_id, t3.unit_code, t3.unit_name, t3.business_group_id, " + \
+            " t3.legal_entity_id, t3.division_id, t2.domain_id, " + \
+            " t1.assignee, t1.concurrence_person, t1.approval_person, " + \
+            " t1.compliance_id " + \
+            " from tbl_assign_compliances t1 " + \
+            " INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id " + \
+            " INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id " + \
+            " LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id " + \
+            "     AND t4.compliance_id = t1.compliance_id AND t2.frequency_id = 1)" + \
+            " WHERE (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= %s " + \
+            " AND t1.is_active = 1 AND t2.is_active = 1 AND t2.frequency_id != 4 " + \
+            " AND t4.compliance_id is null "
 
         logProcessInfo("compliance_to_start %s" % self.client_id, query % (self.current_date))
         rows = self.select_all(query, [self.current_date])
-        columns = [
-            "country_id", "unit_id", "compliance_id", "statutory_dates",
-            "trigger_before_days", "due_date", "validity_date", "document_name", "compliance_task",
-            "frequency", "repeat_type_id", "repeats_every", "start_date",
-            "unit_id", "unit_code", "unit_name",
-            "business_group_id", "legal_entity_id", "division_id",
-            "domain_id",
-            "assignee", "concurrence_person", "approval_person", "t4_compliance_id"
-        ]
-        result = convert_to_dict(rows, columns)
-        return result
+        return rows
 
     def calculate_next_due_date(
         self, frequency, statutory_dates, repeat_type,
@@ -198,22 +194,22 @@ class AutoStart(Database):
         # compliance_history_id = get_new_id(db, "tbl_compliance_history", "compliance_history_id")
         if concurrence is not None:
             values = (
-                unit_id, compliance_id,
+                self.legal_entity_id, unit_id, compliance_id,
                 start_date, due_date, next_due_date, assignee, approve, concurrence
             )
-            query = "INSERT INTO tbl_compliance_history (unit_id, compliance_id, \
-                start_date, due_date, next_due_date, completed_by, approved_by, concurred_by) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
+            query = "INSERT INTO tbl_compliance_history (legal_entity_id, unit_id, compliance_id, " + \
+                " start_date, due_date, next_due_date, completed_by, approved_by, concurred_by) " + \
+                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) "
 
         else :
             values = (
-                unit_id, compliance_id,
+                self.legal_entity_id, unit_id, compliance_id,
                 start_date, due_date, next_due_date, assignee, approve
             )
 
-            query = "INSERT INTO tbl_compliance_history (unit_id, compliance_id, \
-                start_date, due_date, next_due_date, completed_by, approved_by) \
-                VALUES (%s, %s, %s, %s, %s, %s, %s) "
+            query = "INSERT INTO tbl_compliance_history (legal_entity_id, unit_id, compliance_id, " + \
+                " start_date, due_date, next_due_date, completed_by, approved_by) " + \
+                " VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
 
         logProcessInfo("save_new_compliance %s" % self.client_id, query % values)
 
@@ -221,9 +217,9 @@ class AutoStart(Database):
         return compliance_history_id
 
     def update_assign_compliance_due_date(self, trigger_before, due_date, unit_id, compliance_id):
-        query = "UPDATE tbl_assigned_compliances set due_date= %s, \
-            trigger_before_days= %s \
-            WHERE unit_id = %s AND compliance_id = %s "
+        query = "UPDATE tbl_assign_compliances set due_date= %s, " + \
+            " trigger_before_days= %s " + \
+            " WHERE unit_id = %s AND compliance_id = %s "
         values = (due_date, trigger_before, unit_id, compliance_id)
         logProcessInfo("update_assigne_compliance", query % values)
         self.execute(query, values)
@@ -234,12 +230,13 @@ class AutoStart(Database):
         notification_text, extra_details, notification_type_id, notify_to_all=True
     ):
         def save_notification_users(notification_id, user_id):
-            if user_id is not "NULL" and user_id is not None  :
-                q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
-                    VALUES (%s, %s)"
-                v = (notification_id, user_id)
-                logProcessInfo("save_notification_user %s" % self.client_id, q % v)
-                self.execute(q, v)
+            pass
+            # if user_id is not "NULL" and user_id is not None  :
+            #     q = "INSERT INTO tbl_notification_user_log(notification_id, user_id) " + \
+            #         " VALUES (%s, %s) "
+            #     v = (notification_id, user_id)
+            #     logProcessInfo("save_notification_user %s" % self.client_id, q % v)
+            #     self.execute(q, v)
 
         # notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
         created_on = datetime.datetime.now()
@@ -285,6 +282,8 @@ class AutoStart(Database):
 
     def start_new_task(self):
         def notify(d, due_date, next_due_date, approval_person, trigger_before):
+            print d
+            print "\n"
             start_date = self.actual_start_date(due_date, trigger_before)
 
             compliance_history_id = self.save_in_compliance_history(
@@ -322,7 +321,7 @@ class AutoStart(Database):
 
         def start_next_due_date_task(d, due_date, approval_person) :
             next_due_date, trigger_before = self.calculate_next_due_date(
-                int(d["frequency"]), d["statutory_dates"], d["repeat_type_id"],
+                int(d["frequency_id"]), d["statutory_dates"], d["repeats_type_id"],
                 d["repeats_every"], due_date
             )
 
@@ -341,7 +340,7 @@ class AutoStart(Database):
         for d in data :
             try :
                 approval_person = int(d["approval_person"])
-                if d["frequency"] == 1 :
+                if d["frequency_id"] == 1 :
                     next_due_date = "0000-00-00"
                     trigger_before = d["trigger_before_days"]
                     if trigger_before is None :
@@ -374,8 +373,8 @@ class AutoStart(Database):
         logProcessInfo("start_new_task %s" % self.client_id, str(print_msg))
 
     def check_service_provider_contract_period(self):
-        query = "UPDATE tbl_service_providers set is_active = 0 WHERE \
-        contract_from >= now() and contract_to <= now()"
+        query = "UPDATE tbl_service_providers set is_active = 0 WHERE " + \
+            " contract_from >= now() and contract_to <= now() "
         try :
             self.execute(query)
             logProcessInfo("check_service_provider_contract_period %s" % self.client_id, str(query))
@@ -410,11 +409,12 @@ class DailyProcess(KnowledgeConnect):
         logProcessInfo("DailyProcess", str(current_date))
         logProcessInfo("begin_process", client_info)
         for c in client_info:
+            print c
             try :
                 task = AutoStart(
                     c["database_ip"], c["database_username"],
                     c["database_password"], c["database_name"],
-                    c["database_port"], c["client_id"], current_date
+                    c["database_port"], c["client_id"], c["legal_entity_id"], current_date
                 )
                 task.start_process()
             except Exception, e :

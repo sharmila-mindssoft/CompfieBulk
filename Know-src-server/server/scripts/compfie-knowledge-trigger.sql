@@ -1344,50 +1344,6 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                     1,
                     'tbl_client_compliances');
 
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0,
-                    NEW.legal_entity_id,
-                    NEW.client_compliance_id,
-                    'is_submitted',
-                    NEW.is_submitted,
-                    'tbl_client_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0,
-                    NEW.legal_entity_id,
-                    NEW.client_compliance_id,
-                    'submitted_by',
-                    NEW.submitted_by,
-                    'tbl_client_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0,
-                    NEW.legal_entity_id,
-                    NEW.client_compliance_id,
-                    'submitted_on',
-                    NEW.submitted_on,
-                    'tbl_client_compliances');
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,

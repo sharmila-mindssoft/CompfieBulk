@@ -690,7 +690,7 @@ class Domain(object):
         legal_entity_id = data.get("le_id")
         is_active = data.get("is_active")
         return Domain(
-            domain_id, domain_name, is_active
+            domain_id, domain_name, legal_entity_id, is_active
         )
 
     def to_structure(self):
@@ -701,6 +701,36 @@ class Domain(object):
             "is_active": self.is_active,
         }
         return data
+
+
+class DomainInfo(object):
+    def __init__(
+        self, domain_id, domain_name, is_active
+    ):
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "d_id", "d_name", "is_active"
+        ])
+        domain_id = data.get("d_id")
+        domain_name = data.get("d_name")
+        is_active = data.get("is_active")
+        return DomainInfo(
+            domain_id, domain_name, is_active
+        )
+
+    def to_structure(self):
+        data = {
+            "d_id": self.domain_id,
+            "d_name": self.domain_name,
+            "is_active": self.is_active,
+        }
+        return data
+
 
 #
 # Level

@@ -22,7 +22,7 @@ from server.clientdatabase.general import (
 from server.clientdatabase.clienttransaction import (
     get_units_for_assign_compliance
 )
-from processes.expiry_report_generator import ExpiryReportGenerator as exp
+# from processes.expiry_report_generator import ExpiryReportGenerator as exp
 
 email = EmailHandler()
 __all__ = [

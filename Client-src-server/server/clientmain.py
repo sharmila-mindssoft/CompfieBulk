@@ -305,10 +305,12 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
+
+            print company_id
+            print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
             )
-            print company_id
             if is_group is False :
                 company_id = request_data.request.legal_entity_id
 
@@ -463,9 +465,9 @@ class API(object):
     def handle_client_reports(self, request, db, session_user, client_id, le_id):
         return controller.process_client_report_requests(request, db, session_user, client_id, le_id)
 
-    @api_request(dashboard.RequestFormat)
-    def handle_client_dashboard(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_dashboard_requests(request, db)
+    @api_request(dashboard.RequestFormat, is_group=True, need_category=True)
+    def handle_client_dashboard(self, request, db, session_user, session_category):
+        return controller.process_client_dashboard_requests(request, db, session_user, session_category)
 
     @api_request(clientadminsettings.RequestFormat)
     def handle_client_admin_settings(self, request, db, session_user, client_id, le_id):

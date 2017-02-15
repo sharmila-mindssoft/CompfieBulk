@@ -27,10 +27,10 @@ def process_client_transaction_requests(request, db, session_user, session_categ
     request = request.request
     print type(request)
 
-    if type(request) is clienttransactions.GetStatutorySettingsFilters:
-        result = process_client_master_filters_request(db, request, session_user)
+    # if type(request) is clienttransactions.GetStatutorySettingsFilters:
+    #     result = process_client_master_filters_request(db, request, session_user)
 
-    elif type(request) is clienttransactions.GetStatutorySettings:
+    if type(request) is clienttransactions.GetStatutorySettings:
         result = process_get_statutory_settings(db, request, session_user)
 
     elif type(request) is clienttransactions.GetSettingsCompliances:
@@ -62,10 +62,10 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_get_compliance_for_units(
             db, request, session_user
         )
-    # elif type(request) is clienttransactions.SaveAssignedCompliance:
-    #     result = process_save_assigned_compliance(
-    #         db, request, session_user
-    #     )
+    elif type(request) is clienttransactions.SaveAssignedCompliance:
+        result = process_save_assigned_compliance(
+            db, request, session_user
+        )
 
     # elif type(request) is clienttransactions.GetUserwiseCompliances:
     #     result = process_get_user_wise_compliances(
@@ -136,11 +136,13 @@ def process_get_statutory_compliance(db, session_user, request):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     unit_id = request.unit_id
-    data, total_count = return_compliance_for_statutory_settings(
-        db, unit_id, from_count, to_count
+    domain_d = request.domain_id
+    f_id = request.frequency_id
+    data, total = return_compliance_for_statutory_settings(
+        db, unit_id, domain_d, f_id, from_count, to_count
     )
     return clienttransactions.GetSettingsCompliancesSuccess(
-        data, total_count
+        data, total
     )
 
 
@@ -196,11 +198,11 @@ def process_get_compliance_for_units(db, request, session_user):
     domain_id = request.domain_id
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
-    level_1_name, statutories, total = get_assign_compliance_statutories_for_units(
+    level_1_name, statutories = get_assign_compliance_statutories_for_units(
         db, unit_ids, domain_id, session_user, from_count, to_count
     )
     return clienttransactions.GetComplianceForUnitsSuccess(
-        level_1_name, statutories, total
+        level_1_name, statutories
     )
 
 

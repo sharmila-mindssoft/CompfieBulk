@@ -260,7 +260,7 @@ def parse_values(field_name, param, val, type="To"):
     #     val = parse_vector_type_record_type(val)
     #     continue
     if _type == 'STRING':
-
+        print field_name
         assert _length is not None
         assert _validation_method is not None
         if _is_optional is False:
