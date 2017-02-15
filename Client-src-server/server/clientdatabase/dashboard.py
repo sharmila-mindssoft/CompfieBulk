@@ -1312,7 +1312,7 @@ def return_compliance_details_drill_down(
 #
 # Escalation chart
 #
-def get_escalation_chart(db, request, session_user, client_id):
+def get_escalation_chart(db, request, session_user):
     user_id = int(session_user)
 
     filter_type = request.filter_type

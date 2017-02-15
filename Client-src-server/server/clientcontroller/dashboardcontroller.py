@@ -56,18 +56,12 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         logger.logClientApi("GetComplianceStatusChart", "process end")
 
     elif type(request) is dashboard.GetComplianceStatusDrillDownData:
-        logger.logClientApi(
-            "GetComplianceStatusDrillDownData", "process begin"
-        )
         result = process_compliance_status_chart_drilldown(
             db, request, session_user
         )
-        logger.logClientApi("GetComplianceStatusDrillDownData", "process end")
 
     elif type(request) is dashboard.GetEscalationsChart:
-        logger.logClientApi("GetEscalationsChart", "process begin")
-        result = process_escalation_chart(db, request, session_user, client_id)
-        logger.logClientApi("GetEscalationsChart", "process end")
+        result = process_escalation_chart(db, request, session_user)
 
     elif type(request) is dashboard.GetEscalationsDrillDownData:
         logger.logClientApi("GetEscalationsDrillDownData", "process begin")
@@ -282,8 +276,8 @@ def process_compliance_status_chart_drilldown(
     )
 
 
-def process_escalation_chart(db, request, session_user, client_id):
-    return get_escalation_chart(db, request, session_user, client_id)
+def process_escalation_chart(db, request, session_user):
+    return get_escalation_chart(db, request, session_user)
 
 
 def process_escalation_chart_drilldown(db, request, session_user, client_id):
