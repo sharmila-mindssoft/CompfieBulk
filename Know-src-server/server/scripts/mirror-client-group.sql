@@ -249,6 +249,11 @@ CREATE TABLE `tbl_user_sessions` (
   PRIMARY KEY (`session_token`),
   UNIQUE KEY(`user_id`, `session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_user_legal_entities` (
+  `user_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  UNIQUE KEY (`user_id`, `legal_entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,

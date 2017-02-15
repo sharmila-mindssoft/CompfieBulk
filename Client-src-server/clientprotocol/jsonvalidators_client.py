@@ -397,6 +397,8 @@ def to_vector_type_record_type(value):
 
 
 def to_structure_dictionary_values(x):
+    if type(x) is not dict :
+        return x
     keys = x.keys()
     if len(keys) == 0:
         return {}

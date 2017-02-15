@@ -43,38 +43,30 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     #     result = general.MasterDataNotAvailableForClient()
     #     logger.logClientApi("CheckMasterDataDashboard", "process end")
 
-    if type(request) is dashboard.GetChartFilters:
-        logger.logClientApi("GetChartFilters", "process begin")
-        result = process_get_chart_filters(db, session_user, session_category)
-        logger.logClientApi("GetChartFilters", "process end")
+    # if type(request) is dashboard.GetChartFilters:
+    #     logger.logClientApi("GetChartFilters", "process begin")
+    #     result = process_get_chart_filters(db, session_user, session_category)
+    #     logger.logClientApi("GetChartFilters", "process end")
 
-    elif type(request) is dashboard.GetComplianceStatusChart:
+    if type(request) is dashboard.GetComplianceStatusChart:
         logger.logClientApi("GetComplianceStatusChart", "process begin")
         result = process_compliance_status_chart(
-            db, request, session_user, client_id
+            db, request, session_user
         )
         logger.logClientApi("GetComplianceStatusChart", "process end")
 
     elif type(request) is dashboard.GetComplianceStatusDrillDownData:
-        logger.logClientApi(
-            "GetComplianceStatusDrillDownData", "process begin"
-        )
         result = process_compliance_status_chart_drilldown(
-            db, request, session_user, client_id
+            db, request, session_user
         )
-        logger.logClientApi("GetComplianceStatusDrillDownData", "process end")
 
     elif type(request) is dashboard.GetEscalationsChart:
-        logger.logClientApi("GetEscalationsChart", "process begin")
-        result = process_escalation_chart(db, request, session_user, client_id)
-        logger.logClientApi("GetEscalationsChart", "process end")
+        result = process_escalation_chart(db, request, session_user)
 
     elif type(request) is dashboard.GetEscalationsDrillDownData:
-        logger.logClientApi("GetEscalationsDrillDownData", "process begin")
         result = process_escalation_chart_drilldown(
-            db, request, session_user, client_id
+            db, request, session_user
         )
-        logger.logClientApi("GetEscalationsDrillDownData", "process end")
 
     elif type(request) is dashboard.GetNotCompliedChart:
         logger.logClientApi("GetNotCompliedChart", "process begin")
@@ -197,33 +189,33 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     return result
 
 
-def process_get_chart_filters(db, session_user, session_category):
-    countries = get_user_based_countries(db, session_user, session_category)
-    # domains = get_domains_for_user(db, session_user, session_category)
-    business_group_ids = None
-    business_groups = get_business_groups_for_user(db, business_group_ids)
-    # legal_entity_ids = None
-    # legal_entities = get_legal_entities_for_user(db, legal_entity_ids)
-    # division_ids = None
-    # divisions = get_divisions_for_user(db, division_ids)
-    units = get_units_for_dashboard_filters(db, session_user)
-    domain_info = get_country_wise_domain_month_range(db)
-    group_name = get_group_name(db)
+# def process_get_chart_filters(db, session_user, session_category):
+#     countries = get_user_based_countries(db, session_user, session_category)
+#     # domains = get_domains_for_user(db, session_user, session_category)
+#     business_group_ids = None
+#     business_groups = get_business_groups_for_user(db, business_group_ids)
+#     # legal_entity_ids = None
+#     # legal_entities = get_legal_entities_for_user(db, legal_entity_ids)
+#     # division_ids = None
+#     # divisions = get_divisions_for_user(db, division_ids)
+#     units = get_units_for_dashboard_filters(db, session_user)
+#     domain_info = get_country_wise_domain_month_range(db)
+#     group_name = get_group_name(db)
 
-    le_info = get_user_based_legal_entity(db, session_user, session_category)
-    div_info = get_user_based_division(db, session_user, session_category)
-    cat_info = get_user_based_category(db, session_user, session_category)
-    domains = get_domains_info(db, session_user, session_category)
+#     le_info = get_user_based_legal_entity(db, session_user, session_category)
+#     div_info = get_user_based_division(db, session_user, session_category)
+#     cat_info = get_user_based_category(db, session_user, session_category)
+#     domains = get_domains_info(db, session_user, session_category)
 
-    return dashboard.GetChartFiltersSuccess(
-        countries, domains, business_groups,
-        le_info, div_info, units,
-        domain_info, group_name, cat_info
-    )
+#     return dashboard.GetChartFiltersSuccess(
+#         countries, domains, business_groups,
+#         le_info, div_info, units,
+#         domain_info, group_name, cat_info
+#     )
 
 
-def process_compliance_status_chart(db, request, session_user, client_id):
-    return get_compliance_status_chart(db, request, session_user, client_id)
+def process_compliance_status_chart(db, request, session_user):
+    return get_compliance_status_chart(db, request, session_user)
 
 
 def process_trend_chart(db, request, session_user, client_id):
@@ -268,13 +260,13 @@ def process_get_trend_chart_drilldown(db, request, session_user, client_id):
 
 
 def process_compliance_status_chart_drilldown(
-    db, request, session_user, client_id
+    db, request, session_user
 ):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     unit_wise_data = get_compliances_details_for_status_chart(
         db,
-        request, session_user, client_id,
+        request, session_user,
         from_count, to_count
     )
     return dashboard.GetComplianceStatusDrillDownDataSuccess(
@@ -282,16 +274,16 @@ def process_compliance_status_chart_drilldown(
     )
 
 
-def process_escalation_chart(db, request, session_user, client_id):
-    return get_escalation_chart(db, request, session_user, client_id)
+def process_escalation_chart(db, request, session_user):
+    return get_escalation_chart(db, request, session_user)
 
 
-def process_escalation_chart_drilldown(db, request, session_user, client_id):
+def process_escalation_chart_drilldown(db, request, session_user):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     result_list = get_escalation_drill_down_data(
         db,
-        request, session_user, client_id,
+        request, session_user,
         from_count, to_count
     )
     return dashboard.GetEscalationsDrillDownDataSuccess(

@@ -18,7 +18,7 @@ __all__ = [
     'api_params'
 ]
 
-def make_int_field(length=1000, is_optional=False):
+def make_int_field(length=10000, is_optional=False):
     return {'type': 'INT', 'length': length, 'is_optional': is_optional}
 
 def make_string_field(length=100, is_optional=False, validfun=allow_specialchar):
@@ -91,6 +91,7 @@ api_params = {
     "bg_name": make_string_field(is_optional=True),
     "bg_id": make_int_field(is_optional=True),
     "cat_id": make_int_field(is_optional=True),
+    "cat_name": make_text_field(is_optional=True),
     "usr_id": make_int_field(),
     "email_id": make_string_field(validfun=allow_specialchar),
     "emp_name": make_string_field(is_optional=True),
@@ -315,4 +316,30 @@ api_params = {
     "d_months": make_map_type_vector_type(module="dashboard", klass_name="DomainWiseYearConfiguration"),
     "le_did_infos": make_vector_type_field(module="dashboard", klass_name="ClientLegalEntityInfo"),
     "d_info": make_vector_type_field(module="clientcore", klass_name="DomainInfo"),
+    "filter_type": make_enum_type(module="clientcore", klass_name="FILTER_TYPE"),
+    "filter_ids": make_vector_type_int(is_optional=True),
+    "filter_id": make_int_field(),
+    "from_date": make_text_field(is_optional=True),
+    "to_date": make_text_field(is_optional=True),
+    "chart_year": make_int_field(length=10000),
+    "chart_data": make_vector_type_field(module="dashboard", klass_name="ChartDataMap"),
+    "filter_type_id": make_int_field(),
+    "c_data": make_vector_type_field(module="clientcore", klass_name="NumberOfCompliances"),
+    "complied_count": make_int_field(),
+    "delayed_compliance_count": make_int_field(),
+    "inprogress_compliance_count": make_int_field(),
+    "not_complied_count": make_int_field(),
+    "year": make_text_field(),
+    "compliance_status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
+    "record_count": make_int_field(length="100000"),
+    "drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
+    "indus_name": make_text_field(),
+    "drill_compliances": make_map_type_vector_type(module="dashboard", klass_name="Level1Compliance"),
+    "assigned_date": make_text_field(),
+    "status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
+    "ageing": make_text_field(),
+    "es_chart_data": make_vector_type_field(module="dashboard", klass_name="EscalationData"),
+    "years": make_vector_type_int(length=10000),
+    "delayed": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
+    "not_complied": make_vector_type_field(module="dashboard", klass_name="DrillDownData")
 }

@@ -57,6 +57,7 @@ def api_request(
             )
         return wrapped
     return wrapper
+
 '''
     as of now group db has connected for all the request, as per the LE db base operation
     method decorator will have flag which define either group db call or legal entity db call.
@@ -465,7 +466,7 @@ class API(object):
     def handle_client_reports(self, request, db, session_user, client_id, le_id):
         return controller.process_client_report_requests(request, db, session_user, client_id, le_id)
 
-    @api_request(dashboard.RequestFormat, is_group=True, need_category=True)
+    @api_request(dashboard.RequestFormat, is_group=False, need_category=True)
     def handle_client_dashboard(self, request, db, session_user, session_category):
         return controller.process_client_dashboard_requests(request, db, session_user, session_category)
 
