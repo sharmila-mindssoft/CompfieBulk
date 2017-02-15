@@ -4539,7 +4539,6 @@ BEGIN
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
     t.status, t.reason,
     (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and client_statutory_id = t1.client_statutory_id) as rcount
-
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id

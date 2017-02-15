@@ -87,7 +87,7 @@ messages = {
     "E086": "There are no common organisations among the selected units",
     "E087": "Invalid statutory mapping",
     "E088": "Save process failed",
-    "E089": "Invalid status code"
+    "E089": "Invalid status code",
 
 }
 
@@ -121,7 +121,9 @@ client_message = {
     "E027": "Client active status validation failed",
     "E028": "Email notification got failed",
     "E029": "Saving reset token failed",
-    "E030": "User group is inactive, cannot activate user"
+    "E030": "User group is inactive, cannot activate user",
+    "E031": "Save Review Settings failed",
+
 }
 
 
