@@ -56,6 +56,7 @@ __all__ = [
     "get_review_settings_timeline",
     "get_review_settings_compliance",
 
+    "get_user_based_countries",
     "get_user_based_legal_entity", "get_user_based_division",
     "get_user_based_category",
     "update_new_statutory_settings_lock",
@@ -65,6 +66,24 @@ __all__ = [
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
+
+def get_user_based_countries(db, user_id, user_category):
+    query = "SELECT distinct t1.country_name, t1.country_id, t1.is_active FROM tbl_countries as t1"
+    param = []
+    if user_category > 1 :
+        query += " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id " + \
+            " INNER JOIN tbl_user_domains as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
+            " where t3.user_id = %s Order by t1.country_name"
+        param = [user_id]
+
+    rows = db.select_all(query, param)
+
+    results = []
+    for d in rows:
+        results.append(clientcore.Country(
+            d["country_id"], d["country_name"], bool(d["is_active"])
+        ))
+    return results
 
 def get_user_based_legal_entity(db, user_id, user_category):
 
@@ -110,7 +129,6 @@ def get_user_based_division(db, user_id, user_category):
         )
         results.append(division_obj)
     return results
-
 
 def get_user_based_category(db, user_id, user_category):
 
@@ -516,7 +534,7 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None):
         qry = None
     query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, " + \
         " t1.division_id, t1.legal_entity_id, t1.business_group_id, " + \
-        " t1.address, t1.country_id, domain_ids " + \
+        " t1.address, t1.postal_code, t1.country_id " + \
         " FROM tbl_units t1 WHERE t1.is_closed like %s "
     condition_val = [is_close]
     if qry is not None:
@@ -524,13 +542,8 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None):
         condition_val.append(int(session_user))
 
     rows = db.select_all(query, condition_val)
-    columns = [
-        "unit_id", "unit_code", "unit_name",
-        "division_id", "legal_entity_id",
-        "business_group_id", "address", "country_id", "domain_ids"
-    ]
-    result = convert_to_dict(rows, columns)
-    return return_units_for_assign_compliance(result)
+
+    return return_units_for_assign_compliance(rows)
 
 
 def get_units_to_assig(db, domain_id, session_user, session_category):

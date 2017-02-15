@@ -368,6 +368,7 @@ CREATE TABLE `tbl_assign_compliances` (
   `trigger_before_days` int(11) DEFAULT NULL,
   `due_date` date DEFAULT NULL,
   `validity_date` date DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
   CONSTRAINT `legalentity_fk1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `country_fk2` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `domain_fk3` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
@@ -547,3 +548,7 @@ INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
 INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "Flexi Review");
 INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
+INSERT INTO tbl_notification_types VALUES(1, "Notification");
+INSERT INTO tbl_notification_types VALUES(2, "Reminder");
+INSERT INTO tbl_notification_types VALUES(3, "Escalation");
+INSERT INTO tbl_notification_types VALUES(4, "Messages");

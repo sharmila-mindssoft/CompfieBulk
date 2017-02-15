@@ -3,13 +3,21 @@ from clientprotocol import (dashboard, clientlogin, general, clientreport)
 from server.jsontocsvconverter import ConvertJsonToCSV
 from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.dashboard import *
+
 from server.clientdatabase.general import (
     get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_group_name,
     get_country_wise_domain_month_range,
     get_units_for_user, get_assignees
-    )
+)
+from server.clientdatabase.clienttransaction import (
+    get_user_based_legal_entity,
+    get_user_based_division,
+    get_user_based_category,
+    get_user_based_countries
+
+)
 __all__ = [
     "process_client_dashboard_requests"
 ]
@@ -19,25 +27,25 @@ __all__ = [
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_dashboard_requests(request, db):
-    session_token = request.session_token
-    client_info = session_token.split("-")
+def process_client_dashboard_requests(request, db, session_user, session_category):
+    # session_token = request.session_token
+    # client_info = session_token.split("-")
 
     request = request.request
-    client_id = int(client_info[0])
-    session_user = db.validate_session_token(session_token)
+    # client_id = int(client_info[0])
+    # session_user = db.validate_session_token(session_token)
 
-    if session_user is None:
-        return clientlogin.InvalidSessionToken()
+    # if session_user is None:
+    #     return clientlogin.InvalidSessionToken()
 
-    if get_client_compliance_count(db) == 0:
-        logger.logClientApi("CheckMasterDataDashboard", "process begin")
-        result = general.MasterDataNotAvailableForClient()
-        logger.logClientApi("CheckMasterDataDashboard", "process end")
+    # if get_client_compliance_count(db) == 0:
+    #     logger.logClientApi("CheckMasterDataDashboard", "process begin")
+    #     result = general.MasterDataNotAvailableForClient()
+    #     logger.logClientApi("CheckMasterDataDashboard", "process end")
 
-    elif type(request) is dashboard.GetChartFilters:
+    if type(request) is dashboard.GetChartFilters:
         logger.logClientApi("GetChartFilters", "process begin")
-        result = process_get_chart_filters(db, session_user, client_id)
+        result = process_get_chart_filters(db, session_user, session_category)
         logger.logClientApi("GetChartFilters", "process end")
 
     elif type(request) is dashboard.GetComplianceStatusChart:
@@ -189,22 +197,28 @@ def process_client_dashboard_requests(request, db):
     return result
 
 
-def process_get_chart_filters(db, session_user, client_id):
-    countries = get_countries_for_user(db, session_user)
-    domains = get_domains_for_user(db, session_user)
+def process_get_chart_filters(db, session_user, session_category):
+    countries = get_user_based_countries(db, session_user, session_category)
+    # domains = get_domains_for_user(db, session_user, session_category)
     business_group_ids = None
     business_groups = get_business_groups_for_user(db, business_group_ids)
-    legal_entity_ids = None
-    legal_entities = get_legal_entities_for_user(db, legal_entity_ids)
-    division_ids = None
-    divisions = get_divisions_for_user(db, division_ids)
+    # legal_entity_ids = None
+    # legal_entities = get_legal_entities_for_user(db, legal_entity_ids)
+    # division_ids = None
+    # divisions = get_divisions_for_user(db, division_ids)
     units = get_units_for_dashboard_filters(db, session_user)
     domain_info = get_country_wise_domain_month_range(db)
     group_name = get_group_name(db)
+
+    le_info = get_user_based_legal_entity(db, session_user, session_category)
+    div_info = get_user_based_division(db, session_user, session_category)
+    cat_info = get_user_based_category(db, session_user, session_category)
+    domains = get_domains_for_user(db, session_user, session_category)
+
     return dashboard.GetChartFiltersSuccess(
         countries, domains, business_groups,
-        legal_entities, divisions, units,
-        domain_info, group_name
+        le_info, div_info, units,
+        domain_info, group_name, cat_info
     )
 
 

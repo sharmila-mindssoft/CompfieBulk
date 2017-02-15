@@ -1,4 +1,5 @@
-import MySQLdb as mysql
+# import MySQLdb as mysql
+import mysql.connector
 from processes.process_logger import logProcessError
 
 def fetch_error():
@@ -31,13 +32,14 @@ class Database(object):
     def connect(self):
         assert self._connection is None
         try:
-            connection = mysql.connect(
+            connection = mysql.connector.connect(
                 host=self._mysqlHost, user=self._mysqlUser,
                 passwd=self._mysqlPassword, db=self._mysqlDatabase,
                 port=self._mysqlPort
             )
-            connection.autocommit(False)
+            # connection.autocommit(False)
             self._connection = connection
+            print connection
         except Exception, e:
             print e
             self._connection = None
@@ -59,7 +61,8 @@ class Database(object):
     def begin(self):
         assert self._connection is not None
         assert self._cursor is None
-        self._cursor = self._connection.cursor()
+        # self._cursor = self._connection.cursor()
+        self._cursor = self._connection.cursor(dictionary=True, buffered=True)
         return self._cursor
 
     ########################################################
@@ -96,7 +99,7 @@ class Database(object):
             else:
                 cursor.execute(query)
             return True
-        except mysql.Error, e:
+        except Exception, e:
             print e
             # print query
             # print param
@@ -117,7 +120,7 @@ class Database(object):
             else:
                 cursor.execute(query)
             return int(cursor.lastrowid)
-        except mysql.Error, e:
+        except Exception, e:
             print e
             logProcessError("insert", str(e))
             # print query
@@ -147,7 +150,7 @@ class Database(object):
                     cursor.execute(query)
             res = cursor.fetchall()
             return res
-        except mysql.Error, e:
+        except Exception, e:
             print e
             logProcessError("select", str(e))
             # print query
@@ -170,7 +173,7 @@ class Database(object):
                     cursor.execute(query)
             res = cursor.fetchone()
             return res
-        except mysql.Error, e:
+        except Exception, e:
             print "Exception"
             # print query
             # print param
@@ -208,7 +211,7 @@ class Database(object):
         try:
             n_id = int(self.execute_insert(query, values))
             return n_id
-        except mysql.Error, e:
+        except Exception, e:
             print e
             logProcessError("insert", str(e))
             # print query, values
@@ -233,7 +236,7 @@ class Database(object):
             assert cursor is not None
             cursor.executemany(query, valueList)
             return True
-        except mysql.Error, e:
+        except Exception, e:
             print e
             logProcessError("bulk-insert", str(e))
             return False
@@ -254,7 +257,7 @@ class Database(object):
         try:
             status = self.execute(query, values)
             return status
-        except mysql.Error, e:
+        except Exception, e:
             logProcessError("update", str(e))
             print query, values
             print e

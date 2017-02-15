@@ -271,6 +271,8 @@ api_params = {
     "sno": make_int_field(),
     "month_from": make_int_field(),
     "month_to": make_int_field(),
+    "m_name_from": make_string_field(),
+    "m_name_to": make_string_field(),
     "level_1_s_name": make_string_field(),
 
     "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True),
@@ -305,4 +307,5 @@ api_params = {
     "unit_wise_status": make_vector_type_field(module="clienttransactions", klass_name="ComplianceUnitApplicability"),
     "assign_compliances": make_vector_type_field(module="clienttransactions", klass_name="ASSIGNED_COMPLIANCE"),
 
+    "d_months": make_map_type_vector_type(module="dashboard", klass_name="DomainWiseYearConfiguration")
 }

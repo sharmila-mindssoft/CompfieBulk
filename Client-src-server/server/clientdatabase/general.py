@@ -96,23 +96,13 @@ def get_admin_id(db):
     return rows[0]["user_id"]
 
 def get_countries_for_user(db, user_id):
-    # admin_id = get_admin_id(db)
-    # query = "SELECT distinct t1.country_id, t1.country_name, " + \
-    #     " t1.is_active FROM tbl_countries t1 "
-    # if user_id != admin_id:
-    #     query = query + " INNER JOIN tbl_user_countries t2 " + \
-    #         " ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
-    #     rows = db.select_all(query, [user_id])
-    # else:
-    #     rows = db.select_all(query)
-    # columns = ["country_id", "country_name", "is_active"]
-    # result = convert_to_dict(rows, columns)
-    # return return_countries(result)
     query = "SELECT t4.country_id, t4.country_name, t4.is_active FROM tbl_users AS t1 " + \
         " INNER JOIN tbl_user_units AS t2 ON t2.user_id = t1.user_id " + \
         " INNER JOIN tbl_legal_entities AS t3 ON t3.legal_entity_id = t2.legal_entity_id " + \
         " INNER JOIN tbl_countries AS t4 ON t4.country_id = t3.country_id " + \
         " WHERE t1.user_id = %s GROUP BY t4.country_id "
+    print query
+    print user_id
     rows = db.select_all(query, [user_id])
 
     return return_countries(rows)
@@ -255,7 +245,7 @@ def get_group_name(db):
     query = "SELECT group_name from %s " % tblClientGroups
     row = db.select_one(query)
     if row:
-        return row[0]
+        return row["group_name"]
     return "group_name"
 
 
@@ -267,28 +257,22 @@ def get_country_wise_domain_month_range(db):
         " t1.domain_id," + \
         " (select domain_name from tbl_domains " + \
         " where domain_id = t1.domain_id)domain_name, " + \
-        " t1.period_from, t1.period_to " + \
-        " from tbl_client_configurations t1 INNER JOIN " + \
+        " t1.month_from, t1.month_to " + \
+        " from tbl_client_configuration t1 INNER JOIN " + \
         " tbl_countries TC ON TC.country_id = t1.country_id  " + \
         " INNER JOIN tbl_domains TD ON TD.domain_id = t1.domain_id"
     rows = db.select_all(q)
-    columns = [
-        "country_id", "country_name",
-        "domain_id", "domain_name",
-        "period_from", "period_to"
-    ]
-    result = convert_to_dict(rows, columns)
 
     country_wise = {}
     domain_info = []
-    for r in result:
+    for r in rows:
         country_name = r["country_name"].strip()
         domain_name = r["domain_name"]
         info = dashboard.DomainWiseYearConfiguration(
             country_name,
             domain_name,
-            db.string_full_months.get(int(r["period_from"])),
-            db.string_full_months.get(int(r["period_to"]))
+            db.string_full_months.get(int(r["month_from"])),
+            db.string_full_months.get(int(r["month_to"]))
         )
         domain_info = country_wise.get(country_name)
         if domain_info is None:
@@ -1524,7 +1508,7 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
     rows = db.get_data(
         tblClientConfigurations, columns, condition, condition_val
     )
-    period_from = rows[0]["period_from"]
+    period_from = rows[0]["month_from"]
 
     to_date = contract_from
     current_year = to_date.year
