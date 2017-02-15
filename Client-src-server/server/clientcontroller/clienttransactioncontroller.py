@@ -4,14 +4,18 @@ from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.clienttransaction import *
 
 from server.clientdatabase.general import (
-    verify_password, get_user_company_details,
+    get_user_company_details,
     get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_client_settings, get_admin_id,
     get_compliance_frequency, get_users_by_unit_and_domain,
-    get_compliance_name_by_id, validate_compliance_due_date
+    get_compliance_name_by_id, validate_compliance_due_date,
+    get_country_wise_domain_month_range, get_group_name, get_domains_info
 )
 
+from server.clientdatabase.dashboard import (
+    get_units_for_dashboard_filters
+)
 
 __all__ = [
     "process_client_transaction_requests",
@@ -197,9 +201,10 @@ def process_get_compliance_for_units(db, request, session_user):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
     from_count = request.record_count
+    f_ids = request.frequency_ids
     to_count = RECORD_DISPLAY_COUNT
     level_1_name, statutories = get_assign_compliance_statutories_for_units(
-        db, unit_ids, domain_id, session_user, from_count, to_count
+        db, unit_ids, domain_id, f_ids, session_user, from_count, to_count
     )
     return clienttransactions.GetComplianceForUnitsSuccess(
         level_1_name, statutories
@@ -481,6 +486,9 @@ def process_client_master_filters_request(request, db, session_user, session_cat
     elif type(request) is clienttransactions.GetUserToAssignCompliance :
         result = process_get_user_to_assign(db, request)
 
+    if type(request) is clienttransactions.GetChartFilters:
+        result = process_get_chart_filters(db, session_user, session_category)
+
     return result
 
 
@@ -509,3 +517,27 @@ def process_get_user_to_assign(db, request):
     users = get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id)
     two_level = get_approve_level(db, le_id)
     return clienttransactions.GetUserToAssignComplianceSuccess(users, two_level)
+
+def process_get_chart_filters(db, session_user, session_category):
+    countries = get_user_based_countries(db, session_user, session_category)
+    # domains = get_domains_for_user(db, session_user, session_category)
+    business_group_ids = None
+    business_groups = get_business_groups_for_user(db, business_group_ids)
+    # legal_entity_ids = None
+    # legal_entities = get_legal_entities_for_user(db, legal_entity_ids)
+    # division_ids = None
+    # divisions = get_divisions_for_user(db, division_ids)
+    units = get_units_for_dashboard_filters(db, session_user)
+    domain_info = get_country_wise_domain_month_range(db)
+    group_name = get_group_name(db)
+
+    le_info = get_user_based_legal_entity(db, session_user, session_category)
+    div_info = get_user_based_division(db, session_user, session_category)
+    cat_info = get_user_based_category(db, session_user, session_category)
+    domains = get_domains_info(db, session_user, session_category)
+
+    return clienttransactions.GetChartFiltersSuccess(
+        countries, domains, business_groups,
+        le_info, div_info, units,
+        domain_info, group_name, cat_info
+    )

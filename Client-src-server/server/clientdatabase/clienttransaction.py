@@ -280,7 +280,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
 def return_compliance_for_statutory_settings(
     db, unit_ids, domain_id, f_id, from_count, to_count
 ):
-    q = "select count(t1.compliance_id)ccount from tbl_client_compliances as t1 " + \
+    q = "select count(distinct t1.compliance_id)ccount from tbl_client_compliances as t1 " + \
         " where find_in_set(t1.unit_id, %s) and t1.domain_id = %s"
     row = db.select_one(q, [",".join([str(x) for x in unit_ids]), domain_id])
     if row :
@@ -737,10 +737,11 @@ def total_compliance_for_units(db, unit_ids, domain_id):
 
 
 def get_assign_compliance_statutories_for_units(
-    db, sunit_ids, domain_id, session_user, from_count, to_count
+    db, sunit_ids, domain_id, sf_ids, session_user, from_count, to_count
 ):
 
     unit_ids = ",".join([str(x) for x in sunit_ids])
+    f_ids = ",".join([str(y) for y in sf_ids])
     if session_user == get_admin_id(db):
         session_user = '%'
 
@@ -757,6 +758,7 @@ def get_assign_compliance_statutories_for_units(
         " WHERE " + \
         " find_in_set(A.unit_id, %s) " + \
         " AND A.domain_id = %s " + \
+        " AND find_in_set(C.frequency_id, %s) " + \
         " AND A.compliance_opted_status = 1 AND A.is_submitted = 1 " + \
         " AND C.is_active = 1 " + \
         " AND AC.compliance_id is null " + \
@@ -765,7 +767,7 @@ def get_assign_compliance_statutories_for_units(
         " '>>',  - 1) , A.compliance_id  "
 
     qry_applicable_val = [
-        unit_ids, domain_id
+        unit_ids, domain_id, f_ids
     ]
 
     # compliance info for the selected units and domain
@@ -797,6 +799,7 @@ def get_assign_compliance_statutories_for_units(
         " and t2.unit_id = AC.unit_id " + \
         " WHERE find_in_set(t2.unit_id, %s) " + \
         " AND t2.domain_id = %s " + \
+        " AND find_in_set(t3.frequency_id, %s) " + \
         " AND t2.compliance_opted_status = 1 AND t2.is_submitted = 1" + \
         " AND t3.is_active = 1 " + \
         " AND AC.compliance_id IS NULL " + \
@@ -811,6 +814,7 @@ def get_assign_compliance_statutories_for_units(
     rows = db.select_all(query, [
         unit_ids,
         domain_id,
+        f_ids,
         from_count,
         to_count
     ])
@@ -833,9 +837,12 @@ def get_assign_compliance_statutories_for_units(
         " FROM tbl_compliance_dates as t1 WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s"
 
     if len(sunit_ids) > 1 :
-        nrows = db.select_all(q, [unit_ids, domain_id])
-    else :
         nrows = []
+    else :
+        if (4 in sf_ids or 3 in sf_ids) :
+            nrows = db.select_all(q, [unit_ids, domain_id])
+        else :
+            nrows = []
 
     return return_assign_compliance_data(rows, applicable_units, nrows)
 

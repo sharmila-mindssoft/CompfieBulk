@@ -423,27 +423,30 @@ class GetComplianceTotalToAssign(Request):
         }
 
 class GetComplianceForUnits(Request):
-    def __init__(self, legal_entity_id, unit_ids, domain_id, record_count):
+    def __init__(self, legal_entity_id, unit_ids, domain_id, record_count, frequency_ids):
         self.legal_entity_id = legal_entity_id
         self.unit_ids = unit_ids
         self.domain_id = domain_id
         self.record_count = record_count
+        self.frequency_ids = frequency_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "u_ids", "d_id"])
+        data = parse_dictionary(data, ["le_id", "u_ids", "d_id", "f_ids"])
         legal_entity_id = data.get("le_id")
         unit_ids = data.get("u_ids")
         domain_id = data.get("d_id")
         record_count = data.get("r_count")
-        return GetComplianceForUnits(legal_entity_id, unit_ids, domain_id, record_count)
+        frequency_ids = data.get("f_ids")
+        return GetComplianceForUnits(legal_entity_id, unit_ids, domain_id, record_count, frequency_ids)
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
             "u_ids": self.unit_ids,
             "d_id": self.domain_id,
-            "r_count": self.record_count
+            "r_count": self.record_count,
+            "f_ids": self.frequency_ids
         }
 
 class NewUnitSettings(object):
@@ -895,6 +898,19 @@ class SaveReviewSettingsComplianceDict(Request):
             "old_statu_dates": self.old_statu_dates,
         }
 
+class GetChartFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetChartFilters()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 def _init_Request_class_map():
 
@@ -908,7 +924,7 @@ def _init_Request_class_map():
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
         SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
-        GetUserToAssignCompliance
+        GetUserToAssignCompliance, GetChartFilters
     ]
 
     class_map = {}
@@ -1540,6 +1556,56 @@ class ChangeStatutorySettingsLockSuccess(Request):
         return {
         }
 
+class GetChartFiltersSuccess(Response):
+    def __init__(
+        self, countries, domains, business_groups,
+        legal_entities, divisions, units, domain_month,
+        group_name, categories
+    ):
+        self.countries = countries
+        self.domains = domains
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.divisions = divisions
+        self.units = units
+        self.domain_month = domain_month
+        self.group_name = group_name
+        self.categories = categories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "countries", "d_info", "bg_groups",
+            "le_did_infos", "div_infos", "assign_units" "d_months", "g_name",
+            "cat_info"
+        ])
+        countries = data.get("countries")
+        domains = data.get("d_info")
+        business_groups = data.get("bg_groups")
+        legal_entities = data.get("le_did_infos")
+        divisions = data.get("div_infos")
+        units = data.get("assign_units")
+        domain_month = data.get("d_months")
+        group_name = data.get("g_name")
+        cat_info = data.get("cat_info")
+        return GetChartFiltersSuccess(
+            countries, domains, business_groups, legal_entities,
+            divisions, units, domain_month, group_name, cat_info
+        )
+
+    def to_inner_structure(self):
+        return {
+            "countries": self.countries,
+            "d_info": self.domains,
+            "bg_groups": self.business_groups,
+            "le_did_infos": self.legal_entities,
+            "div_infos": self.divisions,
+            "assign_units": self.units,
+            "d_months": self.domain_month,
+            "g_name": self.group_name,
+            "cat_info": self.categories
+        }
+
 def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
@@ -1551,7 +1617,8 @@ def _init_Response_class_map():
         GetAssigneeCompliancesSuccess, ComplianceUpdateFailed,
         GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess,
         GetAssignComplianceUnitsSuccess,
-        GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess
+        GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
+        GetChartFiltersSuccess
     ]
     class_map = {}
     for c in classes:
@@ -2538,3 +2605,4 @@ class Users(object):
             "sp_name": self.service_provider_name,
             "sp_short_name": self.sp_short_name
         }
+

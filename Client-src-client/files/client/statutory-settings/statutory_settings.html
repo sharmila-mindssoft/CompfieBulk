@@ -8,17 +8,16 @@
             <div class="col-sm-12">
             
                 <div class="portlet">
-                
-                   <div class="portlet-heading bg-info">
-                    <h3 class="portlet-title">Statutory Settings</h3>
-                    <div class="portlet-widgets">
-                       
+                    <div class="portlet-heading bg-info">
+                        <h3 class="portlet-title">Statutory Settings</h3>
+                        <div class="portlet-widgets">
+                           
+                        </div>
+                        <div class="clearfix"></div>
                     </div>
-                    <div class="clearfix"></div>
-                </div>
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
-                    <form class="form-horizontal group-border-dashed" action="#" novalidate="">
+                    <div class="form-horizontal group-border-dashed" action="#" novalidate="">
                         <div class="col-lg-6">
                        
                             <div class="form-group has-feedback">
@@ -80,10 +79,10 @@
                             <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
                         </div>
                     </center>
-                    </form>
+                    </div>
                     <div class="clearfix"></div>
                    
-                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight js-filtertable" width="100%" cellspacing="0">
+                    <table id="datatable-responsive" class="table table-striped dt-responsive nowrap js-filtertable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th width="2%">
@@ -227,7 +226,7 @@
                     </div>
 
                     <p>
-                    <button class="btn btn-primary waves-effect waves-light btn-edit" type="button"> Edit 
+                    <button class="btn btn-primary waves-effect waves-light btn-edit default-display-none" type="button"> Edit 
                     </button>
                    
                     <p>*  Statutes assigned to those units are marked in Black color</p>
@@ -239,31 +238,331 @@
         </div>
     </div>
 </div>
+
+<div class="container default-display-none" id="statutorysettings-add">
+    <div class="row">
+        <div id="animationSandbox">
+            <div class="col-sm-12">
+                <div class="portlet">
+                    <div class="portlet-heading bg-info">
+                        <h3 class="portlet-title">Statutory Settings</h3>
+                        <div class="portlet-widgets">
+                            <a id="btn-cancel">
+                              <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                          </a>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div id="bg-primary1" class="panel-collapse collapse in">
+                        <div class="portlet-body">
+                            <div class="panel-group col-lg-12 no-padding tbody-single-assignstatutory" id="accordion" role="tablist" aria-multiselectable="true">
+                                              
+                            </div>
+
+                            <table class="table table-striped dt-responsive nowrap" cellspacing="0" width="100%">
+                                <tbody class="tbody-assignstatutory">
+                                  
+                                </tbody>
+                            </table>
+                            <!-- <div class="panel-group col-lg-12 no-padding singleunit" id="accordion" role="tablist" aria-multiselectable="true">
+                                <div class="panel panel-default bx-shadow-none">
+                                    <div class="panel-heading p-0" role="tab" id="headingOne">
+                                        <h4 class="panel-title">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5">
+                                            <i class="fa fa-check text-info fa-1x"></i> The Batteries Act
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                        <div class="panel-body no-padding">
+                                            <div class="dataTable_wrapper top-lightborder">
+                                                <table class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="center" width="2%">#</th>
+                                                            <th width="14%">Statutory Provision</th>
+                                                            <th width="15%">Compliance Task</th>
+                                                            <th width="14%">Compliance Frequency</th>
+                                                            <th width="25%">Compliance Description</th>
+                                                            <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x"></i></th>
+                                                            <th width="04%" class="text-center"><i class="fa fa-user-plus fa-1-3x"></i></th>
+                                                            <th width="10%">Remarks</th>
+                                                            <th width="2%">Saved</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center">1</td>
+                                                            <td>Rule 4 (iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM I - Half yearly returns Submission"></i> FORM I - Half yearly returns Submission</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned</td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                            <td class="text-center"> </td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">2</td>
+                                                            <td>Rule 5 and Rule 6 (ii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM II - Registration"></i> FORM II - Registration</td>
+                                                            <td>One Time</td>
+                                                            <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td> <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="Remarks text goes here."></i> Remarks...</td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">3</td>
+                                                            <td>Rule 6(iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM III - Undertaking submission</td>
+                                                            <td>Review</td>
+                                                            <td>Whether undertaking submitted by importer to authority.</td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                            <td class="text-center"> </td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">4</td>
+                                                            <td>Rule 7(iv)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by dealer to manufacturer</td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                            <td class="text-center">
+                                                                <textarea class="form-control input-sm" placeholder="Enter Remarks" rows="1"></textarea>
+                                                                <small>(max 500 characters)</small>
+                                                            </td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default bx-shadow-none">
+                                    <div class="panel-heading p-0" role="tab" id="headingTwo">
+                                        <h4 class="panel-title">
+                                    <a class="collapsed p-5" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        <i class="fa fa-times "></i> Indian Partnership Act, 1932
+                                        <div class="col-sm-3 controls pull-right m-t-m-5">
+                                            <label class="col-sm-3 control-label p-t-5">Remarks:</label>
+                                            <div class="col-sm-9 no-padding">
+                                            <input type="text" class="form-control input-sm" id="elementRemarks" placeholder="Enter Remarks" />  
+                                            </div>
+                                        </div>
+                                    </a>
+                                </h4>
+                                    </div>
+                                    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                        <div class="panel-body no-padding">
+                                            <div class="dataTable_wrapper top-lightborder">
+                                                <table class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="center" width="2%">#</th>
+                                                            <th width="14%">Statutory Provision</th>
+                                                            <th width="15%">Compliance Task</th>
+                                                            <th width="14%">Compliance Frequency</th>
+                                                            <th width="25%">Compliance Description</th>
+                                                            <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x"></i></th>
+                                                            <th width="04%" class="text-center"><i class="fa fa-user-plus fa-1-3x"></i></th>
+                                                            <th width="10%">Remarks</th>
+                                                            <th width="2%">Saved</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center">1</td>
+                                                            <td>Rule 4 (iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM I - Half yearly returns Submission"></i> FORM I - Half yearly returns Submission</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned</td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td class="text-center"> </td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">2</td>
+                                                            <td>Rule 5 and Rule 6 (ii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM II - Registration"></i> FORM II - Registration</td>
+                                                            <td>One Time</td>
+                                                            <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td> <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Remarks text goes here."></i> Remarks</td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">3</td>
+                                                            <td>Rule 6(iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM III - Undertaking submission</td>
+                                                            <td>Review</td>
+                                                            <td>Whether undertaking submitted by importer to authority.</td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td class="text-center"> </td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">4</td>
+                                                            <td>Rule 7(iv)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by dealer to manufacturer</td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td> <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Remarks text goes here."></i> Remarks</td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default bx-shadow-none">
+                                    <div class="panel-heading p-0" role="tab" id="headingTwo">
+                                        <h4 class="panel-title">
+                                    <a class="collapsed p-5" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                        <i class="fa fa-check text-info"></i> The Factories Act, 1948
+                                        
+                                    </a>
+                                </h4>
+                                    </div>
+                                    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                                        <div class="panel-body no-padding">
+                                            <div class="dataTable_wrapper top-lightborder">
+                                                <table class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                                                    <thead>
+                                                        <tr>
+                                                            <th align="center" width="2%">#</th>
+                                                            <th width="14%">Statutory Provision</th>
+                                                            <th width="15%">Compliance Task</th>
+                                                            <th width="14%">Compliance Frequency</th>
+                                                            <th width="25%">Compliance Description</th>
+                                                            <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x"></i></th>
+                                                            <th width="04%" class="text-center"><i class="fa fa-user-plus fa-1-3x"></i></th>
+                                                            <th width="10%">Remarks</th>
+                                                            <th width="2%">Saved</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="text-center">1</td>
+                                                            <td>Rule 4 (iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM I - Half yearly returns Submission"></i> FORM I - Half yearly returns Submission</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned</td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                            <td class="text-center"> </td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">2</td>
+                                                            <td>Rule 5 and Rule 6 (ii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="FORM II - Registration"></i> FORM II - Registration</td>
+                                                            <td>One Time</td>
+                                                            <td>Whether registration for importers obtained for importing lead acid battery or primary Lead</td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Remarks text goes here."></i> Remarks</td>
+                                                            <td class="text-center"><i class="fa fa-square text-warning"></i></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">3</td>
+                                                            <td>Rule 6(iii)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM III - Undertaking submission</td>
+                                                            <td>Review</td>
+                                                            <td>Whether undertaking submitted by importer to authority.</td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-info"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-check fa-1-3x text-warning"></i></td>
+                                                            <td class="text-center"> </td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="text-center">4</td>
+                                                            <td>Rule 7(iv)</td>
+                                                            <td><i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="Organization: Factory, Mines"></i> FORM V - Dealer Half yearly returns</td>
+                                                            <td>Periodical</td>
+                                                            <td>Whether half yearly returns submitted by dealer to manufacturer</td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td class="text-center"> <i class="fa fa-times fa-1-3x text-muted"></i></td>
+                                                            <td class="text-center">
+                                                                <textarea class="form-control input-sm" placeholder="Enter Remarks" rows="1"></textarea>
+                                                                <small>(max 500 characters)</small>
+                                                            </td>
+                                                            <td class="text-center"></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> -->
+                            <!-- end single unit -->
+                            <center>
+                                <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light default-display-none btn-showmore" >Show More</button>
+                            </center>
+
+                            <div class="total_count_view default-display-none">
+                                <br> <span class="total_count"></span>
+                            </div>
+
+                            <div class="form-group text-center m-b-0">
+                                <button id="btn-save" class="btn btn-info waves-effect waves-light" type="button"> Save </button>
+                                <button id="btn-submit" class="btn btn-primary waves-effect waves-light" type="button"> Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--  <hr class="no-top-margin"> -->
+                <!--div class="col-sm-12">
+                <div class="card-box table-responsive no-padding b-0">
+                    
+                </div>
+            </div-->
+                <div class="clear"></div>
+                <br>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 </div>
 
 <!-- Modal -->
 <div id="custom-modal" class="modal-demo box-width-400">
-    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
     <div class="custom-modal-text">
-        <form role="form">
+        <div role="form">
             <div class="form-group">
-                <label for="exampleInputPassword" class="pull-left">Password <span class="mandatory">*</span></label>
-                <input type="password" class="form-control input-sm" id="exampleInputPassword" placeholder="Password">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
             </div>
-            <button type="button" class="btn btn-primary waves-effect waves-light">Submit</button>
-        </form>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="password-submit">Submit</button>
+        </div>
     </div>
 </div>
 
 <div id="templates">
   <table class="table-statutorysettings">
-      <tr class="table-row">
-            <td>
-                <input type="checkbox" class="unit-checkbox form_checkbox" />
+      <tr class="table-row text-info">
+            <td class="text-center">
+                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                    <input type="checkbox" class="unit-checkbox">
+                    <label></label>
+                </div>
             </td>
             <td class="tbl_unit"> </td>
             <td class="tbl_location"></td>
@@ -273,7 +572,7 @@
             <td class="tbl_updated_on"></td>         
             <td class="tbl_lock icon-3x text-center">
             <span href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">
-            <i class="fa fa-lock c-pointer text-primary" data-toggle="tooltip" data-placement="top" title="Click here to Unlock"></i>
+            <i class="fa c-pointer text-primary" data-toggle="tooltip" data-placement="top" title="Click here to Unlock"></i>
             </span>
         </td>
       </tr>
@@ -313,13 +612,14 @@
                         <thead>
                             <tr>
                                 <th align="center" width="2%">#</th>
-                                <th width="15%">Statutory Provision</th>
+                                <th width="20%">Statutory Provision</th>
                                 <th width="15%">Compliance Task</th>
-                                <th width="30%">Compliance Description</th>
+                                <th width="15%">Compliance Frequency</th>
+                                <th width="25%">Compliance Description</th>
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
-                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
-                                <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
-                                <th width="1%">Selected</th>
+                                <th width="04%" class="text-center"><i class="fa fa-user-plus fa-1-3x text-white"></i></th>
+                                <th width="10%">Remarks</th>
+                                <th width="5%">Saved</th>
                             </tr>
                         </thead>
                         <tbody class="tbody-compliance-list">                               
@@ -347,22 +647,31 @@
             <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
             <span class="compliancetask"> </span>
           </td>
+          <td class="compliancefrequency"> 
+
+          </td>
+
           <td class="compliancedescription"> 
 
           </td>
-          <td align="center" class="gt">
-              <input type="radio" class="comp compliance-ck-box-1" value="1">
-              <label class="compliance-label-1"></label>
+          <td align="center" class="applicable">
+             
           </td>
 
-          <td align="center" class="gt-cross">
-              <input type="radio" class="comp compliance-ck-box-2" value="2">
-              <label class="compliance-label-2"></label>
+          <td align="center">
+               <label class="opted" for="1"> 
+                <img src="images/tick1bold.png">
+               </label>
           </td>
 
-          <td align="center" class="gt-minus">
-              <input type="radio" class="comp compliance-ck-box-3" value="3">
-              <label class="compliance-label-3"></label>
+          <td class="comp-remark">
+            <div class="default-display-none c-remark-view"> 
+                <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="Remarks text goes here."></i> Remarks...
+            </div>
+            <div class="default-display-none c-remark-add"> 
+                <textarea class="form-control input-sm" placeholder="Enter Remarks" rows="1"></textarea>
+                <small>(max 500 characters)</small>
+            </div>
           </td>
 
           <td align="center">
@@ -383,7 +692,7 @@
       </tr>
       <tbody class="mul-act-heading">
         <tr>
-          <td colspan="8" style="color: #797979;background-color: #f5f5f5;" class="p-0">
+          <td colspan="9" style="color: #797979;background-color: #f5f5f5;" class="p-0">
             <div class="panel-heading" role="tab">
               <h4 class="m-b-0 m-t-0" style="width: 99%; float: left; ">
                 <div class="gt" style="float:left; width:3%;">
@@ -410,14 +719,13 @@
       </tbody>
 
       <tbody class="mul-compliance-heading">
-        <tr>
-            <th align="center" width="2%">#</th>
-            <th width="15%">Statutory Provision</th>
-            <th width="15%">Compliance Task</th>
-            <th width="30%">Compliance Description</th>
-            <th align="center" width="12%" colspan="3">Applicable Units</th>
-            <th width="1%">Saved</th>
-        </tr>
+        <th align="center" width="2%">#</th>
+        <th width="14%">Statutory Provision</th>
+        <th width="15%">Compliance Task</th>
+        <th width="14%">Compliance Frequency</th>
+        <th width="25%">Compliance Description</th>
+        <th width="25%" colspan="3" class="text-center">Applicable Units</th>
+        <th width="2%" class="text-center">Saved</th>
       </tbody>
 
       <tbody class="mul-compliance-details">
@@ -428,6 +736,9 @@
               <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
               <span class="compliancetask"> </span>
             </td>
+            <td class="compliancefrequency"> 
+
+           </td>
             <td class="compliancedescription"> 
 
             </td>
@@ -444,24 +755,15 @@
         <tr>
           <th align="center" width="2%"></th>
           <th width="15%">Location</th>
-          <th width="15%" colspan="2">Unit Name</th>
-          <th width="04%" class="text-center">
-              <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                  <input class="sub-comp sub-tick" value="1" type="checkbox">
-                  <label></label>
-              </div>
+          <th width="25%" colspan="3">Unit Name</th>
+          <th width="06%" class="text-center">
+              <i class="fa fa-edit fa-1-3x text-inverse"></i>
           </th>
-          <th width="04%" class="text-center">
-              <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                  <input class="sub-comp sub-untick" value="2" type="checkbox">
-                  <label></label>
-              </div>
+          <th width="06%" class="text-center">
+              <i class="fa fa-user-plus fa-1-3x text-inverse">
           </th>
-          <th width="04%" class="text-center">
-              <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                  <input  class="sub-comp sub-minus" value="3" type="checkbox">
-                  <label></label>
-              </div>
+          <th width="20%">
+              Remarks
           </th>
           <th width="1%"></th>
         </tr>
@@ -472,21 +774,26 @@
           <td align="center" width="2%">
             <input type="hidden" class="combineid-class" />
           </td>
-          <td width="15%" class="unit-locatiion"></td>
-          <td width="15%" colspan="2" class="unit-name"></td>
-          <td align="center" class="gt">
-              <input type="radio" class="comp compliance-ck-box-1" value="1">
-              <label class="compliance-label-1"></label>
+          <td class="unit-locatiion"></td>
+          <td colspan="3" class="unit-name"></td>
+          <td align="center" class="applicable">
+             
           </td>
 
-          <td align="center" class="gt-cross">
-              <input type="radio" class="comp compliance-ck-box-2" value="2">
-              <label class="compliance-label-2"></label>
+          <td align="center">
+               <label class="opted" for="1"> 
+                <img src="images/tick1bold.png">
+               </label>
           </td>
 
-          <td align="center" class="gt-minus">
-              <input type="radio" class="comp compliance-ck-box-3" value="3">
-              <label class="compliance-label-3"></label>
+          <td class="comp-remark">
+            <div class="default-display-none c-remark-view"> 
+                <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="Remarks text goes here."></i> Remarks...
+            </div>
+            <div class="default-display-none c-remark-add"> 
+                <textarea class="form-control input-sm" placeholder="Enter Remarks" rows="1"></textarea>
+                <small>(max 500 characters)</small>
+            </div>
           </td>
           <td width="1%"></td>
         </tr>
@@ -494,7 +801,16 @@
       
     </table>
   </div>
+
+    <table class="table-no-record">
+        <tr>
+        <td colspan="8" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
 </div>
+
+
 
 <script type="text/javascript" src="/script/statutory-settings/statutory_settings.js"></script>
 <script type="text/javascript">
