@@ -55,12 +55,8 @@ __all__ = [
     "get_domains_for_legalentity",
     "get_review_settings_timeline",
     "get_review_settings_compliance",
-<<<<<<< HEAD
     "save_review_settings_compliance",
-=======
-
     "get_user_based_countries",
->>>>>>> Usha/phase2
     "get_user_based_legal_entity", "get_user_based_division",
     "get_user_based_category",
     "update_new_statutory_settings_lock",
