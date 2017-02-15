@@ -690,7 +690,7 @@ class Domain(object):
         legal_entity_id = data.get("le_id")
         is_active = data.get("is_active")
         return Domain(
-            domain_id, domain_name, is_active
+            domain_id, domain_name, legal_entity_id, is_active
         )
 
     def to_structure(self):
@@ -701,6 +701,36 @@ class Domain(object):
             "is_active": self.is_active,
         }
         return data
+
+
+class DomainInfo(object):
+    def __init__(
+        self, domain_id, domain_name, is_active
+    ):
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.is_active = is_active
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "d_id", "d_name", "is_active"
+        ])
+        domain_id = data.get("d_id")
+        domain_name = data.get("d_name")
+        is_active = data.get("is_active")
+        return DomainInfo(
+            domain_id, domain_name, is_active
+        )
+
+    def to_structure(self):
+        data = {
+            "d_id": self.domain_id,
+            "d_name": self.domain_name,
+            "is_active": self.is_active,
+        }
+        return data
+
 
 #
 # Level
@@ -2959,10 +2989,10 @@ class ComplianceShortDescription(object):
             "ageing": to_structure_UnsignedIntegerType_32(self.ageing),
         }
 
+
 #
 # StatutoryDate
 #
-
 class StatutoryDate(object):
     def __init__(self, statutory_date, statutory_month, trigger_before_days, repeat_by):
         self.statutory_date = statutory_date
@@ -2987,10 +3017,10 @@ class StatutoryDate(object):
             "repeat_by": self.repeat_by
         }
 
+
 #
 # FormCategory
 #
-
 class FormCategory(object):
     def __init__(self, form_category_id, form_category):
         self.form_category_id = form_category_id
@@ -3028,10 +3058,10 @@ class UserCategory(object):
             "user_category_name": self.user_category_name,
         }
 
+
 #
 # FormType
 #
-
 class FormType(object):
     def __init__(self, form_type_id, form_type):
         self.form_type_id = form_type_id
@@ -3052,10 +3082,10 @@ class FormType(object):
             "form_type": to_structure_CustomTextType_50(self.form_type),
         }
 
+
 #
 # ComplianceFrequency
 #
-
 class ComplianceFrequency(object):
     def __init__(self, frequency_id, frequency):
         self.frequency_id = frequency_id
@@ -4096,16 +4126,17 @@ class ReviewSettingsUnits(object):
 class ReviewSettingsCompliance(object):
     def __init__(
         self, compliance_id, compliance_task, statutory_provision,
-        repeats_every, statutory_dates, trigger_before_days,
-        due_date, unit_ids, level_1_statutory_name
+        repeats_every, repeats_type_id, statutory_dates,
+        unit_ids, level_1_statutory_name
     ):
         self.compliance_id = compliance_id
         self.compliance_task = compliance_task
         self.statutory_provision = statutory_provision
         self.repeats_every = repeats_every
+        self.repeats_type_id = repeats_type_id
         self.statutory_dates = statutory_dates
-        self.trigger_before_days = trigger_before_days
-        self.due_date = due_date
+        # self.trigger_before_days = trigger_before_days
+        # self.due_date = due_date
         self.unit_ids = unit_ids
         self.level_1_statutory_name = level_1_statutory_name
 
@@ -4113,25 +4144,25 @@ class ReviewSettingsCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(
             data, [
-                "comp_id", "comp_name", "s_prov",
-                "r_every", "s_dates", "trigger_before_days",
-                "due_date", "u_ids", "level_1_s_name"
+                "comp_id", "comp_name", "s_prov", "r_every", "repeats_type_id",
+                "s_dates", "u_ids", "level_1_s_name"
             ]
         )
         compliance_id = data.get("comp_id")
         compliance_task = data.get("comp_name")
         statutory_provision = data.get("s_prov")
         repeats_every = data.get("r_every")
+        repeats_type_id = data.get("repeats_type_id")
         statutory_dates = data.get("s_dates")
-        trigger_before_days = data.get("trigger_before_days")
-        due_date = data.get("due_date")
+        # trigger_before_days = data.get("trigger_before_days")
+        # due_date = data.get("due_date")
         unit_ids = data.get("u_ids")
         level_1_statutory_name = data.get("level_1_s_name")
 
         return ReviewSettingsCompliance(
             compliance_id, compliance_task, statutory_provision,
-            repeats_every, statutory_dates, trigger_before_days,
-            due_date, unit_ids, level_1_statutory_name
+            repeats_every, repeats_type_id, statutory_dates,
+            unit_ids, level_1_statutory_name
         )
 
     def to_structure(self):
@@ -4140,37 +4171,36 @@ class ReviewSettingsCompliance(object):
             "comp_name": self.compliance_task,
             "s_prov": self.statutory_provision,
             "r_every": self.repeats_every,
+            "repeats_type_id": self.repeats_type_id,
             "s_dates": self.statutory_dates,
-            "trigger_before_days": self.trigger_before_days,
-            "due_date": self.due_date,
             "u_ids": self.unit_ids,
             "level_1_s_name": self.level_1_statutory_name
         }
 
 
-class StatutoryDate(object):
-    def __init__(self, statutory_date, statutory_month, trigger_before_days, repeat_by):
-        self.statutory_date = statutory_date
-        self.statutory_month = statutory_month
-        self.trigger_before_days = trigger_before_days
-        self.repeat_by = repeat_by
+# class StatutoryDate(object):
+#     def __init__(self, statutory_date, statutory_month, trigger_before_days, repeat_by):
+#         self.statutory_date = statutory_date
+#         self.statutory_month = statutory_month
+#         self.trigger_before_days = trigger_before_days
+#         self.repeat_by = repeat_by
 
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["statu_date", "statu_month", "trigger_before_days", "repeat_by"])
-        statutory_date = data.get("statu_date")
-        statutory_month = data.get("statu_month")
-        trigger_before_days = data.get("trigger_before_days")
-        repeat_by = data.get("repeat_by")
-        return StatutoryDate(statutory_date, statutory_month, trigger_before_days, repeat_by)
+#     @staticmethod
+#     def parse_structure(data):
+#         data = parse_dictionary(data, ["statu_date", "statu_month", "trigger_before_days", "repeat_by"])
+#         statutory_date = data.get("statu_date")
+#         statutory_month = data.get("statu_month")
+#         trigger_before_days = data.get("trigger_before_days")
+#         repeat_by = data.get("repeat_by")
+#         return StatutoryDate(statutory_date, statutory_month, trigger_before_days, repeat_by)
 
-    def to_structure(self):
-        return {
-            "statu_date": self.statutory_date,
-            "statu_month": self.statutory_month,
-            "trigger_before_days": self.trigger_before_days,
-            "repeat_by": self.repeat_by
-        }
+#     def to_structure(self):
+#         return {
+#             "statu_date": self.statutory_date,
+#             "statu_month": self.statutory_month,
+#             "trigger_before_days": self.trigger_before_days,
+#             "repeat_by": self.repeat_by
+#         }
 
 
 class LegalEntityUser(object):

@@ -818,8 +818,7 @@ button.btn-success {
 
 .ac-textbox li
 {
-list-style-type:none; line-height:25px;
-
+  list-style-type:none; line-height:25px;
 }
 .ac-textbox ul {
   background: #FFFFFF none repeat scroll 0 0;
@@ -845,3 +844,9 @@ list-style-type:none; line-height:25px;
 }
 
 /* Autocomplete selectbox Style */
+.applicable-count {
+  cursor: pointer;
+}
+.table-review-settings td{
+  vertical-align: top !important;
+}
