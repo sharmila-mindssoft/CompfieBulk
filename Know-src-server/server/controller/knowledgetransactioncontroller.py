@@ -105,7 +105,8 @@ def process_get_statutory_mapping_master(db, user_id):
 def process_get_statutory_mappings(db, user_id, request):
     a_status = request.approval_status_id
     rcount = request.rcount
-    statutory_mappings, total = statutory_mapping_list(db, user_id, a_status, rcount)
+    page_limit = request.page_limit
+    statutory_mappings, total = statutory_mapping_list(db, user_id, a_status, rcount, page_limit)
     return knowledgetransaction.GetStatutoryMappingsSuccess(
         statutory_mappings, total
     )

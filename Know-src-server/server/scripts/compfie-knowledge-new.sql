@@ -8,7 +8,8 @@ CREATE TABLE `tbl_client_replication_status` (
   `is_new_data` tinyint(2) DEFAULT '1',
   `is_new_domain` tinyint(2) DEFAULT '0',
   `domain_id` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`client_id`)
+  `is_group` tinyint(2) DEFAULT '0',
+  UNIQUE KEY(`client_id`, `is_group`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_audit_log`;
@@ -18,8 +19,8 @@ CREATE TABLE `tbl_audit_log` (
   `tbl_auto_id` int(10),
   `column_name` varchar(100),
   `value` longtext,
-  `audit_type` tinyint(4),
   `client_id` int(10),
+  `legal_entity_id` int(11),
   `action` varchar(20)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

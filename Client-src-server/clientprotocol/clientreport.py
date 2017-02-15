@@ -2472,21 +2472,30 @@ class GetComplianceActivityReportSuccess(Response):
 #         }
 
 class GetReassignedHistoryReportFiltersSuccess(Response):
-    def __init__(self, domains, units):
+    def __init__(self, domains, units, acts, compliances, legal_entity_users):
         self.domains = domains
         self.units = units
+        self.acts = acts
+        self.compliances = compliances
+        self.legal_entity_users = legal_entity_users
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["domains", "units"])
+        data = parse_dictionary(data, ["domains", "units", "acts", "compliances", "legal_entity_users"])
         domains = data.get("domains")
         units = data.get("units")
-        return GetReassignedHistoryReportFiltersSuccess(domains, units)
+        acts = data.get("acts")
+        compliances = data.get("compliances")
+        legal_entity_users = data.get("legal_entity_users")
+        return GetReassignedHistoryReportFiltersSuccess(domains, units, acts, compliances, legal_entity_users)
 
     def to_inner_structure(self):
         return {
             "domains": self.domains,
             "units": self.units,
+            "acts": self.acts,
+            "compliances": self.compliances,
+            "legal_entity_users": self.legal_entity_users,
         }
 
 class GetReassignedHistoryReportSuccess(Response):
@@ -2508,7 +2517,6 @@ class GetReassignedHistoryReportSuccess(Response):
             "statutory_wise_compliances": to_structure_VectorType_RecordType_clientreport_StatutoryReassignCompliance(self.statutory_wise_compliances),
             "total": to_structure_UnsignedIntegerType_32(self.total)
         }
-
 
 #
 # Statutory Notificaiton List
@@ -4265,30 +4273,6 @@ class UnitWiseReport(object):
             "completion_date": self.completion_date,
             "url": self.url,
             "domain_name": self.domain_name
-        }
-        return to_structure_dictionary_values(data)
-
-
-#
-# Service Providers
-#
-
-class ServiceProviders(object):
-    def __init__(self, sp_id, sp_name):
-        self.sp_id = sp_id
-        self.sp_name = sp_name
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["sp_id", "sp_name"])
-        sp_id = data.get("sp_id")
-        sp_name = data.get("sp_name")
-        return ServiceProviders(sp_id, sp_name)
-
-    def to_structure(self):
-        data = {
-            "sp_id": self.sp_id,
-            "sp_name": self.sp_name
         }
         return to_structure_dictionary_values(data)
 

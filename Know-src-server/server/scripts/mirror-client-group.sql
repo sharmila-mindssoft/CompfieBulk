@@ -1,3 +1,7 @@
+CREATE TABLE `tbl_audit_log` (
+  `audit_trail_id` int(11) DEFAULT 0,
+  `domain_trail_id` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_category` (
   `user_category_id` int(11) NOT NULL,
   `user_category_name` varchar(50) DEFAULT NULL,
@@ -52,7 +56,7 @@ CREATE TABLE `tbl_domain_countries` (
   UNIQUE KEY (`country_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_organisation` (
-  `organisation_id` int(11) NOT NULL AUTO_INCREMENT,
+  `organisation_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `organisation_name` varchar(50) NOT NULL,
@@ -70,14 +74,12 @@ CREATE TABLE `tbl_client_groups` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_business_groups` (
   `business_group_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `business_group_name` varchar(100) NOT NULL,
   PRIMARY KEY (`business_group_id`),
-  UNIQUE KEY(`business_group_id`, `client_id`)
+  UNIQUE KEY(`business_group_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entities` (
   `legal_entity_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `legal_entity_name` varchar(100) DEFAULT NULL,
@@ -94,7 +96,7 @@ CREATE TABLE `tbl_legal_entities` (
   `closed_by` int(11) DEFAULT NULL,
   `closed_remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`legal_entity_id`),
-  UNIQUE KEY(`legal_entity_id`, `client_id`)
+  UNIQUE KEY(`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entity_domains` (
   `legal_entity_id` int(11) NOT NULL,
@@ -105,23 +107,21 @@ CREATE TABLE `tbl_legal_entity_domains` (
   UNIQUE KEY(`legal_entity_id`, `domain_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_divisions` (
-  `client_id` int(11) NOT NULL,
   `division_id` int(11) NOT NULL,
   `division_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) DEFAULT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`division_id`),
-  UNIQUE KEY(`division_id`, `client_id`)
+  UNIQUE KEY(`division_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_categories` (
   `category_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
   `category_name` varchar(100) DEFAULT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `business_group_id` int(11) DEFAULT NULL,
   `division_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`category_id`),
-  UNIQUE KEY(`category_id`, `client_id`, `legal_entity_id`)
+  UNIQUE KEY(`category_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_configuration` (
   `client_id` int(11) NOT NULL,
@@ -158,7 +158,7 @@ CREATE TABLE `tbl_units_organizations` (
   UNIQUE KEY (`unit_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_groups` (
-  `user_group_id` int(11) NOT NULL,
+  `user_group_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) DEFAULT NULL,
   `user_group_name` varchar(50) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
@@ -177,7 +177,7 @@ CREATE TABLE `tbl_user_group_forms` (
   UNIQUE KEY (`user_group_id`, `form_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_service_providers` (
-  `service_provider_id` int(11) NOT NULL ,
+  `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
   `address` varchar(500) DEFAULT NULL,
   `short_name` varchar(20) DEFAULT NULL,
@@ -205,6 +205,7 @@ CREATE TABLE `tbl_users` (
   `user_category_id` int(11) NOT NULL,
   `client_id` int(11) DEFAULT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
+  `service_provider_id` int(11) DEFAULT NULL,
   `user_level` int(11) DEFAULT NULL,
   `user_group_id` int(11) DEFAULT NULL,
   `email_id` varchar(100) NOT NULL,
@@ -292,6 +293,7 @@ CREATE TABLE `tbl_reminder_settings` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY(`client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
 INSERT INTO tbl_user_category VALUES(3, "Legal Entity Admin");
@@ -333,13 +335,19 @@ INSERT INTO tbl_forms VALUES(25, 3, 'Statutory Notification List', "/statutory-n
 INSERT INTO tbl_forms VALUES(26, 3, 'Service Provider Details', "/service-provider-details", 26, null);
 INSERT INTO tbl_forms VALUES(27, 3, 'Audit Trail', "/audit-trail", 27, null);
 INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 28, null);
-INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/view-profile", 29, null);
+INSERT INTO tbl_forms VALUES(29, 4, 'View Profile', "/view-profile", 29, null);
 INSERT INTO tbl_forms VALUES(30, 4, 'Client View Profile', "/client-view-profile", 30, null);
 INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 31, null);
 INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 32, null);
-INSERT INTO tbl_forms VALUES(33, 4, 'themes', "/themes", 33, null);
+INSERT INTO tbl_forms VALUES(33, 4, 'Themes', "/themes", 33, null);
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
 INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-details", 35, null);
+INSERT INTO tbl_forms VALUES(36, 4, 'Reminders', "/reminders", 36, null);
+INSERT INTO tbl_forms VALUES(37, 4, 'Statutory Notifications', "/statutory-notifications", 37, null);
+INSERT INTO tbl_forms VALUES(38, 4, 'Escalations', "/escalations", 38, null);
+INSERT INTO tbl_forms VALUES(39, 4, 'Messages', "/messages", 39, null);
+
+
 -- Group Admin Forms (form_category_id, form_id, user_category_id )
 insert into tbl_form_category values (1, 1, 1);
 insert into tbl_form_category values (2, 2, 1);
@@ -374,6 +382,12 @@ insert into tbl_form_category values (31, 31, 1);
 insert into tbl_form_category values (32, 32, 1);
 insert into tbl_form_category values (33, 33, 1);
 insert into tbl_form_category values (34, 34, 1);
+insert into tbl_form_category values (148, 36, 1);
+insert into tbl_form_category values (149, 37, 1);
+insert into tbl_form_category values (150, 38, 1);
+insert into tbl_form_category values (151, 39, 1);
+
+
 -- legal Entity Admin Forms
 insert into tbl_form_category values (35, 1, 3);
 insert into tbl_form_category values (36, 2, 3);
@@ -408,6 +422,11 @@ insert into tbl_form_category values (64, 31, 3);
 insert into tbl_form_category values (65, 32, 3);
 insert into tbl_form_category values (66, 33, 3);
 insert into tbl_form_category values (67, 34, 3);
+insert into tbl_form_category values (152, 36, 3);
+insert into tbl_form_category values (153, 37, 3);
+insert into tbl_form_category values (154, 38, 3);
+insert into tbl_form_category values (155, 39, 3);
+
 -- Domain Admin Forms
 insert into tbl_form_category values (68, 3, 4);
 insert into tbl_form_category values (69, 5, 4);
@@ -437,6 +456,11 @@ insert into tbl_form_category values (92, 31, 4);
 insert into tbl_form_category values (93, 32, 4);
 insert into tbl_form_category values (94, 33, 4);
 insert into tbl_form_category values (95, 34, 4);
+insert into tbl_form_category values (156, 36, 4);
+insert into tbl_form_category values (157, 37, 4);
+insert into tbl_form_category values (158, 38, 4);
+insert into tbl_form_category values (159, 39, 4);
+
 -- Inhouse Users Forms
 insert into tbl_form_category values (96, 35, 5);
 insert into tbl_form_category values (97, 11, 5);
@@ -453,6 +477,10 @@ insert into tbl_form_category values (107, 31, 5);
 insert into tbl_form_category values (108, 32, 5);
 insert into tbl_form_category values (109, 33, 5);
 insert into tbl_form_category values (110, 34, 5);
+insert into tbl_form_category values (160, 36, 5);
+insert into tbl_form_category values (161, 38, 5);
+insert into tbl_form_category values (162, 39, 5);
+
 -- Service Provider Forms
 insert into tbl_form_category values (111, 35, 6);
 insert into tbl_form_category values (112, 11, 6);
@@ -469,6 +497,10 @@ insert into tbl_form_category values (122, 31, 6);
 insert into tbl_form_category values (123, 32, 6);
 insert into tbl_form_category values (124, 33, 6);
 insert into tbl_form_category values (125, 34, 6);
+insert into tbl_form_category values (163, 36, 6);
+insert into tbl_form_category values (164, 38, 6);
+insert into tbl_form_category values (165, 39, 6);
+
 -- View Only Forms
 insert into tbl_form_category values (126, 12, 2);
 insert into tbl_form_category values (127, 13, 2);

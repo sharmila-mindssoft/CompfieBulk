@@ -1085,8 +1085,7 @@ function editEntity(e, le_count, value, domain_details) {
     // image_name = image[image.length - 1];
     // if (image) {
     var image = le_table.find(".edit-right-icon").attr("src").split("?")[0].split("/");
-    var image_name = image[image.length-1];
-    
+    var image_name = image[image.length-1];    
     if(image_name == "icon-edit.png"){        
         selected_action = $(".actions select").val();
         if (selected_action == 1) {

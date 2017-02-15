@@ -5,7 +5,7 @@ import json
 from dateutil import relativedelta
 from server.clientdatabase.tables import *
 from server.constants import (CLIENT_DOCS_BASE_PATH)
-from clientprotocol import (clientcore, dashboard, clientreport)
+from clientprotocol import (clientcore, dashboard)
 from server.common import (
     encrypt, convert_to_dict, get_date_time, get_date_time_in_date,
     remove_uploaded_file, convert_to_key_dict
@@ -66,7 +66,8 @@ __all__ = [
     "update_profile",
     "is_service_proivder_user",
     "convert_datetime_to_date",
-    "is_old_primary_admin"
+    "is_old_primary_admin",
+    "get_domains_info"
     ]
 
 
@@ -91,44 +92,28 @@ def get_client_user_forms(db, user_id):
 
 def get_admin_id(db):
     columns = "user_id"
-    condition = " is_active = 1 " # and is_primary_admin = 1
+    condition = " is_active = 1 "  # and is_primary_admin = 1
     rows = db.get_data(tblUsers, columns, condition)
     return rows[0]["user_id"]
 
 def get_countries_for_user(db, user_id):
-    # admin_id = get_admin_id(db)
-    # query = "SELECT distinct t1.country_id, t1.country_name, " + \
-    #     " t1.is_active FROM tbl_countries t1 "
-    # if user_id != admin_id:
-    #     query = query + " INNER JOIN tbl_user_countries t2 " + \
-    #         " ON t1.country_id = t2.country_id WHERE t2.user_id = %s"
-    #     rows = db.select_all(query, [user_id])
-    # else:
-    #     rows = db.select_all(query)
-    # columns = ["country_id", "country_name", "is_active"]
-    # result = convert_to_dict(rows, columns)
-    # return return_countries(result)
     query = "SELECT t4.country_id, t4.country_name, t4.is_active FROM tbl_users AS t1 " + \
         " INNER JOIN tbl_user_units AS t2 ON t2.user_id = t1.user_id " + \
         " INNER JOIN tbl_legal_entities AS t3 ON t3.legal_entity_id = t2.legal_entity_id " + \
         " INNER JOIN tbl_countries AS t4 ON t4.country_id = t3.country_id " + \
         " WHERE t1.user_id = %s GROUP BY t4.country_id "
-    rows = db.select_all(query, [user_id])
-    print "////////////////////"
     print query
-    print [user_id]
-    print rows
-    print "////////////////////"
+    print user_id
+    rows = db.select_all(query, [user_id])
+
     return return_countries(rows)
 
 def return_countries(data):
     results = []
     for d in data:
-        print "--////////////////////"
         results.append(clientcore.Country(
             d["country_id"], d["country_name"], bool(d["is_active"])
         ))
-        print "////////////////////"
     return results
 
 
@@ -145,25 +130,45 @@ def return_countries(data):
 #     columns = ["domain_id", "domain_name", "is_active"]
 #     result = convert_to_dict(rows, columns)
 #     return return_domains(result)
-def get_domains_for_user(db, user_id):
-    admin_id = get_admin_id(db)
-    if user_id != admin_id:
+
+def get_domains_for_user(db, user_id, user_category):
+
+    if user_category > 1 :
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
-        "t2.is_active FROM tbl_user_domains AS t1 " + \
-        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  " + \
-        "WHERE t1.legal_entity_id = %s "
-        print "-------------------->"
-        print query
+            "t2.is_active FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+            "where t1.user_id = %s "
+
         rows = db.select_all(query, [user_id])
     else:
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
-        "t2.is_active FROM tbl_user_domains AS t1 " + \
-        "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  "
-        print "-------------------->"
-        print query
+            "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
         rows = db.select_all(query)
-
     return return_domains(rows)
+
+
+def get_domains_info(db, user_id, user_category):
+
+    if user_category > 1 :
+        query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
+            "t2.is_active FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+            "where t1.user_id = %s "
+
+        rows = db.select_all(query, [user_id])
+    else:
+        query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
+            "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
+        rows = db.select_all(query)
+    results = []
+    for d in rows:
+        results.append(clientcore.DomainInfo(
+            d["domain_id"], d["domain_name"], bool(d["is_active"])
+        ))
+    return results
+
 
 def return_domains(data):
     results = []
@@ -263,7 +268,7 @@ def get_group_name(db):
     query = "SELECT group_name from %s " % tblClientGroups
     row = db.select_one(query)
     if row:
-        return row[0]
+        return row["group_name"]
     return "group_name"
 
 
@@ -275,28 +280,22 @@ def get_country_wise_domain_month_range(db):
         " t1.domain_id," + \
         " (select domain_name from tbl_domains " + \
         " where domain_id = t1.domain_id)domain_name, " + \
-        " t1.period_from, t1.period_to " + \
-        " from tbl_client_configurations t1 INNER JOIN " + \
+        " t1.month_from, t1.month_to " + \
+        " from tbl_client_configuration t1 INNER JOIN " + \
         " tbl_countries TC ON TC.country_id = t1.country_id  " + \
         " INNER JOIN tbl_domains TD ON TD.domain_id = t1.domain_id"
     rows = db.select_all(q)
-    columns = [
-        "country_id", "country_name",
-        "domain_id", "domain_name",
-        "period_from", "period_to"
-    ]
-    result = convert_to_dict(rows, columns)
 
     country_wise = {}
     domain_info = []
-    for r in result:
+    for r in rows:
         country_name = r["country_name"].strip()
         domain_name = r["domain_name"]
         info = dashboard.DomainWiseYearConfiguration(
             country_name,
             domain_name,
-            db.string_full_months.get(int(r["period_from"])),
-            db.string_full_months.get(int(r["period_to"]))
+            db.string_full_months.get(int(r["month_from"])),
+            db.string_full_months.get(int(r["month_to"]))
         )
         domain_info = country_wise.get(country_name)
         if domain_info is None:
@@ -328,19 +327,19 @@ def get_units_for_user(db, user_id):
     admin_id = get_admin_id(db)
     if user_id != admin_id:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
-        "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-        "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
-        "FROM tbl_user_units AS t1 " + \
-        "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
-        "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
+            "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+            "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
+            "FROM tbl_user_units AS t1 " + \
+            "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
+            "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
         rows = db.select_all(query, [user_id])
     else:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
-        "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-        "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
-        "FROM tbl_user_units AS t1 " + \
-        "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id " +\
-        "WHERE t2.is_closed = 0 ORDER BY unit_name"
+            "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+            "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
+            "FROM tbl_user_units AS t1 " + \
+            "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id " +\
+            "WHERE t2.is_closed = 0 ORDER BY unit_name"
         rows = db.select_all(query)
     return return_units(rows)
 
@@ -366,25 +365,51 @@ def return_units(units):
             ))
         return results
 
+# get_acts_for_user(db, user_id):
+#     admin_id = get_admin_id(db)
+#     if user_id != admin_id:
+#         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+#         "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+#         "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
+#         "FROM tbl_user_units AS t1 " + \
+#         "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
+#         "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
+#         rows = db.select_all(query, [user_id])
+#     else:
+#         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+#         "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+#         "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
+#         "FROM tbl_user_units AS t1 " + \
+#         "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id " +\
+#         "WHERE t2.is_closed = 0 ORDER BY unit_name"
+#         rows = db.select_all(query)
+#     return return_units(rows)
+
+
 def get_acts_for_user(db, user_id):
     admin_id = get_admin_id(db)
     if user_id != admin_id:
-        query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
-        "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-        "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
-        "FROM tbl_user_units AS t1 " + \
-        "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
-        "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
-        rows = db.select_all(query, [user_id])
-    else:
-        query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
-        "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-        "t2.address, t2.domain_ids, t2.country_id, t2.business_group_id " + \
-        "FROM tbl_user_units AS t1 " + \
-        "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id " +\
-        "WHERE t2.is_closed = 0 ORDER BY unit_name"
+        query = "SELECT distinct t1.domain_id, SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1) as act " + \
+            "FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id "
         rows = db.select_all(query)
-    return return_units(rows)
+    else:
+        query = "SELECT distinct t1.domain_id, SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1) as act " + \
+            "FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id " + \
+            "where t1.user_id = %s "
+        rows = db.select_all(query, [user_id])
+    return return_acts(rows)
+
+def return_acts(acts):
+        results = []
+        for act in acts:
+            results.append(clientcore.ClientAct(
+                act["domain_id"], act["act"].strip()
+            ))
+        return results
 
 def get_units_for_user_assign(db, unit_ids):
     columns = [
@@ -423,16 +448,23 @@ def return_units_assign(units):
             ))
         return results
 
-def get_client_users(db, unit_ids=None):
-    columns = "user_id, employee_name, employee_code, is_active"
-    condition = "1"
-    conditon_val = None
-    if unit_ids is not None:
-        condition += " and seating_unit_id in (%s)"
-        conditon_val = [unit_ids]
-    rows = db.get_data(
-        tblUsers, columns, condition, conditon_val
-    )
+# def get_client_users(db, unit_ids=None):
+#     columns = "user_id, employee_name, employee_code, is_active"
+#     condition = "1"
+#     conditon_val = None
+#     if unit_ids is not None:
+#         condition += " and seating_unit_id in (%s)"
+#         conditon_val = [unit_ids]
+#     rows = db.get_data(
+#         tblUsers, columns, condition, conditon_val
+#     )
+#     return return_client_users(rows)
+
+def get_client_users(db):
+    query = "SELECT distinct t1.user_id, t1.employee_name, " + \
+        "t1.employee_code, t1.is_active from tbl_users as t1 " + \
+        "inner join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
+    rows = db.select_all(query)
     return return_client_users(rows)
 
 
@@ -458,8 +490,8 @@ def get_assignees(db, unit_ids=None):
 def return_client_users(users):
     results = []
     for user in users:
-        results.append(clientreport.User(
-            user["user_id"], user["employee_code"], user["employee_name"]
+        results.append(clientcore.LegalEntityUser(
+            user["user_id"], user["employee_code"], user["employee_name"], bool(user["is_active"])
         ))
     return results
 
@@ -530,8 +562,10 @@ def get_forms_by_category(db, category_id):
 
 def get_user_forms(db, user_id):
     # except group admin forms
-    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu " + \
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
+        " tf.form_type " + \
         "FROM tbl_forms as t1 " + \
+        " INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
         "INNER JOIN tbl_user_group_forms as t2 on t1.form_id = t2.form_id " + \
         "INNER JOIN tbl_users as t3 on t2.user_group_id = t3.user_group_id " + \
         " WHERE t3.user_id = %s and t3.is_active = 1 and t3.is_disable = 0 " + \
@@ -565,29 +599,31 @@ def get_country_info(db, user_id, user_category_id):
 
 def get_legal_entity_info(db, user_id, user_category_id):
     if user_category_id == 1 :
-        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, t1.client_id, " + \
-            "t1.business_group_id, t1.country_id, " + \
+        q = "SELECT t1.legal_entity_id, t1.legal_entity_name, " + \
+            "t1.business_group_id, t1.country_id, t2.country_name, " + \
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
-            "WHERE contract_to >= date(now()) and is_closed = 0"
+            "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
+            "WHERE contract_to >= CURDATE() and is_closed = 0"
         rows = db.select_all(q)
-        #print "------------------ Admin ---------------"
+        # print "------------------ Admin ---------------"
     else :
         q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
-            "t1.client_id, t1.business_group_id, t1.country_id, " + \
+            "t1.business_group_id, t1.country_id, t3.country_name, " + \
+            "t1.client_id, t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
             "inner join tbl_user_domains as t2 on " + \
             "t1.legal_entity_id = t1.legal_entity_id " + \
-            "where contract_to > now() and is_closed = 0 and t2.user_id= %s"
+            "inner join tbl_countries t3 on t1.country_id = t3.country_id " + \
+            "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
         rows = db.select_all(q, [user_id])
-        #print "------------------ User ---------------"
-
+        # print "------------------ User ---------------"
     le_list = []
     for r in rows :
         le_list.append(clientcore.LegalEntityInfo(
             r["legal_entity_id"], r["legal_entity_name"], r["country_id"],
-            r["business_group_id"], r["business_group_name"]
+            r["business_group_id"], r["business_group_name"], r["country_name"]
         ))
     return le_list
 
@@ -619,13 +655,21 @@ def get_countries(db):
 
 
 def get_domains(db):
-    query = "SELECT distinct t1.domain_id, t1.domain_name, " + \
-        " t1.is_active FROM tbl_domains t1 "
-    rows = db.select_all(query)
-    columns = ["domain_id", "domain_name", "is_active"]
-    result = convert_to_dict(rows, columns)
-    return return_domains(result)
+    query = "SELECT distinct t1.domain_id " + \
+        " FROM tbl_domains t1 "
 
+    rows = db.select_all(query)
+    d_id = []
+    for r in rows :
+        d_id.append(r.get("domain_id"))
+    return d_id
+
+
+def get_le_domains(db):
+    query = "SELECT distinct t1.domain_id" + \
+        "  FROM tbl_legal_entity_domains t1 "
+    rows = db.select_all(query)
+    return rows
 
 def is_primary_admin(db, user_id):
     column = "count(1) as result"
@@ -678,7 +722,7 @@ def get_user_category(db, user_id):
     q = "select user_category_id from tbl_users where user_id = %s"
     row = db.select_one(q, [user_id])
     if row :
-        return row["user-category_id"]
+        return row["user_category_id"]
     else :
         return None
 
@@ -802,23 +846,49 @@ def return_service_providers(service_providers):
     return results
 
 
+# def get_client_compliances(db, user_id):
+#     query = " SELECT compliance_id, document_name ,compliance_task " + \
+#             " FROM tbl_compliances"
+#     rows = db.select_all(query)
+#     columns = ["compliance_id", "document_name", "compliance_name"]
+#     result = convert_to_dict(rows, columns)
+#     return return_client_compliances(result)
+
+
+# def return_client_compliances(data):
+#     results = []
+#     for d in data:
+#         compliance_name = d["compliance_name"]
+#         if d["document_name"] not in ["None", None, ""]:
+#             compliance_name = "%s - %s" % (d["document_name"], compliance_name)
+#         results.append(clientcore.ComplianceFilter(
+#             d["compliance_id"], compliance_name
+#         ))
+#     return results
+
 def get_client_compliances(db, user_id):
-    query = " SELECT compliance_id, document_name ,compliance_task " + \
-            " FROM tbl_compliances"
-    rows = db.select_all(query)
-    columns = ["compliance_id", "document_name", "compliance_name"]
-    result = convert_to_dict(rows, columns)
-    return return_client_compliances(result)
+    admin_id = get_admin_id(db)
+    if user_id != admin_id:
+        query = "SELECT distinct t1.domain_id, compliance_task " + \
+            "FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id "
+        rows = db.select_all(query)
+    else:
+        query = "SELECT distinct t1.domain_id, compliance_task " + \
+            "FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id " + \
+            "where t1.user_id = %s "
+        rows = db.select_all(query, [user_id])
+    return return_client_compliances(rows)
 
 
 def return_client_compliances(data):
     results = []
     for d in data:
-        compliance_name = d["compliance_name"]
-        if d["document_name"] not in ["None", None, ""]:
-            compliance_name = "%s - %s" % (d["document_name"], compliance_name)
         results.append(clientcore.ComplianceFilter(
-            d["compliance_id"], compliance_name
+            d["domain_id"], d["compliance_task"]
         ))
     return results
 
@@ -1101,10 +1171,10 @@ def validate_compliance_due_date(db, request):
         param = [int(c.compliance_id)]
         row = db.select_one(q, param)
         if row:
-            comp_id = row[0]
-            task = row[1]
-            s_dates = json.loads(row[2])
-            repeats_type_id = row[3]
+            comp_id = row["compliance_id"]
+            task = row["compliance_task"]
+            s_dates = json.loads(row["statutory_dates"])
+            repeats_type_id = row["repeats_type_id"]
             due_date, due_date_list, date_list = set_new_due_date(
                 s_dates, repeats_type_id, comp_id
             )
@@ -1415,7 +1485,7 @@ def get_email_id_for_users(db, user_id):
     )
     row = db.select_one(q)
     if row:
-        return row[0], row[1]
+        return row["employee_name"], row["email_id"]
     else:
         return None
 
@@ -1461,7 +1531,7 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
     rows = db.get_data(
         tblClientConfigurations, columns, condition, condition_val
     )
-    period_from = rows[0]["period_from"]
+    period_from = rows[0]["month_from"]
 
     to_date = contract_from
     current_year = to_date.year
@@ -1790,7 +1860,7 @@ def get_trail_id(db, type=None):
         query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id " + \
             " from tbl_audit_log;"
     row = db.select_one(query)
-    trail_id = row[0]
+    trail_id = row.get("audit_trail_id")
     return trail_id
 
 

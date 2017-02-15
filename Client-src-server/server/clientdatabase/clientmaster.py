@@ -459,6 +459,8 @@ def save_user_privilege(
         session_user, get_date_time(), session_user
     ]
     result = db.insert(tblUserGroups, columns, values_list)
+    print ""
+    print result
     if result is False:
         raise client_process_error("E004")
     if result:

@@ -4491,6 +4491,7 @@ DELIMITER //
 CREATE PROCEDURE `sp_clientstatutories_list`(
     IN uid INT(11)
 )
+
 BEGIN
 
     select distinct t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
@@ -4503,18 +4504,16 @@ BEGIN
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
     t.status, t.reason,
-    (select count(compliance_id) from tbl_client_compliances where
-     (is_approved < 5 or IFNULL(compliance_applicable_status,0) = 3 )
-     and client_statutory_id = t1.client_statutory_id and unit_id = t1.unit_id)
-    as is_edit
+    t4.is_edit
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t1.client_statutory_id = t.client_statutory_id
     inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id and t1.domain_id = t3.domain_id and t3.user_id = uid
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
+    left join (select count(compliance_id) as is_edit,client_statutory_id,unit_id  from tbl_client_compliances where
+     (is_approved < 5 or IFNULL(compliance_applicable_status,0) = 3 ) group by client_statutory_id,unit_id) as t4
+     on t1.client_statutory_id = t4.client_statutory_id and t1.unit_id = t4.unit_id
     where t3.user_id = uid
     group by t.unit_id, t1.domain_id;
-
-
 END //
 
 DELIMITER ;
@@ -4538,7 +4537,8 @@ BEGIN
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
-    t.status, t.reason
+    t.status, t.reason,
+    (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and client_statutory_id = t1.client_statutory_id) as rcount
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
@@ -4614,22 +4614,20 @@ CREATE PROCEDURE `sp_clientstatutories_units`(
 )
 BEGIN
 
-    select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t2.geography_name ,
-    t4.client_statutory_id
-    from tbl_units as t1
-    inner join tbl_geographies as t2 on t1.geography_id = t2.geography_id
-    inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id
-    left join (
-        select t4.unit_id, count(distinct t1.compliance_id) as total
+select t4.unit_id, t4.unit_code, t4.unit_name, t4.address, geo.geography_name ,
+    cs.client_statutory_id
             from tbl_compliances as t1
             inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
             inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
             inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
             inner join tbl_units as t4 on t4.country_id = t1.country_id
+            inner join tbl_geographies as geo on t4.geography_id = geo.geography_id
+            inner join tbl_user_units as uu on t4.unit_id = uu.unit_id
             inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
             and t5.organisation_id = t2.organisation_id
             left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
             and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
+            left join tbl_client_statutories as cs on t4.unit_id = cs.unit_id
              where t1.is_active = 1 and t1.is_approved in (2, 3)
              and t6.compliance_id is null
              and t3.geography_id IN
@@ -4640,17 +4638,46 @@ BEGIN
                     (select geography_id from tbl_units where unit_id = t4.unit_id)
                 )
             ))
-            group by t4.unit_id
-    ) as nc on t1.unit_id = nc.unit_id
-    left join tbl_client_statutories as t4 on t1.unit_id = t4.unit_id
-    where t3.user_id = uid and t1.client_id = cid and t1.legal_entity_id = lid and
-    IFNULL(t1.business_group_id, 0) like bid and IFNULL(t1.division_id, 0) like divid
-    and IFNULL(t1.category_id,0) like catid and t3.domain_id = domainid
-    order by t1.unit_code, t1.unit_name;
 
+            and uu.user_id = uid and t4.client_id = cid and t4.legal_entity_id = lid and
+    IFNULL(t4.business_group_id, 0) like bid and IFNULL(t4.division_id, 0) like divid
+    and IFNULL(t4.category_id,0) like catid and uu.domain_id = domainid
+    group by t4.unit_id
+    order by t4.unit_code, t4.unit_name;
 
 END //
 
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_count`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientstatutories_compliance_count`(
+    IN unitid int(11), domainid int(11)
+)
+BEGIN
+
+    select @gid := geography_id from tbl_units where unit_id = unitid;
+    -- total compliances
+
+    select count(distinct t1.compliance_id) as total
+    from tbl_compliances as t1
+    inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
+    inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_units as t4 on t4.country_id = t1.country_id
+    inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+    and t5.organisation_id = t2.organisation_id
+    left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and IFNULL(t6.is_approved, 0) != 5
+     and t3.geography_id IN
+     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+        (select parent_ids from tbl_geographies where geography_id = @gid)));
+
+END //
 DELIMITER ;
 
 
@@ -4710,8 +4737,51 @@ BEGIN
     order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
     limit fromcount, tocount;
 
-    -- total compliances
-    select count(distinct t1.compliance_id) as total
+END //
+
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_to_approve`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientstatutories_compliance_to_approve`(
+    IN unitid INT(11), domainid INT(11), fromcount INT(11), tocount INT(11)
+)
+BEGIN
+    -- unit location
+    select @gid := geography_id from tbl_units where unit_id = unitid;
+    -- mapped statu names
+    select t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) as parent_ids, t2.parent_names, t1.statutory_mapping_id
+    from tbl_mapped_statutories as t1 inner join tbl_statutories as t2
+    on t1.statutory_id = t2.statutory_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    where t4.geography_id IN
+    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
+    -- mapped organistaion
+    select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
+    from tbl_mapped_industries as t1 inner join tbl_organisation as t2
+    on t1.organisation_id = t2.organisation_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    where t4.geography_id IN
+    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
+
+    -- only assigned compliance
+    select distinct t1.statutory_mapping_id, t1.compliance_id,
+    t1.compliance_task, t1.document_name,
+    t1.compliance_description, t1.statutory_provision,
+    t.statutory_mapping,
+    t6.unit_id, t6.domain_id, t6.compliance_id as assigned_compid,
+    t6.statutory_id, t6.statutory_applicable_status, t6.remarks,
+    t6.compliance_applicable_status, t6.is_approved
     from tbl_compliances as t1
     inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
     inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
@@ -4719,14 +4789,12 @@ BEGIN
     inner join tbl_units as t4 on t4.country_id = t1.country_id
     inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
     and t5.organisation_id = t2.organisation_id
-    left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    inner join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
     and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
      where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
-     and IFNULL(t6.is_approved, 0) != 5
-     and t3.geography_id IN
-     (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
-        (select parent_ids from tbl_geographies where geography_id = @gid)))
-    order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id;
+     and IFNULL(t6.is_approved, 0) = 2
+     order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
+    limit fromcount, tocount;
 
 END //
 
@@ -5059,52 +5127,51 @@ BEGIN
     if approvestatus = 6 then
         set approvestatus = '%';
     end if;
-    select t1.statutory_mapping_id, t1.country_id, t1.domain_id, t1.statutory_nature_id,
-    t1.is_active, t1.is_approved, t1.remarks,
+
+    select t1.statutory_mapping_id, t2.country_id, t2.domain_id, t2.statutory_nature_id, t1.compliance_id, t1.compliance_task, t1.document_name,
+    t1.is_active as c_is_active, t1.is_approved as c_is_approved, t1.remarks,
+    t2.is_active, t2.is_approved,
     (select country_name from tbl_countries where country_id = t1.country_id) as country_name,
     (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
-    (select statutory_nature_name from tbl_statutory_natures where statutory_nature_id = t1.statutory_nature_id) as nature
-    from tbl_statutory_mappings as t1
-    inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
-    t3.country_id = t1.country_id
-    where t3.user_id = userid
-    order by country_name, domain_name, t1.statutory_mapping
-    limit fromcount, tocount;
+    (select statutory_nature_name from tbl_statutory_natures where statutory_nature_id = t2.statutory_nature_id) as nature
 
-    select t1.statutory_mapping_id, t1.compliance_id, t1.compliance_task, t1.document_name,
-    t1.is_active, t1.is_approved, t1.remarks
     from tbl_compliances as t1
+    inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id
     where t3.user_id = userid and t1.is_approved like approvestatus
-    order by document_name, compliance_task;
+    order by country_name, domain_name, t1.statutory_mapping_id, compliance_id
+    limit fromcount, tocount;
 
-    select t1.statutory_mapping_id, t1.organisation_id,
+    select distinct t1.statutory_mapping_id, t1.organisation_id,
     (select organisation_name from tbl_organisation where organisation_id = t1.organisation_id) as organisation_name
     from tbl_mapped_industries as t1
-    inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id and
     t4.country_id = t2.country_id
-    where t4.user_id = userid;
+    where t4.user_id = userid
+    limit fromcount, tocount;
 
-    select t1.statutory_mapping_id, t1.statutory_id,
+    select distinct t1.statutory_mapping_id, t1.statutory_id,
     t3.statutory_name, t3.parent_names
     from tbl_mapped_statutories as t1
-    inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_statutories as t3 on t1.statutory_id = t3.statutory_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id  and
     t4.country_id = t2.country_id
-    where t4.user_id = userid;
+    where t4.user_id = userid
+    limit fromcount, tocount;
 
-    select t1.statutory_mapping_id, t1.geography_id,
+    select distinct t1.statutory_mapping_id, t1.geography_id,
     (select parent_names from tbl_geographies where geography_id = t1.geography_id) as geography_name
     from tbl_mapped_locations as t1
-    inner join tbl_statutory_mappings as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
     inner join tbl_user_domains as t4 on t4.domain_id = t2.domain_id and
     t4.country_id = t2.country_id
-    where t4.user_id = userid;
+    where t4.user_id = userid
+    limit fromcount, tocount;
 
-    select count( distinct t1.statutory_mapping_id) as total
+    select count( distinct t1.compliance_id) as total
     from tbl_compliances as t1
     inner join tbl_user_domains as t3 on t3.domain_id = t1.domain_id and
     t3.country_id = t1.country_id and t1.is_approved like approvestatus
@@ -6937,7 +7004,7 @@ BEGIN
     on t1.statutory_mapping_id = t2.statutory_mapping_id
     where t1.compliance_id = compid;
 
-    SELECT t1.geography_name, t1.parent_names from tbl_geographies as t1
+    SELECT distinct t1.geography_name, t1.parent_names from tbl_geographies as t1
     inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
     inner join tbl_compliances as t3 on t3.statutory_mapping_id = t2.statutory_mapping_id
     where t3.compliance_id = compid;
@@ -7030,7 +7097,7 @@ DROP PROCEDURE IF EXISTS `sp_tbl_statutory_mapping_by_id`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_tbl_statutory_mapping_by_id`(
-    IN map_id INT(11), comp_id VARCHAR(50)
+    IN map_id INT(11), comp_id VARCHAR(50), fromcount int(11), tocount int(11)
 )
 BEGIN
     select t1.statutory_mapping_id, t2.compliance_id, t2.country_id, t2.domain_id, t2.document_name,
@@ -7046,17 +7113,18 @@ BEGIN
      from tbl_statutory_mappings as t1
          inner join tbl_compliances as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
          inner join tbl_statutory_natures as t4 on t1.statutory_nature_id = t4.statutory_nature_id
-     where t1.statutory_mapping_id = map_id and t2.compliance_id like comp_id;
+     where t1.statutory_mapping_id = map_id and t2.compliance_id like comp_id
+     limit fromcount, tocount;
 
-     select t1.organisation_id, t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
+     select distinct t1.organisation_id, t.organisation_name, t1.statutory_mapping_id from tbl_organisation as t
          inner join tbl_mapped_industries as t1 on t1.organisation_id = t.organisation_id
      where t1.statutory_mapping_id = map_id;
 
-     SELECT t2.geography_id, t1.geography_name, t1.level_id, t1.parent_names, t1.parent_names, t2.statutory_mapping_id from tbl_geographies as t1
+     SELECT distinct t2.geography_id, t1.geography_name, t1.level_id, t1.parent_names, t1.parent_names, t2.statutory_mapping_id from tbl_geographies as t1
         inner join tbl_mapped_locations as t2 on t2.geography_id = t1.geography_id
      where t2.statutory_mapping_id = map_id;
 
-    SELECT t1.parent_names, t1.statutory_name, t2.statutory_id
+    SELECT distinct t1.parent_names, t1.statutory_name, t2.statutory_id
         from tbl_statutories as t1
         inner join tbl_mapped_statutories as t2 on t2.statutory_id = t1.statutory_id
     where t2.statutory_mapping_id = map_id;
@@ -8804,6 +8872,27 @@ BEGIN
             inner join tbl_legal_entities as le on o.country_id = le.country_id
             inner join tbl_legal_entity_domains as led on o.domain_id = led.domain_id
             where client_id = cid and le.legal_entity_id = le_id;
+
+        select client_id, group_name, short_name, email_id, total_view_licence from
+            tbl_client_groups where client_id = cid;
+
+        select client_id, country_id, domain_id, month_from, month_to
+            from tbl_client_configuration where client_id = cid;
+
+        select client_id, legal_entity_id, legal_entity_name, country_id,
+            business_group_id, contract_from, contract_to, logo,
+            logo_size, file_space_limit, total_licence from
+                tbl_legal_entities where client_id = cid and legal_entity_id = le_id;
+
+        select legal_entity_id, domain_id, activation_date,
+        organisation_id, count from tbl_legal_entity_domains where
+            legal_entity_id = le_id;
+
+
+        select b.business_group_id, b.business_group_name from tbl_business_groups as b
+        inner join tbl_legal_entities as l on b.business_group_id = l.business_group_id
+        where l.legal_entity_id = le_id;
+
 
     END IF ;
 

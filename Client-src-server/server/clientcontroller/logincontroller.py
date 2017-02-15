@@ -96,7 +96,7 @@ def process_login(db, request, client_id, session_user_ip):
         return clientlogin.InvalidCredentials(None)
     else:
         response = verify_login(db, username, encrypt_password)
-        #print response
+        print response
     if login_type.lower() == "web":
         if response is "ContractExpired":
             logger.logLogin("info", user_ip, username, "ContractExpired")
@@ -246,9 +246,11 @@ def user_login_response(db, data, client_id, ip):
         forms = get_forms_by_category(db, cat_id)
     else :
         forms = get_user_forms(db, user_id)
+    print forms
     menu = process_user_forms(
         db, forms
     )
+
     return clientlogin.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
