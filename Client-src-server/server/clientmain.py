@@ -57,6 +57,7 @@ def api_request(
             )
         return wrapped
     return wrapper
+
 '''
     as of now group db has connected for all the request, as per the LE db base operation
     method decorator will have flag which define either group db call or legal entity db call.

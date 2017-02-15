@@ -423,27 +423,30 @@ class GetComplianceTotalToAssign(Request):
         }
 
 class GetComplianceForUnits(Request):
-    def __init__(self, legal_entity_id, unit_ids, domain_id, record_count):
+    def __init__(self, legal_entity_id, unit_ids, domain_id, record_count, frequency_ids):
         self.legal_entity_id = legal_entity_id
         self.unit_ids = unit_ids
         self.domain_id = domain_id
         self.record_count = record_count
+        self.frequency_ids = frequency_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "u_ids", "d_id"])
+        data = parse_dictionary(data, ["le_id", "u_ids", "d_id", "f_ids"])
         legal_entity_id = data.get("le_id")
         unit_ids = data.get("u_ids")
         domain_id = data.get("d_id")
         record_count = data.get("r_count")
-        return GetComplianceForUnits(legal_entity_id, unit_ids, domain_id, record_count)
+        frequency_ids = data.get("f_ids")
+        return GetComplianceForUnits(legal_entity_id, unit_ids, domain_id, record_count, frequency_ids)
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
             "u_ids": self.unit_ids,
             "d_id": self.domain_id,
-            "r_count": self.record_count
+            "r_count": self.record_count,
+            "f_ids": self.frequency_ids
         }
 
 class NewUnitSettings(object):
