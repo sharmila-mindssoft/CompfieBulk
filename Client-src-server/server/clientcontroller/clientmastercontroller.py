@@ -71,6 +71,7 @@ def process_client_master_requests(request, db, session_user, client_id):
         result = process_get_client_users(db, request, session_user)
 
     elif type(request) is clientmasters.SaveClientUser:
+        print "Test inside 74"
         result = process_save_client_user(db, request, session_user, client_id)
 
     elif type(request) is clientmasters.UpdateClientUser:
@@ -186,7 +187,9 @@ def process_change_service_provider_status(
 # Get User Management List
 ########################################################
 def process_get_user_management_list(db, request, session_user):
-    return null
+    user_management_list = user_management_list(db)
+    print user_management_list
+    return clientmasters.GetUserManagementList(user_management_list=user_management_list)
 
 ########################################################
 # To get all client forms to load in User privilege form
@@ -360,23 +363,16 @@ def process_get_client_users(db, request, session_user):
 ########################################################
 def process_save_client_user(db, request, session_user, client_id):
     # user_id = db.get_new_id("user_id", tblUsers)
-    if (get_no_of_remaining_licence(db) <= 0):
-        return clientmasters.UserLimitExceeds()
-    elif is_duplicate_user_email(db, request.email_id, user_id=None):
-        return clientmasters.EmailIdAlreadyExists()
-    elif is_duplicate_employee_code(
-        db,
-        request.employee_code.replace(" ", ""),
-        user_id=None
-    ):
-        return clientmasters.EmployeeCodeAlreadyExists()
-    elif is_duplicate_employee_name(
-        db, request.employee_name, user_id=None
-    ):
-        return clientmasters.EmployeeNameAlreadyExists()
-    elif save_user(db, request, session_user, client_id):
+    # if (get_no_of_remaining_licence(db) <= 0):
+    #     return clientmasters.UserLimitExceeds()
+    # elif is_duplicate_employee_code(
+    #     db,
+    #     request.employee_code.replace(" ", ""),
+    #     user_id=None
+    # ):
+    #     return clientmasters.EmployeeCodeAlreadyExists()
+    if save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
-
 
 ########################################################
 # To validate and update user
