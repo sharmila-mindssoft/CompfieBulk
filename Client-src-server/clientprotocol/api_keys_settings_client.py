@@ -307,5 +307,7 @@ api_params = {
     "unit_wise_status": make_vector_type_field(module="clienttransactions", klass_name="ComplianceUnitApplicability"),
     "assign_compliances": make_vector_type_field(module="clienttransactions", klass_name="ASSIGNED_COMPLIANCE"),
 
-    "d_months": make_map_type_vector_type(module="dashboard", klass_name="DomainWiseYearConfiguration")
+    "d_months": make_map_type_vector_type(module="dashboard", klass_name="DomainWiseYearConfiguration"),
+    "le_did_infos": make_vector_type_field(module="dashboard", klass_name="ClientLegalEntityInfo"),
+    "d_info": make_vector_type_field(module="clientcore", klass_name="DomainInfo"),
 }

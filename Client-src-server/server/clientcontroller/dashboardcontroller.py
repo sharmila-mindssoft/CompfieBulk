@@ -9,7 +9,7 @@ from server.clientdatabase.general import (
     get_business_groups_for_user, get_legal_entities_for_user,
     get_divisions_for_user, get_group_name,
     get_country_wise_domain_month_range,
-    get_units_for_user, get_assignees
+    get_units_for_user, get_assignees, get_domains_info
 )
 from server.clientdatabase.clienttransaction import (
     get_user_based_legal_entity,
@@ -213,7 +213,7 @@ def process_get_chart_filters(db, session_user, session_category):
     le_info = get_user_based_legal_entity(db, session_user, session_category)
     div_info = get_user_based_division(db, session_user, session_category)
     cat_info = get_user_based_category(db, session_user, session_category)
-    domains = get_domains_for_user(db, session_user, session_category)
+    domains = get_domains_info(db, session_user, session_category)
 
     return dashboard.GetChartFiltersSuccess(
         countries, domains, business_groups,

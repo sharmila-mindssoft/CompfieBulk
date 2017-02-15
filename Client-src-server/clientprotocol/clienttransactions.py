@@ -924,15 +924,15 @@ class GetStatutorySettingsFiltersSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_infos", "div_infos", "cat_info"])
+        data = parse_dictionary(data, ["le_did_infos", "div_infos", "cat_info"])
 
         return GetStatutorySettingsFiltersSuccess(
-            data.get("le_infos"), data.get("div_infos"), data.get("cat_info")
+            data.get("le_did_infos"), data.get("div_infos"), data.get("cat_info")
         )
 
     def to_inner_structure(self):
         return {
-            "le_infos": self.le_info,
+            "le_did_infos": self.le_info,
             "div_infos": self.div_info,
             "cat_info": self.cat_info
         }
@@ -1024,10 +1024,10 @@ class GetAssignCompliancesFormDataSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "le_infos", "div_infos", "cat_info", "domains"
+            "le_did_infos", "div_infos", "cat_info", "domains"
         ])
         domains = data.get("domains")
-        legal_entities = data.get("le_infos")
+        legal_entities = data.get("le_did_infos")
         divisions = data.get("div_infos")
         categories = data.get("cat_info")
         return GetAssignCompliancesFormDataSuccess(
@@ -1036,7 +1036,7 @@ class GetAssignCompliancesFormDataSuccess(Response):
 
     def to_inner_structure(self):
         return {
-            "le_infos": self.legal_entities,
+            "le_did_infos": self.legal_entities,
             "div_infos": self.divisions,
             "cat_info": self.categories,
             "domains": self.domains

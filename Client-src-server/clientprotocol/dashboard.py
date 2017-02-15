@@ -842,14 +842,14 @@ class GetChartFiltersSuccess(Response):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "countries", "domains", "bg_groups",
-            "le_infos", "div_infos", "assign_units" "d_months", "g_name",
+            "countries", "d_info", "bg_groups",
+            "le_did_infos", "div_infos", "assign_units" "d_months", "g_name",
             "cat_info"
         ])
         countries = data.get("countries")
-        domains = data.get("domains")
+        domains = data.get("d_info")
         business_groups = data.get("bg_groups")
-        legal_entities = data.get("le_infos")
+        legal_entities = data.get("le_did_infos")
         divisions = data.get("div_infos")
         units = data.get("assign_units")
         domain_month = data.get("d_months")
@@ -863,9 +863,9 @@ class GetChartFiltersSuccess(Response):
     def to_inner_structure(self):
         return {
             "countries": self.countries,
-            "domains": self.domains,
+            "d_info": self.domains,
             "bg_groups": self.business_groups,
-            "le_infos": self.legal_entities,
+            "le_did_infos": self.legal_entities,
             "div_infos": self.divisions,
             "assign_units": self.units,
             "d_months": self.domain_month,
@@ -2173,3 +2173,34 @@ class Compliance(object):
             "download_url": to_structure_OptionalType_VectorType_CustomTextType_500(self.download_url),
             "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
         }
+
+
+class ClientLegalEntityInfo(object):
+    def __init__(
+        self, legal_entity_id, legal_entity_name, business_group_id, domain_ids
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.business_group_id = business_group_id
+        self.domain_ids = domain_ids
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "le_id", "le_name", "bg_id"])
+        legal_entity_id = data.get("le_id")
+        legal_entity_name = data.get("le_name")
+        business_group_id = data.get("bg_id")
+        domain_ids = data.get("d_ids")
+        return ClientLegalEntityInfo(
+            legal_entity_id, legal_entity_name, business_group_id, domain_ids)
+
+    def to_structure(self):
+        data = {
+            "le_id": self.legal_entity_id,
+            "le_name": self.legal_entity_name,
+            "bg_id": self.business_group_id,
+            "d_ids": self.domain_ids
+        }
+        return to_structure_dictionary_values(data)

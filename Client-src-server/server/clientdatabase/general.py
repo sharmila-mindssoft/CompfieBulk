@@ -66,7 +66,8 @@ __all__ = [
     "update_profile",
     "is_service_proivder_user",
     "convert_datetime_to_date",
-    "is_old_primary_admin"
+    "is_old_primary_admin",
+    "get_domains_info"
     ]
 
 
@@ -145,6 +146,28 @@ def get_domains_for_user(db, user_id, user_category):
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
         rows = db.select_all(query)
     return return_domains(rows)
+
+
+def get_domains_info(db, user_id, user_category):
+
+    if user_category > 1 :
+        query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
+            "t2.is_active FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+            "where t1.user_id = %s "
+
+        rows = db.select_all(query, [user_id])
+    else:
+        query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
+            "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
+        rows = db.select_all(query)
+    results = []
+    for d in rows:
+        results.append(clientcore.DomainInfo(
+            d["domain_id"], d["domain_name"], bool(d["is_active"])
+        ))
+    return results
 
 
 def return_domains(data):

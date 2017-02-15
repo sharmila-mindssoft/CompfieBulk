@@ -6,7 +6,7 @@ from server import logger
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientforms import *
 from clientprotocol import (
-    clienttransactions, clientcore
+    clienttransactions, clientcore, dashboard
 )
 from server.common import (
    get_date_time, string_to_datetime, datetime_to_string,
@@ -87,25 +87,39 @@ def get_user_based_countries(db, user_id, user_category):
 
 def get_user_based_legal_entity(db, user_id, user_category):
 
-    q = "select t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id " + \
+    q1 = "select distinct t1.domain_id, t1.legal_entity_id from tbl_legal_entity_domains as t1"
+
+    q = "select distinct t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id " + \
         " from tbl_legal_entities t1"
 
     if user_category == 1 :
         rows = db.select_all(q, None)
+        domains = db.select_all(q1, None)
     else :
         q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
+
+        q1 += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+            " where t2.user_id = %s"
+
         rows = db.select_all(q, [user_id])
+        domains = db.select_all(q1, [user_id])
 
     results = []
     for legal_entity in rows:
+        le_id = legal_entity["legal_entity_id"]
+        d_id = []
+        for d in domains :
+            if le_id == d["legal_entity_id"] :
+                d_id.append(d["domain_id"])
         b_group_id = None
         if legal_entity["business_group_id"] > 0:
             b_group_id = int(legal_entity["business_group_id"])
-        results.append(clientcore.ClientLegalEntity(
-            legal_entity["legal_entity_id"],
+        results.append(dashboard.ClientLegalEntityInfo(
+            le_id,
             legal_entity["legal_entity_name"],
-            b_group_id
+            b_group_id,
+            d_id
         ))
     return results
 
