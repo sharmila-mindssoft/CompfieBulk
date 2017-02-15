@@ -261,6 +261,8 @@ api_params = {
     "s_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "trigger_before_days": make_int_field(is_optional=True),
     "due_date": make_text_field(length=20, is_optional=True),
+    "d_date": make_text_field(length=20, is_optional=True),
+    "v_date": make_text_field(length=20, is_optional=True),
     "statu_date": make_int_field(is_optional=True),
     "statu_month": make_int_field(is_optional=True),
     "repeat_by": make_int_field(is_optional=True),
@@ -300,5 +302,7 @@ api_params = {
     "due_date_list": make_vector_type_string(is_optional=True),
     "assign_statutory": make_map_type_vector_type(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES"),
     "level_one_name": make_vector_type_string(length=150),
-    "unit_wise_status": make_vector_type_field(module="clienttransactions", klass_name="ComplianceUnitApplicability")
+    "unit_wise_status": make_vector_type_field(module="clienttransactions", klass_name="ComplianceUnitApplicability"),
+    "assign_compliances": make_vector_type_field(module="clienttransactions", klass_name="ASSIGNED_COMPLIANCE"),
+
 }

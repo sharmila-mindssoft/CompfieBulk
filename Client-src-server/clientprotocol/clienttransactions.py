@@ -15,7 +15,6 @@ from clientprotocol.parse_structure import (
     parse_structure_VectorType_SignedIntegerType_8,
     parse_structure_VectorType_RecordType_core_ClientDivision,
     parse_structure_VectorType_RecordType_core_StatutoryDate,
-    parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE,
     parse_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST,
     parse_structure_CustomTextType_250,
     parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
@@ -71,7 +70,6 @@ from clientprotocol.to_structure import (
     to_structure_VectorType_CustomTextType_50,
     to_structure_VectorType_RecordType_core_ClientDivision,
     to_structure_VectorType_RecordType_core_StatutoryDate,
-    to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE,
     to_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST,
     to_structure_CustomTextType_250,
     to_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS,
@@ -310,27 +308,29 @@ class UpdateStatutoryCompliance(object):
 class UpdateStatutorySettings(Request):
     def __init__(
         self, password, statutories,
-        legal_entity_id, s_s, domain_id
+        legal_entity_id, s_s, domain_id, unit_ids
     ):
         self.password = password
         self.statutories = statutories
         self.legal_entity_id = legal_entity_id
         self.s_s = s_s
         self.domain_id = domain_id
+        self.unit_ids = unit_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "password", "update_statutories", "le_id", "s_s", "d_id"
+            "password", "update_statutories", "le_id", "s_s", "d_id", "u_ids"
         ])
         password = data.get("password")
         statutories = data.get("update_statutories")
         legal_entity_id = data.get("le_id")
         s_s = data.get("s_s")
         domain_id = data.get("d_id")
+        unit_ids = data.get("u_ids")
         return UpdateStatutorySettings(
             password, statutories, legal_entity_id, s_s,
-            domain_id
+            domain_id, unit_ids
         )
 
     def to_inner_structure(self):
@@ -339,7 +339,8 @@ class UpdateStatutorySettings(Request):
             "update_statutories": self.statutories,
             "le_id": self.legal_entity_id,
             "s_s": self.s_s,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "u_ids": self.unit_ids
         }
 
 
@@ -477,12 +478,12 @@ class NewUnitSettings(object):
 
 class SaveAssignedCompliance(Request):
     def __init__(
-        self, country_id, assignee, assignee_name,
+        self, assignee, assignee_name,
         concurrence_person, concurrence_person_name,
         approval_person, approval_person_name,
-        compliances, new_units
+        compliances, legal_entity_id, domain_id,
+
     ):
-        self.country_id = country_id
         self.assignee = assignee
         self.assignee_name = assignee_name
         self.concurrence_person = concurrence_person
@@ -490,52 +491,44 @@ class SaveAssignedCompliance(Request):
         self.approval_person = approval_person
         self.approval_person_name = approval_person_name
         self.compliances = compliances
-        self.new_units = new_units
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_id", "assignee", "a_name",
-            "con_person", "con_person_name",
-            "a_person", "a_person_name", "compliances",
-            "n_units"
+            "assignee", "assignee_name",
+            "concurrence_person", "concurrer_name",
+            "approval_person", "approver_name", "assign_compliances",
+            "le_id", "d_id"
         ])
-        country_id = data.get("c_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         assignee = data.get("assignee")
-        assignee = parse_structure_UnsignedIntegerType_32(assignee)
-        assignee_name = data.get("a_name")
-        assignee_name = parse_structure_CustomTextType_100(assignee_name)
-        concurrence_person = data.get("con_person")
-        concurrence_person = parse_structure_OptionalType_UnsignedIntegerType_32(concurrence_person)
-        concurrence_person_name = data.get("con_person_name")
-        concurrence_person_name = parse_structure_OptionalType_CustomTextType_100(concurrence_person_name)
-        approval_person = data.get("a_person")
-        approval_person = parse_structure_OptionalType_UnsignedIntegerType_32(approval_person)
-        approval_person_name = data.get("a_person_name")
-        approval_person_name = parse_structure_OptionalType_CustomTextType_100(approval_person_name)
-        compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(compliances)
-        new_units = data.get("n_units")
-        new_units = parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(new_units)
+        assignee_name = data.get("assignee_name")
+        concurrence_person = data.get("concurrence_person")
+        concurrence_person_name = data.get("concurrer_name")
+        approval_person = data.get("approval_person")
+        approval_person_name = data.get("approver_name")
+        compliances = data.get("assign_compliances")
+        legal_entity_id = data.get("le_id")
+        domain_id = data.get("d_id")
         return SaveAssignedCompliance(
-            country_id, assignee, assignee_name,
+            assignee, assignee_name,
             concurrence_person, concurrence_person_name,
             approval_person, approval_person_name,
-            compliances, new_units
+            compliances, legal_entity_id, domain_id
         )
 
     def to_inner_structure(self):
         return {
-            "c_id": to_structure_SignedIntegerType_8(self.country_id),
-            "assignee": to_structure_SignedIntegerType_8(self.assignee),
-            "a_name": to_structure_CustomTextType_100(self.assignee_name),
-            "con_person": to_structure_OptionalType_UnsignedIntegerType_32(self.concurrence_person),
-            "con_person_name": to_structure_OptionalType_CustomTextType_100(self.concurrence_person_name),
-            "a_person": to_structure_OptionalType_UnsignedIntegerType_32(self.approval_person),
-            "a_person_name": to_structure_OptionalType_CustomTextType_100(self.approval_person_name),
-            "compliances": to_structure_VectorType_RecordType_clienttransactions_ASSINGED_COMPLIANCE(self.compliances),
-            "n_units": to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(self.new_units)
+            "assignee": self.assignee,
+            "assignee_name": self.assignee_name,
+            "concurrence_person": self.concurrence_person,
+            "concurrer_name": self.concurrence_person_name,
+            "approval_person": self.approval_person,
+            "approver_name": self.approval_person_name,
+            "assign_compliances": self.compliances,
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id
         }
 
 class GetUserwiseCompliances(Request):
@@ -1504,10 +1497,10 @@ class RequestFormat(object):
         }
 
 #
-# ASSINGED_COMPLIANCE
+# ASSIGNED_COMPLIANCE
 #
 
-class ASSINGED_COMPLIANCE(object):
+class ASSIGNED_COMPLIANCE(object):
     def __init__(
         self, compliance_id, compliance_name, statutory_dates,
         due_date, validity_date, trigger_before, unit_ids
@@ -1524,33 +1517,29 @@ class ASSINGED_COMPLIANCE(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "comp_id", "comp_name", "statu_dates",
-            "d_date", "v_date", "trig_before", "u_ids"
+            "d_date", "v_date", "trigger_before_days", "u_ids"
         ])
         compliance_id = data.get("comp_id")
-        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         compliance_name = data.get("comp_name")
-        compliance_name = parse_structure_CustomTextType_250(compliance_name)
         statutory_dates = data.get("statu_dates")
-        statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         due_date = data.get("d_date")
-        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
         validity_date = data.get("v_date")
-        validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
-        trigger_before = data.get("trig_before")
-        trigger_before = parse_structure_OptionalType_SignedIntegerType_8(trigger_before)
+        trigger_before = data.get("trigger_before_days")
         unit_ids = data.get("u_ids")
-        unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
-        return ASSINGED_COMPLIANCE(compliance_id, compliance_name, statutory_dates, due_date, validity_date, trigger_before, unit_ids)
+        return ASSIGNED_COMPLIANCE(
+            compliance_id, compliance_name, statutory_dates,
+            due_date, validity_date, trigger_before, unit_ids
+        )
 
     def to_structure(self):
         return {
-            "comp_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "comp_name": to_structure_CustomTextType_250(self.compliance_name),
-            "statu_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "d_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
-            "v_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
-            "trig_before": to_structure_OptionalType_SignedIntegerType_8(self.trigger_before),
-            "u_ids": to_structure_VectorType_UnsignedIntegerType_32(self.unit_ids),
+            "comp_id": self.compliance_id,
+            "comp_name": self.compliance_name,
+            "statu_dates": self.statutory_dates,
+            "d_date": self.due_date,
+            "v_date": self.validity_date,
+            "trigger_before_days": self.trigger_before,
+            "u_ids": self.unit_ids,
         }
 
 #

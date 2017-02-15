@@ -183,11 +183,11 @@ CREATE TABLE `tbl_client_compliances` (
   `domain_id` int(11) DEFAULT NULL,
   `statutory_name` varchar(150) DEFAULT NULL,
   `statutory_applicable_status` tinyint(4) DEFAULT '0',
-  `statutory_opted_status` tinyint(4) DEFAULT '0',
+  `statutory_opted_status` tinyint(4) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `compliance_id` int(11) NOT NULL,
   `compliance_applicable_status` tinyint(4) DEFAULT '0',
-  `compliance_opted_status` tinyint(4) DEFAULT '0',
+  `compliance_opted_status` tinyint(4) DEFAULT NULL,
   `not_opted_remarks` varchar(500) DEFAULT NULL,
   `opted_by` int(11) DEFAULT NULL,
   `opted_on` timestamp NULL DEFAULT NULL,
@@ -347,7 +347,6 @@ CREATE TABLE `tbl_compliance_dates_history` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_assign_compliances` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,

@@ -619,7 +619,7 @@
                                 <th width="04%" class="text-center"><i class="fa fa-edit fa-1-3x text-white"></i></th>
                                 <th width="04%" class="text-center"><i class="fa fa-user-plus fa-1-3x text-white"></i></th>
                                 <th width="10%">Remarks</th>
-                                <th width="5%">Selected</th>
+                                <th width="5%">Saved</th>
                             </tr>
                         </thead>
                         <tbody class="tbody-compliance-list">                               
@@ -654,12 +654,12 @@
           <td class="compliancedescription"> 
 
           </td>
-          <td align="center" class="opted">
+          <td align="center" class="applicable">
              
           </td>
 
           <td align="center">
-               <label class="applicable" for="1"> 
+               <label class="opted" for="1"> 
                 <img src="images/tick1bold.png">
                </label>
           </td>
@@ -692,7 +692,7 @@
       </tr>
       <tbody class="mul-act-heading">
         <tr>
-          <td colspan="8" style="color: #797979;background-color: #f5f5f5;" class="p-0">
+          <td colspan="9" style="color: #797979;background-color: #f5f5f5;" class="p-0">
             <div class="panel-heading" role="tab">
               <h4 class="m-b-0 m-t-0" style="width: 99%; float: left; ">
                 <div class="gt" style="float:left; width:3%;">
@@ -719,14 +719,13 @@
       </tbody>
 
       <tbody class="mul-compliance-heading">
-        <tr>
-            <th align="center" width="2%">#</th>
-            <th width="15%">Statutory Provision</th>
-            <th width="15%">Compliance Task</th>
-            <th width="30%">Compliance Description</th>
-            <th align="center" width="12%" colspan="3">Applicable Units</th>
-            <th width="1%">Saved</th>
-        </tr>
+        <th align="center" width="2%">#</th>
+        <th width="14%">Statutory Provision</th>
+        <th width="15%">Compliance Task</th>
+        <th width="14%">Compliance Frequency</th>
+        <th width="25%">Compliance Description</th>
+        <th width="25%" colspan="3" class="text-center">Applicable Units</th>
+        <th width="2%" class="text-center">Saved</th>
       </tbody>
 
       <tbody class="mul-compliance-details">
@@ -737,6 +736,9 @@
               <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
               <span class="compliancetask"> </span>
             </td>
+            <td class="compliancefrequency"> 
+
+           </td>
             <td class="compliancedescription"> 
 
             </td>
@@ -753,24 +755,15 @@
         <tr>
           <th align="center" width="2%"></th>
           <th width="15%">Location</th>
-          <th width="15%" colspan="2">Unit Name</th>
-          <th width="04%" class="text-center">
-              <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                  <input class="sub-comp sub-tick" value="1" type="checkbox">
-                  <label></label>
-              </div>
+          <th width="25%" colspan="3">Unit Name</th>
+          <th width="06%" class="text-center">
+              <i class="fa fa-edit fa-1-3x text-inverse"></i>
           </th>
-          <th width="04%" class="text-center">
-              <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                  <input class="sub-comp sub-untick" value="2" type="checkbox">
-                  <label></label>
-              </div>
+          <th width="06%" class="text-center">
+              <i class="fa fa-user-plus fa-1-3x text-inverse">
           </th>
-          <th width="04%" class="text-center">
-              <div class="checkbox checkbox-primary checkbox-single m-b-0 m-t-0">
-                  <input  class="sub-comp sub-minus" value="3" type="checkbox">
-                  <label></label>
-              </div>
+          <th width="20%">
+              Remarks
           </th>
           <th width="1%"></th>
         </tr>
@@ -781,21 +774,26 @@
           <td align="center" width="2%">
             <input type="hidden" class="combineid-class" />
           </td>
-          <td width="15%" class="unit-locatiion"></td>
-          <td width="15%" colspan="2" class="unit-name"></td>
-          <td align="center" class="gt">
-              <input type="radio" class="comp compliance-ck-box-1" value="1">
-              <label class="compliance-label-1"></label>
+          <td class="unit-locatiion"></td>
+          <td colspan="3" class="unit-name"></td>
+          <td align="center" class="applicable">
+             
           </td>
 
-          <td align="center" class="gt-cross">
-              <input type="radio" class="comp compliance-ck-box-2" value="2">
-              <label class="compliance-label-2"></label>
+          <td align="center">
+               <label class="opted" for="1"> 
+                <img src="images/tick1bold.png">
+               </label>
           </td>
 
-          <td align="center" class="gt-minus">
-              <input type="radio" class="comp compliance-ck-box-3" value="3">
-              <label class="compliance-label-3"></label>
+          <td class="comp-remark">
+            <div class="default-display-none c-remark-view"> 
+                <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="Remarks text goes here."></i> Remarks...
+            </div>
+            <div class="default-display-none c-remark-add"> 
+                <textarea class="form-control input-sm" placeholder="Enter Remarks" rows="1"></textarea>
+                <small>(max 500 characters)</small>
+            </div>
           </td>
           <td width="1%"></td>
         </tr>

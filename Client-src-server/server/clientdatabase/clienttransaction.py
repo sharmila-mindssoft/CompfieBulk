@@ -167,7 +167,8 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         is_approver = False
         if r["form_id"] == 9 :
             is_approver = True
-        else:
+
+        elif r["form_id"] == 35:
             is_assignee = True
 
         if user_cat_id == 1 :
@@ -268,8 +269,8 @@ def return_compliance_for_statutory_settings(
         " FROM tbl_client_compliances t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.compliance_id = t1.compliance_id " + \
-        " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s and" + \
-        " IF (%s IS NOT NULL, t2.frequency_id = %s, 1)" + \
+        " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s " + \
+        " AND IF (%s IS NOT NULL, t2.frequency_id = %s, 1) " + \
         " ORDER BY t2.statutory_mapping, t1.compliance_id " + \
         " limit %s, %s "
 
@@ -406,6 +407,7 @@ def update_statutory_settings(db, data, session_user):
     le_id = data.legal_entity_id
     statutories = data.statutories
     submit_status = data.s_s
+    unit_ids = data.unit_ids
     updated_on = get_date_time()
     value_list = []
     for s in statutories:
@@ -437,7 +439,24 @@ def update_statutory_settings(db, data, session_user):
 
         update_new_statutory_settings(db, unit_id, domain_id, session_user)
 
-    execute_bulk_insert(db, value_list, submit_status)
+    if len(statutories) > 0 :
+        execute_bulk_insert(db, value_list, submit_status)
+
+    if submit_status == 2 :
+        q = "update tbl_client_compliances as A " + \
+            "inner join " + \
+            " (select client_compliance_id, IFNULL(compliance_opted_status, compliance_applicable_status) as client_opted, " + \
+            " IFNULL(statutory_opted_status, statutory_applicable_status) as statu_opted, " + \
+            " unit_id, domain_id from tbl_client_compliances) as B " + \
+            " on A.client_compliance_id = B.client_compliance_id " + \
+            " set A.statutory_opted_status = B.statu_opted, " + \
+            " A.compliance_opted_status = B.client_opted, A.is_saved = 0, A.is_submitted = 1, " + \
+            " A.submitted_by = %s , A.submitted_on = %s " + \
+            " where A.unit_id = %s and A.domain_id = %s "
+
+        print q
+        for u in unit_ids :
+            db.execute(q, [session_user, updated_on, u, domain_id])
 
     SaveOptedStatus(data)
 
@@ -711,7 +730,7 @@ def get_assign_compliance_statutories_for_units(
         " WHERE " + \
         " find_in_set(A.unit_id, %s) " + \
         " AND A.domain_id = %s " + \
-        " AND A.compliance_opted_status = 1 " + \
+        " AND A.compliance_opted_status = 1 AND A.is_submitted = 1 " + \
         " AND C.is_active = 1 " + \
         " AND AC.compliance_id is null " + \
         " ORDER BY SUBSTRING_INDEX( " + \
@@ -751,7 +770,7 @@ def get_assign_compliance_statutories_for_units(
         " and t2.unit_id = AC.unit_id " + \
         " WHERE find_in_set(t2.unit_id, %s) " + \
         " AND t2.domain_id = %s " + \
-        " AND t2.compliance_opted_status = 1 " + \
+        " AND t2.compliance_opted_status = 1 AND t2.is_submitted = 1" + \
         " AND t3.is_active = 1 " + \
         " AND AC.compliance_id IS NULL " + \
         " ORDER BY SUBSTRING_INDEX( " + \
@@ -857,35 +876,40 @@ def return_assign_compliance_data(result, applicable_units, nrow):
 
 
 def save_assigned_compliance(db, request, session_user):
-    new_unit_settings = request.new_units
     current_date = get_date_time()
     created_on = str(current_date)
-    country_id = int(request.country_id)
     assignee = int(request.assignee)
     concurrence = request.concurrence_person
     approval = int(request.approval_person)
     compliances = request.compliances
+    domain_id = request.domain_id
+    le_id = request.legal_entity_id
+
+    q = " select country_id from tbl_legal_entities where legal_entity_id = %s"
+    country = db.select_one(q, [le_id])
+    country_id = country.get("country_id")
 
     compliance_names = []
     columns = [
-        "country_id", "unit_id", "compliance_id",
+        "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
         "statutory_dates", "assignee",
-        "approval_person", "trigger_before_days",
-        "due_date", "validity_date", "created_by",
-        "created_on"
+        "assigned_by", "assigned_on",
+        "approval_person", "a_assigned_by", "a_assigned_on",
+        "trigger_before_days", "due_date", "validity_date",
     ]
     value_list = []
     update_column = [
         "statutory_dates", "assignee",
-        "approval_person", "trigger_before_days",
-        "due_date", "validity_date", "created_by",
-        "created_on"
+        "assigned_by", "assigned_on",
+        "approval_person", "a_assigned_by", "a_assigned_on",
+        "trigger_before_days", "due_date", "validity_date",
     ]
 
     if concurrence is not None:
-        columns.append("concurrence_person")
-        update_column.append("concurrence_person")
+        columns.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
+        update_column.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
 
+    unit_ids = []
     for c in compliances:
         compliance_id = int(c.compliance_id)
         statutory_dates = c.statutory_dates
@@ -928,10 +952,10 @@ def save_assigned_compliance(db, request, session_user):
 
         for unit_id in unit_ids:
             value = [
-                country_id, unit_id, compliance_id,
-                str(date_list), assignee,
-                approval, trigger_before, str(due_date),
-                str(validity_date), int(session_user), created_on
+                le_id, country_id, domain_id, unit_id, compliance_id,
+                str(date_list), assignee, int(session_user), created_on,
+                approval, int(session_user), created_on,
+                trigger_before, str(due_date), str(validity_date)
             ]
             if concurrence is not None:
                 value.append(concurrence)
@@ -939,11 +963,11 @@ def save_assigned_compliance(db, request, session_user):
 
     # db.bulk_insert("tbl_assigned_compliances", columns, value_list)
     db.on_duplicate_key_update(
-        "tbl_assigned_compliances", ",".join(columns),
+        "tbl_assign_compliances", ",".join(columns),
         value_list, update_column
     )
-    if new_unit_settings is not None:
-        update_user_settings(db, new_unit_settings)
+    # if new_unit_settings is not None:
+    #     update_user_settings(db, new_unit_settings)
 
     compliance_names = " <br> ".join(compliance_names)
     if request.concurrence_person_name is None:
@@ -968,8 +992,14 @@ def save_assigned_compliance(db, request, session_user):
             get_email_id_for_users(db, concurrence)[1],
             get_email_id_for_users(db, approval)[1]
         ]
+
     activity_text = action.replace("<br>", " ")
-    db.save_activity(session_user, 7, json.dumps(activity_text))
+    for u in unit_ids :
+        db.save_activity(
+            session_user, frmAssignCompliance, json.dumps(activity_text),
+            legal_entity_id=le_id, unit_id=u
+        )
+
     receiver = get_email_id_for_users(db, assignee)[1]
 
     notify_assign_compliance = threading.Thread(
@@ -980,14 +1010,14 @@ def save_assigned_compliance(db, request, session_user):
     )
     notify_assign_compliance.start()
 
-    # bg_task_start = threading.Thread(
-    #     target=self.start_new_task,
-    #     args=[
-    #         current_date.date(), country_id
-    #     ]
-    # )
-    # # print "bg_task_start begin"
-    # bg_task_start.start()
+    bg_task_start = threading.Thread(
+        target=self.start_new_task,
+        args=[
+            current_date.date(), country_id
+        ]
+    )
+    # print "bg_task_start begin"
+    bg_task_start.start()
     # self.start_new_task(current_date.date(), country_id)
 
     return clienttransactions.SaveAssignedComplianceSuccess()

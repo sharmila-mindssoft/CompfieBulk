@@ -1325,25 +1325,28 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function updateStatutory(clientSId, clientCId, aStatus, aRemarks, compId, oStatus, remarks) {
+    function updateStatutory(clientCId, aStatus, naRemarks, compId, oStatus, remarks, uName, uId) {
         return {
-            'c_s_id': clientSId,
             'c_c_id': clientCId,
             'a_status': aStatus,
-            'n_a_remarks': aRemarks,
+            'n_a_remarks': naRemarks,
             'comp_id': compId,
             'c_o_status': oStatus,
-            'c_remarks': remarks
+            'c_remarks': remarks,
+            'u_name': uName,
+            'u_id': uId
         };
     }
 
-    function updateStatutorySettings(password, uName, uId, statutories, callback) {
+    function updateStatutorySettings(password, statutories, legalEntityId, submissionStatus, dId, uIds, callback) {
         var request = [
             'UpdateStatutorySettings', {
                 'password': password,
-                'u_name': uName,
-                'u_id': uId,
-                'statutories': statutories
+                'update_statutories': statutories,
+                'le_id': legalEntityId,
+                's_s': submissionStatus,
+                'd_id': dId,
+                'u_ids': uIds
             }
         ];
         var callerName = 'client_transaction';

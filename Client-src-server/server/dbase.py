@@ -711,6 +711,8 @@ class Database(object):
         column = ["user_category_id, client_id"]
         condition_val = "user_id= %s" % user_id
         rows = self.get_data(tblUsers, column, condition_val)
+        print '-------------'
+        print rows
         client_id = rows[0]["client_id"]
         category_id = rows[0]["user_category_id"]
         query = " INSERT INTO tbl_activity_log " + \
