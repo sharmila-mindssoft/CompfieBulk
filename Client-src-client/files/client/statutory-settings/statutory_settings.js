@@ -192,7 +192,7 @@ function callAPI(api_type) {
                         } else {
                             displaySuccessMessage(message.submit_success);
                         }
-
+                        reset();
                         StatutorySettingsView.show();
                         StatutorySettingsAdd.hide();
                         loadEntityDetails();
@@ -423,6 +423,7 @@ function pageControls() {
     CancelButton.click(function() {
         StatutorySettingsView.show();
         StatutorySettingsAdd.hide();
+        reset();
     });
 
     BusinessGroupName.keyup(function(e) {
@@ -522,13 +523,14 @@ function reset() {
     val_domain_id = null;
     val_legal_entity_id = null;
     CLIENT_STATUTORY_ID = null;*/
-
+    LastAct = '';
     AssignStatutoryList.empty();
     SingleAssignStatutoryList.empty();
     ACTIVE_UNITS = [];
     DOMAIN_ID = null;
     SELECTED_COMPLIANCE = {};
     SelectAll.prop("checked", false);
+    $(".tbody-statutorysettings-list .unit-checkbox").prop('checked', false);
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
 /*
