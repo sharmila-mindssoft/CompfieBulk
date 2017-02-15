@@ -291,7 +291,7 @@ CREATE TABLE `tbl_users` (
   PRIMARY KEY (`user_id`),
   CONSTRAINT `category_fk2` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_user_legal_eitities` (
+CREATE TABLE `tbl_user_legal_entities` (
   `user_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   UNIQUE KEY (`user_id`, `legal_entity_id`)
