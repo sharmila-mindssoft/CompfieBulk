@@ -4243,3 +4243,61 @@ class LegalEntityUser(object):
             "employee_name": self.employee_name,
             "is_active": self.is_active
         }
+# ==================================================
+# User Management Form
+# ==================================================
+
+class UserDomains(object):
+    def __init__(
+        self, legal_entity_id, domain_id
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "le_id", "d_id"
+        ])
+        legal_entity_id = data.get("le_id")
+        domain_id = data.get("d_id")
+        
+        return UserDomains(
+            legal_entity_id, domain_id
+        )
+
+    def to_structure(self):
+        data = {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id            
+        }
+        print "data>>", data
+        return data
+# ==================================================
+# User Management Form
+# ==================================================
+class UserUnits(object):
+    def __init__(
+        self, legal_entity_id, unit_id
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "le_id", "u_id"
+        ])
+        legal_entity_id = data.get("le_id")
+        unit_id = data.get("u_id")
+        
+        return UserUnits(
+            legal_entity_id, unit_id
+        )
+
+    def to_structure(self):
+        data = {
+            "le_id": self.legal_entity_id,
+            "u_id": self.unit_id            
+        }
+        return data
