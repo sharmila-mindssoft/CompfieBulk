@@ -1,5 +1,5 @@
 /* Elements */
-var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();;
+var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 
 var CancelButton = $('#btn-cancel');
 var StatutorySettingsView = $("#statutorysettings-view");

@@ -1360,7 +1360,7 @@ function initClientMirror() {
             'GetAssignCompliancesFormData',
             {}
         ];
-        var callerName = 'client_transaction';
+        var callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
     }
 
