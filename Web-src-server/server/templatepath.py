@@ -23,7 +23,7 @@ CLIENT_TEMPLATE_PATHS = [
         "files/client/home/home.html",
         None, {}
     ),
-     # Welcome ---------------------------------------------------------------------
+    # Welcome ---------------------------------------------------------------------
     (
         "/welcome",
         "files/client/home/welcome.html",
@@ -48,7 +48,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/client-user-management",
-        "files/client/client-user-management/client-user-management.html",
+        "files/client/client-user-management/client_user_management.html",
         None, {}
     ),
     (
@@ -105,7 +105,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/domain-wise-report",
-         "files/client/domain-wise-report/domain_wise_report.html",
+        "files/client/domain-wise-report/domain_wise_report.html",
         None, {}
     ),
     (
