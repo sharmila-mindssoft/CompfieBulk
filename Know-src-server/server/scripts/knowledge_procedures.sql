@@ -4537,7 +4537,8 @@ BEGIN
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
-    t.status, t.reason
+    t.status, t.reason,
+    (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and client_statutory_id = t1.client_statutory_id) as rcount
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
@@ -4734,6 +4735,65 @@ BEGIN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
     order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
+    limit fromcount, tocount;
+
+END //
+
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_to_approve`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientstatutories_compliance_to_approve`(
+    IN unitid INT(11), domainid INT(11), fromcount INT(11), tocount INT(11)
+)
+BEGIN
+    -- unit location
+    select @gid := geography_id from tbl_units where unit_id = unitid;
+    -- mapped statu names
+    select t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) as parent_ids, t2.parent_names, t1.statutory_mapping_id
+    from tbl_mapped_statutories as t1 inner join tbl_statutories as t2
+    on t1.statutory_id = t2.statutory_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    where t4.geography_id IN
+    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
+    -- mapped organistaion
+    select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
+    from tbl_mapped_industries as t1 inner join tbl_organisation as t2
+    on t1.organisation_id = t2.organisation_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    where t4.geography_id IN
+    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
+
+    -- only assigned compliance
+    select distinct t1.statutory_mapping_id, t1.compliance_id,
+    t1.compliance_task, t1.document_name,
+    t1.compliance_description, t1.statutory_provision,
+    t.statutory_mapping,
+    t6.unit_id, t6.domain_id, t6.compliance_id as assigned_compid,
+    t6.statutory_id, t6.statutory_applicable_status, t6.remarks,
+    t6.compliance_applicable_status, t6.is_approved
+    from tbl_compliances as t1
+    inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
+    inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_units as t4 on t4.country_id = t1.country_id
+    inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+    and t5.organisation_id = t2.organisation_id
+    inner join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and IFNULL(t6.is_approved, 0) = 2
+     order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
     limit fromcount, tocount;
 
 END //

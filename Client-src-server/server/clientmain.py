@@ -23,7 +23,7 @@ import mobilecontroller as mobilecontroller
 from server.client import CompanyManager
 from server.clientreplicationbase import (
     ClientReplicationManager, ReplicationManagerWithBase,
-    DomainReplicationManager
+    # DomainReplicationManager
 )
 from server.constants import SESSION_CUTOFF
 import logger
@@ -57,6 +57,7 @@ def api_request(
             )
         return wrapped
     return wrapper
+
 '''
     as of now group db has connected for all the request, as per the LE db base operation
     method decorator will have flag which define either group db call or legal entity db call.
@@ -305,10 +306,12 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
+
+            print company_id
+            print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
             )
-            print company_id
             if is_group is False :
                 company_id = request_data.request.legal_entity_id
 
@@ -342,6 +345,24 @@ class API(object):
             _group_db_cons.close()
             raise Exception(e)
 
+    def _validate_user_password(self, session, user_id, usr_pwd):
+        session_token = session.split('-')
+        client_id = int(session_token[0])
+        _group_db_cons = self._group_databases.get(client_id).get_connection()
+        _group_db = Database(_group_db_cons)
+        is_valid = False
+        try :
+            _group_db.begin()
+            is_valid = _group_db.verify_password(user_id, usr_pwd)
+            _group_db.commit()
+            _group_db_cons.close()
+        except Exception, e :
+            print e
+            _group_db.rollback()
+            _group_db_cons.close()
+            raise Exception(e)
+        return is_valid
+
     def handle_api_request(
         self, unbound_method,
         request_data_type, need_client_id, is_group, need_category
@@ -367,6 +388,11 @@ class API(object):
             session_user, client_id, session_category = self._validate_user_session(session)
             if session_user is False :
                 return respond(clientlogin.InvalidSessionToken())
+
+            if hasattr(request_data.request, "password") :
+                if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
+                    return respond(clientlogin.InvalidCurrentPassword())
+
         else :
             session_user = None
         # request process in controller
@@ -432,17 +458,17 @@ class API(object):
     def handle_client_master_filters(self, request, db, session_user, session_category):
         return controller.process_client_master_filters_request(request, db, session_user, session_category)
 
-    @api_request(clienttransactions.RequestFormat)
-    def handle_client_transaction(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_transaction_requests(request, db, session_user, client_id)
+    @api_request(clienttransactions.RequestFormat, need_category=True)
+    def handle_client_transaction(self, request, db, session_user, session_category):
+        return controller.process_client_transaction_requests(request, db, session_user, session_category)
 
     @api_request(clientreport.RequestFormat)
     def handle_client_reports(self, request, db, session_user, client_id, le_id):
         return controller.process_client_report_requests(request, db, session_user, client_id, le_id)
 
-    @api_request(dashboard.RequestFormat)
-    def handle_client_dashboard(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_dashboard_requests(request, db)
+    @api_request(dashboard.RequestFormat, is_group=False, need_category=True)
+    def handle_client_dashboard(self, request, db, session_user, session_category):
+        return controller.process_client_dashboard_requests(request, db, session_user, session_category)
 
     @api_request(clientadminsettings.RequestFormat)
     def handle_client_admin_settings(self, request, db, session_user, client_id, le_id):

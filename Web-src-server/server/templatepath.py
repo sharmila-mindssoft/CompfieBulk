@@ -23,7 +23,7 @@ CLIENT_TEMPLATE_PATHS = [
         "files/client/home/home.html",
         None, {}
     ),
-     # Welcome ---------------------------------------------------------------------
+    # Welcome ---------------------------------------------------------------------
     (
         "/welcome",
         "files/client/home/welcome.html",
@@ -32,7 +32,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Dashboard ---------------------------------------------------------------------
     (
         "/dashboard",
-        "files/client/client-home/client-home.html",
+        "files/client/dashboard/dashboard.html",
         None, {}
     ),
     # Master ---------------------------------------------------------------------
@@ -69,7 +69,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/assign-compliance",
-        "files/client/assign-compliance/assigncompliance.html",
+        "files/client/assign-compliance/assign-compliance.html",
         None, {}
     ),
     (

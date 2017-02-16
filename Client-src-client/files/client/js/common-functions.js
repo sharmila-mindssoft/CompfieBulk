@@ -131,11 +131,11 @@ function isCommon(inputElm) {
 function isAlphanumeric(inputElm) {
   //allowed => alphanumeric
   return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
-}
+}*/
 function isNumbers(inputElm) {
   //allowed => only numbers
   return inputElm.val().replace(/[^0-9]/gi, '');
-}*/
+}
 
 function isNonZeroNumbers(inputElm) {
     //allowed => only numbers

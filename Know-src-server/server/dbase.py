@@ -189,6 +189,8 @@ class Database(object):
         cursor = self.cursor()
         assert cursor is not None
         try:
+            print query
+            print param
             if type(param) is tuple:
                 logger.logQuery(self._for_client, "execute", query % param)
                 cursor.execute(query, param)

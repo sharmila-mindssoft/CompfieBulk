@@ -183,11 +183,11 @@ CREATE TABLE `tbl_client_compliances` (
   `domain_id` int(11) DEFAULT NULL,
   `statutory_name` varchar(150) DEFAULT NULL,
   `statutory_applicable_status` tinyint(4) DEFAULT '0',
-  `statutory_opted_status` tinyint(4) DEFAULT '0',
+  `statutory_opted_status` tinyint(4) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `compliance_id` int(11) NOT NULL,
   `compliance_applicable_status` tinyint(4) DEFAULT '0',
-  `compliance_opted_status` tinyint(4) DEFAULT '0',
+  `compliance_opted_status` tinyint(4) DEFAULT NULL,
   `not_opted_remarks` varchar(500) DEFAULT NULL,
   `opted_by` int(11) DEFAULT NULL,
   `opted_on` timestamp NULL DEFAULT NULL,
@@ -199,7 +199,7 @@ CREATE TABLE `tbl_client_compliances` (
   `submitted_by` int(11) DEFAULT NULL,
   `submitted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`),
-  UNIQUE KEY(`unit_id`, `domain_id`, `compliance_id`)
+  UNIQUE KEY(`client_compliance_id`, `legal_entity_id`, `unit_id`, `domain_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_statutories`(
     `client_statutory_id` int(11) NOT NULL,
@@ -291,6 +291,11 @@ CREATE TABLE `tbl_users` (
   PRIMARY KEY (`user_id`),
   CONSTRAINT `category_fk2` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_user_legal_entities` (
+  `user_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  UNIQUE KEY (`user_id`, `legal_entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
@@ -347,7 +352,6 @@ CREATE TABLE `tbl_compliance_dates_history` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_assign_compliances` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -369,6 +373,7 @@ CREATE TABLE `tbl_assign_compliances` (
   `trigger_before_days` int(11) DEFAULT NULL,
   `due_date` date DEFAULT NULL,
   `validity_date` date DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
   CONSTRAINT `legalentity_fk1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `country_fk2` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `domain_fk3` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
@@ -437,7 +442,7 @@ CREATE TABLE `tbl_compliance_activity_log` (
   `unit_id` int(11) DEFAULT NULL,
   `compliance_id` int(11) DEFAULT NULL,
   `compliance_history_id` int(11) DEFAULT NULL,
-  `activity_date` date DEFAULT NULL,
+  `activity_by` int(11) DEFAULT NULL,
   `activity_on` timestamp NULL DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`compliance_activity_id`)
@@ -548,3 +553,7 @@ INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
 INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "Flexi Review");
 INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
+INSERT INTO tbl_notification_types VALUES(1, "Notification");
+INSERT INTO tbl_notification_types VALUES(2, "Reminder");
+INSERT INTO tbl_notification_types VALUES(3, "Escalation");
+INSERT INTO tbl_notification_types VALUES(4, "Messages");

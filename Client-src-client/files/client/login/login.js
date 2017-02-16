@@ -45,13 +45,11 @@ function setLandingPage(userProfile) {
     if(user_entities.length > 1){
       landingPage = '/welcome';
     }else{
-      var selected_entity = [];
       var selected_entity_name = '';
       $.each(user_entities, function(key, value) {
-        selected_entity.push(value.le_id);
         selected_entity_name = value.le_name;
       });
-      window.sessionStorage.selectedEntity = selected_entity;
+      window.sessionStorage.selectedEntity = JSON.stringify(user_entities, null, ' ');
       window.sessionStorage.selectedEntityName = selected_entity_name;
       landingPage = '/home';
     }
