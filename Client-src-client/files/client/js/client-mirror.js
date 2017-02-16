@@ -87,6 +87,7 @@ function initClientMirror() {
     function getUserCountry(){
         var info = getUserInfo();
         return info.country_info;
+
     }
     function getUserBusinessGroup() {
         var info = getUserInfo();
