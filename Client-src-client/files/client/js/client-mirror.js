@@ -2458,8 +2458,8 @@ function initClientMirror() {
         getServiceProviderWiseReportFilters: getServiceProviderWiseReportFilters,
         getServiceProviderWiseReport: getServiceProviderWiseReport,
         getUserWiseReportFilters: getUserWiseReportFilters,
-        getUserWiseReport: getUserWiseReport
-        getStatutorySettingsFilters: getStatutorySettingsFilters,
+        getUserWiseReport: getUserWiseReport,
+        getStatutorySettingsFilters: getStatutorySettingsFilters
     };
 }
 var client_mirror = initClientMirror();
