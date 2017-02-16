@@ -337,4 +337,5 @@ api_params = {
     "assigned_date": make_text_field(),
     "status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "ageing": make_text_field(),
+    "cat_name": make_text_field(is_optional=True),
 }

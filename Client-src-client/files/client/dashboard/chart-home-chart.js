@@ -615,6 +615,10 @@ function ChartInput() {
   this.setLegalEntitiesAll = function (legal_entities) {
     this.legal_entities = copyArray(legal_entities);
   };
+  this.getLegalEntity = function () {
+    var selectedLegalentity = client_mirror.getSelectedLegalEntity();
+    return selectedLegalentity[0]['le_id'];
+  };
   this.getLegalEntities = function () {
     if (this.legal_entities.length > 0)
       return copyArray(this.legal_entities);
@@ -1280,14 +1284,16 @@ function parseComplianceStatusApiInput() {
   if (chart_year == 0) {
     chart_year = chartInput.getCurrentYear();
   }
+  var legalEntityId = chartInput.getLegalEntity();
   var requestData = {
-    'country_ids': countryIds,
-    'domain_ids': domainIds,
+    'c_ids': countryIds,
+    'd_ids': domainIds,
     'filter_type': filterType,
     'filter_ids': filterIds,
     'from_date': fromDate,
     'to_date': toDate,
-    'chart_year': chart_year
+    'chart_year': chart_year, 
+    'le_id': legalEntityId
   };
   return requestData;
 }
