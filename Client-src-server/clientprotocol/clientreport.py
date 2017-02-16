@@ -912,8 +912,9 @@ class GetReassignedHistoryReport(Request):
             "f_count": self.f_count,
             "t_count": self.t_count
         }
+# Reassigned History Report End
 
-# Status Report Consolidated Report
+# Status Report Consolidated Report Start
 class GetStatusReportConsolidatedFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
@@ -992,6 +993,85 @@ class GetStatusReportConsolidated(Request):
             "f_count": self.f_count,
             "t_count": self.t_count
         }
+# Status Report Consolidated Report End
+
+# Statutory Settings Unit Wise Start
+class GetStatutorySettingsUnitWiseFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetStatutorySettingsUnitWiseFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
+
+class GetStatutorySettingsUnitWise(Request):
+    def __init__(
+        self, c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, 
+        compliance_id, frequency_id, status_name, csv, f_count, t_count
+    ):
+        self.c_id = c_id
+        self.bg_id = bg_id
+        self.legal_entity_id = legal_entity_id
+        self.d_id = d_id
+        self.unit_id = unit_id
+        self.div_id = div_id
+        self.cat_id = cat_id
+        self.act = act
+        self.compliance_id = compliance_id
+        self.frequency_id = frequency_id
+        self.status_name = status_name
+        self.csv = csv
+        self.f_count = f_count
+        self.t_count = t_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "c_id", "bg_id", "le_id", "d_id", "unit_id", "div_id", "cat_id", "act", "compliance_id", 
+            "frequency_id", "status_name", "csv", "f_count", "t_count"]
+        )
+        c_id = data.get("c_id")
+        bg_id = data.get("bg_id")
+        legal_entity_id = data.get("le_id")
+        d_id = data.get("d_id")
+        unit_id = data.get("unit_id")
+        div_id = data.get("div_id")
+        cat_id = data.get("cat_id")
+        act = data.get("act")
+        compliance_id = data.get("compliance_id")
+        frequency_id = data.get("frequency_id")
+        status_name = data.get("status_name")
+        csv = data.get("csv")
+        f_count = data.get("f_count")
+        t_count = data.get("t_count")
+        return GetStatutorySettingsUnitWise( 
+            c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, compliance_id, 
+            frequency_id, status_name, csv, f_count, t_count)
+
+    def to_inner_structure(self):
+        return {
+            "c_id": self.c_id,
+            "bg_id": self.bg_id,
+            "le_id": self.legal_entity_id,
+            "d_id": self.d_id,
+            "unit_id": self.unit_id,
+            "div_id": self.div_id,
+            "cat_id": self.cat_id,
+            "act": self.act,
+            "compliance_id": self.compliance_id,
+            "frequency_id": self.frequency_id,
+            "status_name": self.status_name,
+            "csv": self.csv,
+            "f_count": self.f_count,
+            "t_count": self.t_count
+        }
+# Statutory Settings Unit Wise End
 
 class GetStatutoryNotificationsListFilters(Request):
     def __init__(self):
@@ -1579,6 +1659,7 @@ def _init_Request_class_map():
         GetComplianceActivityReportFilters, GetComplianceActivityReport,
         GetReassignedHistoryReportFilters, GetReassignedHistoryReport,
         GetStatusReportConsolidatedFilters, GetStatusReportConsolidated,
+        GetStatutorySettingsUnitWiseFilters, GetStatutorySettingsUnitWise,
         GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport,
         GetClientDetailsReportFilters, GetClientDetailsReportData, GetActivityLogFilters,
         GetActivityLogReport, GetLoginTrace, GetLegalEntityWiseReportFilters,
@@ -2410,6 +2491,60 @@ class GetStatusReportConsolidatedSuccess(Response):
             "total_count": self.total_count
         }
 # Status Report Consolidated Report End
+
+
+# Statutory Settings Unit Wise Start
+class GetStatutorySettingsUnitWiseFiltersSuccess(Response):
+    def __init__(self, domains, units, acts, compliances, compliance_frequency, divisions, categories):
+        self.domains = domains
+        self.units = units
+        self.acts = acts
+        self.compliances = compliances
+        self.compliance_frequency = compliance_frequency
+        self.divisions = divisions
+        self.categories = categories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domains", "units", "acts", "compliances", "compliance_frequency", "div_infos", "cat_infos"])
+        domains = data.get("domains")
+        units = data.get("units")
+        acts = data.get("acts")
+        compliances = data.get("compliances")
+        compliance_frequency = data.get("compliance_frequency")
+        divisions = data.get("div_infos")
+        categories = data.get("cat_infos")
+        return GetStatutorySettingsUnitWiseFiltersSuccess(domains, units, acts, compliances, compliance_frequency, divisions, categories)
+
+    def to_inner_structure(self):
+        return {
+            "domains": self.domains,
+            "units": self.units,
+            "acts": self.acts,
+            "compliances": self.compliances,
+            "compliance_frequency": self.compliance_frequency,
+            "div_infos": self.divisions,
+            "cat_infos": self.categories
+        }
+
+class GetStatutorySettingsUnitWiseSuccess(Response):
+    def __init__(self, statutory_settings_unit_Wise_list, total_count):
+        self.statutory_settings_unit_Wise_list = statutory_settings_unit_Wise_list
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutory_settings_unit_Wise_list", "total_count"])
+        statutory_settings_unit_Wise_list = data.get("statutory_settings_unit_Wise_list"),
+        total_count = data.get("total_count")
+        return GetStatutorySettingsUnitWiseSuccess(statutory_settings_unit_Wise_list, total_count)
+
+    def to_inner_structure(self):
+        return {
+            "statutory_settings_unit_Wise_list": self.statutory_settings_unit_Wise_list,
+            "total_count": self.total_count
+        }
+# Statutory Settings Unit Wise End
 
 #
 # Statutory Notificaiton List

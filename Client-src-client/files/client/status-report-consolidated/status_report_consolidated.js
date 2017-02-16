@@ -150,42 +150,6 @@ function PageControls() {
         }, condition_fields, condition_values);
     });
 
-    /*showButton.click(function() {
-        if (REPORT.validate()) {
-            reportView.show();
-            showAnimation(reportView);
-            var c_id = parseInt(countryId.val());
-            var le_id = parseInt(legalEntityId.val());
-            var d_id = parseInt(domainId.val());
-            var u_id = parseInt(unitId.val());
-            if (!u_id) u_id = null
-            var act = actId.val();
-            if (!act) act = null
-            var compliance_task_id = parseInt(complianceTaskId.val());
-            if (!compliance_task_id) compliance_task_id = null
-            var usr_id = parseInt(usersId.val());
-            if (!usr_id) usr_id = null
-            var from_date = fromDate.val();
-            var to_date = toDate.val();
-            var comp_fre_id = parseInt(complianceFrequency.val());
-            if (!comp_fre_id) comp_fre_id = null
-            var user_type_id = parseInt(userType.val());
-            if (!user_type_id) user_type_id = null
-            var comp_task_status_id = parseInt(complianceTaskStatus.val());
-            if (!comp_task_status_id) comp_task_status_id = null
-            var csv = false;
-            REPORT.fetchReportValues(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, csv);
-            REPORT.showReportValues();
-        }
-    });
-
-    exportButton.click(function() {
-        if (REPORT.validate()) {
-            REPORT.fetchReportValues()
-            REPORT.exportReportValues();
-        }
-    });*/
-
     showButton.click(function() {
         var csv = false;
         on_current_page = 1;
@@ -242,7 +206,6 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domainId.val(val[0]);
     domain.focus();
     clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
-    //REPORT.fetchUnitList(val[0]);
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
@@ -250,7 +213,6 @@ onUnitAutoCompleteSuccess = function(REPORT, val) {
     unitId.val(val[0]);
     unit.focus();
     clearElement([act, actId, complianceTask, complianceTaskId]);
-    //REPORT.fetchActList(val[0]);
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
@@ -258,7 +220,6 @@ onActAutoCompleteSuccess = function(REPORT, val) {
     actId.val(val[0]);
     act.focus();
     clearElement([complianceTask, complianceTaskId]);
-    //REPORT.fetchComplianceaskList(val[0]);
 }
 
 onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
@@ -325,10 +286,6 @@ StatusReportConsolidated.prototype.fetchSearchList = function() {
 };
 
 StatusReportConsolidated.prototype.fetchDomainList = function(le_id) {
-    /*t_this = this;
-    var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":2,"is_active":true},{"d_id":3,"d_name":"Employee Law","le_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._domains = object.domains;*/
     t_this = this;
     client_mirror.getStatusReportConsolidatedFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
@@ -368,14 +325,12 @@ StatusReportConsolidated.prototype.renderUserTypeList = function(data) {
 
 StatusReportConsolidated.prototype.renderComplianceTaskStatusList = function(data) {
     t_this = this;
-
     complianceTaskStatus.empty();
     var complianceTaskStatusList = '<option value="All">All</option>';
     $.each(data, function(i, e) {
         complianceTaskStatusList = complianceTaskStatusList + '<option value="' + e.name + '"> ' + e.name + ' </option>';
     });
     complianceTaskStatus.html(complianceTaskStatusList);
-
 };
 
 StatusReportConsolidated.prototype.validate = function() {
@@ -475,7 +430,6 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
         if (error == null) {
             t_this._report_data = response.status_report_consolidated_list;
             t_this._total_count = response.total_count;
-            alert(response.total_count.toSource());
             if (csv == false) {
                 reportView.show();
                 showAnimation(reportView);

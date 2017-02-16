@@ -1783,6 +1783,39 @@ class ClientDivision(object):
             "bg_id": self.business_group_id,
         }
 
+class ClientCategory(object):
+    def __init__(
+        self, category_id, category_name, division_id, legal_entity_id, business_group_id
+    ):
+        self.category_id = category_id
+        self.category_name = category_name
+        self.division_id = division_id
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [ "cat_id", "cat_name", "div_id",
+                "le_id", "bg_id"]
+        )
+        category_id = data.get("cat_id")
+        category_name = data.get("cat_name")
+        division_id = data.get("div_id")
+        legal_entity_id = data.get("le_id")
+        business_group_id = data.get("bg_id")
+        return Division(
+            category_id, category_name, division_id, legal_entity_id, business_group_id
+        )
+
+    def to_structure(self):
+        return {
+            "cat_id": self.category_id,
+            "cat_name": self.category_name,
+            "div_id": self.division_id,
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id,
+        }
 
 #
 # Unit
@@ -4304,14 +4337,10 @@ class GetStatusReportConsolidatedSuccess(object):
         self.uploaded_document = uploaded_document
         self.activity_status = activity_status
         self.user_name = user_name
-
-        
-        staticmethod
+    @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_activity_id", "compliance_history_id", "legal_entity_id", "unit_id", "unit", "compliance_id", "compliance_name", 
             "frequency_name", "act_name", "activity_on", "due_date", "completion_date", "task_status", "uploaded_document", "activity_status", "user_name"])
-        
-
         compliance_activity_id = data("compliance_activity_id"),
         compliance_history_id = data("compliance_history_id"),
         legal_entity_id = data("legal_entity_id"),
@@ -4348,4 +4377,45 @@ class GetStatusReportConsolidatedSuccess(object):
             "uploaded_document": self.uploaded_document,
             "activity_status": self.activity_status,
             "user_name": self.user_name
+        }
+
+class GetStatutorySettingsUnitWiseSuccess(object):
+    def __init__(self, compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id):
+        self.compliance_id = compliance_id
+        self.frequency = frequency
+        self.compliance_task = compliance_task
+        self.act_name = act_name
+        self.task_status = task_status
+        self.document_name = document_name
+        self.user_name = user_name
+        self.due_date = due_date
+        self.unit = unit
+        self.unit_id = unit_id
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_id","frequency","compliance_task","act_name","task_status","document_name","user_name","due_date","unit","unit_id"])
+        compliance_id = data.get("compliance_id"),
+        frequency = data.get("frequency"),
+        compliance_task = data.get("compliance_task"),
+        act_name = data.get("act_name"),
+        task_status = data.get("task_status"),
+        document_name = data.get("document_name"),
+        user_name = data.get("user_name"),
+        due_date = data.get("due_date"),
+        unit = data.get("unit"),
+        unit_id = data.get("unit_id")
+        return ServiceProviders(compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id
+)
+    def to_structure(self):
+        return {
+            "compliance_id": self.compliance_id,
+            "frequency": self.frequency,
+            "compliance_task": self.compliance_task,
+            "act_name": self.act_name,
+            "task_status": self.task_status,
+            "document_name": self.document_name,
+            "user_name": self.user_name,
+            "due_date": self.due_date,
+            "unit": self.unit,
+            "unit_id": self.unit_id
         }

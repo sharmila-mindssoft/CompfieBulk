@@ -13,7 +13,8 @@ from server.clientdatabase.general import (
     get_divisions_for_user, get_units_for_user, get_acts_for_user, 
     get_client_users, get_client_level_1_statutoy, 
     get_service_providers, get_client_compliances,
-    get_compliance_frequency
+    get_compliance_frequency, get_divisions,
+    get_categories
     )
 
 __all__ = [
@@ -191,6 +192,28 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
             db, request, session_user, client_id
         )
         logger.logClientApi("GetStatusReportConsolidated", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetStatutorySettingsUnitWiseFilters:
+
+        logger.logClientApi(
+            "GetStatutorySettingsUnitWiseFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_statutory_settings_unit_Wise_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetStatutorySettingsUnitWiseFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetStatutorySettingsUnitWise:
+        logger.logClientApi(
+            "GetStatutorySettingsUnitWise  - " + str(client_id), "process begin"
+        ) 
+        logger.logClientApi("------", str(time.time()))
+        result = get_statutory_settings_unit_Wise(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetStatutorySettingsUnitWise", "process end")
         logger.logClientApi("------", str(time.time()))
     elif type(request) is clientreport.GetLoginTrace:
         logger.logClientApi(
@@ -728,8 +751,6 @@ def get_status_report_consolidated(db, request, session_user, client_id):
         usr_id = request.usr_id
         from_date = request.from_date
         to_date = request.to_date
-        print to_date, from_date
-        print "----------------======================="
         csv = request.csv
         f_count = request.f_count
         t_count = request.t_count
@@ -753,6 +774,63 @@ def get_status_report_consolidated(db, request, session_user, client_id):
             link=converter.FILE_DOWNLOAD_PATH
         )
 # Status Report Consolidated Report End
+
+# Statutory Settings Unit Wise Start
+def get_statutory_settings_unit_Wise_filters(db, request, session_user, client_id):
+    domain_list = get_domains_for_user(db, session_user)
+    unit_list = get_units_for_user(db, session_user)
+    acts_list = get_acts_for_user(db, session_user)
+    compliances_list = get_client_compliances(db, session_user)
+    compliance_frequency_list = get_compliance_frequency(db)
+    divisions_list = get_divisions(db)
+    categories_list = get_categories(db)
+
+    return clientreport.GetStatutorySettingsUnitWiseFiltersSuccess(
+        domains=domain_list,
+        units=unit_list,
+        acts=acts_list,
+        compliances=compliances_list,
+        compliance_frequency = compliance_frequency_list,
+        divisions=divisions_list,
+        categories=categories_list
+    )
+
+def get_statutory_settings_unit_Wise(db, request, session_user, client_id):
+    if not request.csv:
+        country_id = request.c_id
+        bg_id = request.bg_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
+        unit_id = request.unit_id
+        div_id = request.div_id
+        cat_id = request.cat_id
+        act = request.act
+        compliance_id = request.compliance_id
+        frequency_id = request.frequency_id
+        status_name = request.status_name
+        csv = request.csv
+        f_count = request.f_count
+        t_count = request.t_count
+
+        statutory_settings_unit_Wise_list = report_statutory_settings_unit_Wise(
+            db, country_id, bg_id, legal_entity_id, domain_id, unit_id, 
+            div_id, cat_id, act, compliance_id, frequency_id, status_name, session_user, f_count, t_count
+        )
+        total_count = report_statutory_settings_unit_Wise_total(
+            db, country_id, bg_id, legal_entity_id, domain_id, unit_id, div_id, cat_id, 
+            act, compliance_id, frequency_id, status_name, session_user
+        )
+        return clientreport.GetStatutorySettingsUnitWiseSuccess(
+            statutory_settings_unit_Wise_list, total_count
+        )
+    else:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "Reassign"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+# Statutory Settings Unit Wise End
 
 def get_risk_report(db, request, session_user, client_id):
     country_id = request.country_id

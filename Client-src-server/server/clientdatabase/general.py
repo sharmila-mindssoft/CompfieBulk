@@ -20,6 +20,9 @@ __all__ = [
     "get_business_groups_for_user",
     "get_legal_entities_for_user",
     "get_divisions_for_user",
+    "get_categories_for_user",
+    "get_divisions",
+    "get_categories",
     "get_group_name",
     "get_country_wise_domain_month_range",
     "get_units_for_user",
@@ -225,7 +228,6 @@ def return_legal_entities(legal_entities):
         ))
     return results
 
-
 def get_divisions_for_user(db, division_ids):
     columns = "division_id, division_name, legal_entity_id, business_group_id"
     condition = "1"
@@ -239,6 +241,14 @@ def get_divisions_for_user(db, division_ids):
     )
     return return_divisions(rows)
 
+def get_divisions(db):
+    columns = "division_id, division_name, legal_entity_id, business_group_id"
+    condition = "1"
+    condition_val = None
+    rows = db.get_data(
+        tblDivisions, columns, condition, condition_val
+    )
+    return return_divisions(rows)
 
 def return_divisions(divisions):
     results = []
@@ -248,6 +258,38 @@ def return_divisions(divisions):
             division["legal_entity_id"], division["business_group_id"]
         )
         results.append(division_obj)
+    return results
+
+def get_categories_for_user(db, category_ids):
+    columns = "category_id, category_name, division_id, legal_entity_id, business_group_id"
+    condition = "1"
+    condition_val = None
+    if category_ids is not None:
+        condition = " find_in_set(category_id, %s) "
+        condition_val = [category_ids]
+    order = " ORDER BY category_name"
+    rows = db.get_data(
+        tblCategories, columns, condition, condition_val, order
+    )
+    return return_categories(rows)
+
+def get_categories(db):
+    columns = "category_id, category_name, division_id, legal_entity_id, business_group_id"
+    condition = "1"
+    condition_val = None
+    rows = db.get_data(
+        tblCategories, columns, condition, condition_val
+    )
+    return return_categories(rows)
+
+def return_categories(categories):
+    results = []
+    for category in categories:
+        category_obj = clientcore.ClientCategory(
+            category["category_id"], category["category_name"], category["division_id"],
+            category["legal_entity_id"], category["business_group_id"]
+        )
+        results.append(category_obj)
     return results
 
 

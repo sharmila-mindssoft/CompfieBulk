@@ -52,10 +52,8 @@ api_params = {
     'request': {},
     'session_token': make_text_field(length=50),
     'reset_token':  make_text_field(length=50),
-
     'new_password': make_text_field(length=20),
     'current_password': make_text_field(length=20),
-
     'login_type': make_enum_type("clientcore", "SESSION_TYPE"),
     'username': make_text_field(length=100),
     'password': make_text_field(length=100),
@@ -68,7 +66,6 @@ api_params = {
     'form_url': make_string_field(length=250, validfun=is_url),
     'parent_menu': make_string_field(length=50, is_optional=True, validfun=is_alphabet),
     'form_type': make_string_field(length=50, validfun=is_alphabet),
-
     'u_g_id': make_int_field(is_optional=True),
     'u_g_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'is_active': make_bool_field(),
@@ -77,12 +74,9 @@ api_params = {
     'u_c_name': make_string_field(length=50, validfun=is_alpha_numeric),
     "forms": make_map_type("clientcore", "Menu"),
     "menus": make_map_type_vector_type("clientcore", "Form"),
-
     "user_groups": make_vector_type_field("clientcore", "ClientUserGroup"),
     "user_category": make_vector_type_field("clientcore", "ClientUsercategory"),
-
     'form_ids': make_int_field(),
-
     "country_info": make_vector_type_field(module="clientcore", klass_name="Country"),
     "entity_info": make_vector_type_field(module="clientcore", klass_name="LegalEntityInfo"),
     "ct_id": make_int_field(),
@@ -91,6 +85,7 @@ api_params = {
     "bg_name": make_string_field(is_optional=True),
     "bg_id": make_int_field(is_optional=True),
     "cat_id": make_int_field(is_optional=True),
+    "cat_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     "usr_id": make_int_field(is_optional=True),
     "email_id": make_string_field(validfun=allow_specialchar),
     "emp_name": make_string_field(is_optional=True),
@@ -106,7 +101,6 @@ api_params = {
     "is_assignee": make_bool_field(),
     "is_approver": make_bool_field(),
     "is_concurrence": make_bool_field(),
-
     "u_id": make_int_field(),
     "u_ids": make_vector_type_int(is_optional=True),
     "u_name": make_string_field(),
@@ -150,7 +144,6 @@ api_params = {
     "country_id": make_int_field(is_optional=True),
     "domain_id": make_int_field(length=10000),
     "is_closed": make_bool_field(),
-
     'postal_code': make_int_field(length=1000000, is_optional=False),
     'division_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'category_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
@@ -192,25 +185,22 @@ api_params = {
     "sp_app_id_optional": make_int_field(is_optional=True),
     "user_id_optional": make_int_field(is_optional=True),
     'user_category_id': make_int_field(),
-
     'csv': make_bool_field(is_optional=False),
     'from_count': make_int_field(is_optional=False),
     'page_count': make_int_field(is_optional=False),
     'total_count': make_int_field(is_optional=False),
-
     "act": make_text_field(is_optional=True),
     "c_task": make_text_field(is_optional=True),
     "user_id": make_int_field(),
     "employee_code": make_text_field(is_optional=True),
     "employee_name": make_string_field(),
     "link": make_text_field(length=500, is_optional=True),
-
-
     "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
     "domains": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "bg_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
     "le_infos": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
     "div_infos": make_vector_type_field(module="clientcore", klass_name="ClientDivision", is_optional=True),
+    "cat_infos": make_vector_type_field(module="clientcore", klass_name="ClientCategory", is_optional=True),
     "units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
     "unit_closure_legal_entities": make_vector_type_field(module="clientcore", klass_name="UnitClosureLegalEntity"),
     "unit_closure_units": make_vector_type_field(module="clientcore", klass_name="UnitClosure_Units"),
@@ -221,7 +211,6 @@ api_params = {
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
     "client_admin": make_int_field(),
-
     "unit_legal_entity": make_vector_type_field(module="clientreport", klass_name="UnitLegalEntity"),
     "act_legal_entity": make_vector_type_field(module="clientreport", klass_name="ActLegalEntity"),
     "compliance_task_list": make_vector_type_field(module="clientreport", klass_name="TaskLegalEntity"),
@@ -233,7 +222,6 @@ api_params = {
     "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
     "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "unit_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
-
     "sp_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviders"),
     "sp_domains_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderDomains"),
     "sp_unit_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderUnits"),
@@ -264,9 +252,7 @@ api_params = {
     "month_from": make_int_field(),
     "month_to": make_int_field(),
     "level_1_s_name": make_string_field(),
-
     "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True),
-
     "reassigned_history_list":make_vector_type_field(module="clientcore", klass_name="ReassignedHistoryReportSuccess", is_optional=True),
     "act_name": make_string_field(),
     "from_date": make_text_field(length=20, is_optional=True),
@@ -290,5 +276,6 @@ api_params = {
     'activity_on': make_text_field(length=20, is_optional=True),
     'uploaded_document': make_text_field(is_optional=True),
     'user_name': make_text_field(is_optional=True),
-    
+    'statutory_settings_unit_Wise_list':make_vector_type_field(module="clientcore", klass_name="GetStatutorySettingsUnitWiseSuccess", is_optional=True),\
+    'document_name': make_text_field(is_optional=True),
 }

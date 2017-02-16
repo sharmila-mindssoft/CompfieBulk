@@ -88,6 +88,10 @@ function initClientMirror() {
         var info = getUserInfo();
         return info.country_info;
     }
+    function getUserBusinessGroup() {
+        var info = getUserInfo();
+        return info.entity_info;
+    }
     function getUserLegalEntity() {
         var info = getUserInfo();
         return info.entity_info;
@@ -863,6 +867,43 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     // Status Report Consolidated Report End
+
+
+    // Statutory Settings Unit Wise Start
+    function getStatutorySettingsUnitWiseFilters(le_id, callback) {
+        var request = [
+            'GetStatutorySettingsUnitWiseFilters',
+            {
+                'le_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id, comp_fre_id, comp_task_status_id, f_count, t_count, csv, callback) {
+        var request = [
+            'GetStatutorySettingsUnitWise', {
+                'c_id': c_id,
+                'bg_id': bg_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'unit_id': u_id,
+                'div_id': div_id,
+                'cat_id': cat_id,
+                'act': act,
+                'compliance_id': compliance_task_id,
+                'frequency_id': comp_fre_id,
+                'status_name': comp_task_status_id,
+                'csv': csv,
+                'f_count': f_count,
+                't_count': t_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Statutory Settings Unit Wise End
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -2221,6 +2262,7 @@ function initClientMirror() {
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,
         getUserCountry: getUserCountry,
+        getUserBusinessGroup: getUserBusinessGroup,
         getUserLegalEntity: getUserLegalEntity,
         getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
@@ -2304,6 +2346,8 @@ function initClientMirror() {
         getReassignedHistoryReport: getReassignedHistoryReport,
         getStatusReportConsolidatedFilters: getStatusReportConsolidatedFilters,
         getStatusReportConsolidated: getStatusReportConsolidated,
+        getStatutorySettingsUnitWiseFilters: getStatutorySettingsUnitWiseFilters,
+        getStatutorySettingsUnitWise: getStatutorySettingsUnitWise,
         updateComplianceDetail: updateComplianceDetail,
         getLoginTrace: getLoginTrace,
         uploadFile: uploadFile,

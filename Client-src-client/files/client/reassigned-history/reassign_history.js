@@ -442,9 +442,9 @@ ReassignHistory.prototype.showReportValues = function() {
                 $('.reason-new', clonefour).text(v.remarks);
                 if (v.reason != "") { $('.reason-new', clonefour).text(v.remarks); } else { $('.reason-new', clonefour).text('-'); }
                 reportTableTbody.append(clonefour);
-                complianceid = v.compliance_id;
                 tree = v.compliance_id
             }
+            complianceid = v.compliance_id;
         }
     });
     showPagePan(f_count, j, t_this._total_count);
