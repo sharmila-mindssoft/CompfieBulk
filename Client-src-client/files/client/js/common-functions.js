@@ -243,7 +243,7 @@ month_id_name_map[12] = "December"
 
 
 function commonAutoComplete(
-    e, ac_div, id_element, text_val, list_val, field_name, id_name, 
+    e, ac_div, id_element, text_val, list_val, field_name, id_name,
     callback, condition_fields, condition_values
 ) {
     ac_div.show();

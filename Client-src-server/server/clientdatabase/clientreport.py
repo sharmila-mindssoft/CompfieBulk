@@ -1,7 +1,7 @@
 import datetime
 from server.clientdatabase.tables import *
 from clientprotocol import (
-    clientcore, clientreport
+    clientcore, clientreport, clientmasters
 )
 import json
 from server.common import (
@@ -69,7 +69,6 @@ __all__ = [
     "get_task_for_le_domain",
     "process_domain_wise_report",
     "process_unit_wise_report",
-    "get_service_providers_list",
     "get_domains_for_sp_users",
     "get_units_for_sp_users",
     "get_acts_for_sp_users",
@@ -79,7 +78,15 @@ __all__ = [
     "get_domains_for_le_users",
     "get_units_for_le_users",
     "get_acts_for_le_users",
-    "process_user_wise_report"
+    "process_user_wise_report",
+    "get_divisions_for_unit_list",
+    "get_categories_for_unit_list",
+    "get_units_list",
+    "get_domains_organization_for_le",
+    "get_units_status",
+    "process_unit_list_report",
+    "process_statutory_notification_list_report",
+    "process_audit_trail_report"
 ]
 
 
@@ -2585,13 +2592,13 @@ def get_units_for_le_domain(db, country_id, legal_entity_id):
 # Parameter: request object
 # Result: list of acts under the selected legal entity
 ###############################################################################################
-def get_acts_for_le_domain(db, legal_entity_id):
+def get_acts_for_le_domain(db, legal_entity_id, country_id):
     query = "select t1.legal_entity_id, t1.domain_id, t1.unit_id, t2.compliance_id, " + \
             "t2.statutory_mapping, t2.compliance_task, t2.frequency_id from " + \
             "tbl_client_compliances as t1 inner join tbl_compliances as t2 " + \
-            "on t2.compliance_id = t1.compliance_id and t2.domain_id = t1.domain_id " + \
-            "where t1.legal_entity_id = %s"
-    result = db.select_all(query, [legal_entity_id])
+            "on t2.compliance_id = t1.compliance_id and t2.domain_id = t1.domain_id and " + \
+            "t2.country_id = %s where t1.legal_entity_id = %s"
+    result = db.select_all(query, [country_id, legal_entity_id])
     print "acts"
     print result
     print len(result)
@@ -2812,17 +2819,21 @@ def process_legal_entity_wise_report(db, request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -2992,17 +3003,21 @@ def process_domain_wise_report(db, request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3177,17 +3192,21 @@ def process_unit_wise_report(db, request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3267,26 +3286,6 @@ def process_unit_wise_report(db, request):
             datetime_to_string(row["completion_date"]), url, row["domain_name"]
         ))
     return unit_report
-
-
-###############################################################################################
-# Objective: To get the service provider details from master
-# Parameter: request object
-# Result: list of service providers
-###############################################################################################
-def get_service_providers_list(db):
-    query = "select concat(short_name,' - ',service_provider_name) as sp_name, " + \
-            "service_provider_id as sp_id from tbl_service_providers"
-    result = db.select_all(query, None)
-    print "sp list"
-    print result
-    sp_details = []
-
-    for row in result:
-        sp_details.append(clientreport.ServiceProviders(
-            row["sp_id"], row["sp_name"]
-        ))
-    return sp_details
 
 ###############################################################################################
 # Objective: To get the domains list with user id under selected legal entity
@@ -3449,17 +3448,21 @@ def process_service_provider_wise_report(db , request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3722,17 +3725,21 @@ def process_user_wise_report(db, request):
         where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
     if due_from is not None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
-        where_clause = where_clause + " and t1.due_date between " + \
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
-        where_clause = where_clause + " and t1.due_date < " + \
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3817,3 +3824,374 @@ def process_user_wise_report(db, request):
             datetime_to_string(row["completion_date"]), url, row["domain_name"]
         ))
     return user_report
+
+###############################################################################################
+# Objective: To get the divisions list under legal entity and business group
+# Parameter: request object
+# Result: list of divisions from master
+###############################################################################################
+def get_divisions_for_unit_list(db, business_group_id, legal_entity_id):
+    query = "select division_id, division_name from tbl_divisions " + \
+        "where legal_entity_id = %s and business_group_id = %s"
+    result = db.select_all(query, [legal_entity_id, business_group_id])
+    divisions_list = []
+    for row in result:
+        divisions_list.append(clientreport.Divisions(
+            row["division_id"], row["division_name"]
+        ))
+    return divisions_list
+
+###############################################################################################
+# Objective: To get the categories list under legal entity and business group
+# Parameter: request object
+# Result: list of categories from master
+###############################################################################################
+def get_categories_for_unit_list(db, business_group_id, legal_entity_id):
+    query = "select division_id, category_id, category_name from tbl_categories " + \
+        "where legal_entity_id = %s and business_group_id = %s"
+    result = db.select_all(query, [legal_entity_id, business_group_id])
+    category_list = []
+    for row in result:
+        category_list.append(clientreport.Category(
+            row["division_id"], row["category_id"], row["category_name"]
+        ))
+    return category_list
+
+###############################################################################################
+# Objective: To get the units list under legal entity and business group and country
+# Parameter: request object
+# Result: list of units from master
+###############################################################################################
+def get_units_list(db, country_id, business_group_id, legal_entity_id):
+    query = "select unit_id, unit_code, unit_name, division_id, category_id from " + \
+        "tbl_units where business_group_id = %s and legal_entity_id =%s and country_id = %s"
+    result = db.select_all(query, [business_group_id, legal_entity_id, country_id])
+
+    query = "select t1.unit_id, t2.domain_id, t2.organisation_id " + \
+        "from tbl_units as t1 inner join tbl_units_organizations as t2 on " + \
+        "t2.unit_id = t1.unit_id where t1.business_group_id = %s and t1.legal_entity_id = %s and " + \
+        "t1.country_id = %s group by t1.unit_id, t2.domain_id, t2.organisation_id order by " + \
+        "t1.unit_id;"
+    result_1 = db.select_all(query, [business_group_id, legal_entity_id, country_id])
+
+    unit_list = []
+    for row in result:
+        unit_id = row["unit_id"]
+        unit_code = row["unit_code"]
+        unit_name = row["unit_name"]
+        division_id = row["division_id"]
+        category_id = row["category_id"]
+        d_ids = []
+        i_ids = []
+        for row_1 in result_1:
+            if unit_id == row_1["unit_id"]:
+                d_ids.append(int(row_1["domain_id"]))
+                i_ids.append(int(row_1["organisation_id"]))
+        unit_list.append(clientreport.UnitList(
+            unit_id, unit_code, unit_name, division_id, category_id, d_ids, i_ids
+        ))
+    return unit_list
+
+###############################################################################################
+# Objective: To get the domains and organization list under legal entity
+# Parameter: request object
+# Result: list of units from master
+###############################################################################################
+def get_domains_organization_for_le(db, legal_entity_id):
+    query = "select t1.domain_id, t2.domain_name, t1.organisation_id, t3.organisation_name " + \
+        "from tbl_legal_entity_domains as t1 inner join tbl_domains as t2 on " + \
+        "t2.domain_id = t1.domain_id inner join tbl_organisation as t3 on " + \
+        "t3.organisation_id = t1.organisation_id where t1.legal_entity_id = %s"
+    result = db.select_all(query, [legal_entity_id])
+    domain_organisation = []
+    for row in result:
+        domain_organisation.append(clientreport.DomainsOrganisation(
+            row["domain_id"], row["domain_name"], row["organisation_id"],
+            row["organisation_name"]
+        ))
+    return domain_organisation
+
+###############################################################################################
+# Objective: To get the status of the units
+# Parameter: request object
+# Result: list of status
+###############################################################################################
+def get_units_status(db):
+    status = ("Active", "Closed")
+    units_status = []
+    i = 0
+    for sts in status:
+        unit_status_name = clientreport.UnitStatus(
+            i, sts
+        )
+        units_status.append(unit_status_name)
+        i = i + 1
+    return units_status
+
+
+###############################################################################################
+# Objective: To get the unit details under filtered data
+# Parameter: request object
+# Result: list of units grouped by division
+###############################################################################################
+def process_unit_list_report(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    country_id = request.country_id
+    business_group_id = request.business_group_id
+    legal_entity_id = request.legal_entity_id
+    division_id = request.division_id
+    category_id = request.category_id
+    unit_id = request.unit_id
+    domain_id = request.domain_id
+    organisation_id = request.organisation_id
+
+    unit_status = request.unit_status
+
+    select_qry = "select t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.postal_code, " + \
+        "t1.geography_name, t1.is_closed, t1.closed_on, t1.division_id, t1.category_id, (select  " + \
+        "division_name from tbl_divisions where division_id = t1.division_id) as division_name, " + \
+        "(select category_name from tbl_categories where category_id = t1.category_id) as " + \
+        "category_name from tbl_units as t1 where "
+    where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
+    condition_val.extend([legal_entity_id, country_id])
+
+    if int(business_group_id) > 0:
+        where_clause = where_clause + "and t1.business_group_id = %s "
+        condition_val.append(business_group_id)
+
+    if int(unit_id) > 0:
+        where_clause = where_clause + "and t1.unit_id = %s "
+        condition_val.append(unit_id)
+
+    if int(division_id) > 0:
+        where_clause = where_clause + "and t1.division_id = %s "
+        condition_val.append(division_id)
+
+    if int(category_id) > 0:
+        where_clause = where_clause + "and t1.category_id = %s "
+        condition_val.append(category_id)
+
+    if unit_status == "Active":
+        where_clause = where_clause + "and t1.is_closed = %s "
+        condition_val.append(0)
+    elif unit_status == "Closed":
+        where_clause = where_clause + "and t1.is_closed = %s "
+        condition_val.append(1)
+
+    where_clause = where_clause + "order by t1.closed_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result = db.select_all(query, condition_val)
+
+    # domains & organisations
+    select_qry = None
+    where_clause = None
+    condition_val = []
+    select_qry = "select t1.unit_id, t2.domain_id, t2.organisation_id, (select domain_name " + \
+        "from tbl_domains where domain_id = t2.domain_id) as domain_name, (select " + \
+        "organisation_name from tbl_organisation where organisation_id = t2.organisation_id) as " + \
+        "organisation_name from tbl_units as t1 inner join tbl_units_organizations as t2 on " + \
+        "t2.unit_id = t1.unit_id where "
+    where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
+    condition_val.extend([legal_entity_id, country_id])
+
+    if int(business_group_id) > 0:
+        where_clause = where_clause + "and t1.business_group_id = %s "
+        condition_val.append(business_group_id)
+
+    if int(unit_id) > 0:
+        where_clause = where_clause + "and t1.unit_id = %s "
+        condition_val.append(unit_id)
+
+    if int(division_id) > 0:
+        where_clause = where_clause + "and t1.division_id = %s "
+        condition_val.append(division_id)
+
+    if int(category_id) > 0:
+        where_clause = where_clause + "and t1.category_id = %s "
+        condition_val.append(category_id)
+
+    if int(domain_id) > 0:
+        where_clause = where_clause + "and t2.domain_id = %s "
+        condition_val.append(domain_id)
+
+    if int(organisation_id) > 0:
+        where_clause = where_clause + "and t2.organisation_id = %s "
+        condition_val.append(organisation_id)
+
+    if unit_status == "Active":
+        where_clause = where_clause + "and t1.is_closed = %s "
+        condition_val.append(0)
+    elif unit_status == "Closed":
+        where_clause = where_clause + "and t1.is_closed = %s "
+        condition_val.append(1)
+
+    where_clause = where_clause + "order by t1.closed_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result_1 = db.select_all(query, condition_val)
+    unit_report = []
+
+    for row in result:
+        unit_id = row["unit_id"]
+        unit_code = row["unit_code"]
+        unit_name = row["unit_name"]
+        geography_name = row["geography_name"]
+        address = row["address"]
+        postal_code = row["postal_code"]
+        division_name = row["division_name"]
+        if row["is_closed"] == "0":
+            unit_status = "Active"
+        else:
+            unit_status = "Closed"
+        d_i_names = []
+        if row["closed_on"] is None:
+            closed_date = datetime_to_string(row["closed_on"])
+        else:
+            closed_date = None
+        last = object()
+        for row_1 in result_1:
+            if unit_id == row_1["unit_id"]:
+                if last != (row_1["domain_name"]+" - "+row_1["organisation_name"]):
+                    last = row_1["domain_name"]+" - "+row_1["organisation_name"]
+                    d_i_names.append(row_1["domain_name"]+" - "+row_1["organisation_name"])
+        unit_report.append(clientreport.UnitListReport(
+            unit_id, unit_code, unit_name, geography_name, address, postal_code,
+            d_i_names, unit_status, closed_date, division_name
+        ))
+    return unit_report
+
+
+###############################################################################################
+# Objective: To get the Compliance details under filtered data
+# Parameter: request object
+# Result: list of compliances and acts
+###############################################################################################
+def process_statutory_notification_list_report(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    country_id = request.country_id
+    legal_entity_id = request.legal_entity_id
+    domain_id = request.domain_id
+    statutory_mapping = request.statutory_mapping
+    due_from = request.due_from_date
+    due_to = request.due_to_date
+
+    select_qry = "select t1.compliance_id, t2.statutory_mapping, t2.compliance_description, " + \
+        "t2.compliance_task, t3.notification_text, t3.created_on from tbl_client_compliances as t1 " + \
+        "inner join tbl_compliances as t2 on t2.compliance_id = t1.compliance_id inner join " + \
+        "tbl_statutory_notifications as t3 on t3.compliance_id = t2.compliance_id where "
+    where_clause = "t1.legal_entity_id = %s and t1.domain_id = %s and t2.country_id = %s "
+    condition_val.extend([legal_entity_id, domain_id, country_id])
+
+    if statutory_mapping is not None:
+        statutory_mapping = '%'+statutory_mapping+'%'
+        where_clause = where_clause + "and t2.statutory_mapping like %s "
+        condition_val.append(statutory_mapping)
+    if due_from is not None and due_to is not None:
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t3.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t3.created_on < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    where_clause = where_clause + "group by t1.compliance_id order by t3.created_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result = db.select_all(query, condition_val)
+    statutory_notification = []
+
+    for row in result:
+        stat_map = json.loads(row["statutory_mapping"])
+        if stat_map[0].find(">>") >= 0:
+            stat_map = stat_map[0].split(">>")[0]
+        else:
+            stat_map = str(stat_map)[3:-2]
+        print "mapped"
+        statutory_notification.append(clientreport.StatutoryNotificationReport(
+            row["compliance_id"], row["compliance_task"], row["compliance_description"],
+            datetime_to_string(row["created_on"]), row["notification_text"],
+            statutory_mapping=stat_map
+        ))
+    return statutory_notification
+
+###############################################################################################
+# Objective: To get the list of activities
+# Parameter: request object
+# Result: list of activities
+###############################################################################################
+def process_audit_trail_report(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    legal_entity_id = request.legal_entity_id
+    user_id = request.user_id
+    form_id = request.form_id_optional
+    due_from = request.due_from_date
+    due_to = request.due_to_date
+
+    select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
+        "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+        "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+    where_clause = "t1.form_id <> 0 and t1.legal_entity_id = %s "
+    condition_val.append(legal_entity_id)
+
+    if int(user_id) > 0:
+        where_clause = where_clause + "and t1.user_id = %s "
+        condition_val.append(user_id)
+    if int(form_id) > 0:
+        where_clause = where_clause + "and t1.form_id = %s "
+        condition_val.append(form_id)
+    if due_from is not None and due_to is not None:
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t1.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t1.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t1.created_on < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result = db.select_all(query, condition_val)
+    activity_list = []
+    for row in result:
+        activity_list.append(clientreport.AuditTrailActivities(
+            row["user_id"], row["user_name"], row["form_id"],
+            row["action"], datetime_to_string_time(row["created_on"])
+        ))
+    return activity_list

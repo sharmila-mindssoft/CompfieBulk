@@ -649,20 +649,20 @@ function initMirror() {
             return null;
     }
 
-  function getAssignedStatutoriesById(u_id, d_id, rcount, callback){
-    callerName = 'domain_transaction';
-    var request = [
-        "GetAssignedStatutoriesById",
-        {
-          "u_id": u_id,
-          "d_id": d_id,
-          "rcount": rcount
-        }
-      ];
-    apiRequest(callerName, request, callback);
-  }
+    function getAssignedStatutoriesById(u_id, d_id, rcount, callback){
+      callerName = 'domain_transaction';
+      var request = [
+          "GetAssignedStatutoriesById",
+          {
+            "u_id": u_id,
+            "d_id": d_id,
+            "rcount": rcount
+          }
+        ];
+      apiRequest(callerName, request, callback);
+    }
 
-  //user mapping report
+    //user mapping report
 
     function getUsermappingDetailsReport(countryId, clientId, legalEntityId, u_m_none, csv, from_count, page_count, callback) {
       callerName = 'techno_report';
@@ -2337,9 +2337,6 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-
-
-
 
     function getDeletionDetails(client_id, entity_id, unit_id, deletion_period) {
         return {
