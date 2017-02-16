@@ -194,7 +194,7 @@ class GetComplianceStatusChart(Request):
         country_ids, domain_ids,
         filter_type, filter_ids,
         from_date, to_date,
-        chart_year, legal_entity_id
+        chart_year, legal_entity_ids
     ):
         self.country_ids = country_ids
         self.domain_ids = domain_ids
@@ -203,7 +203,7 @@ class GetComplianceStatusChart(Request):
         self.from_date = from_date
         self.to_date = to_date
         self.chart_year = chart_year
-        self.legal_entity_id = legal_entity_id
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
@@ -212,7 +212,7 @@ class GetComplianceStatusChart(Request):
             "filter_type", "filter_ids",
             "from_date", "to_date",
             "chart_year",
-            "le_id"
+            "le_ids"
         ])
         country_ids = data.get("c_ids")
         domain_ids = data.get("d_ids")
@@ -221,12 +221,12 @@ class GetComplianceStatusChart(Request):
         from_date = data.get("from_date")
         to_date = data.get("to_date")
         chart_year = data.get("chart_year")
-        legal_entity_id = data.get("le_id")
+        legal_entity_ids = data.get("le_ids")
         return GetComplianceStatusChart(
             country_ids, domain_ids,
             filter_type, filter_ids,
             from_date, to_date,
-            chart_year, legal_entity_id
+            chart_year, legal_entity_ids
         )
 
     def to_inner_structure(self):
@@ -238,25 +238,25 @@ class GetComplianceStatusChart(Request):
             "from_date": self.from_date,
             "to_date": self.to_date,
             "chart_year": self.chart_year,
-            "le_id": self.legal_entity_id
+            "le_ids": self.legal_entity_ids
         }
 
 class GetEscalationsChart(Request):
-    def __init__(self, country_ids, domain_ids, filter_type, filter_ids, legal_entity_id):
+    def __init__(self, country_ids, domain_ids, filter_type, filter_ids, legal_entity_ids):
         self.country_ids = country_ids
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
-        self.legal_entity_id = legal_entity_id
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_id"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_ids"])
         country_ids = data.get("c_ids")
         domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
         filter_ids = data.get("filter_ids")
-        legal_entity_id = data.get("le_id")
+        legal_entity_id = data.get("le_ids")
         return GetEscalationsChart(country_ids, domain_ids, filter_type, filter_ids, legal_entity_id)
 
     def to_inner_structure(self):
@@ -265,25 +265,25 @@ class GetEscalationsChart(Request):
             "d_ids": self.domain_ids,
             "filter_type": self.filter_type,
             "filter_ids": self.filter_ids,
-            "le_id": self.legal_entity_id
+            "le_ids": self.legal_entity_ids
         }
 
 class GetNotCompliedChart(Request):
-    def __init__(self, country_ids, domain_ids, filter_type, filter_ids, legal_entity_id):
+    def __init__(self, country_ids, domain_ids, filter_type, filter_ids, legal_entity_ids):
         self.country_ids = country_ids
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
-        self.legal_entity_id = legal_entity_id
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_id"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_ids"])
         country_ids = data.get("c_ids")
         domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
         filter_ids = data.get("filter_ids")
-        legal_entity_id = data.get("le_id")
+        legal_entity_id = data.get("le_ids")
         return GetNotCompliedChart(country_ids, domain_ids, filter_type, filter_ids, legal_entity_id)
 
     def to_inner_structure(self):
@@ -292,25 +292,27 @@ class GetNotCompliedChart(Request):
             "d_ids": self.domain_ids,
             "filter_type": self.filter_type,
             "filter_ids": self.filter_ids,
-            "le_id": self.legal_entity_id
+            "le_ids": self.legal_entity_ids
         }
 
 
 class GetTrendChart(Request):
-    def __init__(self, country_ids, domain_ids, filter_type, filter_ids):
+    def __init__(self, country_ids, domain_ids, filter_type, filter_ids, legal_entity_ids):
         self.country_ids = country_ids
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_ids"])
         country_ids = data.get("c_ids")
         domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
         filter_ids = data.get("filter_ids")
-        return GetTrendChart(country_ids, domain_ids, filter_type, filter_ids)
+        legal_entity_ids = data.get("le_ids")
+        return GetTrendChart(country_ids, domain_ids, filter_type, filter_ids, legal_entity_ids)
 
     def to_inner_structure(self):
         return {
@@ -318,23 +320,26 @@ class GetTrendChart(Request):
             "d_ids": self.domain_ids,
             "filter_type": self.filter_type,
             "filter_ids": self.filter_ids,
+            "le_ids": self.legal_entity_ids
         }
 
 class GetComplianceApplicabilityStatusChart(Request):
-    def __init__(self, country_ids, domain_ids, filter_type, filter_ids):
+    def __init__(self, country_ids, domain_ids, filter_type, filter_ids, legal_entity_ids):
         self.country_ids = country_ids
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids"])
+        data = parse_dictionary(data, ["c_ids", "d_ids", "filter_type", "filter_ids", "le_ids"])
         country_ids = data.get("c_ids")
         domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
         filter_ids = data.get("filter_ids")
-        return GetComplianceApplicabilityStatusChart(country_ids, domain_ids, filter_type, filter_ids)
+        legal_entity_ids = data.get("le_ids")
+        return GetComplianceApplicabilityStatusChart(country_ids, domain_ids, filter_type, filter_ids, legal_entity_ids)
 
     def to_inner_structure(self):
         return {
@@ -342,6 +347,7 @@ class GetComplianceApplicabilityStatusChart(Request):
             "d_ids": self.domain_ids,
             "filter_type": self.filter_type,
             "filter_ids": self.filter_id,
+            "le_ids": self.legal_entity_ids
         }
 
 class GetAssigneewiseComplianesFilters(Request):
@@ -500,7 +506,7 @@ class GetComplianceStatusDrillDownData(Request):
     def __init__(
         self, domain_ids, from_date, to_date, year,
         filter_type, filter_id, compliance_status,
-        record_count, legal_entity_id
+        record_count, legal_entity_ids
     ):
         self.domain_ids = domain_ids
         self.from_date = from_date
@@ -510,14 +516,14 @@ class GetComplianceStatusDrillDownData(Request):
         self.filter_id = filter_id
         self.compliance_status = compliance_status
         self.record_count = record_count
-        self.legal_entity_id = legal_entity_id
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "d_ids", "from_date", "to_date", "chart_year",  "filter_type",
             "filter_id", "compliance_status", "record_count",
-            "le_id"
+            "le_ids"
         ])
         domain_ids = data.get("d_ids")
         from_date = data.get("from_date")
@@ -527,7 +533,7 @@ class GetComplianceStatusDrillDownData(Request):
         filter_id = data.get("filter_id")
         compliance_status = data.get("compliance_status")
         record_count = data.get("record_count")
-        legal_entity_id = data.get("le_id")
+        legal_entity_id = data.get("le_ids")
         return GetComplianceStatusDrillDownData(
             domain_ids, from_date, to_date,
             year, filter_type, filter_id,
@@ -537,7 +543,7 @@ class GetComplianceStatusDrillDownData(Request):
 
     def to_inner_structure(self):
         return {
-            "d_dis": self.domain_ids,
+            "d_ids": self.domain_ids,
             "from_date": self.from_date,
             "to_date": self.to_date,
             "chart_year": self.year,
@@ -545,33 +551,36 @@ class GetComplianceStatusDrillDownData(Request):
             "filter_id": self.filter_id,
             "compliance_status": self.compliance_status,
             "record_count": self.record_count,
-            "le_id": self.legal_entity_id
+            "le_ids": self.legal_entity_ids
         }
 
 class GetEscalationsDrillDownData(Request):
-    def __init__(self, domain_ids, filter_type, filter_ids, year, record_count, legal_entity_id):
+    def __init__(
+        self, domain_ids, filter_type, filter_ids, year,
+        record_count, legal_entity_ids
+    ):
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
         self.year = year
         self.record_count = record_count
-        self.legal_entity_id = legal_entity_id
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "d_ids", "filter_type", "filter_ids", "chart_year",
-            "record_count", "le_id"
+            "record_count", "le_ids"
         ])
         domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
         filter_ids = data.get("filter_ids")
         year = data.get("chart_year")
         record_count = data.get("record_count")
-        legal_entity_id = data.get("le_id")
+        legal_entity_ids = data.get("le_ids")
         return GetEscalationsDrillDownData(
             domain_ids, filter_type, filter_ids, year, record_count,
-            legal_entity_id
+            legal_entity_ids
         )
 
     def to_inner_structure(self):
@@ -581,13 +590,14 @@ class GetEscalationsDrillDownData(Request):
             "filter_ids": self.filter_ids,
             "chart_year": self.year,
             "record_count": self.record_count,
-            "le_id": self.legal_entity_id
+            "le_ids": self.legal_entity_ids
         }
 
 class GetComplianceApplicabilityStatusDrillDown(Request):
     def __init__(
         self, country_ids, domain_ids, filter_type, filter_ids,
-        applicability_status, record_count
+        applicability_status, record_count,
+        legal_entity_ids
     ):
         self.country_ids = country_ids
         self.domain_ids = domain_ids
@@ -595,38 +605,35 @@ class GetComplianceApplicabilityStatusDrillDown(Request):
         self.filter_ids = filter_ids
         self.applicability_status = applicability_status
         self.record_count = record_count
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "country_ids", "domain_ids", "filter_type", "filter_ids",
-            "applicability_status", "record_count"
+            "c_ids", "d_ids", "filter_type", "filter_ids",
+            "applicability_status", "record_count", "le_ids"
         ])
-        country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        country_ids = data.get("c_ids")
+        domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
-        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_ids = data.get("filter_ids")
-        filter_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(filter_ids)
         applicability_status = data.get("applicability_status")
-        applicability_status = parse_structure_EnumType_core_APPLICABILITY_STATUS(applicability_status)
         record_count = data.get("record_count")
-        record_count = parse_structure_UnsignedIntegerType_32(record_count)
+        legal_entity_ids = data.get("le_ids")
         return GetComplianceApplicabilityStatusDrillDown(
             country_ids, domain_ids, filter_type, filter_ids,
-            applicability_status, record_count
+            applicability_status, record_count, legal_entity_ids
         )
 
     def to_inner_structure(self):
         return {
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.filter_ids),
-            "applicability_status": to_structure_EnumType_core_APPLICABILITY_STATUS(self.applicability_status),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
+            "country_ids": self.country_ids,
+            "domain_ids": self.domain_ids,
+            "filter_type": self.filter_type,
+            "filter_ids": self.filter_ids,
+            "applicability_status": self.applicability_status,
+            "record_count": self.record_count,
+            "le_ids": self.legal_entity_ids
         }
 
 class GetNotCompliedDrillDown(Request):
@@ -669,36 +676,43 @@ class GetNotCompliedDrillDown(Request):
         }
 
 class GetTrendChartDrillDownData(Request):
-    def __init__(self, filter_type, filter_ids, country_ids, domain_ids, year):
+    def __init__(
+        self, filter_type, filter_ids, country_ids, domain_ids, year,
+        legal_entity_ids
+    ):
         self.filter_type = filter_type
         self.filter_ids = filter_ids
         self.country_ids = country_ids
         self.domain_ids = domain_ids
         self.year = year
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["filter_type", "filter_ids", "country_ids", "domain_ids", "year"])
+        data = parse_dictionary(data, [
+            "filter_type", "filter_ids", "country_ids", "domain_ids", "year",
+            "le_ids"
+        ])
         filter_type = data.get("filter_type")
-        filter_type = parse_structure_EnumType_core_FILTER_TYPE(filter_type)
         filter_ids = data.get("filter_ids")
-        filter_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(filter_ids)
-        country_ids = data.get("country_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("domain_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
+        country_ids = data.get("c_ids")
+        domain_ids = data.get("d_ids")
         year = data.get("year")
-        year = parse_structure_UnsignedIntegerType_32(year)
-        return GetTrendChartDrillDownData(filter_type, filter_ids,
-            country_ids, domain_ids, year)
+        legal_entity_ids = data.get("le_ids")
+        return GetTrendChartDrillDownData(
+            filter_type, filter_ids,
+            country_ids, domain_ids, year,
+            legal_entity_ids
+        )
 
     def to_inner_structure(self):
         return {
-            "filter_type": to_structure_EnumType_core_FILTER_TYPE(self.filter_type),
-            "filter_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.filter_ids),
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "year": to_structure_UnsignedIntegerType_32(self.year)
+            "filter_type": self.filter_type,
+            "filter_ids": self.filter_ids,
+            "country_ids": self.country_ids,
+            "domain_ids": self.domain_ids,
+            "year": self.year,
+            "le_ids": self.legal_entity_ids
         }
 
 class GetNotifications(Request):
@@ -742,14 +756,16 @@ class UpdateNotificationStatus(Request):
         }
 
 def _init_Request_class_map():
-    classes = [GetChartFilters, GetComplianceStatusChart, GetEscalationsChart,
-    GetNotCompliedChart, GetTrendChart, GetComplianceApplicabilityStatusChart,
-    GetAssigneeWiseCompliancesChart, GetAssigneeWiseComplianceDrillDown,
-    GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
-    GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
-    GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
-    GetAssigneewiseComplianesFilters, CheckContractExpiration,
-    GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes]
+    classes = [
+        GetChartFilters, GetComplianceStatusChart, GetEscalationsChart,
+        GetNotCompliedChart, GetTrendChart, GetComplianceApplicabilityStatusChart,
+        GetAssigneeWiseCompliancesChart, GetAssigneeWiseComplianceDrillDown,
+        GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
+        GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
+        GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
+        GetAssigneewiseComplianesFilters, CheckContractExpiration,
+        GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes
+    ]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -1168,12 +1184,11 @@ class GetComplianceApplicabilityStatusDrillDownSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["drill_down_data"])
         drill_down_data = data.get("drill_down_data")
-        drill_down_data = parse_structure_VectorType_RecordType_dashboard_ApplicableDrillDown(drill_down_data)
         return GetComplianceApplicabilityStatusDrillDownSuccess(drill_down_data)
 
     def to_inner_structure(self):
         return {
-            "drill_down_data": to_structure_VectorType_RecordType_dashboard_ApplicableDrillDown(self.drill_down_data),
+            "drill_down_data": self.drill_down_data,
         }
 
 class GetNotCompliedDrillDownSuccess(Response):
@@ -1197,14 +1212,13 @@ class GetTrendChartDrillDownDataSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["drill_down_data"])
-        drill_down_data = data.get("drill_down_data")
-        drill_down_data = parse_structure_VectorType_RecordType_dashboard_TrendDrillDownData(drill_down_data)
+        data = parse_dictionary(data, ["t_drill_down_data"])
+        drill_down_data = data.get("t_drill_down_data")
         return GetTrendChartDrillDownDataSuccess(drill_down_data)
 
     def to_inner_structure(self):
         return {
-            "drill_down_data": to_structure_VectorType_RecordType_dashboard_TrendDrillDownData(self.drill_down_data),
+            "t_drill_down_data": self.drill_down_data,
         }
 
 class GetNotificationsSuccess(Response):
@@ -1298,17 +1312,15 @@ class ApplicableDrillDown(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["level1_statutory_name", "compliances"])
+        data = parse_dictionary(data, ["level1_statutory_name", "ap_compliances"])
         level1_statutory_name = data.get("level1_statutory_name")
-        level1_statutory_name = parse_structure_Text(level1_statutory_name)
-        compliances = data.get("compliances")
-        compliances = parse_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance(compliances)
+        compliances = data.get("ap_compliances")
         return ApplicableDrillDown(level1_statutory_name, compliances)
 
     def to_structure(self):
         return {
-            "level1_statutory_name": to_structure_Text(self.level1_statutory_name),
-            "compliances": to_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance(self.compliances),
+            "level1_statutory_name": self.level1_statutory_name,
+            "ap_compliances": self.compliances,
         }
 
 #
@@ -1807,20 +1819,17 @@ class TrendCompliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name", "description", "assignee_name"])
-        compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_500(compliance_name)
-        description = data.get("description")
-        description = parse_structure_Text(description)
-        assignee_name = data.get("assignee_name")
-        assignee_name = parse_structure_CustomTextType_100(assignee_name)
+        data = parse_dictionary(data, ["comp_name", "descp", "assingee_name"])
+        compliance_name = data.get("comp_name")
+        description = data.get("descp")
+        assignee_name = data.get("assingee_name")
         return TrendCompliance(compliance_name, description, assignee_name)
 
     def to_structure(self):
         return {
-            "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
-            "description": to_structure_Text(self.description),
-            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
+            "comp_name": self.compliance_name,
+            "descp": self.description,
+            "assignee_name": self.assignee_name,
         }
 
 #
@@ -1974,29 +1983,23 @@ class TrendDrillDownData(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["business_group", "legal_entity", "division", "unit_name", "address", "compliances"])
-        business_group = data.get("business_group")
-        business_group = parse_structure_OptionalType_CustomTextType_50(business_group)
-        legal_entity = data.get("legal_entity")
-        legal_entity = parse_structure_CustomTextType_50(legal_entity)
-        division = data.get("division")
-        division = parse_structure_OptionalType_CustomTextType_50(division)
-        unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_100(unit_name)
+        data = parse_dictionary(data, ["bg_name", "le_name", "div_name", "u_name", "address", "t_compliances"])
+        business_group = data.get("bg_name")
+        legal_entity = data.get("le_name")
+        division = data.get("div_name")
+        unit_name = data.get("u_name")
         address = data.get("address")
-        address = parse_structure_CustomTextType_500(address)
-        compliances = data.get("compliances")
-        compliances = parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance(compliances)
+        compliances = data.get("t_compliances")
         return TrendDrillDownData(business_group, legal_entity, division, unit_name, address, compliances)
 
     def to_structure(self):
         return {
-            "business_group": to_structure_OptionalType_CustomTextType_50(self.business_group),
-            "legal_entity": to_structure_CustomTextType_50(self.legal_entity),
-            "division": to_structure_OptionalType_CustomTextType_50(self.division),
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "address": to_structure_CustomTextType_500(self.address),
-            "compliances": to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance(self.compliances),
+            "business_group": self.business_group,
+            "legal_entity": self.legal_entity,
+            "division": self.division,
+            "unit_name": self.unit_name,
+            "address": self.address,
+            "t_compliances": self.compliances,
         }
 
 
@@ -2050,38 +2053,24 @@ class Compliance(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "compliance_id", "statutory_provision",
-            "compliance_task", "description",
-            "document_name", "format_file_list",
-            "penal_consequences", "frequency",
-            "statutory_dates", "repeats_type",
-            "repeats_every", "duration_type",
-            "duration", "is_active", "download_url", "summary"
+            "comp_id", "s_prov",
+            "comp_name", "descp",
+            "doc_name", "format_file_list",
+            "p_cons", "frequency",
+            "statu_dates", "is_active", "download_url", "summary"
         ])
-        compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_id)
-        statutory_provision = data.get("statutory_provision")
-        statutory_provision = parse_structure_CustomTextType_500(statutory_provision)
-        compliance_task = data.get("compliance_task")
-        compliance_task = parse_structure_CustomTextType_100(compliance_task)
-        description = data.get("description")
-        description = parse_structure_Text(description)
-        document_name = data.get("document_name")
-        document_name = parse_structure_OptionalType_CustomTextType_50(document_name)
+        compliance_id = data.get("comp_id")
+        statutory_provision = data.get("s_prov")
+        compliance_task = data.get("comp_name")
+        description = data.get("descp")
+        document_name = data.get("doc_name")
         format_file_list = data.get("format_file_list")
-        format_file_list = parse_structure_OptionalType_VectorType_RecordType_core_FileList(format_file_list)
-        penal_consequences = data.get("penal_consequences")
-        penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
+        penal_consequences = data.get("p_cons")
         frequency = data.get("frequency")
-        frequency = parse_structure_OptionalType_CustomTextType_50(frequency)
-        statutory_dates = data.get("statutory_dates")
-        statutory_dates = parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(statutory_dates)
+        statutory_dates = data.get("statu_dates")
         is_active = data.get("is_active")
-        is_active = parse_structure_Bool(is_active)
         download_url = data.get("download_url")
-        download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
         summary = data.get("summary")
-        summary = parse_structure_OptionalType_CustomTextType_500(summary)
         return Compliance(
             compliance_id, statutory_provision,
             compliance_task, description,
@@ -2094,18 +2083,18 @@ class Compliance(object):
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_id),
-            "statutory_provision": to_structure_CustomTextType_500(self.statutory_provision),
-            "compliance_task": to_structure_CustomTextType_100(self.compliance_task),
-            "description": to_structure_Text(self.description),
-            "document_name": to_structure_OptionalType_CustomTextType_50(self.document_name),
-            "format_file_list": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.format_file_list),
-            "penal_consequences": to_structure_OptionalType_CustomTextType_500(self.penal_consequences),
-            "frequency": to_structure_OptionalType_CustomTextType_50(self.frequency),
-            "statutory_dates": to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate(self.statutory_dates),
-            "is_active": to_structure_Bool(self.is_active),
-            "download_url": to_structure_OptionalType_VectorType_CustomTextType_500(self.download_url),
-            "summary": to_structure_OptionalType_CustomTextType_500(self.summary)
+            "comp_id": self.compliance_id,
+            "s_prov": self.statutory_provision,
+            "comp_name": self.compliance_task,
+            "descp": self.description,
+            "doc_name": self.document_name,
+            "format_file_list": self.format_file_list,
+            "p_cons": self.penal_consequences,
+            "frequency": self.frequency,
+            "statu_dates": self.statutory_dates,
+            "is_active": self.is_active,
+            "download_url": self.download_url,
+            "summary": self.summar,
         }
 
 

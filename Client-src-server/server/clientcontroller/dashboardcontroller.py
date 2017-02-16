@@ -32,6 +32,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     # client_info = session_token.split("-")
 
     request = request.request
+
     # client_id = int(client_info[0])
     # session_user = db.validate_session_token(session_token)
 
@@ -49,11 +50,10 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     #     logger.logClientApi("GetChartFilters", "process end")
 
     if type(request) is dashboard.GetComplianceStatusChart:
-        logger.logClientApi("GetComplianceStatusChart", "process begin")
+
         result = process_compliance_status_chart(
             db, request, session_user
         )
-        logger.logClientApi("GetComplianceStatusChart", "process end")
 
     elif type(request) is dashboard.GetComplianceStatusDrillDownData:
         result = process_compliance_status_chart_drilldown(
@@ -211,6 +211,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
 
 def process_compliance_status_chart(db, request, session_user):
+
     return get_compliance_status_chart(db, request, session_user)
 
 

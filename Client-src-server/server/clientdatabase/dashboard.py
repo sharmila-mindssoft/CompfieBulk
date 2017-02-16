@@ -83,6 +83,7 @@ def get_status_wise_compliances_count(db, request, session_user):
         " and T1.due_date < CURDATE())) " + \
         " AND IFNULL(T1.approve_status,0) != 1"
 
+
     filter_ids, inprogress = get_compliance_status(
         db, inprogress_qry, request, user_id
         )
@@ -96,11 +97,13 @@ def get_status_wise_compliances_count(db, request, session_user):
         db, not_complied_qry, request, user_id
         )
     if from_date is not None and to_date is not None:
+
         return frame_compliance_status_count(
             db, inprogress, complied, delayed,
             not_complied
         )
     else:
+
         return frame_compliance_status_yearwise_count(
             db, inprogress, complied, delayed, not_complied,
             filter_ids, chart_year
@@ -111,6 +114,7 @@ def get_compliance_status(
     db, status_type_qry,
     request, user_id, chart_type=None
 ):
+
     country_ids = request.country_ids
 
     if len(country_ids) == 1:
@@ -371,7 +375,9 @@ def frame_compliance_status_yearwise_count(
 
 
 def get_compliance_status_chart(db, request, session_user):
+
     result = get_status_wise_compliances_count(db, request, session_user)
+
     final = []
     filter_types = []
     for r in result:
@@ -1133,7 +1139,6 @@ def get_client_domain_configuration(
     query = "SELECT country_id, domain_id, " + \
         " month_from, month_to " + \
         " FROM  tbl_client_configuration "
-
     rows = db.select_all(query)
 
     years_range = []
@@ -1559,15 +1564,11 @@ def get_escalation_drill_down_data(
 def get_not_complied_chart(db, request, session_user):
     user_id = int(session_user)
     country_ids = request.country_ids
-    if len(country_ids) == 1:
-        country_ids.append(0)
+
     domain_ids = request.domain_ids
-    if len(domain_ids) == 1:
-        domain_ids.append(0)
+
     filter_type = request.filter_type
     _filter_ids = request.filter_ids
-    if len(_filter_ids) == 1:
-        _filter_ids.append(0)
 
     filter_type_ids = ""
     where_qry_val = []
@@ -1596,6 +1597,7 @@ def get_not_complied_chart(db, request, session_user):
         " FROM tbl_compliance_history T1 " + \
         " INNER JOIN tbl_client_compliances T2 " + \
         " ON T1.compliance_id = T2.compliance_id " + \
+        " AND T1.unit_id = T2.unit_id  " + \
         " INNER JOIN tbl_client_statutories T3 " + \
         " ON T2.unit_id = T3.unit_id AND T2.domain_id = T3.domain_id  " + \
         " INNER JOIN tbl_units T4 " + \
@@ -1621,6 +1623,8 @@ def get_not_complied_chart(db, request, session_user):
     param.extend(where_qry_val)
 
     order = "ORDER BY T1.due_date "
+    print query
+    print param
     rows = db.select_all("%s %s" % (query, order), param)
     not_complied = rows
     current_date = datetime.datetime.today()
