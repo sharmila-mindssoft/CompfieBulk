@@ -85,13 +85,8 @@ api_params = {
     "bg_name": make_string_field(is_optional=True),
     "bg_id": make_int_field(is_optional=True),
     "cat_id": make_int_field(is_optional=True),
-<<<<<<< HEAD
     "cat_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     "usr_id": make_int_field(is_optional=True),
-=======
-    "cat_name": make_text_field(is_optional=True),
-    "usr_id": make_int_field(),
->>>>>>> Siva/phase2
     "email_id": make_string_field(validfun=allow_specialchar),
     "emp_name": make_string_field(is_optional=True),
     "emp_code": make_string_field(is_optional=True),
@@ -103,16 +98,9 @@ api_params = {
     "sp_id": make_int_field(is_optional=True),
     "s_u_id": make_int_field(is_optional=True),
     "s_u_name": make_string_field(is_optional=True),
-<<<<<<< HEAD
-    "is_assignee": make_bool_field(),
-    "is_approver": make_bool_field(),
-    "is_concurrence": make_bool_field(),
-=======
     "is_assignee": make_bool_field(is_optional=True),
     "is_approver": make_bool_field(is_optional=True),
     "is_concurrence": make_bool_field(is_optional=True),
-
->>>>>>> Siva/phase2
     "u_id": make_int_field(),
     "u_ids": make_vector_type_int(is_optional=True),
     "u_name": make_string_field(),
