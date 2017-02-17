@@ -486,13 +486,6 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                 $('.activity-date', clonethree).text(v.activity_on);
             else
                 $('.activity-date', clonethree).text('-');
-            /*if (v.doc_list.length > 0) {
-                $.each(v.doc_list, function(k1, v1) {
-                    $('.uploaded-document a', clonethree).text(v1.doc_name).attr("href", v1.doc_url);
-                });
-            } else {
-                $('.uploaded-document', clonethree).text('-');
-            }*/
 
             if(v.uploaded_document != "")
                 $('.uploaded-document', clonethree).text(v.uploaded_document);
@@ -513,13 +506,6 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                 $('.activity-date-new', clonefour).text(v.activity_on);
             else
                 $('.activity-date-new', clonefour).text('-');
-            /*if (v.doc_list.length > 0) {
-                $.each(v.doc_list, function(k1, v1) {
-                    $('.uploaded-document-new a', clonefour).text(v1.doc_name).attr("href", v1.doc_url);
-                });
-            } else {
-                $('.uploaded-document-new', clonefour).text('-');
-            }*/
 
             if(v.uploaded_document != "")
                 $('.uploaded-document', clonethree).text(v.uploaded_document);

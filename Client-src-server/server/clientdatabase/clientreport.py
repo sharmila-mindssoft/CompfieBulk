@@ -682,7 +682,7 @@ def report_statutory_notifications_list(db, request_data):
 
 
 def report_compliance_details(
-    db, client_id, country_id, domain_id, statutory_id,
+    db, country_id, domain_id, statutory_id,
     unit_id, compliance_id, assignee,
     from_date, to_date, compliance_status,
     session_user, from_count, page_count
@@ -705,12 +705,12 @@ def report_compliance_details(
     )
 
     return return_cmopliance_details_report(
-        client_id, compliance_status, result, total
+        compliance_status, result, total
     )
 
 
 def return_cmopliance_details_report(
-    client_id, compliance_status, result, total
+    compliance_status, result, total
 ):
     unitWise = {}
     for r in result:
@@ -741,7 +741,8 @@ def return_cmopliance_details_report(
             for d in documents:
                 if d != "":
                     t = "%s/%s/%s" % (
-                        CLIENT_DOCS_DOWNLOAD_URL, str(client_id), str(d)
+                        # CLIENT_DOCS_DOWNLOAD_URL, str(client_id), str(d)
+                        CLIENT_DOCS_DOWNLOAD_URL, str(d)
                     )
                     doc_urls.append(t)
 
@@ -2002,7 +2003,7 @@ def return_risk_report_data(db, data, total):
 
 
 def get_login_trace(
-    db, client_id, session_user, from_count, to_count, user_id,
+    db, session_user, from_count, to_count, user_id,
     from_date, to_date
 ):
     from_date = string_to_datetime(from_date).date()
@@ -2168,8 +2169,7 @@ def get_compliance_activity_report(
 def return_compliance_activity_report(
     db, country_id, domain_id, user_type, user_id,
     unit_id, compliance_id,
-    level_1_statutory_name, from_date, to_date,
-    session_user, client_id
+    level_1_statutory_name, from_date, to_date, session_user
 ):
     rows = get_compliance_activity_report(
         db, country_id, domain_id, user_type, user_id,

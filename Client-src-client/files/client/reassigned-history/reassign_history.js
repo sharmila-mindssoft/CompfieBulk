@@ -410,7 +410,7 @@ ReassignHistory.prototype.showReportValues = function() {
             reportTableTbody.append(clonetwo);
             actname = v.act_name;
         }
-
+        
         if (complianceid != v.compliance_id) {
             j = j + 1;
             var clonethree = $('#template #report-table .row-three').clone();
@@ -427,13 +427,13 @@ ReassignHistory.prototype.showReportValues = function() {
             reportTableTbody.append(clonethree);
             complianceid = v.compliance_id;
         } else {
-            if (tree == v.compliance_id) {
+            if (tree == v.compliance_id) { 
                 var clonefive = $('#template #report-table .row-five').clone();
                 $('.assigned-date-new', clonefive).text(v.assigned_on);
                 $('.assigned-new', clonefive).text(v.new_user);
                 $('.reason-new', clonefive).text(v.remarks);
                 if (v.reason != "") { $('.reason-new', clonefive).text(v.remarks); } else { $('.reason-new', clonefive).text('-'); }
-                $('.tree' + v.compliance_id).append(clonefive);
+                $('.tree' + v.compliance_id+' .tree-body').append(clonefive);
             } else {
                 var clonefour = $('#template #report-table .row-four').clone();
                 $(clonefour).addClass("tree" + v.compliance_id);

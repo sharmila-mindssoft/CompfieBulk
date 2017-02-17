@@ -500,7 +500,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 var clonefive = $('#template #report-table .row-five').clone();
                 $('.user-name', clonefive).text(v.user_name);
                 $('.due-date', clonefive).text(v.due_date);
-                $('.tree' + v.compliance_id).append(clonefive);
+                $('.tree' + v.compliance_id+' .tree-body').append(clonefive);
             } else {
                 var clonefour = $('#template #report-table .row-four').clone();
                 $(clonefour).addClass("tree" + v.compliance_id);
