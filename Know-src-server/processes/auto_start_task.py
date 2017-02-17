@@ -381,6 +381,9 @@ class AutoStart(Database):
         except Exception, e :
             logProcessError("check_service_provider_contract_period %s" % self.client_id, str(e))
 
+    def update_task_status(self):
+        pass
+
     def start_process(self):
         if self._connection is None :
             details = "%s, %s" % (self._c_db_ip, self._c_db_name)

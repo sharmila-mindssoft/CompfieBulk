@@ -189,7 +189,7 @@ class ReplicationBase(object):
             "tbl_units_organizations": 3,
             "tbl_compliances": 22,
             "tbl_client_statutories": 3,
-            "tbl_client_compliances": 10,
+            "tbl_client_compliances": 13,
             "tbl_statutory_notifications": 5,
             # "tbl_statutory_notifications_units": 6,
             "tbl_countries": 2,

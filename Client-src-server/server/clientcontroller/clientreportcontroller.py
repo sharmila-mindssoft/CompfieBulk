@@ -10,10 +10,10 @@ from server.clientdatabase.general import (
     get_user_company_details,
     get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_units_for_user, get_acts_for_user, 
-    get_client_users, get_client_level_1_statutoy, 
+    get_divisions_for_user, get_units_for_user, get_acts_for_user,
+    get_client_users, get_client_level_1_statutoy,
     get_service_providers, get_client_compliances
-    )
+)
 
 __all__ = [
     "process_client_report_requests"

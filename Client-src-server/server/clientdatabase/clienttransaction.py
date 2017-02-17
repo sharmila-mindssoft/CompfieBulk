@@ -993,7 +993,7 @@ def save_assigned_compliance(db, request, session_user):
                 trigger_before, str(due_date), str(validity_date)
             ]
             if concurrence is not None:
-                value.append(concurrence)
+                value.extend([concurrence, int(session_user), created_on])
             value_list.append(tuple(value))
 
     # db.bulk_insert("tbl_assigned_compliances", columns, value_list)
