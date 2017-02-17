@@ -448,7 +448,6 @@ CREATE TABLE `tbl_compliance_activity_log` (
   PRIMARY KEY (`compliance_activity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_status_chart_unitwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -463,7 +462,6 @@ CREATE TABLE `tbl_compliance_status_chart_unitwise` (
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`, `chart_year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_status_chart_userwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -479,7 +477,6 @@ CREATE TABLE `tbl_compliance_status_chart_userwise` (
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`, `user_id`, `chart_year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_notcomplied_chart_unitwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -491,7 +488,6 @@ CREATE TABLE `tbl_notcomplied_chart_unitwise` (
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_notcomplied_chart_userwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -504,7 +500,6 @@ CREATE TABLE `tbl_notcomplied_chart_userwise` (
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_applicability_chart` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
