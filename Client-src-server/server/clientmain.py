@@ -482,6 +482,12 @@ class API(object):
                 elif type(request_data.request) is dashboard.GetTrendChart :
                     self.performed_response.data.extend(data.data)
 
+                elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusChart :
+                    self.performed_response.unassign_count += data.unassign_count
+                    self.performed_response.not_opted_count += data.not_opted_count
+                    self.performed_response.rejected_count += data.rejected_count
+                    self.performed_response.not_complied_count += data.not_complied_count
+
                 # merge drilldown from the processed LE database
                 elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
                     self.performed_response.drill_down_data.extend(data.drill_down_data)

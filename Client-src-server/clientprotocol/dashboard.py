@@ -976,27 +976,26 @@ class CheckContractExpirationSuccesss(Response):
         }
 
 class GetComplianceApplicabilityStatusChartSuccess(Response):
-    def __init__(self, applicable_count, not_applicable_count, not_opted_count):
-        self.applicable_count = applicable_count
-        self.not_applicable_count = not_applicable_count
+    def __init__(self, unassign_count, not_opted_count, rejected_count, not_complied_count):
+        self.unassign_count = unassign_count
         self.not_opted_count = not_opted_count
+        self.rejected_count = rejected_count
+        self.not_complied_count = not_complied_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["applicable_count", "not_applicable_count", "not_opted_count"])
-        applicable_count = data.get("applicable_count")
-        applicable_count = parse_structure_UnsignedIntegerType_32(applicable_count)
-        not_applicable_count = data.get("not_applicable_count")
-        not_applicable_count = parse_structure_UnsignedIntegerType_32(not_applicable_count)
-        not_opted_count = data.get("not_opted_count")
-        not_opted_count = parse_structure_UnsignedIntegerType_32(not_opted_count)
-        return GetComplianceApplicabilityStatusChartSuccess(applicable_count, not_applicable_count, not_opted_count)
+        data = parse_dictionary(data, ["not_opted_count", "unassign_count", "rejected_count", "not_complied_count"])
+        return GetComplianceApplicabilityStatusChartSuccess(
+            data.get("unassign_count"), data.get("not_opted_count"),
+            data.get("rejected_count"), data.get("not_complied_count")
+        )
 
     def to_inner_structure(self):
         return {
-            "applicable_count": to_structure_SignedIntegerType_8(self.applicable_count),
-            "not_applicable_count": to_structure_SignedIntegerType_8(self.not_applicable_count),
-            "not_opted_count": to_structure_SignedIntegerType_8(self.not_opted_count),
+            "not_opted_count": self.not_opted_count,
+            "unassign_count": self.unassign_count,
+            "rejected_count": self.rejected_count,
+            "not_complied_count": self.not_complied_count
         }
 
 
