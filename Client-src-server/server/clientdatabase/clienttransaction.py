@@ -1035,6 +1035,7 @@ def save_assigned_compliance(db, request, session_user):
             legal_entity_id=le_id, unit_id=u
         )
 
+    print get_email_id_for_users(db, assignee)
     receiver = get_email_id_for_users(db, assignee)[1]
 
     notify_assign_compliance = threading.Thread(
@@ -1045,14 +1046,14 @@ def save_assigned_compliance(db, request, session_user):
     )
     notify_assign_compliance.start()
 
-    bg_task_start = threading.Thread(
-        target=self.start_new_task,
-        args=[
-            current_date.date(), country_id
-        ]
-    )
+    # bg_task_start = threading.Thread(
+    #     target=self.start_new_task,
+    #     args=[
+    #         current_date.date(), country_id
+    #     ]
+    # )
     # print "bg_task_start begin"
-    bg_task_start.start()
+    # bg_task_start.start()
     # self.start_new_task(current_date.date(), country_id)
 
     return clienttransactions.SaveAssignedComplianceSuccess()

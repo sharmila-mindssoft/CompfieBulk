@@ -355,7 +355,7 @@ api_params = {
     "record_count": make_int_field(length="100000"),
     "drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
     "indus_name": make_text_field(),
-    "drill_compliances": make_map_type_vector_type(module="dashboard", klass_name="Level1Compliance"),
+    "drill_compliances": make_map_type_vector_type(module="dashboard", klass_name="Level1Compliance", validfun=allow_specialchar),
     "assigned_date": make_text_field(),
     "status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "ageing": make_text_field(),

@@ -850,3 +850,37 @@ button.btn-success {
 .table-review-settings td{
   vertical-align: top !important;
 }
+.text-middle {
+  vertical-align: middle;
+}
+.tr-level1 .heading{
+  background-color: #ffffff !important;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  box-shadow: none;
+  color: #435966;
+  height: 38px;
+  max-width: 100%;
+  padding: 7px 12px;
+  transition: all 300ms linear 0s;
+  line-height: 27px;
+}
+.div-compliance-list .panel-title{    
+    color: #797979;
+    background-color: #eeeeee;
+    border: medium none !important;
+    border-bottom: medium none;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+/*.panel-title td[data-toggle="collapse"]::before {
+    content: '\f0d8';
+    display: block;
+    float: right;
+    font-family: "FontAwesome";
+    font-size: 14px;
+    text-align: right;
+    width: 25px;
+}
+*/

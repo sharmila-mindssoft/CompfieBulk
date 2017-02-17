@@ -877,7 +877,6 @@ function hidePreviousNext() {
 //
 function loadCountries() {
   countries = CHART_FILTERS_DATA.countries;
-  console.log("getOptionElement--"+countries.toSource());
   for (var i = 0; i < countries.length; i++) {
     var country = countries[i];
     var option = getOptionElement(country.c_id, country.c_name, true);
@@ -1329,8 +1328,8 @@ function prepareComplianceStatusChartData(chart_data) {
     var delayedCount = 0;
     var inprogressCount = 0;
     var notCompliedCount = 0;
-    for (var j = 0; j < chartData.data.length; j++) {
-      var item = chartData.data[j];
+    for (var j = 0; j < chartData.c_data.length; j++) {
+      var item = chartData.c_data[j];
       if (parseInt(item.year) != yearInput)
         continue;
       compliedCount += item.complied_count;
