@@ -1,5 +1,11 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<style>
+.input-box {
+    width: 100px;
+}
+</style>
+
 <link rel="stylesheet" href="/files/client/common/css/multiselect/bootstrap-multiselect.css" type="text/css">
 <script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
 <div class="content-page">
@@ -127,7 +133,10 @@
                                 </div>
                                 <div class="tab-pane m-t-0 fade box-height-350" id="tab2">
                                     <div class="row">
-                                        <div class="panel-group col-lg-12 m-b-0" id="accordion" role="tablist" aria-multiselectable="true">
+                                        <div class="panel-group col-lg-12 m-b-0 tbody-accordion-list" id="accordion" role="tablist" aria-multiselectable="true">
+                                        </div>
+
+                                        <!-- <div class="panel-group col-lg-12 m-b-0" id="accordion" role="tablist" aria-multiselectable="true">
                                             <div class="panel panel-default bx-shadow-none">
                                                 <div class="panel-heading p-0" role="tab" id="headingOne">
                                                     <h4 class="panel-title">
@@ -480,7 +489,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> -->
                                     </div>
                                     <p class="rpt-count">Selected Compliance: 3</p>
                                 </div>
@@ -492,74 +501,46 @@
                                                     <tr>
                                                         <td class="width-31">
                                                             <h6 class="m-t-0 text-center">Assignee <span class="mandatory">*</span></h6>
-                                                            <select class="form-control input-sm m-b-10">
-                                                              <option>All</option>
+                                                            <select class="form-control input-sm m-b-10" id="assignee_unit">
+                                                              <!-- <option>All</option>
                                                               <option>RG0001 - Corporate Office</option>
                                                               <option>RG0002 - Regional Office</option>
                                                               <option selected="selected">RG0003 - Branch Office - Madurai</option>
                                                               <option>RG0004 - Branch Office - Chennai</option>
-                                                              <option>RG0005 - Branch Office - Selam</option>
+                                                              <option>RG0005 - Branch Office - Selam</option> -->
                                                             </select>
                                                             <div class="form-group has-feedback m-b-0">
                                                                 <input class="form-control input-sm" placeholder="Search" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
-                                                            <ul class="list-unstyled ">
-                                                                <li>EMP10013 - Abishek - L2</li>
-                                                                <li>EMP10014 - Krishna - L3</li>
-                                                                <li>EMP10015 - Rajaram - L4</li>
-                                                                <li>EMP10016 - Subash - L4</li>
-                                                                <li class="active">EMP10017 - Vishnu - L5<i class="fa fa-check pull-right"></i></li>
-                                                                <li>EMP10018 - Vivek - L5</li>
+                                                            <ul class="list-unstyled" id="assignee">
+                                                                
                                                             </ul>
                                                         </td>
-                                                        <td class="width-34">
+                                                        <td class="width-34 c-view">
                                                             <h6 class="m-t-0 text-center">Concurrence</h6>
-                                                            <select class="form-control input-sm m-b-10">
-                                                              <option>All</option>
-                                                              <option>RG0001 - Corporate Office</option>
-                                                              <option>RG0002 - Regional Office</option>
-                                                              <option selected="selected">RG0003 - Branch Office - Madurai</option>
-                                                              <option>RG0004 - Branch Office - Chennai</option>
-                                                              <option>RG0005 - Branch Office - Selam</option>
+                                                            <select class="form-control input-sm m-b-10" id="concurrence_unit">
+                                                              
                                                             </select>
                                                             <div class="form-group has-feedback m-b-0">
                                                                 <input class="form-control input-sm" placeholder="Search" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
-                                                            <ul class="list-unstyled ">
-                                                                <li>EMP10012 - Hariharan - L1</li>
-                                                                <li class="active">EMP10013 - Abishek - L2<i class="fa fa-check pull-right"></i></li>
-                                                                <li>EMP10014 - Krishna - L3</li>
-                                                                <li>EMP10015 - Rajaram - L4</li>
-                                                                <li>EMP10016 - Subash - L4</li>
-                                                                <li>EMP10017 - Vishnu - L5</li>
-                                                                <li>EMP10018 - Vivek - L5</li>
+                                                            <ul class="list-unstyled" id="concurrence">
+                                                                
                                                             </ul>
                                                         </td>
                                                         <td class="width-33">
                                                             <h6 class="m-t-0 text-center">Approval</h6>
-                                                            <select class="form-control input-sm m-b-10">
-                                                              <option>All</option>
-                                                              <option selected="selected">RG0001 - Corporate Office</option>
-                                                              <option>RG0002 - Regional Office</option>
-                                                              <option >RG0003 - Branch Office - Madurai</option>
-                                                              <option>RG0004 - Branch Office - Chennai</option>
-                                                              <option>RG0005 - Branch Office - Selam</option>
+                                                            <select class="form-control input-sm m-b-10" id="approval_unit">
+                                                             
                                                             </select>
                                                             <div class="form-group has-feedback m-b-0">
                                                                 <input class="form-control input-sm" placeholder="Search" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
-                                                            <ul class="list-unstyled ">
-                                                                <li class="active">Client Admin<i class="fa fa-check pull-right"></i></li>
-                                                                <li>EMP20176 - Aravind - L1</li>
-                                                                <li>EMP20177 - Arjun - L2</li>
-                                                                <li>EMP20178 - Arun - L3</li>
-                                                                <li>EMP20179 - Babu - L4</li>
-                                                                <li>EMP20180 - Dhinesh - L4</li>
-                                                                <li>EMP20181 - Divagar - L5</li>
-                                                                <li>EMP20182 - Praveen - L5</li>
+                                                            <ul class="list-unstyled" id="approval">
+                                                                
                                                             </ul>
                                                         </td>
                                                     </tr>
@@ -592,7 +573,96 @@
         <ul>
             <li></li>
         </ul>
-     </div>
+    </div>
+
+    <div id="act-templates" class="default-display-none">
+      <div class="panel panel-default bx-shadow-none p-head">
+        <div class="panel-heading p-10 acc-title" role="tab">
+            <h4 class="m-b-0 m-t-0">
+                <div class="checkbox checkbox-primary m-b-0 m-t-5 m-l-5 tab-checkbox">
+                    <input id="checkbox1" type="checkbox" class="text-center">
+                    <label for="checkbox1" class="text-bold"></label>
+                </div>
+                <div class="panel-title">
+                    <a role="button" data-toggle="collapse"
+                        data-parent="#accordion" 
+                        aria-expanded="true" >
+                        <span></span>
+                    </a>
+                </div>
+              
+            </h4>
+        </div>
+        <div class="panel-collapse collapse in coll-title" role="tabpanel">
+            <div class="panel-body no-padding">
+                <div class="dataTable_wrapper">
+                    <!-- <table id="datatable-fixed-header" class="table dt-responsive table-list m-b-0 legal-table" width="100%" cellspacing="0"> -->
+                    <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                              <th width="1%">&nbsp;</th>
+                              <th width="15%">Compliance Task</th>
+                              <th width="06%" class="text-center">Applicable Units</th>
+                              <th width="10%">Compliance Frequency</th>
+                              <th width="12%">Statutory Date/Schedule</th>
+                              <th width="08%">Trigger Before (Days) <span class="mandatory">*</span></th>
+                              <th width="06%">Due Date <span class="mandatory">*</span></th>
+                              <th width="06%">Validity Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-compliance-list">                               
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="compliances">
+        <table class="table-compliances">
+          <tr class="sub-title-row">
+            <td colspan="100%">
+                <div class="col-sm-2 no-padding">
+                    <mark class="p-l-10 p-r-10 sub-title"></mark>
+                </div>
+            </td>
+          </tr>
+          <tr class="row-compliances">
+              <input type="hidden" class="combineid-class" />
+              <input type="hidden" class="appl_unit" />
+
+              <td class="text-center">
+                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                    <input type="checkbox" class="comp-checkbox">
+                    <label></label>
+                </div>
+              </td>
+
+              <td>
+                <i class="fa fa-info-circle text-primary c-pointer desc" data-toggle="tooltip" title=""></i> 
+                <span class="compliancetask"> </span>
+              </td>
+
+              <td class="text-center applicableunits"> </td>
+
+              <td class="frequency"> </td>
+
+              <td class="summary"> </td>
+
+              <td class="trigger"> </td>
+
+              <td class="duedate"> </td>
+
+              <td class="validitydate">
+                <input type="text" value="" class="input-box vdate" readonly="readonly" />
+              </td>
+
+          </tr>
+        </table>
+      </div>
+
+
 </div>
 <!-- Modal -->
 <div id="custom-modal" class="modal-demo">
