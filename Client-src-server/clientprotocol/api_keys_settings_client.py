@@ -400,5 +400,6 @@ api_params = {
     "not_opted_count": make_int_field(length=10000),
     "unassign_count": make_int_field(length=10000),
     "rejected_count": make_int_field(length=10000),
-    "not_complied_count": make_int_field(length=10000)
+    "not_complied_count": make_int_field(length=10000),
+    "n_drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData")
 }

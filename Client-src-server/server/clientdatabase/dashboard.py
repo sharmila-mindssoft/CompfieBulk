@@ -1678,7 +1678,8 @@ def get_not_complied_drill_down(
     for r in not_complied_details_filtered:
 
         unit_id = int(r["unit_id"])
-        statutories = r["statutory_mapping"].split('>>')
+        mappings = json.loads(r["statutory_mapping"])
+        statutories = mappings[0].split('>>')
         level_1 = statutories[0].strip()
         ageing = 0
         due_date = r["due_date"]
@@ -1710,7 +1711,7 @@ def get_not_complied_drill_down(
             level_compliance = {}
             level_compliance[level_1] = [compliance]
             unit_name = "%s-%s" % (r["unit_code"], r["unit_name"])
-            geography = r["geography"].split(">>")
+            geography = r["geography_name"].split(">>")
             geography.reverse()
             geography = ','.join(geography)
             address = "%s, %s, %s" % (
