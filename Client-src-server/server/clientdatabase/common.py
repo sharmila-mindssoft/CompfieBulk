@@ -72,7 +72,7 @@ def get_country_domain_timelines_dict(
 
 
 def get_country_domain_timelines(
-    db, country_ids, domain_ids, years, client_id=None
+    db, country_ids, domain_ids, years
 ):
     country_wise_timelines = []
     for country_id in country_ids:

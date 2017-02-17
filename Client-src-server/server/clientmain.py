@@ -58,13 +58,19 @@ def api_request(
         return wrapped
     return wrapper
 
-'''
-    as of now group db has connected for all the request, as per the LE db base operation
-    method decorator will have flag which define either group db call or legal entity db call.
-    when group db call will be processed as per the currennt code flow
-    For LE db call either the hable_api_will be looped or intermediate contrller will be added to
-    perform multi legalentity request parlally
-'''
+
+def global_api_request(
+    request_data_type, is_group=True, need_category=False
+):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(self):
+            return self.handle_global_api_request(
+                f, request_data_type, is_group, need_category
+            )
+        return wrapped
+    return wrapper
+
 
 class API(object):
     def __init__(
@@ -134,7 +140,7 @@ class API(object):
 
     def server_added(self, servers):
         # server added should not be called in timeout function , pending : need to update from knowledge server.
-        print "**" * 100
+        # print "**" * 100
         self._group_databases = {}
         self._le_databases = {}
         self._replication_managers_for_group = {}
@@ -190,7 +196,7 @@ class API(object):
             def client_added(clients):
                 for c, client in clients.iteritems():
                     _client_id = client.client_id
-                    print _client_id
+                    # print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
                     # _domain_id = client.domain_id
@@ -307,7 +313,7 @@ class API(object):
             company_id = int(data[0])
             actual_data = data[1]
 
-            print company_id
+            # print company_id
             print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
@@ -443,6 +449,118 @@ class API(object):
             # response.set_status(400)
             # response.send(str(e))
 
+    def handle_global_api_request(self, unbound_method, request_data_type, is_group, need_category):
+        le_ids = []
+        self.performed_les = []
+        self.performed_response = None
+
+        def respond(response_data):
+            return self._send_response(response_data, 200)
+
+        def merge_data(data, request_data):
+            if self.performed_response is None :
+                self.performed_response = data
+            else :
+                # merge chart from the processed LE database
+                if type(request_data.request) is dashboard.GetComplianceStatusChart :
+                    self.performed_response.chart_data.extend(data.chart_data)
+
+                elif type(request_data.request) is dashboard.GetEscalationsChart :
+                    self.performed_response.chart_data.extend(data.chart_data)
+
+                elif type(request_data.request) is dashboard.GetNotCompliedChart :
+                    print self.performed_response.T_0_to_30_days_count, data.T_0_to_30_days_count
+                    print self.performed_response.T_31_to_60_days_count
+                    print self.performed_response.T_61_to_90_days_count
+                    print self.performed_response.Above_90_days_count
+
+                    self.performed_response.T_0_to_30_days_count += data.T_0_to_30_days_count
+                    self.performed_response.T_31_to_60_days_count += data.T_31_to_60_days_count
+                    self.performed_response.T_61_to_90_days_count += data.T_61_to_90_days_count
+                    self.performed_response.Above_90_days_count += data.Above_90_days_count
+
+                elif type(request_data.request) is dashboard.GetTrendChart :
+                    self.performed_response.data.extend(data.data)
+
+                elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusChart :
+                    self.performed_response.unassign_count += data.unassign_count
+                    self.performed_response.not_opted_count += data.not_opted_count
+                    self.performed_response.rejected_count += data.rejected_count
+                    self.performed_response.not_complied_count += data.not_complied_count
+
+                # merge drilldown from the processed LE database
+                elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
+                    self.performed_response.drill_down_data.extend(data.drill_down_data)
+
+                elif type(request_data.request) is dashboard.GetEscalationsDrillDownData :
+                    self.performed_response.delayed.extend(data.delayed)
+                    self.performed_response.not_complied.extend(data.not_complied)
+
+                elif type(request_data.request) is dashboard.GetNotCompliedDrillDown :
+                    self.performed_response.drill_down_data.extend(data.drill_down_data)
+
+                elif type(request_data.request) is dashboard.GetTrendChartDrillDownData :
+                    self.performed_response.drill_down_data.extend(data.drill_down_data)
+
+        try :
+            # print "try"
+            request_data, company_id = self._parse_request(request_data_type, is_group)
+            session = request_data.session_token
+            session_user, client_id, session_category = self._validate_user_session(session)
+            # print session_user, client_id, session_category
+            # print request_data.request
+            if hasattr(request_data.request, "legal_entity_ids") :
+                le_ids = request_data.request.legal_entity_ids
+                # print "-------"
+                # print le_ids
+
+                for le in le_ids :
+                    db_cons = self._le_databases.get(le)
+
+                    if db_cons is None:
+                        print 'connection pool is none'
+                        continue
+                        # self._send_response("Company not found", 404)
+
+                    _db_con = db_cons.get_connection()
+                    _db = Database(_db_con)
+                    if _db_con is None:
+                        continue
+                        # self._send_response("Company not found", 404)
+
+                    _db.begin()
+                    try:
+                        response_data = unbound_method(
+                            self, request_data, _db, session_user, session_category
+                        )
+
+                        _db.commit()
+                        _db_con.close()
+                        self.performed_les.append(le)
+                        merge_data(response_data, request_data)
+
+                    except Exception, e:
+                        logger.logClientApi(e, "handle_api_request")
+                        logger.logClientApi(traceback.format_exc(), "")
+                        print(traceback.format_exc())
+                        logger.logClient("error", "clientmain.py-handle-api", e)
+                        logger.logClient("error", "clientmain.py", traceback.format_exc())
+                        if str(e).find("expected a") is False :
+                            _db.rollback()
+                            _db_con.close()
+                        self.performed_response = str(e)
+                        # return self._send_response(str(e), 400)
+
+                if len(le_ids) == len(self.performed_les) :
+                    return respond(self.performed_response)
+
+            else :
+                print "le-ids not found"
+                return self._send_response("le-ids not found", 400)
+
+        except Exception, e :
+            return self._send_response(str(e), 400)
+
     @api_request(clientlogin.Request, need_client_id=True, is_group=True)
     def handle_login(self, request, db, client_id, user_ip):
         print self._ip_address
@@ -466,7 +584,7 @@ class API(object):
     def handle_client_reports(self, request, db, session_user, session_category):
         return controller.process_client_report_requests(request, db, session_user, session_category)
 
-    @api_request(dashboard.RequestFormat, is_group=False, need_category=True)
+    @global_api_request(dashboard.RequestFormat, is_group=True, need_category=True)
     def handle_client_dashboard(self, request, db, session_user, session_category):
         return controller.process_client_dashboard_requests(request, db, session_user, session_category)
 

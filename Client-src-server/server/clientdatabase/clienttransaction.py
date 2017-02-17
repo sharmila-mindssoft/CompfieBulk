@@ -62,7 +62,8 @@ __all__ = [
     "update_new_statutory_settings_lock",
     "total_compliance_for_units",
     "get_clien_users_by_unit_and_domain",
-    "get_approve_level"
+    "get_approve_level",
+    "get_all_frequency"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -1044,14 +1045,14 @@ def save_assigned_compliance(db, request, session_user):
     )
     notify_assign_compliance.start()
 
-    bg_task_start = threading.Thread(
-        target=self.start_new_task,
-        args=[
-            current_date.date(), country_id
-        ]
-    )
-    # print "bg_task_start begin"
-    bg_task_start.start()
+    # bg_task_start = threading.Thread(
+    #     target=self.start_new_task,
+    #     args=[
+    #         current_date.date(), country_id
+    #     ]
+    # )
+    # # print "bg_task_start begin"
+    # bg_task_start.start()
     # self.start_new_task(current_date.date(), country_id)
 
     return clienttransactions.SaveAssignedComplianceSuccess()
@@ -2554,6 +2555,12 @@ def update_user_settings(db, new_units):
             db.bulk_insert(
                 tblUserCountries, country_columns, country_values_list
             )
+
+
+def get_all_frequency(db):
+    query = "SELECT frequency_id, frequency from tbl_compliance_frequency "
+    rows = db.select_all(query)
+    return return_get_review_settings_frequency(rows)
 
 
 def get_review_settings_frequency(db):

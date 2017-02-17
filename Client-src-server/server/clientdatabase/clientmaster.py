@@ -51,7 +51,17 @@ __all__ = [
     "get_unit_closure_legal_entities",
     "get_unit_closure_units_list",
     "save_unit_closure_data",
-    "is_invalid_id"
+    "is_invalid_id",
+    "get_service_providers_list",
+    "get_service_providers_user_list",
+    "get_service_provider_status",
+    "get_service_provider_details_report_data",
+    "get_audit_users_list",
+    "get_audit_forms_list",
+    "get_login_users_list",
+    "process_login_trace_report",
+    "get_user_info",
+    "update_profile"
 ]
 
 ############################################################################
@@ -1321,3 +1331,361 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
     print "result"
     print result
     return result
+
+
+###############################################################################################
+# Objective: To get the service provider details from master
+# Parameter: request object
+# Result: list of service providers
+###############################################################################################
+def get_service_providers_list(db):
+    query = "select concat(short_name,' - ',service_provider_name) as sp_name, " + \
+            "service_provider_id as sp_id from tbl_service_providers"
+    result = db.select_all(query, None)
+    print "sp list"
+    print result
+    sp_details = []
+
+    for row in result:
+        sp_details.append(clientmasters.ServiceProviders(
+            row["sp_id"], row["sp_name"]
+        ))
+    return sp_details
+
+###############################################################################################
+# Objective: To get the users list with its service providers
+# Parameter: request object
+# Result: list of users under service providers
+###############################################################################################
+def get_service_providers_user_list(db):
+    query = "select service_provider_id, user_id, concat(employee_code,' - ',employee_name) as " + \
+        "user_name from tbl_users order by employee_name;"
+
+    result = db.select_all(query, None)
+    sp_user_details = []
+
+    for row in result:
+        sp_id_optional = row["service_provider_id"]
+        sp_user_details.append(clientmasters.ServiceProviderUsers(
+            sp_id_optional, row["user_id"], row["user_name"]
+        ))
+    return sp_user_details
+
+###############################################################################################
+# Objective: To get the service provider status
+# Parameter: request object
+# Result: list of service provider status
+###############################################################################################
+def get_service_provider_status(db):
+    status = ("Active", "Inactive", "Blocked")
+    sp_status = []
+    i = 0
+    for sts in status:
+        s_p_status = clientmasters.ServiceProvidersStatus(
+            i, sts
+        )
+        sp_status.append(s_p_status)
+        i = i + 1
+    return sp_status
+
+###############################################################################################
+# Objective: To get the service providerand the user details
+# Parameter: request object
+# Result: list of service provider and user details
+###############################################################################################
+def get_service_provider_details_report_data(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    sp_id = request.sp_id
+    user_id = request.user_id
+    s_p_status = request.s_p_status
+
+    select_qry = "select t1.service_provider_id, t1.short_name, t1.service_provider_name, " + \
+        "t1.contact_no, t1.email_id, t1.address, t1.contract_from, t1.contract_to, t1.is_active, " + \
+        "t1.status_changed_on, t1.is_blocked, t1.blocked_on from tbl_service_providers as t1 "
+
+    if (int(sp_id) > 0 or s_p_status != "All"):
+        where_clause = "where "
+        if int(sp_id) > 0:
+            where_clause = where_clause + "t1.service_provider_id = %s "
+            condition_val.append(sp_id)
+
+        if s_p_status == "Active":
+            where_clause = where_clause + "and t1.is_active = %s "
+            condition_val.append(1)
+        elif s_p_status == "Inactive":
+            where_clause = where_clause + "and t1.is_active = %s "
+            condition_val.append(0)
+        elif s_p_status == "Blocked":
+            where_clause = where_clause + "and t1.is_blocked = %s "
+            condition_val.append(1)
+
+    if where_clause is None:
+        where_clause = "order by t1.service_provider_name ASC limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+    else:
+        where_clause = where_clause + "order by t1.service_provider_name ASC limit %s, %s;"
+        condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result_sp = db.select_all(query, condition_val)
+
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    select_qry = "select t1.service_provider_id, t1.user_id, t1.employee_name, " + \
+        "t1.contact_no, t1.email_id, t1.is_active, (select count(*) from " + \
+        "tbl_user_units where user_id = t1.user_id) as unit_cnt, t1.status_changed_on from tbl_users as t1 "
+
+    if (int(sp_id) > 0 or int(user_id) > 0):
+        where_clause = "where "
+        if int(sp_id) > 0:
+            where_clause = where_clause + "t1.service_provider_id = %s "
+            condition_val.append(sp_id)
+
+        if int(user_id) > 0:
+            where_clause = where_clause + "t1.user_id = %s "
+            condition_val.append(user_id)
+
+    if where_clause is None:
+        where_clause = "order by t1.employee_name ASC;"
+    else:
+        where_clause = where_clause + "order by t1.employee_name ASC;"
+
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result_users = db.select_all(query, condition_val)
+    print result_users
+    sp_details = []
+
+    for row in result_sp:
+        sp_id = row["service_provider_id"]
+        sp_name = row["short_name"]+' - '+row["service_provider_name"]
+        con_no = row["contact_no"]
+        email_id = row["email_id"]
+        address = row["address"]
+        contract_period = datetime_to_string(row["contract_from"])+" to "+datetime_to_string(row["contract_to"])
+        if row["is_blocked"] == 1:
+            s_p_status = "Blocked"
+            sp_status_date = datetime_to_string(row["blocked_on"])
+        elif row["is_active"] == 1:
+            s_p_status = "Active"
+            sp_status_date = datetime_to_string(row["status_changed_on"])
+        elif row["is_active"] == 0:
+            s_p_status = "Inactive"
+            sp_status_date = datetime_to_string(row["status_changed_on"])
+        unit_count = 0
+        for row_1 in result_users:
+            print row_1["service_provider_id"]
+            if sp_id == row_1["service_provider_id"]:
+                print "unit_count"
+                print row_1["unit_cnt"]
+                unit_count = int(unit_count) + int(row_1["unit_cnt"])
+        sp_details.append(clientmasters.ServiceProvidersDetailsList(
+            sp_id, sp_name, con_no, email_id, address, contract_period,
+            s_p_status, sp_status_date, unit_count
+        ))
+
+        for row_1 in result_users:
+            if sp_id == row_1["service_provider_id"]:
+                employee_name = row_1["employee_name"]
+                mob_no = row_1["contact_no"]
+                user_email_id = row_1["email_id"]
+                if row_1["is_active"] == 1:
+                    user_status = "Active"
+                    user_status_date = datetime_to_string(row_1["status_changed_on"])
+                elif row_1["is_active"] == 0:
+                    user_status = "Inactive"
+                    user_status_date = datetime_to_string(row_1["status_changed_on"])
+                sp_details.append(clientmasters.ServiceProvidersDetailsList(
+                    sp_id, employee_name, mob_no, user_email_id, None, None,
+                    user_status, user_status_date, row_1["unit_cnt"]
+                ))
+    return sp_details
+
+###############################################################################################
+# Objective: To get the list of users under legal entity
+# Parameter: request object
+# Result: list of users
+###############################################################################################
+def get_audit_users_list(db, legal_entity_id):
+    query = "select distinct(t2.user_id), t2.employee_code,t2.employee_name, " + \
+        "t2.user_category_id, t2.user_group_id from tbl_user_domains as t1 inner join tbl_users as t2 " + \
+        "on t2.user_id = t1.user_id or t2.user_category_id=1 where t1.legal_entity_id=%s " + \
+        "order by user_name asc;"
+    result = db.select_all(query, [legal_entity_id])
+    audit_users_list = []
+    for row in result:
+        u_g_id = row["user_group_id"]
+        if row["employee_code"] is None:
+            user_name = row["employee_name"]
+        else:
+            user_name = row["employee_code"]+' - '+row["employee_name"]
+        audit_users_list.append(clientmasters.AuditTrailUsers(
+            row["user_id"], user_name, row["user_category_id"], u_g_id
+        ))
+    return audit_users_list
+
+###############################################################################################
+# Objective: To get the list of forms under legal entity
+# Parameter: request object
+# Result: list of forms
+###############################################################################################
+def get_audit_forms_list(db):
+    query = "select t1.user_group_id as u_g_id, t1.form_id, t2.form_name from tbl_user_group_forms " + \
+        "as t1 inner join tbl_forms as t2 on t2.form_id = t1.form_id;"
+    result = db.select_all(query, None)
+    audit_forms_list = []
+    for row in result:
+        audit_forms_list.append(clientmasters.AuditTrailForms(
+            row["u_g_id"], row["form_id"], row["form_name"]
+        ))
+    return audit_forms_list
+
+###############################################################################################
+# Objective: To get the list of users
+# Parameter: request object
+# Result: list of users
+###############################################################################################
+def get_login_users_list(db):
+    query = "select user_id, employee_code,employee_name, " + \
+        "user_category_id, user_group_id from tbl_users order by user_name asc;"
+    result = db.select_all(query, None)
+    login_users_list = []
+    for row in result:
+        u_g_id = row["user_group_id"]
+        if row["employee_code"] is None:
+            user_name = row["employee_name"]
+        else:
+            user_name = row["employee_code"]+' - '+row["employee_name"]
+        login_users_list.append(clientmasters.AuditTrailUsers(
+            row["user_id"], user_name, row["user_category_id"], u_g_id
+        ))
+    return login_users_list
+
+
+###############################################################################################
+# Objective: To get the list of activities
+# Parameter: request object
+# Result: list of activities
+###############################################################################################
+def process_login_trace_report(db, request):
+    where_clause = None
+    condition_val = []
+    select_qry = None
+    user_id = request.user_id
+    due_from = request.due_from_date
+    due_to = request.due_to_date
+
+    select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
+        "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+        "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+    where_clause = "t1.form_id = 0 "
+
+    if int(user_id) > 0:
+        where_clause = where_clause + "and t1.user_id = %s "
+        condition_val.append(user_id)
+    if due_from is not None and due_to is not None:
+        due_from = string_to_datetime(due_from).date()
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t1.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        due_from = string_to_datetime(due_from).date()
+        where_clause = where_clause + " and t1.created_on between " + \
+            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
+            " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        due_to = string_to_datetime(due_to).date()
+        where_clause = where_clause + " and t1.created_on < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    where_clause = where_clause + "order by t1.created_on desc limit %s, %s;"
+    condition_val.extend([int(request.from_count), int(request.page_count)])
+    query = select_qry + where_clause
+    print "qry"
+    print query
+    result = db.select_all(query, condition_val)
+    activity_list = []
+    for row in result:
+        if row["action"].find("Log In") >= 0:
+            activity_list.append(clientmasters.LoginTraceActivities(
+                row["form_id"], "Login",
+                row["action"], datetime_to_string_time(row["created_on"])
+            ))
+        elif row["action"].find("Log Out") >= 0:
+            activity_list.append(clientmasters.LoginTraceActivities(
+                row["form_id"], "Logout",
+                row["action"], datetime_to_string_time(row["created_on"])
+            ))
+    return activity_list
+
+
+###############################################################################################
+# Objective: To get the user details under client
+# Parameter: request object
+# Result: user information
+###############################################################################################
+def get_user_info(db, session_user, client_id):
+    user_id = session_user
+    query = "select t1.employee_name, (select short_name from tbl_client_groups where client_id = %s) as " + \
+        "short_name, t1.email_id, t1.contact_no, t1.mobile_no, t1.employee_code, (select username from " + \
+        "tbl_user_login_details where user_id = t1.user_id) as user_name, (select user_group_name from " + \
+        "tbl_user_groups where user_category_id = t1.user_category_id and user_group_id = t1.user_group_id) " + \
+        "as u_g_name, t1.address from tbl_users as t1 where t1.user_id = %s"
+    result = db.select_all(query, [client_id, user_id])
+    user_profile = []
+    for row in result:
+        user_name = row["user_name"]
+        emp_code = row["employee_code"]
+        emp_name = row["employee_name"]
+        short_name = row["short_name"]
+        email_id = row["email_id"]
+        con_no = row["contact_no"]
+        mob_no = row["mobile_no"]
+        u_g_name = row["u_g_name"]
+        address = row["address"]
+        user_profile.append(clientmasters.UserProfile(
+            user_id, user_name, emp_code, emp_name, short_name, email_id,
+            con_no, mob_no, u_g_name, address
+        ))
+    return user_profile
+
+###############################################################################################
+# Objective: To update user details
+# Parameter: request object and the client id
+# Result: updates user details
+###############################################################################################
+def update_profile(db, session_user, request):
+    user_id = request.user_id
+    email_id = request.email_id
+    con_no = request.con_no
+    mob_no = request.mob_no
+    address = request.address
+    current_time_stamp = get_date_time()
+    columns = [
+        "email_id", "contact_no", "mobile_no", "address", "updated_on", "updated_by"
+    ]
+    values = [
+        email_id, con_no, mob_no, address, current_time_stamp, session_user
+    ]
+    condition = "user_id= %s "
+
+    values.append(user_id)
+    result1 = db.update(tblUsers, columns, values, condition)
+    if result1 is False:
+        raise client_process_error("E011")
+
+    action = "Updated user \"%s - %s\"" % (
+        request.emp_code, request.emp_name
+    )
+    db.save_activity(session_user, 4, action)
+
+    return True
