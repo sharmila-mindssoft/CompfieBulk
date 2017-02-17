@@ -469,10 +469,6 @@ class API(object):
                     self.performed_response.chart_data.extend(data.chart_data)
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
-                    print self.performed_response.T_0_to_30_days_count, data.T_0_to_30_days_count
-                    print self.performed_response.T_31_to_60_days_count
-                    print self.performed_response.T_61_to_90_days_count
-                    print self.performed_response.Above_90_days_count
 
                     self.performed_response.T_0_to_30_days_count += data.T_0_to_30_days_count
                     self.performed_response.T_31_to_60_days_count += data.T_31_to_60_days_count
@@ -500,6 +496,9 @@ class API(object):
                     self.performed_response.drill_down_data.extend(data.drill_down_data)
 
                 elif type(request_data.request) is dashboard.GetTrendChartDrillDownData :
+                    self.performed_response.drill_down_data.extend(data.drill_down_data)
+
+                elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusDrillDown :
                     self.performed_response.drill_down_data.extend(data.drill_down_data)
 
         try :

@@ -627,8 +627,8 @@ class GetComplianceApplicabilityStatusDrillDown(Request):
 
     def to_inner_structure(self):
         return {
-            "country_ids": self.country_ids,
-            "domain_ids": self.domain_ids,
+            "c_ids": self.country_ids,
+            "d_ids": self.domain_ids,
             "filter_type": self.filter_type,
             "filter_ids": self.filter_ids,
             "applicability_status": self.applicability_status,
@@ -2093,7 +2093,7 @@ class Compliance(object):
             "statu_dates": self.statutory_dates,
             "is_active": self.is_active,
             "download_url": self.download_url,
-            "summary": self.summar,
+            "summary": self.summary,
         }
 
 

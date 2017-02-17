@@ -392,7 +392,7 @@ api_params = {
     "drill_down_data": make_vector_type_field(module="dashboard", klass_name="ApplicableDrillDown"),
     "level1_statutory_name": make_text_field(),
     "ap_compliances": make_map_type(module="dashboard", klass_name="Compliance", validfun=allow_specialchar),
-    "format_file_list": make_vector_type_field(module="clientcore", klass_name="FileList"),
+    "format_file_list": make_vector_type_field(module="clientcore", klass_name="FileList", is_optional=True),
     "p_cons": make_text_field(is_optional=True),
     "download_url": make_text_field(is_optional=True),
     "t_drill_down_data": make_vector_type_field(module="dashboard", klass_name="TrendDrillDownData"),

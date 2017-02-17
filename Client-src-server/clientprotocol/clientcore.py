@@ -397,16 +397,13 @@ class COMPLIANCE_USER_TYPE(object):
 #
 
 class APPLICABILITY_STATUS(object):
-    # Applicable = "Applicable"
-    # NotApplicable = "Not Applicable"
-    # NotOpted = "Not Opted"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Applicable", "Not Applicable", "Not Opted"]
+        return ["Not Complied", "Rejected", "Unassigned", "Not Opted"]
 
     def value(self):
         return self._value
