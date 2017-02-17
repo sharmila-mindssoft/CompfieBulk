@@ -1785,6 +1785,39 @@ class ClientDivision(object):
             "bg_id": self.business_group_id,
         }
 
+class ClientCategory(object):
+    def __init__(
+        self, category_id, category_name, division_id, legal_entity_id, business_group_id
+    ):
+        self.category_id = category_id
+        self.category_name = category_name
+        self.division_id = division_id
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [ "cat_id", "cat_name", "div_id",
+                "le_id", "bg_id"]
+        )
+        category_id = data.get("cat_id")
+        category_name = data.get("cat_name")
+        division_id = data.get("div_id")
+        legal_entity_id = data.get("le_id")
+        business_group_id = data.get("bg_id")
+        return Division(
+            category_id, category_name, division_id, legal_entity_id, business_group_id
+        )
+
+    def to_structure(self):
+        return {
+            "cat_id": self.category_id,
+            "cat_name": self.category_name,
+            "div_id": self.division_id,
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id,
+        }
 
 #
 # Unit
@@ -3221,20 +3254,23 @@ class ClientLevelOneStatutory(object):
 
 
 class ComplianceFilter(object):
-    def __init__(self, domain_id, compliance_task):
+    def __init__(self, domain_id, compliance_id, compliance_task):
         self.domain_id = domain_id
+        self.compliance_id = compliance_id
         self.compliance_task = compliance_task
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["d_id", "c_task"])
+        data = parse_dictionary(data, ["d_id", "c_task", "compliance_id"])
         domain_id = data.get("d_id")
+        compliance_id = data.get("compliance_id")
         compliance_task = data.get("c_task")
-        return ComplianceFilter(domain_id, compliance_task)
+        return ComplianceFilter(domain_id, compliance_id, compliance_task)
 
     def to_structure(self):
         return {
             "d_id": self.domain_id,
+            "compliance_id": self.compliance_id,
             "c_task": self.compliance_task,
         }
 
@@ -4190,4 +4226,163 @@ class LegalEntityUser(object):
             "employee_code": self.employee_code,
             "employee_name": self.employee_name,
             "is_active": self.is_active
+        }
+
+class ReassignedHistoryReportSuccess(object):
+    def __init__(
+        self, country_id, legal_entity_id, domain_id, unit_id, act_name, compliance_id, compliance_task, 
+            old_user, new_user, assigned_on, remarks, due_date, unit
+    ):
+        self.country_id = country_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.unit_id = unit_id
+        self.act_name = act_name
+        self.compliance_id = compliance_id
+        self.compliance_task = compliance_task
+        self.old_user = old_user
+        self.new_user = new_user
+        self.assigned_on = assigned_on
+        self.remarks = remarks
+        self.due_date = due_date
+        self.unit = unit
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["country_id", "legal_entity_id", "domain_id", "unit_id", "act_name", 
+            "compliance_id", "compliance_task", "old_user", "new_user", "assigned_on", "remarks", "due_date", "unit"])
+        country_id = data("country_id"),
+        legal_entity_id = data("legal_entity_id"),
+        domain_id = data("domain_id"),
+        unit_id = data("unit_id"),
+        act_name = data("act_name"),
+        compliance_id = data("compliance_id"),
+        compliance_task = data("compliance_task"),
+        old_user = data("old_user"),
+        new_user = data("new_user"),
+        assigned_on = data("assigned_on"),
+        remarks = data("remarks"),
+        due_date = data("due_date"),
+        unit = data("unit")
+        return ServiceProviders(country_id, legal_entity_id, domain_id, unit_id, act_name, compliance_id, compliance_task, 
+            old_user, new_user, assigned_on, remarks, due_date, unit)
+    def to_structure(self):
+        return {
+            "country_id": self.country_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id,
+            "act_name": self.act_name,
+            "compliance_id": self.compliance_id,
+            "compliance_task": self.compliance_task,
+            "old_user": self.old_user,
+            "new_user": self.new_user,
+            "assigned_on": self.assigned_on,
+            "remarks": self.remarks,
+            "due_date": self.due_date,
+            "unit": self.unit
+        }
+
+class GetStatusReportConsolidatedSuccess(object):
+    def __init__(
+        self, compliance_activity_id, compliance_history_id, legal_entity_id, unit_id, unit, compliance_id, compliance_name, frequency_name, 
+        act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name
+    ):
+
+        self.compliance_activity_id = compliance_activity_id
+        self.compliance_history_id = compliance_history_id
+        self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
+        self.unit = unit
+        self.compliance_id = compliance_id
+        self.compliance_name = compliance_name
+        self.frequency_name = frequency_name
+        self.act_name = act_name
+        self.activity_on = activity_on
+        self.due_date = due_date
+        self.completion_date = completion_date
+        self.task_status = task_status
+        self.uploaded_document = uploaded_document
+        self.activity_status = activity_status
+        self.user_name = user_name
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_activity_id", "compliance_history_id", "legal_entity_id", "unit_id", "unit", "compliance_id", "compliance_name", 
+            "frequency_name", "act_name", "activity_on", "due_date", "completion_date", "task_status", "uploaded_document", "activity_status", "user_name"])
+        compliance_activity_id = data("compliance_activity_id"),
+        compliance_history_id = data("compliance_history_id"),
+        legal_entity_id = data("legal_entity_id"),
+        unit_id = data("unit_id"),
+        unit = data("unit"),
+        compliance_id = data("compliance_id"),
+        compliance_name = data("compliance_name"),
+        frequency_name = data("frequency_name"),
+        act_name = data("act_name"),
+        activity_on = data("activity_on"),
+        due_date = data("due_date"),
+        completion_date = data("completion_date"),
+        task_status = data("task_status"),
+        uploaded_document = data("uploaded_document"),
+        activity_status = data("activity_status"),
+        user_name = data("user_name")
+        return ServiceProviders(compliance_activity_id, compliance_history_id, legal_entity_id, unit_id, unit, compliance_id, compliance_name, frequency_name, 
+        act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name)
+    def to_structure(self):
+        return {
+            "compliance_activity_id": self.compliance_activity_id,
+            "compliance_history_id": self.compliance_history_id,
+            "legal_entity_id": self.legal_entity_id,
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "compliance_id": self.compliance_id,
+            "compliance_name": self.compliance_name,
+            "frequency_name": self.frequency_name,
+            "act_name": self.act_name,
+            "activity_on": self.activity_on,
+            "due_date": self.due_date,
+            "completion_date": self.completion_date,
+            "task_status": self.task_status,
+            "uploaded_document": self.uploaded_document,
+            "activity_status": self.activity_status,
+            "user_name": self.user_name
+        }
+
+class GetStatutorySettingsUnitWiseSuccess(object):
+    def __init__(self, compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id):
+        self.compliance_id = compliance_id
+        self.frequency = frequency
+        self.compliance_task = compliance_task
+        self.act_name = act_name
+        self.task_status = task_status
+        self.document_name = document_name
+        self.user_name = user_name
+        self.due_date = due_date
+        self.unit = unit
+        self.unit_id = unit_id
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_id","frequency","compliance_task","act_name","task_status","document_name","user_name","due_date","unit","unit_id"])
+        compliance_id = data.get("compliance_id"),
+        frequency = data.get("frequency"),
+        compliance_task = data.get("compliance_task"),
+        act_name = data.get("act_name"),
+        task_status = data.get("task_status"),
+        document_name = data.get("document_name"),
+        user_name = data.get("user_name"),
+        due_date = data.get("due_date"),
+        unit = data.get("unit"),
+        unit_id = data.get("unit_id")
+        return ServiceProviders(compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id
+)
+    def to_structure(self):
+        return {
+            "compliance_id": self.compliance_id,
+            "frequency": self.frequency,
+            "compliance_task": self.compliance_task,
+            "act_name": self.act_name,
+            "task_status": self.task_status,
+            "document_name": self.document_name,
+            "user_name": self.user_name,
+            "due_date": self.due_date,
+            "unit": self.unit,
+            "unit_id": self.unit_id
         }
