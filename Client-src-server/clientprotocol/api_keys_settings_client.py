@@ -363,6 +363,7 @@ api_params = {
     "assigned_date": make_text_field(),
     "status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "ageing": make_text_field(),
+    "cat_name": make_text_field(is_optional=True),
     "es_chart_data": make_vector_type_field(module="dashboard", klass_name="EscalationData"),
     "years": make_vector_type_int(length=10000),
     "delayed": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),

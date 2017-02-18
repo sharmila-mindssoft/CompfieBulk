@@ -55,7 +55,7 @@ class ClientReplicationManager(object) :
         self._request_body = json.dumps(
             GetClientChanges().to_structure(), indent=2
         )
-        print self._request_body
+        # print self._request_body
         # print body
         # request = HTTPRequest(
         #     self._poll_url, method="POST", body=body,
@@ -72,17 +72,17 @@ class ClientReplicationManager(object) :
 
         def on_timeout():
             req_data = self._request_body
-            print req_data
+            # print req_data
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
             req_data = base64.b64encode(req_data)
-            print req_data
-            print " ----"
+            # print req_data
+            # print " ----"
             req_data = key+req_data
 
             response = requests.post(self._poll_url, data=req_data)
 
             data = response.text[6:]
-            print data
+            # print data
             data = str(data).decode('base64')
             self._poll_response(data, response.status_code)
             t = threading.Timer(self._timeout_seconds, on_timeout)
@@ -110,7 +110,7 @@ class ClientReplicationManager(object) :
                     json.loads(response)
                 )
             except Exception, e :
-                print err, e
+                # print err, e
                 self._poll()
                 return
 
@@ -122,7 +122,7 @@ class ClientReplicationManager(object) :
 
         else :
             pass
-            print err, response
+            # print err, response
 
         self._poll()
 
@@ -213,7 +213,7 @@ class ReplicationBase(object):
     #     assert self._countries is not None
 
     def _get_client_domains(self):
-        print "---------------------------"
+        # print "---------------------------"
         self._db.begin()
         try:
             self._domains = get_domains(self._db)
@@ -224,8 +224,8 @@ class ReplicationBase(object):
             #     print self._domains
             #     print "=-=-=-"
             self._db.commit()
-        except Exception, e :
-            print e
+        except Exception, e:
+            # print e
             self._domains = None
             self._db.rollback()
         # assert self._domains is not None
@@ -235,9 +235,9 @@ class ReplicationBase(object):
         # print changes
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
-        print tbl_name
+        # print tbl_name
         column_count = self._columns_count.get(tbl_name)
-        print column_count
+        # print column_count
         column_count -= 1
         assert auto_id is not None
         if error_ok:
@@ -281,9 +281,9 @@ class ReplicationBase(object):
             query += ""
 
         try :
-            print domain_id, self._domains
-            print tbl_name
-            print query
+            # print domain_id, self._domains
+            # print tbl_name
+            # print query
             if tbl_name != "tbl_compliances" :
                 self._db.execute(query)
             elif tbl_name == "tbl_compliances" and domain_id in self._domains :
@@ -298,7 +298,7 @@ class ReplicationBase(object):
 
         except Exception, e:
             pass
-            print e
+            # print e
             logger.logClient("client.py", "insert", e)
         self._temp_count = changes[-1].audit_trail_id
 
@@ -318,16 +318,16 @@ class ReplicationBase(object):
             try :
                 self._db.execute(query)
             except Exception, e :
-                print e,
+                # print e,
                 logger.logClient("client.py", "update", e)
-                print query
+                # print query
                 # logger.logClient("client.py", "update", query)
         self._temp_count = change.audit_trail_id
-        print self._temp_count
+        # print self._temp_count
 
     def _parse_data(self, changes):
         # self._get_received_count()
-        print self._temp_count
+        # print self._temp_count
         if self._temp_count > self._received_count :
             return
 
@@ -365,14 +365,14 @@ class ReplicationBase(object):
                 # print "insert 3 -------------------------"
                 self._execute_insert_statement(changes_list, error_ok=True)
                 changes_list = []
-            print "audit_trail_id updated ", self._temp_count, self._type
+            # print "audit_trail_id updated ", self._temp_count, self._type
             update_traild_id(self._db, self._temp_count, self._type)
             self._received_count = self._temp_count
             self._db.commit()
             # self._temp_count = 0
         except Exception, e:
-            print(traceback.format_exc())
-            print e
+            # print(traceback.format_exc())
+            # print e
             logger.logClient("error", "client.py-parse-data", e)
             logger.logClient("error", "client.py", traceback.format_exc())
 
@@ -404,7 +404,7 @@ class ReplicationManagerWithBase(ReplicationBase):
             self._received_count = get_trail_id(self._db)
             self._db.commit()
         except Exception, e:
-            print e
+            # print e
             self._received_count = None
             self._db.rollback()
         assert self._received_count is not None
@@ -412,11 +412,11 @@ class ReplicationManagerWithBase(ReplicationBase):
     def _poll(self) :
         assert self._stop is False
         assert self._received_count is not None
-        print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
+        # print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
 
         def on_timeout():
-            print "-1-1-1"
-            print time.time()
+            # print "-1-1-1"
+            # print time.time()
             if self._stop:
                 return
 
@@ -435,7 +435,7 @@ class ReplicationManagerWithBase(ReplicationBase):
 
             data = response.text[6:]
             data = str(data).decode('base64')
-            print data
+            # print data
             self._poll_response(data, response.status_code)
 
         t = threading.Timer(10, on_timeout)
@@ -454,18 +454,18 @@ class ReplicationManagerWithBase(ReplicationBase):
                 )
 
             except Exception, e:
-                print err, e
+                # print err, e
                 self._poll()
                 return
             if type(r) is InvalidReceivedCount:
-                print "InvalidReceivedCount sent"
+                # print "InvalidReceivedCount sent"
                 self._poll()
                 return
             assert r is not None
             self._parse_data(r.changes)
-            print len(r.changes)
+            # print len(r.changes)
             if len(r.changes) > 0 :
-                print len(r.changes)
+                # print len(r.changes)
                 self._poll()
             else :
                 return
@@ -510,7 +510,7 @@ class ReplicationManagerWithBase(ReplicationBase):
 
     def start(self):
         self._stop = False
-        print "poll started for ----------- ", self._client_id
+        # print "poll started for ----------- ", self._client_id
         self._poll()
         # self._io_loop.add_callback(self._poll_for_del)
 
@@ -538,11 +538,11 @@ class DomainReplicationManager(ReplicationBase):
         self._db.begin()
         try:
             self._actual_replica_count = get_trail_id(self._db)
-            print "_actual_replica_count"
-            print self._actual_replica_count
+            # print "_actual_replica_count"
+            # print self._actual_replica_count
             self._db.commit()
         except Exception, e:
-            print e
+            # print e
             self._actual_replica_count = None
             self._db.rollback()
         assert self._actual_replica_count is not None
@@ -551,11 +551,11 @@ class DomainReplicationManager(ReplicationBase):
         self._db.begin()
         try:
             self._received_count = get_trail_id(self._db, self._type)
-            print "_received_count"
-            print self._received_count
+            # print "_received_count"
+            # print self._received_count
             self._db.commit()
         except Exception, e:
-            print e
+            # print e
             self._received_count = None
             self._db.rollback()
 
@@ -565,20 +565,20 @@ class DomainReplicationManager(ReplicationBase):
             reset_domain_trail_id(self._db)
             self._db.commit()
         except Exception, e :
-            print e
+            # print e
             self._db.rollback()
 
     def _poll(self):
         assert self._stop is False
         assert self._received_count is not None
-        print "poll validate"
+        # print "poll validate"
         # if self._received_count > self._actual_replica_count :
         #     return
-        print "Domain replication poll for client_id = %s, domain_id = %s, _received_count=%s " % (self._client_id, self._domain_id, self._received_count)
+        # print "Domain replication poll for client_id = %s, domain_id = %s, _received_count=%s " % (self._client_id, self._domain_id, self._received_count)
 
         def on_timeout():
-            print time.time()
-            print self._received_count
+            # print time.time()
+            # print self._received_count
             if self._stop :
                 return
 
@@ -603,8 +603,8 @@ class DomainReplicationManager(ReplicationBase):
     def _poll_response(self, response) :
         if self._stop :
             return
-        print "poll response receive, actual"
-        print self._received_count, self._actual_replica_count
+        # print "poll response receive, actual"
+        # print self._received_count, self._actual_replica_count
 
         # if self._received_count > self._actual_replica_count :
         #     return
@@ -620,7 +620,7 @@ class DomainReplicationManager(ReplicationBase):
                 # print r.to_structure()
 
             except Exception, e :
-                print err, e
+                # print err, e
                 self._poll()
                 return
 
@@ -630,7 +630,7 @@ class DomainReplicationManager(ReplicationBase):
 
             assert r is not None
             self._parse_data(r.changes)
-            print len(r.changes)
+            # print len(r.changes)
             if len(r.changes) > 0 :
                 self._poll()
             else :
@@ -644,5 +644,5 @@ class DomainReplicationManager(ReplicationBase):
 
     def start(self):
         self._stop = False
-        print "poll started for ", self._client_id
+        # print "poll started for ", self._client_id
         self._io_loop.add_callback(self._poll)
