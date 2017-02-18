@@ -1012,14 +1012,13 @@ class GetStatutorySettingsUnitWiseFilters(Request):
 
 class GetStatutorySettingsUnitWise(Request):
     def __init__(
-        self, c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, 
+        self, c_id, bg_id, legal_entity_id, d_id, div_id, cat_id, act, 
         compliance_id, frequency_id, status_name, csv, f_count, t_count
     ):
         self.c_id = c_id
         self.bg_id = bg_id
         self.legal_entity_id = legal_entity_id
         self.d_id = d_id
-        self.unit_id = unit_id
         self.div_id = div_id
         self.cat_id = cat_id
         self.act = act
@@ -1033,14 +1032,13 @@ class GetStatutorySettingsUnitWise(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_id", "bg_id", "le_id", "d_id", "unit_id", "div_id", "cat_id", "act", "compliance_id", 
+            "c_id", "bg_id", "le_id", "d_id", "div_id", "cat_id", "act", "compliance_id", 
             "frequency_id", "status_name", "csv", "f_count", "t_count"]
         )
         c_id = data.get("c_id")
         bg_id = data.get("bg_id")
         legal_entity_id = data.get("le_id")
         d_id = data.get("d_id")
-        unit_id = data.get("unit_id")
         div_id = data.get("div_id")
         cat_id = data.get("cat_id")
         act = data.get("act")
@@ -1051,7 +1049,7 @@ class GetStatutorySettingsUnitWise(Request):
         f_count = data.get("f_count")
         t_count = data.get("t_count")
         return GetStatutorySettingsUnitWise( 
-            c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, compliance_id, 
+            c_id, bg_id, legal_entity_id, d_id, div_id, cat_id, act, compliance_id, 
             frequency_id, status_name, csv, f_count, t_count)
 
     def to_inner_structure(self):
@@ -1060,7 +1058,6 @@ class GetStatutorySettingsUnitWise(Request):
             "bg_id": self.bg_id,
             "le_id": self.legal_entity_id,
             "d_id": self.d_id,
-            "unit_id": self.unit_id,
             "div_id": self.div_id,
             "cat_id": self.cat_id,
             "act": self.act,
@@ -1072,6 +1069,60 @@ class GetStatutorySettingsUnitWise(Request):
             "t_count": self.t_count
         }
 # Statutory Settings Unit Wise End
+
+# Domain Score Card Start
+class GetDomainScoreCardFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetDomainScoreCardFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
+
+class GetDomainScoreCard(Request):
+    def __init__(
+        self, c_id, bg_id, legal_entity_id, d_id, div_id, cat_id, csv
+    ):
+        self.c_id = c_id
+        self.bg_id = bg_id
+        self.legal_entity_id = legal_entity_id
+        self.d_id = d_id
+        self.div_id = div_id
+        self.cat_id = cat_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "c_id", "bg_id", "le_id", "d_id", "div_id", "cat_id", "csv"]
+        )
+        c_id = data.get("c_id")
+        bg_id = data.get("bg_id")
+        legal_entity_id = data.get("le_id")
+        d_id = data.get("d_id")
+        div_id = data.get("div_id")
+        cat_id = data.get("cat_id")
+        csv = data.get("csv")
+        return GetDomainScoreCard( 
+            c_id, bg_id, legal_entity_id, d_id, div_id, cat_id, csv)
+
+    def to_inner_structure(self):
+        return {
+            "c_id": self.c_id,
+            "bg_id": self.bg_id,
+            "le_id": self.legal_entity_id,
+            "d_id": self.d_id,
+            "div_id": self.div_id,
+            "cat_id": self.cat_id,
+            "csv": self.csv
+        }
+# Domain Score Card End
 
 class GetStatutoryNotificationsListFilters(Request):
     def __init__(self):
@@ -1851,6 +1902,7 @@ def _init_Request_class_map():
         GetReassignedHistoryReportFilters, GetReassignedHistoryReport,
         GetStatusReportConsolidatedFilters, GetStatusReportConsolidated,
         GetStatutorySettingsUnitWiseFilters, GetStatutorySettingsUnitWise,
+        GetDomainScoreCardFilters, GetDomainScoreCard,
         GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport,
         GetClientDetailsReportFilters, GetClientDetailsReportData, GetActivityLogFilters,
         GetActivityLogReport, GetLoginTrace, GetLegalEntityWiseReportFilters,
@@ -2739,6 +2791,45 @@ class GetStatutorySettingsUnitWiseSuccess(Response):
         }
 # Statutory Settings Unit Wise End
 
+
+# Domain Score Card Start
+class GetDomainScoreCardFiltersSuccess(Response):
+    def __init__(self, domains, divisions, categories):
+        self.domains = domains
+        self.divisions = divisions
+        self.categories = categories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domains", "div_infos", "cat_infos"])
+        domains = data.get("domains")
+        divisions = data.get("div_infos")
+        categories = data.get("cat_infos")
+        return GetDomainScoreCardFiltersSuccess(domains, divisions, categories)
+
+    def to_inner_structure(self):
+        return {
+            "domains": self.domains,
+            "div_infos": self.divisions,
+            "cat_infos": self.categories
+        }
+
+class GetDomainScoreCardSuccess(Response):
+    def __init__(self, domain_score_card_list):
+        self.domain_score_card_list = domain_score_card_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domain_score_card_list"])
+        domain_score_card_list = data.get("domain_score_card_list")
+        return GetDomainScoreCardSuccess(domain_score_card_list)
+
+    def to_inner_structure(self):
+        return {
+            "domain_score_card_list": self.domain_score_card_list
+        }
+# Domain Score Card End
+
 #
 # Statutory Notificaiton List
 #
@@ -3162,7 +3253,9 @@ def _init_Response_class_map():
         GetComplianceTaskApplicabilityStatusReportSuccess,
         GetComplianceActivityReportFiltersSuccess, GetComplianceActivityReportSuccess,
         GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess,
-        GetStatusReportConsolidatedFiltersSuccess,
+        GetStatusReportConsolidatedFiltersSuccess, GetStatusReportConsolidatedSuccess,
+        GetStatutorySettingsUnitWiseFiltersSuccess, GetStatutorySettingsUnitWiseSuccess,
+        GetDomainScoreCardFiltersSuccess, GetDomainScoreCardSuccess,
         GetStatutoryNotificationsListFiltersSuccess,
         GetStatutoryNotificationsListReportSuccess,
         GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess,

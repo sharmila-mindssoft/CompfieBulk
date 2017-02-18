@@ -214,6 +214,28 @@ def process_client_report_requests(request, db, session_user, session_category):
         )
         logger.logClientApi("GetStatutorySettingsUnitWise", "process end")
         logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetDomainScoreCardFilters:
+
+        logger.logClientApi(
+            "GetDomainScoreCardFilters  - " + str(session_user),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_domain_score_card_filters(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetDomainScoreCardFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetDomainScoreCard:
+        logger.logClientApi(
+            "GetDomainScoreCard  - " + str(session_user), "process begin"
+        ) 
+        logger.logClientApi("------", str(time.time()))
+        result = get_domain_score_card(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetDomainScoreCard", "process end")
+        logger.logClientApi("------", str(time.time()))
     elif type(request) is clientreport.GetLoginTrace:
         logger.logClientApi(
             "GetLoginTrace  - " + str(session_user), "process begin"
@@ -889,6 +911,40 @@ def get_statutory_settings_unit_Wise(db, request, session_user, session_category
             link=converter.FILE_DOWNLOAD_PATH
         )
 # Statutory Settings Unit Wise End
+
+# Domain Score Card Start
+def get_domain_score_card_filters(db, request, session_user, session_category):
+    domain_list = get_domains_for_user(db, session_user, session_category)
+    divisions_list = get_divisions(db)
+    categories_list = get_categories(db)
+
+    return clientreport.GetDomainScoreCardFiltersSuccess(
+        domains=domain_list,
+        divisions=divisions_list,
+        categories=categories_list
+    )
+
+def get_domain_score_card(db, request, session_user, session_category):
+    if not request.csv:
+        country_id = request.c_id
+        bg_id = request.bg_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
+        div_id = request.div_id
+        cat_id = request.cat_id
+
+        domain_score_card_list = report_domain_score_card(
+            db, country_id, bg_id, legal_entity_id, domain_id, div_id, cat_id, session_user
+        )
+        return clientreport.GetDomainScoreCardSuccess(domain_score_card_list)
+    else:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "Reassign"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+# Domain Score Card End
 
 def get_risk_report(db, request, session_user, session_category):
     country_id = request.country_id

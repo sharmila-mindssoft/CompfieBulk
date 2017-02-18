@@ -187,7 +187,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        //alert(body.toSource());
+        alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -908,6 +908,34 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     // Statutory Settings Unit Wise End
+
+    // Domain Score Card Start
+    function getDomainScoreCardFilters(le_id, callback) {
+        var request = [
+            'GetDomainScoreCardFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getDomainScoreCard(c_id, bg_id, le_id, d_id, div_id, cat_id, csv, callback) {
+        var request = [
+            'GetDomainScoreCard', {
+                'c_id': c_id,
+                'bg_id': bg_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'div_id': div_id,
+                'cat_id': cat_id,
+                'csv': csv
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Domain Score Card End 
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -2617,6 +2645,8 @@ function initClientMirror() {
         getStatusReportConsolidatedFilters: getStatusReportConsolidatedFilters,
         getStatusReportConsolidated: getStatusReportConsolidated,
         getStatutorySettingsUnitWiseFilters: getStatutorySettingsUnitWiseFilters,
+        getDomainScoreCardFilters: getDomainScoreCardFilters,
+        getDomainScoreCard: getDomainScoreCard,
         getStatutorySettingsUnitWise: getStatutorySettingsUnitWise,
         updateComplianceDetail: updateComplianceDetail,
         getLoginTrace: getLoginTrace,

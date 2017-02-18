@@ -297,7 +297,7 @@ api_params = {
     'remarks': make_text_field(length=500, is_optional=True),
     'assigned_on': make_text_field(length=20, is_optional=True), 
     'unit': make_text_field(is_optional=True),
-    'status_report_consolidated_list':make_vector_type_field(module="clientcore", klass_name="GetStatusReportConsolidatedSuccess", is_optional=True),\
+    'status_report_consolidated_list':make_vector_type_field(module="clientcore", klass_name="GetStatusReportConsolidatedSuccess", is_optional=True),
     'status_name': make_string_field(),
     'compliance_activity_id': make_int_field(),
     'compliance_history_id': make_int_field(),
@@ -305,7 +305,7 @@ api_params = {
     'activity_on': make_text_field(length=20, is_optional=True),
     'uploaded_document': make_text_field(is_optional=True),
     'user_name': make_text_field(is_optional=True),
-    'statutory_settings_unit_Wise_list':make_vector_type_field(module="clientcore", klass_name="GetStatutorySettingsUnitWiseSuccess", is_optional=True),\
+    'statutory_settings_unit_Wise_list':make_vector_type_field(module="clientcore", klass_name="GetStatutorySettingsUnitWiseSuccess", is_optional=True),
     'document_name': make_text_field(is_optional=True),
     "repeats_type_id": make_int_field(is_optional=True),
     "repeats_type": make_string_field(is_optional=True),
@@ -353,10 +353,10 @@ api_params = {
     "chart_data": make_vector_type_field(module="dashboard", klass_name="ChartDataMap"),
     "filter_type_id": make_int_field(),
     "c_data": make_vector_type_field(module="clientcore", klass_name="NumberOfCompliances"),
-    "complied_count": make_int_field(),
+    "complied_count": make_int_field(length=10000),
     "delayed_compliance_count": make_int_field(),
     "inprogress_compliance_count": make_int_field(),
-    "not_complied_count": make_int_field(),
+    "not_complied_count": make_int_field(length=10000),
     "year": make_text_field(),
     "compliance_status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "record_count": make_int_field(length="100000"),
@@ -403,4 +403,11 @@ api_params = {
     "rejected_count": make_int_field(length=10000),
     "not_complied_count": make_int_field(length=10000),
     "n_drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData")
+    'domain_score_card_list':make_vector_type_field(module="clientcore", klass_name="GetDomainScoreCardSuccess", is_optional=True),
+    "assigned_count": make_int_field(length=10000),
+    "unassigned_count": make_int_field(length=10000),
+    "units_wise_count": make_vector_type_field(module="clientcore", klass_name="GetDomainWiseUnitScoreCardSuccess", is_optional=True),
+    "delayed_count": make_int_field(length=10000),
+    "inprogress_count": make_int_field(length=10000),
+    "overdue_count": make_int_field(length=10000),
 }
