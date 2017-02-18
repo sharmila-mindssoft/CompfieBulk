@@ -4263,7 +4263,7 @@ class ReassignedHistoryReportSuccess(object):
         remarks = data("remarks"),
         due_date = data("due_date"),
         unit = data("unit")
-        return ServiceProviders(country_id, legal_entity_id, domain_id, unit_id, act_name, compliance_id, compliance_task, 
+        return ReassignedHistoryReportSuccess(country_id, legal_entity_id, domain_id, unit_id, act_name, compliance_id, compliance_task, 
             old_user, new_user, assigned_on, remarks, due_date, unit)
     def to_structure(self):
         return {
@@ -4324,7 +4324,7 @@ class GetStatusReportConsolidatedSuccess(object):
         uploaded_document = data("uploaded_document"),
         activity_status = data("activity_status"),
         user_name = data("user_name")
-        return ServiceProviders(compliance_activity_id, compliance_history_id, legal_entity_id, unit_id, unit, compliance_id, compliance_name, frequency_name, 
+        return GetStatusReportConsolidatedSuccess(compliance_activity_id, compliance_history_id, legal_entity_id, unit_id, unit, compliance_id, compliance_name, frequency_name, 
         act_name, activity_on, due_date, completion_date, task_status, uploaded_document, activity_status, user_name)
     def to_structure(self):
         return {
@@ -4371,7 +4371,7 @@ class GetStatutorySettingsUnitWiseSuccess(object):
         due_date = data.get("due_date"),
         unit = data.get("unit"),
         unit_id = data.get("unit_id")
-        return ServiceProviders(compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id
+        return GetStatutorySettingsUnitWiseSuccess(compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id
 )
     def to_structure(self):
         return {
@@ -4385,4 +4385,69 @@ class GetStatutorySettingsUnitWiseSuccess(object):
             "due_date": self.due_date,
             "unit": self.unit,
             "unit_id": self.unit_id
+        }
+
+class GetDomainScoreCardSuccess(object):
+    def __init__(self, domain_id, domain_name, not_opted_count, unassigned_count, assigned_count, units_count):
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+        self.not_opted_count = not_opted_count
+        self.unassigned_count = unassigned_count
+        self.assigned_count = assigned_count
+        self.units_count = units_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["domain_id", "domain_name", "not_opted_count", "unassigned_count", "assigned_count", "units_wise_count"])
+        domain_id = data.get("domain_id"), 
+        domain_name = data.get("domain_name"), 
+        not_opted_count = data.get("not_opted_count"), 
+        unassigned_count = data.get("unassigned_count"), 
+        assigned_count = data.get("assigned_count"), 
+        units_count = data.get("units_wise_count")
+        return GetDomainScoreCardSuccess(domain_id, domain_name, not_opted_count, unassigned_count, assigned_count, units_count)
+    def to_structure(self):
+        return {
+            "domain_id" : self.domain_id,
+            "domain_name" : self.domain_name,
+            "not_opted_count" : self.not_opted_count,
+            "unassigned_count" : self.unassigned_count,
+            "assigned_count" : self.assigned_count,
+            "units_wise_count" : self.units_count
+        }
+
+class GetDomainWiseUnitScoreCardSuccess(object):
+    def __init__(self, unit_id, domain_name, units, not_opted_count, unassigned_count, complied_count, delayed_count, inprogress_count, overdue_count):
+        self.unit_id = unit_id
+        self.domain_name = domain_name
+        self.units = units
+        self.not_opted_count = not_opted_count
+        self.unassigned_count = unassigned_count
+        self.complied_count = complied_count
+        self.delayed_count = delayed_count
+        self.inprogress_count = inprogress_count
+        self.overdue_count = overdue_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "domain_name", "unit", "not_opted_count", "unassigned_count", "complied_count", "delayed_count", "inprogress_count", "overdue_count"])
+        unit_id = data.get("unit_id"), 
+        domain_name = data.get("domain_name"), 
+        units = data.get("unit"), 
+        not_opted_count = data.get("not_opted_count"), 
+        unassigned_count = data.get("unassigned_count"), 
+        complied_count = data.get("complied_count"), 
+        delayed_count = data.get("delayed_count"), 
+        inprogress_count = data.get("inprogress_count"), 
+        overdue_count = data.get("overdue_count")
+        return GetDomainWiseUnitScoreCardSuccess(unit_id, domain_name, units, not_opted_count, unassigned_count, complied_count, delayed_count, inprogress_count, overdue_count)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "domain_name": self.domain_name,
+            "unit": self.units,
+            "not_opted_count": self.not_opted_count,
+            "unassigned_count": self.unassigned_count,
+            "complied_count": self.complied_count,
+            "delayed_count": self.delayed_count,
+            "inprogress_count": self.inprogress_count,
+            "overdue_count": self.overdue_count
         }

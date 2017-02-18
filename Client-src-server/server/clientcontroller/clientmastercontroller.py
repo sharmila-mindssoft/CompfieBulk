@@ -263,9 +263,6 @@ def process_get_user_privilege_details_list(db):
 # To get all user groups list
 ########################################################
 def process_get_user_privileges(db, request, session_user):
-    # call form category
-    # loop user category
-    # process_get_forms --> process_get_menus -- > append to dictionary key
     form_category = {}
     user_category = {}
     for cat_id in [2, 3, 4, 5, 6] :

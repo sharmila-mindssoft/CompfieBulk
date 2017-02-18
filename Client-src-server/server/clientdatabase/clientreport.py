@@ -31,6 +31,7 @@ __all__ = [
     "report_status_report_consolidated_total",
     "report_statutory_settings_unit_Wise",
     "report_statutory_settings_unit_Wise_total",
+    "report_domain_score_card",
     "get_delayed_compliances_with_count",
     "get_delayed_compliances_where_qry",
     "get_delayed_compliances_count",
@@ -1293,6 +1294,81 @@ def report_statutory_settings_unit_Wise_total(
             ])
     return int(rows["total_count"])
 # Statutory Settings Unit Wise End
+
+# Domain Score Card Start
+def report_domain_score_card(
+    db, country_id, bg_id, legal_entity_id, domain_id, div_id, cat_id, session_user
+):
+    query = "select cc.domain_id,(select domain_name from tbl_domains where domain_id = cc.domain_id) as domain_name, " + \
+            "IFNULL(sum(IF(IFNULL(cc.compliance_opted_status,0) = 0,1,0)), 0) as not_opted_count, " + \
+            "count(IFNULL(ac.compliance_id,0)) as unassigned_count, " + \
+            "IFNULL(csu.assigned_count,0) as assigned_count " + \
+            "from tbl_client_compliances as cc " + \
+            "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \
+            "left join (select domain_id,sum(complied_count + delayed_count + inprogress_count + overdue_count) as assigned_count,unit_id " + \
+            "from tbl_compliance_status_chart_unitwise group by domain_id,unit_id) as csu on cc.domain_id = csu.domain_id and cc.unit_id = csu.unit_id " + \
+            "left join tbl_assign_compliances as ac on cc.compliance_id = ac.compliance_id and cc.unit_id = ac.unit_id and cc.domain_id = ac.domain_id " + \
+            "where unt.country_id = %s " + \
+            "and IF(%s IS NOT NULL,unt.business_group_id = %s,1) " + \
+            "and cc.legal_entity_id = %s " + \
+            "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
+            "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
+            "and IF(%s IS NOT NULL,cc.domain_id = %s,1) " + \
+            "group by cc.domain_id,csu.unit_id,csu.domain_id "
+
+    domain_wise_count = db.select_all(query, [country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
+    print domain_wise_count
+
+    def domain_wise_unit_count(country_id, bg_id, legal_entity_id, div_id, cat_id, domain_id) :
+        query_new = "select cc.unit_id,(select domain_name from tbl_domains where domain_id = cc.domain_id) as domain_name, " + \
+                "concat(unt.unit_code,' - ',unt.unit_name) as units, " + \
+                "IFNULL(sum(IF(IFNULL(cc.compliance_opted_status,0) = 0,1,0)), 0) as not_opted_count, " + \
+                "IFNULL(count(IFNULL(ac.compliance_id,0)), 0) as unassigned_count, " + \
+                "IFNULL(csu.complied_count, 0) as complied_count, IFNULL(csu.delayed_count, 0) as delayed_count,  " + \
+                "IFNULL(csu.inprogress_count, 0) as inprogress_count, IFNULL(csu.overdue_count, 0) as overdue_count " + \
+                "from tbl_client_compliances as cc " + \
+                "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \
+                "left join (select unit_id,domain_id,sum(complied_count) as complied_count,sum(delayed_count) as delayed_count, " + \
+                            "sum(inprogress_count) as inprogress_count,sum(overdue_count) as overdue_count  " + \
+                            "from tbl_compliance_status_chart_unitwise group by unit_id,domain_id) as csu on cc.unit_id = csu.unit_id and cc.domain_id = csu.domain_id " + \
+                "left join tbl_assign_compliances as ac on cc.compliance_id = ac.compliance_id and cc.unit_id = ac.unit_id and cc.domain_id = ac.domain_id " + \
+                "where unt.country_id = %s " + \
+                "and IF(%s IS NOT NULL,unt.business_group_id = %s,1) " + \
+                "and cc.legal_entity_id = %s " + \
+                "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
+                "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
+                "and IF(%s IS NOT NULL,cc.domain_id = %s,1) " + \
+                "group by cc.domain_id,cc.unit_id "
+
+        rows = db.select_all(query_new, [ country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id ])
+        print rows
+        units = []
+        for r in rows :
+            unit_id = int(r["unit_id"])
+            domain_name = r["domain_name"]
+            unit = r["units"]
+            not_opted_count = int(r["not_opted_count"])
+            unassigned_count = int(r["unassigned_count"])
+            complied_count = int(r["complied_count"])
+            delayed_count = int(r["delayed_count"])
+            inprogress_count = int(r["inprogress_count"])
+            overdue_count = int(r["overdue_count"])
+            unit_row = clientcore.GetDomainWiseUnitScoreCardSuccess(unit_id, domain_name, unit, not_opted_count, unassigned_count, complied_count, delayed_count, inprogress_count, overdue_count)
+            units.append(unit_row)
+        return units
+
+    compliances = []
+    for r in domain_wise_count :
+        domain_id = int(r["domain_id"])
+        domain_name = r["domain_name"]
+        not_opted_count = int(r["not_opted_count"])
+        unassigned_count = int(r["unassigned_count"])
+        assigned_count = int(r["assigned_count"])
+        units_count = domain_wise_unit_count(country_id, bg_id, legal_entity_id, div_id, cat_id, domain_id)
+        compliance = clientcore.GetDomainScoreCardSuccess(domain_id, domain_name, not_opted_count, unassigned_count, assigned_count, units_count)
+        compliances.append(compliance)
+    return compliances
+
 
 def get_delayed_compliances_where_qry(
     db, business_group_id, legal_entity_id, division_id, unit_id,
