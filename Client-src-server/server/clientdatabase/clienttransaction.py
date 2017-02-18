@@ -460,8 +460,8 @@ def update_statutory_settings(db, data, session_user):
             client_compliance_id, le_id,
             unit_id, domain_id,
             compliance_id,
-            statutory_opted_status, not_applicable_remarks,
-            opted_status, remarks,
+            statutory_opted_status, str(not_applicable_remarks),
+            opted_status, str(remarks),
             int(session_user), str(updated_on), 0,
             1, int(session_user), updated_on, 0
         )
@@ -487,7 +487,7 @@ def update_statutory_settings(db, data, session_user):
             " A.submitted_by = %s , A.submitted_on = %s " + \
             " where A.unit_id = %s and A.domain_id = %s "
 
-        print q
+        # print q
         for u in unit_ids :
             db.execute(q, [session_user, updated_on, u, domain_id])
 
@@ -525,7 +525,6 @@ def execute_bulk_insert(db, value_list, s_status):
     db.on_duplicate_key_update(
         table, ",".join(column), value_list, update_column
     )
-
 
 def update_new_statutory_settings(db, unit_id, domain_id, user_id):
     q = "Update tbl_client_statutories set updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"

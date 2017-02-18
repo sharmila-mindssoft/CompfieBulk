@@ -6,8 +6,6 @@
 }
 </style>
 
-<link rel="stylesheet" href="/files/client/common/css/multiselect/bootstrap-multiselect.css" type="text/css">
-<script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
 <div class="content-page">
 <div class="content">
 <div class="container page_font_size_13">
@@ -25,9 +23,9 @@
                     <div class="portlet-body">
                         <div id="basicwizard">
                             <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab m-b-0">
-                                <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. Select Unit</a></li>
-                                <li><a href="#tab2" data-toggle="tab">2. Select Compliance Task</a></li>
-                                <li><a href="#tab3" data-toggle="tab">3. Select Assignee</a></li>
+                                <li class="tab-step-1 active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. Select Unit</a></li>
+                                <li class="tab-step-2 disabled" ><a href="#tab2" data-toggle="tab">2. Select Compliance Task</a></li>
+                                <li class="tab-step-3 disabled" ><a href="#tab3" data-toggle="tab">3. Select Assignee</a></li>
                             </ul>
                             <div class="tab-content b-0 m-b-0">
                                 <div class="tab-pane m-t-0 fade active in " id="tab1">
@@ -491,8 +489,13 @@
                                             </div>
                                         </div> -->
                                     </div>
-                                    <p class="rpt-count">Selected Compliance: 3</p>
-                                </div>
+                                     <div class="total_count_view default-display-none">
+                                         <br> 
+                                         <span class="total_count"></span> 
+                                         <span class="selected_count"> Selected Compliance: 0 </span>
+                                    </div>
+
+0                                </div>
                                 <div class="tab-pane m-t-0 fade box-height-350" id="tab3">
                                     <div class="row">
                                         <div class="col-sm-12 scroll_box">
@@ -549,8 +552,13 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <center style="padding-top:10px;">
+                                    <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light default-display-none btn-showmore" >Show More</button>
+                                </center>
+
                                 <ul class="pager wizard m-b-0">
-                                    <li id="btn-previous" class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                    <li id="btn-previous" class="previous"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
                                     <li id="btn-next" class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
                                     <li id="btn-submit" class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
                                     <!-- <li class="finish pull-right"><a href="#" class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li> -->
@@ -580,8 +588,8 @@
         <div class="panel-heading p-10 acc-title" role="tab">
             <h4 class="m-b-0 m-t-0">
                 <div class="checkbox checkbox-primary m-b-0 m-t-5 m-l-5 tab-checkbox">
-                    <input id="checkbox1" type="checkbox" class="text-center">
-                    <label for="checkbox1" class="text-bold"></label>
+                    <input type="checkbox" class="text-center act-checkbox">
+                    <label class="text-bold"></label>
                 </div>
                 <div class="panel-title">
                     <a role="button" data-toggle="collapse"
@@ -671,17 +679,17 @@
     </span>
     <h4 class="custom-modal-title p-t-10 p-b-10">Applicable Units</h4>
     <div class="custom-modal-text">
-        <form role="form">
+        <div role="form">
             <p class="form-control-static text-left">RG1001 - Corporate Office - 15/9, New Delhi, New Delhi, North Region, India</p>
             <p class="form-control-static text-left">RG1002 - Regional Office - 24-1/4, South Delhi Municipal Corporation, Delhi</p>
             <p class="form-control-static text-left">RG1003 - Branch Office - 12, KK nagar, Chennai, Tamil Nadu, South Region</p>
-        </form>
+        </div>
     </div>
 </div>
 <!-- <script src="/files/client/common/js/custombox/custombox.min.js"></script>
  -->
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
-<script type="text/javascript">
+<!-- <script type="text/javascript">
     var resizefunc = [];
     $(document).ready(function() {
         $('#basicwizard').bootstrapWizard({'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'});
@@ -689,7 +697,7 @@
         
     });
 </script>
-
+ -->
 <script type="text/javascript" src="/script/assign-compliance/assign-compliance.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
@@ -697,17 +705,5 @@
           return false;
         });
     });
-</script>
-
-<script type="text/javascript">
-  function trigger_change(id) {
-    if(id == "2") {
-      $(".view-trigger-days").show();
-      $(".edit-trigger-days").hide();
-    } else {
-      $(".view-trigger-days").hide();
-      $(".edit-trigger-days").show();
-    }
-  }
 </script>
 {% endblock %}

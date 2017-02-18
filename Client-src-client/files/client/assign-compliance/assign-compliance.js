@@ -26,6 +26,7 @@ var ShowMore = $(".btn-showmore");
 
 var WIZARD_ONE_FILTER = 'wizard_one_filter';
 var WIZARD_ONE_UNIT_FILTER = 'wizard_one_unit_filter';
+var GET_COMPLIANCE = 'get_compliance';
 var SUBMIT_API = 'submit_api';
 
 var ACTIVE_UNITS = [];
@@ -36,21 +37,13 @@ var ActList = null;
 var LastAct = '';
 var SCOUNT = 1;
 var ACOUNT = 1;
+var totalRecord = 0;
+var mUnit = 20;
+var mCompliances = 500;
 
 function convert_month(data) {
   var months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
+    'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
   ];
   var rmonth;
   for (var j = 0; j < months.length; j++) {
@@ -60,21 +53,11 @@ function convert_month(data) {
   }
   return rmonth;
 }
+
 function convert_date(data) {
   var date = data.split('-');
   var months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
+    'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
   ];
   for (var j = 0; j < months.length; j++) {
     if (date[1] == months[j]) {
@@ -86,6 +69,12 @@ function convert_date(data) {
   }
   return new Date(date[2], date[1] - 1, date[0]);
 }
+
+//find date difference between two dates
+function daydiff(first, second) {
+  return (second - first) / (1000 * 60 * 60 * 24);
+}
+
 function callAPI(api_type) {
     if (api_type == WIZARD_ONE_FILTER) { 
         displayLoader();
@@ -101,6 +90,7 @@ function callAPI(api_type) {
             }
         });
     }
+
     else if (api_type == WIZARD_ONE_UNIT_FILTER) { 
         displayLoader();
         var le_id = LEList.find("li.active").attr("id");
@@ -116,18 +106,36 @@ function callAPI(api_type) {
             }
         });
     } 
+
+    else if (api_type == GET_COMPLIANCE) { 
+        displayLoader();
+        var le_id = LEList.find("li.active").attr("id");
+        var d_id = DomainList.find("li.active").attr("id");
+        client_mirror.getAssignComplianceForUnits(
+            parseInt(le_id), ACTIVE_UNITS, parseInt(d_id), (SCOUNT - 1), ACTIVE_FREQUENCY, 
+        	function(error, data) {
+            if (error == null) {
+                ComplianceList = data.assign_statutory;
+                ActList = data.level_one_name;
+                loadCompliances();
+            } else {
+                displayMessage(error);
+                hideLoader();
+            }
+        });
+    }
+
     else if (api_type == SUBMIT_API) { 
         displayLoader();
         var le_id = LEList.find("li.active").attr("id");
         var d_id = DomainList.find("li.active").attr("id");
 
-		var assignComplianceAssigneeId = null;
-		var assignComplianceConcurrenceId = null;
-		var assignComplianceApprovalId = null;
-		var assignComplianceAssigneeName = null;
-		var assignComplianceConcurrenceName = null;
-		var assignComplianceApprovalName = null;
-
+		var ass_Id = null;
+		var con_Id = null;
+		var app_Id = null;
+		var ass_Name = null;
+		var con_Name = null;
+		var app_Name = null;
 
 		var d = new Date();
 		var month = d.getMonth() + 1;
@@ -135,21 +143,19 @@ function callAPI(api_type) {
 		var output = d.getFullYear() + '/' + month + '/' + day;
 		var currentDate = new Date(output);
 
-
 		if ($('.assigneelist.active').attr('id') != undefined) {
-		    assignComplianceAssigneeId = parseInt($('.assigneelist.active').attr('id'));
-		    assignComplianceAssigneeName = $('.assigneelist.active').text().trim();
+		    ass_Id = parseInt($('.assigneelist.active').attr('id'));
+		    ass_Name = $('.assigneelist.active').text().trim();
 		}
 		if ($('.concurrencelist.active').attr('id') != undefined) {
-		    assignComplianceConcurrenceId = parseInt($('.concurrencelist.active').attr('id'));
-		    assignComplianceConcurrenceName = $('.concurrencelist.active').text().trim();
+		    con_Id = parseInt($('.concurrencelist.active').attr('id'));
+		    con_Name = $('.concurrencelist.active').text().trim();
 		}
 		if ($('.approvallist.active').attr('id') != undefined) {
-		    assignComplianceApprovalId = parseInt($('.approvallist.active').attr('id'));
-		    assignComplianceApprovalName = $('.approvallist.active').text().trim();
+		    app_Id = parseInt($('.approvallist.active').attr('id'));
+		    app_Name = $('.approvallist.active').text().trim();
 		}
 		  
-
 		assignCompliance = [];
 		var totalCompliance = 1;
 		var selectedStatus = false;
@@ -333,6 +339,8 @@ function callAPI(api_type) {
 
 		    function onSuccess(data) {
 		        displayMessage(message.save_success);
+		        CURRENT_TAB = 1;
+		        initialize();
 		    }
 		    function onFailure(error, response) {
 		        displayMessage(error);
@@ -346,8 +354,8 @@ function callAPI(api_type) {
 		        displayMessage(err_message);
 		        hideLoader();
 		    }
-		    client_mirror.saveAssignedComplianceFormData(assignComplianceAssigneeId, assignComplianceAssigneeName, assignComplianceConcurrenceId, assignComplianceConcurrenceName, 
-		    	assignComplianceApprovalId, assignComplianceApprovalName, assignCompliance, parseInt(le_id), parseInt(d_id),  function (error, response) {
+		    client_mirror.saveAssignedComplianceFormData(ass_Id, ass_Name, con_Id, con_Name, 
+		    	app_Id, app_Name, assignCompliance, parseInt(le_id), parseInt(d_id),  function (error, response) {
 		        if (error == null) {
 		          onSuccess(response);
 		        } else {
@@ -363,8 +371,24 @@ function callAPI(api_type) {
 }
 
 function validateFirstTab() {
-    if (ACTIVE_FREQUENCY.length <= 0) {
-        displayMessage(message.atleast_one_unit_required)
+	if (ACTIVE_UNITS.length == 0) {
+        displayMessage(message.unit_required)
+        return false;
+    }
+    else if (ACTIVE_FREQUENCY.length == 0) {
+        displayMessage(message.compliancefrequency_required)
+        return false;
+    } else {
+    	LastAct = '';
+		SCOUNT = 1;
+		ACOUNT = 1;
+        return true;
+    }
+};
+
+function validateSecondTab() {
+    if ($('.comp-checkbox:checked').length <= 0) {
+        displayMessage(message.nocompliance_selected_forassign)
         return false;
     } else {
         /*$(".total_count_view").hide();
@@ -383,152 +407,168 @@ function validateFirstTab() {
     }
 };
 
-function validateSecondTab() {
-    /*if (ACTIVE_FREQUENCY.length <= 0) {
-        displayMessage(message.atleast_one_unit_required)
-        return false;
-    } else {
-        $(".total_count_view").hide();
-        LastAct = '';
-        LastSubAct = '';
-        SCOUNT = 1;
-        actCount = 1;
-        count = 1;
-        sno = 1;
-        totalRecord = 0;
-        AssignStatutoryList.empty();
-        SingleAssignStatutoryList.empty();
-        SELECTED_COMPLIANCE = {};
-        ACT_MAP = {};
-        return true;
-    }*/
-    return true;
-};
-
-function loadCompliances(){
-if (SCOUNT <= 1) {
-    $('.tbody-accordion-list').empty();
+function actstatus(element) {
+    var id = $(element).attr("id");
+    var cstatus = $(element).prop("checked");
+    $('.a-' + id).each(function() {
+    	if(cstatus){
+    		if($('.comp-checkbox:checked').length > mCompliances){
+    			alert('hi')
+				$(this).prop("checked", false);
+				displayMessage(message.maximum_compliance_selection_reached_select_all);
+				return false;
+			}else{
+				$(this).prop("checked", true);
+			}
+    	}else{
+    		$(this).prop("checked", cstatus);
+    	}
+    });
+    $('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
 }
 
-for (var l = 0; l < ActList.length; l++) {
+function get_selected_count(element){
+	if($('.comp-checkbox:checked').length > mCompliances){
+		$(element).prop("checked", false);
+		displayMessage(message.maximum_compliance_selection_reached_select_all);
+	}
+	$('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
+}
 
-    if(LastAct != ActList[l]){         
-        var countrytableRow = $('#act-templates .p-head');
-        var clone = countrytableRow.clone();
-        $('.acc-title', clone).attr('id', 'heading'+ACOUNT);
-        $('.panel-title a span', clone).text(ActList[l]);
-        $('.panel-title a', clone).attr('href', '#collapse'+ACOUNT);
-        $('.panel-title a', clone).attr('aria-controls', 'collapse'+ACOUNT);
-        $('.coll-title', clone).attr('id', 'collapse'+ACOUNT);
-        $('.coll-title', clone).attr('aria-labelledb', 'heading'+ACOUNT);
-        $('.tbody-accordion-list').append(clone);
-        LastAct = ActList[l];
-        ACOUNT++;
+function loadCompliances(){
+	if (SCOUNT <= 1) {
+	    $('.tbody-accordion-list').empty();
+	}
 
-        var C_LIST = ComplianceList[ActList[l]];
-        $.each(C_LIST, function(key, value) {
-		    var compliance_id = value.comp_id;
-		    var compliance_name = value.comp_name
-		    var compliance_description = value.descp;
-		    var applicable_units = value.applicable_units;
-		    var frequency = value.freq;
-		    var statutory_date = value.statu_dates;
-		    var due_date = value.due_date_list;
-		    var summary = value.summary;
-		    var triggerdate = '';
-		    var statutorydate = '';
-		    var elementTriggerdate = '';
-		    var elementDuedate = '';
-		    var due_date_length = 0;
-		    var disp_appl_unit = applicable_units.length + '/' + ACTIVE_UNITS.length;
+	for (var l = 0; l < ActList.length; l++) {
+	    if(LastAct != ActList[l]){         
+	        var countrytableRow = $('#act-templates .p-head');
+	        var clone = countrytableRow.clone();
 
-		    //var repeats_type = value.repeats_by;
-		    //var repeats_every = value.repeats_every;
+	        $('.act-checkbox', clone).attr('id', ACOUNT);
+	        $('.act-checkbox', clone).on('click', function() {
+		        actstatus(this);
+		    });
 
-		    if (due_date != '' || due_date != null) {
-		        if (due_date.length > 1) {
-		          for (var k = 0; k < due_date.length; k++) {
-		            elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>';
-		          }
-		        } else {
-		          elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="input-box" value="' + due_date[0] + '" style="width:50px;"/>';
-		        }
-		        due_date_length = due_date.length;
-		    }
-		    for (j = 0; j < statutory_date.length; j++) {
-		        var sDay = '';
-		        if (statutory_date[j].statutory_date != null)
-		          sDay = statutory_date[j].statutory_date;
-		        var sMonth = '';
-		        if (statutory_date[j].statutory_month != null)
-		          sMonth = statutory_date[j].statutory_month;
-		        var tDays = '';
-		        if (statutory_date[j].trigger_before_days != null)
-		          tDays = statutory_date[j].trigger_before_days;
-		        if (sMonth != '')
-		          sMonth = getMonth_IntegertoString(sMonth);
-		        if (tDays != '') {
-		          triggerdate += tDays + ' Day(s) ';
-		        }
-		        statutorydate += sMonth + ' ' + sDay + ' ';
-		        if (statutory_date.length > 1) {
-		          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
-		        } else {
-		          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
-		        }
-		    }
+	        $('.acc-title', clone).attr('id', 'heading'+ACOUNT);
+	        $('.panel-title a span', clone).text(ActList[l]);
+	        $('.panel-title a', clone).attr('href', '#collapse'+ACOUNT);
+	        $('.panel-title a', clone).attr('aria-controls', 'collapse'+ACOUNT);
+	        $('.coll-title', clone).attr('id', 'collapse'+ACOUNT);
+	        $('.coll-title', clone).attr('aria-labelledb', 'heading'+ACOUNT);
+	        $('.tbody-accordion-list').append(clone);
 
+	        $('#'+ACOUNT).click(function() {
+                actStatus(this);
+            });
 
-		    var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length;
-		    var COMPRow = $('#compliances .table-compliances .row-compliances');
-		    var clone2 = COMPRow.clone();
-		    $('.comp-checkbox', clone2).attr('id', 'c-' + SCOUNT);
-        	$('.comp-checkbox', clone2).val(compliance_id);
-        	$('.comp-checkbox', clone2).addClass('a-' + (ACOUNT-1));
+	        LastAct = ActList[l];
+	        ACOUNT++;
 
-        	$('.combineid-class', clone2).attr('id', 'combineid' + SCOUNT);
-      		$('.combineid-class', clone2).val(combineId);
+	        var C_LIST = ComplianceList[ActList[l]];
+	        $.each(C_LIST, function(key, value) {
+			    var compliance_id = value.comp_id;
+			    var compliance_name = value.comp_name
+			    var compliance_description = value.descp;
+			    var applicable_units = value.applicable_units;
+			    var frequency = value.freq;
+			    var statutory_date = value.statu_dates;
+			    var due_date = value.due_date_list;
+			    var summary = value.summary;
+			    var triggerdate = '';
+			    var statutorydate = '';
+			    var elementTriggerdate = '';
+			    var elementDuedate = '';
+			    var due_date_length = 0;
+			    var disp_appl_unit = applicable_units.length + '/' + ACTIVE_UNITS.length;
+			    //var repeats_type = value.repeats_by;
+			    //var repeats_every = value.repeats_every;
 
-		    $('.compliancetask', clone2).text(compliance_name);
-		    $('.desc', clone2).attr('title', compliance_description);
-		    $('.applicableunits', clone2).text(disp_appl_unit);
-		    $('.frequency', clone2).text(frequency);
+			    if (due_date != '' || due_date != null) {
+			        if (due_date.length > 1) {
+			          for (var k = 0; k < due_date.length; k++) {
+			            elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>';
+			          }
+			        } else {
+			          elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="input-box" value="' + due_date[0] + '" style="width:50px;"/>';
+			        }
+			        due_date_length = due_date.length;
+			    }
+			    for (j = 0; j < statutory_date.length; j++) {
+			        var sDay = '';
+			        if (statutory_date[j].statutory_date != null)
+			          sDay = statutory_date[j].statutory_date;
+			        var sMonth = '';
+			        if (statutory_date[j].statutory_month != null)
+			          sMonth = statutory_date[j].statutory_month;
+			        var tDays = '';
+			        if (statutory_date[j].trigger_before_days != null)
+			          tDays = statutory_date[j].trigger_before_days;
+			        if (sMonth != '')
+			          sMonth = getMonth_IntegertoString(sMonth);
+			        if (tDays != '') {
+			          triggerdate += tDays + ' Day(s) ';
+			        }
+			        statutorydate += sMonth + ' ' + sDay + ' ';
+			        if (statutory_date.length > 1) {
+			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+			        } else {
+			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+			        }
+			    }
 
-		    var dispUnit = '';
-		    for (var i = 0; i < applicable_units.length; i++) {
-		        dispUnit = dispUnit + applicable_units[i] + ',';
-		    }
-		    $('.appl_unit', clone2).attr('id', 'appl_unit' + SCOUNT);
-		    $('.appl_unit', clone2).val(dispUnit);
+			    var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length;
+			    var COMPRow = $('#compliances .table-compliances .row-compliances');
+			    var clone2 = COMPRow.clone();
+			    $('.comp-checkbox', clone2).attr('id', 'c-' + SCOUNT);
+	        	$('.comp-checkbox', clone2).val(compliance_id);
+	        	$('.comp-checkbox', clone2).addClass('a-' + (ACOUNT-1));
 
-		    if (summary != null) {
-		        if (statutorydate.trim() != '') {
-		          statutorydate = summary + ' ( ' + statutorydate + ' )';
-		        } else {
-		          statutorydate = summary;
-		        }
-		    }
+	        	$('.comp-checkbox', clone2).on('click', function() {
+		            get_selected_count(this);
+		        });
 
-		    //$('.summary', clone2).text(statutorydate);
-		    $('.summary', clone2).text(summary);
+	        	$('.combineid-class', clone2).attr('id', 'combineid' + SCOUNT);
+	      		$('.combineid-class', clone2).val(combineId);
 
-		    if (frequency != 'On Occurrence') {
-		        if (triggerdate == '') {
-		          $('.trigger', clone2).html(' <input type="text" value="" class="input-box trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
-		          $('.duedate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="duedate' + SCOUNT + '"/>');
-		        } else {
-		          $('.trigger', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/delete.png" width="12"></span>' + triggerdate + '<div class="edittriggertextbox' + SCOUNT + '" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
-		          $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
-		        }
-		    }
-		    if (frequency == 'Periodical' || frequency == 'Review' || frequency == 'Flexi Review') {
-		        $('.vdate', clone2).attr('id', 'validitydate' + SCOUNT);
-		      } else {
-		        $('.validitydate', clone2).html('');
-		    }
+			    $('.compliancetask', clone2).text(compliance_name);
+			    $('.desc', clone2).attr('title', compliance_description);
+			    $('.applicableunits', clone2).text(disp_appl_unit);
+			    $('.frequency', clone2).text(frequency);
 
+			    var dispUnit = '';
+			    for (var i = 0; i < applicable_units.length; i++) {
+			        dispUnit = dispUnit + applicable_units[i] + ',';
+			    }
+			    $('.appl_unit', clone2).attr('id', 'appl_unit' + SCOUNT);
+			    $('.appl_unit', clone2).val(dispUnit);
 
-		    $('#collapse' + (ACOUNT-1) + ' .tbody-compliance-list').append(clone2);
+			    if (summary != null) {
+			        if (statutorydate.trim() != '') {
+			          statutorydate = summary + ' ( ' + statutorydate + ' )';
+			        } else {
+			          statutorydate = summary;
+			        }
+			    }
+			    //$('.summary', clone2).text(statutorydate);
+			    $('.summary', clone2).text(summary);
+
+			    if (frequency != 'On Occurrence') {
+			        if (triggerdate == '') {
+			          $('.trigger', clone2).html(' <input type="text" value="" class="input-box trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
+			          $('.duedate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="duedate' + SCOUNT + '"/>');
+			        } else {
+			          $('.trigger', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/delete.png" width="12"></span>' + triggerdate + '<div class="edittriggertextbox' + SCOUNT + '" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
+			          $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');
+			        }
+			    }
+			    if (frequency == 'Periodical' || frequency == 'Review' || frequency == 'Flexi Review') {
+			        $('.vdate', clone2).attr('id', 'validitydate' + SCOUNT);
+			      } else {
+			        $('.validitydate', clone2).html('');
+			    }
+
+			    $('#collapse' + (ACOUNT-1) + ' .tbody-compliance-list').append(clone2);
 
 		        var duename = SCOUNT;
 			    if (due_date.length > 1) {
@@ -540,18 +580,7 @@ for (var l = 0; l < ActList.length; l++) {
 			            numberOfMonths: 1,
 			            dateFormat: 'dd-M-yy',
 			            monthNames: [
-			              'Jan',
-			              'Feb',
-			              'Mar',
-			              'Apr',
-			              'May',
-			              'Jun',
-			              'Jul',
-			              'Aug',
-			              'Sep',
-			              'Oct',
-			              'Nov',
-			              'Dec'
+			              'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
 			            ]
 			          });
 			        }
@@ -562,18 +591,7 @@ for (var l = 0; l < ActList.length; l++) {
 			          numberOfMonths: 1,
 			          dateFormat: 'dd-M-yy',
 			          monthNames: [
-			            'Jan',
-			            'Feb',
-			            'Mar',
-			            'Apr',
-			            'May',
-			            'Jun',
-			            'Jul',
-			            'Aug',
-			            'Sep',
-			            'Oct',
-			            'Nov',
-			            'Dec'
+			            'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
 			          ]
 			        });
 			    }
@@ -583,273 +601,232 @@ for (var l = 0; l < ActList.length; l++) {
 			        numberOfMonths: 1,
 			        dateFormat: 'dd-M-yy',
 			        monthNames: [
-			          'Jan',
-			          'Feb',
-			          'Mar',
-			          'Apr',
-			          'May',
-			          'Jun',
-			          'Jul',
-			          'Aug',
-			          'Sep',
-			          'Oct',
-			          'Nov',
-			          'Dec'
+			          'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
 			        ]
 			    });
 
-		    $('.edittrigger' + SCOUNT).click(function () {
-		        var text = $(this).attr('class');
-		        var clickvalue = text.substring(text.lastIndexOf('r') + 1);
-		        $('.edittriggertextbox' + clickvalue).show();
-		        $('.closetrigger' + clickvalue).show();
-		        $('.edittrigger' + clickvalue).hide();
-		    });
-		    $('.closetrigger' + SCOUNT).click(function () {
-		        var text = $(this).attr('class');
-		        var clickvalue = text.substring(text.lastIndexOf('r') + 1);
-		        $('.edittriggertextbox' + clickvalue).hide();
-		        $('.edittrigger' + clickvalue).show();
-		        $('.closetrigger' + clickvalue).hide();
-		    });
-		    $('.trigger').on('input', function (e) {
-		        this.value = isNumbers($(this));
-		    });
+			    $('.edittrigger' + SCOUNT).click(function () {
+			        var text = $(this).attr('class');
+			        var clickvalue = text.substring(text.lastIndexOf('r') + 1);
+			        $('.edittriggertextbox' + clickvalue).show();
+			        $('.closetrigger' + clickvalue).show();
+			        $('.edittrigger' + clickvalue).hide();
+			    });
+			    $('.closetrigger' + SCOUNT).click(function () {
+			        var text = $(this).attr('class');
+			        var clickvalue = text.substring(text.lastIndexOf('r') + 1);
+			        $('.edittriggertextbox' + clickvalue).hide();
+			        $('.edittrigger' + clickvalue).show();
+			        $('.closetrigger' + clickvalue).hide();
+			    });
+			    $('.trigger').on('input', function (e) {
+			        this.value = isNumbers($(this));
+			    });
+			    SCOUNT++;
+			});
+	    }
+	}
 
-		    SCOUNT++;
-		});
-
+	if (SCOUNT == 1) {
+        $(".total_count_view").hide();
+    } else {
+        if (totalRecord == (SCOUNT - 1)) {
+            ShowMore.hide();
+        } else {
+            ShowMore.show();
+        }
+        $(".total_count").text('Showing 1 to ' + (SCOUNT - 1) + ' of ' + totalRecord + ' entries');
+        $(".total_count_view").show();
     }
-
-
-}
-
-
+	hideLoader();
 }
 
 //load available user in third wizard
 function loadUser(userType) {
-  var selectedUnit = null;
-  var userClass;
-  var temp_assignee = null;
-  var temp_concurrence = null;
-  var temp_approval = null;
-  var sId = 0;
-  //var temp_id = null;
-  if (userType == 'assignee') {
-    selectedUnit = $('#assignee_unit').val();
-    userClass = 'assigneelist';  /*if($('.assigneelist.active').attr('id') != undefined)
-      temp_id = parseInt($('.assigneelist.active').attr('id'));*/
-  } else if (userType == 'concurrence') {
-    selectedUnit = $('#concurrence_unit').val();
-    userClass = 'concurrencelist';  /*if($('.concurrencelist.active').attr('id') != undefined)
-      temp_id = parseInt($('.concurrencelist.active').attr('id'));*/
-  } else {
-    selectedUnit = $('#approval_unit').val();
-    userClass = 'approvallist';  /*if($('.approvallist.active').attr('id') != undefined)
-      temp_id = parseInt($('.approvallist.active').attr('id'));*/
-  }
-  $('#' + userType).empty();
-  var assigneeUserId = null;
+  	var selectedUnit = null;
+ 	var userClass;
+  	var sId = 0;
+  	if (userType == 'assignee') {
+    	selectedUnit = $('#assignee_unit').val();
+    	userClass = 'assigneelist';
+  	} else if (userType == 'concurrence') {
+    	selectedUnit = $('#concurrence_unit').val();
+    	userClass = 'concurrencelist';
+  	} else {
+    	selectedUnit = $('#approval_unit').val();
+    	userClass = 'approvallist';
+  	}
+  	$('#' + userType).empty();
+  	var assigneeUserId = null;
 
-  if ($('.assigneelist.active').attr('id') != undefined) {
-    var cIds = $('.assigneelist.active').attr('id').split('-');
-    assigneeUserId = parseInt(cIds[0]);
-    if (parseInt(cIds[1]) != 0)
-      sId = cIds[1];
-  }
-  var concurrenceUserId = null;
-  if ($('.concurrencelist.active').attr('id') != undefined) {
-    var cIds = $('.concurrencelist.active').attr('id').split('-');
-    concurrenceUserId = parseInt(cIds[0]);
-    if (parseInt(cIds[1]) != 0)
-      sId = cIds[1];
-  }
-  var approvalUserId = null;
-  if ($('.approvallist.active').attr('id') != undefined) {
-    var cIds = $('.approvallist.active').attr('id').split('-');
-    approvalUserId = parseInt(cIds[0]);
-    if (parseInt(cIds[1]) != 0)
-      sId = cIds[1];
-  }
-  var conditionResult = true;
-  var conditionResult1 = true;
-  /*var userLevel = null;
-  var userLevel1 = null;
-  if (userType == 'assignee' && (concurrenceUserId != null || approvalUserId != null)) {
-    if (concurrenceUserId != null) {
-      userLevel = getUserLevel(concurrenceUserId);
-    } else {
-      userLevel = getUserLevel(approvalUserId);
-    }
-  } else if (userType == 'concurrence' && (assigneeUserId != null || approvalUserId != null)) {
-    if (assigneeUserId != null) {
-      userLevel = getUserLevel(assigneeUserId);
-    }
-    if (approvalUserId != null) {
-      userLevel1 = getUserLevel(approvalUserId);
-    }
-  } else if (userType == 'approval' && (concurrenceUserId != null || assigneeUserId != null)) {
-    if (concurrenceUserId != null) {
-      userLevel = getUserLevel(concurrenceUserId);
-    } else {
-      userLevel = getUserLevel(assigneeUserId);
-    }
-  }*/
-  var str = '';
-  var str1 = '';
-  /*if (userType = 'approval' && selectedUnit != '') {
-    str1 = '<li id="' + client_admin + '-0' + '" class="' + userClass + '" > Client Admin </li>'; 
-  }*/
+	if ($('.assigneelist.active').attr('id') != undefined) {
+	    var cIds = $('.assigneelist.active').attr('id').split('-');
+	    assigneeUserId = parseInt(cIds[0]);
+	    if (parseInt(cIds[1]) != 0)
+	      	sId = cIds[1];
+	}
+	var concurrenceUserId = null;
+	if ($('.concurrencelist.active').attr('id') != undefined) {
+	    var cIds = $('.concurrencelist.active').attr('id').split('-');
+	    concurrenceUserId = parseInt(cIds[0]);
+	    if (parseInt(cIds[1]) != 0)
+	      	sId = cIds[1];
+	}
+	var approvalUserId = null;
+	  	if ($('.approvallist.active').attr('id') != undefined) {
+	    var cIds = $('.approvallist.active').attr('id').split('-');
+	    approvalUserId = parseInt(cIds[0]);
+	    if (parseInt(cIds[1]) != 0)
+	      	sId = cIds[1];
+	}
+  	var conditionResult = true;
+  	var conditionResult1 = true;
+  
+	var str = '';
 
-  for (var user in USERS) {
-    var serviceProviderId = 0;
-    if (USERS[user].sp_id != null) {
-      serviceProviderId = USERS[user].sp_id;
-    }
-    if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
-      var userId = USERS[user].usr_id;
-      var userName = USERS[user].emp_name;
-      /*if (userId == client_admin) {
-        userName = userName + ' (Client Admin)';
-        str1 = '';
-      }*/
-      var combine = userId + '-' + serviceProviderId;
-      var isAssignee = USERS[user].is_assignee;
-      var isConcurrence = USERS[user].is_approver;
-      var isApprover = USERS[user].is_approver;
-      var userPermission;
-      if (userType == 'assignee') {
-        userPermission = isAssignee;
-      } else if (userType == 'concurrence') {
-        userPermission = isConcurrence;
-      } else if (userType == 'approval') {
-        userPermission = isApprover;
-      }
+	for (var user in USERS) {
+	    var serviceProviderId = 0;
+	    if (USERS[user].sp_id != null) {
+	      	serviceProviderId = USERS[user].sp_id;
+	    }
+	    if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
+		    var userId = USERS[user].usr_id;
+		    var userName = USERS[user].emp_name;
+		    var combine = userId + '-' + serviceProviderId;
+		    var isAssignee = USERS[user].is_assignee;
+		    var isConcurrence = USERS[user].is_approver;
+		    var isApprover = USERS[user].is_approver;
+		    var userPermission;
+		    if (userType == 'assignee') {
+		        userPermission = isAssignee;
+		    } else if (userType == 'concurrence') {
+		        userPermission = isConcurrence;
+		    } else if (userType == 'approval') {
+		        userPermission = isApprover;
+		    }
 
-      var concurrenceStatus = true;
-      if(userType == 'concurrence' && USERS[user].usr_cat_id == 1){
-      	concurrenceStatus = false;
-      }
-      if (userPermission && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
-        str += '<li id="' + combine + '" class="' + userClass + '" >' + userName + ' <i></i> </li>';
-      }
-    }
-  }
-  $('#' + userType).append(str1 + str);
+		    var concurrenceStatus = true;
+		    if(userType == 'concurrence' && USERS[user].usr_cat_id == 1){
+		      	concurrenceStatus = false;
+		    }
+		    if (userPermission && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
+		      	str += '<li id="' + combine + '" class="' + userClass + '" >' + userName + ' <i></i> </li>';
+		    }
+	    }
+	}
+	$('#' + userType).append(str);
 }
 
 $('#assignee_unit').change(function () {
-  loadUser('assignee');
+  	loadUser('assignee');
 });
 
 $('#concurrence_unit').change(function () {
-  var assigneeSelectedId = '';
-  if ($('.assigneelist.active').attr('id') != undefined) {
-    assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
-  }
-  loadUser('concurrence');
-  
-});
-$('#approval_unit').change(function () {
-  var assigneeSelectedId = '';
-  if ($('.assigneelist.active').attr('id') != undefined) {
-    assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
-  }
-  loadUser('approval');
+  	var assigneeSelectedId = '';
+  	if ($('.assigneelist.active').attr('id') != undefined) {
+    	assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
+  	}
+  	loadUser('concurrence');
 });
 
+$('#approval_unit').change(function () {
+  	var assigneeSelectedId = '';
+  	if ($('.assigneelist.active').attr('id') != undefined) {
+    	assigneeSelectedId = $('.assigneelist.active').attr('id').split('-')[0];
+  	}
+  	loadUser('approval');
+});
 
 $('#assignee').click(function (event) {
-  var chkstatus = $(event.target).attr('class');
-  if (chkstatus != undefined) {
-    if (chkstatus == 'assigneelist active') {
-      $(event.target).removeClass('active');
-      $(event.target).find('i').removeClass('fa fa-check pull-right');
-    } else {
-      $('.assigneelist').each(function (index, el) {
-        $(el).removeClass('active');
-        $(el).find('i').removeClass('fa fa-check pull-right');
-      });
-      $(event.target).addClass('active');
-      $(event.target).find('i').addClass('fa fa-check pull-right');
-    }
-  }
+  	var chkstatus = $(event.target).attr('class');
+  	if (chkstatus != undefined) {
+    	if (chkstatus == 'assigneelist active') {
+      		$(event.target).removeClass('active');
+      		$(event.target).find('i').removeClass('fa fa-check pull-right');
+    	} else {
+      		$('.assigneelist').each(function (index, el) {
+        		$(el).removeClass('active');
+        		$(el).find('i').removeClass('fa fa-check pull-right');
+      		});
+      		$(event.target).addClass('active');
+      		$(event.target).find('i').addClass('fa fa-check pull-right');
+    	}
+  	}
 });
+
 $('#concurrence').click(function (event) {
-  var chkstatus = $(event.target).attr('class');
-  if (chkstatus != undefined) {
-    if (chkstatus == 'concurrencelist active') {
-      $(event.target).removeClass('active');
-      $(event.target).find('i').removeClass('fa fa-check pull-right');
-    } else {
-      $('.concurrencelist').each(function (index, el) {
-        $(el).removeClass('active');
-        $(el).find('i').removeClass('fa fa-check pull-right');
-      });
-      $(event.target).addClass('active');
-      $(event.target).find('i').addClass('fa fa-check pull-right');
+  	var chkstatus = $(event.target).attr('class');
+  	if (chkstatus != undefined) {
+    	if (chkstatus == 'concurrencelist active') {
+      		$(event.target).removeClass('active');
+      		$(event.target).find('i').removeClass('fa fa-check pull-right');
+    	} else {
+      		$('.concurrencelist').each(function (index, el) {
+        	$(el).removeClass('active');
+        	$(el).find('i').removeClass('fa fa-check pull-right');
+      	});
+      	$(event.target).addClass('active');
+      	$(event.target).find('i').addClass('fa fa-check pull-right');
     }
- 
     loadUser('approval');
   }
 });
+
 $('#approval').click(function (event) {
-  var chkstatus = $(event.target).attr('class');
-  if (chkstatus != undefined) {
-    if (chkstatus == 'approvallist active') {
-      $(event.target).removeClass('active');
-      $(event.target).find('i').removeClass('fa fa-check pull-right');
-    } else {
-      $('.approvallist').each(function (index, el) {
-        $(el).removeClass('active');
-        $(el).find('i').removeClass('fa fa-check pull-right');
-      });
-      $(event.target).addClass('active');
-      $(event.target).find('i').addClass('fa fa-check pull-right');
-    }  
-  }
+  	var chkstatus = $(event.target).attr('class');
+  	if (chkstatus != undefined) {
+    	if (chkstatus == 'approvallist active') {
+      		$(event.target).removeClass('active');
+      		$(event.target).find('i').removeClass('fa fa-check pull-right');
+    	} else {
+      		$('.approvallist').each(function (index, el) {
+	        	$(el).removeClass('active');
+	        	$(el).find('i').removeClass('fa fa-check pull-right');
+	      	});
+	      	$(event.target).addClass('active');
+	      	$(event.target).find('i').addClass('fa fa-check pull-right');
+    	}  
+  	}
 });
 
 function loadSeatingUnits(){
-  $('#assignee_unit').empty();
-  $('#assignee_unit').append('<option value=""> Select </option>');
-  $('#assignee_unit').append('<option value="all"> All </option>');
-  $.each(ASSIGNEE_SU, function (key, value) {
-    var option = $('<option></option>');
-    option.val(key);
-    option.text(value);
-    $('#assignee_unit').append(option);
-  });
-  $('#concurrence_unit').empty();
-  $('#concurrence_unit').append('<option value=""> Select </option>');
-  $('#concurrence_unit').append('<option value="all"> All </option>');
-  $.each(APPROVER_SU, function (key, value) {
-    var option = $('<option></option>');
-    option.val(key);
-    option.text(value);
-    $('#concurrence_unit').append(option);
-  });
-  $('#approval_unit').empty();
-  $('#approval_unit').append('<option value=""> Select </option>');
-  $('#approval_unit').append('<option value="all"> All </option>');
-  $.each(APPROVER_SU, function (key, value) {
-    var option = $('<option></option>');
-    option.val(key);
-    option.text(value);
-    $('#approval_unit').append(option);
-  });
+	$('#assignee_unit').empty();
+	$('#assignee_unit').append('<option value=""> Select </option>');
+	$('#assignee_unit').append('<option value="all"> All </option>');
+	$.each(ASSIGNEE_SU, function (key, value) {
+	    var option = $('<option></option>');
+	    option.val(key);
+	    option.text(value);
+	    $('#assignee_unit').append(option);
+	});
+	$('#concurrence_unit').empty();
+	$('#concurrence_unit').append('<option value=""> Select </option>');
+	$('#concurrence_unit').append('<option value="all"> All </option>');
+	$.each(APPROVER_SU, function (key, value) {
+	    var option = $('<option></option>');
+	    option.val(key);
+	    option.text(value);
+	    $('#concurrence_unit').append(option);
+	});
+	$('#approval_unit').empty();
+	$('#approval_unit').append('<option value=""> Select </option>');
+	$('#approval_unit').append('<option value="all"> All </option>');
+	$.each(APPROVER_SU, function (key, value) {
+	    var option = $('<option></option>');
+	    option.val(key);
+	    option.text(value);
+	    $('#approval_unit').append(option);
+	});
 
-  /*if (two_level_approve) {
-    $('.c-view').show();
-  } else {
-    $('.c-view').hide();
-  }*/
+	/*if (two_level_approve) {
+	    $('.c-view').show();
+	  } else {
+	    $('.c-view').hide();
+	}*/
 }
 
 function showTab() {
     hideall = function() {
-        // $('.setup-panel li').addClass('disabled');
         $('.statutory_mapping_tab li').removeClass('active');
         $('.tab-pane').removeClass('active in');
         $('#tab1').hide();
@@ -860,7 +837,6 @@ function showTab() {
         NextButton.hide();
         PreviousButton.hide();
     }
-
     enabletabevent = function(tab) {
         if (tab == 1) {
             $('.tab-step-1 a').attr('href', '#tab1');
@@ -893,32 +869,19 @@ function showTab() {
             var le_id = LEList.find("li.active").attr("id");
         	var d_id = DomainList.find("li.active").attr("id");
 
-            client_mirror.getAssignComplianceForUnits(
-                parseInt(le_id), ACTIVE_UNITS, parseInt(d_id), 0, ACTIVE_FREQUENCY, 
+            client_mirror.getComplianceTotalToAssign(
+                parseInt(le_id), ACTIVE_UNITS, parseInt(d_id),
                 function(error, data) {
                     if (error == null) {
-                    	ComplianceList = data.assign_statutory;
-                    	ActList = data.level_one_name;
-                    	loadCompliances();
-                        /*totalRecord = data.total_records;
-                        if (data.unit_total > 5000 && ACTIVE_UNITS.length > 1) {
-                            displayMessage(message.maximum_compliance_selection_reached);
-                            hideLoader();
-                            CURRENT_TAB -= 1;
-                            return false;
-                        } else {
-                            callAPI(API_Wizard2);
-                            hideall();
-                            enabletabevent(2);
-                            $('.tab-step-2').addClass('active')
-                            $('#tab2').addClass('active in');
-                            $('#tab2').show();
-                            SubmitButton.show();
-                            PreviousButton.show();
-                            SaveButton.show();
-                            ShowMore.show();
-                            showBreadCrumbText();
-                        }*/
+                    	totalRecord = data.r_count;
+                    	callAPI(GET_COMPLIANCE);
+                        hideall();
+                        enabletabevent(2);
+                        $('.tab-step-2').addClass('active')
+                        $('#tab2').addClass('active in');
+                        $('#tab2').show();
+                        PreviousButton.show();
+                        NextButton.show();
                     } else {
                         displayMessage(error);
                         hideLoader();
@@ -933,12 +896,12 @@ function showTab() {
             CURRENT_TAB -= 1;
             return false;
         } else {
+
             displayLoader();
             var le_id = LEList.find("li.active").attr("id");
         	var d_id = DomainList.find("li.active").attr("id");
-
             client_mirror.getUserToAssignCompliance(
-                parseInt(d_id), ACTIVE_UNITS,  parseInt(le_id), 
+                parseInt(d_id), ACTIVE_UNITS, parseInt(le_id), 
                 function(error, data) {
                     if (error == null) {
                     	two_level_approve = data.t_l_approve;
@@ -954,28 +917,15 @@ function showTab() {
 					    });
 					    loadSeatingUnits();
 
-             			//ComplianceList = data.assign_statutory;
-                    	//ActList = data.level_one_name;
-                    	//loadCompliances();
-                        /*totalRecord = data.total_records;
-                        if (data.unit_total > 5000 && ACTIVE_UNITS.length > 1) {
-                            displayMessage(message.maximum_compliance_selection_reached);
-                            hideLoader();
-                            CURRENT_TAB -= 1;
-                            return false;
-                        } else {
-                            callAPI(API_Wizard2);
-                            hideall();
-                            enabletabevent(2);
-                            $('.tab-step-2').addClass('active')
-                            $('#tab2').addClass('active in');
-                            $('#tab2').show();
-                            SubmitButton.show();
-                            PreviousButton.show();
-                            SaveButton.show();
-                            ShowMore.show();
-                            showBreadCrumbText();
-                        }*/
+					    hideall();
+                        enabletabevent(3);
+                        $('.tab-step-3').addClass('active')
+                        $('#tab3').addClass('active in');
+                        $('#tab3').show();
+                        PreviousButton.show();
+                        NextButton.hide();
+                        SubmitButton.show();
+
                     } else {
                         displayMessage(error);
                         hideLoader();
@@ -988,28 +938,7 @@ function showTab() {
     }
 };
 
-function pageControls(){
-	NextButton.click(function() {
-        //$('.tbody-compliance-list').empty();
-        CURRENT_TAB += 1;
-        showTab();
-    });
-    PreviousButton.click(function() {
-        $(".total_count_view").hide();
-        CURRENT_TAB = CURRENT_TAB - 1;
-        showTab();
-    });
-    ShowMore.click(function() {
-        callAPI(API_Wizard2);
-    });
-    SubmitButton.click(function() {
-        displayLoader();
-        setTimeout(function() {
-            callAPI(SUBMIT_API)
-        }, 500);
-    });
 
-}
 //clear list values
 function clearValues(levelvalue) {
   if (levelvalue == 'legalentity') {
@@ -1023,9 +952,6 @@ function clearValues(levelvalue) {
   }
   else if (levelvalue == 'division') {	
     CategoryList.empty();
-    /*DomainList.empty();
-    UnitList.empty();
-    FrequencyList.empty();*/
   }
   else if (levelvalue == 'domain') {
   	ACTIVE_UNITS = [];
@@ -1084,7 +1010,7 @@ function activateMultiList(element, levelvalue) {
         $(element).addClass('active');
         $(element).find('i').addClass('fa fa-check pull-right');
 
-        if (ACTIVE_UNITS.length >= 20) {
+        if (ACTIVE_UNITS.length >= mUnit) {
             displayMessage(message.maximum_units);
             return false;
         }else{
@@ -1193,25 +1119,51 @@ function loadFrequency(){
 	$.each(FREQUENCY, function(key, value) {
         id = value.frequency_id;
         text = value.frequency;
-
-    	var clone = ULRow.clone();
-        clone.html(text + '<i></i>');
-        clone.attr('id', id);
-        FrequencyList.append(clone);
-        clone.click(function() {
-            activateMultiList(this, 'frequency');
-        });
+        if(ACTIVE_UNITS.length == 1 || (id != 3 && id !=4) ){
+        	var clone = ULRow.clone();
+	        clone.html(text + '<i></i>');
+	        clone.attr('id', id);
+	        FrequencyList.append(clone);
+	        clone.click(function() {
+	            activateMultiList(this, 'frequency');
+	        });
+	    }
     });
 }
 
+function pageControls(){
+	NextButton.click(function() {
+        //$('.tbody-compliance-list').empty();
+        CURRENT_TAB += 1;
+        showTab();
+    });
+    PreviousButton.click(function() {
+        $(".total_count_view").hide();
+        CURRENT_TAB = CURRENT_TAB - 1;
+        showTab();
+    });
+    ShowMore.click(function() {
+        callAPI(GET_COMPLIANCE);
+    });
+    SubmitButton.click(function() {
+        displayLoader();
+        setTimeout(function() {
+            callAPI(SUBMIT_API)
+        }, 500);
+    });
+
+}
+
+
+
 function initialize() {
+	showTab();
 	LEList.empty();
+	clearValues('legalentity')
 	LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 	callAPI(WIZARD_ONE_FILTER);
-	
-
     pageControls();
-    
+    hideLoader();
 }
 
 $(function() {

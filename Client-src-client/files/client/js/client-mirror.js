@@ -1475,6 +1475,18 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getComplianceTotalToAssign(legalEntityId, unitIds, domainId, callback) {
+        var request = [
+            'GetComplianceTotalToAssign', {
+                'le_id': legalEntityId,
+                'u_ids': unitIds,
+                'd_id': domainId
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     function getUserToAssignCompliance(domainId, unitIds, legalEntityId, callback) {
         var request = [
             'GetUserToAssignCompliance', {
@@ -2562,6 +2574,7 @@ function initClientMirror() {
         getAssignComplianceFormData: getAssignComplianceFormData,
         getAssignComplianceUnits: getAssignComplianceUnits,
         getAssignComplianceForUnits: getAssignComplianceForUnits,
+        getComplianceTotalToAssign: getComplianceTotalToAssign,
         getUserToAssignCompliance: getUserToAssignCompliance,
         statutoryDates: statutoryDates,
         assignCompliances: assignCompliances,
