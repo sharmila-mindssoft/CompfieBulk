@@ -126,7 +126,7 @@ function callAPI(api_type) {
         });
     } else if (api_type == API_Wizard1) {
         displayLoader();
-        client_mirror.getStatutorySettingsCompliance(parseInt(LegalEntityId.val()), ACTIVE_UNITS, 0, DOMAIN_ID, function(error, data) {
+        client_mirror.getStatutorySettingsCompliance(parseInt(LegalEntityId.val()), ACTIVE_UNITS, (sno - 1), DOMAIN_ID, function(error, data) {
             if (error == null) {
                 COMPLIANCES_LIST = data.applicable_statu;
                 totalRecord = data.r_count;
