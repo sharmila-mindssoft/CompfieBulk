@@ -802,6 +802,7 @@ def get_reassignedhistory_report(db, request, session_user, session_category):
 # Status Report Consolidated Report Start
 def get_status_report_consolidated_filters(db, request, session_user, session_category):
     domain_list = get_domains_for_user(db, session_user, session_category)
+    
     unit_list = get_units_for_user(db, session_user)
     acts_list = get_acts_for_user(db, session_user)
     compliances_list = get_client_compliances(db, session_user)

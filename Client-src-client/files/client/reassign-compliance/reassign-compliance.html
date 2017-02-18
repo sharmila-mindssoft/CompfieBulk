@@ -21,46 +21,80 @@
 					
                 <div id="bg-primary1" class="panel-collapse collapse in">
                     <div class="portlet-body">
-                    <form class="form-horizontal group-border-dashed" action="#" novalidate="">
-                    <div class="col-sm-4">
-                        <div class="form-group has-feedback">
-                            <label class="col-sm-3 control-label" for="example-input-small">User <span class="mandatory">*</span></label>
-                            <div class="col-sm-8">
-                                <input class="form-control input-sm" value="EMP1008 - Vishnu" type="text">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group has-feedback">
-                            <label class="col-sm-3 control-label" for="example-input-small">Unit</label>
-                            <div class="col-sm-8">
-                                <input class="form-control input-sm" placeholder="Enter Unit Name" type="text">
-                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label" for="example-input-small">User Type</label>
-                            <div class="col-sm-8 controls">
-                                <select class="form-control input-sm">
-                                  <option selected="selected">All</option>
-                                  <option>Assignee</option>
-                                  <option>Concurrence</option>
-                                  <option>Approver</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div class="clear"></div>
-                    <center>
-                        <div class="form-group">
-                            <button class="btn btn-primary waves-effect waves-light" type="button"> Show </button>
-                        </div>
-                    </center>
-                    </form>
+                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+	                        <div class="col-lg-6">
+	                        	<div class="form-group has-feedback">
+		                            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Legal Entity:<span class="mandatory">*</span></label>
+		                            <div class="col-sm-6 controls">
+		                                <p class="form-control-static legal-entity-name default-display-none"></p>
+		                                <div class="legal-entity-name-ac default-display-none">
+		                                    <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1">
+		                                    <i class="form-control-feedback fa fa-search"></i>
+		                                    <input type="hidden" id="legal_entity_id" value="">
+		                                    <div id="ac-entity" class="ac-textbox default-display-none">
+		                                        <ul class="width85Percent"></ul>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+	                       
+	                            <div class="form-group has-feedback">
+	                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Domain:<span class="mandatory">*</span> </label>
+	                                <div class="col-sm-6 controls">
+                                        <input class="form-control input-sm" type="text" id="domain_name" tabindex="2">
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="domain_id">
+                                        <div id="ac-domain" class="ac-textbox default-display-none">
+                                            <ul class="width85Percent"></ul>
+                                        </div>
+	                                </div>
+	                            </div>
+
+	                            <div class="form-group has-feedback">
+	                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">User:<span class="mandatory">*</span> </label>
+	                                <div class="col-sm-6 controls">
+	                                    <input class="form-control input-sm" type="text" id="user_name" tabindex="3">
+	                                    <i class="form-control-feedback fa fa-search"></i>
+	                                    <input type="hidden" id="user_id">
+	                                    <div id="ac-user" class="ac-textbox default-display-none">
+	                                        <ul class="width85Percent"></ul>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="col-lg-6">
+	                        	<div class="form-group">
+		                            <label class="col-sm-4 control-label" for="example-input-small">User Type: </label>
+		                            <div class="col-sm-6 controls">
+		                                <select class="form-control input-sm" tabindex="4">
+		                                  <option selected="selected">All</option>
+		                                  <option>Assignee</option>
+		                                  <option>Concurrence</option>
+		                                  <option>Approver</option>
+		                                </select>
+		                            </div>
+		                        </div>
+
+		                        <div class="form-group has-feedback">
+	                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Unit: </label>
+	                                <div class="col-sm-6 controls">
+	                                    <input class="form-control input-sm" type="text" id="unit_name" tabindex="5">
+	                                    <i class="form-control-feedback fa fa-search"></i>
+	                                    <input type="hidden" id="unit_id">
+	                                    <div id="ac-unit" class="ac-textbox default-display-none">
+	                                        <ul class="width85Percent"></ul>
+	                                    </div>
+	                                </div>
+	                            </div>  
+		                    </div>
+	                     <center>
+	                        <div class="form-group">
+	                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
+	                        </div>
+	                    </center>
+	                </div>
+
                     <div class="table-responsive">
                     <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%" cellspacing="0">
                         <thead>
@@ -156,4 +190,5 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="/script/reassign-compliance/reassign-compliance.js"></script>
 {% endblock %}

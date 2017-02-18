@@ -2541,6 +2541,17 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    // Reassign Compliance Filter Start
+    function getReassignComplianceFilters(le_id, callback) {
+        var request = [
+            'GetReassignComplianceFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2709,6 +2720,7 @@ function initClientMirror() {
         getLoginTraceReportData: getLoginTraceReportData,
         getUserProfile: getUserProfile,
         updateUserProfile: updateUserProfile,
+        getReassignComplianceFilters: getReassignComplianceFilters,
     };
 }
 
