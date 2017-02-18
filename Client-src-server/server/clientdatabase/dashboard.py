@@ -1613,8 +1613,7 @@ def get_not_complied_chart(db, request, session_user):
     param.extend(where_qry_val)
 
     order = "ORDER BY T1.due_date "
-    print query
-    print param
+
     rows = db.select_all("%s %s" % (query, order), param)
     not_complied = rows
     current_date = datetime.datetime.today()
