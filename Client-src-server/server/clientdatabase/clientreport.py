@@ -1,9 +1,11 @@
+import os
 import datetime
 from server.clientdatabase.tables import *
 from clientprotocol import (
     clientcore, clientreport, clientmasters
 )
 import json
+# from server.constants import (CLIENT_LOGO_PATH)
 from server.common import (
     datetime_to_string_time, string_to_datetime, datetime_to_string,
     convert_to_dict, get_date_time_in_date
@@ -16,6 +18,9 @@ from server.clientdatabase.general import (
 )
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
+ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
+CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
+
 __all__ = [
     "report_unitwise_compliance",
     "return_unitwise_report",
@@ -2771,7 +2776,9 @@ def process_legal_entity_wise_report(db, request):
         "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-        "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size "
+        "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
+        "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
         "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -2821,19 +2828,19 @@ def process_legal_entity_wise_report(db, request):
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on < " + \
+        where_clause = where_clause + " and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -2910,12 +2917,23 @@ def process_legal_entity_wise_report(db, request):
         else:
             url = None
 
+        logo = row["logo"]
+        logo_size = row["logo_size"]
+        if logo_size is not None:
+            logo_size = int(logo_size)
+        if logo:
+            logo_url = "%s/%s" % (
+                CLIENT_LOGO_PATH, logo
+            )
+        else:
+            logo_url = None
+
         le_report.append(clientreport.LegalEntityWiseReport(
             row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
             row["compliance_id"], row["unit_name"], statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_date"]), name,
-            datetime_to_string(row["completion_date"]), url
+            datetime_to_string(row["completion_date"]), url, logo_url
         ))
     return le_report
 
@@ -2955,7 +2973,9 @@ def process_domain_wise_report(db, request):
         "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-        "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size "
+        "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
+        "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
         "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -3005,19 +3025,19 @@ def process_domain_wise_report(db, request):
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on < " + \
+        where_clause = where_clause + " and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3094,12 +3114,23 @@ def process_domain_wise_report(db, request):
         else:
             url = None
 
+        logo = row["logo"]
+        logo_size = row["logo_size"]
+        if logo_size is not None:
+            logo_size = int(logo_size)
+        if logo:
+            logo_url = "%s/%s" % (
+                CLIENT_LOGO_PATH, logo
+            )
+        else:
+            logo_url = None
+
         le_report.append(clientreport.LegalEntityWiseReport(
             row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
             row["compliance_id"], row["unit_name"], statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_date"]), name,
-            datetime_to_string(row["completion_date"]), url
+            datetime_to_string(row["completion_date"]), url, logo_url
         ))
     return le_report
 
@@ -3116,7 +3147,7 @@ def process_unit_wise_report(db, request):
     from_clause = None
     country_id = request.country_id
     legal_entity_id = request.legal_entity_id
-    domain_id = request.domain_id
+    domain_id = request.d_id_optional
 
     stat_map = request.statutory_mapping
 
@@ -3139,7 +3170,9 @@ def process_unit_wise_report(db, request):
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
         "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
-        "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name "
+        "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
+        "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
         "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -3193,20 +3226,22 @@ def process_unit_wise_report(db, request):
 
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
+        print due_from
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        print due_to
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on < " + \
+        where_clause = where_clause + " and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3278,12 +3313,23 @@ def process_unit_wise_report(db, request):
         else:
             url = None
 
+        logo = row["logo"]
+        logo_size = row["logo_size"]
+        if logo_size is not None:
+            logo_size = int(logo_size)
+        if logo:
+            logo_url = "%s/%s" % (
+                CLIENT_LOGO_PATH, logo
+            )
+        else:
+            logo_url = None
+
         unit_report.append(clientreport.UnitWiseReport(
             row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
             row["compliance_id"], row["unit_name"], statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_date"]), name,
-            datetime_to_string(row["completion_date"]), url, row["domain_name"]
+            datetime_to_string(row["completion_date"]), url, row["domain_name"], logo_url
         ))
     return unit_report
 
@@ -3425,7 +3471,9 @@ def process_service_provider_wise_report(db , request):
         "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-        "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size "
+        "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
+        "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
         "on (t1.completed_by=t4.user_id or t1.concurred_by=t4.user_id or t1.approved_by=t4.user_id) " + \
         "left join tbl_compliance_activity_log as t2 " + \
@@ -3450,19 +3498,19 @@ def process_service_provider_wise_report(db , request):
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on < " + \
+        where_clause = where_clause + " and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3545,12 +3593,23 @@ def process_service_provider_wise_report(db , request):
         else:
             url = None
 
+        logo = row["logo"]
+        logo_size = row["logo_size"]
+        if logo_size is not None:
+            logo_size = int(logo_size)
+        if logo:
+            logo_url = "%s/%s" % (
+                CLIENT_LOGO_PATH, logo
+            )
+        else:
+            logo_url = None
+
         sp_report.append(clientreport.LegalEntityWiseReport(
             row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
             row["compliance_id"], row["unit_name"], statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_date"]), name,
-            datetime_to_string(row["completion_date"]), url
+            datetime_to_string(row["completion_date"]), url, logo_url
         ))
     return sp_report
 
@@ -3680,7 +3739,9 @@ def process_user_wise_report(db, request):
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
         "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
-        "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name "
+        "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
+        "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
         "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
         "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -3727,19 +3788,19 @@ def process_user_wise_report(db, request):
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
-        where_clause = where_clause + " and t3.created_on between " + \
+        where_clause = where_clause + " and t1.due_date between " + \
             " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
             " DATE_ADD(curdate(), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t3.created_on < " + \
+        where_clause = where_clause + " and t1.due_date < " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_to)
 
@@ -3816,12 +3877,23 @@ def process_user_wise_report(db, request):
         else:
             url = None
 
+        logo = row["logo"]
+        logo_size = row["logo_size"]
+        if logo_size is not None:
+            logo_size = int(logo_size)
+        if logo:
+            logo_url = "%s/%s" % (
+                CLIENT_LOGO_PATH, logo
+            )
+        else:
+            logo_url = None
+
         user_report.append(clientreport.UnitWiseReport(
             row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
             row["compliance_id"], row["unit_name"], statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
             activity_status, datetime_to_string(row["activity_date"]), name,
-            datetime_to_string(row["completion_date"]), url, row["domain_name"]
+            datetime_to_string(row["completion_date"]), url, row["domain_name"], logo_url
         ))
     return user_report
 
@@ -3953,7 +4025,9 @@ def process_unit_list_report(db, request):
         "t1.geography_name, t1.is_closed, t1.closed_on, t1.division_id, t1.category_id, (select  " + \
         "division_name from tbl_divisions where division_id = t1.division_id) as division_name, " + \
         "(select category_name from tbl_categories where category_id = t1.category_id) as " + \
-        "category_name from tbl_units as t1 where "
+        "category_name, (select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+        "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size " + \
+        "from tbl_units as t1 where "
     where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
     condition_val.extend([legal_entity_id, country_id])
 
@@ -4055,6 +4129,18 @@ def process_unit_list_report(db, request):
             closed_date = datetime_to_string(row["closed_on"])
         else:
             closed_date = None
+
+        logo = row["logo"]
+        logo_size = row["logo_size"]
+        if logo_size is not None:
+            logo_size = int(logo_size)
+        if logo:
+            logo_url = "%s/%s" % (
+                CLIENT_LOGO_PATH, logo
+            )
+        else:
+            logo_url = None
+
         last = object()
         for row_1 in result_1:
             if unit_id == row_1["unit_id"]:
@@ -4063,7 +4149,7 @@ def process_unit_list_report(db, request):
                     d_i_names.append(row_1["domain_name"]+" - "+row_1["organisation_name"])
         unit_report.append(clientreport.UnitListReport(
             unit_id, unit_code, unit_name, geography_name, address, postal_code,
-            d_i_names, unit_status, closed_date, division_name
+            d_i_names, unit_status, closed_date, division_name, logo_url
         ))
     return unit_report
 
@@ -4153,7 +4239,9 @@ def process_audit_trail_report(db, request):
 
     select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
         "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
-        "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+        "= t1.user_id) as user_name, (select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) " + \
+        "as logo, (select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size " + \
+        "from tbl_activity_log as t1 where "
     where_clause = "t1.form_id <> 0 and t1.legal_entity_id = %s "
     condition_val.append(legal_entity_id)
 
@@ -4190,8 +4278,19 @@ def process_audit_trail_report(db, request):
     result = db.select_all(query, condition_val)
     activity_list = []
     for row in result:
+        logo = row["logo"]
+        logo_size = row["logo_size"]
+        if logo_size is not None:
+            logo_size = int(logo_size)
+        if logo:
+            logo_url = "%s/%s" % (
+                CLIENT_LOGO_PATH, logo
+            )
+        else:
+            logo_url = None
+
         activity_list.append(clientreport.AuditTrailActivities(
             row["user_id"], row["user_name"], row["form_id"],
-            row["action"], datetime_to_string_time(row["created_on"])
+            row["action"], datetime_to_string_time(row["created_on"]), logo_url
         ))
     return activity_list
