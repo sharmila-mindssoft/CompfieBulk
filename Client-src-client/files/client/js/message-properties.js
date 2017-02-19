@@ -1,12 +1,12 @@
 var message = {
-  //Common 
+  //Common
   "save_success" : "Record Saved Successfully",
   "update_success" : "Record Updated Successfully",
   'enter_password': 'Please Enter password',
   'enter_correct_password': 'Enter Correct password',
   "password_required": "Password Required",
   'invalid_password': 'Invalid Password',
-  
+
   //User Privileges
   'usergroupname_required': 'User Group Name Required',
   'usergroupname_max': 'User Group Name is maximum 50 characters Allowed',
@@ -15,6 +15,8 @@ var message = {
 
   'invalid_usergroupid': 'Invalid User Group Id',
   'form_name_required' : 'Select atleast one form from list',
+  'form_max': 'Form is maximum 50 characters Allowed',
+  'form_str' : 'Form Not Valid Characters',
 
   'country_required': 'Country Required',
   'country_max': 'Country is maximum 50 characters Allowed',
@@ -35,6 +37,9 @@ var message = {
   'category_required' : 'Category Name Required',
   'category_max': 'Category is maximum 50 characters Allowed',
   'category_str' : 'Category Not Valid Characters',
+
+  'orgtype_max': 'Organization type is maximum 50 characters Allowed',
+  'orgtype_str' : 'Organization type Not Valid Characters',
 
   'domain_required': 'Domain Required',
   'domain_max': 'Domain is maximum 50 characters Allowed',
@@ -74,7 +79,7 @@ var message = {
   'emailid_required': 'Email Id Required',
   'usergroup_required': 'User Group Required',
   'invalid_emailid': 'Invalid Email ID',
-  
+
 
   'emailid_exists': 'Email Id Already Exists',
   'contactno_exists': 'Contact Number Already Exists',
@@ -109,7 +114,7 @@ var message = {
   'nostatutory_selected': 'No statutory is selected',
   'statutory_already_added': 'This statutory already added in list',
   'statutoryprovision_required': 'Statutory Provision Required',
-  
+
   'compliancedescription_required': 'Compliance Description Required',
   'compliancefrequency_required': 'Compliance Frequency Required',
   'repeatstype_required': 'Repeats Type Required',
@@ -140,17 +145,17 @@ var message = {
   'mapping_update_success': 'Statutory mapping updated successfully',
   'action_selection_success': 'Selected action has been saved successfully',
   'group_required': 'Group Required',
-  
+
   'le_50': 'Legal Entity : Not Allowed More than 50 Characters.',
-  
-  
+
+
   'geographylevel_required': 'Geography Level Required',
   'location_required': 'Location Required',
-  
+
   'act_remarks_required': 'Remarks required for not applicable act',
   'act_remarks_opted_required': 'Remarks required for not opted act',
   'compliance_remarks_opted_required': 'Remarks required for not opted compliance',
-  
+
   'assignee_required': 'Assignee Required',
   'concurrence_required': 'Concurrence Required',
   'approval_required': 'Approval Required',
@@ -163,7 +168,7 @@ var message = {
   'duedate_required': 'Due Date Required',
   'compliancedate_required': 'Compliance Date Required',
   'validity_required': 'Validity Date Required',
-  
+
   'approval_level': 'Level of Approval is Required',
   'reminder_assignee_required': 'Reminder to Assignee is Required',
   'escalationreminder_concurrence_approval_required': 'Escalation Reminders to Concurrence & Approval Person is Required',
@@ -212,7 +217,7 @@ var message = {
   'unitname_required': 'Unit Name Required',
   'unitaddress_required': 'Unit Address Required',
   'unitpostal_required': 'Unit Postal Code Required',
-  'spname_required': 'Enter Service Provider Name ',
+  'spname_required': 'Service Provider Name Required',
   'spname_max50': 'Service Provider Name is maximum 50 characters Allowed',
   'contactpersonname_required': 'Enter Contact Person Name',
   'contactpersonname_max50': 'Contact Person Name is maximum 50 characters Allowed',
@@ -227,14 +232,14 @@ var message = {
   'seatingunit_required': 'Seating Unit Required',
   'employeecode_required': 'Employee Code Required',
 
-  
+
 
   'userlevel_required': 'User Level Required',
   'usertype_required': 'User Type Required',
   'add_one_form': 'Select atleast one form from list',
   'cannot_deactivate_usergroup': 'User(s) Exists. Cannot Deactivate User group.',
-  
-  
+
+
   'action_required': 'Action Required',
   'validitydate_required': 'Validity Date Required',
   'nextduedate_required': 'Next Due Date Required',
@@ -323,7 +328,7 @@ var message = {
   "group_approve_success": "Client group approved successfully",
   "country_or_group_required": "Country or group required",
   "db_server_save_success": "Database server saved successfully",
-  
+
   "port_required": "Port Required",
   "ip_required": "IP Required",
   "db_server_name_required": "DB Server name required",
@@ -361,12 +366,12 @@ var message = {
   "unit_updated": "Units(s) Updated Successfully",
   "no_legal_entity_selected" : "Select atleast one legal entity",
   "no_user_selected" : "No user selected for assign",
-  
+
   'user_category_required': 'User Category Required',
   "resend": 'Resend Email Successfully',
   'mobile_required': 'Mobile Number Required',
   'catgname_required': 'Category Name Required',
-  
+
   "status_success": "Status Changed Successfully",
   "statutory_mapping_approve_success": "Statutory Mapping approved successfully",
   "atleast_one_compliance_select": "Atleast one compliance should be select",
