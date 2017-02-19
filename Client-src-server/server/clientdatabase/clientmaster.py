@@ -1404,22 +1404,30 @@ def get_service_provider_details_report_data(db, request):
     select_qry = "select t1.service_provider_id, t1.short_name, t1.service_provider_name, " + \
         "t1.contact_no, t1.email_id, t1.address, t1.contract_from, t1.contract_to, t1.is_active, " + \
         "t1.status_changed_on, t1.is_blocked, t1.blocked_on from tbl_service_providers as t1 "
-
+    where_1 = None
+    where_2 = None
     if (int(sp_id) > 0 or s_p_status != "All"):
         where_clause = "where "
         if int(sp_id) > 0:
-            where_clause = where_clause + "t1.service_provider_id = %s "
+            where_1 = "t1.service_provider_id = %s "
             condition_val.append(sp_id)
 
         if s_p_status == "Active":
-            where_clause = where_clause + "and t1.is_active = %s "
+            where_2 = "t1.is_active = %s "
             condition_val.append(1)
         elif s_p_status == "Inactive":
-            where_clause = where_clause + "and t1.is_active = %s "
+            where_2 = "t1.is_active = %s "
             condition_val.append(0)
         elif s_p_status == "Blocked":
-            where_clause = where_clause + "and t1.is_blocked = %s "
+            where_2 = "t1.is_blocked = %s "
             condition_val.append(1)
+
+        if where_1 is not None and where_2 is not None:
+            where_clause = where_clause + str(where_1)+" and "+str(where_2)
+        elif where_1 is not None:
+            where_clause = where_clause + str(where_1)
+        elif where_2 is not None:
+            where_clause = where_clause + str(where_2)
 
     if where_clause is None:
         where_clause = "order by t1.service_provider_name ASC limit %s, %s;"
@@ -1433,6 +1441,8 @@ def get_service_provider_details_report_data(db, request):
     result_sp = db.select_all(query, condition_val)
 
     where_clause = None
+    where_1 = None
+    where_2 = None
     condition_val = []
     select_qry = None
     select_qry = "select t1.service_provider_id, t1.user_id, t1.employee_name, " + \
@@ -1442,12 +1452,19 @@ def get_service_provider_details_report_data(db, request):
     if (int(sp_id) > 0 or int(user_id) > 0):
         where_clause = "where "
         if int(sp_id) > 0:
-            where_clause = where_clause + "t1.service_provider_id = %s "
+            where_1 = "t1.service_provider_id = %s "
             condition_val.append(sp_id)
 
         if int(user_id) > 0:
-            where_clause = where_clause + "t1.user_id = %s "
+            where_2 = "t1.user_id = %s "
             condition_val.append(user_id)
+
+        if where_1 is not None and where_2 is not None:
+            where_clause = where_clause + str(where_1)+" and "+str(where_2)
+        elif where_1 is not None:
+            where_clause = where_clause + str(where_1)
+        elif where_2 is not None:
+            where_clause = where_clause + str(where_2)
 
     if where_clause is None:
         where_clause = "order by t1.employee_name ASC;"
@@ -1515,7 +1532,7 @@ def get_audit_users_list(db, legal_entity_id):
     query = "select distinct(t2.user_id), t2.employee_code,t2.employee_name, " + \
         "t2.user_category_id, t2.user_group_id from tbl_user_domains as t1 inner join tbl_users as t2 " + \
         "on t2.user_id = t1.user_id or t2.user_category_id=1 where t1.legal_entity_id=%s " + \
-        "order by user_name asc;"
+        "order by employee_name asc;"
     result = db.select_all(query, [legal_entity_id])
     audit_users_list = []
     for row in result:
@@ -1552,7 +1569,7 @@ def get_audit_forms_list(db):
 ###############################################################################################
 def get_login_users_list(db):
     query = "select user_id, employee_code,employee_name, " + \
-        "user_category_id, user_group_id from tbl_users order by user_name asc;"
+        "user_category_id, user_group_id from tbl_users order by employee_name asc;"
     result = db.select_all(query, None)
     login_users_list = []
     for row in result:
@@ -1572,7 +1589,7 @@ def get_login_users_list(db):
 # Parameter: request object
 # Result: list of activities
 ###############################################################################################
-def process_login_trace_report(db, request):
+def process_login_trace_report(db, request, client_id):
     where_clause = None
     condition_val = []
     select_qry = None
