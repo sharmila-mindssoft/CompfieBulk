@@ -1,5 +1,7 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/jquery-ui.css">
 <div class="content-page">
 <div class="content">
 <div class="container">
@@ -24,21 +26,29 @@
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
                             <div class="col-sm-6 has-feedback">
-                                <p class="form-control-static">RG Legal Entity</p>
+                                <p class="form-control-static legal-entity-name default-display-none"></p>
+                                <div class="legal-entity-name-ac default-display-none">
+                                    <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="1">
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="legal-entity-id" value="">
+                                    <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="10-Jul-2016">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                                <input type="text" class="form-control input-sm from-date" id="from_date" placeholder="DD-MM-YYYY" tabindex="10" readonly="readonly">
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="20-Jul-2016">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                                <input type="text" class="form-control input-sm to-date" id="to_date" placeholder="DD-MM-YYYY" tabindex="11" readonly="readonly">
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                     </div>
@@ -46,23 +56,31 @@
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter User">
+                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="4">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                 <input type="hidden" id="user-id" value="">
+                                 <div id="ac-user" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Form Name: </label>
                             <div class="col-sm-6 has-feedback">
-                                <input type="text" class="form-control input-sm" placeholder="Enter Form Name">
+                                <input type="text" class="form-control input-sm" id="form" placeholder="Enter Form" tabindex="5">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                 <input type="hidden" id="form-id" value="">
+                                 <div id="ac-form" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <center>
                             <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="6"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button" tabindex="7"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -70,26 +88,20 @@
                 </form>
                 </div>
                 </div>
-                <script type="text/javascript">
-                    function show_div() {
-                        $('.details').show();
-                        $('#compliance_animation')
-                          .removeClass().addClass('bounceInLeft animated')
-                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                          $(this).removeClass();
-                        });
-                    }
-                </script>
+
                 </div>
+
+
                 <div id="compliance_animation">
-                <div class="card-box details" style="display: none;">
-                <div class="table-responsive">
+                <div id="report-view" style="display: none;">
+                <div class="card-box">
+                <div class="table-responsive ">
                     <div class="col-sm-12">
-                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><img class="rpt-logo m-t-0 client-logo"></div>
                         <div class="col-sm-12 text-center"><h4>Audit Trail</h4></div>
-                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
-                        <div class="col-sm-4 text-center"><h6>From Date : 10-Jul-2016</h6></div>
-                        <div class="col-sm-4 text-center"><h6>To Date : 20-Jul-2016</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity : <span class="le-header"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>From Date : <span class="from-header"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>To Date : <span class="to-header"></span></h6></div>
                     </div>
                     <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
@@ -101,52 +113,29 @@
                                 <th width="20%">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>EMP1017 - Krishna Moorthy</td>
-                                <td>18-Jul-2016 12:15</td>
-                                <td>Compliance Task Details</td>
-                                <td>Upload Compliance - "Returns - Obtain attendance"</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>EMP1009 - Hariharan</td>
-                                <td>16-Jul-2016 15:25</td>
-                                <td>Assign Compliance</td>
-                                <td>Assign Compliance - "Returns - Krishna Moorthy"</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>EMP1017 - Krishna Moorthy</td>
-                                <td>15-Jul-2016 10:30</td>
-                                <td>Compliance Task Details</td>
-                                <td>Upload Compliance - "Registration - Prepare Form 3"</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>EMP1009 - Hariharan</td>
-                                <td>14-Jul-2016 12:15</td>
-                                <td>Assign Compliance</td>
-                                <td>Assign Compliance - "Registration - ART Solutions"</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>EMP1009 - Hariharan</td>
-                                <td>13-Jul-2016 15:25</td>
-                                <td>User Privileges</td>
-                                <td>Add User Privileges - "Asst. Manager"</td>
-                            </tr>
-                            <tr>
-                                <td>6</td>
-                                <td>EMP1009 - Hariharan</td>
-                                <td>11-Jul-2016 10:30</td>
-                                <td>Service Provider</td>
-                                <td>Add Service Provider - "ART Solutions"</td>
-                            </tr>
-                        </tbody>
+                          <tbody id="report-table-tbody">
+
+                            </tbody>
                     </table>
-                    <p class="rpt-count m-b-0">Total : 6 record(s)</p>
+                    <table class="pagination-view default-display-none">
+                      <tr>
+                        <td>
+                          <span class="compliance_count"> </span>
+                          <span class="divider-view"> | </span>
+                          <span class="items-per-page">
+                          Show
+                          <select id="items_per_page">
+                          </select>
+                          entries
+                          </span>
+                        </td>
+                        <td style="width:600px;"></td>
+                        <td style="text-align:right;padding-right:10px;">
+                          <ul id="pagination-rpt"></ul>
+                        </td>
+                      </tr>
+                    </table>
+                </div>
                 </div>
             </div>
             </div>
@@ -156,4 +145,25 @@
 </div>
 </div>
 </div>
+<div id="template">
+    <table id="report-table">
+        <tr class="row-three">
+            <td class="sno"></td>
+            <td class="user-name"></td>
+            <td class="activity-date"></td>
+            <td class="form-name"></td>
+            <td class="form-action"></td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/audit-trail-client/audit_trail_client.js"></script>
+<script src="js/jquery-ui.js"></script>
 {% endblock %}
