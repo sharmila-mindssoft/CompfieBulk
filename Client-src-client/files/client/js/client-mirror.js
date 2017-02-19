@@ -2037,7 +2037,7 @@ function initClientMirror() {
     }
 
     function getUnitWiseReport(
-        country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
+        country_id, legal_entity_id, unit_id, domain_id, statutory_mapping,
         compliance_id, frequency_id, user_type, user_id, from_date, to_date,
         task_status, csv, from_count, page_count, callback
     ){
@@ -2047,7 +2047,7 @@ function initClientMirror() {
                 'country_id': country_id,
                 'legal_entity_id' : legal_entity_id,
                 'unit_id': unit_id,
-                'domain_id': domain_id,
+                'd_id_optional': domain_id,
                 'statutory_mapping': statutory_mapping,
                 'compliance_id': compliance_id,
                 'frequency_id': frequency_id,
@@ -2234,7 +2234,7 @@ function initClientMirror() {
     }
 
     function getServiceProviderDetailsReport(
-        sp_id, user_id, s_p_status, callback
+        sp_id, user_id, s_p_status, from_count, page_count, callback
     ){
         var request = [
             'GetServiceProviderDetailsReport',
@@ -2402,6 +2402,7 @@ function initClientMirror() {
             {}
         ];
         callerName = 'client_master_filters';
+    }
 
     return {
         log: log,
@@ -2561,7 +2562,7 @@ function initClientMirror() {
         getLoginTraceReportFilters: getLoginTraceReportFilters,
         getLoginTraceReportData: getLoginTraceReportData,
         getUserProfile: getUserProfile,
-        updateUserProfile: updateUserProfile
+        updateUserProfile: updateUserProfile,
         getStatutorySettingsFilters: getStatutorySettingsFilters,
     };
 }
