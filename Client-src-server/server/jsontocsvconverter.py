@@ -32,7 +32,8 @@ ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 CSV_PATH = os.path.join(ROOT_PATH, "exported_reports")
 FILE_DOWNLOAD_BASE_PATH = "/download/csv"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
-
+CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
+CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 
 class ConvertJsonToCSV(object):
     def __init__(self, db, request, session_user, report_type):
@@ -1588,7 +1589,9 @@ class ConvertJsonToCSV(object):
             "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
             "frequency_id = t3.frequency_id) as frequency_name, (select " + \
             "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-            "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size "
+            "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
+            "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+            "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
             "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -1636,16 +1639,20 @@ class ConvertJsonToCSV(object):
             where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
         if due_from is not None and due_to is not None:
+            due_from = string_to_datetime(due_from).date()
+            due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date between " + \
                 " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
+            due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.due_date between " + \
                 " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
                 " DATE_ADD(curdate(), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
+            due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.append(due_to)
@@ -1672,7 +1679,7 @@ class ConvertJsonToCSV(object):
             csv_headers = [
                 "Unit Name", "Act", "Compliance Task", "Frequency", "Due Date",
                 "Compliance Task Status", "User Name", "Activity Status", "Activity Date",
-                "Uploaded Document", "Completion Date"
+                "Uploaded Document", "Completion Date", "Document URL", "Logo URL"
             ]
             self.write_csv(csv_headers, None)
             is_header = True
@@ -1733,11 +1740,22 @@ class ConvertJsonToCSV(object):
             else:
                 url = None
 
+            logo = row["logo"]
+            logo_size = row["logo_size"]
+            if logo_size is not None:
+                logo_size = int(logo_size)
+            if logo:
+                logo_url = "%s/%s" % (
+                    CLIENT_LOGO_PATH, logo
+                )
+            else:
+                logo_url = None
+
             csv_values = [
                 row["unit_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
                 datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
                 activity_status, datetime_to_string(row["activity_date"]), name,
-                datetime_to_string(row["completion_date"]), url
+                datetime_to_string(row["completion_date"]), url, logo_url
             ]
             self.write_csv(None, csv_values)
 
@@ -1750,7 +1768,7 @@ class ConvertJsonToCSV(object):
         from_clause = None
         country_id = request.country_id
         legal_entity_id = request.legal_entity_id
-        domain_id = request.domain_id
+        domain_id = request.d_id_optional
 
         stat_map = request.statutory_mapping
 
@@ -1773,7 +1791,9 @@ class ConvertJsonToCSV(object):
             "frequency_id = t3.frequency_id) as frequency_name, (select " + \
             "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
             "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
-            "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name"
+            "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
+            "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+            "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
             "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -1826,16 +1846,20 @@ class ConvertJsonToCSV(object):
             where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
         if due_from is not None and due_to is not None:
+            due_from = string_to_datetime(due_from).date()
+            due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date between " + \
                 " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
+            due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.due_date between " + \
                 " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
                 " DATE_ADD(curdate(), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
+            due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.append(due_to)
@@ -1846,7 +1870,7 @@ class ConvertJsonToCSV(object):
             condition_val.append(compliance_id)
 
         where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s order by t1.due_date desc;"
-        condition_val.extend([legal_entity_id, unit_id])
+        condition_val.extend([legal_entity_id, request.unit_id])
         query = select_qry + from_clause + where_clause
         print "qry"
         print query
@@ -1857,7 +1881,7 @@ class ConvertJsonToCSV(object):
             csv_headers = [
                 "Domain Name", "Act", "Compliance Task", "Frequency", "Due Date",
                 "Compliance Task Status", "User Name", "Activity Status", "Activity Date",
-                "Uploaded Document", "Completion Date"
+                "Uploaded Document", "Completion Date", "Document URL", "Logo URL"
             ]
             self.write_csv(csv_headers, None)
             is_header = True
@@ -1918,11 +1942,22 @@ class ConvertJsonToCSV(object):
             else:
                 url = None
 
+            logo = row["logo"]
+            logo_size = row["logo_size"]
+            if logo_size is not None:
+                logo_size = int(logo_size)
+            if logo:
+                logo_url = "%s/%s" % (
+                    CLIENT_LOGO_PATH, logo
+                )
+            else:
+                logo_url = None
+
             csv_values = [
                 row["domain_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
                 datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
                 activity_status, datetime_to_string(row["activity_date"]), name,
-                datetime_to_string(row["completion_date"]), url
+                datetime_to_string(row["completion_date"]), url, logo_url
             ]
             self.write_csv(None, csv_values)
 
@@ -1951,7 +1986,9 @@ class ConvertJsonToCSV(object):
             "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
             "frequency_id = t3.frequency_id) as frequency_name, (select " + \
             "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-            "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size "
+            "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
+            "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+            "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
         from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
             "on (t1.completed_by=t4.user_id or t1.concurred_by=t4.user_id or t1.approved_by=t4.user_id) " + \
             "left join tbl_compliance_activity_log as t2 " + \
@@ -1974,16 +2011,20 @@ class ConvertJsonToCSV(object):
             where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
         if due_from is not None and due_to is not None:
+            due_from = string_to_datetime(due_from).date()
+            due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date between " + \
                 " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
+            due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.due_date between " + \
                 " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
                 " DATE_ADD(curdate(), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
+            due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.append(due_to)
@@ -2016,7 +2057,7 @@ class ConvertJsonToCSV(object):
             csv_headers = [
                 "Unit Name", "Act", "Compliance Task", "Frequency", "Due Date",
                 "Compliance Task Status", "User Name", "Activity Status", "Activity Date",
-                "Uploaded Document", "Completion Date"
+                "Uploaded Document", "Completion Date", "Document URL", "Logo URL"
             ]
             self.write_csv(csv_headers, None)
             is_header = True
@@ -2077,11 +2118,22 @@ class ConvertJsonToCSV(object):
             else:
                 url = None
 
+            logo = row["logo"]
+            logo_size = row["logo_size"]
+            if logo_size is not None:
+                logo_size = int(logo_size)
+            if logo:
+                logo_url = "%s/%s" % (
+                    CLIENT_LOGO_PATH, logo
+                )
+            else:
+                logo_url = None
+
             csv_values = [
                 row["unit_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
                 datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
                 activity_status, datetime_to_string(row["activity_date"]), name,
-                datetime_to_string(row["completion_date"]), url
+                datetime_to_string(row["completion_date"]), url, logo_url
             ]
             self.write_csv(None, csv_values)
 
@@ -2115,7 +2167,9 @@ class ConvertJsonToCSV(object):
             "frequency_id = t3.frequency_id) as frequency_name, (select " + \
             "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
             "as assignee_name, t1.completed_by, t2.activity_date, t3.format_file, t3.format_file_size, " + \
-            "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name "
+            "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
+            "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+            "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id " + \
             "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -2160,16 +2214,20 @@ class ConvertJsonToCSV(object):
             where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
 
         if due_from is not None and due_to is not None:
+            due_from = string_to_datetime(due_from).date()
+            due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date between " + \
                 " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
+            due_from = string_to_datetime(due_from).date()
             where_clause = where_clause + " and t1.due_date between " + \
                 " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
                 " DATE_ADD(curdate(), INTERVAL 1 DAY) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
+            due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t1.due_date < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.append(due_to)
@@ -2190,14 +2248,13 @@ class ConvertJsonToCSV(object):
         print "qry"
         print query
         result = db.select_all(query, condition_val)
-        user_report = []
 
         is_header = False
         if not is_header:
             csv_headers = [
                 "Domain Name", "Unit Name", "Act", "Compliance Task", "Frequency", "Due Date",
                 "Compliance Task Status", "User Name", "Activity Status", "Activity Date",
-                "Uploaded Document", "Completion Date"
+                "Uploaded Document", "Completion Date", "Document URL", "Logo URL"
             ]
             self.write_csv(csv_headers, None)
             is_header = True
@@ -2258,11 +2315,22 @@ class ConvertJsonToCSV(object):
             else:
                 url = None
 
+            logo = row["logo"]
+            logo_size = row["logo_size"]
+            if logo_size is not None:
+                logo_size = int(logo_size)
+            if logo:
+                logo_url = "%s/%s" % (
+                    CLIENT_LOGO_PATH, logo
+                )
+            else:
+                logo_url = None
+
             csv_values = [
                 row["domain_name"], row["unit_name"], statutory_mapping, row["compliance_task"],
                 row["frequency_name"], datetime_to_string(row["due_date"]), task_status,
                 row["assignee_name"], activity_status, datetime_to_string(row["activity_date"]), name,
-                datetime_to_string(row["completion_date"]), url
+                datetime_to_string(row["completion_date"]), url, logo_url
             ]
             self.write_csv(None, csv_values)
 
@@ -2287,7 +2355,9 @@ class ConvertJsonToCSV(object):
             "t1.geography_name, t1.is_closed, t1.closed_on, t1.division_id, t1.category_id, (select  " + \
             "division_name from tbl_divisions where division_id = t1.division_id) as division_name, " + \
             "(select category_name from tbl_categories where category_id = t1.category_id) as " + \
-            "category_name from tbl_units as t1 where "
+            "category_name, (select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
+            "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size " + \
+            "from tbl_units as t1 where "
         where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
         condition_val.extend([legal_entity_id, country_id])
 
@@ -2370,7 +2440,6 @@ class ConvertJsonToCSV(object):
         print "qry"
         print query
         result_1 = db.select_all(query, condition_val)
-        unit_report = []
 
         is_header = False
         if not is_header:
@@ -2397,6 +2466,18 @@ class ConvertJsonToCSV(object):
                 closed_date = datetime_to_string(row["closed_on"])
             else:
                 closed_date = None
+
+            logo = row["logo"]
+            logo_size = row["logo_size"]
+            if logo_size is not None:
+                logo_size = int(logo_size)
+            if logo:
+                logo_url = "%s/%s" % (
+                    CLIENT_LOGO_PATH, logo
+                )
+            else:
+                logo_url = None
+
             last = object()
             for row_1 in result_1:
                 if unit_id == row_1["unit_id"]:
@@ -2406,7 +2487,7 @@ class ConvertJsonToCSV(object):
 
             csv_values = [
                 unit_id, unit_code, unit_name, d_i_names, geography_name, address, postal_code,
-                division_name, unit_status, closed_date,
+                division_name, unit_status, closed_date, logo_url
             ]
             self.write_csv(None, csv_values)
 
