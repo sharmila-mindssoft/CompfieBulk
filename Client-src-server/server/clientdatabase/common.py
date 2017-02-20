@@ -35,22 +35,23 @@ def get_country_domain_timelines_dict(
                 condition, condition_val
             )
             if len(rows) > 0:
-                period_from = rows[0]["month_from"]
-                period_to = rows[0]["month_to"]
+                month_from = rows[0]["month_from"]
+                month_to = rows[0]["month_to"]
                 start_end_dates = {}
                 for year in years:
+                    year = int(year)
                     start_year = year
                     end_year = year+1
                     start_date_string = None
                     end_date_string = None
                     start_date_string = "1-%s-%s" % (
-                        db.string_months[period_from],
+                        db.string_months[month_from],
                         start_year
                     )
                     start_date = string_to_datetime(start_date_string)
                     end_date_string = "%s-%s-%s" % (
-                        db.end_day_of_month[period_to],
-                        db.string_months[period_to],
+                        db.end_day_of_month[month_to],
+                        db.string_months[month_to],
                         end_year
                     )
                     end_date = string_to_datetime(end_date_string)

@@ -559,182 +559,104 @@ def get_trend_chart_drill_down(
     db, country_ids, domain_ids, filter_ids,
     filter_type, year
 ):
-    domain_wise_timelines = get_country_domain_timelines_dict(
-        db, country_ids, domain_ids, [year]
-    )
-    country_codition, country_condition_val = db.generate_tuple_condition(
-        "tcs.country_id", country_ids
-    )
-    domain_condition, domain_condition_val = db.generate_tuple_condition(
-        "domain_id", domain_ids
-    )
-    where_condition = " %s and %s" % (
-        country_codition, domain_condition)
-    where_codition_val = [
-        country_condition_val, domain_condition_val
-    ]
-    if filter_type != "Group":
-        if filter_type == "BusinessGroup":
-            bg_condition, bg_condition_val = db.generate_tuple_condition(
-                "business_group_id", filter_ids
-            )
-            where_condition += " and %s " % bg_condition
-            where_codition_val.append(bg_condition_val)
-        elif filter_type == "LegalEntity":
-            le_condition, le_condition_val = db.generate_tuple_condition(
-                "legal_entity_id", filter_ids
-            )
-            where_condition += " and %s " % le_condition
-            where_codition_val.append(le_condition_val)
-        elif filter_type == "Division":
-            div_condition, div_condition_val = db.generate_tuple_condition(
-                "division_id", filter_ids
-            )
-            where_condition += " and %s " % div_condition
-            where_codition_val.append(div_condition_val)
-        elif filter_type == "Unit":
-            unit_condition, unit_condition_val = db.generate_tuple_condition(
-                "unit_id", filter_ids
-            )
-            where_condition += " and %s " % unit_condition
-            where_codition_val.append(unit_condition_val)
 
-    unit_query = " SELECT distinct tcs.unit_id" + \
-        " FROM tbl_client_statutories tcs INNER JOIN " + \
-        " tbl_units tu ON tcs.unit_id = tu.unit_id " + \
-        " WHERE " + where_condition
-    unit_rows = db.select_all(unit_query, where_codition_val)
+    where_qry_val = []
+    if filter_type == "BusinessGroup":
+        filter_type_ids = " AND find_in_set(u.business_group_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
-    columns = ["unit_id"]
+    elif filter_type == "LegalEntity":
+        filter_type_ids = " AND find_in_set(u.legal_entity_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
-    unit_ids = []
-    for unit_row in unit_rows:
-        unit_ids.append(int(unit_row["unit_id"]))
+    elif filter_type == "Division":
+        filter_type_ids = " AND find_in_set(u.division_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
-    history_unit_cond, history_unit_cond_val = db.generate_tuple_condition(
-        "tch.unit_id", unit_ids
-    )
-    cs_unit_cond, cs_unit_cond_val = db.generate_tuple_condition(
-        "unit_id", unit_ids
-    )
+    elif filter_type == "Unit":
+        filter_type_ids = " AND find_in_set(u.unit_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+    else :
+        filter_type_ids = ""
+
     query = " SELECT " + \
         " tch.compliance_id, tu.employee_code, tu.employee_name, " + \
         " tc.compliance_task, tc.compliance_description, " + \
         " tc.document_name, tc.statutory_mapping, tch.due_date, tcc.domain_id, " + \
         " u.country_id, " + \
         " (SELECT business_group_name FROM tbl_business_groups " + \
-        " where business_group_id = (select business_group_id from tbl_units " + \
-        " where unit_id=tch.unit_id )) as business_group_name, " + \
+        " where business_group_id = u.business_group_id ) as business_group_name, " + \
         " (SELECT legal_entity_name FROM tbl_legal_entities " + \
-        " where legal_entity_id = (select legal_entity_id from tbl_units " + \
-        " where unit_id=tch.unit_id )) as legal_entity_name, " + \
+        " where legal_entity_id = u.legal_entity_id ) as legal_entity_name, " + \
         " (SELECT division_name FROM tbl_divisions " + \
-        " where division_id = (select division_id from tbl_units " + \
-        " where unit_id=tch.unit_id )) as division_name, " + \
+        " where division_id = u.division_id ) as division_name, " + \
         " concat(unit_code, '-', unit_name) as unit_name," + \
         " address, u.unit_id " + \
-        " FROM tbl_compliance_history tch INNER JOIN " + \
-        " tbl_units u ON tch.unit_id = u.unit_id  INNER JOIN " + \
+        " FROM tbl_compliance_history tch " + \
+        " inner join tbl_client_compliances as tcc on tch.compliance_id = tcc.compliance_id and tch.unit_id = tcc.unit_id " + \
+        "  inner join tbl_units u ON tch.unit_id = u.unit_id  INNER JOIN " + \
         " tbl_compliances tc ON tch.compliance_id = tc.compliance_id " + \
+        "  inner join tbl_client_configuration as ccf on tcc.domain_id = ccf.domain_id and u.country_id = ccf.country_id " + \
         " INNER JOIN  tbl_users tu ON tch.completed_by = tu.user_id  " + \
-        " WHERE " + history_unit_cond + \
-        " AND approve_status = 1 AND " + \
-        " tch.compliance_id in (SELECT distinct compliance_id " + \
-        " FROM tbl_client_compliances tcc " + \
-        " WHERE tcc.compliance_opted = 1 " + \
-        " AND client_statutory_id in (select client_statutory_id FROM " + \
-        " tbl_client_statutories " + \
-        " WHERE " + cs_unit_cond + " and " + domain_condition + " )) "
+        " WHERE " + \
+        " approve_status = 1 AND " + \
+        " tch.due_date >= tch.completion_date AND " + \
+        " tch.due_date >= date(concat_ws('-',%s,ccf.month_from,1)) " + \
+        " AND  tch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+        " AND find_in_set(tcc.domain_id, %s) " + filter_type_ids
     param = [
-        history_unit_cond_val, cs_unit_cond_val, domain_condition_val
+        year, year, ",".join([str(x) for x in domain_ids]),
     ]
+    param.extend(where_qry_val)
     history_rows = db.select_all(query, param)
 
-    drill_down_data = {}
-    level_1_statutory_wise_compliances = {}
-    count = 0
-    skipping = 0
-    not_skipping = 0
-    for history_row in history_rows:
-        count += 1
-        domain_id = history_row["domain_id"]
-        country_id = history_row["country_id"]
-        due_date = history_row["due_date"]
-        start_date = domain_wise_timelines[country_id][domain_id][year]["start_date"]
-        end_date = domain_wise_timelines[country_id][domain_id][year]["end_date"]
-        if not (due_date >= start_date and due_date <= end_date):
-            skipping += 1
-            continue
-        else:
-            not_skipping += 1
-        business_group_name = "None" if(
-            history_row["business_group_name"] is None) else history_row["business_group_name"]
-        legal_entity_name = history_row["legal_entity_name"]
-        division_name = "None" if(
-            history_row["division_name"] is None) else history_row["division_name"]
-        unit_name = history_row["unit_name"]
-        address = history_row["address"]
-        assignee_name = history_row["employee_name"]
-        if history_row["employee_code"] is not None:
+    trend_comp = {}
+    for d in history_rows:
+        print d
+        unit_id = d["unit_id"]
+
+        business_group_name = d["business_group_name"]
+        legal_entity_name = d["legal_entity_name"]
+        division_name = d["division_name"]
+        unit_name = d["unit_name"]
+        address = d["address"]
+        assignee_name = d["employee_name"]
+        if d["employee_code"] is not None:
             assignee_name = "%s-%s" % (
-                history_row["employee_code"],
-                history_row["employee_name"]
+                d["employee_code"],
+                d["employee_name"]
             )
-        compliance_name = history_row["compliance_task"]
-        if history_row["document_name"] is not None:
+        compliance_name = d["compliance_task"]
+        if d["document_name"] is not None:
             compliance_name = "%s-%s" % (
-                history_row["document_name"],
-                history_row["compliance_task"]
+                d["document_name"],
+                d["compliance_task"]
             )
-        description = history_row["compliance_description"]
-        statutories = history_row["statutory_mapping"].split(">>")
+        description = d["compliance_description"]
+        maps = json.loads(d["statutory_mapping"])
+        statutories = maps[0].split(">>")
         level_1_statutory = statutories[0]
 
-        if business_group_name not in drill_down_data:
-            drill_down_data[business_group_name] = {}
-        if legal_entity_name not in drill_down_data[business_group_name]:
-            drill_down_data[business_group_name][legal_entity_name] = {}
-        if division_name not in drill_down_data[
-                business_group_name][legal_entity_name]:
-            drill_down_data[
-                business_group_name][legal_entity_name][division_name] = {}
-        if unit_name not in drill_down_data[
-                business_group_name][legal_entity_name][division_name]:
-            drill_down_data[business_group_name][
-                legal_entity_name][division_name][unit_name] = {}
-            drill_down_data[business_group_name][
-                legal_entity_name][division_name][unit_name]["address"] = address
-        if "level1" not in drill_down_data[business_group_name][
-                legal_entity_name][division_name][unit_name]:
-            drill_down_data[business_group_name][
-                legal_entity_name][division_name][unit_name]["level1"] = {}
-        if level_1_statutory not in drill_down_data[business_group_name][
-                legal_entity_name][division_name][unit_name]["level1"]:
-            drill_down_data[business_group_name][legal_entity_name][
-                division_name][unit_name]["level1"][level_1_statutory] = []
-        drill_down_data[business_group_name][
-            legal_entity_name][division_name][unit_name]["level1"][level_1_statutory].append(
-                dashboard.TrendCompliance(
-                    compliance_name, description, assignee_name
-                )
+        comp_info = dashboard.TrendCompliance(compliance_name, description, assignee_name)
+        saved_trend = trend_comp.get(unit_id)
+        if saved_trend is None :
+            trend_comp[unit_id] = dashboard.TrendDrillDownData(
+                business_group_name, legal_entity_name, division_name,
+                unit_name, address, {level_1_statutory : [comp_info]}
             )
-    result = []
-    for business_group_name in drill_down_data:
-        for legal_entity_name in drill_down_data[business_group_name]:
-            for division_name in drill_down_data[business_group_name][legal_entity_name]:
-                for unit_name in drill_down_data[business_group_name][legal_entity_name][division_name]:
-                    address = drill_down_data[business_group_name][
-                        legal_entity_name][division_name][unit_name]["address"]
-                    level1 = drill_down_data[business_group_name][
-                        legal_entity_name][division_name][unit_name]["level1"]
-                    result.append(
-                        dashboard.TrendDrillDownData(
-                            business_group_name,
-                            legal_entity_name, division_name,
-                            unit_name, address, level1
-                        )
-                    )
-    return result
+        else :
+            compliances = saved_trend.compliances
+            comp_map_info = compliances.get(level_1_statutory)
+            if comp_map_info is None :
+                complainces[level_1_statutory] = [comp_info]
+            else :
+                comp_map_info.append(comp_info)
+            compliances[level_1_statutory] = comp_map_info
+            saved_trend.compliances = compliances
+            trend_comp[unit_id] = saved_trend
+
+    return trend_comp.values()
 
 
 def get_trend_chart_drill_down1(
@@ -1441,8 +1363,8 @@ def calculate_year_wise_count(
             if year_wise is None:
                 year_wise = {}
 
-            period_from = int(y["month_from"])
-            period_to = int(y["month_to"])
+            month_from = int(y["month_from"])
+            month_to = int(y["month_to"])
             for index, i in enumerate(years_range):
                 compliance_count_info = year_wise.get(i[0])
                 if compliance_count_info is None:
@@ -1469,7 +1391,7 @@ def calculate_year_wise_count(
                             if (
                                 c["year"] == i[0] and
                                 month in [
-                                    int(x) for x in range(period_from, 12+1)
+                                    int(x) for x in range(month_from, 12+1)
                                 ]
                             ):
                                 compliance_count += int(c["compliances"])
@@ -1477,7 +1399,7 @@ def calculate_year_wise_count(
                             elif (
                                 c["year"] == i[1] and
                                 month in [
-                                    int(y) for y in range(1, period_to+1)
+                                    int(y) for y in range(1, month_to+1)
                                 ]
                             ):
                                 compliance_count += int(c["compliances"])
@@ -1487,7 +1409,7 @@ def calculate_year_wise_count(
                                 int(c["year"]) == i[0] and
                                 month in [
                                     int(x) for x in range(
-                                        period_from, period_to + 1
+                                        month_from, month_to + 1
                                     )
                                 ]
                             ):
