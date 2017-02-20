@@ -1830,12 +1830,13 @@ function loadTrendChartDrillDown(year) {
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
   var requestData = {
-    'c_ids': chartInput.getCountries(),
-    'd_ids': chartInput.getDomains(),
+    'country_ids': chartInput.getCountries(),
+    'domain_ids': chartInput.getDomains(),
     'filter_type': filterType,
     'filter_ids': [1],
     'year': parseInt(year),
-    'record_count': SNO
+    'record_count': SNO,
+    'le_ids': chartInput.getLegalEntities()
   };
   $('.btn-back').on('click', function () {
      $('.chart-container').show();
