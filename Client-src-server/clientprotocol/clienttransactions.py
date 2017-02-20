@@ -912,6 +912,19 @@ class GetChartFilters(Request):
         }
 
 
+class GetAssigneewiseComplianesFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetAssigneewiseComplianesFilters()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 def _init_Request_class_map():
 
     classes = [
@@ -924,7 +937,7 @@ def _init_Request_class_map():
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
         SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
-        GetUserToAssignCompliance, GetChartFilters
+        GetUserToAssignCompliance, GetChartFilters, GetAssigneewiseComplianesFilters
     ]
 
     class_map = {}
@@ -1606,6 +1619,51 @@ class GetChartFiltersSuccess(Response):
             "cat_info": self.categories
         }
 
+class GetAssigneewiseComplianesFiltersSuccess(Response):
+    def __init__(
+        self, countries, business_groups, legal_entities, divisions,
+        units, users, domains, categories
+    ):
+        self.countries = countries
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.divisions = divisions
+        self.units = units
+        self.users = users
+        self.domains = domains
+        self.categories = categories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "countries", "business_groups", "legal_entities", "client_divisions",
+            "units", "users", "domains", "categories"
+        ])
+        countries = data.get("countries")
+        business_groups = data.get("business_groups")
+        legal_entities = data.get("legal_entities")
+        divisions = data.get("client_divisions")
+        categories = data.get("client_categories")
+        units = data.get("units")
+        users = data.get("users")
+        domains = data.get("domains")
+
+        return GetAssigneewiseComplianesFiltersSuccess(
+            countries, business_groups, legal_entities, divisions, units, users, domains, categories
+        )
+
+    def to_inner_structure(self):
+        return {
+            "countries": self.countries,
+            "business_groups": self.business_groups,
+            "legal_entities": self.legal_entities,
+            "divisions": self.divisions,
+            "units": self.units,
+            "users": self.users,
+            "domins": self.domains
+        }
+
+
 def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
@@ -1618,7 +1676,7 @@ def _init_Response_class_map():
         GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess,
         GetAssignComplianceUnitsSuccess,
         GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
-        GetChartFiltersSuccess
+        GetChartFiltersSuccess, GetAssigneewiseComplianesFilters
     ]
     class_map = {}
     for c in classes:

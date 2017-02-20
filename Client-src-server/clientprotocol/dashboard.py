@@ -350,19 +350,6 @@ class GetComplianceApplicabilityStatusChart(Request):
             "le_ids": self.legal_entity_ids
         }
 
-class GetAssigneewiseComplianesFilters(Request):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetAssigneewiseComplianesFilters()
-
-    def to_inner_structure(self):
-        return {
-        }
-
 class GetAssigneeWiseCompliancesChart(Request):
     def __init__(
         self, country_id, business_group_id, legal_entity_id, division_id,
@@ -763,7 +750,7 @@ def _init_Request_class_map():
         GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
         GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
         GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
-        GetAssigneewiseComplianesFilters, CheckContractExpiration,
+        CheckContractExpiration,
         GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes
     ]
     class_map = {}
@@ -996,53 +983,6 @@ class GetComplianceApplicabilityStatusChartSuccess(Response):
             "not_complied_count": self.not_complied_count
         }
 
-
-class GetAssigneewiseComplianesFiltersSuccess(Response):
-    def __init__(self, countries, business_groups, legal_entities, divisions,
-        units, users, domains):
-        self.countries = countries
-        self.business_groups = business_groups
-        self.legal_entities = legal_entities
-        self.divisions = divisions
-        self.units = units
-        self.users = users
-        self.domains = domains
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "countries", "business_groups", "legal_entities", "divisions",
-            "units", "users", "domains"
-        ])
-        countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
-        business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
-        legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
-        divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
-        units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
-        users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clientreport_User(users)
-        domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        return GetAssigneewiseComplianesFiltersSuccess(countries,
-            business_groups, legal_entities, divisions, units, users, domains)
-
-    def to_inner_structure(self):
-        return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
-            "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
-            "domins": to_structure_VectorType_RecordType_core_Domain(self.domains)
-        }
-
-
 class GetAssigneeWiseCompliancesChartSuccess(Response):
     def __init__(self, chart_data):
         self.chart_data = chart_data
@@ -1263,7 +1203,6 @@ def _init_Response_class_map():
         GetTrendChartDrillDownDataSuccess,
         GetNotificationsSuccess,
         UpdateNotificationStatusSuccess,
-        GetAssigneewiseComplianesFiltersSuccess,
         CheckContractExpirationSuccesss,
         GetAssigneewiseYearwiseCompliancesSuccess
     ]

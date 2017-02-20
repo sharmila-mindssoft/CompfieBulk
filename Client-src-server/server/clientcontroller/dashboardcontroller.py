@@ -67,14 +67,9 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
 
     elif type(request) is dashboard.GetComplianceApplicabilityStatusDrillDown:
-        logger.logClientApi(
-            "GetComplianceApplicabilityStatusDrillDown", "process begin"
-        )
+
         result = process_compliance_applicability_drill_down(
             db, request, session_user
-        )
-        logger.logClientApi(
-            "GetComplianceApplicabilityStatusDrillDown", "process end"
         )
 
     elif type(request) is dashboard.GetNotifications:
@@ -92,13 +87,10 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         logger.logClientApi("UpdateNotificationStatus", "process end")
 
     elif type(request) is dashboard.GetAssigneewiseComplianesFilters:
-        logger.logClientApi(
-            "GetAssigneewiseComplianesFilters", "process begin"
-        )
+
         result = process_assigneewise_compliances_filters(
             db, request, session_user
         )
-        logger.logClientApi("GetAssigneewiseComplianesFilters", "process end")
 
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart:
         logger.logClientApi("GetAssigneeWiseCompliancesChart", "process begin")
@@ -290,8 +282,9 @@ def process_update_notification_status(db, request, session_user):
 # chart filters
 ########################################################
 def process_assigneewise_compliances_filters(
-    db, request, session_user
+    db, request, session_user, session_category
 ):
+    countries = get_user_based_countries(db, session_user, session_category)
     user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]

@@ -418,4 +418,11 @@ api_params = {
     "yaxis": make_vector_type_string(),
     "widget_data": make_widget_type(),
 
+    "business_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
+    "legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
+    "client_divisions": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
+    "client_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
+    "client_users": make_vector_type_field(module="clientreport", klass_name="User"),
+
+
 }
