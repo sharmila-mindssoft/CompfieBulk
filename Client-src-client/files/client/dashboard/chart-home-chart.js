@@ -856,6 +856,7 @@ function getXAxisName() {
     'business_group': 'Business Groups',
     'legal_entity': 'Legal Entities',
     'division': 'Divisions',
+    'category': 'Categories',
     'unit': 'Units'
   };
   var filterType = chartInput.getFilterType();
@@ -1511,7 +1512,7 @@ function prepareTrendChartData(source_data) {
   var chartDataSeries = [];
   var total_count = [];
 
-  xAxis = source_data.years;
+  //xAxis = source_data.years;
   for (var i = 0; i < source_data.trend_data.length; i++) {
     chartData = source_data.trend_data[i];
     var filter_type_id = chartData.filter_id;
@@ -1536,10 +1537,10 @@ function prepareTrendChartData(source_data) {
       'data': data,
       'total': total_count
     });
-    console.log(chartDataSeries.toSource());
+    xAxis.push(chartData.chart_year);
   }
   chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
-  console.log(xAxis);
+  
   return [
     xAxis,
     chartTitle,

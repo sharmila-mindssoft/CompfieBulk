@@ -62,9 +62,9 @@
             <div id="level-filter" class="card-box">
               <input type="hidden" id="hidden"/>           
               <div class="graph-box">
-                <input type="button" id="viewaspie" class="pull-right btn btn-info m-r-10"  value="View as pie chart"/>
-                <input type="button" id="viewasbar" class="pull-right btn btn-info m-r-10" value="View as bar chart"/>
-                <input type="button" id="back"  class="pull-right btn btn-info m-r-10" onClick="loadGroup()"  value="Back"/>
+                <input type="button" id="btn-pie-chart" class="pull-right btn btn-info m-r-10"  value="View as pie chart"/>
+                <input type="button" id="btn-bar-chart" class="pull-right btn btn-info m-r-10" value="View as bar chart"/>
+                <input type="button" id="btn-back"  class="pull-right btn btn-info m-r-10" value="Back"/>
                <!--  <p id="year-para"> <span >Select Year:</span>
                   <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
                     <option value="2009" >2009</option>
@@ -95,12 +95,10 @@
             </div>
             <div class="clearfix"></div>
             <div class="m-t-0 m-b-30">
-                  <input type="button" id="previousyear" class="pull-left btn btn-primary btn-trans "  value="<< Previous Year"/>
-                  <!--input type="button" class="btn btn-info m-l-10" value="<< Previous"/-->
-                  <input type="button" id="nextyear" class="pull-right btn btn-primary btn-trans " value="Next Year >>"/>
-                  <!--input type="button" id="next" class="pull-right btn btn-info" value="Next >>"/-->
-                  <!--input type="button" class="pull-right btn btn-info m-r-10" value="Next >>"/-->
-                  <input type="button" id="previous" class="pull-left btn btn-primary btn-trans " value="<< Previous"/>
+                  <input type="button" id="btn-previous-year" class="pull-left btn btn-primary btn-trans  m-r-10" value="<< Previous Year"/>
+                  <input type="button" id="btn-next-year" class="pull-right btn btn-primary btn-trans " value="Next Year >>"/>                  
+                  <input type="button" id="btn-previous" class="pull-left btn btn-primary btn-trans " value="<< Previous"/>
+                  <input type="button" id="btn-next" class="pull-right btn btn-primary btn-trans  m-r-10" value="Next >>" />
             </div>
           </div>
           <!-- End Chart -->
@@ -112,6 +110,9 @@
                   <div class="drilldown-container">
                   </div>
                   <div class="escalation-drilldown-container">
+                  </div>
+                  <div class="text-center">
+                    <button class="btn btn-info text-center" id="pagination" onclick="showmorerecords();">Show more records</button>
                   </div>
                 </div>
               </div>
