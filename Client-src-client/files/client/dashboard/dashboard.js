@@ -324,8 +324,9 @@ function showComplianceApplicabilityDrillDownRecord_complianceList(val) {
       tBefore = statutory_date[j].trigger_before_days + ' Days';
     if (sMonth != '')
       sMonth = getMonth_IntegettoString(sMonth);
-    if(sDay !)
-    statutorydate += sDay + ' - ' + sMonth + ', ';
+    if(sDay != "" && sMonth != ""){
+      statutorydate += sDay + ' - ' + sMonth + ', ';  
+    }    
     triggerbefore += tBefore + ', ';
   }
   if (summary != null) {
