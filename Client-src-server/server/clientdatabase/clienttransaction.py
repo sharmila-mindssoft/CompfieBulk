@@ -460,8 +460,8 @@ def update_statutory_settings(db, data, session_user):
             client_compliance_id, le_id,
             unit_id, domain_id,
             compliance_id,
-            statutory_opted_status, not_applicable_remarks,
-            opted_status, remarks,
+            statutory_opted_status, str(not_applicable_remarks),
+            opted_status, str(remarks),
             int(session_user), str(updated_on), 0,
             1, int(session_user), updated_on, 0
         )
@@ -487,7 +487,7 @@ def update_statutory_settings(db, data, session_user):
             " A.submitted_by = %s , A.submitted_on = %s " + \
             " where A.unit_id = %s and A.domain_id = %s "
 
-        print q
+        # print q
         for u in unit_ids :
             db.execute(q, [session_user, updated_on, u, domain_id])
 
@@ -525,7 +525,6 @@ def execute_bulk_insert(db, value_list, s_status):
     db.on_duplicate_key_update(
         table, ",".join(column), value_list, update_column
     )
-
 
 def update_new_statutory_settings(db, unit_id, domain_id, user_id):
     q = "Update tbl_client_statutories set updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"
@@ -993,7 +992,7 @@ def save_assigned_compliance(db, request, session_user):
                 trigger_before, str(due_date), str(validity_date)
             ]
             if concurrence is not None:
-                value.append(concurrence)
+                value.extend([concurrence, int(session_user), created_on])
             value_list.append(tuple(value))
 
     # db.bulk_insert("tbl_assigned_compliances", columns, value_list)
@@ -1001,6 +1000,8 @@ def save_assigned_compliance(db, request, session_user):
         "tbl_assign_compliances", ",".join(columns),
         value_list, update_column
     )
+
+
     # if new_unit_settings is not None:
     #     update_user_settings(db, new_unit_settings)
 

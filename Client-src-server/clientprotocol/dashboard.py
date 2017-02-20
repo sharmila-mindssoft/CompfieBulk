@@ -639,30 +639,30 @@ class GetComplianceApplicabilityStatusDrillDown(Request):
 class GetNotCompliedDrillDown(Request):
     def __init__(
         self, domain_ids,  filter_type, filter_ids, not_complied_type,
-        record_count, legal_entity_id
+        record_count, legal_entity_ids
     ):
         self.domain_ids = domain_ids
         self.filter_type = filter_type
         self.filter_ids = filter_ids
         self.not_complied_type = not_complied_type
         self.record_count = record_count
-        self.legal_entity_id = legal_entity_id
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "d_ids", "filter_type", "filter_ids", "not_complied_type",
-            "record_count", "le_id"
+            "record_count", "le_ids"
         ])
         domain_ids = data.get("d_ids")
         filter_type = data.get("filter_type")
         filter_ids = data.get("filter_ids")
         not_complied_type = data.get("not_complied_type")
         record_count = data.get("record_count")
-        legal_entity_id = data.get("le_id")
+        legal_entity_ids = data.get("le_ids")
         return GetNotCompliedDrillDown(
             domain_ids, filter_type, filter_ids, not_complied_type,
-            record_count, legal_entity_id
+            record_count, legal_entity_ids
         )
 
     def to_inner_structure(self):
@@ -672,7 +672,7 @@ class GetNotCompliedDrillDown(Request):
             "filter_ids": self.filter_ids,
             "not_complied_type": self.not_complied_type,
             "record_count": self.record_count,
-            "le_id": self.legal_entity_id
+            "le_ids": self.legal_entity_ids
         }
 
 class GetTrendChartDrillDownData(Request):
@@ -1196,13 +1196,13 @@ class GetNotCompliedDrillDownSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["drill_down_data"])
-        drill_down_data = data.get("drill_down_data")
+        data = parse_dictionary(data, ["n_drill_down_data"])
+        drill_down_data = data.get("n_drill_down_data")
         return GetNotCompliedDrillDownSuccess(drill_down_data)
 
     def to_inner_structure(self):
         return {
-            "drill_down_data": self.drill_down_data,
+            "n_drill_down_data": self.drill_down_data,
         }
 
 class GetTrendChartDrillDownDataSuccess(Response):

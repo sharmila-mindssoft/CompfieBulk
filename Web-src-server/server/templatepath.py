@@ -74,7 +74,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/reassign-compliance",
-        "files/client/reassign-compliance/reassigncompliance.html",
+        "files/client/reassign-compliance/reassign-compliance.html",
         None, {}
     ),
     (

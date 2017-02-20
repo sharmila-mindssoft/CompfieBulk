@@ -400,6 +400,8 @@ api_params = {
     "not_opted_count": make_int_field(length=10000),
     "unassign_count": make_int_field(length=10000),
     "rejected_count": make_int_field(length=10000),
+    "not_complied_count": make_int_field(length=10000),
+    "n_drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
     'domain_score_card_list':make_vector_type_field(module="clientcore", klass_name="GetDomainScoreCardSuccess", is_optional=True),
     "assigned_count": make_int_field(length=10000),
     "unassigned_count": make_int_field(length=10000),

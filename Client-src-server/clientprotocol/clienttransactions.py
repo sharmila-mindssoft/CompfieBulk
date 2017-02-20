@@ -911,6 +911,19 @@ class GetChartFilters(Request):
         return {
         }
 
+class GetReassignComplianceFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetReassignComplianceFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
 
 def _init_Request_class_map():
 
@@ -924,7 +937,8 @@ def _init_Request_class_map():
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
         SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
-        GetUserToAssignCompliance, GetChartFilters
+        GetUserToAssignCompliance, GetChartFilters,
+        GetReassignComplianceFilters
     ]
 
     class_map = {}
@@ -1606,6 +1620,27 @@ class GetChartFiltersSuccess(Response):
             "cat_info": self.categories
         }
 
+class GetReassignComplianceFiltersSuccess(Response):
+    def __init__(self, domains, units, legal_entity_users):
+        self.domains = domains
+        self.units = units
+        self.legal_entity_users = legal_entity_users
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domains", "units", "legal_entity_users"])
+        domains = data.get("domains")
+        units = data.get("units")
+        legal_entity_users = data.get("legal_entity_users")
+        return GetReassignComplianceFiltersSuccess(domains, units, legal_entity_users)
+
+    def to_inner_structure(self):
+        return {
+            "domains": self.domains,
+            "units": self.units,
+            "legal_entity_users": self.legal_entity_users
+        }
+
 def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
@@ -1618,7 +1653,7 @@ def _init_Response_class_map():
         GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess,
         GetAssignComplianceUnitsSuccess,
         GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
-        GetChartFiltersSuccess
+        GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess
     ]
     class_map = {}
     for c in classes:
