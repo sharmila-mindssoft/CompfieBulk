@@ -444,6 +444,7 @@ CREATE TABLE `tbl_compliance_activity_log` (
   `compliance_history_id` int(11) DEFAULT NULL,
   `activity_by` int(11) DEFAULT NULL,
   `activity_on` timestamp NULL DEFAULT NULL,
+  `action` varchar(500) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`compliance_activity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

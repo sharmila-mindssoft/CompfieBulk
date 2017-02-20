@@ -25,6 +25,10 @@ __all__ = [
     "KnowledgeConnect"
 ]
 
+def getCurrentYear():
+    now = datetime.datetime.now()
+    return now.year
+
 
 class KnowledgeConnect(object):
     def __init__(self):
@@ -390,7 +394,7 @@ class AutoStart(Database):
 
     def update_unit_wise_task_status(self):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
-        year = "2017"
+        year = getCurrentYear()
 
         q_delete = "delete from tbl_compliance_status_chart_unitwise where chart_year = %s"
 
@@ -424,7 +428,7 @@ class AutoStart(Database):
     def update_user_wise_task_status(self):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
         # user_ids = ",".join([str(y) for y in self.started_user_id])
-        year = "2017"
+        year = getCurrentYear()
 
         q_delete = "delete from tbl_compliance_status_chart_userwise where chart_year = %s"
 

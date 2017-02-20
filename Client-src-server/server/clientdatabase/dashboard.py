@@ -399,74 +399,70 @@ def get_compliance_status_chart(db, request, session_user):
 
 
 def get_trend_chart(
-    db, country_ids, domain_ids, session_user
+    db, request, user_id, user_category
 ):
+    domain_ids = request.domain_ids
+    # country_ids = request.country_ids
+    filter_type = request.filter_type
+    filter_ids = request.filter_ids
+    where_qry_val = []
+
+    if filter_type == "BusinessGroup":
+        group_by_name = "T3.business_group_id"
+        filter_type_ids = " AND find_in_set(T3.business_group_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+    elif filter_type == "LegalEntity":
+
+        group_by_name = "T3.legal_entity_id"
+        filter_type_ids = " AND find_in_set(T3.legal_entity_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+    elif filter_type == "Division":
+        group_by_name = "T3.division_id"
+        filter_type_ids = " AND find_in_set(T3.division_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+    elif filter_type == "Unit":
+        group_by_name = "T3.unit_id"
+        filter_type_ids = " AND find_in_set(T3.unit_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+    else :
+        group_by_name = "T3.country_id"
+        filter_type_ids = ""
+
     # import from common.py
     years = get_last_7_years()
     # import from common.py
-    country_domain_timelines = get_country_domain_timelines(
-        db, country_ids, domain_ids, years)
+
+    q = "select " + group_by_name + " as filter_id, t1.chart_year, sum(t1.complied_count) as comp_count, " + \
+        " (sum(t1.complied_count)+sum(t1.delayed_count)+sum(t1.inprogress_count)+sum(t1.overdue_count)) as total" + \
+        " from tbl_compliance_status_chart_unitwise as t1" + \
+        " inner join tbl_units as T3 on t1.unit_id = T3.unit_id " + \
+        " where find_in_set(t1.chart_year, %s) and " + \
+        " find_in_set(t1.domain_id, %s) " + filter_type_ids + \
+        " group by t1.chart_year, %s "
+
+    param = [
+        ",".join([str(x) for x in years]),
+        ",".join([str(x) for x in domain_ids]),
+    ]
+    param.extend(where_qry_val)
+    param.append(group_by_name)
+
+    rows = db.select_all(q, param)
+    chart_years = []
     chart_data = []
-    count_flag = 0
-    for country_wise_timeline in country_domain_timelines:
-        country_id = country_wise_timeline[0]
-        domain_wise_timelines = country_wise_timeline[1]
-        year_wise_count = [[0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
-        for domain_wise_timeline in domain_wise_timelines:
-            domain_id = domain_wise_timeline[0]
-            start_end_dates = domain_wise_timeline[1]
-            (
-                compliance_history_ids, unit_ids
-            ) = get_compliance_history_ids_for_trend_chart(
-                db, country_id, domain_id, session_user
-            )
-            if len(compliance_history_ids) > 0:
-                for index, dates in enumerate(start_end_dates):
-                    columns = "count(*) as total, sum(case " + \
-                        " when approve_status is null then 0 " + \
-                        "else 1 end) as complied"
-                    condition = "due_date between %s and %s "
-                    condition_val = [
-                        dates["start_date"], dates["end_date"]
-                    ]
-                    (
-                        comp_hist_cond, comp_hist_cond_val
-                    ) = db.generate_tuple_condition(
-                        "compliance_history_id", compliance_history_ids
-                    )
-                    condition += " AND %s " % comp_hist_cond
-                    condition_val.append(comp_hist_cond_val)
-                    rows = db.get_data(
-                        tblComplianceHistory, columns, condition, condition_val
-                    )
-                    if len(rows) > 0:
-                        row = rows[0]
-                        total_compliances = row["total"]
-                        complied_compliances = row["complied"] if (
-                            row["complied"] != None
-                        ) else 0
-                        year_wise_count[index][0] += int(total_compliances) if(
-                            total_compliances is not None
-                        ) else 0
-                        year_wise_count[index][1] += int(
-                                complied_compliances
-                            ) if(
-                                complied_compliances is not None
-                            ) else 0
-        compliance_chart_data = []
-        for index, count_of_year in enumerate(year_wise_count):
-            count_flag += int(count_of_year[0])
-            compliance_chart_data.append(
-                dashboard.CompliedMap(
-                    year=years[index],
-                    total_compliances=int(count_of_year[0]),
-                    complied_compliances_count=int(count_of_year[1])
-                ))
-        chart_data.append(dashboard.TrendData(
-            filter_id=country_id,
-            complied_compliance=compliance_chart_data
+    for d in rows :
+        if d["total"] == 0 :
+            continue
+        chart_years.append(d["chart_year"])
+        chart_data.append(dashboard.TrendCompliedMap(
+            d["filter_id"], d["chart_year"],
+            int(d["total"]), int(d["comp_count"])
         ))
-    return years, chart_data, count_flag
+    return years, chart_data
 
 
 def get_filtered_trend_data(
@@ -2959,15 +2955,15 @@ def get_compliance_history_ids_for_trend_chart(
     unit_condition = "country_id = %s "
     unit_condition_val = [country_id]
 
-    unit_condition += " AND  find_in_set( " + \
-        " %s, domain_ids) "
-    unit_condition_val.append(domain_id)
+    # unit_condition += " AND  find_in_set( " + \
+    #     " %s, domain_ids) "
+    # unit_condition_val.append(domain_id)
 
-    if not is_primary_admin(db, session_user):
-        unit_condition += " AND unit_id in ( " + \
-            " SELECT unit_id from tbl_user_units where " + \
-            " user_id=%s) "
-        unit_condition_val.append(session_user)
+    # if not is_primary_admin(db, session_user):
+    #     unit_condition += " AND unit_id in ( " + \
+    #         " SELECT unit_id from tbl_user_units where " + \
+    #         " user_id=%s) "
+    #     unit_condition_val.append(session_user)
 
     if filter_type is not None:
         if filter_type == "BusinessGroup":
@@ -2986,22 +2982,23 @@ def get_compliance_history_ids_for_trend_chart(
     for row in unit_result_rows:
         unit_ids.append(row["unit_id"])
 
-
     # result = get_client_statutory_ids_and_unit_ids_for_trend_chart(
     #     db, country_id, domain_id, filter_id, filter_type
     # )
     # client_statutory_ids = result[0]
 
     query = " SELECT compliance_history_id FROM " + \
-        " tbl_compliance_history WHERE compliance_id in " + \
+        " tbl_compliance_history WHERE find_in_set(compliance_id, " + \
         " ( SELECT compliance_id FROM tbl_compliances  " + \
-        "  WHERE domain_id = %s ) AND unit_id in ( " + \
+        "  WHERE domain_id = %s )) AND find_in_set(unit_id, ( " + \
         " SELECT unit_id FROM tbl_units WHERE " + unit_condition + \
         " )"
+
     param = [domain_id] + unit_condition_val
+    print query % tuple(param)
     result = db.select_all(query, param)
     compliance_history_ids = [
-        row[0] for row in result
+        row["compliance_history_id"] for row in result
     ]
     return compliance_history_ids, unit_ids
 
@@ -3047,9 +3044,9 @@ def get_client_statutory_ids_and_unit_ids_for_trend_chart(
 
 
 def get_client_compliance_count(db):
-    q = "select count(*) from tbl_compliances"
+    q = "select count(*) as ccomp from tbl_compliances"
     row = db.select_one(q)
-    return row[0]
+    return row["ccomp"]
 
 
 def get_dashboard_notification_counts(
