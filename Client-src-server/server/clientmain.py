@@ -14,7 +14,8 @@ from functools import wraps
 from clientprotocol import (
     clientadminsettings, clientmasters, clientreport,
     clienttransactions, dashboard,
-    clientlogin, general, clientuser, clientmobile
+    clientlogin, general, clientuser, clientmobile,
+    widgetprotocol
 )
 # from server.clientdatabase import ClientDatabase
 from server.dbase import Database
@@ -507,7 +508,8 @@ class API(object):
             session = request_data.session_token
             session_user, client_id, session_category = self._validate_user_session(session)
             # print session_user, client_id, session_category
-            # print request_data.request
+            print request_data.request
+            print " ------------ &&&&& "
             if hasattr(request_data.request, "legal_entity_ids") :
                 le_ids = request_data.request.legal_entity_ids
                 # print "-------"
@@ -603,6 +605,10 @@ class API(object):
     def handle_mobile_request(self, request, db, session_user, client_id, le_id):
         return mobilecontroller.process_client_mobile_request(request, db)
 
+    @global_api_request(widgetprotocol.RequestFormat, is_group=True, need_category=True)
+    def handle_widget_request(self, request, db, session_user, session_category):
+        return controller.process_client_widget_requests(request, db, session_user, session_category)
+
 
 def handle_isalive():
     return Response("Application is alive", status=200, mimetype="application/json")
@@ -645,6 +651,7 @@ def run_server(address, knowledge_server_address):
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
             ("/api/mobile", api.handle_mobile_request),
+            ("/api/widgets", api.handle_widget_request),
             # (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:

@@ -48,6 +48,10 @@ def make_map_type(module, klass_name, validfun=is_numeric, is_optional=False):
 def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
     return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name}
 
+def make_widget_type():
+    # customized widget data from backend
+    return {'type': 'WIDGET_TYPE'}
+
 api_params = {
     'request': {},
     'session_token': make_text_field(length=50),
@@ -353,6 +357,8 @@ api_params = {
     "complied_count": make_int_field(),
     "delayed_compliance_count": make_int_field(),
     "inprogress_compliance_count": make_int_field(),
+    "complied_compliances_count": make_int_field(),
+    "total_compliances": make_int_field(),
     "not_complied_count": make_int_field(),
     "year": make_text_field(),
     "compliance_status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
@@ -402,5 +408,14 @@ api_params = {
     "unassign_count": make_int_field(length=10000),
     "rejected_count": make_int_field(length=10000),
     "not_complied_count": make_int_field(length=10000),
-    "n_drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData")
+    "n_drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
+    "trend_data" : make_vector_type_field(module="dashboard", klass_name="TrendCompliedMap"),
+
+    "chart_title": make_text_field(),
+    "xaxis_name": make_text_field(),
+    "xaxis": make_vector_type_string(),
+    "yaxis_name": make_text_field(),
+    "yaxis": make_vector_type_string(),
+    "widget_data": make_widget_type(),
+
 }

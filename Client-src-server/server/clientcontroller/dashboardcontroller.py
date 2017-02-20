@@ -54,7 +54,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
 
     elif type(request) is dashboard.GetTrendChart:
-        result = process_trend_chart(db, request, session_user)
+        result = process_trend_chart(db, request, session_user, session_category)
 
     elif type(request) is dashboard.GetTrendChartDrillDownData:
         result = process_get_trend_chart_drilldown(
@@ -155,24 +155,8 @@ def process_compliance_status_chart(db, request, session_user):
     return get_compliance_status_chart(db, request, session_user)
 
 
-def process_trend_chart(db, request, session_user):
-    trend_chart_info = None
-    if request.filter_type == "Group":
-        trend_chart_info = get_trend_chart(
-            db, request.country_ids, request.domain_ids,
-            session_user
-        )
-    else:
-        trend_chart_info = get_filtered_trend_data(
-            db, request.country_ids, request.domain_ids,
-            request.filter_type, request.filter_ids,
-            session_user
-        )
-    years = trend_chart_info[0]
-    data = trend_chart_info[1]
-    count_flag = trend_chart_info[2]
-    if count_flag == 0:
-        data = []
+def process_trend_chart(db, request, session_user, session_category):
+    years, data = get_trend_chart(db, request, session_user, session_category)
     return dashboard.GetTrendChartSuccess(
         years=years,
         data=data

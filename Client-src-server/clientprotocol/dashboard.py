@@ -915,17 +915,15 @@ class GetTrendChartSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["years", "data"])
+        data = parse_dictionary(data, ["years", "trend_data"])
         years = data.get("years")
-        years = parse_structure_VectorType_UnignedIntegerType_32(years)
-        data = data.get("data")
-        data = parse_structure_VectorType_RecordType_dashboard_TrendData(data)
+        data = data.get("trend_data")
         return GetTrendChartSuccess(years, data)
 
     def to_inner_structure(self):
         return {
-            "years": to_structure_VectorType_UnsignedIntegerType_32(self.years),
-            "data": to_structure_VectorType_RecordType_dashboard_TrendData(self.data),
+            "years": self.years,
+            "trend_data": self.data,
         }
 
 class CheckContractExpirationSuccesss(Response):
@@ -1397,52 +1395,28 @@ class EscalationData(object):
 # CompliedMap
 #
 
-class CompliedMap(object):
-    def __init__(self, year, total_compliances, complied_compliances_count):
+class TrendCompliedMap(object):
+    def __init__(self, filter_id, year, total_compliances, complied_compliances_count):
+        self.filter_id = filter_id
         self.year = year
         self.total_compliances = total_compliances
         self.complied_compliances_count = complied_compliances_count
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["year", "total_compliances", "complied_compliances_count"])
-        year = data.get("year")
-        year = parse_structure_UnsignedIntegerType_32(year)
-        total_compliances = data.get("total_compliances")
-        total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
-        complied_compliances_count = data.get("complied_compliances_count")
-        complied_compliances_count = parse_structure_UnsignedIntegerType_32(complied_compliances_count)
-        return CompliedMap(year, total_compliances, complied_compliances_count)
-
-    def to_structure(self):
-        return {
-            "year": to_structure_UnsignedIntegerType_32(self.year),
-            "total_compliances": to_structure_UnsignedIntegerType_32(self.total_compliances),
-            "complied_compliances_count": to_structure_SignedIntegerType_8(self.complied_compliances_count),
-        }
-
-#
-# TrendData
-#
-
-class TrendData(object):
-    def __init__(self, filter_id, complied_compliance):
-        self.filter_id = filter_id
-        self.complied_compliance = complied_compliance
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["filter_id", "complied_compliance"])
+        data = parse_dictionary(data, ["filter_id", "chart_year", "total_compliances", "complied_compliances_count"])
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
-        complied_compliance = data.get("complied_compliance")
-        complied_compliance = parse_structure_VectorType_RecordType_dashboard_CompliedMap(complied_compliance)
-        return TrendData(filter_id, complied_compliance)
+        year = data.get("chart_year")
+        total_compliances = data.get("total_compliances")
+        complied_compliances_count = data.get("complied_compliances_count")
+        return TrendCompliedMap(filter_id, year, total_compliances, complied_compliances_count)
 
     def to_structure(self):
         return {
-            "filter_id": to_structure_UnsignedIntegerType_32(self.filter_id),
-            "complied_compliance": to_structure_VectorType_RecordType_dashboard_CompliedMap(self.complied_compliance),
+            "filter_id": self.filter_id,
+            "chart_year": self.year,
+            "total_compliances": self.total_compliances,
+            "complied_compliances_count": self.complied_compliances_count,
         }
 
 
