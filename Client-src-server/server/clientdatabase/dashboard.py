@@ -2228,7 +2228,7 @@ def get_user_company_details(db, user_id=None):
 #
 def get_assigneewise_compliances_list(
     db, country_id, business_group_id, legal_entity_id, division_id,
-    unit_id, session_user, assignee_id
+    unit_id, session_user, assignee_id, session_category
 ):
     condition = "tu.country_id =  %s"
     condition_val = [country_id]
@@ -2266,11 +2266,11 @@ def get_assigneewise_compliances_list(
         query = " SELECT " + \
             " concat(IFNULL(employee_code, " + \
             " 'Administrator'), '-', employee_name) " + \
-            " as Assignee, tch.completed_by, tch.unit_id, " + \
-            " concat(unit_code, '-', unit_name) as Unit, " + \
+            " as assignee, tch.completed_by, tch.unit_id, " + \
+            " concat(unit_code, '-', unit_name) as unit_name, " + \
             " address, tc.domain_id, " + \
             " (SELECT domain_name FROM tbl_domains td " + \
-            " WHERE tc.domain_id = td.domain_id) as Domain, " + \
+            " WHERE tc.domain_id = td.domain_id) as domain_name, " + \
             " sum(case when (approve_status = 1 " + \
             " and (tch.due_date > completion_date or " + \
             " tch.due_date = completion_date)) then 1 else 0 end) " + \
@@ -2278,28 +2278,28 @@ def get_assigneewise_compliances_list(
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
             " tch.due_date >= now() and frequency_id=4) " + \
-            "  then 1 else 0 end) as OnOccurrence_Inprogress, " + \
+            "  then 1 else 0 end) as on_occurrence_inprogress, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and frequency_id!=4 and " + \
             " tch.due_date >= current_date) then 1 else 0 end) " + \
-            " as Inprogress, " + \
+            " as inprogress, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
             " tch.due_date < now() and frequency_id=4) " + \
-            " then 1 else 0 end) as OnOccurrence_NotComplied, " + \
+            " then 1 else 0 end) as on_occurrence_not_complied, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
             " tch.due_date < current_date and frequency_id != 4) " + \
-            " then 1 else 0 end) as NotComplied, " + \
+            " then 1 else 0 end) as not_complied, " + \
             " sum(case when (approve_status = 1 " + \
             " and completion_date > tch.due_date and " + \
             " (is_reassigned = 0 or is_reassigned is null) ) " + \
-            " then 1 else 0 end) as DelayedCompliance , " + \
+            " then 1 else 0 end) as delayed_count , " + \
             " sum(case when (approve_status = 1 " + \
             " and completion_date > tch.due_date and (is_reassigned = 1)) " + \
-            " then 1 else 0 end) as DelayedReassignedCompliance " + \
+            " then 1 else 0 end) as delayed_reassigned " + \
             " FROM tbl_compliance_history tch " + \
-            " INNER JOIN tbl_assigned_compliances tac ON ( " + \
+            " INNER JOIN tbl_assign_compliances tac ON ( " + \
             " tch.compliance_id = tac.compliance_id " + \
             " AND tch.unit_id = tac.unit_id) " + \
             " INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id) " + \
@@ -2307,22 +2307,14 @@ def get_assigneewise_compliances_list(
             " (tus.user_id = tch.completed_by) " + \
             " INNER JOIN tbl_compliances tc " + \
             " ON (tac.compliance_id = tc.compliance_id) " + \
-            " WHERE " + condition + " AND domain_id = %s " + \
+            " WHERE " + condition + " AND tac.domain_id = %s " + \
             " AND tch.due_date " + \
             " BETWEEN DATE_SUB(%s, INTERVAL 1 DAY) AND " + \
             " DATE_ADD(%s, INTERVAL 1 DAY) " + \
             " group by completed_by, tch.unit_id; "
         param = [domain_id, from_date, to_date]
         parameter_list = condition_val + param
-        rows = db.select_all(query, parameter_list)
-        columns = [
-            "assignee", "completed_by", "unit_id", "unit_name",
-            "address", "domain_id", "domain_name", "complied",
-            "on_occurrence_inprogress", "inprogress",
-            "on_occurrence_not_complied", "not_complied",
-            "delayed", "delayed_reassigned"
-        ]
-        assignee_wise_compliances = convert_to_dict(rows, columns)
+        assignee_wise_compliances = db.select_all(query, parameter_list)
         for compliance in assignee_wise_compliances:
             unit_name = compliance["unit_name"]
             assignee = compliance["assignee"]
@@ -2342,7 +2334,7 @@ def get_assigneewise_compliances_list(
                     compliance["on_occurrence_inprogress"]) + int(
                     compliance["inprogress"])
             total_compliances += int(
-                compliance["delayed"]) + int(compliance["delayed_reassigned"])
+                compliance["delayed_count"]) + int(compliance["delayed_reassigned"])
             total_compliances += int(
                 compliance["not_complied"]) + int(
                 compliance["on_occurrence_not_complied"])
@@ -2352,7 +2344,7 @@ def get_assigneewise_compliances_list(
                     domain_name=compliance["domain_name"],
                     total_compliances=total_compliances,
                     complied_count=int(compliance["complied"]),
-                    assigned_count=int(compliance["delayed"]),
+                    assigned_count=int(compliance["delayed_count"]),
                     reassigned_count=int(compliance["delayed_reassigned"]),
                     inprogress_compliance_count=int(
                         compliance["inprogress"]) + int(

@@ -434,4 +434,11 @@ api_params = {
     "inprogress_count": make_int_field(length=10000),
     "overdue_count": make_int_field(length=10000),
     "users": make_vector_type_field(module="clientcore", klass_name="LegalEntityUser"),
+    "assingee_data": make_vector_type_field(module="dashboard", klass_name="AssigneeChartData"),
+    "assignee_wise_details": make_vector_type_field(module="dashboard", klass_name="AssigneeWiseDetails"),
+    "domain_wise_details": make_vector_type_field(module="dashboard", klass_name="DomainWise"),
+    "assigned_count": make_int_field(length=100000),
+    "reassigned_count": make_int_field(length=10000),
+
+
 }

@@ -559,7 +559,7 @@ def get_user_domains(db, user_id):
     rows = db.select_all(q + condition, param)
     d_ids = []
     for r in rows:
-        d_ids.append(int(r[0]))
+        d_ids.append(int(r["domain_id"]))
     return d_ids
 
 
@@ -725,7 +725,7 @@ def get_le_domains(db):
 
 def is_primary_admin(db, user_id):
     column = "count(1) as result"
-    condition = "user_id = %s and is_primary_admin = 1 and is_active = 1"
+    condition = "user_id = %s and user_category_id in (1,2,3) and is_active = 1"
     condition_val = [user_id]
     rows = db.get_data(tblUsers, column, condition, condition_val)
     if rows[0]["result"] > 0 or user_id == 1:
