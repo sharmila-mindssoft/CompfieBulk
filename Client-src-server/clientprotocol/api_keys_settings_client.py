@@ -396,7 +396,7 @@ api_params = {
     "Above_90_days_count": make_int_field(length=10000),
     "not_complied_type": make_enum_type(module="clientcore", klass_name="NOT_COMPLIED_TYPE"),
     "applicability_status": make_enum_type(module="clientcore", klass_name="APPLICABILITY_STATUS"),
-    "drill_down_data": make_vector_type_field(module="dashboard", klass_name="ApplicableDrillDown"),
+    "r_drill_down_data": make_vector_type_field(module="dashboard", klass_name="ApplicableDrillDown"),
     "level1_statutory_name": make_text_field(),
     "ap_compliances": make_map_type(module="dashboard", klass_name="Compliance", validfun=allow_specialchar),
     "format_file_list": make_vector_type_field(module="clientcore", klass_name="FileList", is_optional=True),

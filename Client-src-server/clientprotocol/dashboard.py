@@ -690,7 +690,7 @@ class GetTrendChartDrillDownData(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "filter_type", "filter_ids", "country_ids", "domain_ids", "year",
+            "filter_type", "filter_ids", "c_ids", "d_ids", "year",
             "le_ids"
         ])
         filter_type = data.get("filter_type")
@@ -709,8 +709,8 @@ class GetTrendChartDrillDownData(Request):
         return {
             "filter_type": self.filter_type,
             "filter_ids": self.filter_ids,
-            "country_ids": self.country_ids,
-            "domain_ids": self.domain_ids,
+            "c_ids": self.country_ids,
+            "d_ids": self.domain_ids,
             "year": self.year,
             "le_ids": self.legal_entity_ids
         }
@@ -1179,13 +1179,13 @@ class GetComplianceApplicabilityStatusDrillDownSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["drill_down_data"])
-        drill_down_data = data.get("drill_down_data")
+        data = parse_dictionary(data, ["r_drill_down_data"])
+        drill_down_data = data.get("r_drill_down_data")
         return GetComplianceApplicabilityStatusDrillDownSuccess(drill_down_data)
 
     def to_inner_structure(self):
         return {
-            "drill_down_data": self.drill_down_data,
+            "r_drill_down_data": self.drill_down_data,
         }
 
 class GetNotCompliedDrillDownSuccess(Response):
