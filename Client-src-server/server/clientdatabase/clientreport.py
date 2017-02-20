@@ -33,6 +33,7 @@ __all__ = [
     "report_statutory_settings_unit_Wise_total",
     "report_domain_score_card",
     "report_le_wise_score_card",
+    "report_work_flow_score_card",
     "get_delayed_compliances_with_count",
     "get_delayed_compliances_where_qry",
     "get_delayed_compliances_count",
@@ -1543,6 +1544,120 @@ def report_le_wise_score_card(
         compliances.append(compliance)
     return compliances
 # Legal Entity Wise Score Card End
+
+
+# Work Flow Score Card Start
+def report_work_flow_score_card(
+    db, country_id, legal_entity_id, domain_id, session_user
+):
+    query = "select SUM(IF(ch.completed_on IS NULL AND IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = @user_id,1,0)) as c_assignee, " + \
+            "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)) as c_concur, " + \
+            "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = @user_id,1,0)) as c_approver, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_on IS NULL and ch.completed_by = @user_id,1,0)), " + \
+            "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = @user_id,1,0)))) as inp_assignee, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and  IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)), " + \
+            "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)))) as inp_concur, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = @user_id,1,0)), " + \
+            "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = @user_id,1,0)))) as inp_approver, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_on IS NULL and ch.completed_by = @user_id,1,0)), " + \
+            "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = @user_id,1,0)))) as ov_assignee, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and  IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)), " + \
+            "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)))) as ov_concur, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = @user_id,1,0)), " + \
+            "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = @user_id,1,0)))) as ov_approver " + \
+            "from tbl_compliance_history as ch inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+            "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s "
+
+    domain_wise_count = db.select_all(query, [country_id, legal_entity_id, domain_id])
+    print domain_wise_count
+
+    def completed_task_count(country_id, legal_entity_id, domain_id) :
+        query = "select ch.unit_id,(select concat(unit_code,' - ',unit_name) from tbl_units where unit_id = ch.unit_id) as unitname, " + \
+                "SUM(IF(ch.completed_on IS NULL AND IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = @user_id,1,0)) as c_assignee, " + \
+                "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)) as c_concur, " + \
+                "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = @user_id,1,0)) as c_approver " + \
+                "from tbl_compliance_history as ch inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s group by ch.unit_id"
+        rows = db.select_all(query, [country_id, legal_entity_id, domain_id])
+        print rows
+        array = []
+        for r in rows :
+            unit_id = int(r["unit_id"])
+            unit = r["unitname"]
+            c_assignee = int(r["c_assignee"])
+            c_concur = int(r["c_concur"])
+            c_approver = int(r["c_approver"])
+            result = clientcore.GetCompletedTaskCountSuccess(unit_id, unit, c_assignee, c_concur, c_approver)
+            array.append(result)
+        return array
+
+    def inprogress_within_duedate_task_count(country_id, legal_entity_id, domain_id) :
+        query = "select ch.unit_id,(select concat(unit_code,' - ',unit_name) from tbl_units where unit_id = ch.unit_id) as unitname, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_on IS NULL and ch.completed_by = @user_id,1,0)), " + \
+                "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = @user_id,1,0)))) as inp_assignee, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and  IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)), " + \
+                "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)))) as inp_concur, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = @user_id,1,0)), " + \
+                "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = @user_id,1,0)))) as inp_approver " + \
+                "from tbl_compliance_history as ch inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s group by ch.unit_id"
+        rows = db.select_all(query, [country_id, legal_entity_id, domain_id])
+        print rows
+        inprogress_unit = []
+        for r in rows :
+            unit_id = int(r["unit_id"])
+            unit = r["unitname"]
+            inp_assignee = int(r["inp_assignee"])
+            inp_concur = int(r["inp_concur"])
+            inp_approver = int(r["inp_approver"])
+            result = clientcore.GetInprogressWithinDuedateTaskCountSuccess(unit_id, unit, inp_assignee, inp_concur, inp_approver)
+            inprogress_unit.append(result)
+        return inprogress_unit
+
+    def over_due_task_count(country_id, legal_entity_id, domain_id) :
+        query = "select ch.unit_id,(select concat(unit_code,' - ',unit_name) from tbl_units where unit_id = ch.unit_id) as unitname, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_on IS NULL and ch.completed_by = @user_id,1,0)), " + \
+                "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = @user_id,1,0)))) as ov_assignee, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and  IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)), " + \
+                "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = @user_id,1,0)))) as ov_concur, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = @user_id,1,0)), " + \
+                "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = @user_id,1,0)))) as ov_approver " + \
+                "from tbl_compliance_history as ch inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s group by ch.unit_id "
+        rows = db.select_all(query, [country_id, legal_entity_id, domain_id])
+        print rows
+        inprogress_unit = []
+        for r in rows :
+            unit_id = int(r["unit_id"])
+            unit = r["unitname"]
+            ov_assignee = int(r["ov_assignee"])
+            ov_concur = int(r["ov_concur"])
+            ov_approver = int(r["ov_approver"])
+            result = clientcore.GetOverDueTaskCountSuccess(unit_id, unit, ov_assignee, ov_concur, ov_approver)
+            inprogress_unit.append(result)
+        return inprogress_unit
+
+    compliances = []
+    for r in domain_wise_count :
+        c_assignee = int(r["c_assignee"])
+        c_concur = int(r["c_concur"])
+        c_approver = int(r["c_approver"])
+        inp_assignee = int(r["inp_assignee"])
+        inp_concur = int(r["inp_concur"])
+        inp_approver = int(r["inp_approver"])
+        ov_assignee = int(r["ov_assignee"])
+        ov_concur = int(r["ov_concur"])
+        ov_approver = int(r["ov_approver"])
+        completed_task_count = completed_task_count(country_id, legal_entity_id, domain_id)
+        inprogress_within_duedate_task_count = inprogress_within_duedate_task_count(country_id, legal_entity_id, domain_id)
+        over_due_task_count = over_due_task_count(country_id, legal_entity_id, domain_id)
+        compliance = clientcore.GetWorkFlowScoreCardSuccess(
+            c_assignee, c_concur, c_approver, inp_assignee, inp_concur, inp_approver, ov_assignee, ov_concur, ov_approver, 
+            completed_task_count, inprogress_within_duedate_task_count, over_due_task_count
+        )
+        compliances.append(compliance)
+    return compliances
+# Work Flow Score Card End
 
 def get_delayed_compliances_where_qry(
     db, business_group_id, legal_entity_id, division_id, unit_id,

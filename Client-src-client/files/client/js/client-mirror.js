@@ -961,7 +961,32 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-    // Legal Entity Wise Score Card End 
+    // Legal Entity Wise Score Card End
+
+    // Work Flow Score Card Start
+    function getWorkFlowScoreCardFilters(le_id, callback) {
+        var request = [
+            'GetWorkFlowScoreCardFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getWorkFlowScoreCard(c_id, le_id, d_id, csv, callback) {
+        var request = [
+            'GetWorkFlowScoreCard', {
+                'c_id': c_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'csv': csv
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Work Flow Score Card End 
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -2632,6 +2657,8 @@ function initClientMirror() {
         getDomainScoreCard: getDomainScoreCard,
         getLEWiseScoreCardFilters: getLEWiseScoreCardFilters,
         getLEWiseScoreCard: getLEWiseScoreCard,
+        getWorkFlowScoreCardFilters: getWorkFlowScoreCardFilters,
+        getWorkFlowScoreCard: getWorkFlowScoreCard,
         getStatutorySettingsUnitWise: getStatutorySettingsUnitWise,
         updateComplianceDetail: updateComplianceDetail,
         getLoginTrace: getLoginTrace,
