@@ -1,7 +1,7 @@
 tblActivityLog = 'tbl_activity_log'
 tblBusinessGroups = 'tbl_business_groups'
 tblCategories = 'tbl_categories'
-tblClientConfiguration = 'tbl_client_configuration'
+tblClientConfigurations = 'tbl_client_configuration'
 tblClientGroups = 'tbl_client_groups'
 tblCountries = 'tbl_countries'
 tblDivisions = 'tbl_divisions'

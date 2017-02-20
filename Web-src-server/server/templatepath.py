@@ -20,7 +20,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Widgets ---------------------------------------------------------------------
     (
         "/home",
-        "files/client/home/home.html",
+        "files/client/widgets/widgets.html",
         None, {}
     ),
     # Welcome ---------------------------------------------------------------------

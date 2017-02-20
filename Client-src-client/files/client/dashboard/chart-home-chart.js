@@ -211,7 +211,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 // Escalation chart
 //
 function updateEscalationChart(data) {
-  $('.graph-container.compliance-status').show();
+  $('.chart-container').show();
   data = prepareEscalationChartdata(data);
   xAxis = data[0];
   chartDataSeries = data[1];
@@ -262,7 +262,7 @@ function updateEscalationChart(data) {
 // Not complied
 //
 function updateNotCompliedChart(data) {
-  data = prepareNotCompliedChart(data);
+  data = prepareNotCompliedChart(data);  
   chartDataSeries = data[0];
   chartTitle = data[1];
   total = data[2];
@@ -620,6 +620,8 @@ function ChartInput() {
     return selectedLegalentity[0]['le_id'];
   };
   this.getLegalEntities = function () {
+    leids = client_mirror.getSelectedLegalEntity();
+    this.legal_entities = $.map(leids, function(element,index) {return element.le_id});
     if (this.legal_entities.length > 0)
       return copyArray(this.legal_entities);
     else {
@@ -941,8 +943,7 @@ function loadUnits(isSelectAll) {
   }
 }
 function loadSubFilters(isSelectAll, isSingleSelect) {
-  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
-  console.log("selectedLegalentity--"+selectedLegalentity);
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();  
   loadBusinessGroups(isSelectAll);
   loadLegalEntities(isSelectAll);
   loadDivisions(isSelectAll);
@@ -1283,7 +1284,7 @@ function parseComplianceStatusApiInput() {
   if (chart_year == 0) {
     chart_year = chartInput.getCurrentYear();
   }
-  var legalEntityId = chartInput.getLegalEntity();
+  var legalEntityIds = chartInput.getLegalEntities();
   var requestData = {
     'c_ids': countryIds,
     'd_ids': domainIds,
@@ -1292,7 +1293,7 @@ function parseComplianceStatusApiInput() {
     'from_date': fromDate,
     'to_date': toDate,
     'chart_year': chart_year, 
-    'le_id': legalEntityId
+    'le_ids': legalEntityIds
   };
   return requestData;
 }
@@ -1434,7 +1435,7 @@ function prepareComplianceStatusChartData(chart_data) {
   ];
 }
 // Escalation
-function prepareEscalationChartdata(source_data) {
+function prepareEscalationChartdata(source_data) {  
   var chartTitle = getFilterTypeTitle();
   var xAxis = [];
   function set_value(dict, key, value) {
@@ -1444,14 +1445,14 @@ function prepareEscalationChartdata(source_data) {
     temp = parseInt(temp) + parseInt(value);
     dict[key] = temp;
   }
-  chart_data = source_data.chart_data;
+  chart_data = source_data.es_chart_data;
   var chartDataSeries = [];
   delayed_data = [];
   not_complied_data = [];
   $.each(chart_data, function (i, value) {
     delayed = value.delayed_compliance_count;
     not_complied = value.not_complied_count;
-    year = value.year;
+    year = value.chart_year;
     if (delayed == 0 && not_complied == 0) {
     } else {
       if (delayed == 0)
@@ -1603,30 +1604,41 @@ function prepareNotCompliedChart(source_data) {
 function prepareComplianceApplicability(source_data) {
   chartDataSeries = [];
   chartTitle = getFilterTypeTitle();
-  applicable = source_data.applicable_count;
-  not_applicable = source_data.not_applicable_count;
+  rejected_count = source_data.rejected_count;
+  not_complied_count = source_data.not_complied_count;
+  unassign_count = source_data.unassign_count;
   not_opted = source_data.not_opted_count;
-  total = parseInt(applicable) + parseInt(not_applicable) + parseInt(not_opted);
-  if (applicable == 0 && not_applicable == 0 && not_opted == 0) {
+  total = parseInt(rejected_count) + parseInt(not_complied_count) + parseInt(unassign_count) + parseInt(not_opted);
+  if (rejected_count == 0 && not_complied_count == 0 && unassign_count == 0 && not_opted == 0) {
   } else {
-    if (applicable == 0)
+    if (rejected_count == 0)
       v_visible = false;
     else
       v_visible = true;
     chartDataSeries.push({
-      name: 'Applicable',
-      y: applicable,
-      drilldown: 'Applicable',
+      name: 'Rejected',
+      y: rejected_count,
+      drilldown: 'Rejected',
       visible: v_visible
     });
-    if (not_applicable == 0)
+    if (not_complied_count == 0)
       v_visible = false;
     else
       v_visible = true;
     chartDataSeries.push({
-      name: 'Not Applicable',
-      y: not_applicable,
-      drilldown: 'Not Applicable',
+      name: 'Not Complied',
+      y: not_complied_count,
+      drilldown: 'Not Complied',
+      visible: v_visible
+    });
+    if (unassign_count == 0)
+      v_visible = false;
+    else
+      v_visible = true;
+    chartDataSeries.push({
+      name: 'Unassigned',
+      y: unassign_count,
+      drilldown: 'Unassigned',
       visible: v_visible
     });
     if (not_opted == 0)
@@ -1642,14 +1654,14 @@ function prepareComplianceApplicability(source_data) {
   }
   var filterTypeInput = getFilterTypeInput();
   if (chartTitle == 'Country') {
-    chartTitle = 'Compliance Applicability Status of ' + GROUP_NAME;
+    chartTitle = 'Risk Chart of ' + GROUP_NAME;
   } else {
     filter_names = [];
     for (var i = 0; i < filterTypeInput.length; i++) {
       name = getFilterTypeName(filterTypeInput[i]);
       filter_names.push(name);
     }
-    chartTitle = 'Compliance Applicability Status of ' + chartTitle + ' ' + filter_names;
+    chartTitle = 'Risk Chart of ' + chartTitle + ' ' + filter_names;
   }
   return [
     chartDataSeries,
@@ -1693,11 +1705,13 @@ function loadEscalationChart() {
   } else {
     filter_ids = getFilterIds(filter_type);
   }
+  legalEntityIds = chartInput.getLegalEntities();
   var requestData = {
-    'country_ids': chartInput.getCountries(),
-    'domain_ids': chartInput.getDomains(),
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': filter_ids
+    'filter_ids': filter_ids,
+    'le_ids': legalEntityIds
   };
   client_mirror.getEscalationChartData(requestData, function (status, data) {
     ESCALATION_DATA = data;
@@ -1712,11 +1726,13 @@ function loadTrendChart() {
   if (filterType == 'Group') {
     filter_ids = chartInput.getCountries();
   }
+  var legalEntityIds = chartInput.getLegalEntities();
   var requestData = {
-    'country_ids': chartInput.getCountries(),
-    'domain_ids': chartInput.getDomains(),
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': filter_ids
+    'filter_ids': filter_ids,
+    'le_ids': legalEntityIds
   };
   client_mirror.getTrendChart(requestData, function (status, data) {
     TREND_CHART_DATA = data;
@@ -1731,11 +1747,13 @@ function loadNotCompliedChart() {
   if (filterType == 'Group') {
     filter_ids = chartInput.getCountries();
   }
+  var legalEntityIds = chartInput.getLegalEntities();
   var requestData = {
-    'country_ids': chartInput.getCountries(),
-    'domain_ids': chartInput.getDomains(),
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': filter_ids
+    'filter_ids': filter_ids,
+    'le_ids': legalEntityIds
   };
   client_mirror.getNotCompliedData(requestData, function (status, data) {
     NOT_COMPLIED_DATA = data;
@@ -1751,10 +1769,12 @@ function loadComplianceApplicabilityChart() {
     filter_ids = chartInput.getCountries();
   }
   var requestData = {
-    'country_ids': chartInput.getCountries(),
-    'domain_ids': chartInput.getDomains(),
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': filter_ids
+    'filter_ids': filter_ids,
+    'le_ids': chartInput.getLegalEntities()
+
   };
   client_mirror.getComplianceApplicabilityChart(requestData, function (status, data) {
     COMPLIANCE_APPLICABILITY_DATA = data;

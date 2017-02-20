@@ -1616,6 +1616,7 @@ def get_not_complied_chart(db, request, session_user):
     print query
     print param
     rows = db.select_all("%s %s" % (query, order), param)
+    print "rows--", rows
     not_complied = rows
     current_date = datetime.datetime.today()
     below_30 = 0
@@ -1858,7 +1859,7 @@ def make_not_opted_drill_down_query():
         " concat(T2.unit_code, ' - ', T2.unit_name) as unit_name " + \
         " from tbl_client_compliances as T1 " + \
         " inner join tbl_units as T2 on T1.unit_id = T2.unit_id" + \
-        " inner join tbl_compliances as T3 on T1.compliance_id = T3.compliance_id " + \
+        " inner join tbl_compliances as T3 on T1.compliance_id = T3.compliance_id and" + \
         " T3.domain_id = T1.domain_id " + \
         " where ifnull(T1.compliance_opted_status,0) = 0 " + \
         " AND find_in_set(T2.country_id, %s) " + \
@@ -2960,15 +2961,15 @@ def get_compliance_history_ids_for_trend_chart(
     unit_condition = "country_id = %s "
     unit_condition_val = [country_id]
 
-    unit_condition += " AND  find_in_set( " + \
-        " %s, domain_ids) "
-    unit_condition_val.append(domain_id)
+    # unit_condition += " AND  find_in_set( " + \
+    #     " %s, domain_ids) "
+    # unit_condition_val.append(domain_id)
 
-    if not is_primary_admin(db, session_user):
-        unit_condition += " AND unit_id in ( " + \
-            " SELECT unit_id from tbl_user_units where " + \
-            " user_id=%s) "
-        unit_condition_val.append(session_user)
+    # if not is_primary_admin(db, session_user):
+    #     unit_condition += " AND unit_id in ( " + \
+    #         " SELECT unit_id from tbl_user_units where " + \
+    #         " user_id=%s) "
+    #     unit_condition_val.append(session_user)
 
     if filter_type is not None:
         if filter_type == "BusinessGroup":
@@ -2986,7 +2987,6 @@ def get_compliance_history_ids_for_trend_chart(
     unit_ids = []
     for row in unit_result_rows:
         unit_ids.append(row["unit_id"])
-
 
     # result = get_client_statutory_ids_and_unit_ids_for_trend_chart(
     #     db, country_id, domain_id, filter_id, filter_type
