@@ -69,12 +69,12 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/assign-compliance",
-        "files/client/assign-compliance/assigncompliance.html",
+        "files/client/assign-compliance/assign-compliance.html",
         None, {}
     ),
     (
         "/reassign-compliance",
-        "files/client/reassign-compliance/reassigncompliance.html",
+        "files/client/reassign-compliance/reassign-compliance.html",
         None, {}
     ),
     (

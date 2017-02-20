@@ -400,8 +400,10 @@ class API(object):
                 if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
                     return respond(clientlogin.InvalidCurrentPassword())
 
-        else :
-            session_user = None
+        print '*' * 20
+        print session_user, client_id, session_category
+        print '*' * 20
+
         # request process in controller
         if is_group :
             print "Group DB"
@@ -581,9 +583,9 @@ class API(object):
     def handle_client_transaction(self, request, db, session_user, session_category):
         return controller.process_client_transaction_requests(request, db, session_user, session_category)
 
-    @api_request(clientreport.RequestFormat)
-    def handle_client_reports(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_report_requests(request, db, session_user, client_id, le_id)
+    @api_request(clientreport.RequestFormat, is_group=False, need_category=True)
+    def handle_client_reports(self, request, db, session_user, session_category):
+        return controller.process_client_report_requests(request, db, session_user, session_category)
 
     @global_api_request(dashboard.RequestFormat, is_group=True, need_category=True)
     def handle_client_dashboard(self, request, db, session_user, session_category):

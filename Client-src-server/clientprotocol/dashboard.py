@@ -350,27 +350,14 @@ class GetComplianceApplicabilityStatusChart(Request):
             "le_ids": self.legal_entity_ids
         }
 
-class GetAssigneewiseComplianesFilters(Request):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetAssigneewiseComplianesFilters()
-
-    def to_inner_structure(self):
-        return {
-        }
-
 class GetAssigneeWiseCompliancesChart(Request):
     def __init__(
-        self, country_id, business_group_id, legal_entity_id, division_id,
+        self, country_id, business_group_id, legal_entity_ids, division_id,
         unit_id, user_id, csv
     ):
         self.country_id = country_id
         self.business_group_id = business_group_id
-        self.legal_entity_id = legal_entity_id
+        self.legal_entity_ids = legal_entity_ids
         self.division_id = division_id
         self.unit_id = unit_id
         self.user_id = user_id
@@ -380,27 +367,27 @@ class GetAssigneeWiseCompliancesChart(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "c_ids", "bg_id", "le_id", "div_id",
+                "c_id", "bg_id", "le_ids", "div_id",
                 "u_id", "usr_id", "csv"
             ]
         )
-        country_id = data.get("c_ids")
+        country_id = data.get("c_id")
         business_group_id = data.get("bg_id")
-        legal_entity_id = data.get("le_id")
+        legal_entity_ids = data.get("le_ids")
         division_id = data.get("div_id")
         unit_id = data.get("u_id")
         user_id = data.get("usr_id")
         csv = data.get("csv")
         return GetAssigneeWiseCompliancesChart(
-            country_id, business_group_id, legal_entity_id, division_id,
+            country_id, business_group_id, legal_entity_ids, division_id,
             unit_id, user_id, csv
         )
 
     def to_inner_structure(self):
         return {
-            "c_ids": self.country_id,
+            "c_id": self.country_id,
             "bg_id": self.business_group_id,
-            "le_id": self.legal_entity_id,
+            "le_ids": self.legal_entity_ids,
             "div_id": self.division_id,
             "u_id": self.unit_id,
             "usr_id": self.user_id,
@@ -763,7 +750,7 @@ def _init_Request_class_map():
         GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
         GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
         GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
-        GetAssigneewiseComplianesFilters, CheckContractExpiration,
+        CheckContractExpiration,
         GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes
     ]
     class_map = {}
@@ -996,67 +983,19 @@ class GetComplianceApplicabilityStatusChartSuccess(Response):
             "not_complied_count": self.not_complied_count
         }
 
-
-class GetAssigneewiseComplianesFiltersSuccess(Response):
-    def __init__(self, countries, business_groups, legal_entities, divisions,
-        units, users, domains):
-        self.countries = countries
-        self.business_groups = business_groups
-        self.legal_entities = legal_entities
-        self.divisions = divisions
-        self.units = units
-        self.users = users
-        self.domains = domains
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "countries", "business_groups", "legal_entities", "divisions",
-            "units", "users", "domains"
-        ])
-        countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
-        business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
-        legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
-        divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
-        units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
-        users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clientreport_User(users)
-        domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        return GetAssigneewiseComplianesFiltersSuccess(countries,
-            business_groups, legal_entities, divisions, units, users, domains)
-
-    def to_inner_structure(self):
-        return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
-            "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
-            "domins": to_structure_VectorType_RecordType_core_Domain(self.domains)
-        }
-
-
 class GetAssigneeWiseCompliancesChartSuccess(Response):
     def __init__(self, chart_data):
         self.chart_data = chart_data
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["chart_data"])
-        chart_data = data.get("chart_data")
-        chart_data = parse_structure_VectorType_RecordType_dashboard_AssigneeChartData(chart_data)
+        data = parse_dictionary(data, ["assingee_data"])
+        chart_data = data.get("assingee_data")
         return GetAssigneeWiseCompliancesChartSuccess(chart_data)
 
     def to_inner_structure(self):
         return {
-            "chart_data": to_structure_VectorType_RecordType_dashboard_AssigneeChartData(self.chart_data),
+            "assingee_data": self.chart_data,
         }
 
 class GetAssigneewiseYearwiseCompliancesSuccess(Response):
@@ -1263,7 +1202,6 @@ def _init_Response_class_map():
         GetTrendChartDrillDownDataSuccess,
         GetNotificationsSuccess,
         UpdateNotificationStatusSuccess,
-        GetAssigneewiseComplianesFiltersSuccess,
         CheckContractExpirationSuccesss,
         GetAssigneewiseYearwiseCompliancesSuccess
     ]
@@ -1510,40 +1448,35 @@ class DomainWise(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["domain_id", "domain_name",
-        "total_compliances", "complied_count", "assigned_count",
-        "reassigned_count", "inprogress_compliance_count", "not_complied_count"])
+        data = parse_dictionary(data, [
+            "domain_id", "domain_name",
+            "total_compliances", "complied_count", "assigned_count",
+            "reassigned_count", "inprogress_compliance_count", "not_complied_count"
+        ])
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
-        domain_name = parse_structure_CustomTextType_50(domain_name)
         total_compliances = data.get("total_compliances")
-        total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
         complied_count = data.get("complied_count")
-        complied_count = parse_structure_UnsignedIntegerType_32(complied_count)
         assigned_count = data.get("assigned_count")
-        assigned_count = parse_structure_UnsignedIntegerType_32(assigned_count)
         reassigned_count = data.get("reassigned_count")
-        reassigned_count = parse_structure_UnsignedIntegerType_32(reassigned_count)
         inprogress_compliance_count = data.get("inprogress_compliance_count")
-        inprogress_compliance_count = parse_structure_UnsignedIntegerType_32(inprogress_compliance_count)
         not_complied_count = data.get("not_complied_count")
-        not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
-        return DomainWise(domain_id, domain_name, total_compliances,
+        return DomainWise(
+            domain_id, domain_name, total_compliances,
             complied_count, assigned_count, reassigned_count,
             inprogress_compliance_count, not_complied_count
         )
 
     def to_structure(self):
         return {
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "domain_name": to_structure_CustomTextType_50(self.domain_name),
-            "total_compliances": to_structure_UnsignedIntegerType_32(self.total_compliances),
-            "complied_count": to_structure_UnsignedIntegerType_32(self.complied_count),
-            "assigned_count": to_structure_UnsignedIntegerType_32(self.assigned_count),
-            "reassigned_count": to_structure_UnsignedIntegerType_32(self.reassigned_count),
-            "inprogress_compliance_count": to_structure_UnsignedIntegerType_32(self.inprogress_compliance_count),
-            "not_complied_count": to_structure_UnsignedIntegerType_32(self.not_complied_count),
+            "domain_id": self.domain_id,
+            "domain_name": self.domain_name,
+            "total_compliances": self.total_compliances,
+            "complied_count": self.complied_count,
+            "assigned_count": self.assigned_count,
+            "reassigned_count": self.reassigned_count,
+            "inprogress_compliance_count": self.inprogress_compliance_count,
+            "not_complied_count": self.not_complied_count,
         }
 
 #
@@ -1611,20 +1544,17 @@ class AssigneeWiseDetails(object):
             ]
         )
         user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         assignee_name = data.get("assignee_name")
-        assignee_name = parse_structure_CustomTextType_100(assignee_name)
         domain_wise_details = data.get("domain_wise_details")
-        domain_wise_details = parse_structure_VectorType_RecordType_dashboard_DomainWise(domain_wise_details)
         return AssigneeWiseDetails(
             user_id, assignee_name, domain_wise_details
         )
 
     def to_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
-            "domain_wise_details": to_structure_VectorType_RecordType_dashboard_DomainWise(self.domain_wise_details)
+            "user_id": self.user_id,
+            "assignee_name": self.assignee_name,
+            "domain_wise_details": self.domain_wise_details
         }
 
 #
@@ -1642,21 +1572,17 @@ class AssigneeChartData(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_name", "unit_id", "assignee_wise_details", "address"])
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         assignee_wise_details = data.get("assignee_wise_details")
-        assignee_wise_details = parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(assignee_wise_details)
         address = data.get("address")
-        address = parse_structure_CustomTextType_500(address)
         return AssigneeChartData(unit_name, unit_id, assignee_wise_details, address)
 
     def to_structure(self):
         return {
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
-            "address": to_structure_CustomTextType_500(self.address),
-            "assignee_wise_details": to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(self.assignee_wise_details),
+            "unit_name": self.unit_name,
+            "unit_id": self.unit_id,
+            "address": self.address,
+            "assignee_wise_details": self.assignee_wise_details,
         }
 
 
@@ -1990,7 +1916,7 @@ class DomainWiseYearConfiguration(object):
         ])
         country_name = data.get("c_name")
         domain_name = data.get("d_name")
-        period_from = data.get("m_nmae_from")
+        period_from = data.get("m_name_from")
         period_to = data.get("m_name_to")
         return DomainWiseYearConfiguration(country_name, domain_name, period_from, period_to)
 
