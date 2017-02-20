@@ -436,9 +436,14 @@ def get_trend_chart(
     years = get_last_7_years()
     # import from common.py
 
+    if user_category <= 3 :
+        tbl_name = "tbl_compliance_status_chart_unitwise"
+    else :
+        tbl_name = "tbl_compliance_status_chart_userwise"
+
     q = "select " + group_by_name + " as filter_id, t1.chart_year, sum(t1.complied_count) as comp_count, " + \
         " (sum(t1.complied_count)+sum(t1.delayed_count)+sum(t1.inprogress_count)+sum(t1.overdue_count)) as total" + \
-        " from tbl_compliance_status_chart_unitwise as t1" + \
+        " from " + tbl_name + " as t1" + \
         " inner join tbl_units as T3 on t1.unit_id = T3.unit_id " + \
         " where find_in_set(t1.chart_year, %s) and " + \
         " find_in_set(t1.domain_id, %s) " + filter_type_ids + \
