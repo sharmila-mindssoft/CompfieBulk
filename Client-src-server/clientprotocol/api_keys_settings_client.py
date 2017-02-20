@@ -410,4 +410,6 @@ api_params = {
     "delayed_count": make_int_field(length=10000),
     "inprogress_count": make_int_field(length=10000),
     "overdue_count": make_int_field(length=10000),
+    "reassign_units": make_vector_type_field(module="clienttransactions", klass_name="REASSIGN_COMPLIANCE_UNITS"),
+    "no_of_compliances": make_int_field(length=100000),
 }

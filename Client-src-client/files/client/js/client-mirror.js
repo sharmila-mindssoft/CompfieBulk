@@ -187,7 +187,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        alert(body.toSource());
+        /*alert(body.toSource());*/
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -2552,6 +2552,35 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getReAssignComplianceUnits(legalEntityId, domainId, userId, userType, unitId, callback) {
+        var request = [
+            'GetReAssignComplianceUnits', {
+                'le_id': legalEntityId,
+                'd_id': domainId,
+                'usr_id': userId,
+                'user_type_id': userType,
+                'unit_id': unitId
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getReAssignComplianceForUnits(legalEntityId, domainId, userId, userType, unitIds, recordCount, callback) {
+        var request = [
+            'GetReAssignComplianceForUnits', {
+                'le_id': legalEntityId,
+                'd_id': domainId,
+                'usr_id': userId,
+                'user_type_id': userType,
+                'u_ids': unitIds,
+                'r_count': recordCount
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2721,6 +2750,8 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         updateUserProfile: updateUserProfile,
         getReassignComplianceFilters: getReassignComplianceFilters,
+        getReAssignComplianceUnits: getReAssignComplianceUnits,
+        getReAssignComplianceForUnits: getReAssignComplianceForUnits,
     };
 }
 

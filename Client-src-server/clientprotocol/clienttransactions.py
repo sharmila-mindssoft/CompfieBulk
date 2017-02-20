@@ -925,6 +925,65 @@ class GetReassignComplianceFilters(Request):
             "le_id": self.legal_entity_id
         }
 
+class GetReAssignComplianceUnits(Request):
+    def __init__(self, legal_entity_id, d_id, usr_id, user_type_id, unit_id):
+        self.legal_entity_id = legal_entity_id
+        self.d_id = d_id
+        self.usr_id = usr_id
+        self.user_type_id = user_type_id
+        self.unit_id = unit_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "usr_id", "user_type_id", "unit_id"])
+        return GetReAssignComplianceUnits(
+            data.get("le_id"),
+            data.get("d_id"),
+            data.get("usr_id"),
+            data.get("user_type_id"),
+            data.get("unit_id")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.d_id,
+            "usr_id": self.usr_id,
+            "user_type_id": self.user_type_id,
+            "unit_id": self.unit_id
+        }
+
+
+class GetReAssignComplianceForUnits(Request):
+    def __init__(self, legal_entity_id, d_id, usr_id, user_type_id, u_ids, r_count):
+        self.legal_entity_id = legal_entity_id
+        self.d_id = d_id
+        self.usr_id = usr_id
+        self.user_type_id = user_type_id
+        self.u_ids = u_ids
+        self.r_count = r_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "usr_id", "user_type_id", "u_ids", "r_count"])
+        return GetReAssignComplianceForUnits(
+            data.get("le_id"),
+            data.get("d_id"),
+            data.get("usr_id"),
+            data.get("user_type_id"),
+            data.get("u_ids"),
+            data.get("r_count")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.d_id,
+            "usr_id": self.usr_id,
+            "user_type_id": self.user_type_id,
+            "u_ids": self.u_ids,
+            "r_count": self.r_count
+        }
 def _init_Request_class_map():
 
     classes = [
@@ -938,7 +997,8 @@ def _init_Request_class_map():
         SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
         GetUserToAssignCompliance, GetChartFilters,
-        GetReassignComplianceFilters
+        GetReassignComplianceFilters, GetReAssignComplianceUnits,
+        GetReAssignComplianceForUnits
     ]
 
     class_map = {}
@@ -1641,6 +1701,34 @@ class GetReassignComplianceFiltersSuccess(Response):
             "legal_entity_users": self.legal_entity_users
         }
 
+class GetReAssignComplianceUnitsSuccess(Response):
+    def __init__(self, units):
+        self.units = units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["reassign_units"])
+        return GetReAssignComplianceUnitsSuccess(
+            data.get("units"),
+        )
+
+    def to_inner_structure(self):
+        return {
+            "reassign_units": self.units,
+        }
+
+class GetReassignComplianceForUnitsSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [])
+        return GetReassignComplianceForUnitsSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
 def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
@@ -1653,7 +1741,8 @@ def _init_Response_class_map():
         GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess,
         GetAssignComplianceUnitsSuccess,
         GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
-        GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess
+        GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess,
+        GetReAssignComplianceUnitsSuccess
     ]
     class_map = {}
     for c in classes:
@@ -2641,3 +2730,43 @@ class Users(object):
             "sp_short_name": self.sp_short_name
         }
 
+#
+# REASSIGN_COMPLIANCE_UNITS
+#
+
+class REASSIGN_COMPLIANCE_UNITS(object):
+    def __init__(
+        self, unit_id, unit_name, address, postal_code, user_type_id, no_of_compliances
+    ):
+        self.unit_id = unit_id
+        self.unit_name = unit_name
+        self.address = address
+        self.postal_code = postal_code
+        self.user_type_id = user_type_id
+        self.no_of_compliances = no_of_compliances
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "u_id", "u_name", "address", "postal_code", "user_type_id", "no_of_compliances"
+        ])
+        unit_id = data.get("u_id")
+        unit_name = data.get("u_name")
+        address = data.get("address")
+        postal_code = data.get("postal_code")
+        user_type_id = data.get("user_type_id")
+        no_of_compliances = data.get("no_of_compliances")
+
+        return ASSIGN_COMPLIANCE_UNITS(
+            unit_id, unit_name, address, postal_code, user_type_id, no_of_compliances
+        )
+
+    def to_structure(self):
+        return {
+            "u_id": self.unit_id,
+            "u_name": self.unit_name,
+            "address": self.address,
+            "postal_code": self.postal_code,
+            "user_type_id": self.user_type_id,
+            "no_of_compliances": self.no_of_compliances
+        }

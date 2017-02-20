@@ -63,7 +63,8 @@ __all__ = [
     "total_compliance_for_units",
     "get_clien_users_by_unit_and_domain",
     "get_approve_level",
-    "get_all_frequency"
+    "get_all_frequency",
+    "get_units_to_reassig",
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -2786,3 +2787,104 @@ def save_review_settings_compliance(db, compliances, session_user):
                         )
             db.save_activity(session_user, frmReviewSettings, action, c["legal_entity_id"], unit_id)
             return result
+
+def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_user, session_category):
+
+    if session_category <= 3 :
+        query = "select * From (" + \
+            "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
+            "count(ac.compliance_id) as no_of_compliances, " + \
+            "'1' as user_type " + \
+            "from tbl_assign_compliances as ac " + \
+            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
+            "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
+            "Where ac.assignee = %s and ac.domain_id = %s " + \
+            "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
+            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "UNION ALL " + \
+            "(select ac.unit_id,concat(unt.unit_code,' - ', unt.unit_name,' - ', SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
+            "count(ac.compliance_id) as no_of_compliances," + \
+            "'2' as user_type " + \
+            "from tbl_assign_compliances as ac " + \
+            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
+            "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
+            "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
+            "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
+            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "UNION ALL " + \
+            "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
+            "count(ac.compliance_id) as no_of_compliances, " + \
+            "'3' as user_type " + \
+            "from tbl_assign_compliances as ac " + \
+            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
+            "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
+            "Where ac.approval_person = %s and ac.domain_id = %s " + \
+            "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
+            "Group by ac.unit_id,ac.assignee,ac.concurrence_person)) as t1 " + \
+            "Where IF(%s > 0,user_type = %s, 1) " + \
+            "ORDER BY user_type,unit_id;"
+        param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type]
+
+    else :
+        # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
+        #     "t2.ccount, t2.domain_id " + \
+        #     " from tbl_units t1 " + \
+        #     " left join  " + \
+        #     " (select count(t1.compliance_id) as ccount, t1.unit_id, t1.domain_id from tbl_client_compliances as t1 " + \
+        #     " left join tbl_assign_compliances as t2 on t1.compliance_id = t2.compliance_id  " + \
+        #     " and t1.unit_id = t2.unit_id group by t1.unit_id) as t2 " + \
+        #     " on t1.unit_id = t2.unit_id  " + \
+        #     " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id" + \
+        #     " inner join tbl_user_domains as t4 on t2.domain_id = t4.domain_id and t3.user_id = t4.user_id" + \
+        #     " where t2.ccount > 0 and t2.domain_id = %s and t4.user_id = %s" + \
+        #     " order by t1.unit_code, t1.unit_name"
+        # param = [domain_id, session_user]
+        
+        query = "select * From (" + \
+            "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
+            "count(ac.compliance_id) as no_of_compliances, " + \
+            "'1' as user_type " + \
+            "from tbl_assign_compliances as ac " + \
+            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
+            "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
+            "Where ac.assignee = %s and ac.domain_id = %s " + \
+            "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
+            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "UNION ALL " + \
+            "(select ac.unit_id,concat(unt.unit_code,' - ', unt.unit_name,' - ', SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
+            "count(ac.compliance_id) as no_of_compliances," + \
+            "'2' as user_type " + \
+            "from tbl_assign_compliances as ac " + \
+            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
+            "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
+            "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
+            "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
+            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "UNION ALL " + \
+            "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
+            "count(ac.compliance_id) as no_of_compliances, " + \
+            "'3' as user_type " + \
+            "from tbl_assign_compliances as ac " + \
+            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
+            "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
+            "Where ac.approval_person = %s and ac.domain_id = %s " + \
+            "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
+            "Group by ac.unit_id,ac.assignee,ac.concurrence_person)) as t1 " + \
+            "Where IF(%s > 0,user_type = %s, 1) " + \
+            "ORDER BY user_type,unit_id;"
+        param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type] 
+
+    row = db.select_all(query, param)
+    return return_units_for_reassign_compliance(row)
+
+def return_units_for_reassign_compliance(result):
+    unit_list = []
+    for r in result:
+        unit_list.append(
+            clienttransactions.REASSIGN_COMPLIANCE_UNITS(
+                r["unit_id"], r["unit_name"],
+                r["address"], r["postal_code"],
+                int(r["user_type"]), r["no_of_compliances"]
+            )
+        )
+    return unit_list
