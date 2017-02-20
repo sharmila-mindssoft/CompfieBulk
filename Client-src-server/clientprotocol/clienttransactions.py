@@ -911,6 +911,19 @@ class GetChartFilters(Request):
         return {
         }
 
+class GetReassignComplianceFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetReassignComplianceFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
 
 class GetAssigneewiseComplianesFilters(Request):
     def __init__(self):
@@ -937,7 +950,10 @@ def _init_Request_class_map():
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
         SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
-        GetUserToAssignCompliance, GetChartFilters, GetAssigneewiseComplianesFilters
+
+        GetAssigneewiseComplianesFilters,
+        GetUserToAssignCompliance, GetChartFilters,
+        GetReassignComplianceFilters
     ]
 
     class_map = {}
@@ -1619,6 +1635,7 @@ class GetChartFiltersSuccess(Response):
             "cat_info": self.categories
         }
 
+
 class GetAssigneewiseComplianesFiltersSuccess(Response):
     def __init__(
         self, countries, business_groups, legal_entities, divisions,
@@ -1664,6 +1681,27 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
         }
 
 
+class GetReassignComplianceFiltersSuccess(Response):
+    def __init__(self, domains, units, legal_entity_users):
+        self.domains = domains
+        self.units = units
+        self.legal_entity_users = legal_entity_users
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domains", "units", "legal_entity_users"])
+        domains = data.get("domains")
+        units = data.get("units")
+        legal_entity_users = data.get("legal_entity_users")
+        return GetReassignComplianceFiltersSuccess(domains, units, legal_entity_users)
+
+    def to_inner_structure(self):
+        return {
+            "domains": self.domains,
+            "units": self.units,
+            "legal_entity_users": self.legal_entity_users
+        }
+
 def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
@@ -1676,7 +1714,7 @@ def _init_Response_class_map():
         GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess,
         GetAssignComplianceUnitsSuccess,
         GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
-        GetChartFiltersSuccess, GetAssigneewiseComplianesFilters
+        GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess, GetAssigneewiseComplianesFilters
     ]
     class_map = {}
     for c in classes:

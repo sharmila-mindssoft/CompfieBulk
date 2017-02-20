@@ -10,17 +10,18 @@ from server.clientdatabase.general import (
     get_user_company_details,
     get_countries_for_user, get_domains_for_user,
     get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_units_for_user, get_acts_for_user,
-    get_client_users, get_client_level_1_statutoy,
-    get_service_providers, get_client_compliances
+    get_divisions_for_user, get_units_for_user, get_acts_for_user, 
+    get_client_users, get_client_level_1_statutoy, 
+    get_service_providers, get_client_compliances,
+    get_compliance_frequency, get_divisions,
+    get_categories
 )
 
 __all__ = [
     "process_client_report_requests"
 ]
 
-
-def process_client_report_requests(request, db, session_user, client_id, le_id):
+def process_client_report_requests(request, db, session_user, session_category):
     # session_token = request.session_token
     # client_info = request.session_token.split("-")
     request = request.request
@@ -31,7 +32,7 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     if type(request) is clientreport.GetClientReportFilters:
         logger.logClientApi(
-            "GetClientReportFilters  - " + str(client_id), "process begin"
+            "GetClientReportFilters  - " + str(session_user), "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_client_report_filters(db, request, session_user)
@@ -40,7 +41,7 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     elif type(request) is clientreport.GetUnitwisecomplianceReport:
         logger.logClientApi(
-            "GetUnitwisecomplianceReport  - " + str(client_id), "process begin"
+            "GetUnitwisecomplianceReport  - " + str(session_user), "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_unitwise_compliance(db, request, session_user)
@@ -49,7 +50,7 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     elif type(request) is clientreport.GetAssigneewisecomplianceReport:
         logger.logClientApi(
-            "GetAssigneewisecomplianceReport  - " + str(client_id),
+            "GetAssigneewisecomplianceReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
@@ -59,7 +60,7 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     elif type(request) is clientreport.GetServiceProviderReportFilters:
         logger.logClientApi(
-            "GetServiceProviderReportFilters  - " + str(client_id),
+            "GetServiceProviderReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
@@ -69,7 +70,7 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     elif type(request) is clientreport.GetServiceProviderWiseCompliance:
         logger.logClientApi(
-            "GetServiceProviderWiseCompliance  - " + str(client_id),
+            "GetServiceProviderWiseCompliance  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
@@ -79,36 +80,36 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     elif type(request) is clientreport.GetComplianceDetailsReportFilters:
         logger.logClientApi(
-            "GetComplianceDetailsReportFilters  - " + str(client_id),
+            "GetComplianceDetailsReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_compliancedetails_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetComplianceDetailsReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetComplianceDetailsReport:
         logger.logClientApi(
-            "GetComplianceDetailsReport  - " + str(client_id),
+            "GetComplianceDetailsReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_compliancedetails_report(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetComplianceDetailsReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetStatutoryNotificationsListFilters:
         logger.logClientApi(
-            "GetStatutoryNotificationsListFilters  - " + str(client_id),
+            "GetStatutoryNotificationsListFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_statutory_notifications_list_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi(
             "GetStatutoryNotificationsListFilters", "process end"
@@ -117,12 +118,12 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     elif type(request) is clientreport.GetStatutoryNotificationsListReport:
         logger.logClientApi(
-            "GetStatutoryNotificationsListReport  - " + str(client_id),
+            "GetStatutoryNotificationsListReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_statutory_notifications_list_report(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi(
             "GetStatutoryNotificationsListReport", "process end"
@@ -131,62 +132,127 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     elif type(request) is clientreport.GetRiskReportFilters:
         logger.logClientApi(
-            "GetRiskReportFilters  - " + str(client_id), "process begin")
+            "GetRiskReportFilters  - " + str(session_user), "process begin")
         logger.logClientApi("------", str(time.time()))
-        result = get_risk_report_filters(db, request, session_user, client_id)
+        result = get_risk_report_filters(db, request, session_user, session_category)
         logger.logClientApi("GetRiskReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetRiskReport:
         logger.logClientApi(
-            "GetRiskReport  - " + str(client_id),
+            "GetRiskReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
-        result = get_risk_report(db, request, session_user, client_id)
+        result = get_risk_report(db, request, session_user, session_category)
         logger.logClientApi("GetRiskReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetReassignedHistoryReportFilters:
         logger.logClientApi(
-            "GetReassignedHistoryReportFilters  - " + str(client_id),
+            "GetReassignedHistoryReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_reassignedhistory_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetReassignedHistoryReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetReassignedHistoryReport:
         logger.logClientApi(
-            "GetReassignedHistoryReport  - " + str(client_id), "process begin"
+            "GetReassignedHistoryReport  - " + str(session_user), "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_reassignedhistory_report(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetReassignedHistoryReport", "process end")
         logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetStatusReportConsolidatedFilters:
 
-    elif type(request) is clientreport.GetLoginTrace:
         logger.logClientApi(
-            "GetLoginTrace  - " + str(client_id), "process begin"
+            "GetStatusReportConsolidatedFilters  - " + str(session_user),
+            "process begin"
         )
         logger.logClientApi("------", str(time.time()))
-        result = get_login_trace_report(db, request, session_user, client_id)
+        result = get_status_report_consolidated_filters(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetStatusReportConsolidatedFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetStatusReportConsolidated:
+        logger.logClientApi(
+            "GetStatusReportConsolidated  - " + str(session_user), "process begin"
+        ) 
+        logger.logClientApi("------", str(time.time()))
+        result = get_status_report_consolidated(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetStatusReportConsolidated", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetStatutorySettingsUnitWiseFilters:
+
+        logger.logClientApi(
+            "GetStatutorySettingsUnitWiseFilters  - " + str(session_user),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_statutory_settings_unit_Wise_filters(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetStatutorySettingsUnitWiseFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetStatutorySettingsUnitWise:
+        logger.logClientApi(
+            "GetStatutorySettingsUnitWise  - " + str(session_user), "process begin"
+        ) 
+        logger.logClientApi("------", str(time.time()))
+        result = get_statutory_settings_unit_Wise(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetStatutorySettingsUnitWise", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetDomainScoreCardFilters:
+
+        logger.logClientApi(
+            "GetDomainScoreCardFilters  - " + str(session_user),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_domain_score_card_filters(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetDomainScoreCardFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetDomainScoreCard:
+        logger.logClientApi(
+            "GetDomainScoreCard  - " + str(session_user), "process begin"
+        ) 
+        logger.logClientApi("------", str(time.time()))
+        result = get_domain_score_card(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetDomainScoreCard", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetLoginTrace:
+        logger.logClientApi(
+            "GetLoginTrace  - " + str(session_user), "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_login_trace_report(db, request, session_user, session_category)
         logger.logClientApi("GetLoginTrace", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetComplianceActivityReportFilters:
         logger.logClientApi(
-            "GetComplianceActivityReportFilters  - " + str(client_id),
+            "GetComplianceActivityReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = process_get_compliance_activity_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi(
             "GetComplianceActivityReportFilters",
@@ -196,19 +262,19 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     elif type(request) is clientreport.GetComplianceActivityReport:
         logger.logClientApi(
-            "GetComplianceActivityReport  - " + str(client_id),
+            "GetComplianceActivityReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = process_get_compliance_activity_report(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetComplianceActivityReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetTaskApplicabilityStatusFilters:
         logger.logClientApi(
-            "GetTaskApplicabilityStatusFilters  - " + str(client_id),
+            "GetTaskApplicabilityStatusFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
@@ -223,12 +289,12 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
             clientreport.GetComplianceTaskApplicabilityStatusReport
     ):
         logger.logClientApi(
-            "GetComplianceTaskApplicabilityStatusReport  - " + str(client_id),
+            "GetComplianceTaskApplicabilityStatusReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = process_get_task_applicability_report_data(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi(
             "GetComplianceTaskApplicabilityStatusReport", "process end"
@@ -237,153 +303,153 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
 
     elif type(request) is clientreport.GetClientDetailsReportFilters:
         logger.logClientApi(
-            "GetClientDetailsReportFilters  - " + str(client_id),
+            "GetClientDetailsReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_client_details_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetClientDetailsReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetClientDetailsReportData:
         logger.logClientApi(
-            "GetClientDetailsReportData  - " + str(client_id),
+            "GetClientDetailsReportData  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_client_details_report_data(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetClientDetailsReportData", "process end")
         logger.logClientApi("------", str(time.time()))
 
     # elif type(request) is clientreport.ExportToCSV:
     #     logger.logClientApi(
-    #         "ExportToCSV  - " + str(client_id), "process begin"
+    #         "ExportToCSV  - " + str(session_user), "process begin"
     #     )
     #     logger.logClientApi("------", str(time.time()))
-    #     result = export_to_csv(db, request, session_user, client_id)
+    #     result = export_to_csv(db, request, session_user, session_category)
     #     logger.logClientApi("ExportToCSV", "process end")
     #     logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetLegalEntityWiseReportFilters:
         logger.logClientApi(
-            "GetLegalEntityWiseReportFilters  - " + str(client_id),
+            "GetLegalEntityWiseReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_legal_entity_wise_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetLegalEntityWiseReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetLegalEntityWiseReport:
         logger.logClientApi(
-            "GetLegalEntityWiseReport  - " + str(client_id),
+            "GetLegalEntityWiseReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_legal_entity_wise_report(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetLegalEntityWiseReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetDomainWiseReportFilters:
         logger.logClientApi(
-            "GetDomainWiseReportFilters  - " + str(client_id),
+            "GetDomainWiseReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_domain_wise_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetDomainWiseReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetDomainWiseReport:
         logger.logClientApi(
-            "GetDomainWiseReport  - " + str(client_id),
+            "GetDomainWiseReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_domain_wise_report(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetDomainWiseReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUnitWiseReportFilters:
         logger.logClientApi(
-            "GetUnitWiseReportFilters  - " + str(client_id),
+            "GetUnitWiseReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_unit_wise_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetUnitWiseReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUnitWiseReport:
         logger.logClientApi(
-            "GetUnitWiseReport  - " + str(client_id),
+            "GetUnitWiseReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_unit_wise_report(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetUnitWiseReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetServiceProviderWiseReportFilters:
         logger.logClientApi(
-            "GetServiceProviderWiseReportFilters  - " + str(client_id),
+            "GetServiceProviderWiseReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_service_provider_wise_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetServiceProviderWiseReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetServiceProviderWiseReport:
         logger.logClientApi(
-            "GetServiceProviderWiseReport  - " + str(client_id),
+            "GetServiceProviderWiseReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_service_provider_wise_report(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetServiceProviderWiseReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUserWiseReportFilters:
         logger.logClientApi(
-            "GetUserWiseReportFilters  - " + str(client_id),
+            "GetUserWiseReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_user_wise_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetUserWiseReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUserWiseReport:
         logger.logClientApi(
-            "GetUserWiseReport  - " + str(client_id),
+            "GetUserWiseReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_user_wise_report(
-            db, request, session_user, client_id
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetUserWiseReport", "process end")
         logger.logClientApi("------", str(time.time()))
@@ -565,11 +631,11 @@ def get_serviceproviderwise_compliance(db, request, session_user):
         )
 
 
-def get_compliancedetails_report_filters(db, request, session_user, client_id):
+def get_compliancedetails_report_filters(db, request, session_user, session_category):
     user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     country_list = get_countries_for_user(db, session_user)
-    domain_list = get_domains_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user, session_category)
     unit_list = get_units_for_user(db, unit_ids)
     level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
     compliances_list = get_client_compliances(db, session_user)
@@ -585,7 +651,7 @@ def get_compliancedetails_report_filters(db, request, session_user, client_id):
 
 
 def get_statutory_notifications_list_filters(
-    db, request, session_user, client_id
+    db, request, session_user, session_category
 ):
     user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
@@ -614,7 +680,7 @@ def get_statutory_notifications_list_filters(
 
 
 def get_statutory_notifications_list_report(
-    db, request, session_user, client_id
+    db, request, session_user, session_category
 ):
     if request.csv:
         converter = ConvertJsonToCSV(
@@ -628,7 +694,7 @@ def get_statutory_notifications_list_report(
         return clientreport.GetStatutoryNotificationsListReportSuccess(result)
 
 
-def get_compliancedetails_report(db, request, session_user, client_id):
+def get_compliancedetails_report(db, request, session_user, session_category):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "ComplianceDetails"
@@ -650,8 +716,7 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         page_count = request.page_count
 
         compliance_details_list, total = report_compliance_details(
-            db, client_id,
-            country_id, domain_id, statutory_id, unit_id, compliance_id,
+            db, country_id, domain_id, statutory_id, unit_id, compliance_id,
             assignee_id, from_date, to_date, compliance_status, session_user,
             from_count, page_count
         )
@@ -660,14 +725,14 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         )
 
 
-def get_risk_report_filters(db, request, session_user, client_id):
+def get_risk_report_filters(db, request, session_user, session_category):
     user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
     division_ids = user_company_info[1]
     legal_entity_ids = user_company_info[2]
     business_group_ids = user_company_info[3]
     country_list = get_countries_for_user(db, session_user)
-    domain_list = get_domains_for_user(db, session_user)
+    domain_list = get_domains_for_user(db, session_user, session_category)
     business_group_list = get_business_groups_for_user(db, business_group_ids)
     legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
     division_list = get_divisions_for_user(db, division_ids)
@@ -683,14 +748,9 @@ def get_risk_report_filters(db, request, session_user, client_id):
         level1_statutories=level_1_statutories_list
     )
 
-
-def get_reassignedhistory_report_filters(db, request, session_user, client_id):
-    #user_company_info = get_user_company_details(db, session_user)
-    #unit_ids = user_company_info[0]
-    #country_list = get_countries_for_user(db, session_user)
-    #legal_entities_list = get_legal_entities_for_user(db, request.legal_entity_id)
-
-    domain_list = get_domains_for_user(db, session_user)
+# Reassigned History Report Start
+def get_reassignedhistory_report_filters(db, request, session_user, session_category):
+    domain_list = get_domains_for_user(db, session_user, session_category)
     unit_list = get_units_for_user(db, session_user)
     acts_list = get_acts_for_user(db, session_user)
     compliances_list = get_client_compliances(db, session_user)
@@ -704,25 +764,31 @@ def get_reassignedhistory_report_filters(db, request, session_user, client_id):
         legal_entity_users=users_list
     )
 
-def get_reassignedhistory_report(db, request, session_user, client_id):
+def get_reassignedhistory_report(db, request, session_user, session_category):
     if not request.csv:
-        country_id = request.country_id
-        domain_id = request.domain_id
-        level_1_statutory_id = request.level_1_statutory_id
+        country_id = request.c_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
         unit_id = request.unit_id
+        act = request.act
         compliance_id = request.compliance_id
-        user_id = request.user_id
+        usr_id = request.usr_id
         from_date = request.from_date
         to_date = request.to_date
-        from_count = request.record_count
-        to_count = 200
-        reassigned_history_list, total = report_reassigned_history(
-            db, country_id, domain_id, level_1_statutory_id,
-            unit_id, compliance_id, user_id, from_date, to_date, session_user,
-            from_count, to_count
+        csv = request.csv
+        f_count = request.f_count
+        t_count = request.t_count
+
+        reassigned_history_list = report_reassigned_history(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, usr_id, from_date, to_date, session_user, f_count, t_count
+        )
+        total_count = report_reassigned_history_total(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, usr_id, from_date, to_date, session_user
         )
         return clientreport.GetReassignedHistoryReportSuccess(
-            reassigned_history_list, total
+            reassigned_history_list, total_count
         )
     else:
         converter = ConvertJsonToCSV(
@@ -731,9 +797,157 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
+# Reassigned History Report End
 
+# Status Report Consolidated Report Start
+def get_status_report_consolidated_filters(db, request, session_user, session_category):
+    domain_list = get_domains_for_user(db, session_user, session_category)
+    
+    unit_list = get_units_for_user(db, session_user)
+    acts_list = get_acts_for_user(db, session_user)
+    compliances_list = get_client_compliances(db, session_user)
+    compliance_frequency_list = get_compliance_frequency(db)
+    users_list = get_client_users(db)
 
-def get_risk_report(db, request, session_user, client_id):
+    return clientreport.GetStatusReportConsolidatedFiltersSuccess(
+        domains=domain_list,
+        units=unit_list,
+        acts=acts_list,
+        compliances=compliances_list,
+        compliance_frequency = compliance_frequency_list,
+        legal_entity_users=users_list
+    )
+
+def get_status_report_consolidated(db, request, session_user, session_category):
+    if not request.csv:
+        country_id = request.c_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
+        unit_id = request.unit_id
+        act = request.act
+        compliance_id = request.compliance_id
+        frequency_id = request.frequency_id
+        user_type_id = request.user_type_id
+        status_name = request.status_name
+        usr_id = request.usr_id
+        from_date = request.from_date
+        to_date = request.to_date
+        csv = request.csv
+        f_count = request.f_count
+        t_count = request.t_count
+
+        status_report_consolidated_list = report_status_report_consolidated(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user, f_count, t_count
+        )
+        total_count = report_status_report_consolidated_total(
+            db, country_id, legal_entity_id, domain_id, unit_id, 
+            act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user
+        )
+        return clientreport.GetStatusReportConsolidatedSuccess(
+            status_report_consolidated_list, total_count
+        )
+    else:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "Reassign"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+# Status Report Consolidated Report End
+
+# Statutory Settings Unit Wise Start
+def get_statutory_settings_unit_Wise_filters(db, request, session_user, session_category):
+    domain_list = get_domains_for_user(db, session_user, session_category)
+    unit_list = get_units_for_user(db, session_user)
+    acts_list = get_acts_for_user(db, session_user)
+    compliances_list = get_client_compliances(db, session_user)
+    compliance_frequency_list = get_compliance_frequency(db)
+    divisions_list = get_divisions(db)
+    categories_list = get_categories(db)
+
+    return clientreport.GetStatutorySettingsUnitWiseFiltersSuccess(
+        domains=domain_list,
+        units=unit_list,
+        acts=acts_list,
+        compliances=compliances_list,
+        compliance_frequency = compliance_frequency_list,
+        divisions=divisions_list,
+        categories=categories_list
+    )
+
+def get_statutory_settings_unit_Wise(db, request, session_user, session_category):
+    if not request.csv:
+        country_id = request.c_id
+        bg_id = request.bg_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
+        unit_id = request.unit_id
+        div_id = request.div_id
+        cat_id = request.cat_id
+        act = request.act
+        compliance_id = request.compliance_id
+        frequency_id = request.frequency_id
+        status_name = request.status_name
+        csv = request.csv
+        f_count = request.f_count
+        t_count = request.t_count
+
+        statutory_settings_unit_Wise_list = report_statutory_settings_unit_Wise(
+            db, country_id, bg_id, legal_entity_id, domain_id, unit_id, 
+            div_id, cat_id, act, compliance_id, frequency_id, status_name, session_user, f_count, t_count
+        )
+        total_count = report_statutory_settings_unit_Wise_total(
+            db, country_id, bg_id, legal_entity_id, domain_id, unit_id, div_id, cat_id, 
+            act, compliance_id, frequency_id, status_name, session_user
+        )
+        return clientreport.GetStatutorySettingsUnitWiseSuccess(
+            statutory_settings_unit_Wise_list, total_count
+        )
+    else:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "Reassign"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+# Statutory Settings Unit Wise End
+
+# Domain Score Card Start
+def get_domain_score_card_filters(db, request, session_user, session_category):
+    domain_list = get_domains_for_user(db, session_user, session_category)
+    divisions_list = get_divisions(db)
+    categories_list = get_categories(db)
+
+    return clientreport.GetDomainScoreCardFiltersSuccess(
+        domains=domain_list,
+        divisions=divisions_list,
+        categories=categories_list
+    )
+
+def get_domain_score_card(db, request, session_user, session_category):
+    if not request.csv:
+        country_id = request.c_id
+        bg_id = request.bg_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
+        div_id = request.div_id
+        cat_id = request.cat_id
+
+        domain_score_card_list = report_domain_score_card(
+            db, country_id, bg_id, legal_entity_id, domain_id, div_id, cat_id, session_user
+        )
+        return clientreport.GetDomainScoreCardSuccess(domain_score_card_list)
+    else:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "Reassign"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+# Domain Score Card End
+
+def get_risk_report(db, request, session_user, session_category):
     country_id = request.country_id
     domain_id = request.domain_id
     business_group_id = request.business_group_id
@@ -784,7 +998,7 @@ def get_risk_report(db, request, session_user, client_id):
         )
 
 
-def get_login_trace_report(db, request, session_user, client_id):
+def get_login_trace_report(db, request, session_user, session_category):
     users_list = get_client_users(db)
     from_count = request.record_count
     user_id = request.user_id
@@ -792,7 +1006,7 @@ def get_login_trace_report(db, request, session_user, client_id):
     from_date = request.from_date
     to_date = request.to_date
     logintracelist = get_login_trace(
-        db, client_id, session_user, from_count, to_count, user_id,
+        db, session_user, from_count, to_count, user_id,
         from_date, to_date
     )
     return clientreport.GetLoginTraceSuccess(
@@ -802,7 +1016,7 @@ def get_login_trace_report(db, request, session_user, client_id):
 
 
 def process_get_compliance_activity_report_filters(
-    db, request, session_user, client_id
+    db, request, session_user, session_category
 ):
     user_company_info = get_user_company_details(db, session_user)
     unit_ids = user_company_info[0]
@@ -823,7 +1037,7 @@ def process_get_compliance_activity_report_filters(
 
 
 def process_get_compliance_activity_report(
-    db, request, session_user, client_id
+    db, request, session_user, session_category
 ):
     country_id = request.country_id
     domain_id = request.domain_id
@@ -838,7 +1052,7 @@ def process_get_compliance_activity_report(
         activities = return_compliance_activity_report(
             db, country_id, domain_id, user_type, user_id,
             unit_id, compliance_id, level_1_statutory_name,
-            from_date, to_date, session_user, client_id
+            from_date, to_date, session_user
         )
         return clientreport.GetComplianceActivityReportSuccess(
             activities=activities
@@ -874,7 +1088,7 @@ def process_get_task_applicability_status_filters(db, request, session_user):
 
 
 def process_get_task_applicability_report_data(
-    db, request, session_user, client_id
+    db, request, session_user, session_category
 ):
     if request.csv:
         converter = ConvertJsonToCSV(
@@ -888,7 +1102,7 @@ def process_get_task_applicability_report_data(
         return result
 
 
-def get_client_details_report_filters(db, request, session_user, client_id):
+def get_client_details_report_filters(db, request, session_user, session_category):
     countries = get_countries_for_user(db, session_user)
     domains = get_domains_for_user(db, session_user)
     user_company_info = get_user_company_details(db, session_user)
@@ -911,7 +1125,7 @@ def get_client_details_report_filters(db, request, session_user, client_id):
     )
 
 
-def get_client_details_report_data(db, request, session_user, client_id):
+def get_client_details_report_data(db, request, session_user, session_category):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "ClientDetails"
@@ -935,7 +1149,7 @@ def get_client_details_report_data(db, request, session_user, client_id):
         )
 
 
-def export_to_csv(db, request, session_user, client_id):
+def export_to_csv(db, request, session_user, session_category):
     converter = ConvertJsonToCSV(db, request, session_user)
     return clientreport.ExportToCSVSuccess(link=converter.FILE_DOWNLOAD_PATH)
 
@@ -946,7 +1160,7 @@ def export_to_csv(db, request, session_user, client_id):
 # Result: list of record sets which contains domain list, compliances, units
 ###############################################################################################
 
-def get_legal_entity_wise_report_filters(db, request, session_user, client_id):
+def get_legal_entity_wise_report_filters(db, request, session_user, session_category):
     country_id = request.country_id
     legal_entity_id = request.legal_entity_id
     domains_list = get_domains_for_le(db, legal_entity_id)
@@ -969,7 +1183,7 @@ def get_legal_entity_wise_report_filters(db, request, session_user, client_id):
 # Parameter: request object and the client id
 # Result: list of record sets which contains compliance list with the status
 ###############################################################################################
-def get_legal_entity_wise_report(db, request, session_user, client_id):
+def get_legal_entity_wise_report(db, request, session_user, session_category):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "LegalEntityWiseReport"
@@ -987,7 +1201,7 @@ def get_legal_entity_wise_report(db, request, session_user, client_id):
 # Result: list of record sets which contains domain list, compliances, units
 ###############################################################################################
 
-def get_domain_wise_report_filters(db, request, session_user, client_id):
+def get_domain_wise_report_filters(db, request, session_user, session_category):
     country_id = request.country_id
     legal_entity_id = request.legal_entity_id
     domains_list = get_domains_for_le(db, legal_entity_id)
@@ -1010,7 +1224,7 @@ def get_domain_wise_report_filters(db, request, session_user, client_id):
 # Parameter: request object and the client id
 # Result: list of record sets which contains compliance list with the status
 ###############################################################################################
-def get_domain_wise_report(db, request, session_user, client_id):
+def get_domain_wise_report(db, request, session_user, session_category):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "DomainWiseReport"
@@ -1029,7 +1243,7 @@ def get_domain_wise_report(db, request, session_user, client_id):
 # Result: list of record sets which contains domain list, compliances, units
 ###############################################################################################
 
-def get_unit_wise_report_filters(db, request, session_user, client_id):
+def get_unit_wise_report_filters(db, request, session_user, session_category):
     country_id = request.country_id
     legal_entity_id = request.legal_entity_id
     domains_list = get_domains_for_le(db, legal_entity_id)
@@ -1052,7 +1266,7 @@ def get_unit_wise_report_filters(db, request, session_user, client_id):
 # Parameter: request object and the client id
 # Result: list of record sets which contains compliance list with the status
 ###############################################################################################
-def get_unit_wise_report(db, request, session_user, client_id):
+def get_unit_wise_report(db, request, session_user, session_category):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "UnitWiseReport"
@@ -1070,7 +1284,7 @@ def get_unit_wise_report(db, request, session_user, client_id):
 # Parameter: request object and the client id
 # Result: list of record sets which contains service provider list, domain list, compliances.
 ###############################################################################################
-def get_service_provider_wise_report_filters(db, request, session_user, client_id):
+def get_service_provider_wise_report_filters(db, request, session_user, session_category):
     country_id = request.country_id
     legal_entity_id = request.legal_entity_id
     sp_list = get_service_providers_list(db)
@@ -1090,7 +1304,7 @@ def get_service_provider_wise_report_filters(db, request, session_user, client_i
 # Parameter: request object and the client id
 # Result: list of record sets which contains compliance list with the status
 ###############################################################################################
-def get_service_provider_wise_report(db, request, session_user, client_id):
+def get_service_provider_wise_report(db, request, session_user, session_category):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "ServiceProviderWiseReport"
@@ -1109,7 +1323,7 @@ def get_service_provider_wise_report(db, request, session_user, client_id):
 # Result: list of record sets which contains users lits, domain list, compliances, units
 ###############################################################################################
 
-def get_user_wise_report_filters(db, request, session_user, client_id):
+def get_user_wise_report_filters(db, request, session_user, session_category):
     country_id = request.country_id
     legal_entity_id = request.legal_entity_id
     le_users_list = get_le_users_list(db)
@@ -1132,7 +1346,7 @@ def get_user_wise_report_filters(db, request, session_user, client_id):
 # Parameter: request object and the client id
 # Result: list of record sets which contains compliance list with the status
 ###############################################################################################
-def get_user_wise_report(db, request, session_user, client_id):
+def get_user_wise_report(db, request, session_user, session_category):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "UserWiseReport"

@@ -11,7 +11,8 @@ from server.clientdatabase.general import (
     get_compliance_frequency, get_users_by_unit_and_domain,
     get_compliance_name_by_id, validate_compliance_due_date,
     get_country_wise_domain_month_range, get_group_name, get_domains_info,
-    get_units_for_user, get_assignees
+    get_assignees,
+    get_client_users, get_units_for_user
 )
 
 from server.clientdatabase.dashboard import (
@@ -123,9 +124,14 @@ def process_client_transaction_requests(request, db, session_user, session_categ
             db, request, session_user
         )
 
-    elif type(request) is clienttransactions.saveReviewSettingsCompliance:
+    elif type(request) is clienttransactions.SaveReviewSettingsCompliance:
         result = process_save_review_settings_compliance(
             db, request, session_user
+        )
+
+    elif type(request) is clienttransactions.GetReassignComplianceFilters:
+        result = process_reassign_compliance_filters(
+            db, request, session_user, session_category
         )
 
     return result
@@ -541,6 +547,7 @@ def process_get_chart_filters(db, session_user, session_category):
         domain_info, group_name, cat_info
     )
 
+
 def process_assigneewise_compliances_filters(
     db, session_user, session_category
 ):
@@ -559,3 +566,15 @@ def process_assigneewise_compliances_filters(
         units=unit_list, users=users_list, domains=domain_list,
         categories=category_list
     )
+
+def process_reassign_compliance_filters(db, request, session_user, session_category):
+    domain_list = get_domains_for_user(db, session_user, session_category)
+    unit_list = get_units_for_user(db, session_user)
+    users_list = get_client_users(db)
+
+    return clienttransactions.GetReassignComplianceFiltersSuccess(
+        domains=domain_list,
+        units=unit_list,
+        legal_entity_users=users_list
+    )
+
