@@ -12,7 +12,7 @@ from server.clientdatabase.general import (
     get_compliance_name_by_id, validate_compliance_due_date,
     get_country_wise_domain_month_range, get_group_name, get_domains_info,
     get_assignees,
-    get_client_users, get_units_for_user
+    get_client_users, get_units_for_user, get_user_based_units
 )
 
 from server.clientdatabase.dashboard import (
@@ -551,13 +551,14 @@ def process_get_chart_filters(db, session_user, session_category):
 def process_assigneewise_compliances_filters(
     db, session_user, session_category
 ):
+    print session_user, session_category
     countries = get_user_based_countries(db, session_user, session_category)
 
     domain_list = get_domains_info(db, session_user, session_category)
     business_group_list = get_business_groups_for_user(db, None)
     legal_entity_list = get_user_based_legal_entity(db, session_user, session_category)
     division_list = get_user_based_division(db, session_user, session_category)
-    unit_list = get_units_for_user(db, None)
+    unit_list = get_user_based_units(db, session_user, session_category)
     users_list = get_assignees(db, None)
     category_list = get_user_based_category(db, session_user, session_category)
     return clienttransactions.GetAssigneewiseComplianesFiltersSuccess(

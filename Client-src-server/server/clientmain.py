@@ -400,8 +400,10 @@ class API(object):
                 if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
                     return respond(clientlogin.InvalidCurrentPassword())
 
-        else :
-            session_user = None
+        print '*' * 20
+        print session_user, client_id, session_category
+        print '*' * 20
+
         # request process in controller
         if is_group :
             print "Group DB"

@@ -1654,7 +1654,7 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "countries", "business_groups", "legal_entities", "client_divisions",
-            "units", "users", "domains", "categories"
+            "units", "users", "d_info", "categories"
         ])
         countries = data.get("countries")
         business_groups = data.get("business_groups")
@@ -1663,7 +1663,7 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
         categories = data.get("client_categories")
         units = data.get("units")
         users = data.get("users")
-        domains = data.get("domains")
+        domains = data.get("d_info")
 
         return GetAssigneewiseComplianesFiltersSuccess(
             countries, business_groups, legal_entities, divisions, units, users, domains, categories
@@ -1677,7 +1677,7 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
             "divisions": self.divisions,
             "units": self.units,
             "users": self.users,
-            "domins": self.domains
+            "d_info": self.domains
         }
 
 
