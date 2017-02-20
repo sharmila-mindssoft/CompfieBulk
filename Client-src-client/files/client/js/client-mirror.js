@@ -206,7 +206,7 @@ function initClientMirror() {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
                     console.log(status)
-                    // redirect_login();
+                        // redirect_login();
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);
@@ -936,6 +936,32 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     // Domain Score Card End 
+
+
+    // Legal Entity Wise Score Card Start
+    function getLEWiseScoreCardFilters(le_id, callback) {
+        var request = [
+            'GetLEWiseScoreCardFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getLEWiseScoreCard(c_id, le_id, d_id, csv, callback) {
+        var request = [
+            'GetLEWiseScoreCard', {
+                'c_id': c_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'csv': csv
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Legal Entity Wise Score Card End 
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -2329,11 +2355,10 @@ function initClientMirror() {
     /* Unit List report - updated*/
     function getUnitListReportFilters(country_id, business_group_id, le_id, callback) {
         var request = [
-            'GetUnitListReportFilters',
-            {
+            'GetUnitListReportFilters', {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2343,13 +2368,12 @@ function initClientMirror() {
     function getUnitListReport(
         country_id, business_group_id, legal_entity_id, division_id, category_id,
         unit_id, domain_id, organisation_id, unit_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
-            'GetUnitListReport',
-            {
+            'GetUnitListReport', {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'division_id': division_id,
                 'category_id': category_id,
                 'unit_id': unit_id,
@@ -2368,10 +2392,9 @@ function initClientMirror() {
     /* Statutory Notifications List report - updated*/
     function getStatutoryNotificationsListReportFilters(country_id, le_id, callback) {
         var request = [
-            'GetStatutoryNotificationsListReportFilters',
-            {
+            'GetStatutoryNotificationsListReportFilters', {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2381,12 +2404,11 @@ function initClientMirror() {
     function getStatutoryNotificationsListReportData(
         country_id, legal_entity_id, domain_id, statutory_mapping, from_date,
         to_date, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
-            'GetStatutoryNotificationsListReportData',
-            {
+            'GetStatutoryNotificationsListReportData', {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'domain_id': domain_id,
                 'statutory_mapping': statutory_mapping,
                 'due_from_date': from_date,
@@ -2403,9 +2425,7 @@ function initClientMirror() {
     /* Service Provider Details report - updated*/
     function getServiceProviderDetailsReportFilters(callback) {
         var request = [
-            'GetServiceProviderDetailsReportFilters',
-            {
-            }
+            'GetServiceProviderDetailsReportFilters', {}
         ];
         callerName = 'client_masters';
         clientApiRequest(callerName, request, callback);
@@ -2413,12 +2433,11 @@ function initClientMirror() {
 
     function getServiceProviderDetailsReport(
         sp_id, user_id, s_p_status, callback
-    ){
+    ) {
         var request = [
-            'GetServiceProviderDetailsReport',
-            {
+            'GetServiceProviderDetailsReport', {
                 'sp_id': sp_id,
-                'user_id' : user_id,
+                'user_id': user_id,
                 's_p_status': s_p_status,
                 'from_count': from_count,
                 'page_count': page_count
@@ -2431,9 +2450,8 @@ function initClientMirror() {
     /* Audit Trail - updated*/
     function getAuditTrailReportFilters(le_id, callback) {
         var request = [
-            'GetAuditTrailReportFilters',
-            {
-                'legal_entity_id' : le_id
+            'GetAuditTrailReportFilters', {
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_masters';
@@ -2444,13 +2462,12 @@ function initClientMirror() {
         le_id, user_id, form_id, from_date, to_date, csv, from_count, page_count, callback
     ) {
         var request = [
-            'GetAuditTrailReportData',
-            {
-                'legal_entity_id' : le_id,
-                'user_id' : user_id,
-                'form_id_optional' : form_id,
-                'due_from_date' : from_date,
-                'due_to_date' : to_date,
+            'GetAuditTrailReportData', {
+                'legal_entity_id': le_id,
+                'user_id': user_id,
+                'form_id_optional': form_id,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
                 'csv': csv,
                 'from_count': from_count,
                 'page_count': page_count
@@ -2463,9 +2480,7 @@ function initClientMirror() {
     /* Login Trace - updated*/
     function getLoginTraceReportFilters(callback) {
         var request = [
-            'GetLogintraceReportFilters',
-            {
-            }
+            'GetLogintraceReportFilters', {}
         ];
         callerName = 'client_masters';
         clientApiRequest(callerName, request, callback);
@@ -2473,11 +2488,10 @@ function initClientMirror() {
 
     function getLoginTraceReportData(user_id, from_date, to_date, csv, from_count, page_count, callback) {
         var request = [
-            'GetLoginTraceReportData',
-            {
-                'user_id' : user_id,
-                'due_from_date' : from_date,
-                'due_to_date' : to_date,
+            'GetLoginTraceReportData', {
+                'user_id': user_id,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
                 'csv': csv,
                 'from_count': from_count,
                 'page_count': page_count
@@ -2490,9 +2504,7 @@ function initClientMirror() {
     /* View Profile */
     function getUserProfile(callback) {
         var request = [
-            'GetUserProfile',
-            {
-            }
+            'GetUserProfile', {}
         ];
         callerName = 'client_masters';
         clientApiRequest(callerName, request, callback);
@@ -2500,8 +2512,7 @@ function initClientMirror() {
 
     function updateUserProfile(user_id, emailId, c_no, m_no, address, employee_code, employee_name, callback) {
         var request = [
-            'UpdateUserProfile',
-            {
+            'UpdateUserProfile', {
                 'user_id': user_id,
                 'email_id': emailId,
                 'con_no': c_no,
@@ -2619,6 +2630,8 @@ function initClientMirror() {
         getStatutorySettingsUnitWiseFilters: getStatutorySettingsUnitWiseFilters,
         getDomainScoreCardFilters: getDomainScoreCardFilters,
         getDomainScoreCard: getDomainScoreCard,
+        getLEWiseScoreCardFilters: getLEWiseScoreCardFilters,
+        getLEWiseScoreCard: getLEWiseScoreCard,
         getStatutorySettingsUnitWise: getStatutorySettingsUnitWise,
         updateComplianceDetail: updateComplianceDetail,
         getLoginTrace: getLoginTrace,
