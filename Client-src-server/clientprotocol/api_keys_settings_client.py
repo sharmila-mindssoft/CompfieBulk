@@ -403,7 +403,7 @@ api_params = {
     "p_cons": make_text_field(is_optional=True),
     "download_url": make_text_field(is_optional=True),
     "t_drill_down_data": make_vector_type_field(module="dashboard", klass_name="TrendDrillDownData"),
-    "t_complainces": make_map_type(module="dashboard", klass_name="TrendCompliance"),
+    "t_compliances": make_map_type(module="dashboard", klass_name="TrendCompliance", validfun=allow_specialchar),
     "not_opted_count": make_int_field(length=10000),
     "unassign_count": make_int_field(length=10000),
     "rejected_count": make_int_field(length=10000),

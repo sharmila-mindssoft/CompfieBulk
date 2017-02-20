@@ -172,8 +172,7 @@ def process_get_trend_chart_drilldown(db, request, session_user):
         db,
         request.country_ids,
         request.domain_ids, filter_ids,
-        request.filter_type, request.year,
-        client_id
+        request.filter_type, request.year
     )
     return dashboard.GetTrendChartDrillDownDataSuccess(
         drill_down_data=drill_down_info

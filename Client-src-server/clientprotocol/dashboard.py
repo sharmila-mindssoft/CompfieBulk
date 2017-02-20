@@ -1967,10 +1967,10 @@ class TrendDrillDownData(object):
 
     def to_structure(self):
         return {
-            "business_group": self.business_group,
-            "legal_entity": self.legal_entity,
-            "division": self.division,
-            "unit_name": self.unit_name,
+            "bg_name": self.business_group,
+            "le_name": self.legal_entity,
+            "div_name": self.division,
+            "u_name": self.unit_name,
             "address": self.address,
             "t_compliances": self.compliances,
         }
