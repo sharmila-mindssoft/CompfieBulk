@@ -52,6 +52,9 @@ def make_widget_type():
     # customized widget data from backend
     return {'type': 'WIDGET_TYPE'}
 
+def make_reccord_type(module, klass_name):
+    return {'type': 'RECORD_TYPE', 'module_name': module, 'class_name': klass_name}
+
 api_params = {
     'request': {},
     'session_token': make_text_field(length=50),
@@ -423,7 +426,7 @@ api_params = {
     "business_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
     "legal_entities": make_vector_type_field(module="dashboard", klass_name="ClientLegalEntityInfo"),
     "client_divisions": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
-    "client_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
+    "client_categories": make_vector_type_field(module="clientcore", klass_name="Category"),
     "client_users": make_vector_type_field(module="clientreport", klass_name="User"),
 
     'domain_score_card_list': make_vector_type_field(module="clientcore", klass_name="GetDomainScoreCardSuccess", is_optional=True),
@@ -437,8 +440,20 @@ api_params = {
     "assingee_data": make_vector_type_field(module="dashboard", klass_name="AssigneeChartData"),
     "assignee_wise_details": make_vector_type_field(module="dashboard", klass_name="AssigneeWiseDetails"),
     "domain_wise_details": make_vector_type_field(module="dashboard", klass_name="DomainWise"),
-    "assigned_count": make_int_field(length=100000),
+
     "reassigned_count": make_int_field(length=10000),
+    "year_wise_data": make_vector_type_field(module="dashboard", klass_name="YearWise"),
+    "sdelayed_compliance": make_reccord_type(module="dashboard", klass_name="DelayedCompliance"),
+    "reassigned_compliances": make_vector_type_field(module="dashboard", klass_name="RessignedCompliance", is_optional=True),
+
+    "reassign_from": make_text_field(),
+    "start_date": make_text_field(),
+    "due_date": make_text_field(),
+    "due_date": make_text_field(),
+    "reassigned_data": make_text_field(),
+    "completed_date": make_text_field(),
+
+
 
 
 }

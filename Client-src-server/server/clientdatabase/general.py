@@ -556,6 +556,9 @@ def get_user_domains(db, user_id):
         q = "select domain_id from tbl_user_domains"
         condition = " WHERE user_id = %s"
         param = [user_id]
+    print q
+    print condition
+    print param
     rows = db.select_all(q + condition, param)
     d_ids = []
     for r in rows:
@@ -665,7 +668,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "t1.client_id, t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
-            "inner join tbl_user_domains as t2 on " + \
+            "inner join tbl_user_legal_entities as t2 on " + \
             "t1.legal_entity_id = t1.legal_entity_id " + \
             "inner join tbl_countries t3 on t1.country_id = t3.country_id " + \
             "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"

@@ -97,14 +97,9 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
             db, request, session_user, session_user
         )
     elif type(request) is dashboard.GetAssigneewiseYearwiseCompliances:
-        logger.logClientApi(
-            "GetAssigneewiseYearwiseCompliances", "process begin"
-        )
+
         result = process_assigneewise_yearwise_compliances(
             db, request, session_user
-        )
-        logger.logClientApi(
-            "GetAssigneewiseYearwiseCompliances", "process end"
         )
 
     elif type(request) is dashboard.GetAssigneewiseReassignedComplianes:

@@ -2384,11 +2384,15 @@ def get_assigneewise_yearwise_compliances(
     db, country_id, unit_id, user_id
 ):
     current_year = get_date_time_in_date().year
+    print user_id
     domain_ids_list = get_user_domains(db, user_id)
+    print domain_ids_list
     start_year = current_year - 5
     iter_year = start_year
     year_wise_compliance_count = []
+
     while iter_year <= current_year:
+        print iter_year , current_year
         domainwise_complied = 0
         domainwise_inprogress = 0
         domainwise_notcomplied = 0
@@ -2407,20 +2411,20 @@ def get_assigneewise_yearwise_compliances(
                 " then 1 else 0 end) as complied, " + \
                 " sum(case when ((approve_status = 0 " + \
                 " or approve_status is null) and " + \
-                " tch.due_date > now()) then 1 else 0 end) as Inprogress, " + \
+                " tch.due_date > now()) then 1 else 0 end) as inprogress, " + \
                 " sum(case when ((approve_status = 0 or " + \
                 " approve_status is null) and " + \
                 " tch.due_date < now()) then 1 else 0 end) " + \
-                " as NotComplied, " + \
+                " as not_complied, " + \
                 " sum(case when (approve_status = 1 " + \
                 " and completion_date > tch.due_date and " + \
                 " (is_reassigned = 0 or is_reassigned is null) ) " + \
-                " then 1 else 0 end) as DelayedCompliance, " + \
+                " then 1 else 0 end) as delayed_comp, " + \
                 " sum(case when (approve_status = 1 and " + \
                 " completion_date > tch.due_date and (is_reassigned = 1)) " + \
-                " then 1 else 0 end) as DelayedReassignedCompliance " + \
+                " then 1 else 0 end) as delayed_reassigned " + \
                 " FROM tbl_compliance_history tch " + \
-                " INNER JOIN tbl_assigned_compliances tac ON ( " + \
+                " INNER JOIN tbl_assign_compliances tac ON ( " + \
                 " tch.compliance_id = tac.compliance_id " + \
                 " AND tch.unit_id = tac.unit_id " + \
                 " AND tch.completed_by = %s) " + \
@@ -2439,25 +2443,21 @@ def get_assigneewise_yearwise_compliances(
             rows = db.select_all(query, [
                 user_id, unit_id, int(domain_id)
             ])
-            if rows:
-                convert_columns = [
-                    "domain_id", "complied", "inprogress", "not_complied",
-                    "delayed", "delayed_reassigned"
-                ]
-                count_rows = convert_to_dict(rows, convert_columns)
-                for row in count_rows:
-                    domainwise_complied += 0 if(
-                        row["complied"] is None) else int(row["complied"])
-                    domainwise_inprogress += 0 if(
-                        row["inprogress"] is None) else int(row["inprogress"])
-                    domainwise_notcomplied += 0 if(
-                        row["not_complied"] is None
-                    ) else int(row["not_complied"])
-                    domainwise_delayed += 0 if(
-                        row["delayed"] is None) else int(row["delayed"])
-                    domainwise_delayed += 0 if(
-                            row["delayed_reassigned"] is None
-                        ) else int(row["delayed_reassigned"])
+            print rows
+            for row in rows:
+                domainwise_complied += 0 if(
+                    row["complied"] is None) else int(row["complied"])
+                domainwise_inprogress += 0 if(
+                    row["inprogress"] is None) else int(row["inprogress"])
+                domainwise_notcomplied += 0 if(
+                    row["not_complied"] is None
+                ) else int(row["not_complied"])
+                domainwise_delayed += 0 if(
+                    row["delayed_comp"] is None) else int(row["delayed_comp"])
+                domainwise_delayed += 0 if(
+                        row["delayed_reassigned"] is None
+
+                    ) else int(row["delayed_reassigned"])
         domainwise_total += (
             domainwise_complied + domainwise_inprogress)
         domainwise_total += (
