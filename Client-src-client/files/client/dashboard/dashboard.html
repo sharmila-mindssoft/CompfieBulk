@@ -44,7 +44,7 @@
       <!-- Page-Title -->
       <div class="row">
         <div class="col-sm-12 h4-title">
-          <h4 class="page-title pull-left">Compliance Status </h4>
+          <h4 class="page-title pull-left"></h4>
     		  <div class="pull-right">
     		    <span class="contract_timer">Contract Renewal: 20 Days Left</span>
             <a href="javascript:void(0);" class="btn btn-primary btn-trans" title="Export">
@@ -666,32 +666,54 @@
       </div>
     </div>
     <!-- Assignee wise compliance-->
-    <div class="report-container-inner">
-      
-      </div>                
+    <div class="report-container-inner">             
        <table style="border:1px solid #ddd;" class="table-assignee-wise-compliance-list" >
-          <tr >
-            <th width="5%" align="center">#</th>
-            <th width="25%" align="left">Domain</th>
-            <th width="10%" align="center">Total</th>
-            <th width="10%" align="center">Complied</th>
-            <th width="10%" align="center">Delayed</th>
-            <th width="10%" align="center">In progress</th>
-            <th width="10%" align="center">Not complied</th>
-            <th style="padding-right:10px;" width="5%"></th>
-          </tr>
-          <tr style="background-color:#fff;">
-            <td width="4%" align="center"></td>
-            <td width="15%" align="left"><input type="text"  class="filter-text-box js-filter"></td>
-            <td width="10%" align="center"></td>
-            <td width="10%" align="center"></td>
-            <td width="10%" align="center"></td>
-            <td width="10%" align="center"></td>
-            <td width="10%" align="center"></td>
-            <td></td>
-          </tr>
-          <tbody class="tbody-assignee-wise-compliance-list"></tbody>
-        </table>
+        <tr >
+          <th width="5%" align="center">#</th>
+          <th width="25%" align="left">Domain</th>
+          <th width="10%" align="center">Total</th>
+          <th width="10%" align="center">Complied</th>
+          <th width="10%" align="center">Delayed</th>
+          <th width="10%" align="center">In progress</th>
+          <th width="10%" align="center">Not complied</th>
+          <th style="padding-right:10px;" width="5%"></th>
+        </tr>
+        <tr style="background-color:#fff;">
+          <td width="4%" align="center"></td>
+          <td width="15%" align="left"><input type="text"  class="filter-text-box js-filter"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td></td>
+        </tr>
+        <tbody class="tbody-assignee-wise-compliance-list"></tbody>
+      </table>
+    </div>
+     <div class="assignee-wise-compliance-list">
+      <table>
+        <tr class="unitHeading">
+        <td colspan="8" class="unit-name">
+        </td>
+      </tr>
+      <tr align="left" class="userHeading" >
+        <td align="left" colspan="8"> <span class="assignee-name-for-popup"></span></td>
+      </tr>
+      <tr align="center" class="usecom1-tab assignee-row-list"  >
+        <td class="sno"></td>
+        <td align="left" class="level1value"></td>
+        <td class="total-count"></td>
+        <td class="complied-count"></td>
+        <td class="delayed-count"></td>
+        <td class="inprogress-count"></td>
+        <td class="not-complied-count"></td>
+        <td align="left" class="open-details-list">
+          <i class="fa fa-chevron-right pull-right c-pointer"></i>
+        </td>
+      </tr>
+      </table>
+    </div>
 </div>
 
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 

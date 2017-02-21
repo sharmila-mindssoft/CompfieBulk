@@ -62,6 +62,7 @@ var CAS_TYPE = null;
 var CAS_LEVEL1 = null;
 var CAS_UNITNAME = null;
 
+var PageTitle = $('.page-title');
 // Assignee wise compliance (AWC) Autocomplete variable declaration
 var ACCountry = $('#ac-country');
 var ACBusinessGroup = $('#ac-businessgroup');
@@ -1595,10 +1596,10 @@ function showFiltersResults(csv) {
         var legalentityid = parseInt(LegalEntity.val().trim());
         var legalentityval = LegalEntityVal.val().trim();
         if(legalentityval == "" ){
-            legalentityid = null;
+            legalentityids = chartInput.getLegalEntities();
         }
         else{
-          legalentityids = chartInput.getLegalEntities();
+          legalentityids.push(legalentityid)
         }
         var divisionid = parseInt(Division.val().trim());
         var divisionval = DivisionVal.val().trim();

@@ -1820,18 +1820,25 @@ function loadCharts() {
     $('.report-container-inner').hide();
   }
   if (chartType == 'compliance_status') {
+    PageTitle.val("Compliance Status");
     loadComplianceStatusChart();
   } else if (chartType == 'escalations') {
+    PageTitle.html("Escalation");
     loadEscalationChart();
   } else if (chartType == 'not_complied') {
+    PageTitle.html("Not Complied");
     loadNotCompliedChart();
   } else if (chartType == 'compliance_report') {
+    PageTitle.html("Assignee Wise Compliances");
     loadAssigneeWiseCompliance();
   } else if (chartType == 'trend_chart') {
+    PageTitle.html("Trend Chart");
     loadTrendChart();
   } else if (chartType == 'applicability_status') {
+    PageTitle.html("Risk Report");
     loadComplianceApplicabilityChart();
   } else if (chartType == 'assignee_wise_compliance') {
+    PageTitle.html("Assignee Wise Compliances");
     loadAssignessWiseComplianceChart();
   } else {
     hideLoader();
