@@ -211,7 +211,7 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
 // Escalation chart
 //
 function updateEscalationChart(data) {
-  $('.graph-container.compliance-status').show();
+  $('.chart-container').show();
   data = prepareEscalationChartdata(data);
   xAxis = data[0];
   chartDataSeries = data[1];
@@ -262,7 +262,7 @@ function updateEscalationChart(data) {
 // Not complied
 //
 function updateNotCompliedChart(data) {
-  data = prepareNotCompliedChart(data);
+  data = prepareNotCompliedChart(data);  
   chartDataSeries = data[0];
   chartTitle = data[1];
   total = data[2];
@@ -620,6 +620,8 @@ function ChartInput() {
     return selectedLegalentity[0]['le_id'];
   };
   this.getLegalEntities = function () {
+    leids = client_mirror.getSelectedLegalEntity();
+    this.legal_entities = $.map(leids, function(element,index) {return element.le_id});
     if (this.legal_entities.length > 0)
       return copyArray(this.legal_entities);
     else {
@@ -854,6 +856,7 @@ function getXAxisName() {
     'business_group': 'Business Groups',
     'legal_entity': 'Legal Entities',
     'division': 'Divisions',
+    'category': 'Categories',
     'unit': 'Units'
   };
   var filterType = chartInput.getFilterType();
@@ -941,8 +944,7 @@ function loadUnits(isSelectAll) {
   }
 }
 function loadSubFilters(isSelectAll, isSingleSelect) {
-  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
-  console.log("selectedLegalentity--"+selectedLegalentity);
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();  
   loadBusinessGroups(isSelectAll);
   loadLegalEntities(isSelectAll);
   loadDivisions(isSelectAll);
@@ -1198,74 +1200,75 @@ function initializeFilters() {
     updateComplianceStatusChart(data);
   });
 }
+
 //retrive country autocomplete value
-function onCountrySuccess(val) {
-  $('#countryval').val(val[1]);
-  $('#country').val(val[0]);
-}
+// function onCountrySuccess(val) {
+//   $('#countryval').val(val[1]);
+//   $('#country').val(val[0]);
+// }
 //load country list in autocomplete text box
-function ac_country_load(textval, e) {
-  getCountryAutocomplete(e, textval, COUNTRYLIST, function (val) {
-    onCountrySuccess(val);
-  });
-}
-//retrive legelentity form autocomplete value
-function onLegalEntitySuccess(val) {
-  $('#legalentityval').val(val[1]);
-  $('#legalentityid').val(val[0]);
-}
-//load legalentity form list in autocomplete text box
-function ac_le_load(textval, e) {
-  getClientLegalEntityAutocomplete(e, textval, LEGALENTITYLIST, function (val) {
-    onLegalEntitySuccess(val);
-  });
-}
-//retrive unit form autocomplete value
-function onUnitSuccess(val) {
-  $('#unitval').val(val[1]);
-  $('#unitid').val(val[0]);
-}
-//load unit  form list in autocomplete text box
-function ac_unit_load(textval, e) {
-  //var cId = $("#country").val();
-  //var dId = 0;
-  getUnitAutocomplete(e, textval, UNITLIST, function (val) {
-    onUnitSuccess(val);
-  });
-}
-//retrive businessgroup form autocomplete value
-function onBusinessGroupSuccess(val) {
-  $('#businessgroupsval').val(val[1]);
-  $('#businessgroupid').val(val[0]);
-}
-//load businessgroup form list in autocomplete text box
-function ac_bg_load(textval, e) {
-  getClientBusinessGroupAutocomplete(e, textval, BUSINESSGROUPSLIST, function (val) {
-    onBusinessGroupSuccess(val);
-  });
-}
-//retrive division form autocomplete value
-function onDivisionSuccess(val) {
-  $('#divisionval').val(val[1]);
-  $('#divisionid').val(val[0]);
-}
-//load division form list in autocomplete text box
-function ac_division_load(textval, e) {
-  getClientDivisionAutocomplete(e, textval, DIVISIONLIST, function (val) {
-    onDivisionSuccess(val);
-  });
-}
-//retrive user autocomplete value
-function onUserSuccess(val) {
-  $('#userval').val(val[1]);
-  $('#userid').val(val[0]);
-}
-//load user list in autocomplete text box
-function ac_user_load(textval, e) {
-  getUserAutocomplete(e, textval, USERLIST, function (val) {
-    onUserSuccess(val);
-  });
-}
+// function ac_country_load(textval, e) {
+//   getCountryAutocomplete(e, textval, COUNTRYLIST, function (val) {
+//     onCountrySuccess(val);
+//   });
+// }
+// //retrive legelentity form autocomplete value
+// function onLegalEntitySuccess(val) {
+//   $('#legalentityval').val(val[1]);
+//   $('#legalentityid').val(val[0]);
+// }
+// //load legalentity form list in autocomplete text box
+// function ac_le_load(textval, e) {
+//   getClientLegalEntityAutocomplete(e, textval, LEGALENTITYLIST, function (val) {
+//     onLegalEntitySuccess(val);
+//   });
+// }
+// //retrive unit form autocomplete value
+// function onUnitSuccess(val) {
+//   $('#unitval').val(val[1]);
+//   $('#unitid').val(val[0]);
+// }
+// //load unit  form list in autocomplete text box
+// function ac_unit_load(textval, e) {
+//   //var cId = $("#country").val();
+//   //var dId = 0;
+//   getUnitAutocomplete(e, textval, UNITLIST, function (val) {
+//     onUnitSuccess(val);
+//   });
+// }
+// //retrive businessgroup form autocomplete value
+// function onBusinessGroupSuccess(val) {
+//   $('#businessgroupsval').val(val[1]);
+//   $('#businessgroupid').val(val[0]);
+// }
+// //load businessgroup form list in autocomplete text box
+// function ac_bg_load(textval, e) {
+//   getClientBusinessGroupAutocomplete(e, textval, BUSINESSGROUPSLIST, function (val) {
+//     onBusinessGroupSuccess(val);
+//   });
+// }
+// //retrive division form autocomplete value
+// function onDivisionSuccess(val) {
+//   $('#divisionval').val(val[1]);
+//   $('#divisionid').val(val[0]);
+// }
+// //load division form list in autocomplete text box
+// function ac_division_load(textval, e) {
+//   getClientDivisionAutocomplete(e, textval, DIVISIONLIST, function (val) {
+//     onDivisionSuccess(val);
+//   });
+// }
+// //retrive user autocomplete value
+// function onUserSuccess(val) {
+//   $('#userval').val(val[1]);
+//   $('#userid').val(val[0]);
+// }
+// //load user list in autocomplete text box
+// function ac_user_load(textval, e) {
+//   getUserAutocomplete(e, textval, USERLIST, function (val) {
+//     onUserSuccess(val);
+//   });
+// }
 //
 // Prepare chart data
 //
@@ -1283,7 +1286,7 @@ function parseComplianceStatusApiInput() {
   if (chart_year == 0) {
     chart_year = chartInput.getCurrentYear();
   }
-  var legalEntityId = chartInput.getLegalEntity();
+  var legalEntityIds = chartInput.getLegalEntities();
   var requestData = {
     'c_ids': countryIds,
     'd_ids': domainIds,
@@ -1291,8 +1294,8 @@ function parseComplianceStatusApiInput() {
     'filter_ids': filterIds,
     'from_date': fromDate,
     'to_date': toDate,
-    'chart_year': chart_year,
-    'le_id': legalEntityId
+    'chart_year': chart_year, 
+    'le_ids': legalEntityIds
   };
   return requestData;
 }
@@ -1434,7 +1437,7 @@ function prepareComplianceStatusChartData(chart_data) {
   ];
 }
 // Escalation
-function prepareEscalationChartdata(source_data) {
+function prepareEscalationChartdata(source_data) {  
   var chartTitle = getFilterTypeTitle();
   var xAxis = [];
   function set_value(dict, key, value) {
@@ -1444,14 +1447,14 @@ function prepareEscalationChartdata(source_data) {
     temp = parseInt(temp) + parseInt(value);
     dict[key] = temp;
   }
-  chart_data = source_data.chart_data;
+  chart_data = source_data.es_chart_data;
   var chartDataSeries = [];
   delayed_data = [];
   not_complied_data = [];
   $.each(chart_data, function (i, value) {
     delayed = value.delayed_compliance_count;
     not_complied = value.not_complied_count;
-    year = value.year;
+    year = value.chart_year;
     if (delayed == 0 && not_complied == 0) {
     } else {
       if (delayed == 0)
@@ -1508,33 +1511,37 @@ function prepareTrendChartData(source_data) {
   var xAxis = [];
   var xAxisIds = [];
   var chartDataSeries = [];
-  xAxis = source_data.years;
-  for (var i = 0; i < source_data.data.length; i++) {
-    chartData = source_data.data[i];
+  var total_count = [];
+
+  //xAxis = source_data.years;
+  for (var i = 0; i < source_data.trend_data.length; i++) {
+    chartData = source_data.trend_data[i];
     var filter_type_id = chartData.filter_id;
     var filterTypeInput = getFilterTypeInput();
     if (filterTypeInput.indexOf(filter_type_id) == -1)
       continue;
     var filterTypeName = getFilterTypeName(filter_type_id);
-    compliance_count = [];
-    total_count = [];
-    compliance_info = chartData.complied_compliance;
+        
+    //compliance_info = chartData.complied_compliance;
     data = [];
-    for (var j = 0; j < compliance_info.length; j++) {
-      compliance_count.push(compliance_info[j].complied_compliances_count);
-      total_count.push(compliance_info[j].total_compliances);
+//   for (var j = 0; j < compliance_info.length; j++) {
+      //compliance_count.push(compliance_info[j].complied_compliances_count);
+    total_count.push(chartData.total_compliances);
       data.push({
-        y: compliance_info[j].complied_compliances_count,
-        t: compliance_info[j].total_compliances
+        y: chartData.complied_compliances_count,
+        t: chartData.total_compliances
       });
-    }
+    //}
+
     chartDataSeries.push({
       'name': filterTypeName,
       'data': data,
       'total': total_count
     });
+    xAxis.push(chartData.chart_year);
   }
   chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
+  
   return [
     xAxis,
     chartTitle,
@@ -1603,30 +1610,41 @@ function prepareNotCompliedChart(source_data) {
 function prepareComplianceApplicability(source_data) {
   chartDataSeries = [];
   chartTitle = getFilterTypeTitle();
-  applicable = source_data.applicable_count;
-  not_applicable = source_data.not_applicable_count;
+  rejected_count = source_data.rejected_count;
+  not_complied_count = source_data.not_complied_count;
+  unassign_count = source_data.unassign_count;
   not_opted = source_data.not_opted_count;
-  total = parseInt(applicable) + parseInt(not_applicable) + parseInt(not_opted);
-  if (applicable == 0 && not_applicable == 0 && not_opted == 0) {
+  total = parseInt(rejected_count) + parseInt(not_complied_count) + parseInt(unassign_count) + parseInt(not_opted);
+  if (rejected_count == 0 && not_complied_count == 0 && unassign_count == 0 && not_opted == 0) {
   } else {
-    if (applicable == 0)
+    if (rejected_count == 0)
       v_visible = false;
     else
       v_visible = true;
     chartDataSeries.push({
-      name: 'Applicable',
-      y: applicable,
-      drilldown: 'Applicable',
+      name: 'Rejected',
+      y: rejected_count,
+      drilldown: 'Rejected',
       visible: v_visible
     });
-    if (not_applicable == 0)
+    if (not_complied_count == 0)
       v_visible = false;
     else
       v_visible = true;
     chartDataSeries.push({
-      name: 'Not Applicable',
-      y: not_applicable,
-      drilldown: 'Not Applicable',
+      name: 'Not Complied',
+      y: not_complied_count,
+      drilldown: 'Not Complied',
+      visible: v_visible
+    });
+    if (unassign_count == 0)
+      v_visible = false;
+    else
+      v_visible = true;
+    chartDataSeries.push({
+      name: 'Unassigned',
+      y: unassign_count,
+      drilldown: 'Unassigned',
       visible: v_visible
     });
     if (not_opted == 0)
@@ -1642,14 +1660,14 @@ function prepareComplianceApplicability(source_data) {
   }
   var filterTypeInput = getFilterTypeInput();
   if (chartTitle == 'Country') {
-    chartTitle = 'Compliance Applicability Status of ' + GROUP_NAME;
+    chartTitle = 'Risk Chart of ' + GROUP_NAME;
   } else {
     filter_names = [];
     for (var i = 0; i < filterTypeInput.length; i++) {
       name = getFilterTypeName(filterTypeInput[i]);
       filter_names.push(name);
     }
-    chartTitle = 'Compliance Applicability Status of ' + chartTitle + ' ' + filter_names;
+    chartTitle = 'Risk Chart of ' + chartTitle + ' ' + filter_names;
   }
   return [
     chartDataSeries,
@@ -1693,11 +1711,13 @@ function loadEscalationChart() {
   } else {
     filter_ids = getFilterIds(filter_type);
   }
+  legalEntityIds = chartInput.getLegalEntities();
   var requestData = {
-    'country_ids': chartInput.getCountries(),
-    'domain_ids': chartInput.getDomains(),
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': filter_ids
+    'filter_ids': filter_ids,
+    'le_ids': legalEntityIds
   };
   client_mirror.getEscalationChartData(requestData, function (status, data) {
     ESCALATION_DATA = data;
@@ -1712,11 +1732,13 @@ function loadTrendChart() {
   if (filterType == 'Group') {
     filter_ids = chartInput.getCountries();
   }
+  var legalEntityIds = chartInput.getLegalEntities();
   var requestData = {
-    'country_ids': chartInput.getCountries(),
-    'domain_ids': chartInput.getDomains(),
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': filter_ids
+    'filter_ids': filter_ids,
+    'le_ids': legalEntityIds
   };
   client_mirror.getTrendChart(requestData, function (status, data) {
     TREND_CHART_DATA = data;
@@ -1731,11 +1753,13 @@ function loadNotCompliedChart() {
   if (filterType == 'Group') {
     filter_ids = chartInput.getCountries();
   }
+  var legalEntityIds = chartInput.getLegalEntities();
   var requestData = {
-    'country_ids': chartInput.getCountries(),
-    'domain_ids': chartInput.getDomains(),
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': filter_ids
+    'filter_ids': filter_ids,
+    'le_ids': legalEntityIds
   };
   client_mirror.getNotCompliedData(requestData, function (status, data) {
     NOT_COMPLIED_DATA = data;
@@ -1751,10 +1775,12 @@ function loadComplianceApplicabilityChart() {
     filter_ids = chartInput.getCountries();
   }
   var requestData = {
-    'country_ids': chartInput.getCountries(),
-    'domain_ids': chartInput.getDomains(),
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
     'filter_type': filterType,
-    'filter_ids': filter_ids
+    'filter_ids': filter_ids,
+    'le_ids': chartInput.getLegalEntities()
+
   };
   client_mirror.getComplianceApplicabilityChart(requestData, function (status, data) {
     COMPLIANCE_APPLICABILITY_DATA = data;

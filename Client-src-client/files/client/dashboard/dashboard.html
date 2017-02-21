@@ -23,14 +23,14 @@
 <div class="left side-menu">
   <div class="sidebar-inner slimscrollleft">
     <div id="sidebar-menu">
-      <ul class="chart-tab"> 
+      <ul> 
         <li class="text-muted menu-title">Chart List</li>
         <li class="has_sub chart-tab compliance-status-tab active"> <a class="waves-effect"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
         <li class="has_sub chart-tab escalations-tab"> <a class="waves-effect "><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
         <li class="has_sub chart-tab not-complied-tab"> <a class="waves-effect"><i class="zmdi zmdi-block"></i> <span> Not Complied </span> </a> </li>
         <li class="has_sub chart-tab compliance-report-tab"> <a class="waves-effect"><i class="zmdi zmdi-card-travel"></i> <span> Assignee Wise Compliance</span> </a> </li>
         <li class="has_sub chart-tab trend-chart-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
-        <li class="has_sub chart-tab risk-chart-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
+        <li class="has_sub chart-tab applicability-status-tab"> <a class="waves-effect"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
       </ul>
       <div class="clearfix"></div>
     </div>
@@ -62,9 +62,9 @@
             <div id="level-filter" class="card-box">
               <input type="hidden" id="hidden"/>           
               <div class="graph-box">
-                <input type="button" id="viewaspie" class="pull-right btn btn-info m-r-10"  value="View as pie chart"/>
-                <input type="button" id="viewasbar" class="pull-right btn btn-info m-r-10" value="View as bar chart"/>
-                <input type="button" id="back"  class="pull-right btn btn-info m-r-10" onClick="loadGroup()"  value="Back"/>
+                <input type="button" id="btn-pie-chart" class="pull-right btn btn-info m-r-10"  value="View as pie chart"/>
+                <input type="button" id="btn-bar-chart" class="pull-right btn btn-info m-r-10" value="View as bar chart"/>
+                <input type="button" id="btn-back"  class="pull-right btn btn-info m-r-10" value="Back"/>
                <!--  <p id="year-para"> <span >Select Year:</span>
                   <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
                     <option value="2009" >2009</option>
@@ -95,12 +95,10 @@
             </div>
             <div class="clearfix"></div>
             <div class="m-t-0 m-b-30">
-                  <input type="button" id="previousyear" class="pull-left btn btn-primary btn-trans "  value="<< Previous Year"/>
-                  <!--input type="button" class="btn btn-info m-l-10" value="<< Previous"/-->
-                  <input type="button" id="nextyear" class="pull-right btn btn-primary btn-trans " value="Next Year >>"/>
-                  <!--input type="button" id="next" class="pull-right btn btn-info" value="Next >>"/-->
-                  <!--input type="button" class="pull-right btn btn-info m-r-10" value="Next >>"/-->
-                  <input type="button" id="previous" class="pull-left btn btn-primary btn-trans " value="<< Previous"/>
+                  <input type="button" id="btn-previous-year" class="pull-left btn btn-primary btn-trans  m-r-10" value="<< Previous Year"/>
+                  <input type="button" id="btn-next-year" class="pull-right btn btn-primary btn-trans " value="Next Year >>"/>                  
+                  <input type="button" id="btn-previous" class="pull-left btn btn-primary btn-trans " value="<< Previous"/>
+                  <input type="button" id="btn-next" class="pull-right btn btn-primary btn-trans  m-r-10" value="Next >>" />
             </div>
           </div>
           <!-- End Chart -->
@@ -108,8 +106,117 @@
           <div class="div-drilldown-container default-display-none">
             <div class="col-lg-12">
               <div class="table-responsive details">
-                <div class="card-box">
+                <div class="card-box clearfix">
                   <div class="drilldown-container">
+                  </div>
+                  <div class="escalation-drilldown-container">
+                  </div>
+                  <div class="div-assignee-wise-compliance">
+                    <div class="compliance-report-tab-content" id="assignee-wise-compliance">
+                     <form class="form-horizontal group-border-dashed" novalidate="">
+                        <div class="col-sm-6">
+                            <input type="hidden" id="a_user" value="">
+                            <input type="hidden" id="a_domain" value="">
+                            <input type="hidden" id="a_year" value="">
+                            <input type="hidden" id="a_unit" value="">
+                            <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" id="awc-country" placeholder="Country Name" value="">
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-country-id" value="">
+                                    <div id="ac-country" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" id="awc-legalentity" placeholder="Enter Legal Entity" >
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-legalentity-id" value="">
+                                    <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                           <!--  <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Category:</label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter Category" id="awc-category" >
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                      <input type="hidden" id="awc-category-id" value="">
+                                      <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul class="hidemenu"></ul>
+                                      </div>
+                                </div>
+                            </div> -->
+                   
+                             <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Seating Unit:</label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter Seating Unit" id="awc-unit" >
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                      <input type="hidden" id="awc-unit-id" value="">
+                                      <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul class="hidemenu"></ul>
+                                      </div>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-4 control-label">Business Group:</label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter BusinessGroup" id="awc-businessgroup" >
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-businessgroup-id">
+                                      <div id="ac-businessgroup" class="ac-textbox default-display-none" >
+                                        <ul class="hidemenu"></ul>
+                                      </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-4 control-label">Division:</label>
+                               <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter Division" id="awc-division">
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-division-id">
+                                      <div id="ac-division" class="ac-textbox default-display-none" >
+                                        <ul class="hidemenu"></ul>
+                                      </div>
+                                </div>
+                            </div>
+                                    <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-4 control-label">User: </label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter User"  id="awc-user">
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-user-id" value="">
+                                    <div id="ac-user" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                      
+                      
+                        </div>
+                        <div class="col-sm-12">
+                            <center>
+                                <div class="form-group">
+                                    <button class="btn btn-primary waves-effect waves-light" type="button"  id="assigneeWiseShow" onclick="showFiltersResults(false)"  > Show </button>
+                                    <button class="btn btn-info waves-effect waves-light" type="button" onclick="showFiltersResults(true);"> Export </button>
+                                </div>
+                            </center>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  <div class="text-center">
+                    <button class="btn btn-info text-center" id="pagination" onclick="showmorerecords();">Show more records</button>
                   </div>
                 </div>
               </div>
@@ -209,6 +316,7 @@
   </div>
 </div>
 <div id="templates">
+    <!-- Compliance Status-->
     <div class="compliance-status">
       <div class="table-compliance-status">
       <table id="datatable-responsive" class="table dt-responsive nowrap div-compliance-list" cellspacing="0" width="100%">
@@ -224,7 +332,6 @@
                   <th width="11%" class="delayed-by-row" align="left">Delayed By</th>
                   <th width="13%" class="dates-left-to-complete-row" align="left">Days Left to Complete </th>
                   <th width="11%" class="over-due-row" align="left">Over Due</th>
-
               </tr>
               <tr>
                 <td></td>
@@ -285,16 +392,6 @@
 
               </tr>
           </thead>
-        <!--   <tbody class="tbody-compliance-status-list div-compliance-list" id="accordion">
-            <tr>
-              <td colspan="100%">
-                      
-                  <div class="panel-group col-lg-12 no-padding-left no-padding-right no-bottom-margin "  role="tablist" aria-multiselectable="true">
-                  </div>
-                  
-              </td>
-            </tr>
-          </tbody> -->
       </table>
       </div>
       <div class="table-row-accordian-unit">
@@ -324,9 +421,277 @@
           <td class="dates-left-to-complete-row dates-left-to-complete"></td>
           <td class="over-due-row over-due"></td>
         </tr>
+        </table>
       </div>
     </div>
+    <!-- Escalation-->
+    <div class="escalation-status">
+      <div class="table-compliance-status">
+      <table id="datatable-responsive" class="table dt-responsive nowrap div-compliance-list" cellspacing="0" width="100%">
+          <thead>
+              <tr>
+                  <th width="3%" >#</th>
+                  <th width="13%" class="business-group-row">Business Group</th>
+                  <th width="13%" class="legal-entity-row">Legal Entity </th>
+                  <th width="15%" class="division-row">Division </th>
+                  <th width="5%" class="type-row">Type </th>
+                  <th width="20%" class="compliance-row" >Compliance </th>
+                  <th width="11%" class="assigned-to-row" >Assigned To </th>
+                  <th width="11%" class="delayed-by-row">Delayed By</th>
+                  <th width="11%" class="over-due-row">Over Due</th>
+              </tr>
+              <tr>
+                <td></td>
+                <td class="business-group-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm" />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="legal-entity-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="division-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="type-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="compliance-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="assigned-to-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="delayed-by-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="over-due-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
 
+              </tr>
+          </thead>
+      </table>
+      </div>
+      <div class="table-row-accordian-unit">
+        <table>
+          <tr class="tr-h2">
+            <td colspan="7" class="escalation-status-text"><span></span></td>
+          </tr>
+          <tr class="panel-title">
+            <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
+          </tr>       
+        </table>
+        <table class="compliance-list-inner">
+          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
+        </table>
+      </div>
+      <div class="table-row-list">
+      <table>
+        <tr class="tr-level1">
+          <td colspan="7" align="left"><span class="heading"></span></td>
+        </tr>
+        <tr class="tr-compliance">
+          <td width="02%" class="sno">1</td>
+          <td width="15%" class="businessgroup-name"></td>
+          <td width="10%" class="legalentity-name"></td>
+          <td width="10%" class="division-name"></td>
+          <td width="10%" class="industry-type-name"></td>
+          <td width="15%" class="compliance-name"></td>
+          <td width="10%" class="assigned-to"></td>
+          <td class="delayed-by-row delayed-by"></td>
+          <td class="over-due-row over-due"></td>
+        </tr>
+      </table>
+      </div>
+    </div>
+    <!-- Not Complied -->
+    <div class="notcomplied-status">
+      <div class="table-compliance-status">
+      <table id="datatable-responsive" class="table dt-responsive nowrap div-compliance-list" cellspacing="0" width="100%">
+          <thead>
+              <tr>
+                  <th width="02%">#</th>
+                  <th width="10%">Business Group</th>
+                  <th width="10%">Legal Entity</th>
+                  <th width="10%">Division</th>
+                  <th width="10%">Type</th>
+                  <th width="15%">Compliance</th>
+                  <th width="8%">Assigned To</th>
+                  <th width="11%" class="over-due-row" align="left">Over Due</th>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm" />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                  <td class="over-due-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+
+              </tr>
+          </thead>
+      </table>
+      </div>
+      <div class="table-row-accordian-unit">
+        <table>
+          <tr class="panel-title">
+            <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
+          </tr>       
+        </table>
+        <table class="compliance-list-inner">
+          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
+        </table>
+      </div>
+      <div class="table-row-list">
+      <table>
+        <tr class="tr-level1">
+          <td colspan="7" align="left"><span class="heading"></span></td>
+        </tr>
+        <tr class="tr-compliance">
+          <td width="02%" class="sno"></td>
+          <td width="15%" class="businessgroup-name"></td>
+          <td width="10%" class="legalentity-name"></td>
+          <td width="10%" class="division-name"></td>
+          <td width="10%" class="industry-type-name"></td>
+          <td width="15%" class="compliance-name"></td>
+          <td width="10%" class="assigned-to"></td>
+          <td class="over-due-row over-due"></td>
+        </tr>
+        </table>
+      </div>
+    </div>
+    <!-- Rish Chart -->
+    <div class="compliance-applicable-status">
+     <table class="table dt-responsive nowrap div-compliance-list" cellspacing="0" width="100%">
+      <thead>
+        <tr class="tr-heading">
+          <th width="3%" align="center">#</th>
+          <th width="15%" class="statutory-row">Statutory</th>
+          <th width="15%" class="compliance-task-row">Compliance Task </th>
+          <th width="18%" class="compliance-description-row">Compliance Description </th>
+          <th width="12%" class="penal-consequences-row">Penal Consequences </th>
+          <th width="10%" class="compliance-frequency-row">Compliance Frequency</th>
+          <th width="17%" class="repeats-row">Repeats </th>
+          <th width="10%" class="trigger-before-row">Trigger Before </th>
+        </tr>
+      </thead>
+      </table>
+      
+      <div class="table-row-accordian-unit">
+      <table class="table-heading">
+        <tr class="panel-title">
+            <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 level1-heading" colspan="7"></td>
+          </tr>
+      </table>
+        <table class="compliance-list-inner">
+            <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
+        </table>
+        <table class="table-row-accordian">
+          <tr class="tr-unit">
+            <th colspan="8" class="unit-heading">
+              <span></span>
+            </th>
+          </tr>
+          <tr class="table-row-list">
+            <td align="center" class="sno"></td>
+            <td class="statutory-name"></td>
+            <td class="compliance-task-name"></td>
+            <td class="compliance-description-name"></td>
+            <td class="penal-consequences-name"></td>
+            <td class="compliance-frequency-name"></td>
+            <td class="repeats"></td>
+            <!-- <td class="statutory-date"></td> -->
+            <td class="trigger-before"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <!-- Assignee wise compliance-->
+    <div class="report-container-inner">
+      
+      </div>                
+       <table style="border:1px solid #ddd;" class="table-assignee-wise-compliance-list" >
+          <tr >
+            <th width="5%" align="center">#</th>
+            <th width="25%" align="left">Domain</th>
+            <th width="10%" align="center">Total</th>
+            <th width="10%" align="center">Complied</th>
+            <th width="10%" align="center">Delayed</th>
+            <th width="10%" align="center">In progress</th>
+            <th width="10%" align="center">Not complied</th>
+            <th style="padding-right:10px;" width="5%"></th>
+          </tr>
+          <tr style="background-color:#fff;">
+            <td width="4%" align="center"></td>
+            <td width="15%" align="left"><input type="text"  class="filter-text-box js-filter"></td>
+            <td width="10%" align="center"></td>
+            <td width="10%" align="center"></td>
+            <td width="10%" align="center"></td>
+            <td width="10%" align="center"></td>
+            <td width="10%" align="center"></td>
+            <td></td>
+          </tr>
+          <tbody class="tbody-assignee-wise-compliance-list"></tbody>
+        </table>
 </div>
 
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 

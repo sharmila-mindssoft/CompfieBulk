@@ -187,7 +187,6 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -1010,19 +1009,19 @@ function initClientMirror() {
             'GetAssigneewiseComplianesFilters',
             {}
         ];
-        callerName = 'client_dashboard';
+        callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
     }
 
     function getAssigneewiseComplianes(country_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, csv, callback) {
         var request = [
             'GetAssigneeWiseCompliancesChart', {
-                'country_id': country_id,
-                'business_group_id': business_group_id,
-                'legal_entity_id': legal_entity_id,
-                'division_id': division_id,
+                'c_id': country_id,
+                'bg_id': business_group_id,
+                'le_ids': legal_entity_id,
+                'div_id': division_id,
                 'unit_id': unit_id,
-                'user_id': user_id,
+                'usr_id': user_id,
                 'csv': csv
             }
         ];
