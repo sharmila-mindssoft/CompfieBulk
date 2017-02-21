@@ -2494,9 +2494,9 @@ def fetch_assigneewise_reassigned_compliances(
     )
     from_date = result[0][1][0][1][0]["start_date"].date()
     to_date = result[0][1][0][1][0]["end_date"].date()
-    query = " SELECT reassigned_date, concat( " + \
+    query = " SELECT trch.assigned_on as reassigned_date, concat( " + \
         " IFNULL(employee_code, 'Administrator'), '-', " + \
-        " employee_name) as previous_assignee,  " + \
+        " employee_name) as reassigned_from,  " + \
         " document_name, compliance_task, " + \
         " tch.due_date, DATE_SUB(tch.due_date, " + \
         " INTERVAL trigger_before_days DAY) as start_date, " + \
@@ -2505,7 +2505,7 @@ def fetch_assigneewise_reassigned_compliances(
         " tbl_compliance_history tch ON ( " + \
         " trch.compliance_id = tch.compliance_id " + \
         " AND assignee= %s AND trch.unit_id = tch.unit_id) " + \
-        " INNER JOIN tbl_assigned_compliances tac ON ( " + \
+        " INNER JOIN tbl_assign_compliances tac ON ( " + \
         " tch.compliance_id = tac.compliance_id  " + \
         " AND tch.unit_id = tac.unit_id " + \
         " AND tch.completed_by = %s) " + \
@@ -2516,9 +2516,9 @@ def fetch_assigneewise_reassigned_compliances(
         " INNER JOIN tbl_domains td ON (td.domain_id = tc.domain_id) " + \
         " WHERE tch.unit_id = %s AND tc.domain_id = %s " + \
         " AND approve_status = 1 AND completed_by = %s " + \
-        " AND reassigned_date between CAST(tch.start_date AS DATE) " + \
+        " AND trch.assigned_on between CAST(tch.start_date AS DATE) " + \
         " and CAST(completion_date AS DATE) " + \
-        " AND completion_date > tch.due_date AND is_reassigned = 1 "
+        " AND completion_date >= tch.due_date AND is_reassigned = 1 "
 
     date_condition = " AND tch.due_date between '%s' AND '%s' "
     date_condition = date_condition % (from_date, to_date)
@@ -2526,18 +2526,13 @@ def fetch_assigneewise_reassigned_compliances(
     rows = db.select_all(query, [
         user_id, user_id, unit_id, int(domain_id), user_id
     ])
-    columns = [
-        "reassigned_date", "reassigned_from", "document_name",
-        "compliance_name", "due_date", "start_date", "completion_date"
-    ]
-    results = convert_to_dict(rows, columns)
-    return results
+    return rows
 
 
 def return_reassigned_details(results):
     reassigned_compliances = []
     for compliance in results:
-        compliance_name = compliance["compliance_name"]
+        compliance_name = compliance["compliance_task"]
         if compliance["document_name"] is not None:
             compliance_name = "%s - %s" % (
                 compliance["document_name"], compliance_name
@@ -2586,7 +2581,7 @@ def get_assigneewise_compliances_drilldown_data_count(
         from_date = result[0][1][0][1][0]["start_date"]
         to_date = result[0][1][0][1][0]["end_date"]
         domain_condition = str(domain_id_list[0])
-    query = " SELECT count(*) " + \
+    query = " SELECT count(*) as cnt " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc ON " + \
         " (tch.compliance_id = tc.compliance_id) " + \
@@ -2594,10 +2589,10 @@ def get_assigneewise_compliances_drilldown_data_count(
         " WHERE completed_by = %s AND unit_id = %s " + \
         " AND due_date BETWEEN %s AND %s " + \
         " AND domain_id in (%s) "
-    rows = db.select_all(query, [
+    rows = db.select_one(query, [
         assignee_id, unit_id, from_date, to_date, domain_condition
     ])
-    return rows[0][0]
+    return rows["cnt"]
 
 
 def get_assigneewise_compliances_drilldown_data(
@@ -2685,7 +2680,7 @@ def fetch_assigneewise_compliances_drilldown_data(
     query = " SELECT " + \
         " compliance_id, start_date, due_date, completion_date, " + \
         " document_name, compliance_task, compliance_description, " + \
-        " statutory_mapping, employee_name, compliance_status FROM ( " + \
+        " statutory_mapping, employee_name as assignee, compliance_status FROM ( " + \
         " SELECT %s, %s " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
@@ -2702,13 +2697,7 @@ def fetch_assigneewise_compliances_drilldown_data(
     ]
     query = query + where_condition
     rows = db.select_all(query, where_condition_val)
-    columns_list = [
-        "compliance_id", "start_date", "due_date", "completion_date",
-        "document_name", "compliance_name", "compliance_description",
-        "statutory_mapping", "assignee", "compliance_status"
-    ]
-    result = convert_to_dict(rows, columns_list)
-    return result
+    return rows
 
 
 def return_assignee_wise_compliance_drill_down_data(result):
@@ -2718,13 +2707,14 @@ def return_assignee_wise_compliance_drill_down_data(result):
     not_complied_compliances = {}
 
     for compliance in result:
-        compliance_name = compliance["compliance_name"]
+        compliance_name = compliance["compliance_task"]
         compliance_status = compliance["compliance_status"]
         if compliance["document_name"] is not None:
             compliance_name = "%s - %s" % (
                 compliance["document_name"], compliance_name
             )
-        level_1_statutory = compliance["statutory_mapping"].split(">>")[0]
+        maps = json.loads(compliance["statutory_mapping"])
+        level_1_statutory = maps[0].split(">>")[0]
 
         if compliance_status == "Complied":
             current_list = complied_compliances

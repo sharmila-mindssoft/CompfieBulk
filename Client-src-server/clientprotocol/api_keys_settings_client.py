@@ -446,14 +446,20 @@ api_params = {
     "sdelayed_compliance": make_reccord_type(module="dashboard", klass_name="DelayedCompliance"),
     "reassigned_compliances": make_vector_type_field(module="dashboard", klass_name="RessignedCompliance", is_optional=True),
 
-    "reassign_from": make_text_field(),
+    "reassigned_from": make_text_field(),
     "start_date": make_text_field(),
     "due_date": make_text_field(),
     "due_date": make_text_field(),
-    "reassigned_data": make_text_field(),
+    "reassigned_date": make_text_field(),
     "completed_date": make_text_field(),
 
-
-
+    "description": make_text_field(),
+    "complied": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
+    "delayed": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
+    "inprogress": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
+    "not_complied": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
+    "assignee_wise_drill_down": make_reccord_type(module="dashboard", klass_name="AssigneeWiseCompliance"),
+    "assignee_id": make_int_field(),
+    "start_count": make_int_field(),
 
 }
