@@ -811,7 +811,7 @@ def get_user_unit_ids(db, user_id):
     rows = db.select_all(q + condition, param)
     u_ids = []
     for r in rows:
-        u_ids.append(int(r[0]))
+        u_ids.append(int(r["unit_id"]))
     return u_ids
 
 
