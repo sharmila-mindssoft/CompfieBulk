@@ -434,4 +434,5 @@ api_params = {
     "completed_task_count": make_vector_type_field(module="clientcore", klass_name="GetCompletedTaskCountSuccess", is_optional=True),
     "inprogress_within_duedate_task_count": make_vector_type_field(module="clientcore", klass_name="GetInprogressWithinDuedateTaskCountSuccess", is_optional=True),
     "over_due_task_count": make_vector_type_field(module="clientcore", klass_name="GetOverDueTaskCountSuccess", is_optional=True),
+    "messages": make_vector_type_field(module="clientcore", klass_name="messages", is_optional=True),
 }

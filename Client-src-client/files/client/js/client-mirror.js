@@ -365,6 +365,19 @@ function initClientMirror() {
         apiRequest('general', request, callback);
     }
 
+    /* Messages */
+    function getMessages(from_count, page_count, callback) {
+      var request = [
+        'GetMessages',
+        {
+          'from_count': from_count,
+          'page_count': page_count
+        }
+        callerName = 'client_dashboard';
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
     /* Compliance Approal */
     function getComplianceApprovalList(start_count, callback) {
         var request = [
@@ -2761,6 +2774,7 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         updateUserProfile: updateUserProfile,
         getReassignComplianceFilters: getReassignComplianceFilters,
+        getMessages: getMessages,
     };
 }
 

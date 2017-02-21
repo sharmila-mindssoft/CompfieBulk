@@ -114,8 +114,6 @@ function initializeNavBar() {
         $('.cssmenu .menu-ul').append(liObject);
     }
 
-
-
     var user = client_mirror.getUserInfo();
     console.log(user);
     // console.log(navBarItems["My Accounts"])
@@ -124,12 +122,12 @@ function initializeNavBar() {
     $('.username', settingsMenuObject).text(user.emp_name);
     for (var form_key in settingsMenu) {
         var form = navBarItems["My Accounts"][form_key];
-        if (form.form_name != "Reminders" && form.form_name != "Statutory Notification" &&
-            form.form_name != "Escalations" && form.form_name != "Messages") {
+        if (form.form_name != "Reminders" && form.form_name != "Statutory Notification" && form.form_name != "Escalations" && form.form_name != "Messages") {
             var item = getItemObject(form.form_url, form.form_name);
             $('ul', settingsMenuObject).append(item);
         }
     }
+
     /*var employee_name = client_mirror.getEmployeeName();
     profile_url = '/knowledge/profile';
     if (employee_name != 'undefined' && employee_name != 'Administrator') {
@@ -170,6 +168,27 @@ function initializeNavBar() {
         } else if (form.form_name == "Messages") {
             var liObject = $('#nav-bar-templates .messages li').clone();
             $('.cssmenu .menu-ul').append(liObject);
+            $('.message-menu').on('click', function(event) {
+                /*$('.msg-items-ul').empty();
+                var partHeading = "Sample Title";
+                var partText = "Sample Messages";
+                var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                for(var i=0; i<= 5; i++) {
+                    $('.statu-heading', msgObject).text(partHeading);
+                    $('.statu-content', msgObject).text(partText);
+                    $('.slink').attr('href', '/message');
+                    $('.msg-items-ul').append(msgObject);
+                }
+                //$('.msg-items-ul .divider').last().html();*/
+
+                $('.msg-items-ul').empty();
+                client-mirror.getMessages(0, 2, function(error, response) {
+                    if (error == null) {
+                        
+                    }
+                });
+
+            });
         }
     }
 }

@@ -147,8 +147,14 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
         logger.logClientApi("CheckContractExpiration", "process end")
 
-    return result
+    elif type(request) is dashboard.GetMessages:
+        logger.logClientApi("GetMessages", "process begin")
+        result = process_get_messages(
+            db, request, session_user
+        )
+        logger.logClientApi("GetMessages", "process end")
 
+    return result
 
 def process_compliance_status_chart(db, request, session_user):
 
@@ -431,6 +437,33 @@ def process_assigneewise_compliances_drilldown(
 # and escalation count
 ########################################################
 def check_contract_expiration(
+    db, request, session_user
+):
+    no_of_days_left = get_no_of_days_left_for_contract_expiration(
+        db
+    )
+    if no_of_days_left < 0:
+        no_of_days_left = 0
+    (
+        notification_count, reminder_count, escalation_count
+    ) = get_dashboard_notification_counts(
+        db,
+        session_user
+    )
+    show_popup, notification_text = need_to_display_deletion_popup(db)
+    return dashboard.CheckContractExpirationSuccesss(
+        no_of_days_left=no_of_days_left,
+        notification_count=notification_count,
+        reminder_count=reminder_count,
+        escalation_count=escalation_count,
+        show_popup=show_popup,
+        notification_text=notification_text
+    )
+
+########################################################
+#To get the messages selected legal entity in menu
+########################################################
+def process_get_messages(
     db, request, session_user
 ):
     no_of_days_left = get_no_of_days_left_for_contract_expiration(

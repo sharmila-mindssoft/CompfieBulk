@@ -188,6 +188,19 @@ class CheckContractExpiration(Request):
         return {
         }
 
+class GetMessages(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetMessages()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class GetComplianceStatusChart(Request):
     def __init__(
         self,
