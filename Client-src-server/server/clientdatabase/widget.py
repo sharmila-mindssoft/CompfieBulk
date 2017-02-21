@@ -135,7 +135,7 @@ def frame_escalation_count(data):
         chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartdata
     )
 
-def get_risk_chart_count(db, le_ids, user_id, user_category):
+def get_risk_chart_count(db, user_id, user_category):
     q = "select ch.not_complied, ch.rejected, cc.not_opted, cc.unassigned from ( " + \
         " (select " + \
         " sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
@@ -150,8 +150,35 @@ def get_risk_chart_count(db, le_ids, user_id, user_category):
         " on t1.compliance_id = t2.compliance_id ) as cc)"
 
     param = []
-    rows = db.select_all(q, param)
+    rows = db.select_one(q, param)
     return rows
+
+def frame_risk_chart(data):
+    chart_title = "Risk Chart"
+    xaxis_name = "Years"
+    xaxis = []
+    yaxis_name = "Total Compliances"
+    yaxis = []
+    chartData = []
+    if data :
+        chartData.append({
+            "name": "Not Complied",
+            "y": data["not_complied"]
+        })
+        chartData.append({
+            "name": "Not Complied",
+            "y": data["not_complied"]
+        })
+        chartData.append({
+            "name": "Not Complied",
+            "y": data["not_complied"]
+        })
+        chartData.append({
+            "name": "Not Complied",
+            "y": data["not_complied"]
+        })
+
+    return widgetprotocol.GetNotCompliedChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
 
 def get_trend_chart(db, le_ids, user_id, user_category):
     years = get_last_7_years()

@@ -914,6 +914,7 @@ class GetChartFilters(Request):
 class GetReassignComplianceFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -938,6 +939,58 @@ class GetAssigneewiseComplianesFilters(Request):
         return {
         }
 
+
+class GetUserWidetData(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [])
+        return GetUserWidetData()
+
+    def to_inner_structure(self):
+        return {}
+
+class WidgetInfo(object):
+    def __init__(self, widget_id, width, height, pin_status):
+        self.widget_id = widget_id
+        self.width = width
+        self.height = height
+        self.pin_status = pin_status
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["w_id", "width", "height", "pin_status"])
+        return WidgetInfo(
+            data.get("w_id"), data.get("width"),
+            data.get("height"), data.get("pin_status")
+        )
+
+    def to_structure(self):
+        return {
+            "w_id": self.widget_id,
+            "width": self.width,
+            "height": self.height,
+            "pin_status": self.pin_status
+        }
+
+
+class SaveWidgetData(Request):
+    def __init__(self, widget_data):
+        self.widget_data = widget_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["widget_info"])
+        return SaveWidgetData(data.get("widget_info"))
+
+    def to_inner_structure(self):
+        return {
+            "widget_info": self.widget_data
+        }
+
+
 def _init_Request_class_map():
 
     classes = [
@@ -953,7 +1006,7 @@ def _init_Request_class_map():
 
         GetAssigneewiseComplianesFilters,
         GetUserToAssignCompliance, GetChartFilters,
-        GetReassignComplianceFilters
+        GetReassignComplianceFilters, GetUserWidetData, SaveWidgetData
     ]
 
     class_map = {}
@@ -1703,6 +1756,32 @@ class GetReassignComplianceFiltersSuccess(Response):
             "legal_entity_users": self.legal_entity_users
         }
 
+class GetUserWidetDataSuccess(Response):
+    def __init__(self, widget_order_info):
+        self.widget_order_info = widget_order_info
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["widget_info"])
+        return GetUserWidetDataSuccess(data.get("widget_info"))
+
+    def to_inner_structure(self):
+        return {
+            "widget_info": self.widget_order_info
+        }
+
+class SaveWidgetDataSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [])
+        return SaveWidgetDataSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
 def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
@@ -1715,7 +1794,8 @@ def _init_Response_class_map():
         GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess,
         GetAssignComplianceUnitsSuccess,
         GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
-        GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess, GetAssigneewiseComplianesFilters
+        GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess, GetAssigneewiseComplianesFilters,
+        GetUserWidetDataSuccess, SaveWidgetDataSuccess
     ]
     class_map = {}
     for c in classes:

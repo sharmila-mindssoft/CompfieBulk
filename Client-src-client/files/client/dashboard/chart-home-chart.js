@@ -1058,7 +1058,7 @@ function initializeFilters() {
       chartInput.setCountriesAll([]);
     }
   });
-  
+
   loadDomains();
   $('.domain-filter').multiselect({
     enableFiltering: true,

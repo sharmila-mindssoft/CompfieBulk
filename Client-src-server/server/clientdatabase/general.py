@@ -71,7 +71,9 @@ __all__ = [
     "convert_datetime_to_date",
     "is_old_primary_admin",
     "get_domains_info",
-    "get_user_based_units"
+    "get_user_based_units",
+    "get_user_widget_settings",
+    "save_user_widget_settings"
     ]
 
 
@@ -556,6 +558,9 @@ def get_user_domains(db, user_id):
         q = "select domain_id from tbl_user_domains"
         condition = " WHERE user_id = %s"
         param = [user_id]
+    print q
+    print condition
+    print param
     rows = db.select_all(q + condition, param)
     d_ids = []
     for r in rows:
@@ -665,7 +670,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "t1.client_id, t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
-            "inner join tbl_user_domains as t2 on " + \
+            "inner join tbl_user_legal_entities as t2 on " + \
             "t1.legal_entity_id = t1.legal_entity_id " + \
             "inner join tbl_countries t3 on t1.country_id = t3.country_id " + \
             "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
@@ -1930,3 +1935,16 @@ def update_traild_id(db, audit_trail_id, get_type=None):
 def reset_domain_trail_id(db):
     q = "update tbl_audit_log set domain_trail_id=0"
     db.execute(q)
+
+def get_user_widget_settings(db, user_id):
+    q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
+    rows = db.select_one(q, [user_id])
+    if rows :
+        data = json.loads(rows["widget_data"])
+        return data
+    else :
+        return []
+
+def save_user_widget_settings(db, user_id, widget_data):
+    q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s)"
+    db.execute(q, [user_id, widget_data])

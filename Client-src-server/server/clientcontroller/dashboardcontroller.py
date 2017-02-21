@@ -97,36 +97,21 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
             db, request, session_user, session_user
         )
     elif type(request) is dashboard.GetAssigneewiseYearwiseCompliances:
-        logger.logClientApi(
-            "GetAssigneewiseYearwiseCompliances", "process begin"
-        )
+
         result = process_assigneewise_yearwise_compliances(
             db, request, session_user
         )
-        logger.logClientApi(
-            "GetAssigneewiseYearwiseCompliances", "process end"
-        )
 
     elif type(request) is dashboard.GetAssigneewiseReassignedComplianes:
-        logger.logClientApi(
-            "GetAssigneewiseReassignedComplianes", "process begin"
-        )
+
         result = process_get_assigneewise_reassigned_compliances(
             db, request, session_user
         )
-        logger.logClientApi(
-            "GetAssigneewiseReassignedComplianes", "process end"
-        )
 
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown:
-        logger.logClientApi(
-            "GetAssigneeWiseComplianceDrillDown", "process begin"
-        )
+
         result = process_assigneewise_compliances_drilldown(
             db, request, session_user
-        )
-        logger.logClientApi(
-            "GetAssigneeWiseComplianceDrillDown", "process end"
         )
 
     elif type(request) is dashboard.CheckContractExpiration:

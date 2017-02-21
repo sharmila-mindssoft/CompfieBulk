@@ -248,6 +248,11 @@ CREATE TABLE `tbl_notifications_log` (
   `extra_details` longtext,
   `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE tbl_notifications_user_log(
+  `notification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `read_status` tinyint(4) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_service_providers` (
   `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
