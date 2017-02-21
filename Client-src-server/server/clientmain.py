@@ -14,7 +14,8 @@ from functools import wraps
 from clientprotocol import (
     clientadminsettings, clientmasters, clientreport,
     clienttransactions, dashboard,
-    clientlogin, general, clientuser, clientmobile
+    clientlogin, general, clientuser, clientmobile,
+    widgetprotocol
 )
 # from server.clientdatabase import ClientDatabase
 from server.dbase import Database
@@ -91,7 +92,7 @@ class API(object):
             5000,
             self.server_added
         )
-        print "Databases initialize"
+        # print "Databases initialize"
 
         self._ip_address = None
         # self._remove_old_session()
@@ -152,7 +153,7 @@ class API(object):
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
-                print self._address
+                # print self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
                     if company.is_group is True:
                         if self._group_databases.get(company_id) is not None :
@@ -188,9 +189,9 @@ class API(object):
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
 
-            print "after connection created"
-            print self._group_databases
-            print self._le_databases
+            # print "after connection created"
+            # print self._group_databases
+            # print self._le_databases
             # After database connection client poll for replication
 
             def client_added(clients):
@@ -202,7 +203,7 @@ class API(object):
                     # _domain_id = client.domain_id
 
                     if client.is_group is True:
-                        print "client added"
+                        # print "client added"
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
                             continue
@@ -314,7 +315,7 @@ class API(object):
             actual_data = data[1]
 
             # print company_id
-            print actual_data
+            # print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
             )
@@ -399,8 +400,10 @@ class API(object):
                 if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
                     return respond(clientlogin.InvalidCurrentPassword())
 
-        else :
-            session_user = None
+        # print '*' * 20
+        # print session_user, client_id, session_category
+        # print '*' * 20
+
         # request process in controller
         if is_group :
             print "Group DB"
@@ -469,10 +472,6 @@ class API(object):
                     self.performed_response.chart_data.extend(data.chart_data)
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
-                    print self.performed_response.T_0_to_30_days_count, data.T_0_to_30_days_count
-                    print self.performed_response.T_31_to_60_days_count
-                    print self.performed_response.T_61_to_90_days_count
-                    print self.performed_response.Above_90_days_count
 
                     self.performed_response.T_0_to_30_days_count += data.T_0_to_30_days_count
                     self.performed_response.T_31_to_60_days_count += data.T_31_to_60_days_count
@@ -502,6 +501,9 @@ class API(object):
                 elif type(request_data.request) is dashboard.GetTrendChartDrillDownData :
                     self.performed_response.drill_down_data.extend(data.drill_down_data)
 
+                elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusDrillDown :
+                    self.performed_response.drill_down_data.extend(data.drill_down_data)
+
         try :
             # print "try"
             request_data, company_id = self._parse_request(request_data_type, is_group)
@@ -509,6 +511,7 @@ class API(object):
             session_user, client_id, session_category = self._validate_user_session(session)
             # print session_user, client_id, session_category
             # print request_data.request
+            # print " ------------ &&&&& "
             if hasattr(request_data.request, "legal_entity_ids") :
                 le_ids = request_data.request.legal_entity_ids
                 # print "-------"
@@ -563,7 +566,7 @@ class API(object):
 
     @api_request(clientlogin.Request, need_client_id=True, is_group=True)
     def handle_login(self, request, db, client_id, user_ip):
-        print self._ip_address
+        # print self._ip_address
 
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
@@ -603,6 +606,10 @@ class API(object):
     @api_request(clientmobile.RequestFormat)
     def handle_mobile_request(self, request, db, session_user, client_id, le_id):
         return mobilecontroller.process_client_mobile_request(request, db)
+
+    @global_api_request(widgetprotocol.RequestFormat, is_group=True, need_category=True)
+    def handle_widget_request(self, request, db, session_user, session_category):
+        return controller.process_client_widget_requests(request, db, session_user, session_category)
 
 
 def handle_isalive():
@@ -646,6 +653,7 @@ def run_server(address, knowledge_server_address):
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
             ("/api/mobile", api.handle_mobile_request),
+            ("/api/widgets", api.handle_widget_request),
             # (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:

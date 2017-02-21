@@ -363,27 +363,14 @@ class GetComplianceApplicabilityStatusChart(Request):
             "le_ids": self.legal_entity_ids
         }
 
-class GetAssigneewiseComplianesFilters(Request):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetAssigneewiseComplianesFilters()
-
-    def to_inner_structure(self):
-        return {
-        }
-
 class GetAssigneeWiseCompliancesChart(Request):
     def __init__(
-        self, country_id, business_group_id, legal_entity_id, division_id,
+        self, country_id, business_group_id, legal_entity_ids, division_id,
         unit_id, user_id, csv
     ):
         self.country_id = country_id
         self.business_group_id = business_group_id
-        self.legal_entity_id = legal_entity_id
+        self.legal_entity_ids = legal_entity_ids
         self.division_id = division_id
         self.unit_id = unit_id
         self.user_id = user_id
@@ -393,27 +380,27 @@ class GetAssigneeWiseCompliancesChart(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "c_ids", "bg_id", "le_id", "div_id",
+                "c_id", "bg_id", "le_ids", "div_id",
                 "u_id", "usr_id", "csv"
             ]
         )
-        country_id = data.get("c_ids")
+        country_id = data.get("c_id")
         business_group_id = data.get("bg_id")
-        legal_entity_id = data.get("le_id")
+        legal_entity_ids = data.get("le_ids")
         division_id = data.get("div_id")
         unit_id = data.get("u_id")
         user_id = data.get("usr_id")
         csv = data.get("csv")
         return GetAssigneeWiseCompliancesChart(
-            country_id, business_group_id, legal_entity_id, division_id,
+            country_id, business_group_id, legal_entity_ids, division_id,
             unit_id, user_id, csv
         )
 
     def to_inner_structure(self):
         return {
-            "c_ids": self.country_id,
+            "c_id": self.country_id,
             "bg_id": self.business_group_id,
-            "le_id": self.legal_entity_id,
+            "le_ids": self.legal_entity_ids,
             "div_id": self.division_id,
             "u_id": self.unit_id,
             "usr_id": self.user_id,
@@ -422,55 +409,61 @@ class GetAssigneeWiseCompliancesChart(Request):
 
 class GetAssigneewiseYearwiseCompliances(Request):
     def __init__(
-        self, country_id, unit_id, user_id
+        self, country_id, unit_id, user_id, legal_entity_ids
     ):
         self.country_id = country_id
         self.unit_id = unit_id
         self.user_id = user_id
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "c_id", "u_id", "usr_id"
+                "c_id", "u_id", "usr_id", "le_ids"
             ]
         )
         country_id = data.get("c_id")
         unit_id = data.get("u_id")
         user_id = data.get("usr_id")
+        legal_entity_ids = data.get("le_ids")
         return GetAssigneewiseYearwiseCompliances(
-            country_id, unit_id, user_id
+            country_id, unit_id, user_id, legal_entity_ids
         )
 
     def to_inner_structure(self):
         return {
             "c_id": self.country_id,
             "u_id": self.unit_id,
-            "usr_id": self.user_id
+            "usr_id": self.user_id,
+            "le_ids": self.legal_entity_ids
         }
 
 class GetAssigneewiseReassignedComplianes(Request):
     def __init__(
-        self, country_id, unit_id, user_id, domain_id
+        self, country_id, unit_id, user_id, domain_id,
+        legal_entity_ids
     ):
         self.country_id = country_id
         self.unit_id = unit_id
         self.user_id = user_id
         self.domain_id = domain_id
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "c_id", "u_id", "usr_id", "d_id"
+                "c_id", "u_id", "usr_id", "d_id", "le_ids"
             ]
         )
         country_id = data.get("c_id")
         unit_id = data.get("u_id")
         user_id = data.get("usr_id")
         domain_id = data.get("d_id")
+        legal_entity_ids = data.get("le_ids")
         return GetAssigneewiseReassignedComplianes(
-            country_id, unit_id, user_id, domain_id
+            country_id, unit_id, user_id, domain_id, legal_entity_ids
         )
 
     def to_inner_structure(self):
@@ -479,30 +472,38 @@ class GetAssigneewiseReassignedComplianes(Request):
             "u_id": self.unit_id,
             "usr_id": self.user_id,
             "d_id": self.domain_id,
+            "le_ids": self.legal_entity_ids
         }
 
 class GetAssigneeWiseComplianceDrillDown(Request):
-    def __init__(self, country_id, assignee_id, domain_id, year, unit_id, start_count):
+    def __init__(
+        self, country_id, assignee_id, domain_id, year, unit_id, start_count,
+        legal_entity_ids
+    ):
         self.country_id = country_id
         self.assignee_id = assignee_id
         self.domain_id = domain_id
         self.year = year
         self.unit_id = unit_id
         self.start_count = start_count
+        self.legal_entity_ids = legal_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "assignee_id",
-            "d_id", "year", "u_id", "start_count"])
+            "d_id", "chart_year", "u_id", "start_count", "le_ids"
+        ])
         country_id = data.get("c_id")
         assignee_id = data.get("assignee_id")
         domain_id = data.get("d_id")
-        year = data.get("year")
+        year = data.get("chart_year")
         unit_id = data.get("u_id")
         start_count = data.get("start_count")
+        legal_entity_ids = data.get("le_ids")
         return GetAssigneeWiseComplianceDrillDown(
-            country_id, assignee_id, domain_id, year, unit_id, start_count
+            country_id, assignee_id, domain_id, year, unit_id, start_count,
+            legal_entity_ids
         )
 
     def to_inner_structure(self):
@@ -510,9 +511,10 @@ class GetAssigneeWiseComplianceDrillDown(Request):
             "c_id": self.country_id,
             "assignee_id": self.assignee_id,
             "d_id": self.domain_id,
-            "year": self.year,
+            "chart_year": self.year,
             "u_id": self.unit_id,
-            "start_count" : self.start_count
+            "start_count" : self.start_count,
+            "le_ids": self.legal_entity_ids
         }
 
 class GetComplianceStatusDrillDownData(Request):
@@ -640,8 +642,8 @@ class GetComplianceApplicabilityStatusDrillDown(Request):
 
     def to_inner_structure(self):
         return {
-            "country_ids": self.country_ids,
-            "domain_ids": self.domain_ids,
+            "c_ids": self.country_ids,
+            "d_ids": self.domain_ids,
             "filter_type": self.filter_type,
             "filter_ids": self.filter_ids,
             "applicability_status": self.applicability_status,
@@ -703,7 +705,7 @@ class GetTrendChartDrillDownData(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "filter_type", "filter_ids", "country_ids", "domain_ids", "year",
+            "filter_type", "filter_ids", "c_ids", "d_ids", "year",
             "le_ids"
         ])
         filter_type = data.get("filter_type")
@@ -722,8 +724,8 @@ class GetTrendChartDrillDownData(Request):
         return {
             "filter_type": self.filter_type,
             "filter_ids": self.filter_ids,
-            "country_ids": self.country_ids,
-            "domain_ids": self.domain_ids,
+            "c_ids": self.country_ids,
+            "d_ids": self.domain_ids,
             "year": self.year,
             "le_ids": self.legal_entity_ids
         }
@@ -776,7 +778,7 @@ def _init_Request_class_map():
         GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
         GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
         GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
-        GetAssigneewiseComplianesFilters, CheckContractExpiration,
+        CheckContractExpiration,
         GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes
     ]
     class_map = {}
@@ -928,17 +930,15 @@ class GetTrendChartSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["years", "data"])
+        data = parse_dictionary(data, ["years", "trend_data"])
         years = data.get("years")
-        years = parse_structure_VectorType_UnignedIntegerType_32(years)
-        data = data.get("data")
-        data = parse_structure_VectorType_RecordType_dashboard_TrendData(data)
+        data = data.get("trend_data")
         return GetTrendChartSuccess(years, data)
 
     def to_inner_structure(self):
         return {
-            "years": to_structure_VectorType_UnsignedIntegerType_32(self.years),
-            "data": to_structure_VectorType_RecordType_dashboard_TrendData(self.data),
+            "years": self.years,
+            "trend_data": self.data,
         }
 
 class CheckContractExpirationSuccesss(Response):
@@ -1011,67 +1011,19 @@ class GetComplianceApplicabilityStatusChartSuccess(Response):
             "not_complied_count": self.not_complied_count
         }
 
-
-class GetAssigneewiseComplianesFiltersSuccess(Response):
-    def __init__(self, countries, business_groups, legal_entities, divisions,
-        units, users, domains):
-        self.countries = countries
-        self.business_groups = business_groups
-        self.legal_entities = legal_entities
-        self.divisions = divisions
-        self.units = units
-        self.users = users
-        self.domains = domains
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "countries", "business_groups", "legal_entities", "divisions",
-            "units", "users", "domains"
-        ])
-        countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
-        business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
-        legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
-        divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
-        units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
-        users = data.get("users")
-        users = parse_structure_VectorType_RecordType_clientreport_User(users)
-        domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        return GetAssigneewiseComplianesFiltersSuccess(countries,
-            business_groups, legal_entities, divisions, units, users, domains)
-
-    def to_inner_structure(self):
-        return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
-            "users": to_structure_VectorType_RecordType_clientreport_User(self.users),
-            "domins": to_structure_VectorType_RecordType_core_Domain(self.domains)
-        }
-
-
 class GetAssigneeWiseCompliancesChartSuccess(Response):
     def __init__(self, chart_data):
         self.chart_data = chart_data
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["chart_data"])
-        chart_data = data.get("chart_data")
-        chart_data = parse_structure_VectorType_RecordType_dashboard_AssigneeChartData(chart_data)
+        data = parse_dictionary(data, ["assingee_data"])
+        chart_data = data.get("assingee_data")
         return GetAssigneeWiseCompliancesChartSuccess(chart_data)
 
     def to_inner_structure(self):
         return {
-            "chart_data": to_structure_VectorType_RecordType_dashboard_AssigneeChartData(self.chart_data),
+            "assingee_data": self.chart_data,
         }
 
 class GetAssigneewiseYearwiseCompliancesSuccess(Response):
@@ -1080,14 +1032,13 @@ class GetAssigneewiseYearwiseCompliancesSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["chart_data"])
-        chart_data = data.get("chart_data")
-        chart_data = parse_structure_VectorType_RecordType_dashboard_YearWise(chart_data)
+        data = parse_dictionary(data, ["year_wise_data"])
+        chart_data = data.get("year_wise_data")
         return GetAssigneewiseYearwiseCompliancesSuccess(chart_data)
 
     def to_inner_structure(self):
         return {
-            "chart_data": to_structure_VectorType_RecordType_dashboard_YearWise(self.chart_data),
+            "year_wise_data": self.chart_data,
         }
 
 class GetAssigneewiseReassignedComplianesSuccess(Response):
@@ -1096,14 +1047,13 @@ class GetAssigneewiseReassignedComplianesSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["chart_data"])
-        chart_data = data.get("chart_data")
-        chart_data = parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(chart_data)
+        data = parse_dictionary(data, ["reassigned_compliances"])
+        chart_data = data.get("reassigned_compliances")
         return GetAssigneewiseReassignedComplianesSuccess(chart_data)
 
     def to_inner_structure(self):
         return {
-            "chart_data": to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(self.chart_data),
+            "reassigned_compliances": self.chart_data,
         }
 
 
@@ -1115,24 +1065,20 @@ class AssigneeWiseCompliance(object):
         self.not_complied = not_complied
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, ["complied", "delayed", "inprogress", "not_complied"])
         complied = data.get("complied")
-        complied = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(complied)
         delayed = data.get("delayed")
-        delayed = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(delayed)
         inprogress = data.get("inprogress")
-        inprogress = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(inprogress)
         not_complied = data.get("not_complied")
-        not_complied = parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(not_complied)
         return AssigneeWiseCompliance(complied, delayed, inprogress, not_complied)
 
-    def to_inner_structure(self):
+    def to_structure(self):
         return {
-            "complied": to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.complied),
-            "delayed": to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.delayed),
-            "inprogress": to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.inprogress),
-            "not_complied": to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance(self.not_complied),
+            "complied": self.complied,
+            "delayed": self.delayed,
+            "inprogress": self.inprogress,
+            "not_complied": self.not_complied,
         }
 
 class GetAssigneeWiseComplianceDrillDownSuccess(Response):
@@ -1142,17 +1088,15 @@ class GetAssigneeWiseComplianceDrillDownSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["drill_down_data"])
-        drill_down_data = data.get("drill_down_data")
-        drill_down_data = parse_structure_RecordType_dashboard_AssigneeWiseCompliance(drill_down_data)
+        data = parse_dictionary(data, ["assignee_wise_drill_down"])
+        drill_down_data = data.get("assignee_wise_drill_down")
         total_count = data.get("total_count")
-        total_count = parse_structure_UnsignedIntegerType_32(total_count)
         return GetAssigneeWiseComplianceDrillDownSuccess(drill_down_data, total_count)
 
     def to_inner_structure(self):
         return {
-            "drill_down_data": to_structure_RecordType_dashboard_AssigneeWiseCompliance(self.drill_down_data),
-            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
+            "assignee_wise_drill_down": self.drill_down_data,
+            "total_count": self.total_count
         }
 
 class GetComplianceStatusDrillDownDataSuccess(Response):
@@ -1194,13 +1138,13 @@ class GetComplianceApplicabilityStatusDrillDownSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["drill_down_data"])
-        drill_down_data = data.get("drill_down_data")
+        data = parse_dictionary(data, ["r_drill_down_data"])
+        drill_down_data = data.get("r_drill_down_data")
         return GetComplianceApplicabilityStatusDrillDownSuccess(drill_down_data)
 
     def to_inner_structure(self):
         return {
-            "drill_down_data": self.drill_down_data,
+            "r_drill_down_data": self.drill_down_data,
         }
 
 class GetNotCompliedDrillDownSuccess(Response):
@@ -1278,7 +1222,6 @@ def _init_Response_class_map():
         GetTrendChartDrillDownDataSuccess,
         GetNotificationsSuccess,
         UpdateNotificationStatusSuccess,
-        GetAssigneewiseComplianesFiltersSuccess,
         CheckContractExpirationSuccesss,
         GetAssigneewiseYearwiseCompliancesSuccess
     ]
@@ -1410,52 +1353,28 @@ class EscalationData(object):
 # CompliedMap
 #
 
-class CompliedMap(object):
-    def __init__(self, year, total_compliances, complied_compliances_count):
+class TrendCompliedMap(object):
+    def __init__(self, filter_id, year, total_compliances, complied_compliances_count):
+        self.filter_id = filter_id
         self.year = year
         self.total_compliances = total_compliances
         self.complied_compliances_count = complied_compliances_count
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["year", "total_compliances", "complied_compliances_count"])
-        year = data.get("year")
-        year = parse_structure_UnsignedIntegerType_32(year)
-        total_compliances = data.get("total_compliances")
-        total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
-        complied_compliances_count = data.get("complied_compliances_count")
-        complied_compliances_count = parse_structure_UnsignedIntegerType_32(complied_compliances_count)
-        return CompliedMap(year, total_compliances, complied_compliances_count)
-
-    def to_structure(self):
-        return {
-            "year": to_structure_UnsignedIntegerType_32(self.year),
-            "total_compliances": to_structure_UnsignedIntegerType_32(self.total_compliances),
-            "complied_compliances_count": to_structure_SignedIntegerType_8(self.complied_compliances_count),
-        }
-
-#
-# TrendData
-#
-
-class TrendData(object):
-    def __init__(self, filter_id, complied_compliance):
-        self.filter_id = filter_id
-        self.complied_compliance = complied_compliance
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["filter_id", "complied_compliance"])
+        data = parse_dictionary(data, ["filter_id", "chart_year", "total_compliances", "complied_compliances_count"])
         filter_id = data.get("filter_id")
-        filter_id = parse_structure_UnsignedIntegerType_32(filter_id)
-        complied_compliance = data.get("complied_compliance")
-        complied_compliance = parse_structure_VectorType_RecordType_dashboard_CompliedMap(complied_compliance)
-        return TrendData(filter_id, complied_compliance)
+        year = data.get("chart_year")
+        total_compliances = data.get("total_compliances")
+        complied_compliances_count = data.get("complied_compliances_count")
+        return TrendCompliedMap(filter_id, year, total_compliances, complied_compliances_count)
 
     def to_structure(self):
         return {
-            "filter_id": to_structure_UnsignedIntegerType_32(self.filter_id),
-            "complied_compliance": to_structure_VectorType_RecordType_dashboard_CompliedMap(self.complied_compliance),
+            "filter_id": self.filter_id,
+            "chart_year": self.year,
+            "total_compliances": self.total_compliances,
+            "complied_compliances_count": self.complied_compliances_count,
         }
 
 
@@ -1476,27 +1395,21 @@ class RessignedCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_name", "reassigned_from", "start_date", "due_date", "reassigned_date", "completed_date"])
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_500(compliance_name)
         reassigned_from = data.get("reassigned_from")
-        reassigned_from = parse_structure_CustomTextType_50(reassigned_from)
         start_date = data.get("start_date")
-        start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
         reassigned_date = data.get("reassigned_date")
-        reassigned_date = parse_structure_CustomTextType_20(reassigned_date)
         completed_date = data.get("completed_date")
-        completed_date = parse_structure_CustomTextType_20(completed_date)
         return RessignedCompliance(compliance_name, reassigned_from, start_date, due_date, reassigned_date, completed_date)
 
     def to_structure(self):
         return {
-            "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
-            "reassigned_from": to_structure_CustomTextType_50(self.reassigned_from),
-            "start_date": to_structure_OptionalType_CustomTextType_20(self.start_date),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
-            "reassigned_date": to_structure_CustomTextType_20(self.reassigned_date),
-            "completed_date": to_structure_CustomTextType_20(self.completed_date),
+            "compliance_name": self.compliance_name,
+            "reassigned_from": self.reassigned_from,
+            "start_date": self.start_date,
+            "due_date": self.due_date,
+            "reassigned_date": self.reassigned_date,
+            "completed_date": self.completed_date,
         }
 
 #
@@ -1511,21 +1424,19 @@ class DelayedCompliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data,
-        ["assigned_count", "reassigned_count", "reassigned_compliances"])
+        data = parse_dictionary(data, [
+            "assigned_count", "reassigned_count", "reassigned_compliances"
+        ])
         assigned_count = data.get("assigned_count")
-        assigned_count = parse_structure_UnsignedIntegerType_32(assigned_count)
         reassigned_count = data.get("reassigned_count")
-        reassigned_count = parse_structure_UnsignedIntegerType_32(reassigned_count)
         reassigned_compliances = data.get("reassigned_compliances")
-        reassigned_compliances = parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(reassigned_compliances)
         return DelayedCompliance(assigned_count, reassigned_count, reassigned_compliances)
 
     def to_structure(self):
         return {
-            "assigned_count": to_structure_SignedIntegerType_8(self.assigned_count),
-            "reassigned_count": to_structure_SignedIntegerType_8(self.reassigned_count),
-            "reassigned_compliances": to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance(self.reassigned_compliances),
+            "assigned_count": self.assigned_count,
+            "reassigned_count": self.reassigned_count,
+            "reassigned_compliances": self.reassigned_compliances,
         }
 
 #
@@ -1549,40 +1460,35 @@ class DomainWise(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["domain_id", "domain_name",
-        "total_compliances", "complied_count", "assigned_count",
-        "reassigned_count", "inprogress_compliance_count", "not_complied_count"])
+        data = parse_dictionary(data, [
+            "domain_id", "domain_name",
+            "total_compliances", "complied_count", "assigned_count",
+            "reassigned_count", "inprogress_compliance_count", "not_complied_count"
+        ])
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         domain_name = data.get("domain_name")
-        domain_name = parse_structure_CustomTextType_50(domain_name)
         total_compliances = data.get("total_compliances")
-        total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
         complied_count = data.get("complied_count")
-        complied_count = parse_structure_UnsignedIntegerType_32(complied_count)
         assigned_count = data.get("assigned_count")
-        assigned_count = parse_structure_UnsignedIntegerType_32(assigned_count)
         reassigned_count = data.get("reassigned_count")
-        reassigned_count = parse_structure_UnsignedIntegerType_32(reassigned_count)
         inprogress_compliance_count = data.get("inprogress_compliance_count")
-        inprogress_compliance_count = parse_structure_UnsignedIntegerType_32(inprogress_compliance_count)
         not_complied_count = data.get("not_complied_count")
-        not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
-        return DomainWise(domain_id, domain_name, total_compliances,
+        return DomainWise(
+            domain_id, domain_name, total_compliances,
             complied_count, assigned_count, reassigned_count,
             inprogress_compliance_count, not_complied_count
         )
 
     def to_structure(self):
         return {
-            "domain_id": to_structure_UnsignedIntegerType_32(self.domain_id),
-            "domain_name": to_structure_CustomTextType_50(self.domain_name),
-            "total_compliances": to_structure_UnsignedIntegerType_32(self.total_compliances),
-            "complied_count": to_structure_UnsignedIntegerType_32(self.complied_count),
-            "assigned_count": to_structure_UnsignedIntegerType_32(self.assigned_count),
-            "reassigned_count": to_structure_UnsignedIntegerType_32(self.reassigned_count),
-            "inprogress_compliance_count": to_structure_UnsignedIntegerType_32(self.inprogress_compliance_count),
-            "not_complied_count": to_structure_UnsignedIntegerType_32(self.not_complied_count),
+            "domain_id": self.domain_id,
+            "domain_name": self.domain_name,
+            "total_compliances": self.total_compliances,
+            "complied_count": self.complied_count,
+            "assigned_count": self.assigned_count,
+            "reassigned_count": self.reassigned_count,
+            "inprogress_compliance_count": self.inprogress_compliance_count,
+            "not_complied_count": self.not_complied_count,
         }
 
 #
@@ -1601,22 +1507,16 @@ class YearWise(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-                "year", "total_compliances", "complied_count", "delayed_compliance",
+                "year", "total_compliances", "complied_count", "delayed_compliance_count",
                 "inprogress_compliance_count", "not_complied_count"
             ]
         )
         year = data.get("year")
-        year = parse_structure_CustomTextType_50(year)
         total_compliances = data.get("total_compliances")
-        total_compliances = parse_structure_UnsignedIntegerType_32(total_compliances)
         complied_count = data.get("complied_count")
-        complied_count = parse_structure_UnsignedIntegerType_32(complied_count)
-        delayed_compliance = data.get("delayed_compliance")
-        delayed_compliance = parse_structure_RecordType_dashboard_DelayedCompliance(delayed_compliance)
+        delayed_compliance = data.get("delayed_compliance_count")
         inprogress_compliance_count = data.get("inprogress_compliance_count")
-        inprogress_compliance_count = parse_structure_UnsignedIntegerType_32(inprogress_compliance_count)
         not_complied_count = data.get("not_complied_count")
-        not_complied_count = parse_structure_UnsignedIntegerType_32(not_complied_count)
         return YearWise(
             year, total_compliances, complied_count, delayed_compliance,
             inprogress_compliance_count, not_complied_count
@@ -1624,12 +1524,12 @@ class YearWise(object):
 
     def to_structure(self):
         return {
-            "year": to_structure_CustomTextType_50(self.year),
-            "total_compliances": to_structure_UnsignedIntegerType_32(self.total_compliances),
-            "complied_count": to_structure_UnsignedIntegerType_32(self.complied_count),
-            "delayed_compliance": to_structure_UnsignedIntegerType_32(self.delayed_compliance),
-            "inprogress_compliance_count": to_structure_UnsignedIntegerType_32(self.inprogress_compliance_count),
-            "not_complied_count": to_structure_UnsignedIntegerType_32(self.not_complied_count),
+            "year": self.year,
+            "total_compliances": self.total_compliances,
+            "complied_count": self.complied_count,
+            "delayed_compliance_count": self.delayed_compliance,
+            "inprogress_compliance_count": self.inprogress_compliance_count,
+            "not_complied_count": self.not_complied_count,
         }
 
 #
@@ -1650,20 +1550,17 @@ class AssigneeWiseDetails(object):
             ]
         )
         user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
         assignee_name = data.get("assignee_name")
-        assignee_name = parse_structure_CustomTextType_100(assignee_name)
         domain_wise_details = data.get("domain_wise_details")
-        domain_wise_details = parse_structure_VectorType_RecordType_dashboard_DomainWise(domain_wise_details)
         return AssigneeWiseDetails(
             user_id, assignee_name, domain_wise_details
         )
 
     def to_structure(self):
         return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
-            "domain_wise_details": to_structure_VectorType_RecordType_dashboard_DomainWise(self.domain_wise_details)
+            "user_id": self.user_id,
+            "assignee_name": self.assignee_name,
+            "domain_wise_details": self.domain_wise_details
         }
 
 #
@@ -1681,21 +1578,17 @@ class AssigneeChartData(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["unit_name", "unit_id", "assignee_wise_details", "address"])
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_50(unit_name)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         assignee_wise_details = data.get("assignee_wise_details")
-        assignee_wise_details = parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(assignee_wise_details)
         address = data.get("address")
-        address = parse_structure_CustomTextType_500(address)
         return AssigneeChartData(unit_name, unit_id, assignee_wise_details, address)
 
     def to_structure(self):
         return {
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
-            "address": to_structure_CustomTextType_500(self.address),
-            "assignee_wise_details": to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails(self.assignee_wise_details),
+            "unit_name": self.unit_name,
+            "unit_id": self.unit_id,
+            "address": self.address,
+            "assignee_wise_details": self.assignee_wise_details,
         }
 
 
@@ -1756,8 +1649,10 @@ class Level1Compliance(object):
 #
 
 class AssigneeWiseLevel1Compliance(object):
-    def __init__(self, compliance_name, description, assignee_name, assigned_date,
-        due_date, completion_date):
+    def __init__(
+        self, compliance_name, description, assignee_name, assigned_date,
+        due_date, completion_date
+    ):
         self.compliance_name = compliance_name
         self.description = description
         self.assignee_name = assignee_name
@@ -1767,32 +1662,29 @@ class AssigneeWiseLevel1Compliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_name", "description",
+        data = parse_dictionary(data, [
+            "compliance_name", "description",
             "assignee_name", "assigned_date", "due_date", "completion_date",
         ])
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_500(compliance_name)
         description = data.get("description")
-        description = parse_structure_Text(description)
         assignee_name = data.get("assignee_name")
-        assignee_name = parse_structure_CustomTextType_100(assignee_name)
         assigned_date = data.get("assigned_date")
-        assigned_date = parse_structure_CustomTextType_20(assigned_date)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
         completion_date = data.get("completion_date")
-        completion_date = parse_structure_OptionalType_CustomTextType_20(completion_date)
-        return AssigneeWiseLevel1Compliance(compliance_name, description, assignee_name, assigned_date,
-        due_date, completion_date)
+        return AssigneeWiseLevel1Compliance(
+            compliance_name, description, assignee_name, assigned_date,
+            due_date, completion_date
+        )
 
     def to_structure(self):
         return {
-            "compliance_name": to_structure_CustomTextType_500(self.compliance_name),
-            "description": to_structure_Text(self.description),
-            "assignee_name": to_structure_CustomTextType_100(self.assignee_name),
-            "assigned_date": to_structure_OptionalType_CustomTextType_20(self.assigned_date),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
-            "completion_date": to_structure_OptionalType_CustomTextType_20(self.completion_date)
+            "compliance_name": self.compliance_name,
+            "description": self.description,
+            "assignee_name": self.assignee_name,
+            "assigned_date": self.assigned_date,
+            "due_date": self.due_date,
+            "completion_date": self.completion_date
         }
 
 #
@@ -2006,10 +1898,10 @@ class TrendDrillDownData(object):
 
     def to_structure(self):
         return {
-            "business_group": self.business_group,
-            "legal_entity": self.legal_entity,
-            "division": self.division,
-            "unit_name": self.unit_name,
+            "bg_name": self.business_group,
+            "le_name": self.legal_entity,
+            "div_name": self.division,
+            "u_name": self.unit_name,
             "address": self.address,
             "t_compliances": self.compliances,
         }
@@ -2029,7 +1921,7 @@ class DomainWiseYearConfiguration(object):
         ])
         country_name = data.get("c_name")
         domain_name = data.get("d_name")
-        period_from = data.get("m_nmae_from")
+        period_from = data.get("m_name_from")
         period_to = data.get("m_name_to")
         return DomainWiseYearConfiguration(country_name, domain_name, period_from, period_to)
 
@@ -2106,7 +1998,7 @@ class Compliance(object):
             "statu_dates": self.statutory_dates,
             "is_active": self.is_active,
             "download_url": self.download_url,
-            "summary": self.summar,
+            "summary": self.summary,
         }
 
 

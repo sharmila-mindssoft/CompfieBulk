@@ -70,7 +70,8 @@ __all__ = [
     "is_service_proivder_user",
     "convert_datetime_to_date",
     "is_old_primary_admin",
-    "get_domains_info"
+    "get_domains_info",
+    "get_user_based_units"
     ]
 
 
@@ -95,7 +96,7 @@ def get_client_user_forms(db, user_id):
 
 def get_admin_id(db):
     columns = "user_id"
-    condition = " is_active = 1 "  # and is_primary_admin = 1
+    condition = " is_active = 1 and user_category_id = 1"  # and is_primary_admin = 1
     rows = db.get_data(tblUsers, columns, condition)
     return rows[0]["user_id"]
 
@@ -363,6 +364,27 @@ def get_country_wise_domain_month_range(db):
 #     )
 #     return return_units(rows)
 
+def get_user_based_units(db, user_id, user_category) :
+    if user_category > 3 :
+        query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+                "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "FROM tbl_user_units AS t1 " + \
+                "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
+                "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
+                "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
+        rows = db.select_all(query, [user_id])
+    else:
+        query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+                "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "FROM tbl_units AS t2   " + \
+                "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
+                "WHERE t2.is_closed = 0 ORDER BY unit_name"
+        rows = db.select_all(query)
+    return return_units(rows)
+
+
 def get_units_for_user(db, user_id):
     admin_id = get_admin_id(db)
     if user_id != admin_id:
@@ -375,6 +397,7 @@ def get_units_for_user(db, user_id):
                 "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
         rows = db.select_all(query, [user_id])
     else:
+        print "else"
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
                 "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
@@ -511,21 +534,8 @@ def get_client_users(db):
 
 
 def get_assignees(db, unit_ids=None):
-    columns = "user_id, employee_name, employee_code, is_active"
-    condition = " "
-    conditon_val = None
-    if unit_ids is not None:
-        condition, conditon_val = db.generate_tuple_condition(
-            "seating_unit_id", [int(x) for x in unit_ids.split(",")]
-        )
-        condition = " (%s or seating_unit_id is null) " % condition
-        conditon_val = [conditon_val]
-    condition += " and user_id in ( " + \
-        " select distinct assignee " + \
-        " from tbl_assigned_compliances)"
-    rows = db.get_data(
-        tblUsers, columns, condition, conditon_val
-    )
+    q = "select user_id, employee_code, employee_name, is_active from tbl_users where is_active = 1 and user_category_id in (5,6)"
+    rows = db.select_all(q)
     return return_client_users(rows)
 
 
@@ -546,10 +556,13 @@ def get_user_domains(db, user_id):
         q = "select domain_id from tbl_user_domains"
         condition = " WHERE user_id = %s"
         param = [user_id]
+    print q
+    print condition
+    print param
     rows = db.select_all(q + condition, param)
     d_ids = []
     for r in rows:
-        d_ids.append(int(r[0]))
+        d_ids.append(int(r["domain_id"]))
     return d_ids
 
 
@@ -655,7 +668,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "t1.client_id, t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
-            "inner join tbl_user_domains as t2 on " + \
+            "inner join tbl_user_legal_entities as t2 on " + \
             "t1.legal_entity_id = t1.legal_entity_id " + \
             "inner join tbl_countries t3 on t1.country_id = t3.country_id " + \
             "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
@@ -715,7 +728,7 @@ def get_le_domains(db):
 
 def is_primary_admin(db, user_id):
     column = "count(1) as result"
-    condition = "user_id = %s and is_primary_admin = 1 and is_active = 1"
+    condition = "user_id = %s and user_category_id in (1,2,3) and is_active = 1"
     condition_val = [user_id]
     rows = db.get_data(tblUsers, column, condition, condition_val)
     if rows[0]["result"] > 0 or user_id == 1:

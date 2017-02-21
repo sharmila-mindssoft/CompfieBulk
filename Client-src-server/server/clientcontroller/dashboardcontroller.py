@@ -54,7 +54,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
 
     elif type(request) is dashboard.GetTrendChart:
-        result = process_trend_chart(db, request, session_user)
+        result = process_trend_chart(db, request, session_user, session_category)
 
     elif type(request) is dashboard.GetTrendChartDrillDownData:
         result = process_get_trend_chart_drilldown(
@@ -67,14 +67,9 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
 
     elif type(request) is dashboard.GetComplianceApplicabilityStatusDrillDown:
-        logger.logClientApi(
-            "GetComplianceApplicabilityStatusDrillDown", "process begin"
-        )
+
         result = process_compliance_applicability_drill_down(
             db, request, session_user
-        )
-        logger.logClientApi(
-            "GetComplianceApplicabilityStatusDrillDown", "process end"
         )
 
     elif type(request) is dashboard.GetNotifications:
@@ -91,53 +86,32 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
         logger.logClientApi("UpdateNotificationStatus", "process end")
 
-    elif type(request) is dashboard.GetAssigneewiseComplianesFilters:
-        logger.logClientApi(
-            "GetAssigneewiseComplianesFilters", "process begin"
-        )
-        result = process_assigneewise_compliances_filters(
-            db, request, session_user
-        )
-        logger.logClientApi("GetAssigneewiseComplianesFilters", "process end")
+    # elif type(request) is dashboard.GetAssigneewiseComplianesFilters:
+
+    #     result = process_assigneewise_compliances_filters(
+    #         db, request, session_user
+    #     )
 
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart:
-        logger.logClientApi("GetAssigneeWiseCompliancesChart", "process begin")
         result = process_assigneewise_compliances(
-            db, request, session_user
+            db, request, session_user, session_user
         )
-        logger.logClientApi("GetAssigneeWiseCompliancesChart", "process end")
-
     elif type(request) is dashboard.GetAssigneewiseYearwiseCompliances:
-        logger.logClientApi(
-            "GetAssigneewiseYearwiseCompliances", "process begin"
-        )
+
         result = process_assigneewise_yearwise_compliances(
             db, request, session_user
         )
-        logger.logClientApi(
-            "GetAssigneewiseYearwiseCompliances", "process end"
-        )
 
     elif type(request) is dashboard.GetAssigneewiseReassignedComplianes:
-        logger.logClientApi(
-            "GetAssigneewiseReassignedComplianes", "process begin"
-        )
+
         result = process_get_assigneewise_reassigned_compliances(
             db, request, session_user
         )
-        logger.logClientApi(
-            "GetAssigneewiseReassignedComplianes", "process end"
-        )
 
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown:
-        logger.logClientApi(
-            "GetAssigneeWiseComplianceDrillDown", "process begin"
-        )
+
         result = process_assigneewise_compliances_drilldown(
             db, request, session_user
-        )
-        logger.logClientApi(
-            "GetAssigneeWiseComplianceDrillDown", "process end"
         )
 
     elif type(request) is dashboard.CheckContractExpiration:
@@ -161,24 +135,8 @@ def process_compliance_status_chart(db, request, session_user):
     return get_compliance_status_chart(db, request, session_user)
 
 
-def process_trend_chart(db, request, session_user):
-    trend_chart_info = None
-    if request.filter_type == "Group":
-        trend_chart_info = get_trend_chart(
-            db, request.country_ids, request.domain_ids,
-            session_user
-        )
-    else:
-        trend_chart_info = get_filtered_trend_data(
-            db, request.country_ids, request.domain_ids,
-            request.filter_type, request.filter_ids,
-            session_user
-        )
-    years = trend_chart_info[0]
-    data = trend_chart_info[1]
-    count_flag = trend_chart_info[2]
-    if count_flag == 0:
-        data = []
+def process_trend_chart(db, request, session_user, session_category):
+    years, data = get_trend_chart(db, request, session_user, session_category)
     return dashboard.GetTrendChartSuccess(
         years=years,
         data=data
@@ -194,8 +152,7 @@ def process_get_trend_chart_drilldown(db, request, session_user):
         db,
         request.country_ids,
         request.domain_ids, filter_ids,
-        request.filter_type, request.year,
-        client_id
+        request.filter_type, request.year
     )
     return dashboard.GetTrendChartDrillDownDataSuccess(
         drill_down_data=drill_down_info
@@ -312,33 +269,34 @@ def process_update_notification_status(db, request, session_user):
 # To get data to populate in assignee wise compliance
 # chart filters
 ########################################################
-def process_assigneewise_compliances_filters(
-    db, request, session_user
-):
-    user_company_info = get_user_company_details(db, session_user)
-    unit_ids = user_company_info[0]
-    division_ids = user_company_info[1]
-    legal_entity_ids = user_company_info[2]
-    business_group_ids = user_company_info[3]
-    country_list = get_countries_for_user(db, session_user)
-    domain_list = get_domains_for_user(db, session_user)
-    business_group_list = get_business_groups_for_user(db, business_group_ids)
-    legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
-    division_list = get_divisions_for_user(db, division_ids)
-    unit_list = get_units_for_user(db, unit_ids)
-    users_list = get_assignees(db, unit_ids)
-    return dashboard.GetAssigneewiseComplianesFiltersSuccess(
-        countries=country_list, business_groups=business_group_list,
-        legal_entities=legal_entity_list, divisions=division_list,
-        units=unit_list, users=users_list, domains=domain_list
-    )
+# def process_assigneewise_compliances_filters(
+#     db, request, session_user, session_category
+# ):
+#     countries = get_user_based_countries(db, session_user, session_category)
+#     user_company_info = get_user_company_details(db, session_user)
+#     unit_ids = user_company_info[0]
+#     division_ids = user_company_info[1]
+#     legal_entity_ids = user_company_info[2]
+#     business_group_ids = user_company_info[3]
+#     country_list = get_countries_for_user(db, session_user)
+#     domain_list = get_domains_for_user(db, session_user)
+#     business_group_list = get_business_groups_for_user(db, business_group_ids)
+#     legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
+#     division_list = get_divisions_for_user(db, division_ids)
+#     unit_list = get_units_for_user(db, unit_ids)
+#     users_list = get_assignees(db, unit_ids)
+#     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
+#         countries=country_list, business_groups=business_group_list,
+#         legal_entities=legal_entity_list, divisions=division_list,
+#         units=unit_list, users=users_list, domains=domain_list
+#     )
 
 
 ########################################################
 # To retrieve data for assignee wise compliances chart
 # based on the received filters
 ########################################################
-def process_assigneewise_compliances(db, request, session_user):
+def process_assigneewise_compliances(db, request, session_user, session_category):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "AssigneeWise"
@@ -349,13 +307,13 @@ def process_assigneewise_compliances(db, request, session_user):
     else:
         country_id = request.country_id
         business_group_id = request.business_group_id
-        legal_entity_id = request.legal_entity_id
+        legal_entity_id = request.legal_entity_ids[0]
         division_id = request.division_id
         unit_id = request.unit_id
         user_id = request.user_id
         chart_data = get_assigneewise_compliances_list(
             db, country_id, business_group_id, legal_entity_id,
-            division_id, unit_id, session_user, user_id
+            division_id, unit_id, session_user, user_id, session_category
         )
         return dashboard.GetAssigneeWiseCompliancesChartSuccess(
             chart_data=chart_data

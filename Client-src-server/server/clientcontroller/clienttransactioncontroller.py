@@ -11,7 +11,8 @@ from server.clientdatabase.general import (
     get_compliance_frequency, get_users_by_unit_and_domain,
     get_compliance_name_by_id, validate_compliance_due_date,
     get_country_wise_domain_month_range, get_group_name, get_domains_info,
-    get_client_users, get_units_for_user
+    get_assignees,
+    get_client_users, get_units_for_user, get_user_based_units
 )
 
 from server.clientdatabase.dashboard import (
@@ -495,6 +496,9 @@ def process_client_master_filters_request(request, db, session_user, session_cat
     if type(request) is clienttransactions.GetChartFilters:
         result = process_get_chart_filters(db, session_user, session_category)
 
+    if type(request) is clienttransactions.GetAssigneewiseComplianesFilters :
+        result = process_assigneewise_compliances_filters(db, session_user, session_category)
+
     return result
 
 
@@ -526,13 +530,8 @@ def process_get_user_to_assign(db, request):
 
 def process_get_chart_filters(db, session_user, session_category):
     countries = get_user_based_countries(db, session_user, session_category)
-    # domains = get_domains_for_user(db, session_user, session_category)
-    business_group_ids = None
-    business_groups = get_business_groups_for_user(db, business_group_ids)
-    # legal_entity_ids = None
-    # legal_entities = get_legal_entities_for_user(db, legal_entity_ids)
-    # division_ids = None
-    # divisions = get_divisions_for_user(db, division_ids)
+    business_groups = get_business_groups_for_user(db, None)
+
     units = get_units_for_dashboard_filters(db, session_user)
     domain_info = get_country_wise_domain_month_range(db)
     group_name = get_group_name(db)
@@ -548,6 +547,27 @@ def process_get_chart_filters(db, session_user, session_category):
         domain_info, group_name, cat_info
     )
 
+
+def process_assigneewise_compliances_filters(
+    db, session_user, session_category
+):
+    print session_user, session_category
+    countries = get_user_based_countries(db, session_user, session_category)
+
+    domain_list = get_domains_info(db, session_user, session_category)
+    business_group_list = get_business_groups_for_user(db, None)
+    legal_entity_list = get_user_based_legal_entity(db, session_user, session_category)
+    division_list = get_user_based_division(db, session_user, session_category)
+    unit_list = get_user_based_units(db, session_user, session_category)
+    users_list = get_assignees(db, None)
+    category_list = get_user_based_category(db, session_user, session_category)
+    return clienttransactions.GetAssigneewiseComplianesFiltersSuccess(
+        countries=countries, business_groups=business_group_list,
+        legal_entities=legal_entity_list, divisions=division_list,
+        units=unit_list, users=users_list, domains=domain_list,
+        categories=category_list
+    )
+
 def process_reassign_compliance_filters(db, request, session_user, session_category):
     domain_list = get_domains_for_user(db, session_user, session_category)
     unit_list = get_units_for_user(db, session_user)
@@ -558,3 +578,4 @@ def process_reassign_compliance_filters(db, request, session_user, session_categ
         units=unit_list,
         legal_entity_users=users_list
     )
+
