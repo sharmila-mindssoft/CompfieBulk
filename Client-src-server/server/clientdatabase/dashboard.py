@@ -2003,12 +2003,15 @@ def get_assigneewise_compliances_list(
         condition += " AND tu.unit_id = %s"
         condition_val.append(unit_id)
     else:
+
         units = get_user_unit_ids(db, session_user)
-        unit_condition, unit_condition_val = db.generate_tuple_condition(
-            "tu.unit_id", units
-        )
-        condition = " %s AND %s " % (condition, unit_condition)
-        condition_val.append(unit_condition_val)
+        condition += " AND find_in_set(tu.unit_id, %s)"
+        condition_val.append(",".join([str(x) for x in units]))
+        # unit_condition, unit_condition_val = db.generate_tuple_condition(
+        #     "tu.unit_id", units
+        # )
+        # condition = " %s AND %s " % (condition, unit_condition)
+        # condition_val.append(unit_condition_val)
     if assignee_id is not None:
         condition += " AND tch.completed_by = %s"
         condition_val.append(assignee_id)
