@@ -423,7 +423,7 @@ api_params = {
     "business_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
     "legal_entities": make_vector_type_field(module="dashboard", klass_name="ClientLegalEntityInfo"),
     "client_divisions": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
-    "client_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
+    "client_categories": make_vector_type_field(module="clientcore", klass_name="Category"),
     "client_users": make_vector_type_field(module="clientreport", klass_name="User"),
 
     'domain_score_card_list': make_vector_type_field(module="clientcore", klass_name="GetDomainScoreCardSuccess", is_optional=True),

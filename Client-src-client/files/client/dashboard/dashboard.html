@@ -106,10 +106,114 @@
           <div class="div-drilldown-container default-display-none">
             <div class="col-lg-12">
               <div class="table-responsive details">
-                <div class="card-box">
+                <div class="card-box clearfix">
                   <div class="drilldown-container">
                   </div>
                   <div class="escalation-drilldown-container">
+                  </div>
+                  <div class="div-assignee-wise-compliance">
+                    <div class="compliance-report-tab-content" id="assignee-wise-compliance">
+                     <form class="form-horizontal group-border-dashed" novalidate="">
+                        <div class="col-sm-6">
+                            <input type="hidden" id="a_user" value="">
+                            <input type="hidden" id="a_domain" value="">
+                            <input type="hidden" id="a_year" value="">
+                            <input type="hidden" id="a_unit" value="">
+                            <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" id="awc-country" placeholder="Country Name" value="">
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-country-id" value="">
+                                    <div id="ac-country" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" id="awc-legalentity" placeholder="Enter Legal Entity" >
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-legalentity-id" value="">
+                                    <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                           <!--  <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Category:</label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter Category" id="awc-category" >
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                      <input type="hidden" id="awc-category-id" value="">
+                                      <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul class="hidemenu"></ul>
+                                      </div>
+                                </div>
+                            </div> -->
+                   
+                             <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Seating Unit:</label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter Seating Unit" id="awc-unit" >
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                      <input type="hidden" id="awc-unit-id" value="">
+                                      <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul class="hidemenu"></ul>
+                                      </div>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-4 control-label">Business Group:</label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter BusinessGroup" id="awc-businessgroup" >
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-businessgroup-id">
+                                      <div id="ac-businessgroup" class="ac-textbox default-display-none" >
+                                        <ul class="hidemenu"></ul>
+                                      </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-4 control-label">Division:</label>
+                               <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter Division" id="awc-division">
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-division-id">
+                                      <div id="ac-division" class="ac-textbox default-display-none" >
+                                        <ul class="hidemenu"></ul>
+                                      </div>
+                                </div>
+                            </div>
+                                    <div class="form-group">
+                                <label class=" col-sm-offset-1 col-sm-4 control-label">User: </label>
+                                <div class="col-sm-6 has-feedback">
+                                    <input type="text" class="form-control input-sm" placeholder="Enter User"  id="awc-user">
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="awc-user-id" value="">
+                                    <div id="ac-user" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                      
+                      
+                        </div>
+                        <div class="col-sm-12">
+                            <center>
+                                <div class="form-group">
+                                    <button class="btn btn-primary waves-effect waves-light" type="button"  id="assigneeWiseShow" onclick="showFiltersResults(false)"  > Show </button>
+                                    <button class="btn btn-info waves-effect waves-light" type="button" onclick="showFiltersResults(true);"> Export </button>
+                                </div>
+                            </center>
+                        </div>
+                      </form>
+                    </div>
                   </div>
                   <div class="text-center">
                     <button class="btn btn-info text-center" id="pagination" onclick="showmorerecords();">Show more records</button>
@@ -424,7 +528,7 @@
       </div>
     </div>
     <!-- Not Complied -->
-     <div class="notcomplied-status">
+    <div class="notcomplied-status">
       <div class="table-compliance-status">
       <table id="datatable-responsive" class="table dt-responsive nowrap div-compliance-list" cellspacing="0" width="100%">
           <thead>
@@ -561,7 +665,33 @@
         </table>
       </div>
     </div>
-    
+    <!-- Assignee wise compliance-->
+    <div class="report-container-inner">
+      
+      </div>                
+       <table style="border:1px solid #ddd;" class="table-assignee-wise-compliance-list" >
+          <tr >
+            <th width="5%" align="center">#</th>
+            <th width="25%" align="left">Domain</th>
+            <th width="10%" align="center">Total</th>
+            <th width="10%" align="center">Complied</th>
+            <th width="10%" align="center">Delayed</th>
+            <th width="10%" align="center">In progress</th>
+            <th width="10%" align="center">Not complied</th>
+            <th style="padding-right:10px;" width="5%"></th>
+          </tr>
+          <tr style="background-color:#fff;">
+            <td width="4%" align="center"></td>
+            <td width="15%" align="left"><input type="text"  class="filter-text-box js-filter"></td>
+            <td width="10%" align="center"></td>
+            <td width="10%" align="center"></td>
+            <td width="10%" align="center"></td>
+            <td width="10%" align="center"></td>
+            <td width="10%" align="center"></td>
+            <td></td>
+          </tr>
+          <tbody class="tbody-assignee-wise-compliance-list"></tbody>
+        </table>
 </div>
 
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 

@@ -21,6 +21,7 @@ var COUNTRYLIST = null;
 var BUSINESSGROUPSLIST = null;
 var LEGALENTITYLIST = null;
 var DIVISIONLIST = null;
+var CATEGORYLIST = null;
 var USERLIST = null;
 var UNITLIST = null;
 var DOMAINLIST = null;
@@ -60,6 +61,29 @@ var TC_LEVEL1 = null;
 var CAS_TYPE = null;
 var CAS_LEVEL1 = null;
 var CAS_UNITNAME = null;
+
+// Assignee wise compliance (AWC) Autocomplete variable declaration
+var ACCountry = $('#ac-country');
+var ACBusinessGroup = $('#ac-businessgroup');
+var ACLegalEntity = $('#ac-legalentity');
+var ACDivision = $('#ac-division');
+var ACUnit = $('#ac-unit');
+var ACUser = $('#ac-user');
+
+// AWC Input field variable declaration
+var CountryVal = $('#awc-country');
+var Country = $('#awc-country-id');
+var BusinessGroupVal = $('#awc-businessgroup');
+var BusinessGroup = $('#awc-businessgroup-id');
+var LegalEntityVal = $('#awc-legalentity');
+var LegalEntity = $('#awc-legalentity-id');
+var DivisionVal = $('#awc-division');
+var Division = $('#awc-division-id');
+var UnitVal = $('#awc-unit');
+var Unit = $('#awc-unit-id');
+var UserVal = $('#awc-user');
+var User = $('#awc-user-id');
+
 var chartInput = new ChartInput();
 
 //  Compliance Status Chart
@@ -569,9 +593,9 @@ function notCompliedDrilldown(status, data) {
     });
   });
   // accordianType('accordion', 'accordion-toggle', 'accordion-content');
-  // $('.js-filtertable').on('keyup', function () {
-  //   $(this).filtertable().addFilter('.js-filter');
-  // });
+  $('.js-filtertable').on('keyup', function () {
+    $(this).filtertable().addFilter('.js-filter');
+  });
 }
 function showEscalationDrillDownRecord(data, year) {
   var filter_type = chartInput.getFilterType();
@@ -829,7 +853,7 @@ function escalationDrilldownnotcomplied(status, data) {
   //     $('.norecord', clone).html("No Record Found");
   //     $('.inner-table-notcomplied-escalation-list').append(clone);
   // }
-  accordianTypenotcomplied('accordionNC', 'accordion-toggle', 'accordion-nc-content');
+  //accordianTypenotcomplied('accordionNC', 'accordion-toggle', 'accordion-nc-content');
   $('.js-filtertable_not_c').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter_not_c');
   });
@@ -892,23 +916,23 @@ function escalationDrilldowndelayed(status, data) {
   //     $('.norecord', clone).html("No Record Found");
   //     $('.inner-table-delayed-escalation-list').append(clone);
   // }
-  accordianTypedelayed('accordionD', 'accordion-toggle', 'accordion-delayed-content');
+  //accordianTypedelayed('accordionD', 'accordion-toggle', 'accordion-delayed-content');
   $('.js-filtertable_delayed').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter_delayed');
   });
 }
-function accordianTypedelayed(idtype, toggleClass, contentClass) {
-  $('#' + idtype).find('.' + toggleClass).click(function () {
-    $(this).next().slideToggle('fast');
-    $('.' + contentClass).not($(this).next()).slideUp('fast');
-  });
-}
-function accordianTypenotcomplied(idtype, toggleClass, contentClass) {
-  $('#' + idtype).find('.' + toggleClass).click(function () {
-    $(this).next().slideToggle('fast');
-    $('.' + contentClass).not($(this).next()).slideUp('fast');
-  });
-}
+// function accordianTypedelayed(idtype, toggleClass, contentClass) {
+//   $('#' + idtype).find('.' + toggleClass).click(function () {
+//     $(this).next().slideToggle('fast');
+//     $('.' + contentClass).not($(this).next()).slideUp('fast');
+//   });
+// }
+// function accordianTypenotcomplied(idtype, toggleClass, contentClass) {
+//   $('#' + idtype).find('.' + toggleClass).click(function () {
+//     $(this).next().slideToggle('fast');
+//     $('.' + contentClass).not($(this).next()).slideUp('fast');
+//   });
+// }
 // Trend Chart Drill Down
 function updateTrendChartDrillDown(status, data, year) {
   $('.chart-container').hide();
@@ -1158,7 +1182,7 @@ function trendChartDrilldown(status, data) {
       });
     });
   });
-  accordianType('accordion', 'accordion-toggle', 'accordion-content');
+  // accordianType('accordion', 'accordion-toggle', 'accordion-content');
   $('.js-filtertable').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter');
   });
@@ -1411,69 +1435,189 @@ function complianceStatusDrilldown(status, data) {
     });
   });
   // accordianType('accordion', 'accordion-toggle', 'accordion-content');
-  // $('.js-filtertable').on('keyup', function () {
-  //   $(this).filtertable().addFilter('.js-filter');
-  // });
-}
-//-----------------------------------End Compliance Status--------------------------------------------------------------
-function accordianType(idtype, toggleClass, contentClass) {
-  $('#' + idtype).find('.' + toggleClass).stop().slideDown('fast');
-  $('#' + idtype).find('.' + toggleClass).click(function (e) {
-    e.preventDefault();
-    e.stopPropagation();
-    $(this).next().slideDown('fast');
-    $('.' + contentClass).not($(this).next()).slideUp('fast');
+  $('.js-filtertable').on('keyup', function () {
+    $(this).filtertable().addFilter('.js-filter');
   });
 }
+//-----------------------------------End Compliance Status--------------------------------------------------------------
+// function accordianType(idtype, toggleClass, contentClass) {
+//   $('#' + idtype).find('.' + toggleClass).stop().slideDown('fast');
+//   $('#' + idtype).find('.' + toggleClass).click(function (e) {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     $(this).next().slideDown('fast');
+//     $('.' + contentClass).not($(this).next()).slideUp('fast');
+//   });
+// }
 
 function updateAssigneeWiseComplianceFiltersList(data) {
-  $('.table-assignee-wise-compliance-list').hide();
+  //$('.table-assignee-wise-compliance-list').hide();
   $('.grid-table-dash1').hide();
+  $('.chart-container').hide();
+  $('.div-drilldown-container').show();
+  $('.drilldown-container').show();
   $('.popupoverlay').css('visibility', 'hidden');
   $('.popupoverlay').css('opacity', '0');
+  $('#pagination').hide();
+  
+  var tableCreate = $('#templates .compliance-report-tab-content');
+  var clonetablecreate = tableCreate.clone();
+  $('.drilldown-container').append(clonetablecreate);
+
   COUNTRYLIST = data.countries;
   BUSINESSGROUPSLIST = data.business_groups;
   LEGALENTITYLIST = data.legal_entities;
-  DIVISIONLIST = data.divisions;
+  DIVISIONLIST = data.client_divisions;
+  CATEGORYLIST = data.client_categories;
   UNITLIST = data.units;
   USERLIST = data.users;
 }
+$("#awc-country").on("keyup",function (e) {
+  var text_val = $(this).val();
+  commonAutoComplete(
+    e, ACCountry, Country, text_val,
+    COUNTRYLIST, "c_name", "c_id", function (val) {
+      onAutoCompleteSuccess(CountryVal, Country, val);
+  });
+});
+
+$("#awc-businessgroup").on("keyup",function (e) {
+  var text_val = $(this).val();
+  console.log(text_val);
+  commonAutoComplete(
+    e, ACBusinessGroup, BusinessGroup, text_val,
+    BUSINESSGROUPSLIST, "bg_name", "bg_id", function (val) {
+      onAutoCompleteSuccess(LegalEntityVal, LegalEntity, val);
+  });
+});
+
+$("#awc-legalentity").on("keyup",function (e) {
+  var text_val = $(this).val();
+  console.log(text_val);
+  commonAutoComplete(
+    e, ACLegalEntity, LegalEntity, text_val,
+    LEGALENTITYLIST, "le_name", "le_id", function (val) {
+      onAutoCompleteSuccess(LegalEntityVal, LegalEntity, val);
+  });
+});
+$("#awc-division").on("keyup",function (e) {
+  var text_val = $(this).val();
+  console.log(text_val);
+  commonAutoComplete(
+    e, ACDivision, Division, text_val,
+    DIVISIONLIST, "div_name", "div_id", function (val) {
+      onAutoCompleteSuccess(DivisionVal, Division, val);
+  });
+});
+$("#awc-category").on("keyup",function (e) {
+  var text_val = $(this).val();
+  console.log(text_val);
+  commonAutoComplete(
+    e, ACCategory, Category, text_val,
+    CATEGORYLIST, "cat_name", "cat_id", function (val) {
+      onAutoCompleteSuccess(CategoryVal, Category, val);
+  });
+});
+
+$("#awc-category").on("keyup",function (e) {
+  var text_val = $(this).val();
+  console.log(text_val);
+  commonAutoComplete(
+    e, ACCategory, Category, text_val,
+    CATEGORYLIST, "cat_name", "cat_id", function (val) {
+      onAutoCompleteSuccess(CategoryVal, Category, val);
+  });
+});
+
+$("#awc-unit").on("keyup",function (e) {
+  var text_val = $(this).val();
+  console.log(text_val);
+  commonAutoComplete(
+    e, ACUnit, Unit, text_val,
+    UNITLIST, "unit_name", "unit_id", function (val) {
+      onAutoCompleteSuccess(UnitVal, Unit, val);
+  });
+});
+
+
+$("#awc-user").on("keyup",function (e) {
+  var text_val = $(this).val();
+  console.log(text_val);
+  commonAutoComplete(
+    e, ACUser, User, text_val,
+    USERLIST, "employee_name", "user_id", function (val) {
+      onAutoCompleteSuccess(UserVal, User, val);
+  });
+});
+
+
+function onAutoCompleteSuccess(value_element, id_element, val) {
+console.log(value_element)
+console.log(id_element)
+  value_element.val(val[1]);
+  id_element.val(val[0]);
+  value_element.focus();
+  var current_id = id_element[0].id;
+  console.log(current_id);
+  if(current_id == 'c-id'){
+    resetfilter('countries');
+  }else if(current_id == 'group-id'){
+    resetfilter('clients');
+  }else if(current_id == 'businessgroupid'){
+    resetfilter('bg');
+  }
+  else if(current_id == 'legalentityid'){
+    resetfilter('le');
+  }else if(current_id == 'unitid'){
+    resetfilter('unit');
+  }else if(current_id == 'domainid'){
+    resetfilter('domian');
+  }
+  else if(current_id == 'statutoryid'){
+    resetfilter('act');
+  }
+}
+
 
 function showFiltersResults(csv) {
-    var country = $("#country").val().trim();
-    var countryval = $("#countryval").val().trim();
+    var legalentityids = [];
+    var country = Country.val().trim();
+    var countryval = CountryVal.val().trim();
     if(countryval == "" || countryval == null){
-        $(".assignee-chart-error-message").text(message.country_required);
+        displayMessage(message.country_required);
         return
     }else{
-        var businessgroupid = parseInt($("#businessgroupid").val());
-        var businessgroupsval = $("#businessgroupsval").val().trim();
+        var businessgroupid = parseInt(BusinessGroup.val());
+        var businessgroupsval = BusinessGroupVal.val().trim();
         if(businessgroupsval == ""){
             businessgroupid = null
         }
-        var legalentityid = parseInt($("#legalentityid").val().trim());
-        var legalentityval = $("#legalentityval").val().trim();
+        var legalentityid = parseInt(LegalEntity.val().trim());
+        var legalentityval = LegalEntityVal.val().trim();
         if(legalentityval == "" ){
-            legalentityid = null
+            legalentityid = null;
         }
-        var divisionid = parseInt($("#divisionid").val().trim());
-        var divisionval = $("#divisionval").val().trim();
+        else{
+          legalentityids = chartInput.getLegalEntities();
+        }
+        var divisionid = parseInt(Division.val().trim());
+        var divisionval = DivisionVal.val().trim();
         if(divisionval == ""){
             divisionid = null
         }
-         var unitid = parseInt($("#unitid").val().trim());
-        var unitval = $("#unitval").val().trim();
+        var unitid = parseInt(Unit.val().trim());
+        var unitval = UnitVal.val().trim();
         if(unitval == ""){
             unitid = null
         }
-        var userid = parseInt($("#userid").val().trim());
-        var userval = $("#userval").val().trim();
+        var userid = parseInt(User.val().trim());
+        var userval = UserVal.val().trim();
         if(userval == ""){
             userid = null
         }
         displayLoader();
         client_mirror.getAssigneewiseComplianes(
-            parseInt(country), businessgroupid, legalentityid,
+            parseInt(country), businessgroupid, legalentityids,
             divisionid, unitid, userid, csv,
             function (status, data) {
                 chart_data = data['chart_data'];

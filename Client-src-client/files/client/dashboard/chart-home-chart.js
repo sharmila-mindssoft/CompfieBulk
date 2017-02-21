@@ -1200,74 +1200,75 @@ function initializeFilters() {
     updateComplianceStatusChart(data);
   });
 }
+
 //retrive country autocomplete value
-function onCountrySuccess(val) {
-  $('#countryval').val(val[1]);
-  $('#country').val(val[0]);
-}
+// function onCountrySuccess(val) {
+//   $('#countryval').val(val[1]);
+//   $('#country').val(val[0]);
+// }
 //load country list in autocomplete text box
-function ac_country_load(textval, e) {
-  getCountryAutocomplete(e, textval, COUNTRYLIST, function (val) {
-    onCountrySuccess(val);
-  });
-}
-//retrive legelentity form autocomplete value
-function onLegalEntitySuccess(val) {
-  $('#legalentityval').val(val[1]);
-  $('#legalentityid').val(val[0]);
-}
-//load legalentity form list in autocomplete text box
-function ac_le_load(textval, e) {
-  getClientLegalEntityAutocomplete(e, textval, LEGALENTITYLIST, function (val) {
-    onLegalEntitySuccess(val);
-  });
-}
-//retrive unit form autocomplete value
-function onUnitSuccess(val) {
-  $('#unitval').val(val[1]);
-  $('#unitid').val(val[0]);
-}
-//load unit  form list in autocomplete text box
-function ac_unit_load(textval, e) {
-  //var cId = $("#country").val();
-  //var dId = 0;
-  getUnitAutocomplete(e, textval, UNITLIST, function (val) {
-    onUnitSuccess(val);
-  });
-}
-//retrive businessgroup form autocomplete value
-function onBusinessGroupSuccess(val) {
-  $('#businessgroupsval').val(val[1]);
-  $('#businessgroupid').val(val[0]);
-}
-//load businessgroup form list in autocomplete text box
-function ac_bg_load(textval, e) {
-  getClientBusinessGroupAutocomplete(e, textval, BUSINESSGROUPSLIST, function (val) {
-    onBusinessGroupSuccess(val);
-  });
-}
-//retrive division form autocomplete value
-function onDivisionSuccess(val) {
-  $('#divisionval').val(val[1]);
-  $('#divisionid').val(val[0]);
-}
-//load division form list in autocomplete text box
-function ac_division_load(textval, e) {
-  getClientDivisionAutocomplete(e, textval, DIVISIONLIST, function (val) {
-    onDivisionSuccess(val);
-  });
-}
-//retrive user autocomplete value
-function onUserSuccess(val) {
-  $('#userval').val(val[1]);
-  $('#userid').val(val[0]);
-}
-//load user list in autocomplete text box
-function ac_user_load(textval, e) {
-  getUserAutocomplete(e, textval, USERLIST, function (val) {
-    onUserSuccess(val);
-  });
-}
+// function ac_country_load(textval, e) {
+//   getCountryAutocomplete(e, textval, COUNTRYLIST, function (val) {
+//     onCountrySuccess(val);
+//   });
+// }
+// //retrive legelentity form autocomplete value
+// function onLegalEntitySuccess(val) {
+//   $('#legalentityval').val(val[1]);
+//   $('#legalentityid').val(val[0]);
+// }
+// //load legalentity form list in autocomplete text box
+// function ac_le_load(textval, e) {
+//   getClientLegalEntityAutocomplete(e, textval, LEGALENTITYLIST, function (val) {
+//     onLegalEntitySuccess(val);
+//   });
+// }
+// //retrive unit form autocomplete value
+// function onUnitSuccess(val) {
+//   $('#unitval').val(val[1]);
+//   $('#unitid').val(val[0]);
+// }
+// //load unit  form list in autocomplete text box
+// function ac_unit_load(textval, e) {
+//   //var cId = $("#country").val();
+//   //var dId = 0;
+//   getUnitAutocomplete(e, textval, UNITLIST, function (val) {
+//     onUnitSuccess(val);
+//   });
+// }
+// //retrive businessgroup form autocomplete value
+// function onBusinessGroupSuccess(val) {
+//   $('#businessgroupsval').val(val[1]);
+//   $('#businessgroupid').val(val[0]);
+// }
+// //load businessgroup form list in autocomplete text box
+// function ac_bg_load(textval, e) {
+//   getClientBusinessGroupAutocomplete(e, textval, BUSINESSGROUPSLIST, function (val) {
+//     onBusinessGroupSuccess(val);
+//   });
+// }
+// //retrive division form autocomplete value
+// function onDivisionSuccess(val) {
+//   $('#divisionval').val(val[1]);
+//   $('#divisionid').val(val[0]);
+// }
+// //load division form list in autocomplete text box
+// function ac_division_load(textval, e) {
+//   getClientDivisionAutocomplete(e, textval, DIVISIONLIST, function (val) {
+//     onDivisionSuccess(val);
+//   });
+// }
+// //retrive user autocomplete value
+// function onUserSuccess(val) {
+//   $('#userval').val(val[1]);
+//   $('#userid').val(val[0]);
+// }
+// //load user list in autocomplete text box
+// function ac_user_load(textval, e) {
+//   getUserAutocomplete(e, textval, USERLIST, function (val) {
+//     onUserSuccess(val);
+//   });
+// }
 //
 // Prepare chart data
 //
