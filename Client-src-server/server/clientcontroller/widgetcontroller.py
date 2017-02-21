@@ -13,4 +13,10 @@ def process_client_widget_requests(request, db, session_user, session_category):
 
     elif type(request) is widgetprotocol.GetEscalationChart :
         result = get_escalation_count(db, le_ids, session_user, session_category)
+
+    elif type(request) is widgetprotocol.GetNotCompliedChart :
+        pass
+
+    elif type(request) is widgetprotocol.GetRiskChart :
+        result = get_risk_chart_count(db, le_ids, session_user, session_category)
     return result

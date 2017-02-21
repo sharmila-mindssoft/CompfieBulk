@@ -1056,7 +1056,7 @@ function initializeFilters() {
       chartInput.setCountriesAll([]);
     }
   });
-  
+
   loadDomains();
   $('.domain-filter').multiselect({
     enableFiltering: true,
@@ -1291,7 +1291,7 @@ function parseComplianceStatusApiInput() {
     'filter_ids': filterIds,
     'from_date': fromDate,
     'to_date': toDate,
-    'chart_year': chart_year, 
+    'chart_year': chart_year,
     'le_id': legalEntityId
   };
   return requestData;

@@ -71,7 +71,9 @@ __all__ = [
     "convert_datetime_to_date",
     "is_old_primary_admin",
     "get_domains_info",
-    "get_user_based_units"
+    "get_user_based_units",
+    "get_user_widget_settings",
+    "save_user_widget_settings"
     ]
 
 
@@ -1933,3 +1935,16 @@ def update_traild_id(db, audit_trail_id, get_type=None):
 def reset_domain_trail_id(db):
     q = "update tbl_audit_log set domain_trail_id=0"
     db.execute(q)
+
+def get_user_widget_settings(db, user_id):
+    q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
+    rows = db.select_one(q, [user_id])
+    if rows :
+        data = json.loads(rows["widget_data"])
+        return data
+    else :
+        return []
+
+def save_user_widget_settings(db, user_id, widget_data):
+    q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s)"
+    db.execute(q, [user_id, widget_data])

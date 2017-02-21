@@ -87,6 +87,7 @@ class GetRiskChart(Request):
 
 def _init_Request_class_map():
     classes = [
+
         GetComplianceChart, GetEscalationChart, GetNotCompliedChart,
         GetRiskChart
     ]

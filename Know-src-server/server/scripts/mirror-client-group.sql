@@ -298,6 +298,10 @@ CREATE TABLE `tbl_reminder_settings` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY(`client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_widget_settings`(
+ `user_id` int(11) PRIMARY KEY NOT NULL,
+  `widget_data` TEXT DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
