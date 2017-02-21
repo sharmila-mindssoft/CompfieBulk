@@ -245,7 +245,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Message ---------------------------------------------------------------------
     (
         "/message",
-        "files/client/message/message.html",
+        "files/client/messages/messages.html",
         None, {}
     )
 ]

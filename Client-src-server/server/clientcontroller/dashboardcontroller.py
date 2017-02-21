@@ -86,12 +86,6 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
         logger.logClientApi("UpdateNotificationStatus", "process end")
 
-    # elif type(request) is dashboard.GetAssigneewiseComplianesFilters:
-
-    #     result = process_assigneewise_compliances_filters(
-    #         db, request, session_user
-    #     )
-
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart:
         result = process_assigneewise_compliances(
             db, request, session_user, session_user
@@ -120,13 +114,6 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
             db, request, session_user
         )
         logger.logClientApi("CheckContractExpiration", "process end")
-
-    elif type(request) is dashboard.GetMessages:
-        logger.logClientApi("GetMessages", "process begin")
-        result = process_get_messages(
-            db, request, session_user
-        )
-        logger.logClientApi("GetMessages", "process end")
 
     return result
 
@@ -231,29 +218,16 @@ def process_compliance_applicability_drill_down(
 
 
 def process_get_notifications(db, request, session_user):
+    legal_entity_ids = request.legal_entity_ids
     notifications = None
     (
         notification_count, reminder_count, escalation_count
     ) = get_dashboard_notification_counts(
-        db,
-        session_user
+        db, session_user
     )
     to_count = RECORD_DISPLAY_COUNT
-    notification_type = request.notification_type
-    if notification_type == "Notification":
-        if notification_count == 0:
-            to_count = 30
-    elif notification_type == "Reminder":
-        if reminder_count == 0:
-            to_count = 30
-    elif notification_type == "Escalation":
-        if escalation_count == 0:
-            to_count = 30
 
-    notifications = get_notifications(
-        db, notification_type, request.start_count, to_count,
-        session_user
-    )
+    notifications = get_notifications( db, request.notification_type, request.start_count, request.end_count, session_user )
     return dashboard.GetNotificationsSuccess(notifications=notifications)
 
 

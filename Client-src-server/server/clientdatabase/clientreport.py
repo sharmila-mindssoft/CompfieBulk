@@ -1550,23 +1550,24 @@ def report_le_wise_score_card(
 def report_work_flow_score_card(
     db, country_id, legal_entity_id, domain_id, session_user
 ):
-    query = "select SUM(IF(ch.completed_on IS NULL AND IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = %s,1,0)) as c_assignee, " + \
-            "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)) as c_concur, " + \
-            "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = %s,1,0)) as c_approver, " + \
-            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_on IS NULL and ch.completed_by = %s,1,0)), " + \
-            "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = %s,1,0)))) as inp_assignee, " + \
-            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and  IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)), " + \
-            "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)))) as inp_concur, " + \
-            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = %s,1,0)), " + \
-            "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = %s,1,0)))) as inp_approver, " + \
-            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_on IS NULL and ch.completed_by = %s,1,0)), " + \
-            "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = %s,1,0)))) as ov_assignee, " + \
-            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and  IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)), " + \
-            "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)))) as ov_concur, " + \
-            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = %s,1,0)), " + \
-            "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = %s,1,0)))) as ov_approver " + \
-            "from tbl_compliance_history as ch inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-            "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s "
+    query = "select SUM(IF(ch.completed_on IS NOT NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)) as c_assignee, " + \
+            "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.concurred_by = acl.activity_by and ch.concurred_by = %s,1,0)) as c_concur, " + \
+            "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) = 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)) as c_approver, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)), " + \
+            "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)))) as inp_assignee, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = acl.activity_by  and ch.concurred_by = %s,1,0)), " + \
+            "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = acl.activity_by  and ch.concurred_by = %s,1,0)))) as inp_concur, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)), " + \
+            "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)))) as inp_approver, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)), " + \
+            "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)))) as ov_assignee, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = acl.activity_by and ch.concurred_by = %s,1,0)), " + \
+            "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = acl.activity_by and ch.concurred_by = %s,1,0)))) as ov_concur, " + \
+            "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)), " + \
+            "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)))) as ov_approver " + \
+            "from tbl_compliance_history as ch inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+            "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s "
+    # print query
 
     domain_wise_count = db.select_all(query, [session_user, session_user, session_user, session_user, session_user, session_user, session_user, session_user, 
         session_user, session_user, session_user, session_user, session_user, session_user, session_user, country_id, legal_entity_id, domain_id])
@@ -1574,11 +1575,12 @@ def report_work_flow_score_card(
 
     def completed_task_count(country_id, legal_entity_id, domain_id, session_user) :
         query = "select ch.unit_id,(select concat(unit_code,' - ',unit_name) from tbl_units where unit_id = ch.unit_id) as unitname, " + \
-                "SUM(IF(ch.completed_on IS NULL AND IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = %s,1,0)) as c_assignee, " + \
-                "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)) as c_concur, " + \
-                "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = %s,1,0)) as c_approver " + \
-                "from tbl_compliance_history as ch inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-                "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s group by ch.unit_id"
+                "SUM(IF(ch.completed_on IS NOT NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)) as c_assignee, " + \
+                "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.concurred_by = acl.activity_by and ch.concurred_by = %s,1,0)) as c_concur, " + \
+                "SUM(IF(ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) = 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)) as c_approver " + \
+                "from tbl_compliance_history as ch inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s group by ch.unit_id; "
         rows = db.select_all(query, [session_user, session_user, session_user, country_id, legal_entity_id, domain_id])
         print rows
         array = []
@@ -1594,14 +1596,15 @@ def report_work_flow_score_card(
 
     def inprogress_within_duedate_task_count(country_id, legal_entity_id, domain_id, session_user) :
         query = "select ch.unit_id,(select concat(unit_code,' - ',unit_name) from tbl_units where unit_id = ch.unit_id) as unitname, " + \
-                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_on IS NULL and ch.completed_by = %s,1,0)), " + \
-                "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = %s,1,0)))) as inp_assignee, " + \
-                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and  IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)), " + \
-                "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)))) as inp_concur, " + \
-                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = %s,1,0)), " + \
-                "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = %s,1,0)))) as inp_approver " + \
-                "from tbl_compliance_history as ch inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-                "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s group by ch.unit_id"
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)), " + \
+                "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)))) as inp_assignee, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = acl.activity_by  and ch.concurred_by = %s,1,0)), " + \
+                "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = acl.activity_by  and ch.concurred_by = %s,1,0)))) as inp_concur, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)), " + \
+                "(IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)))) as inp_approver " + \
+                "from tbl_compliance_history as ch inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+                "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s group by ch.unit_id; "
         rows = db.select_all(query, [session_user, session_user, session_user, session_user, session_user, session_user, country_id, legal_entity_id, domain_id])
         print rows
         inprogress_unit = []
@@ -1617,14 +1620,14 @@ def report_work_flow_score_card(
 
     def over_due_task_count(country_id, legal_entity_id, domain_id, session_user) :
         query = "select ch.unit_id,(select concat(unit_code,' - ',unit_name) from tbl_units where unit_id = ch.unit_id) as unitname, " + \
-                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date >= now() and ch.completed_on IS NULL and ch.completed_on IS NULL and ch.completed_by = %s,1,0)), " + \
-                "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.completed_by = %s,1,0)))) as ov_assignee, " + \
-                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and  IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)), " + \
-                "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NULL and IFNULL(ch.approve_status,0) <> 1 and ch.concurred_by = %s,1,0)))) as ov_concur, " + \
-                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = %s,1,0)), " + \
-                "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and ch.approved_on IS NULL and ch.approved_by = %s,1,0)))) as ov_approver " + \
-                "from tbl_compliance_history as ch inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-                "where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s group by ch.unit_id "
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)), " + \
+                "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NULL and ch.completed_by = acl.activity_by and ch.completed_by = %s,1,0)))) as ov_assignee, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = acl.activity_by and ch.concurred_by = %s,1,0)), " + \
+                "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = acl.activity_by and ch.concurred_by = %s,1,0)))) as ov_concur, " + \
+                "SUM(IF(com.frequency_id = 5,(IF(ch.due_date < now() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)), " + \
+                "(IF(date(ch.due_date) < curdate() and ch.completed_on IS NOT NULL and ch.concurred_on IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = acl.activity_by and ch.approved_by = %s,1,0)))) as ov_approver " + \
+                "from tbl_compliance_history as ch inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id where com.country_id = %s and ch.legal_entity_id = %s and com.domain_id = %s group by ch.unit_id; "
         rows = db.select_all(query, [session_user, session_user, session_user, session_user, session_user, session_user, country_id, legal_entity_id, domain_id])
         print rows
         inprogress_unit = []

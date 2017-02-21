@@ -461,17 +461,14 @@ api_params = {
     "assingee_data": make_vector_type_field(module="dashboard", klass_name="AssigneeChartData"),
     "assignee_wise_details": make_vector_type_field(module="dashboard", klass_name="AssigneeWiseDetails"),
     "domain_wise_details": make_vector_type_field(module="dashboard", klass_name="DomainWise"),
-
     "reassigned_count": make_int_field(length=10000),
     "year_wise_data": make_vector_type_field(module="dashboard", klass_name="YearWise"),
     "sdelayed_compliance": make_reccord_type(module="dashboard", klass_name="DelayedCompliance"),
     "reassigned_compliances": make_vector_type_field(module="dashboard", klass_name="RessignedCompliance", is_optional=True),
-
     "reassigned_from": make_text_field(),
     "start_date": make_text_field(),
     "reassigned_date": make_text_field(),
     "completed_date": make_text_field(),
-
     "description": make_text_field(),
     "complied_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
     "delayed_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
@@ -480,4 +477,6 @@ api_params = {
     "assignee_wise_drill_down": make_reccord_type(module="dashboard", klass_name="AssigneeWiseCompliance"),
     "assignee_id": make_int_field(),
     "start_count": make_int_field(),
+    "end_count": make_int_field(),
+    "notification_type": make_int_field(),
 }

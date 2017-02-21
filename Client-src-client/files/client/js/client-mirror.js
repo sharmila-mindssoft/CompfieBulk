@@ -365,19 +365,6 @@ function initClientMirror() {
         apiRequest('general', request, callback);
     }
 
-    /* Messages */
-    function getMessages(from_count, page_count, callback) {
-      var request = [
-        'GetMessages',
-        {
-          'from_count': from_count,
-          'page_count': page_count
-        }
-        callerName = 'client_dashboard';
-      ];
-      apiRequest(callerName, request, callback);
-    }
-
     /* Compliance Approal */
     function getComplianceApprovalList(start_count, callback) {
         var request = [
@@ -632,12 +619,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     /* Notifications */
-    function getNotifications(notification_type, start_count, callback) {
+    function getNotifications(le_ids, notification_type, start_count, end_count callback) {
         callerName = 'client_dashboard';
         var request = [
             'GetNotifications', {
+                'le_ids': le_ids,
                 'notification_type': notification_type,
-                'start_count': start_count
+                'start_count': start_count,
+                'end_count': end_count
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1591,7 +1580,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    
+
     function statutoryDates(date, month, triggerBefore, repeatBy) {
         var statutoryDate = {};
         statutoryDate.statutory_date = date;
@@ -1745,7 +1734,7 @@ function initClientMirror() {
             }
         }
     }
-    
+
     function getAssigneeWiseCompliances(assignee, record_count, callback) {
         var request = [
             'GetAssigneeCompliances', {
@@ -2491,7 +2480,6 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         updateUserProfile: updateUserProfile,
         getReassignComplianceFilters: getReassignComplianceFilters,
-        getMessages: getMessages,
     };
 }
 

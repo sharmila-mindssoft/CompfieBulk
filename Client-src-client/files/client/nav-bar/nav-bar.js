@@ -153,6 +153,7 @@ function initializeNavBar() {
 
     $('ul', settingsMenuObject).append(item);
 
+    var notification_type = "";
     $('.cssmenu .menu-ul').append(settingsMenuObject);
     for (var form_key in settingsMenu) {
         var form = navBarItems["My Accounts"][form_key];
@@ -182,9 +183,13 @@ function initializeNavBar() {
                 //$('.msg-items-ul .divider').last().html();*/
 
                 $('.msg-items-ul').empty();
-                client-mirror.getMessages(0, 2, function(error, response) {
+                le_ids = [1];
+                n_type = 3;
+                f_count = 0;
+                t_count = 2;
+                client-mirror.getNotifications(le_ids, n_type, f_count, t_count function(error, response) {
                     if (error == null) {
-                        
+
                     }
                 });
 
