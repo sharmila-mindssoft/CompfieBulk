@@ -1053,19 +1053,19 @@ class AssigneeWiseCompliance(object):
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["complied", "delayed", "inprogress", "not_complied"])
-        complied = data.get("complied")
-        delayed = data.get("delayed")
-        inprogress = data.get("inprogress")
-        not_complied = data.get("not_complied")
+        data = parse_dictionary(data, ["complied_map", "delayed_map", "inprogress_map", "not_complied_map"])
+        complied = data.get("complied_map")
+        delayed = data.get("delayed_map")
+        inprogress = data.get("inprogress_map")
+        not_complied = data.get("not_complied_map")
         return AssigneeWiseCompliance(complied, delayed, inprogress, not_complied)
 
     def to_structure(self):
         return {
-            "complied": self.complied,
-            "delayed": self.delayed,
-            "inprogress": self.inprogress,
-            "not_complied": self.not_complied,
+            "complied_map": self.complied,
+            "delayed_map": self.delayed,
+            "inprogress_map": self.inprogress,
+            "not_complied_map": self.not_complied,
         }
 
 class GetAssigneeWiseComplianceDrillDownSuccess(Response):
@@ -1728,10 +1728,14 @@ class TrendCompliance(object):
 #
 
 class DrillDownData(object):
-    def __init__(self, business_group, legal_entity, division, unit_name, address, industry_name, compliances):
+    def __init__(
+        self, business_group, legal_entity, division, category,
+        unit_name, address, industry_name, compliances
+    ):
         self.business_group = business_group
         self.legal_entity = legal_entity
         self.division = division
+        self.category = category
         self.unit_name = unit_name
         self.address = address
         self.industry_name = industry_name
@@ -1740,23 +1744,28 @@ class DrillDownData(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "bg_name", "le_name", "div_name",
+            "bg_name", "le_name", "div_name", "cat_name",
             "u_name", "address", "indus_name", "drill_compliances"
         ])
         business_group = data.get("bg_name")
         legal_entity = data.get("le_name")
         division = data.get("div_name")
+        category = data.get("cat_name")
         unit_name = data.get("u_name")
         address = data.get("address")
         industry_name = data.get("indus_name")
         compliances = data.get("drill_compliances")
-        return DrillDownData(business_group, legal_entity, division, unit_name, address, industry_name, compliances)
+        return DrillDownData(
+            business_group, legal_entity, division,
+            category, unit_name, address, industry_name, compliances
+        )
 
     def to_structure(self):
         return {
             "bg_name": self.business_group,
             "le_name": self.legal_entity,
             "div_name": self.division,
+            "cat_name": self.category,
             "u_name": self.unit_name,
             "address": self.address,
             "indus_name": self.industry_name,
@@ -1864,30 +1873,41 @@ class Notification(object):
 #
 
 class TrendDrillDownData(object):
-    def __init__(self, business_group, legal_entity, division, unit_name, address, compliances):
+    def __init__(
+        self, business_group, legal_entity, division, category, unit_name,
+        address, compliances
+    ):
         self.business_group = business_group
         self.legal_entity = legal_entity
         self.division = division
+        self.category = category
         self.unit_name = unit_name
         self.address = address
         self.compliances = compliances
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["bg_name", "le_name", "div_name", "u_name", "address", "t_compliances"])
+        data = parse_dictionary(data, [
+            "bg_name", "le_name", "div_name", "cat_name", "u_name", "address", "t_compliances"
+        ])
         business_group = data.get("bg_name")
         legal_entity = data.get("le_name")
         division = data.get("div_name")
+        category = data.get("cat_name")
         unit_name = data.get("u_name")
         address = data.get("address")
         compliances = data.get("t_compliances")
-        return TrendDrillDownData(business_group, legal_entity, division, unit_name, address, compliances)
+        return TrendDrillDownData(
+            business_group, legal_entity, division, category, unit_name,
+            address, compliances
+        )
 
     def to_structure(self):
         return {
             "bg_name": self.business_group,
             "le_name": self.legal_entity,
             "div_name": self.division,
+            "cat_name": self.category,
             "u_name": self.unit_name,
             "address": self.address,
             "t_compliances": self.compliances,
