@@ -22,8 +22,12 @@ __all__ = [
     "get_client_configuration",
     "save_login_failure",
     "delete_login_failure_history",
-    "get_login_attempt_and_time"
-
+    "get_login_attempt_and_time",
+    "validate_email_token",
+    "save_login_details",
+    "check_username_duplicate",
+    "get_user_id_from_token",
+    "get_client_details_from_userid"
 ]
 
 
@@ -197,3 +201,76 @@ def get_login_attempt_and_time(db, user_id):
         tblUserLoginHistory, columns, condition, condition_val
     )
     return rows
+#################################################################
+# Validate Registration Token
+#################################################################
+def validate_email_token(db, token):
+    q = "SELECT user_id, verification_code FROM tbl_email_verification " + \
+        " WHERE expiry_date > convert_tz(utc_timestamp(),'+00:00','+05:30') AND verification_code = %s"
+    rows = db.select_one(q, [token])
+    if rows:
+        user_id = rows.get("user_id")
+        # print "userid>>>", user_id
+        if user_id is None:
+            return False
+        else:
+            return user_id
+    else:
+        return False
+#################################################################
+# Get Valid User ID
+#################################################################
+def get_user_id_from_token(db, token):
+    columns = "user_id"
+    condition = "verification_code = %s"
+    condition_val = [token]
+    rows = db.get_data(
+        "tbl_email_verification", columns, condition, condition_val
+    )
+    return rows[0]["user_id"]
+#################################################################
+# Get User category ID, is_active
+#################################################################
+def get_client_details_from_userid(db, user_id):
+    columns = "user_category_id, is_active"
+    condition = "user_id = %s"
+    condition_val = [user_id]
+    rows = db.get_data(tblUsers, columns, condition, condition_val)
+    return rows
+
+#################################################################
+# Delete Email Verification Token
+#################################################################
+def delete_emailverification_token(db, token):
+    q = " DELETE FROM tbl_email_verification where verification_code = %s "
+    db.execute(q, [token])
+    return True
+
+#################################################################
+# Save login Details
+#################################################################
+def save_login_details(db, token, username, password):
+    user_id = get_user_id_from_token(db, token)
+    user_details = get_client_details_from_userid(db, user_id)
+    user_category_id = user_details[0]["user_category_id"]
+    is_active = user_details[0]["is_active"]
+    print "user_category_id>>", user_category_id
+
+    q = " INSERT INTO tbl_user_login_details(user_id, user_category_id, username, " + \
+        " password, is_active) VALUES (%s, %s, %s, %s, %s) "
+    db.execute(q, [user_id, user_category_id, username, password, is_active])
+
+    delete_emailverification_token()
+
+    return True
+#################################################################
+# Check User Name Duplication
+#################################################################
+def check_username_duplicate(db, uname):
+    q = " SELECT count(0) as uname from tbl_user_login_details where username = %s "
+    rows = db.select_one(q, [uname])    
+    count = rows.get("uname")
+    if count > 0:
+        return False
+
+    return True
