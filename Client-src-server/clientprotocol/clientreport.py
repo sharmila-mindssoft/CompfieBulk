@@ -280,91 +280,6 @@ class GetComplianceDetailsReport(Request):
             "page_count": to_structure_UnsignedIntegerType_32(self.page_count)
         }
 
-class GetRiskReportFilters(Request):
-    def __init__(self):
-        pass
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data)
-        return GetRiskReportFilters()
-
-    def to_inner_structure(self):
-        return {
-        }
-
-class GetRiskReport(Request):
-    def __init__(
-        self, country_id, domain_id, business_group_id,
-        legal_entity_id, division_id, unit_id, level_1_statutory_name,
-        statutory_status, csv, from_count, page_count
-    ):
-        self.country_id = country_id
-        self.domain_id = domain_id
-        self.business_group_id = business_group_id
-        self.legal_entity_id = legal_entity_id
-        self.division_id = division_id
-        self.unit_id = unit_id
-        self.level_1_statutory_name = level_1_statutory_name
-        self.statutory_status = statutory_status
-        self.csv = csv
-        self.from_count = from_count
-        self.page_count = page_count
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(
-            data, [
-                "country_id", "domain_id", "business_group_id",
-                "legal_entity_id", "division_id", "unit_id",
-                "level_1_statutory_name", "statutory_status", "csv",
-                "from_count", "page_count"
-            ]
-        )
-        country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
-        domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
-        business_group_id = data.get("business_group_id")
-        business_group_id = parse_structure_OptionalType_SignedIntegerType_8(business_group_id)
-        legal_entity_id = data.get("legal_entity_id")
-        legal_entity_id = parse_structure_OptionalType_SignedIntegerType_8(legal_entity_id)
-        division_id = data.get("division_id")
-        division_id = parse_structure_OptionalType_SignedIntegerType_8(division_id)
-        unit_id = data.get("unit_id")
-        unit_id = parse_structure_OptionalType_SignedIntegerType_8(unit_id)
-        level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_OptionalType_CustomTextType_100(level_1_statutory_name)
-        statutory_status = data.get("statutory_status")
-        statutory_status = parse_structure_OptionalType_UnsignedIntegerType_32(statutory_status)
-        csv = data.get("csv")
-        csv = parse_structure_Bool(csv)
-        from_count = data.get("from_count")
-        from_count = parse_structure_UnsignedIntegerType_32(from_count)
-        page_count = data.get("page_count")
-        page_count = parse_structure_UnsignedIntegerType_32(page_count)
-        return GetRiskReport(
-            country_id, domain_id, business_group_id,
-            legal_entity_id, division_id, unit_id, level_1_statutory_name,
-            statutory_status, csv,
-            from_count, page_count
-        )
-
-    def to_inner_structure(self):
-        return {
-            "country_id": to_structure_SignedIntegerType_8(self.country_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "business_group_id": to_structure_OptionalType_SignedIntegerType_8(self.business_group_id),
-            "legal_entity_id": to_structure_OptionalType_SignedIntegerType_8(self.legal_entity_id),
-            "division_id": to_structure_OptionalType_SignedIntegerType_8(self.division_id),
-            "unit_id": to_structure_OptionalType_SignedIntegerType_8(self.unit_id),
-            "level_1_statutory_name": to_structure_OptionalType_CustomTextType_100(self.level_1_statutory_name),
-            "statutory_status": to_structure_OptionalType_SignedIntegerType_8(self.statutory_status),
-            "csv": to_structure_Bool(self.csv),
-            "from_count": to_structure_UnsignedIntegerType_32(self.from_count),
-            "page_count": to_structure_UnsignedIntegerType_32(self.page_count)
-        }
-
 class GetServiceProviderReportFilters(Request):
     def __init__(self):
         pass
@@ -845,6 +760,7 @@ class GetComplianceActivityReport(Request):
 class GetReassignedHistoryReportFilters(Request):
     def __init__(self, legal_entity_id):
         self.legal_entity_id = legal_entity_id
+
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_id"])
@@ -1682,10 +1598,93 @@ class GetAuditTrailReportData(Request):
             "page_count": self.page_count
         }
 
+class GetRiskReportFilters(Request):
+    def __init__(self, country_id, business_group_id, legal_entity_id):
+        self.country_id = country_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["country_id", "business_group_id", "legal_entity_id"])
+        country_id = data.get("country_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        return GetRiskReportFilters(country_id, business_group_id, legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+        }
+
+class GetRiskReportData(Request):
+    def __init__(
+        self, country_id, business_group_id, legal_entity_id, domain_id, division_id,
+        category_id, unit_id, statutory_mapping, compliance_id, task_status,
+        csv, from_count, page_count
+    ):
+        self.country_id = country_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.division_id = division_id
+        self.category_id = category_id
+        self.unit_id = unit_id
+        self.statutory_mapping = statutory_mapping
+        self.compliance_id = compliance_id
+        self.task_status = task_status
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "country_id", "business_group_id", "legal_entity_id", "domain_id", "division_id",
+            "category_id", "unit_id", "statutory_mapping", "compliance_id", "task_status",
+            "csv", "from_count", "page_count"
+        ])
+        country_id = data.get("country_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id")
+        division_id = data.get("division_id")
+        category_id = data.get("category_id")
+        unit_id = data.get("unit_id")
+        statutory_mapping = data.get("statutory_mapping")
+        compliance_id = data.get("compliance_id")
+        task_status = data.get("task_status")
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetRiskReportData(
+            country_id, business_group_id, legal_entity_id, domain_id, division_id, category_id,
+            unit_id, statutory_mapping, compliance_id, task_status, csv, from_count, page_count
+        )
+
+    def to_inner_structure(self):
+        return {
+            "country_id": self.country_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+            "domain_id": self.domain_id,
+            "division_id": self.division_id,
+            "category_id": self.category_id,
+            "unit_id": self.unit_id,
+            "statutory_mapping": self.statutory_mapping,
+            "compliance_id": self.compliance_id,
+            "task_status": self.task_status,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
+        }
+
 def _init_Request_class_map():
     classes = [
         GetComplianceDetailsReportFilters, GetComplianceDetailsReport,
-        GetRiskReportFilters, GetRiskReport, GetServiceProviderReportFilters,
+        GetRiskReportFilters, GetRiskReportData, GetServiceProviderReportFilters,
         GetServiceProviderWiseCompliance, GetClientReportFilters,
         GetAssigneewisecomplianceReport, GetUnitwisecomplianceReport,
         GetReassignComplianceTaskReportFilters, GetReassignComplianceTaskDetails,
@@ -2029,65 +2028,6 @@ class GetComplianceDetailsReportSuccess(Response):
             "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
         }
 
-class GetRiskReportFiltersSuccess(Response):
-    def __init__(self, countries, domains, business_groups, legal_entities, divisions, units, level1_statutories):
-        self.countries = countries
-        self.domains = domains
-        self.business_groups = business_groups
-        self.legal_entities = legal_entities
-        self.divisions = divisions
-        self.units = units
-        self.level1_statutories = level1_statutories
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["countries", "domains", "business_groups", "legal_entities", "divisions", "units", "level1_statutories"])
-        countries = data.get("countries")
-        countries = parse_structure_VectorType_RecordType_core_Country(countries)
-        domains = data.get("domains")
-        domains = parse_structure_VectorType_RecordType_core_Domain(domains)
-        business_groups = data.get("business_groups")
-        business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
-        legal_entities = data.get("legal_entities")
-        legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
-        divisions = data.get("divisions")
-        divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
-        units = data.get("units")
-        units = parse_structure_VectorType_RecordType_core_ClientUnit(units)
-        level1_statutories = data.get("level1_statutories")
-        level1_statutories = parse_structure_VectorType_CustomTextType_100(level1_statutories)
-        return GetRiskReportFiltersSuccess(countries, domains, business_groups, legal_entities, divisions, units, level1_statutories)
-
-    def to_inner_structure(self):
-        return {
-            "countries": to_structure_VectorType_RecordType_core_Country(self.countries),
-            "domains": to_structure_VectorType_RecordType_core_Domain(self.domains),
-            "business_groups": to_structure_VectorType_RecordType_core_ClientBusinessGroup(self.business_groups),
-            "legal_entities": to_structure_VectorType_RecordType_core_ClientLegalEntity(self.legal_entities),
-            "divisions": to_structure_VectorType_RecordType_core_ClientDivision(self.divisions),
-            "units": to_structure_VectorType_RecordType_core_ClientUnit(self.units),
-            "level1_statutories": to_structure_VectorType_CustomTextType_100(self.level1_statutories),
-        }
-
-class GetRiskReportSuccess(Response):
-    def __init__(self, total_record, compliance_list):
-        self.total_record = total_record
-        self.compliance_list = compliance_list
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["total_record", "compliance_list"])
-        total_record = data.get("total_record")
-        total_record = parse_structure_UnsignedIntegerType_32(total_record)
-        compliance_list = data.get("compliance_list")
-        compliance_list = parse_structure_VectorType_RecordType_clientreport_RiskData(compliance_list)
-        return GetRiskReportSuccess(total_record, compliance_list)
-
-    def to_inner_structure(self):
-        return {
-            "total_record": to_structure_UnsignedIntegerType_32(self.total_record),
-            "compliance_list": to_structure_VectorType_RecordType_clientreport_RiskData(self.compliance_list),
-        }
 
 class GetServiceProviderReportFiltersSuccess(Response):
     def __init__(self, countries, domains, level_1_statutories, units, service_providers):
@@ -2913,6 +2853,63 @@ class GetAuditTrailReportDataSuccess(Response):
             "audit_activities" : self.audit_activities
         }
 
+class GetRiskReportFiltersSuccess(Response):
+    def __init__(
+        self, domains, divisions, categories, units_list, act_legal_entity,
+        compliance_task_list, compliance_task_status
+    ):
+        self.domains = domains
+        self.divisions = divisions
+        self.categories = categories
+        self.units_list = units_list
+        self.act_legal_entity = act_legal_entity
+        self.compliance_task_list = compliance_task_list
+        self.compliance_task_status = compliance_task_status
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "domains", "divisions", "categories", "units_list", "act_legal_entity",
+            "compliance_task_list", "compliance_task_status"
+        ])
+        domains = data.get("domains")
+        divisions = data.get("divisions")
+        categories = data.getr("categories")
+        units_list = data.get("units_list")
+        act_legal_entity = data.get("act_legal_entity")
+        compliance_task_list = data.get("compliance_task_list")
+        compliance_task_status = data.get("compliance_task_status")
+        return GetRiskReportFiltersSuccess(
+           domains, divisions, categories, units_list, act_legal_entity,
+           compliance_task_list, compliance_task_status
+        )
+
+    def to_inner_structure(self):
+        return {
+            "domains": self.domains,
+            "divisions": self.divisions,
+            "categories": self.categories,
+            "units_list": self.units_list,
+            "act_legal_entity": self.act_legal_entity,
+            "compliance_task_list": self.compliance_task_list,
+            "compliance_task_status": self.compliance_task_status
+        }
+
+class GetRiskReportSuccess(Response):
+    def __init__(self, risk_report):
+        self.risk_report = risk_report
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["risk_report"])
+        risk_report = data.get("risk_report")
+        return GetRiskReportSuccess(risk_report)
+
+    def to_inner_structure(self):
+        return {
+            "risk_report" : self.risk_report
+        }
+
 class ExportToCSVSuccess(Response):
     def __init__(self, link):
         self.link = link
@@ -2932,7 +2929,7 @@ def _init_Response_class_map():
     classes = [
         GetComplianceDetailsReportFiltersSuccess,
         GetComplianceDetailsReportSuccess, GetRiskReportFiltersSuccess,
-        GetRiskReportSuccess, GetServiceProviderReportFiltersSuccess,
+        GetServiceProviderReportFiltersSuccess,
         GetServiceProviderWiseComplianceSuccess, GetClientReportFiltersSuccess,
         GetAssigneewisecomplianceReportSuccess, GetUnitwisecomplianceReportSuccess,
         GetReassignComplianceTaskReportFiltersSuccess,
@@ -2960,7 +2957,8 @@ def _init_Response_class_map():
         GetunitListReportSuccess,
         GetStatutoryNotificationsListReportFilterSuccess,
         GetStatutoryNotificationReportDataSuccess,
-        GetAuditTrailReportDataSuccess
+        GetAuditTrailReportDataSuccess,
+        GetRiskReportSuccess
     ]
     class_map = {}
     for c in classes:
@@ -4892,6 +4890,93 @@ class UserName(object):
         return {
             "user_id": self.user_id,
             "user_name": self.user_name,
+        }
+
+#
+# UserName
+#
+
+class RiskReport(object):
+    def __init__(
+        self, statutory_mapping, unit_name, compliance_task, frequency_name, penal_consequences,
+        admin_incharge, assignee_name, task_status, documents, url, logo_url, start_date, due_date,
+        concurrer_name, approver_name, assigned_on, concurred_on, approved_on, comp_remarks
+    ):
+        self.statutory_mapping = statutory_mapping
+        self.unit_name = unit_name
+        self.compliance_task = compliance_task
+        self.frequency_name = frequency_name
+        self.penal_consequences = penal_consequences
+        self.admin_incharge = admin_incharge
+        self.assignee_name = assignee_name
+        self.task_status = task_status
+        self.documents = documents
+        self.url = url
+        self.logo_url = logo_url
+        self.start_date = start_date
+        self.due_date = due_date
+        self.concurrer_name = concurrer_name
+        self.approver_name = approver_name
+        self.assigned_on = assigned_on
+        self.concurred_on = concurred_on
+        self.approved_on = approved_on
+        self.comp_remarks = comp_remarks
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "statutory_mapping", "unit_name", "compliance_task", "frequency_name", "penal_consequences",
+            "admin_incharge", "assignee_name", "task_status", "documents", "url", "logo_url", "start_date",
+            "due_date", "concurrer_name", "approver_name", "assigned_on", "concurred_on", "approved_on",
+            "comp_remarks"
+        ])
+        statutory_mapping = data.get("statutory_mapping")
+        unit_name = data.get("unit_name")
+        compliance_task = data.get("compliance_task")
+        frequency_name = data.get("frequency_name")
+        penal_consequences = data.get("penal_consequences")
+        admin_incharge = data.get("admin_incharge")
+        assignee_name = data.get("assignee_name")
+        task_status = data.get("task_status")
+        documents = data.get("documents")
+        url = data.get("url")
+        logo_url = data.get("logo_url")
+        start_date = data.get("start_date")
+        due_date = data.get("due_date")
+        concurrer_name = data.get("concurrer_name")
+        approver_name = data.get("approver_name")
+        assigned_on = data.get("assigned_on")
+        concurred_on = data.get("concurred_on")
+        approved_on = data.get("approved_on")
+        comp_remarks = data.get("comp_remarks")
+        return RiskReport(
+            statutory_mapping, unit_name, compliance_task, frequency_name, penal_consequences,
+            admin_incharge, assignee_name, task_status, documents, url, logo_url, start_date,
+            due_date, concurrer_name, approver_name, assigned_on, concurred_on, approved_on,
+            comp_remarks
+        )
+
+    def to_structure(self):
+        return {
+            "statutory_mapping": self.statutory_mapping,
+            "unit_name": self.unit_name,
+            "compliance_task": self.compliance_task,
+            "frequency_name": self.frequency_name,
+            "penal_consequences": self.penal_consequences,
+            "admin_incharge": self.admin_incharge,
+            "assignee_name": self.assignee_name,
+            "task_status": self.task_status,
+            "documents": self.documents,
+            "url": self.url,
+            "logo_url": self.logo_url,
+            "start_date": self.start_date,
+            "due_date": self.due_date,
+            "concurrer_name": self.concurrer_name,
+            "approver_name": self.approver_name,
+            "assigned_on": self.assigned_on,
+            "concurred_on": self.concurred_on,
+            "approved_on": self.approved_on,
+            "comp_remarks": self.comp_remarks
         }
 
 
