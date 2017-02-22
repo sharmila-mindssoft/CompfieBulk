@@ -438,6 +438,8 @@ class API(object):
             return self._send_response(response_data, 200)
 
         def merge_data(data, request_data):
+            print "merge_data"
+            print self.performed_response
             if self.performed_response is None :
                 self.performed_response = data
             else :
@@ -481,6 +483,9 @@ class API(object):
                 elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusDrillDown :
                     self.performed_response.drill_down_data.extend(data.drill_down_data)
 
+                elif type(request_data.request) is widgetprotocol.GetComplianceChart :
+                    self.performed_response = controller.merge_compliance_chart_widget(self.performed_response, data)
+
         try :
             # print "try"
             request_data, company_id = self._parse_request(request_data_type, is_group)
@@ -493,20 +498,24 @@ class API(object):
                 le_ids = request_data.request.legal_entity_ids
                 print "-------"
                 print le_ids
+                self.performed_les = []
+                self.performed_response = None
 
                 for le in le_ids :
                     db_cons = self._le_databases.get(le)
 
                     if db_cons is None:
+                        self.performed_les.append(le)
                         print 'connection pool is none'
-                        # continue
-                        return self._send_response("Company not found", 404)
+                        continue
+                        # return self._send_response("Company not found", 404)
 
                     _db_con = db_cons.get_connection()
                     _db = Database(_db_con)
                     if _db_con is None:
+                        self.performed_les.append(le)
                         continue
-                        return self._send_response("Company not found", 404)
+                        # return self._send_response("Company not found", 404)
 
                     _db.begin()
                     try:
@@ -534,6 +543,8 @@ class API(object):
                         self.performed_response = str(e)
                         # return self._send_response(str(e), 400)
 
+                print len(self.performed_les)
+                print self.performed_les
                 if len(le_ids) == len(self.performed_les) :
                     return respond(self.performed_response)
 
