@@ -1,28 +1,16 @@
-var NotificationList;
 var from_count = 0;
 var page_count = 50;
 
-function updateNotificationStatus(n_id, u_id, r_status) {
-    mirror.updateStatutoryNotificationStatus(n_id, u_id, r_status, function(error, response) {
-        if (error == null) {
-            initialize();
-        } else {
-            displayMessage(error);
-        }
-
-    });
-}
-// User List render process
-function loadMessages() {
+function loadMessages(data) {
     var isEmpty = true;
     $('.tbody-message-list').find('tr').remove();
-    $.each(NotificationList, function(k, v) {
+    $.each(data, function(k, v) {
         isEmpty = false;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
 
         rowClone.on('click', function(e) {
-            mirror.getComplianceInfo(v.compliance_id, function(error, response) {
+            /*mirror.updateNotificationStatus(v.compliance_id, 1 function(error, response) {
                 if (error == null) {
                     $('.popup-statutory').text(response.s_pro);
                     $('.popup-compliancetask').text(response.c_task);
@@ -42,12 +30,14 @@ function loadMessages() {
                 } else {
                     displayMessage(error);
                 }
+            });*/
+            Custombox.open({
+                target: '#custom-modal',
+                effect: 'contentscale',
             });
         });
-
         $('.message-content', rowClone).text(v.notification_text);
         $('.message-time', rowClone).text(v.created_on);
-        $('.message-user', rowClone).text('User: ' + v.created_by);
         $('.tbody-message-list').append(rowClone);
     });
 
@@ -57,17 +47,13 @@ function loadMessages() {
         $(".tbody-message-list").append(clone);
     }
 
-
 }
 
-// page load
 function initialize() {
-    mirror.getStatutoryNotifications(from_count, page_count, function(error, response) {
-        if (error != null) {
-            displayMessage(error);
-        } else {
-            NotificationList = response.statutory_notifications;
-            loadMessages();
+    client_mirror.getNotifications(LEIDS, 4, 0, 50, function(error, response) {
+        if (error == null) {
+            data = response.messages;
+            loadMessages(data);
         }
     });
 }

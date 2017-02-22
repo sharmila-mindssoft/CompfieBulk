@@ -1,5 +1,5 @@
 //country countryId businessGroup businessGroupId legalEntity legalEntityId division divisionId category categoryId domain domainId
-var country = $("#country"); 
+var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
 
@@ -38,7 +38,7 @@ var template = $("#template");
 var reportTable = $("#report-table");
 var REPORT = null;
 
-StatusReportConsolidated = function() {
+DomainScoreCard = function() {
     this._countries = [];
     this._business_group = [];
     this._entities = [];
@@ -48,7 +48,7 @@ StatusReportConsolidated = function() {
     this._report_data = [];
 }
 
-StatusReportConsolidated.prototype.fetchSearchList = function() {
+DomainScoreCard.prototype.fetchSearchList = function() {
     t_this = this;
     /*var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"business_group":[{"b_g_id":1,"b_g_name":"RG Business Group","c_id":1,"is_active":true},{"b_g_id":2,"b_g_name":"ABC Business Group","c_id":1,"is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"b_g_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"b_g_id":null,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);*/
@@ -144,7 +144,7 @@ processSubmit = function(csv) {
 }
 
 clearElement = function(arr) {
-    if(arr.length > 0) {
+    if (arr.length > 0) {
         $.each(arr, function(i, element) {
             element.val('');
         });
@@ -193,13 +193,13 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.focus();
 }
 
-StatusReportConsolidated.prototype.loadSearch = function() {
+DomainScoreCard.prototype.loadSearch = function() {
     reportView.hide();
     clearElement([country, countryId, businessGroup, businessGroupId, legalEntity, legalEntityId, division, divisionId, category, categoryId, domain, domainId]);
     this.fetchSearchList();
 };
 
-StatusReportConsolidated.prototype.fetchDivisionCategoryDomainList = function(le_id) {
+DomainScoreCard.prototype.fetchDivisionCategoryDomainList = function(le_id) {
     t_this = this;
     client_mirror.getStatutorySettingsUnitWiseFilters(parseInt(le_id), function(error, response) {
         if (error == null) {
@@ -212,7 +212,7 @@ StatusReportConsolidated.prototype.fetchDivisionCategoryDomainList = function(le
     });
 };
 //country businessGroup legalEntity division category domain
-StatusReportConsolidated.prototype.validate = function() {
+DomainScoreCard.prototype.validate = function() {
     if (country) {
         if (isNotEmpty(country, message.country_required) == false)
             return false;
@@ -263,13 +263,14 @@ showAnimation = function(element) {
         });
 }
 
-StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
+DomainScoreCard.prototype.fetchReportValues = function(csv) {
     t_this = this;
     var c_id = parseInt(countryId.val());
     var bg_id = parseInt(businessGroupId.val());
     if (!bg_id) bg_id = null
     var le_id = parseInt(legalEntityId.val());
     var d_id = parseInt(domainId.val());
+    if (!d_id) d_id = null
     var div_id = parseInt(divisionId.val());
     if (!div_id) div_id = null
     var cat_id = parseInt(categoryId.val());
@@ -292,7 +293,7 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
 
 };
 
-StatusReportConsolidated.prototype.showReportValues = function() {
+DomainScoreCard.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
     clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
@@ -318,8 +319,8 @@ StatusReportConsolidated.prototype.showReportValues = function() {
         $('.assigned', cloneone).text(v.assigned_count);
         $('.un-assigned', cloneone).text(v.unassigned_count);
         $('.not-opted', cloneone).text(v.not_opted_count);
-        
-        
+
+
         assigned_count = assigned_count + v.assigned_count;
         un_assigned_count = un_assigned_count + v.unassigned_count;
         not_opted_count = not_opted_count + v.not_opted_count;
@@ -340,7 +341,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
         $.each(v.units_wise_count, function(k1, v1) {
             var row_total_new = 0;
             var clonetwo = $('#template #report-table .report-new-row').clone();
-            clonetwo.addClass("domain-"+v.domain_id);
+            clonetwo.addClass("domain-" + v.domain_id);
             $('.unit-name', clonetwo).text(v1.unit);
             $('.inprogress', clonetwo).text(v1.inprogress_count);
             $('.complied', clonetwo).text(v1.complied_count);
@@ -360,9 +361,9 @@ StatusReportConsolidated.prototype.showReportValues = function() {
             reportTableTbodyNew.append(clonetwo);
             i = i + 1;
         });
-        if(i > 1) {
+        if (i > 1) {
             var clonethree = $('#template #report-table .report-new-total-row').clone();
-            clonethree.addClass("domain-"+v.dom_id);
+            clonethree.addClass("domain-" + v.dom_id);
             $('.total-inprogress', clonethree).text(inprogress_new_count);
             $('.total-complied', clonethree).text(complied_new_count);
             $('.total-delayed-complied', clonethree).text(delayed_new_count);
@@ -373,7 +374,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
             reportTableTbodyNew.append(clonethree);
         }
     });
-    if(j > 2) {
+    if (j > 2) {
         var clonefour = $('#template #report-table .report-total-row').clone();
         $('.assigned-total', clonefour).text(assigned_count);
         $('.un-assigned-total', clonefour).text(un_assigned_count);
@@ -383,25 +384,25 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     }
 };
 
-StatusReportConsolidated.prototype.showDomainDetails = function(dom_id) {
+DomainScoreCard.prototype.showDomainDetails = function(dom_id) {
     $('.domain-table-view').show();
     $('.unit-details').hide();
-    $('.domain-'+dom_id).show();
+    $('.domain-' + dom_id).show();
 };
 
-StatusReportConsolidated.prototype.exportReportValues = function() {
+DomainScoreCard.prototype.exportReportValues = function() {
     alert('export');
 };
 
-StatusReportConsolidated.prototype.possibleFailures = function(error) {
+DomainScoreCard.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage("Domain name exists");
+        displayMessage("Domain name exists");
     } else {
-        this.displayMessage(error);
+        displayMessage(error);
     }
 };
 
-REPORT = new StatusReportConsolidated();
+REPORT = new DomainScoreCard();
 
 $(document).ready(function() {
     PageControls();

@@ -58,11 +58,11 @@ def frame_compliance_status(data) :
     })
     chartdata.append({
         "name": yaxis[2],
-        "data": not_complied_data
+        "data": delayed_data
     })
     chartdata.append({
         "name": yaxis[3],
-        "data": delayed_data
+        "data": not_complied_data
     })
 
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartdata)
@@ -315,3 +315,6 @@ def frame_not_complied_chart(data):
             "y": above_90_days
         })
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
+
+def get_userwise_score_card(db, user_id):
+    pass

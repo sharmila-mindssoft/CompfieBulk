@@ -4753,6 +4753,8 @@ class GetStatutorySettingsUnitWiseSuccess(object):
             "unit_id": self.unit_id
         }
 
+
+# Domain Score Card Start
 class GetDomainScoreCardSuccess(object):
     def __init__(self, domain_id, domain_name, not_opted_count, unassigned_count, assigned_count, units_count):
         self.domain_id = domain_id
@@ -4817,3 +4819,309 @@ class GetDomainWiseUnitScoreCardSuccess(object):
             "inprogress_count": self.inprogress_count,
             "overdue_count": self.overdue_count
         }
+# Domain Score Card End
+
+# Legal Entity Wise Score Card Start
+class GetLEWiseScoreCardSuccess(object):
+    def __init__(self, inprogress_count, completed_count, overdue_count, inprogress_unit_wise, inprogress_user_wise, 
+        completed_unit_wise, completed_user_wise, overdue_unit_wise, overdue_user_wise
+        ):
+        self.inprogress_count = inprogress_count
+        self.completed_count = completed_count
+        self.overdue_count = overdue_count
+        self.inprogress_unit_wise = inprogress_unit_wise
+        self.inprogress_user_wise = inprogress_user_wise
+        self.completed_unit_wise = completed_unit_wise
+        self.completed_user_wise = completed_user_wise
+        self.overdue_unit_wise = overdue_unit_wise
+        self.overdue_user_wise = overdue_user_wise
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["inprogress_count", "completed_count", "overdue_count", "inprogress_unit_wise", 
+            "inprogress_unit_wise", "completed_unit_wise", "completed_user_wise", "overdue_unit_wise", "overdue_user_wise"])
+        inprogress_count = data.get("inprogress_count"), 
+        completed_count = data.get("completed_count"),
+        overdue_count = data.get("overdue_count"),
+        inprogress_unit_wise = data.get("inprogress_unit_wise"),
+        inprogress_user_wise = data.get("inprogress_user_wise"),
+        completed_unit_wise = data.get("completed_unit_wise"),
+        completed_user_wise = data.get("completed_user_wise"),
+        overdue_unit_wise = data.get("overdue_unit_wise"),
+        overdue_user_wise = data.get("overdue_user_wise")
+        return GetLEWiseScoreCardSuccess(inprogress_count, completed_count, overdue_count, inprogress_unit_wise, 
+            inprogress_user_wise, completed_unit_wise, completed_user_wise, overdue_unit_wise, overdue_user_wise)
+    def to_structure(self):
+        return {
+            "inprogress_count": self.inprogress_count,
+            "completed_count": self.completed_count,
+            "overdue_count": self.overdue_count,
+            "inprogress_unit_wise": self.inprogress_unit_wise,
+            "inprogress_user_wise": self.inprogress_user_wise,
+            "completed_unit_wise": self.completed_unit_wise,
+            "completed_user_wise": self.completed_user_wise,
+            "overdue_unit_wise": self.overdue_unit_wise,
+            "overdue_user_wise": self.overdue_user_wise
+        }
+
+class GetInprogressUnitWiseCountSuccess(object):
+    def __init__(self, unit_id, unit, to_complete, to_concur, to_approve):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "to_complete", "to_concur", "to_approve"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        to_complete = data.get("to_complete"),
+        to_concur = data.get("to_concur"),
+        to_approve = data.get("to_approve")
+        return GetInprogressUnitWiseCountSuccess(unit_id, unit, to_complete, to_concur, to_approve)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
+        }
+
+class GetInprogressUserWiseCountSuccess(object):
+    def __init__(self, user_id, user_name, to_complete, to_concur, to_approve):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "user_name", "to_complete", "to_concur", "to_approve"])
+        user_id = data.get("user_id"), 
+        user_name = data.get("user_name"),
+        to_complete = data.get("to_complete"),
+        to_concur = data.get("to_concur"),
+        to_approve = data.get("to_approve")
+        return GetInprogressUserWiseCountSuccess(user_id, user_name, to_complete, to_concur, to_approve)
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
+        }
+
+class GetCompletedUnitWiseCountSuccess(object):
+    def __init__(self, unit_id, unit, complied_count, delayed_count):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.complied_count = complied_count
+        self.delayed_count = delayed_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "complied_count", "delayed_count"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        complied_count = data.get("complied_count"),
+        delayed_count = data.get("delayed_count")
+        return GetCompletedUnitWiseCountSuccess(unit_id, unit, complied_count, delayed_count)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "complied_count": self.complied_count,
+            "delayed_count": self.delayed_count
+        }
+
+class GetCompletedUserWiseCountSuccess(object):
+    def __init__(self, user_id, user_name, complied_count, delayed_count):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.complied_count = complied_count
+        self.delayed_count = delayed_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "user_name", "complied_count", "delayed_count"])
+        user_id = data.get("user_id"), 
+        user_name = data.get("user_name"),
+        complied_count = data.get("complied_count"),
+        delayed_count = data.get("delayed_count")
+        return GetCompletedUserWiseCountSuccess(user_id, user_name, complied_count, delayed_count)
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "complied_count": self.complied_count,
+            "delayed_count": self.delayed_count
+        }
+
+class GetOverdueUnitWiseCountSuccess(object):
+    def __init__(self, unit_id, unit, overdue_count):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.overdue_count = overdue_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "overdue_count"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        overdue_count = data.get("overdue_count")
+        return GetOverdueUnitWiseCountSuccess(unit_id, unit, overdue_count)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "overdue_count": self.overdue_count
+        }
+
+class GetOverdueUserWiseCountSuccess(object):
+    def __init__(self, user_id, user_name, overdue_count):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.overdue_count = overdue_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "user_name", "overdue_count", "delayed_count"])
+        user_id = data.get("user_id"), 
+        user_name = data.get("user_name"),
+        overdue_count = data.get("overdue_count")
+        return GetOverdueUserWiseCountSuccess(user_id, user_name, overdue_count)
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "overdue_count": self.overdue_count
+        }
+
+# Legal Entity Wise Score Card Start
+
+
+# Work Flow Score Card Start
+class GetWorkFlowScoreCardSuccess(object):
+    def __init__(self, c_assignee, c_concur, c_approver, inp_assignee, inp_concur, inp_approver, 
+        ov_assignee, ov_concur, ov_approver, completed_task_count, inprogress_within_duedate_task_count, over_due_task_count
+        ):
+        self.c_assignee = c_assignee
+        self.c_concur = c_concur
+        self.c_approver = c_approver
+        self.inp_assignee = inp_assignee
+        self.inp_concur = inp_concur
+        self.inp_approver = inp_approver
+        self.ov_assignee = ov_assignee
+        self.ov_concur = ov_concur
+        self.ov_approver = ov_approver
+        self.completed_task_count = completed_task_count
+        self.inprogress_within_duedate_task_count = inprogress_within_duedate_task_count
+        self.over_due_task_count = over_due_task_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["c_assignee", "c_concur", "c_approver", "inp_assignee", "inp_concur", "inp_approver", 
+            "ov_assignee", "ov_concur", "ov_approver", "completed_task_count", "inprogress_within_duedate_task_count", "over_due_task_count"])
+        c_assignee = data.get("c_assignee"),
+        c_concur = data.get("c_concur"),
+        c_approver = data.get("c_approver"),
+        inp_assignee = data.get("inp_assignee"),
+        inp_concur = data.get("inp_concur"),
+        inp_approver = data.get("inp_approver"),
+        ov_assignee = data.get("ov_assignee"),
+        ov_concur = data.get("ov_concur"),
+        ov_approver = data.get("ov_approver"),
+        completed_task_count = data.get("completed_task_count"),
+        inprogress_within_duedate_task_count = data.get("inprogress_within_duedate_task_count"),
+        over_due_task_count = data.get("over_due_task_count")
+        return GetWorkFlowScoreCardSuccess(c_assignee, c_concur, c_approver, inp_assignee, inp_concur, inp_approver, 
+            ov_assignee, ov_concur, ov_approver, completed_task_count, inprogress_within_duedate_task_count, over_due_task_count)
+    def to_structure(self):
+        return {
+            "c_assignee": self.c_assignee,
+            "c_concur": self.c_concur,
+            "c_approver": self.c_approver,
+            "inp_assignee": self.inp_assignee,
+            "inp_concur": self.inp_concur,
+            "inp_approver": self.inp_approver,
+            "ov_assignee": self.ov_assignee,
+            "ov_concur": self.ov_concur,
+            "ov_approver": self.ov_approver,
+            "completed_task_count": self.completed_task_count,
+            "inprogress_within_duedate_task_count": self.inprogress_within_duedate_task_count,
+            "over_due_task_count": self.over_due_task_count
+        }
+
+class GetCompletedTaskCountSuccess(object):
+    def __init__(self, unit_id, unit, c_assignee, c_concur, c_approver):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.c_assignee = c_assignee
+        self.c_concur = c_concur
+        self.c_approver = c_approver
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "c_assignee", "c_concur", "c_approver"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        c_assignee = data.get("c_assignee"),
+        c_concur = data.get("c_concur"),
+        c_approver = data.get("c_approver")
+        return GetCompletedTaskCountSuccess(unit_id, unit, c_assignee, c_concur, c_approver)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "c_assignee": self.c_assignee,
+            "c_concur": self.c_concur,
+            "c_approver": self.c_approver
+        }
+
+class GetInprogressWithinDuedateTaskCountSuccess(object):
+    def __init__(self, unit_id, unit, inp_assignee, inp_concur, inp_approver):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.inp_assignee = inp_assignee
+        self.inp_concur = inp_concur
+        self.inp_approver = inp_approver
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "inp_assignee", "inp_concur", "inp_approver"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        inp_assignee = data.get("inp_assignee"),
+        inp_concur = data.get("inp_concur"),
+        inp_approver = data.get("inp_approver")
+        return GetInprogressWithinDuedateTaskCountSuccess(unit_id, unit, inp_assignee, inp_concur, inp_approver)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "inp_assignee": self.inp_assignee,
+            "inp_concur": self.inp_concur,
+            "inp_approver": self.inp_approver
+        }
+
+class GetOverDueTaskCountSuccess(object):
+    def __init__(self, user_id, unit, ov_assignee, ov_concur, ov_approver):
+        self.user_id = user_id
+        self.unit = unit
+        self.ov_assignee = ov_assignee
+        self.ov_concur = ov_concur
+        self.ov_approver = ov_approver
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "unit", "ov_assignee", "ov_concur", "ov_approver"])
+        user_id = data.get("user_id"), 
+        unit = data.get("unit"),
+        ov_assignee = data.get("ov_assignee"),
+        ov_concur = data.get("ov_concur"),
+        ov_approver = data.get("ov_approver")
+        return GetOverDueTaskCountSuccess(user_id, unit, ov_assignee, ov_concur, ov_approver)
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "unit": self.unit,
+            "ov_assignee": self.ov_assignee,
+            "ov_concur": self.ov_concur,
+            "ov_approver": self.ov_approver
+        }
+
+# Work Flow Score Card Start 

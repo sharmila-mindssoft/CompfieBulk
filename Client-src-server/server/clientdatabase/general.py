@@ -73,6 +73,7 @@ __all__ = [
     "get_domains_info",
     "get_user_based_units",
     "get_user_widget_settings",
+    "get_widget_list",
     "save_user_widget_settings"
     ]
 
@@ -1936,15 +1937,70 @@ def reset_domain_trail_id(db):
     q = "update tbl_audit_log set domain_trail_id=0"
     db.execute(q)
 
-def get_user_widget_settings(db, user_id):
+def get_users_forms(db, user_id, user_category):
+    if user_category == 1 :
+        q = "select form_id from tbl_form_category where user_category_id = 1"
+        param = []
+    else :
+        q = "select t1.form_id from tbl_user_group_forms as t1 " + \
+            " inner join tbl_users as t2  " + \
+            " on t1.user_group_id = t2.user_group_id " + \
+            " where t2.user_id = %s"
+        param = [user_id]
+    rows = db.select_all(q, param)
+    f_ids = []
+    for r in rows :
+        f_ids.append(int(r["form_id"]))
+    return f_ids
+
+def get_widget_rights(db, user_id, user_category):
+    forms = get_users_forms(db, user_id, user_category)
+    showDashboard = False
+    showCalendar = False
+    showUserScore = False
+    showDomainScore = False
+    if 34 in forms :
+        showDashboard = True
+
+    if 35 in forms :
+        showCalendar = True
+
+    if 18 in forms :
+        showDomainScore = True
+
+    if 20 in forms :
+        showUserScore = True
+
+    return showDashboard, showCalendar, showUserScore, showDomainScore
+
+def get_widget_list(db):
+    q = "select form_id, form_name from tbl_widget_forms"
+    rows = db.select_all(q, [])
+    return rows
+
+def get_user_widget_settings(db, user_id, user_category):
+    showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
     q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
     rows = db.select_one(q, [user_id])
+    data = []
     if rows :
         data = json.loads(rows["widget_data"])
-        return data
-    else :
-        return []
+        for i, d in enumerate(data) :
+            w_id = d["w_id"]
+            if showDashboard is False and w_id in [1, 2, 3, 4, 5]:
+                data.pop(i)
+
+            elif showUserScore is False and w_id == 6 :
+                data.pop(i)
+
+            elif showCalendar is False and w_id == 8 :
+                data.pop(i)
+
+            elif showDomainScore is False and w_id == 7 :
+                data.pop(i)
+
+    return data
 
 def save_user_widget_settings(db, user_id, widget_data):
-    q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s)"
+    q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
     db.execute(q, [user_id, widget_data])

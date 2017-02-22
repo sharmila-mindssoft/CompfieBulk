@@ -1012,13 +1012,14 @@ class GetStatutorySettingsUnitWiseFilters(Request):
 
 class GetStatutorySettingsUnitWise(Request):
     def __init__(
-        self, c_id, bg_id, legal_entity_id, d_id, div_id, cat_id, act, 
+        self, c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, 
         compliance_id, frequency_id, status_name, csv, f_count, t_count
     ):
         self.c_id = c_id
         self.bg_id = bg_id
         self.legal_entity_id = legal_entity_id
         self.d_id = d_id
+        self.unit_id = unit_id
         self.div_id = div_id
         self.cat_id = cat_id
         self.act = act
@@ -1032,13 +1033,14 @@ class GetStatutorySettingsUnitWise(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_id", "bg_id", "le_id", "d_id", "div_id", "cat_id", "act", "compliance_id", 
+            "c_id", "bg_id", "le_id", "d_id", "unit_id", "div_id", "cat_id", "act", "compliance_id", 
             "frequency_id", "status_name", "csv", "f_count", "t_count"]
         )
         c_id = data.get("c_id")
         bg_id = data.get("bg_id")
         legal_entity_id = data.get("le_id")
         d_id = data.get("d_id")
+        unit_id = data.get("unit_id")
         div_id = data.get("div_id")
         cat_id = data.get("cat_id")
         act = data.get("act")
@@ -1049,7 +1051,7 @@ class GetStatutorySettingsUnitWise(Request):
         f_count = data.get("f_count")
         t_count = data.get("t_count")
         return GetStatutorySettingsUnitWise( 
-            c_id, bg_id, legal_entity_id, d_id, div_id, cat_id, act, compliance_id, 
+            c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, compliance_id, 
             frequency_id, status_name, csv, f_count, t_count)
 
     def to_inner_structure(self):
@@ -1058,6 +1060,7 @@ class GetStatutorySettingsUnitWise(Request):
             "bg_id": self.bg_id,
             "le_id": self.legal_entity_id,
             "d_id": self.d_id,
+            "unit_id": self.unit_id,
             "div_id": self.div_id,
             "cat_id": self.cat_id,
             "act": self.act,
@@ -1123,6 +1126,98 @@ class GetDomainScoreCard(Request):
             "csv": self.csv
         }
 # Domain Score Card End
+
+
+# Legal Entity Wise Score Card Start
+class GetLEWiseScoreCardFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetLEWiseScoreCardFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
+
+class GetLEWiseScoreCard(Request):
+    def __init__(
+        self, c_id, legal_entity_id, d_id, csv
+    ):
+        self.c_id = c_id
+        self.legal_entity_id = legal_entity_id
+        self.d_id = d_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "c_id", "le_id", "d_id", "csv"]
+        )
+        c_id = data.get("c_id")
+        legal_entity_id = data.get("le_id")
+        d_id = data.get("d_id")
+        csv = data.get("csv")
+        return GetLEWiseScoreCard( 
+            c_id, legal_entity_id, d_id, csv)
+
+    def to_inner_structure(self):
+        return {
+            "c_id": self.c_id,
+            "le_id": self.legal_entity_id,
+            "d_id": self.d_id,
+            "csv": self.csv
+        }
+# Legal Entity Wise Score Card End
+
+
+# Work Flow Score Card Start
+class GetWorkFlowScoreCardFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetWorkFlowScoreCardFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
+
+class GetWorkFlowScoreCard(Request):
+    def __init__(
+        self, c_id, legal_entity_id, d_id, csv
+    ):
+        self.c_id = c_id
+        self.legal_entity_id = legal_entity_id
+        self.d_id = d_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "c_id", "le_id", "d_id", "csv"]
+        )
+        c_id = data.get("c_id")
+        legal_entity_id = data.get("le_id")
+        d_id = data.get("d_id")
+        csv = data.get("csv")
+        return GetWorkFlowScoreCard( 
+            c_id, legal_entity_id, d_id, csv)
+
+    def to_inner_structure(self):
+        return {
+            "c_id": self.c_id,
+            "le_id": self.legal_entity_id,
+            "d_id": self.d_id,
+            "csv": self.csv
+        }
+# Work Flow Score Card End
 
 class GetStatutoryNotificationsListFilters(Request):
     def __init__(self):
@@ -1903,6 +1998,8 @@ def _init_Request_class_map():
         GetStatusReportConsolidatedFilters, GetStatusReportConsolidated,
         GetStatutorySettingsUnitWiseFilters, GetStatutorySettingsUnitWise,
         GetDomainScoreCardFilters, GetDomainScoreCard,
+        GetLEWiseScoreCardFilters, GetLEWiseScoreCard,
+        GetWorkFlowScoreCardFilters, GetWorkFlowScoreCard,
         GetStatutoryNotificationsListFilters, GetStatutoryNotificationsListReport,
         GetClientDetailsReportFilters, GetClientDetailsReportData, GetActivityLogFilters,
         GetActivityLogReport, GetLoginTrace, GetLegalEntityWiseReportFilters,
@@ -2830,6 +2927,72 @@ class GetDomainScoreCardSuccess(Response):
         }
 # Domain Score Card End
 
+
+# Legal Entity Wise Score Card Start
+class GetLEWiseScoreCardFiltersSuccess(Response):
+    def __init__(self, domains):
+        self.domains = domains
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domains"])
+        domains = data.get("domains")
+        return GetLEWiseScoreCardFiltersSuccess(domains)
+
+    def to_inner_structure(self):
+        return {
+            "domains": self.domains
+        }
+
+class GetLEWiseScoreCardSuccess(Response):
+    def __init__(self, le_wise_score_card_list):
+        self.le_wise_score_card_list = le_wise_score_card_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_wise_score_card_list"])
+        le_wise_score_card_list = data.get("le_wise_score_card_list")
+        return GetDomainScoreCardSuccess(le_wise_score_card_list)
+
+    def to_inner_structure(self):
+        return {
+            "le_wise_score_card_list": self.le_wise_score_card_list
+        }
+# Legal Entity Wise Score Card End
+
+
+# Work Flow Score Card Start
+class GetWorkFlowScoreCardFiltersSuccess(Response):
+    def __init__(self, domains):
+        self.domains = domains
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domains"])
+        domains = data.get("domains")
+        return GetWorkFlowScoreCardFiltersSuccess(domains)
+
+    def to_inner_structure(self):
+        return {
+            "domains": self.domains
+        }
+
+class GetWorkFlowScoreCardSuccess(Response):
+    def __init__(self, work_flow_score_card_list):
+        self.work_flow_score_card_list = work_flow_score_card_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["work_flow_score_card_list"])
+        work_flow_score_card_list = data.get("work_flow_score_card_list")
+        return GetWorkFlowScoreCardSuccess(work_flow_score_card_list)
+
+    def to_inner_structure(self):
+        return {
+            "work_flow_score_card_list": self.work_flow_score_card_list
+        }
+# Work Flow Score Card End
+
 #
 # Statutory Notificaiton List
 #
@@ -3256,6 +3419,8 @@ def _init_Response_class_map():
         GetStatusReportConsolidatedFiltersSuccess, GetStatusReportConsolidatedSuccess,
         GetStatutorySettingsUnitWiseFiltersSuccess, GetStatutorySettingsUnitWiseSuccess,
         GetDomainScoreCardFiltersSuccess, GetDomainScoreCardSuccess,
+        GetLEWiseScoreCardFiltersSuccess, GetLEWiseScoreCardSuccess,
+        GetWorkFlowScoreCardFiltersSuccess, GetWorkFlowScoreCardSuccess,
         GetStatutoryNotificationsListFiltersSuccess,
         GetStatutoryNotificationsListReportSuccess,
         GetClientDetailsReportDataSuccess, GetActivityLogFiltersSuccess,

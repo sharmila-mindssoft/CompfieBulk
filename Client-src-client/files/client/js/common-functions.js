@@ -9,6 +9,12 @@ var UserTypes = jQuery.parseJSON(UserTypeString);
 var ComplianceTaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 
+var LEARRAYS = client_mirror.getSelectedLegalEntity();
+var LEIDS = [];
+$.each(LEARRAYS, function(key, value) {
+    LEIDS.push(value.le_id);
+});
+
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
         var Id = pageList[i];
@@ -470,4 +476,11 @@ function hypToUpperCamelCase(d) {
     a.push(c);
   }
   return a.join('');
+}
+
+function limits(str,num) {
+    if(str.length >= parseInt(num))
+        return str.substr(0, parseInt(num))+'...';
+    else
+        return str; 
 }
