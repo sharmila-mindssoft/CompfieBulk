@@ -486,6 +486,9 @@ class API(object):
                 elif type(request_data.request) is widgetprotocol.GetComplianceChart :
                     self.performed_response = controller.merge_compliance_chart_widget(self.performed_response, data)
 
+                elif type(request_data.request) is widgetprotocol.GetEscalationChart :
+                    self.performed_response = controller.merge_escalation_chart_widget(self.performed_response, data)
+
         try :
             # print "try"
             request_data, company_id = self._parse_request(request_data_type, is_group)
