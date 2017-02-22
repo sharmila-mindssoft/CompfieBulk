@@ -39,7 +39,7 @@ NO_OF_FAILURE_ATTEMPTS = 3
 FILE_TYPES = ["exe", "xhtml", "htm", "html", "py", "js"]
 FILE_MAX_LIMIT = 1024 * 1024 * 50  # 50 MB
 SESSION_CUTOFF = 15   # minutes
-REGISTRATION_EXPIRY = 48  # Hours
+REGISTRATION_EXPIRY = 72  # Hours
 DOWNLOAD_EXPIRY = 48  # Hours
 
 KNOWLEDGE_DB_HOST = "localhost"
@@ -47,7 +47,7 @@ KNOWLEDGE_DB_PORT = 3306
 KNOWLEDGE_DB_USERNAME = "root"
 
 KNOWLEDGE_DB_PASSWORD = "Msft!@#$%^"
-KNOWLEDGE_DATABASE_NAME = "compfie_knowledge"
+KNOWLEDGE_DATABASE_NAME = "compfie_knowledge_dev1"
 
 URL = "http://localhost:8082/"
 CLIENT_URL = URL
