@@ -73,3 +73,5 @@ tblApprovalStatus = "tbl_approval_status"
 tblAssignedCompliances = "tbl_assigned_compliances"
 tblComplianceDates = "tbl_compliance_dates"
 tblComplianceDatesHistory = "tbl_compliance_dates_history"
+tblAssignCompliances = "tbl_assign_compliances"
+

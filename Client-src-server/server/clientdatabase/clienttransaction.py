@@ -2383,86 +2383,99 @@ def return_compliance_to_reassign(data):
 
 
 def reassign_compliance(db, request, session_user):
+    legal_entity_id = request.legal_entity_id
     reassigned_from = request.r_from
     assignee = request.assignee
     concurrence = request.concurrence_person
     approval = request.approval_person
     compliances = request.reassigned_compliance
     reassigned_reason = request.reason
-
-    print 'enter into reassing save'
-    print reassigned_from
-    print assignee
-    print compliances
-    for c in compliances:
-        print c.compliance_name
-
     created_on = get_date_time_in_date()
     reassigned_date = created_on.strftime("%Y-%m-%d")
     created_by = int(session_user)
     
 
     # new_unit_settings = request.new_units
-    # compliance_names = []
-    # compliance_ids = []
-    # reassing_columns = [
-    #     "unit_id", "compliance_id", "assignee",
-    #     "reassigned_from", "reassigned_date", "remarks",
-    #     "created_by", "created_on"
-    # ]
-    # for c in compliances:
-    #     unit_id = c.unit_id
-    #     compliance_id = c.compliance_id
-    #     compliance_ids.append(compliance_id)
-    #     compliance_names.append(c.compliance_name)
-    #     due_date = c.due_date
-    #     if due_date is not None:
-    #         due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y").date()
+    compliance_names = []
+    compliance_ids = []
+    reassing_columns = [
+        "legal_entity_id", "unit_id", "compliance_id", "old_assignee", 
+        "old_concurrer", "old_approver", "assignee",
+        "concurrer", "approver", "remarks", "assigned_by", "assigned_on"
+    ]
+    for c in compliances:
+        unit_id = c.u_id
+        compliance_id = c.comp_id
+        compliance_ids.append(compliance_id)
+        compliance_names.append(c.compliance_name)
+        due_date = c.d_date
+        if due_date is not None:
+            due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y").date()
 
-    #     history_id = c.compliance_history_id
-    #     values = [
-    #         unit_id, compliance_id, assignee, reassigned_from,
-    #         reassigned_date, reassigned_reason, created_by,
-    #         created_on
-    #     ]
-    #     result = db.insert(
-    #         tblReassignedCompliancesHistory, reassing_columns, values
-    #     )
-    #     if result is False:
-    #         raise client_process_error("E016")
+        history_id = c.c_h_id
+        o_assignee = c.o_assignee
+        o_concurrence = c.o_concurrence_person
+        o_approval = c.o_approval_person
 
-    #     update_assign_column = [
-    #         "assignee", "is_reassigned", "approval_person",
-    #     ]
-    #     update_assign_val = [
-    #         assignee, 1, approval,
-    #     ]
-    #     if due_date is not None:
-    #         update_assign_column.append("due_date")
-    #         update_assign_val.append(due_date)
+        values = [
+            legal_entity_id, unit_id, compliance_id, o_assignee, o_concurrence,
+            o_approval, assignee, concurrence, approval, reassigned_reason, created_by,
+            created_on
+        ]
 
-    #     if concurrence not in [None, "None", 0, "null", "NULL"]:
-    #         update_assign_column.append("concurrence_person")
-    #         update_assign_val.append(concurrence)
+        result = db.insert(
+            tblReassignedCompliancesHistory, reassing_columns, values
+        )
+        if result is False:
+            raise client_process_error("E016")
 
-    #     where_qry = " unit_id = %s AND compliance_id = %s "
-    #     update_assign_val.extend([unit_id, compliance_id])
-    #     db.update(
-    #         tblAssignedCompliances, update_assign_column,
-    #         update_assign_val, where_qry
-    #     )
+        update_assign_column = []
+        update_assign_val = []
 
-    #     if history_id is not None:
-    #         update_history = "UPDATE tbl_compliance_history SET  " + \
-    #             " completed_by = %s, approved_by = %s"
-    #         if concurrence not in [None, "None", "null", "Null", 0]:
-    #             update_history += " ,concurred_by = %s " % (concurrence)
-    #         where_qry = " WHERE IFNULL(approve_status, 0) != 1 " + \
-    #             " and compliance_id = %s  and unit_id = %s "
+        if assignee != o_assignee:
+            update_assign_column.append("assignee")
+            update_assign_val.append(assignee)
+            update_assign_column.append("is_reassigned")
+            update_assign_val.append(1)
 
-    #         qry = update_history + where_qry
-    #         update_qry_val = [assignee, approval, compliance_id, unit_id]
-    #         db.execute(qry, update_qry_val)
+        if concurrence is not None and concurrence != o_concurrence:
+            update_assign_column.append("concurrence_person")
+            update_assign_val.append(concurrence)
+            update_assign_column.append("c_is_reassigned")
+            update_assign_val.append(1)
+
+        if approval != o_approval:
+            update_assign_column.append("approval_person")
+            update_assign_val.append(approval)
+            update_assign_column.append("a_is_reassigned")
+            update_assign_val.append(1)
+
+        if due_date is not None:
+            update_assign_column.append("due_date")
+            update_assign_val.append(due_date)
+
+        # if concurrence not in [None, "None", 0, "null", "NULL"]:
+        #     update_assign_column.append("concurrence_person")
+        #     update_assign_val.append(concurrence)
+
+        where_qry = " unit_id = %s AND compliance_id = %s "
+        update_assign_val.extend([unit_id, compliance_id])
+        db.update(
+            tblAssignCompliances, update_assign_column,
+            update_assign_val, where_qry
+        )
+
+        if history_id is not None:
+            update_history = "UPDATE tbl_compliance_history SET  " + \
+                " completed_by = %s, approved_by = %s"
+            if concurrence not in [None, "None", "null", "Null", 0]:
+                update_history += " ,concurred_by = %s " % (concurrence)
+            where_qry = " WHERE IFNULL(approve_status, 0) != 1 " + \
+                " and compliance_id = %s  and unit_id = %s "
+
+            qry = update_history + where_qry
+            update_qry_val = [assignee, approval, compliance_id, unit_id]
+            db.execute(qry, update_qry_val)
 
     # if new_unit_settings is not None:
     #     update_user_settings(db, new_unit_settings)
