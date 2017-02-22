@@ -160,7 +160,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/risk-report",
-        "files/client/risk-report/risk-report.html",
+        "files/client/risk-report/risk_report.html",
         None, {}
     ),
     (
@@ -169,7 +169,7 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/statutory-notification-list",
+        "/statutory-notifications-list",
         "files/client/statutory-notifications-list/statutory-notifications-list.html",
         None, {}
     ),
