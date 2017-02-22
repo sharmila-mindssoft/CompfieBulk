@@ -48,6 +48,13 @@ def make_map_type(module, klass_name, validfun=is_numeric, is_optional=False):
 def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
     return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name}
 
+def make_widget_type():
+    # customized widget data from backend
+    return {'type': 'WIDGET_TYPE'}
+
+def make_reccord_type(module, klass_name):
+    return {'type': 'RECORD_TYPE', 'module_name': module, 'class_name': klass_name}
+
 api_params = {
     'request': {},
     'session_token': make_text_field(length=50),
@@ -282,7 +289,7 @@ api_params = {
     "month_to": make_int_field(),
     "level_1_s_name": make_string_field(),
     "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True),
-    "reassigned_history_list":make_vector_type_field(module="clientcore", klass_name="ReassignedHistoryReportSuccess", is_optional=True),
+    "reassigned_history_list": make_vector_type_field(module="clientcore", klass_name="ReassignedHistoryReportSuccess", is_optional=True),
     "act_name": make_string_field(),
     "from_date": make_text_field(length=20, is_optional=True),
     "to_date": make_text_field(length=20, is_optional=True),
@@ -295,9 +302,9 @@ api_params = {
     'new_user': make_text_field(is_optional=True),
     'old_user': make_text_field(is_optional=True),
     'remarks': make_text_field(length=500, is_optional=True),
-    'assigned_on': make_text_field(length=20, is_optional=True), 
+    'assigned_on': make_text_field(length=20, is_optional=True),
     'unit': make_text_field(is_optional=True),
-    'status_report_consolidated_list':make_vector_type_field(module="clientcore", klass_name="GetStatusReportConsolidatedSuccess", is_optional=True),
+    'status_report_consolidated_list': make_vector_type_field(module="clientcore", klass_name="GetStatusReportConsolidatedSuccess", is_optional=True),
     'status_name': make_string_field(),
     'compliance_activity_id': make_int_field(),
     'compliance_history_id': make_int_field(),
@@ -305,7 +312,7 @@ api_params = {
     'activity_on': make_text_field(length=20, is_optional=True),
     'uploaded_document': make_text_field(is_optional=True),
     'user_name': make_text_field(is_optional=True),
-    'statutory_settings_unit_Wise_list':make_vector_type_field(module="clientcore", klass_name="GetStatutorySettingsUnitWiseSuccess", is_optional=True),
+    'statutory_settings_unit_Wise_list': make_vector_type_field(module="clientcore", klass_name="GetStatutorySettingsUnitWiseSuccess", is_optional=True),
     'document_name': make_text_field(is_optional=True),
     "repeats_type_id": make_int_field(is_optional=True),
     "repeats_type": make_string_field(is_optional=True),
@@ -356,7 +363,9 @@ api_params = {
     "complied_count": make_int_field(length=10000),
     "delayed_compliance_count": make_int_field(),
     "inprogress_compliance_count": make_int_field(),
-    "not_complied_count": make_int_field(length=10000),
+    "complied_compliances_count": make_int_field(),
+    "total_compliances": make_int_field(),
+    "not_complied_count": make_int_field(length=100000),
     "year": make_text_field(),
     "compliance_status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "record_count": make_int_field(length="100000"),
@@ -365,6 +374,7 @@ api_params = {
     "drill_compliances": make_map_type_vector_type(module="dashboard", klass_name="Level1Compliance", validfun=allow_specialchar),
     "status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "ageing": make_text_field(),
+    "cat_name": make_text_field(is_optional=True),
     "es_chart_data": make_vector_type_field(module="dashboard", klass_name="EscalationData"),
     "years": make_vector_type_int(length=10000),
     "delayed": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
@@ -390,20 +400,36 @@ api_params = {
     "Above_90_days_count": make_int_field(length=10000),
     "not_complied_type": make_enum_type(module="clientcore", klass_name="NOT_COMPLIED_TYPE"),
     "applicability_status": make_enum_type(module="clientcore", klass_name="APPLICABILITY_STATUS"),
-    "drill_down_data": make_vector_type_field(module="dashboard", klass_name="ApplicableDrillDown"),
+    "r_drill_down_data": make_vector_type_field(module="dashboard", klass_name="ApplicableDrillDown"),
     "level1_statutory_name": make_text_field(),
     "ap_compliances": make_map_type(module="dashboard", klass_name="Compliance", validfun=allow_specialchar),
-    "format_file_list": make_vector_type_field(module="clientcore", klass_name="FileList"),
+    "format_file_list": make_vector_type_field(module="clientcore", klass_name="FileList", is_optional=True),
     "p_cons": make_text_field(is_optional=True),
     "download_url": make_text_field(is_optional=True),
     "t_drill_down_data": make_vector_type_field(module="dashboard", klass_name="TrendDrillDownData"),
-    "t_complainces": make_map_type(module="dashboard", klass_name="TrendCompliance"),
+    "t_compliances": make_map_type(module="dashboard", klass_name="TrendCompliance", validfun=allow_specialchar),
     "not_opted_count": make_int_field(length=10000),
     "unassign_count": make_int_field(length=10000),
     "rejected_count": make_int_field(length=10000),
     "not_complied_count": make_int_field(length=10000),
     "n_drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
-    'domain_score_card_list':make_vector_type_field(module="clientcore", klass_name="GetDomainScoreCardSuccess", is_optional=True),
+
+    "trend_data" : make_vector_type_field(module="dashboard", klass_name="TrendCompliedMap"),
+
+    "chart_title": make_text_field(),
+    "xaxis_name": make_text_field(),
+    "xaxis": make_vector_type_string(),
+    "yaxis_name": make_text_field(),
+    "yaxis": make_vector_type_string(),
+    "widget_data": make_widget_type(),
+
+    "business_groups": make_vector_type_field(module="clientcore", klass_name="ClientBusinessGroup"),
+    "legal_entities": make_vector_type_field(module="dashboard", klass_name="ClientLegalEntityInfo"),
+    "client_divisions": make_vector_type_field(module="clientcore", klass_name="ClientDivision"),
+    "client_categories": make_vector_type_field(module="clientcore", klass_name="Category"),
+    "client_users": make_vector_type_field(module="clientreport", klass_name="User"),
+
+    'domain_score_card_list': make_vector_type_field(module="clientcore", klass_name="GetDomainScoreCardSuccess", is_optional=True),
     "assigned_count": make_int_field(length=10000),
     "unassigned_count": make_int_field(length=10000),
     "units_wise_count": make_vector_type_field(module="clientcore", klass_name="GetDomainWiseUnitScoreCardSuccess", is_optional=True),
@@ -421,5 +447,36 @@ api_params = {
     "r_from": make_int_field(),
     "reassigned_compliance": make_vector_type_field(module="clienttransactions", klass_name="REASSIGNED_COMPLIANCE"),
 
+    "users": make_vector_type_field(module="clientcore", klass_name="LegalEntityUser"),
+    "assingee_data": make_vector_type_field(module="dashboard", klass_name="AssigneeChartData"),
+    "assignee_wise_details": make_vector_type_field(module="dashboard", klass_name="AssigneeWiseDetails"),
+    "domain_wise_details": make_vector_type_field(module="dashboard", klass_name="DomainWise"),
 
+    "reassigned_count": make_int_field(length=10000),
+    "year_wise_data": make_vector_type_field(module="dashboard", klass_name="YearWise"),
+    "sdelayed_compliance": make_reccord_type(module="dashboard", klass_name="DelayedCompliance"),
+    "reassigned_compliances": make_vector_type_field(module="dashboard", klass_name="RessignedCompliance", is_optional=True),
+
+    "reassigned_from": make_text_field(),
+    "start_date": make_text_field(),
+    "due_date": make_text_field(),
+    "reassigned_date": make_text_field(),
+    "completed_date": make_text_field(),
+
+    "description": make_text_field(),
+    "complied_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
+    "delayed_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
+    "inprogress_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
+    "not_complied_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
+    "assignee_wise_drill_down": make_reccord_type(module="dashboard", klass_name="AssigneeWiseCompliance"),
+    "assignee_id": make_int_field(),
+    "start_count": make_int_field(),
+    "w_id": make_int_field(),
+    "w_name": make_text_field(),
+    "active_status": make_bool_field(),
+    "width": make_text_field(),
+    "height": make_text_field(),
+    "pin_status": make_bool_field(),
+    "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo"),
+    "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList")
 }

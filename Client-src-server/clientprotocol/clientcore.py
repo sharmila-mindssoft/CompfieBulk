@@ -397,16 +397,13 @@ class COMPLIANCE_USER_TYPE(object):
 #
 
 class APPLICABILITY_STATUS(object):
-    # Applicable = "Applicable"
-    # NotApplicable = "Not Applicable"
-    # NotOpted = "Not Opted"
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Applicable", "Not Applicable", "Not Opted"]
+        return ["Not Complied", "Rejected", "Unassigned", "Not Opted"]
 
     def value(self):
         return self._value
@@ -1773,7 +1770,7 @@ class ClientDivision(object):
         division_name = data.get("div_name")
         legal_entity_id = data.get("le_id")
         business_group_id = data.get("bg_id")
-        return Division(
+        return ClientDivision(
             division_id, division_name, legal_entity_id, business_group_id
         )
 
@@ -1818,6 +1815,42 @@ class ClientCategory(object):
             "le_id": self.legal_entity_id,
             "bg_id": self.business_group_id,
         }
+
+class ClientCategory(object):
+    def __init__(
+        self, category_id, category_name, legal_entity_id, business_group_id, division_id
+    ):
+        self.category_id = category_id
+        self.category_name = category_name
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+        self.division_id = division_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "cat_id", "cat_name",
+                "le_id", "bg_id", "div_id"]
+        )
+        category_id = data.get("cat_id")
+        category_name = data.get("cat_name")
+        legal_entity_id = data.get("le_id")
+        business_group_id = data.get("bg_id")
+        division_id = data.get("div_id")
+        return ClientCategory(
+            category_id, category_name, legal_entity_id, business_group_id, division_id
+        )
+
+    def to_structure(self):
+        return {
+            "cat_id": self.category_id,
+            "cat_name": self.category_name,
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id,
+            "div_id": self.division_id,
+        }
+
 
 #
 # Unit

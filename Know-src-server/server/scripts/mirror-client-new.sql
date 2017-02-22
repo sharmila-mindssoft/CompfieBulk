@@ -248,6 +248,11 @@ CREATE TABLE `tbl_notifications_log` (
   `extra_details` longtext,
   `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE tbl_notifications_user_log(
+  `notification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `read_status` tinyint(4) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_service_providers` (
   `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
@@ -444,6 +449,7 @@ CREATE TABLE `tbl_compliance_activity_log` (
   `compliance_history_id` int(11) DEFAULT NULL,
   `activity_by` int(11) DEFAULT NULL,
   `activity_on` timestamp NULL DEFAULT NULL,
+  `action` varchar(500) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`compliance_activity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -452,10 +458,10 @@ CREATE TABLE `tbl_compliance_status_chart_unitwise` (
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
-  `complied` int(11) DEFAULT NULL,
-  `delayed` int(11) DEFAULT NULL,
-  `inprogress` int(11) DEFAULT NULL,
-  `overdue` int(11) DEFAULT NULL,
+  `complied_count` int(11) DEFAULT NULL,
+  `delayed_count` int(11) DEFAULT NULL,
+  `inprogress_count` int(11) DEFAULT NULL,
+  `overdue_count` int(11) DEFAULT NULL,
   `chart_year` int(11) DEFAULT NULL,
   `month_from` int(11) DEFAULT NULL,
   `month_to` int(11) DEFAULT NULL,
@@ -467,10 +473,10 @@ CREATE TABLE `tbl_compliance_status_chart_userwise` (
   `domain_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `complied` int(11) DEFAULT NULL,
-  `delayed` int(11) DEFAULT NULL,
-  `inprogress` int(11) DEFAULT NULL,
-  `overdue` int(11) DEFAULT NULL,
+  `complied_count` int(11) DEFAULT NULL,
+  `delayed_count` int(11) DEFAULT NULL,
+  `inprogress_count` int(11) DEFAULT NULL,
+  `overdue_count` int(11) DEFAULT NULL,
   `chart_year` int(11) DEFAULT NULL,
   `month_from` int(11) DEFAULT NULL,
   `month_to` int(11) DEFAULT NULL,

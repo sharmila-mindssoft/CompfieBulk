@@ -64,6 +64,15 @@ function initClientMirror() {
         return info;
     }
 
+    function getLEids() {
+        le_ids = []
+        le_data = getSelectedLegalEntity();
+        $.each(le_data, function(i,v) {
+            le_ids.push(v.le_id);
+        });
+        return le_ids;
+    }
+
     function updateUserInfo(response) {
         var info = getUserInfo();
         info.contact_no = response.contact_no;
@@ -187,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        /*alert(body.toSource());*/
+
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -195,7 +204,7 @@ function initClientMirror() {
             contentType: 'application/json',
             data: toJSON(body),
             success: function(data) {
-                console.log(data);
+                //console.log(data);
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -438,7 +447,7 @@ function initClientMirror() {
             'GetChartFilters',
             {}
         ];
-        var callerName = 'client_dashboard';
+        var callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
     }
     // function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
@@ -935,7 +944,7 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-    // Domain Score Card End 
+    // Domain Score Card End
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -1010,19 +1019,19 @@ function initClientMirror() {
             'GetAssigneewiseComplianesFilters',
             {}
         ];
-        callerName = 'client_dashboard';
+        callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
     }
 
     function getAssigneewiseComplianes(country_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, csv, callback) {
         var request = [
             'GetAssigneeWiseCompliancesChart', {
-                'country_id': country_id,
-                'business_group_id': business_group_id,
-                'legal_entity_id': legal_entity_id,
-                'division_id': division_id,
+                'c_id': country_id,
+                'bg_id': business_group_id,
+                'le_ids': legal_entity_id,
+                'div_id': division_id,
                 'unit_id': unit_id,
-                'user_id': user_id,
+                'usr_id': user_id,
                 'csv': csv
             }
         ];
@@ -1030,12 +1039,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, callback) {
+    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, legalEntityIds, callback) {
         var request = [
             'GetAssigneewiseYearwiseCompliances', {
-                'country_id': country_id,
-                'unit_id': unit_id,
-                'user_id': user_id
+                'c_id': country_id,
+                'u_id': unit_id,
+                'usr_id': user_id,
+                'le_ids': legalEntityIds,
+
             }
         ];
         callerName = 'client_dashboard';
@@ -1055,15 +1066,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, callback) {
+    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, legalEntityIds, callback) {
         var request = [
             'GetAssigneeWiseComplianceDrillDown', {
-                'country_id': country_id,
+                'c_id': country_id,
                 'assignee_id': assignee_id,
-                'domain_id': domain_id,
-                'year': year,
+                'd_id': domain_id,
+                'chart_year': year,
                 'unit_id': unit_id,
-                'start_count': start_count
+                'start_count': start_count,
+                'le_ids': legalEntityIds
             }
         ];
         callerName = 'client_dashboard';
@@ -1527,7 +1539,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    
+
     function statutoryDates(date, month, triggerBefore, repeatBy) {
         var statutoryDate = {};
         statutoryDate.statutory_date = date;
@@ -1680,289 +1692,6 @@ function initClientMirror() {
                 }
             }
         }
-    }
-    /* Compliance Approal */
-    function getComplianceApprovalList(start_count, callback) {
-        var request = [
-            'GetComplianceApprovalList',
-            { 'start_count': start_count }
-        ];
-        clientApiRequest('client_transaction', request, callback);
-    }
-
-    function getClientReportFilters(callback) {
-        var request = [
-            'GetClientReportFilters',
-            {}
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-
-
-    function approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
-        var request = [
-            'ApproveCompliance', {
-                'compliance_history_id': compliance_history_id,
-                'approval_status': compliance_approval_status,
-                'remarks': remarks,
-                'next_due_date': next_due_date,
-                'validity_date': validity_date
-            }
-        ];
-        callerName = 'client_transaction';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getChartFilters(callback) {
-        var request = [
-            'GetChartFilters',
-            {}
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-    // function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
-    //     var request = [
-    //         "GetComplianceStatusChart", {
-    //             "country_ids": countryIds,
-    //             "domain_ids": domainIds,
-    //             "filter_type": filterType,
-    //             "filter_ids": filterIds,
-    //             "from_date": fromDate,
-    //             "to_date": toDate,
-    //         }
-    function getComplianceStatusChartData(requestData, callback) {
-        var request = [
-            'GetComplianceStatusChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceStatusDrillDown(requestData, callback) {
-        var request = [
-            'GetComplianceStatusDrillDownData',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getEscalationChartData(requestData, callback) {
-        var request = [
-            'GetEscalationsChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getEscalationDrillDown(requestData, callback) {
-        var request = [
-            'GetEscalationsDrillDownData',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /* Trend Chart */
-    function getTrendChart(requestData, callback) {
-        var request = [
-            'GetTrendChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getTrendChartDrillDown(requestData, callback) {
-        var request = [
-            'GetTrendChartDrillDownData',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getNotCompliedData(requestData, callback) {
-        var request = [
-            'GetNotCompliedChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getNotCompliedDrillDown(requestData, callback) {
-        var request = [
-            'GetNotCompliedDrillDown',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceApplicabilityChart(requestData, callback) {
-        var request = [
-            'GetComplianceApplicabilityStatusChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceApplicabilityDrillDown(requestData, callback) {
-        var request = [
-            'GetComplianceApplicabilityStatusDrillDown',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-    /* Settings */
-    function getSettings(callback) {
-        var request = [
-            'GetSettings',
-            {}
-        ];
-        var callerName = 'client_admin_settings';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function updateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days, callback) {
-        var request = [
-            'UpdateSettings', {
-                'is_two_levels_of_approval': is_two_levels_of_approval,
-                'assignee_reminder_days': assignee_reminder_days,
-                'escalation_reminder_In_advance_days': escalation_reminder_In_advance_days,
-                'escalation_reminder_days': escalation_reminder_days
-            }
-        ];
-        var callerName = 'client_admin_settings';
-        clientApiRequest(callerName, request, callback);
-    }
-    /* Notifications */
-    function getNotifications(notification_type, start_count, callback) {
-        callerName = 'client_dashboard';
-        var request = [
-            'GetNotifications', {
-                'notification_type': notification_type,
-                'start_count': start_count
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function updateNotificationStatus(notification_id, has_read, callback) {
-        callerName = 'client_dashboard';
-        var request = [
-            'UpdateNotificationStatus', {
-                'notification_id': notification_id,
-                'has_read': has_read
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-    /* Get Compliance List*/
-    function getCurrentComplianceDetail(current_start_count, callback) {
-        callerName = 'client_user';
-        var request = [
-            'GetCurrentComplianceDetail',
-            { 'current_start_count': current_start_count }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getUpcomingComplianceDetail(upcoming_start_count, callback) {
-        callerName = 'client_user';
-        var request = [
-            'GetUpcomingComplianceDetail',
-            { 'upcoming_start_count': upcoming_start_count }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /*Statutory Notifications List*/
-    function getStatutoryNotificationsListFilters(callback) {
-        callerName = 'client_reports';
-        var request = [
-            'GetStatutoryNotificationsListFilters',
-            {}
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId, legalEntityId, divisionId, unitId, level1Id, fromdate, todate, csv, callback) {
-        callerName = 'client_reports';
-        var request = [
-            'GetStatutoryNotificationsListReport', {
-                'country_name': countryName,
-                'domain_name': domainName,
-                'business_group_id': businessGroupId,
-                'legal_entity_id': legalEntityId,
-                'division_id': divisionId,
-                'unit_id': unitId,
-                'level_1_statutory_name': level1Id,
-                'from_date': fromdate,
-                'to_date': todate,
-                'csv': csv
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-
-    function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
-        var request = [
-            'GetLoginTrace', {
-                'record_count': record_count,
-                'user_id': user_id,
-                'from_date': from_date,
-                'to_date': to_date
-            }
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceActivityReportFilters(callback) {
-        var request = [
-            'GetComplianceActivityReportFilters',
-            {}
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceActivityReportData(user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id, compliance_id, from_date, to_date, csv, callback) {
-        var request = [
-            'GetComplianceActivityReport', {
-                'user_type': user_type,
-                'user_id': user_id,
-                'country_id': country_id,
-                'domain_id': domain_id,
-                'level_1_statutory_name': level_1_statutory_name,
-                'unit_id': unit_id,
-                'compliance_id': compliance_id,
-                'from_date': from_date,
-                'to_date': to_date,
-                'csv': csv
-            }
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-    // Client Details Report
-    function getClientDetailsReportFilters(callback) {
-        var request = [
-            'GetClientDetailsReportFilters',
-            {}
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
     }
 
     function getAssigneeWiseCompliances(assignee, record_count, callback) {
@@ -2584,6 +2313,71 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    // Widget api call begin
+    function getUserWidgetData(callback) {
+        var request = [
+            "GetUserWidgetData", {}
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function SaveUserWidgetData(widget_info, callback) {
+        var request = [
+            "SaveWidgetData", {
+                "widget_info": widget_info
+            }
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetComplianceChart(callback){
+         var request = [
+            "GetComplianceChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetEscalationChart(callback){
+         var request = [
+            "GetEscalationChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetNotCompliedChart(callback){
+         var request = [
+            "GetNotCompliedChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetRiskChart(callback){
+         var request = [
+            "GetRiskChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetTrendChart(callback){
+         var request = [
+            "GetTrendChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    // Widget api call end
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2755,6 +2549,13 @@ function initClientMirror() {
         getReassignComplianceFilters: getReassignComplianceFilters,
         getReAssignComplianceUnits: getReAssignComplianceUnits,
         getReAssignComplianceForUnits: getReAssignComplianceForUnits,
+        getUserWidgetData: getUserWidgetData,
+        SaveUserWidgetData: SaveUserWidgetData,
+        getWidgetComplianceChart: getWidgetComplianceChart,
+        getWidgetEscalationChart: getWidgetEscalationChart,
+        getWidgetNotCompliedChart: getWidgetNotCompliedChart,
+        getWidgetRiskChart: getWidgetRiskChart,
+        getWidgetTrendChart: getWidgetTrendChart,
     };
 }
 

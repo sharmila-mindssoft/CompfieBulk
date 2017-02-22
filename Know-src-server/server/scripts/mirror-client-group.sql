@@ -298,6 +298,14 @@ CREATE TABLE `tbl_reminder_settings` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY(`client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_widget_settings`(
+ `user_id` int(11) PRIMARY KEY NOT NULL,
+  `widget_data` TEXT DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_widget_forms`(
+  `form_id` int(11) PRIMARY KEY NOT NULL,
+  `form_name` TEXT NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
@@ -538,3 +546,13 @@ INSERT INTO tbl_session_types VALUES(4, "blackberry");
 INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");
+
+-- tbl_widget_forms
+INSERT INTO tbl_widget_forms VALUES(1, "Compliance Status");
+INSERT INTO tbl_widget_forms VALUES(2, "Escalations");
+INSERT INTO tbl_widget_forms VALUES(3, "Not Complied");
+INSERT INTO tbl_widget_forms VALUES(4, "Trend Chart");
+INSERT INTO tbl_widget_forms VALUES(5, "Risk Chart");
+INSERT INTO tbl_widget_forms VALUES(6, "User Scorecard");
+INSERT INTO tbl_widget_forms VALUES(7, "Domain Scorecard");
+INSERT INTO tbl_widget_forms VALUES(8, "Calendar View");

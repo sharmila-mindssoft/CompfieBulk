@@ -377,6 +377,8 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
             assert _class_name is not None
             val = parse_EnumType(_module_name, _class_name, val)
 
+        elif _type == "WIDGET_TYPE":
+            val = val
         else:
             val = parse_values(field_name, param, val, "parse")
         if(
@@ -406,7 +408,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        print param, val, field_name
+
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 
