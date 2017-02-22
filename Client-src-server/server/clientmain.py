@@ -291,7 +291,6 @@ class API(object):
             actual_data = data[1]
 
             # print company_id
-            print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
             )
@@ -377,10 +376,6 @@ class API(object):
                 if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
                     return respond(clientlogin.InvalidCurrentPassword())
 
-        # print '*' * 20
-        # print session_user, client_id, session_category
-        # print '*' * 20
-
         # request process in controller
         if is_group :
             print "Group DB"
@@ -431,84 +426,82 @@ class API(object):
 
     def handle_global_api_request(self, unbound_method, request_data_type, is_group, need_category):
         le_ids = []
-        self.performed_les = []
-        self.performed_response = None
 
         def respond(response_data):
             return self._send_response(response_data, 200)
 
-        def merge_data(data, request_data):
-            print "merge_data"
-            print self.performed_response
-            if self.performed_response is None :
-                self.performed_response = data
+        performed_les = []
+        # global performed_response
+        performed_response = None
+
+        def merge_data(p_response, data, request_data):
+            if p_response is None :
+                p_response = data
             else :
                 # merge chart from the processed LE database
                 if type(request_data.request) is dashboard.GetComplianceStatusChart :
-                    self.performed_response.chart_data.extend(data.chart_data)
+                    p_response.chart_data.extend(data.chart_data)
 
                 elif type(request_data.request) is dashboard.GetEscalationsChart :
-                    self.performed_response.chart_data.extend(data.chart_data)
+                    p_response.chart_data.extend(data.chart_data)
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
 
-                    self.performed_response.T_0_to_30_days_count += data.T_0_to_30_days_count
-                    self.performed_response.T_31_to_60_days_count += data.T_31_to_60_days_count
-                    self.performed_response.T_61_to_90_days_count += data.T_61_to_90_days_count
-                    self.performed_response.Above_90_days_count += data.Above_90_days_count
+                    p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
+                    p_response.T_31_to_60_days_count += data.T_31_to_60_days_count
+                    p_response.T_61_to_90_days_count += data.T_61_to_90_days_count
+                    p_response.Above_90_days_count += data.Above_90_days_count
 
                 elif type(request_data.request) is dashboard.GetTrendChart :
-                    self.performed_response.data.extend(data.data)
+                    p_response.data.extend(data.data)
 
                 elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusChart :
-                    self.performed_response.unassign_count += data.unassign_count
-                    self.performed_response.not_opted_count += data.not_opted_count
-                    self.performed_response.rejected_count += data.rejected_count
-                    self.performed_response.not_complied_count += data.not_complied_count
+                    p_response.unassign_count += data.unassign_count
+                    p_response.not_opted_count += data.not_opted_count
+                    p_response.rejected_count += data.rejected_count
+                    p_response.not_complied_count += data.not_complied_count
 
                 # merge drilldown from the processed LE database
                 elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
-                    self.performed_response.drill_down_data.extend(data.drill_down_data)
+                    p_response.drill_down_data.extend(data.drill_down_data)
 
                 elif type(request_data.request) is dashboard.GetEscalationsDrillDownData :
-                    self.performed_response.delayed.extend(data.delayed)
-                    self.performed_response.not_complied.extend(data.not_complied)
+                    p_response.delayed.extend(data.delayed)
+                    p_response.not_complied.extend(data.not_complied)
 
                 elif type(request_data.request) is dashboard.GetNotCompliedDrillDown :
-                    self.performed_response.drill_down_data.extend(data.drill_down_data)
+                    p_response.drill_down_data.extend(data.drill_down_data)
 
                 elif type(request_data.request) is dashboard.GetTrendChartDrillDownData :
-                    self.performed_response.drill_down_data.extend(data.drill_down_data)
+                    p_response.drill_down_data.extend(data.drill_down_data)
 
                 elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusDrillDown :
-                    self.performed_response.drill_down_data.extend(data.drill_down_data)
+                    p_response.drill_down_data.extend(data.drill_down_data)
 
                 elif type(request_data.request) is widgetprotocol.GetComplianceChart :
-                    self.performed_response = controller.merge_compliance_chart_widget(self.performed_response, data)
+                    p_response = controller.merge_compliance_chart_widget(p_response, data)
 
                 elif type(request_data.request) is widgetprotocol.GetEscalationChart :
-                    self.performed_response = controller.merge_escalation_chart_widget(self.performed_response, data)
+                    p_response = controller.merge_escalation_chart_widget(p_response, data)
+                else :
+                    pass
+            return p_response
 
         try :
             # print "try"
             request_data, company_id = self._parse_request(request_data_type, is_group)
             session = request_data.session_token
             session_user, client_id, session_category = self._validate_user_session(session)
-            # print session_user, client_id, session_category
-            # print request_data.request
-            # print " ------------ &&&&& "
             if hasattr(request_data.request, "legal_entity_ids") :
                 le_ids = request_data.request.legal_entity_ids
-                print "-------"
-                print le_ids
-                self.performed_les = []
-                self.performed_response = None
+                performed_les = []
+                performed_response = None
 
                 for le in le_ids :
                     db_cons = self._le_databases.get(le)
 
                     if db_cons is None:
-                        self.performed_les.append(le)
+                        performed_les.append(le)
                         print 'connection pool is none'
                         continue
                         # return self._send_response("Company not found", 404)
@@ -516,22 +509,20 @@ class API(object):
                     _db_con = db_cons.get_connection()
                     _db = Database(_db_con)
                     if _db_con is None:
-                        self.performed_les.append(le)
+                        performed_les.append(le)
                         continue
                         # return self._send_response("Company not found", 404)
 
                     _db.begin()
                     try:
-                        print "begin process"
                         response_data = unbound_method(
                             self, request_data, _db, session_user, session_category
                         )
-                        print response_data
 
                         _db.commit()
                         _db_con.close()
-                        self.performed_les.append(le)
-                        merge_data(response_data, request_data)
+                        performed_les.append(le)
+                        performed_response = merge_data(performed_response, response_data, request_data)
 
                     except Exception, e:
                         print " --------------"
@@ -543,13 +534,11 @@ class API(object):
                         if str(e).find("expected a") is False :
                             _db.rollback()
                             _db_con.close()
-                        self.performed_response = str(e)
+                        performed_response = str(e)
                         # return self._send_response(str(e), 400)
 
-                print len(self.performed_les)
-                print self.performed_les
-                if len(le_ids) == len(self.performed_les) :
-                    return respond(self.performed_response)
+                if len(le_ids) == len(performed_les) :
+                    return respond(performed_response)
 
             else :
                 print "le-ids not found"

@@ -64,5 +64,6 @@ def merge_escalation_chart_widget(data, new_data):
         idx = xnames.index(not_comp["year"])
         old_notcomplied[idx]["y"] += not_comp["y"]
 
-    data.chart_data = [old_delayed, old_notcomplied]
+    data.chart_data[0]["data"] = old_delayed
+    data.chart_data[1]["data"] = old_notcomplied
     return data
