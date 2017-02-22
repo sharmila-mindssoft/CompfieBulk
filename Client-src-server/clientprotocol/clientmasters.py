@@ -212,18 +212,18 @@ class ChangeServiceProviderStatus(Request):
 
 ########################################################
 # Get User Management List
-# class GetUserManagementList(Request):
-#     def __init__(self):
-#         pass
+class UserManagementPrerequisite(Request):
+    def __init__(self):
+        pass
 
-#     @staticmethod
-#     def parse_inner_structure(data):
-#         data = parse_dictionary(data)
-#         return GetUserManagementList()
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UserManagementPrerequisite()
 
-#     def to_inner_structure(self):
-#         return {
-#         }
+    def to_inner_structure(self):
+        return {
+        }
 ########################################################
 
 class GetUserPrivileges(Request):
@@ -322,7 +322,8 @@ class GetClientUsers(Request):
 class SaveClientUser(Request):
     def __init__(self, user_category, user_group_id, email_id, employee_name,
         employee_code, contact_no, mobile_no, user_level, seating_unit_id, 
-        is_service_provider, service_provider_id, user_domain_ids, user_unit_ids):       
+        is_service_provider, service_provider_id, user_domain_ids, user_unit_ids,
+        user_entity_ids):       
         self.user_category = user_category
         self.user_group_id = user_group_id
         self.email_id = email_id
@@ -336,11 +337,12 @@ class SaveClientUser(Request):
         self.service_provider_id = service_provider_id
         self.user_domain_ids = user_domain_ids
         self.user_unit_ids =user_unit_ids
+        self.user_entity_ids =user_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):        
         data = parse_dictionary(data, ["u_cat_id", "u_g_id", "email_id", "emp_name", "emp_code",
-        "cont_no", "mob_no", "u_level", "s_unit", "is_sp", "sp_id", "user_domain_ids", "user_unit_ids"])
+        "cont_no", "mob_no", "u_level", "s_unit", "is_sp", "sp_id", "user_domain_ids", "user_unit_ids", "user_entity_ids"])
         user_category = data.get("u_cat_id")
         user_group_id = data.get("u_g_id")
         email_id = data.get("email_id")
@@ -354,10 +356,10 @@ class SaveClientUser(Request):
         service_provider_id = data.get("sp_id")
         user_domain_ids = data.get("user_domain_ids")
         user_unit_ids = data.get("user_unit_ids")
+        user_entity_ids = data.get("user_entity_ids")
         
         return SaveClientUser(user_category, user_group_id, email_id, employee_name, employee_code, contact_no, mobile_no, user_level,
-        seating_unit_id, is_service_provider, service_provider_id, 
-        user_domain_ids, user_unit_ids)
+                              seating_unit_id, is_service_provider, service_provider_id, user_domain_ids, user_unit_ids, user_entity_ids)
 
     def to_inner_structure(self):
         return {
@@ -374,6 +376,7 @@ class SaveClientUser(Request):
             "service_provider_id" : self.service_provider_id,
             "user_domain_ids" : self.user_domain_ids,
             "user_unit_ids" : self.user_unit_ids,
+            "user_entity_ids" : self.user_entity_ids,
         }
 # --------------------------------------------------------------------------------------------------
 class UpdateClientUser(Request):
@@ -654,7 +657,8 @@ def _init_Request_class_map():
         GetUserPrivileges, SaveUserPrivileges, UpdateUserPrivileges,
         ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser,
         UpdateClientUserStatus, GetUnits, CloseUnit, GetAuditTrails,
-        GetUnitClosureData, SaveUnitClosureData, GetUnitClosureUnitData
+        GetUnitClosureData, SaveUnitClosureData, GetUnitClosureUnitData,
+        UserManagementPrerequisite
     ]
     class_map = {}
     for c in classes:
@@ -719,7 +723,9 @@ class SaveServiceProviderSuccess(Response):
     def to_inner_structure(self):
         return {
         }
-
+#################################################################
+# Service Provider Short Name + Service Provider Name Exists
+#################################################################
 class ServiceProviderNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -771,7 +777,62 @@ class ChangeServiceProviderStatusSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+##############################################################################
+# User Management Add - Prerequisite
+##############################################################################
+class GetUserManagementPrerequisiteSuccess(Response):
+    def __init__(self, user_category, user_group, business_group,
+                 legal_entity, group_division, group_category,
+                 legal_Domains, legal_units):
+        self.user_category = user_category
+        self.user_group = user_group
+        self.business_group = business_group
+        self.legal_entity = legal_entity
+        self.group_division = group_division
+        self.group_category = group_category
+        self.legal_Domains = legal_Domains
+        self.legal_units = legal_units
 
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["um_user_category", "um_user_group",
+                                       "um_business_group", "um_legal_entity",
+                                       "um_group_division", "um_group_category",
+                                       "um_legal_domain", "um_legal_units"])
+        user_category = data.get("um_user_category")
+        user_group = data.get("um_user_group")
+        business_group = data.get("um_business_group")
+        legal_entity = data.get("um_legal_entity")
+        group_division = data.get("um_group_division")
+        group_category = data.get("um_group_category")
+        legal_Domains = data.get("um_legal_domain")
+        legal_units = data.get("um_legal_units")
+
+        user_category = user_category
+        user_group = user_group
+        business_group = business_group
+        legal_entity = legal_entity
+        group_division = group_division
+        group_category = group_category
+        legal_Domains = legal_Domains
+        legal_units = legal_units
+        return GetUserManagementPrerequisiteSuccess(user_category, user_group,
+                                                    business_group, legal_entity,
+                                                    group_division, group_category,
+                                                    legal_Domains, legal_units)
+
+    def to_inner_structure(self):
+        return {
+            "um_user_category": self.user_category,
+            "um_user_group": self.user_group,
+            "um_business_group": self.business_group,
+            "um_legal_entity": self.legal_entity,
+            "um_group_division": self.group_division,
+            "um_group_category": self.group_category,
+            "um_legal_domain": self.legal_Domains,
+            "um_legal_units": self.legal_units
+        }
+##############################################################################
 class GetUserPrivilegesSuccess(Response):
     def __init__(self, forms, user_groups, user_category):
         self.forms = forms
@@ -1314,7 +1375,8 @@ def _init_Response_class_map():
         InvalidServiceProviderId, EmailIdAlreadyExists, CannotChangePrimaryAdminStatus ,
         CannotPromoteServiceProvider, ReassignCompliancesBeforeDeactivate,
         CannotChangeStatusOfContractExpiredSP, CannotCloseUnit, GetUnitClosureUnitDataSuccess,
-        GetUnitClosureDataSuccess, SaveUnitClosureSuccess, InvalidUnitId
+        GetUnitClosureDataSuccess, SaveUnitClosureSuccess, InvalidUnitId,
+        GetUserManagementPrerequisiteSuccess
     ]
     class_map = {}
     for c in classes:
