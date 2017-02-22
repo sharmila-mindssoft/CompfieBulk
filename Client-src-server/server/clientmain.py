@@ -2,22 +2,17 @@ import os
 import json
 import time
 import traceback
-# from tornado.web import StaticFileHandler
-# from tornado.httpclient import AsyncHTTPClient
 import mysql.connector.pooling
 from flask import Flask, request, Response
 
 from functools import wraps
 
-# from basics.webserver import WebServer
-# from basics.ioloop import IOLoop
 from clientprotocol import (
     clientadminsettings, clientmasters, clientreport,
     clienttransactions, dashboard,
     clientlogin, general, clientuser, clientmobile,
     widgetprotocol
 )
-# from server.clientdatabase import ClientDatabase
 from server.dbase import Database
 import clientcontroller as controller
 import mobilecontroller as mobilecontroller
@@ -31,16 +26,6 @@ import logger
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
-
-#
-# cors_handler
-#
-def cors_handler(response):
-    response.set_header("Access-Control-Allow-Origin", "*")
-    response.set_header("Access-Control-Allow-Headers", "Content-Type")
-    response.set_header("Access-Control-Allow-Methods", "POST")
-    response.set_status(204)
-    response.send("")
 
 
 #
@@ -79,10 +64,8 @@ class API(object):
         address,
         knowledge_server_address,
     ):
-        # self._io_loop = io_loop
         self._address = address
         self._knowledge_server_address = knowledge_server_address
-        # self._http_client = http_client
         self._group_databases = {}
         self._le_databases = {}
         self._replication_managers_for_group = {}
@@ -140,8 +123,6 @@ class API(object):
         )
 
     def server_added(self, servers):
-        # server added should not be called in timeout function , pending : need to update from knowledge server.
-        # print "**" * 100
         self._group_databases = {}
         self._le_databases = {}
         self._replication_managers_for_group = {}
@@ -188,11 +169,6 @@ class API(object):
                                 logger.logClient("error", "clientmain.py-le_database-added", e)
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
-
-            # print "after connection created"
-            # print self._group_databases
-            # print self._le_databases
-            # After database connection client poll for replication
 
             def client_added(clients):
                 for c, client in clients.iteritems():
@@ -323,6 +299,7 @@ class API(object):
                 company_id = request_data.request.legal_entity_id
 
         except Exception, e:
+            print e
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
 
@@ -461,6 +438,8 @@ class API(object):
             return self._send_response(response_data, 200)
 
         def merge_data(data, request_data):
+            print "merge_data"
+            print self.performed_response
             if self.performed_response is None :
                 self.performed_response = data
             else :
@@ -504,6 +483,9 @@ class API(object):
                 elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusDrillDown :
                     self.performed_response.drill_down_data.extend(data.drill_down_data)
 
+                elif type(request_data.request) is widgetprotocol.GetComplianceChart :
+                    self.performed_response = controller.merge_compliance_chart_widget(self.performed_response, data)
+
         try :
             # print "try"
             request_data, company_id = self._parse_request(request_data_type, is_group)
@@ -516,20 +498,24 @@ class API(object):
                 le_ids = request_data.request.legal_entity_ids
                 print "-------"
                 print le_ids
+                self.performed_les = []
+                self.performed_response = None
 
                 for le in le_ids :
                     db_cons = self._le_databases.get(le)
 
                     if db_cons is None:
+                        self.performed_les.append(le)
                         print 'connection pool is none'
-                        # continue
-                        self._send_response("Company not found", 404)
+                        continue
+                        # return self._send_response("Company not found", 404)
 
                     _db_con = db_cons.get_connection()
                     _db = Database(_db_con)
                     if _db_con is None:
+                        self.performed_les.append(le)
                         continue
-                        # self._send_response("Company not found", 404)
+                        # return self._send_response("Company not found", 404)
 
                     _db.begin()
                     try:
@@ -557,6 +543,8 @@ class API(object):
                         self.performed_response = str(e)
                         # return self._send_response(str(e), 400)
 
+                print len(self.performed_les)
+                print self.performed_les
                 if len(le_ids) == len(self.performed_les) :
                     return respond(self.performed_response)
 
@@ -565,6 +553,7 @@ class API(object):
                 return self._send_response("le-ids not found", 400)
 
         except Exception, e :
+            print(traceback.format_exc())
             return self._send_response(str(e), 400)
 
     @api_request(clientlogin.Request, need_client_id=True, is_group=True)
@@ -623,25 +612,12 @@ def handle_isalive():
 #
 def run_server(address, knowledge_server_address):
     ip, port = address
-    # io_loop = IOLoop()
 
     def delay_initialize():
-        # http_client = AsyncHTTPClient(
-        #     io_loop.inner(),
-        #     max_clients=1000
-        # )
-
-        # web_server = WebServer(io_loop)
-        # src_server_path = os.path.join(ROOT_PATH, "Src-server")
-        # server_path = os.path.join(src_server_path, "server")
-        # client_docs_path = os.path.join(server_path, "clientdocuments")
-        # exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
 
         api = API(
-            # io_loop,
             address,
             knowledge_server_address,
-            # http_client
         )
 
         api_urls_and_handlers = [
@@ -660,24 +636,10 @@ def run_server(address, knowledge_server_address):
             # (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
-            # web_server.url(url, POST=handler, OPTIONS=cors_handler)
             app.add_url_rule(url, view_func=handler, methods=['POST'])
 
-        # web_server.low_level_url(
-        #     r"/client/client_documents/(.*)",
-        #     StaticFileHandler,
-        #     dict(path=client_docs_path)
-        # )
-
-        # web_server.low_level_url(
-        #     r"/download/csv/(.*)", StaticFileHandler,
-        #     dict(path=exported_reports_path)
-        # )
         print "Listening at: %s:%s" % (ip, port)
-        # web_server.start(port, backlog=1000)
 
-    # io_loop.add_callback(delay_initialize)
-    # io_loop.run()
     delay_initialize()
     settings = {
         "threaded": True
