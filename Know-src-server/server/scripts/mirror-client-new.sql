@@ -388,7 +388,6 @@ CREATE TABLE `tbl_assign_compliances` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_reassigned_compliances_history` (
   `reassign_history_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `compliance_id` int(11) DEFAULT NULL,
