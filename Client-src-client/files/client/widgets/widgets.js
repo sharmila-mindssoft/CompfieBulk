@@ -114,9 +114,7 @@ function updateComplianceStatusStackBarChart(data, id) {
 //
 // Escalation chart
 //
-function updateEscalationChart(data) {
-  $('.chart-container').show();
-  data = prepareEscalationChartdata(data);
+function updateEscalationChart(data, id) {  
   xAxis = data[0];
   chartDataSeries = data[1];
   chartTitle = data[2];
@@ -127,7 +125,7 @@ function updateEscalationChart(data) {
     ],
     chart: {
       type: 'column',
-      renderTo: 'status-container'
+      renderTo: 'cardbox'+id
     },
     title: { text: chartTitle },
     credits: { enabled: false },
@@ -157,10 +155,10 @@ function updateEscalationChart(data) {
     },
     series: chartDataSeries
   });
-  $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
-    var year = this.textContent || this.innerText;
-    loadEscalationDrillDown(year);  // setChart(value);
-  });
+  // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+  //   var year = this.textContent || this.innerText;
+  //   loadEscalationDrillDown(year);  // setChart(value);
+  // });
 }
 //
 // Not complied
@@ -354,8 +352,8 @@ function loadComplianceStatusChart(data, id){
   updateComplianceStatusStackBarChart(data, id);
 }
 
-function loadEscalationChart(){
-
+function loadEscalationChart(data, id){
+  updateEscalationChart(data, id)
 }
 
 function loadNotCompliedChart(){
