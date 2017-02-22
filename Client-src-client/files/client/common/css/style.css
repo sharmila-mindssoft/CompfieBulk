@@ -898,3 +898,6 @@ button.btn-success {
     color: #f7f9fa !important;
     vertical-align: middle;
 }
+.compliance_count_assignee {
+  clear: both;
+}

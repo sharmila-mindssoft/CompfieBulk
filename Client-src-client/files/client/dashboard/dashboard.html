@@ -44,7 +44,7 @@
       <!-- Page-Title -->
       <div class="row">
         <div class="col-sm-12 h4-title">
-          <h4 class="page-title pull-left">Compliance Status </h4>
+          <h4 class="page-title pull-left"></h4>
     		  <div class="pull-right">
     		    <span class="contract_timer">Contract Renewal: 20 Days Left</span>
             <a href="javascript:void(0);" class="btn btn-primary btn-trans" title="Export">
@@ -207,8 +207,8 @@
                         <div class="col-sm-12">
                             <center>
                                 <div class="form-group">
-                                    <button class="btn btn-primary waves-effect waves-light" type="button"  id="assigneeWiseShow" onclick="showFiltersResults(false)"  > Show </button>
-                                    <button class="btn btn-info waves-effect waves-light" type="button" onclick="showFiltersResults(true);"> Export </button>
+                                  <button class="btn btn-primary waves-effect waves-light" type="button"  id="assigneeWiseShow" onclick="showFiltersResults(false)"  > Show </button>
+                                  <button class="btn btn-info waves-effect waves-light" type="button" onclick="showFiltersResults(true);"> Export </button>
                                 </div>
                             </center>
                         </div>
@@ -218,7 +218,16 @@
                   <div class="text-center">
                     <button class="btn btn-info text-center" id="pagination" onclick="showmorerecords();">Show more records</button>
                   </div>
+                   <div class="text-center">
+                  <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination-assignee" onclick="getShowmoreData()">
+                  <p class="compliance_count_assignee"></p>
+
                 </div>
+                </div>
+                <div class="card-box clearfix assignee-wise">
+
+                </div>
+
               </div>
             </div>
           </div>
@@ -666,32 +675,231 @@
       </div>
     </div>
     <!-- Assignee wise compliance-->
-    <div class="report-container-inner">
-      
-      </div>                
-       <table style="border:1px solid #ddd;" class="table-assignee-wise-compliance-list" >
-          <tr >
-            <th width="5%" align="center">#</th>
-            <th width="25%" align="left">Domain</th>
-            <th width="10%" align="center">Total</th>
-            <th width="10%" align="center">Complied</th>
-            <th width="10%" align="center">Delayed</th>
-            <th width="10%" align="center">In progress</th>
-            <th width="10%" align="center">Not complied</th>
-            <th style="padding-right:10px;" width="5%"></th>
+    <div class="report-container-inner">             
+       <table class="table-assignee-wise-compliance-list table dt-responsive nowrap highlight" >
+       <thead>
+        <tr >
+          <th width="5%" align="center">#</th>
+          <th width="25%" align="left">Domain</th>
+          <th width="10%" align="center">Total</th>
+          <th width="10%" align="center">Complied</th>
+          <th width="10%" align="center">Delayed</th>
+          <th width="10%" align="center">In progress</th>
+          <th width="10%" align="center">Not complied</th>
+          <th style="padding-right:10px;" width="5%"></th>
+        </tr>
+        </thead>
+      <!--   <tr style="background-color:#fff;">
+          <td width="4%" align="center"></td>
+          <td width="15%" align="left"><input type="text"  class="filter-text-box js-filter"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td width="10%" align="center"></td>
+          <td></td>
+        </tr> -->
+        <tbody class="tbody-assignee-wise-compliance-list"></tbody>
+      </table>
+    </div>
+     <div class="assignee-wise-compliance-list">
+      <table>
+        <tr class="unitHeading bg-lightdark">
+        <td colspan="8" class="unit-name">
+        </td>
+      </tr>
+      <tr align="left" class="userHeading" >
+        <td align="left" colspan="8"><a class="c-pointer assignee-name-for-popup"></a></td>
+      </tr>
+      <tr align="center" class="usecom1-tab assignee-row-list"  >
+        <td class="sno"></td>
+        <td align="left" class="level1value"></td>
+        <td class="total-count" align="center"></td>
+        <td class="complied-count" align="center"></td>
+        <td class="delayed-count" align="center"></td>
+        <td class="inprogress-count" align="center"></td>
+        <td class="not-complied-count" align="center"></td>
+        <td class="open-details-list" align="center" >
+          <i class="fa fa-chevron-right pull-right c-pointer"></i>
+        </td>
+      </tr>
+      </table>
+      <table class="year-wise-compliance-list-popup">
+        <tr class="tablerow assign-wise-compliance-details">
+          <td align="center" class="popup-sno"></td>
+          <td align="left" class="popup-year-val"></td>
+          <td align="center" class="popup-total-count"></td>
+          <td align="center" class="popup-complied-count"></td>
+          <td align="center" class="popup-delayed-count"></td>
+          <td align="center" class="popup-inprogress-count"></td>
+          <td align="center" class="popup-not-complied-count"></td>
+          <td class="popup-click-drilldown"><i class="fa fa-chevron-right pull-right"></i></td>
+        </tr>
+      </table>
+    </div>
+    <div id="year-modal" class="modal-demo box-width-700">
+      <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+      </span>
+      <h4 class="custom-modal-title p-t-10 p-b-10 year-heading"> </h4>
+
+      <div class="custom-modal-text">      
+        <div class="panel-group text-left m-b-10 tbody-legal-panel-change" >
+        <div class="">
+         <table class="modaltable table dt-responsive nowrap" width="100%">
+         <thead>
+          <tr>
+          <th width="5%" align="center">#</th>
+          <th width="15%" align="left">Year</th>
+          <th width="12%" align="center">Total</th>
+          <th width="12%" align="center">Complied</th>
+          <th width="12%" align="center">Delayed</th>
+          <th width="12%" align="center">In progress</th>
+          <th width="13%" align="center">Not complied</th>
+          <th width="5%"></th>
           </tr>
-          <tr style="background-color:#fff;">
-            <td width="4%" align="center"></td>
-            <td width="15%" align="left"><input type="text"  class="filter-text-box js-filter"></td>
-            <td width="10%" align="center"></td>
-            <td width="10%" align="center"></td>
-            <td width="10%" align="center"></td>
-            <td width="10%" align="center"></td>
-            <td width="10%" align="center"></td>
-            <td></td>
+          </thead>
+          <tbody class="tbody-popup-list">
+          </tbody>
+          
+          </table>
+          </div>
+        </div>
+        <div class="clear"></div>
+       </div>
+    </div>
+    <div class="assignee-wise-accordian-list">
+      <div class="panel-group col-lg-12" id="accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel panel-default bx-shadow-none">
+              <div class="panel-heading p-0" role="tab" id="headingOne">
+                  <h4 class="panel-title">
+                      
+                <a role="button" data-toggle="collapse"
+                    data-parent="#accordion" 
+                    aria-expanded="false" 
+                    class="collapsed">  Status: <span class="comp-list-status"></span> </a>
+                  </h4>
+              </div>
+              <div id="" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                  <div class="panel-body no-padding">
+                    <div class="dataTable_wrapper top-lightborder">
+                      <table class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                        <thead>
+                          <tr>
+                            <th width="1%">#</th>
+                            <th width="15%">Compliance Task</th>
+                            <th width="10%">Start Date</th>
+                            <th width="10%">Actual Due Date</th>
+                            <th width="10%">Date of Completion</th>
+                          </tr>
+                        </thead>
+                        <tbody class="tbody-compliance-details">
+                          
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+    <div class="compliance-details-list">
+      <div class="filterHeader">        
+        <div class="col-sm-4">
+            <div class="form-group m-b-0">
+                <label class="col-sm-4 text-right">User: </label>
+                <label class="col-sm-8 comp-list-user"></label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group m-b-0">
+                <label class="col-sm-4 text-right">Domain: </label>
+                <label class="col-sm-8 comp-list-filter-domain"></label>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="form-group m-b-0">
+                <label class="col-sm-4 text-right">Year: </label>
+                <label class="col-sm-8 comp-list-year"></label>
+            </div>
+        </div>
+      </div>
+    <table>
+      <!-- <tr align="left" class="rightside comp-list-statusheading">
+        <th colspan="6" style="background-color:#eae8e8; color:#000000; font-size: 0.813em;font-weight: bold;" width="95%">Status: <abbr class="comp-list-status"></span><abbr><img src="/images/chevron_black_down.png"></span></th>
+      </tr> -->
+     <!--   <thead class="comp-list-heading">
+        <tr>
+          <th width="1%">#</th>
+          <th width="15%">Compliance Task</th>
+          <th width="10%">Start Date</th>
+          <th width="10%">Actual Due Date</th>
+          <th width="10%">Date of Completion</th>
+        </tr>
+      </thead> -->
+      <!-- <tr align="left" style="background-color:#DBDBDB; color:#000000; font-size: 1em;font-weight: bold;" class="comp-list-heading">
+        <td width="5%" align="center">#</th>
+        <td width="45%">Compliance</th>
+        <td width="15%">Start date</th>
+        <td width="15%">Actual due date</th>
+        <td width="15%" colspan="2">Date of completion</th>
+      </tr> -->
+      <tr class="comp-list-filter-unitname bg-lightdark">
+        <td colspan="5" class="comp-list-unitname"> <span class="pull-left"> </span> </td>
+      </tr>
+      <tr align="left" class="bg-lightdark comp-list-level1" >
+        <th  colspan="5"> <span class="comp-list-level1-val"> </span> </th>
+      </tr>
+      <tr class="comp-list-tablerowlist">
+        <td align="center" class="comp-list-sno"></td>
+        <td class="comp-list-compliance"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i> </td>
+        <td class="comp-list-startdate"></td>
+        <td class="comp-list-duedate"></td>
+        <td class="comp-list-completiondate" colspan="2"></td>
+        </tr>
+        <tr class="comp-list-delayed-row-list" >
+          <td align="center" class="comp-delayed-sno"></td>
+          <td align="left" class="comp-delayed-compliance"></td>
+          <td align="left" class="comp-delayed-reassigned-from"></td>
+          <td align="center" class="comp-delayed-startdate"></td>
+          <td align="center" class="comp-delayed-duedate"></td>
+          <td align="center" class="comp-delayed-reassigned-date"></td>
+          <td align="center" class="comp-delayed-completed-date"></td>
+        </tr>
+      </table>
+
+   <!--  <div id="year-modal" class="modal-demo box-width-700">
+      <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+      </span>
+      <h4 class="custom-modal-title p-t-10 p-b-10"> </h4>
+       <div class="content">
+          <div>
+          <header>
+            <h1 class="year-heading"> </h1>
+          </header>
+          <section>
+          <p style="font-size:0.8em; padding-top:10px;">
+          <table class="modaltable" width="100%">
+          <tr style="background-color:#DBDBDB;font-size: 0.813em;font-weight: bold; padding:5px 0px; margin-bottom:10px; ">
+          <th width="5%" align="center">#</th>
+          <th width="15%" align="left">Year</th>
+          <th width="12%" align="center">Total</th>
+          <th width="12%" align="center">Complied</th>
+          <th width="12%" align="center">Delayed</th>
+          <th width="12%" align="center">In progress</th>
+          <th width="13%" align="center">Not complied</th>
+          <th width="5%"></th>
           </tr>
-          <tbody class="tbody-assignee-wise-compliance-list"></tbody>
-        </table>
+          <tbody class="tbody-popup-list">
+          </tbody>
+          </table>
+          </p>
+          </section>
+        </div>
+      </div>
+    </div>    -->
+    <!-- /.modal-dialog -->
 </div>
 
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 
@@ -707,5 +915,8 @@
 <script type="text/javascript">
     $('#country').multiselect();
     $('#domain').multiselect();
+</script>
+<script type="text/javascript"> 
+    var resizefunc = []; 
 </script>
 {% endblock %}
