@@ -3962,7 +3962,6 @@ class ClientUsercategory(object):
             "u_c_id": self.user_category_id,
             "u_c_name": self.user_category_name,
         }
-
 #
 # Unit closure - Legal Entity
 #
@@ -4301,3 +4300,260 @@ class UserUnits(object):
             "u_id": self.unit_id            
         }
         return data
+
+# ==================================================
+# User Management Form
+# ==================================================
+class UserEntities(object):
+    def __init__(
+        self, legal_entity_id
+    ):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "le_id"
+        ])
+        legal_entity_id = data.get("le_id")        
+        
+        return UserEntities(
+            legal_entity_id
+        )
+
+    def to_structure(self):
+        data = {
+            "le_id": self.legal_entity_id,            
+        }
+        return data
+##############################################################################
+# User Management Add - Category Prerequisite
+##############################################################################
+class ClientUsercategory_UserManagement(object):
+    def __init__(self, user_category_id, user_category_name):
+        self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
+        user_category_id = data.get("user_category_id")
+        user_category_name = data.get("user_category_name")
+        return ClientUsercategory_UserManagement(user_category_id, user_category_name)
+
+    def to_structure(self):
+        return {
+            "u_c_id": self.user_category_id,
+            "u_c_name": self.user_category_name,
+        }
+
+##############################################################################
+# User Management Add - User Group Prerequisite
+##############################################################################
+class ClientUserGroup_UserManagement(object):
+    def __init__(self, user_group_id, user_group_name, user_category_id):
+        self.user_group_id = user_group_id
+        self.user_group_name = user_group_name
+        self.user_category_id = user_category_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_group_id", "user_group_name", "user_category_id"])
+        user_group_id = data.get("user_group_id")
+        user_group_name = data.get("user_group_name")
+        user_category_id = data.get("user_category_id")
+        return ClientUserGroup_UserManagement(user_group_id, user_group_name, user_category_id)
+
+    def to_structure(self):
+        return {
+            "u_g_id": self.user_group_id,
+            "u_g_name": self.user_group_name,
+            "u_c_id": self.user_category_id
+        }
+##############################################################################
+# User Management Add - Business Group
+##############################################################################
+class ClientUserBusinessGroup_UserManagement(object):
+    def __init__(self, business_group_id, business_group_name):        
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["business_group_id", "business_group_name"])        
+        business_group_id = data.get("business_group_id")
+        business_group_name = data.get("business_group_name")
+        return ClientUserBusinessGroup_UserManagement(business_group_id, business_group_name)
+
+    def to_structure(self):
+        return {            
+            "bg_id": self.business_group_id,
+            "bg_name": self.business_group_name            
+        }
+##############################################################################
+# User Management Add - Legal Entity
+##############################################################################
+class ClientUserLegalEntity_UserManagement(object):
+    def __init__(self, legal_entity_id, business_group_id, legal_entity_name):
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+        self.legal_entity_name = legal_entity_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id", "business_group_id", "user_category_id"])
+        legal_entity_id = data.get("legal_entity_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_name = data.get("legal_entity_name")
+        return ClientUserLegalEntity_UserManagement(legal_entity_id, business_group_id, legal_entity_name)
+
+    def to_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id,
+            "le_name": self.legal_entity_name            
+        }
+##############################################################################
+# User Management Add - Division
+##############################################################################
+class ClientUserDivision_UserManagement(object):
+    def __init__(self, division_id, division_name, legal_entity_id, business_group_id):        
+        self.division_id = division_id
+        self.division_name = division_name
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["division_id", "division_name", 
+                                       "legal_entity_id", "business_group_id"])
+        division_id = data.get("division_id")
+        division_name = data.get("division_name")
+        legal_entity_id = data.get("legal_entity_id")
+        business_group_id = data.get("business_group_id")
+        return ClientUserDivision_UserManagement(division_id, division_name, legal_entity_id, business_group_id)
+
+    def to_structure(self):
+        return {            
+            "d_id": self.division_id,
+            "d_name": self.division_name,
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id            
+        }
+##############################################################################
+# User Management Add - Category
+##############################################################################
+class ClientGroupCategory_UserManagement(object):
+    def __init__(self, category_id, category_name, legal_entity_id, business_group_id, division_id):        
+        self.category_id = category_id
+        self.category_name = category_name
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+        self.division_id = division_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["category_id", "category_name","legal_entity_id", 
+        "business_group_id", "division_id"])        
+        category_id = data.get("category_id")
+        category_name = data.get("category_name")
+        legal_entity_id = data.get("legal_entity_id")
+        business_group_id = data.get("business_group_id")
+        division_id = data.get("division_id")        
+        return ClientGroupCategory_UserManagement(category_id, category_name, legal_entity_id,
+        business_group_id, division_id)
+
+    def to_structure(self):
+        return {
+            "cat_id": self.category_id,
+            "cat_name": self.category_name,
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id,
+            "d_id": self.division_id
+        }
+##############################################################################
+# User Management Add - Domains
+##############################################################################
+class ClientLegalDomains_UserManagement(object):
+    def __init__(self, legal_entity_id, domain_id, domain_name):        
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["category_id", "category_name","legal_entity_id", 
+        "business_group_id", "division_id"])
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id")
+        domain_name = data.get("domain_name")        
+        return ClientLegalDomains_UserManagement(legal_entity_id, domain_id, domain_name)
+
+    def to_structure(self):
+        return {            
+            "le_id": self.legal_entity_id,
+            "u_dm_id": self.domain_id,
+            "u_dm_name": self.domain_name
+        }
+##############################################################################
+# User Management Add - Units
+##############################################################################
+class ClientLegalUnits_UserManagement(object):
+    def __init__(self, unit_id, business_group_id, legal_entity_id, division_id,
+                category_id, unit_code, unit_name, address, postal_code):        
+        self.unit_id = unit_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id        
+        self.category_id = category_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.address = address
+        self.postal_code = postal_code
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "business_group_id","legal_entity_id", 
+        "division_id", "category_id", "unit_code", "unit_name", "address", "postal_code"])
+        
+        unit_id = data.get("unit_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        division_id = data.get("division_id")
+        category_id = data.get("category_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        address = data.get("address")
+        postal_code = data.get("postal_code")
+        return ClientLegalUnits_UserManagement(unit_id, business_group_id, legal_entity_id, division_id,
+                                                category_id, unit_code, unit_name, address, postal_code)
+
+    def to_structure(self):
+        return {
+            "u_unt_id": self.unit_id,
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "d_id": self.division_id,
+            "cat_id": self.category_id,
+            "u_unt_code": self.unit_code,
+            "u_unt_name": self.unit_name,
+            "u_unt_address": self.address,
+            "u_unt_postal": self.postal_code
+        }
+##############################################################################
+# User Management Add - Legal Entities
+##############################################################################
+class ClientLegalEntity_UserManagement(object):
+    def __init__(self, legal_entity_id):        
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id"])
+        legal_entity_id = data.get("legal_entity_id")        
+        return ClientLegalEntity_UserManagement(legal_entity_id)
+
+    def to_structure(self):
+        return {            
+            "le_id": self.legal_entity_id
+        }
