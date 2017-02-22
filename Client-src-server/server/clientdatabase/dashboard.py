@@ -8,7 +8,6 @@ from server.clientdatabase.tables import *
 from server.clientdatabase.common import (
     get_last_7_years, get_country_domain_timelines,
     calculate_ageing_in_hours, calculate_years,
-    get_country_domain_timelines_dict
 )
 from server.common import (
     get_date_time_in_date, convert_to_dict,
@@ -29,7 +28,6 @@ __all__ = [
     "get_units_for_dashboard_filters",
     "get_compliance_status_chart",
     "get_trend_chart",
-    "get_filtered_trend_data",
     "get_trend_chart_drill_down",
     "get_compliances_details_for_status_chart",
     "get_escalation_chart",
@@ -38,7 +36,9 @@ __all__ = [
     "get_not_complied_drill_down",
     "get_compliance_applicability_chart",
     "get_compliance_applicability_drill_down",
-    "get_notifications",
+    "get_reminders",
+    "get_escalations",
+    "get_messages",
     "update_notification_status",
     "get_user_company_details",
     "get_assigneewise_compliances_list",
@@ -48,9 +48,7 @@ __all__ = [
     "get_assigneewise_compliances_drilldown_data_count",
     "get_no_of_days_left_for_contract_expiration",
     "need_to_display_deletion_popup",
-    "get_client_compliance_count",
     "get_dashboard_notification_counts"
-    "get_messages",
 ]
 
 
@@ -83,7 +81,6 @@ def get_status_wise_compliances_count(db, request, session_user):
         " or (IFNULL(T2.duration_type_id, 0) != 2 " + \
         " and T1.due_date < CURDATE())) " + \
         " AND IFNULL(T1.approve_status,0) != 1"
-
 
     filter_ids, inprogress = get_compliance_status(
         db, inprogress_qry, request, user_id
@@ -176,6 +173,11 @@ def get_compliance_status(
     elif filter_type == "Division":
         group_by_name = "T3.division_id"
         filter_type_ids = " AND find_in_set(T3.division_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+    elif filter_type == "Category" :
+        group_by_name = "T3.category_id"
+        filter_type_ids = " AND find_in_set(T3.category_id, %s) "
         where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
     elif filter_type == "Unit":
@@ -424,6 +426,11 @@ def get_trend_chart(
         filter_type_ids = " AND find_in_set(T3.division_id, %s) "
         where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
+    elif filter_type == "Category" :
+        group_by_name = "T3.category_id"
+        filter_type_ids = " AND find_in_set(T3.category_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
     elif filter_type == "Unit":
         group_by_name = "T3.unit_id"
         filter_type_ids = " AND find_in_set(T3.unit_id, %s) "
@@ -471,91 +478,6 @@ def get_trend_chart(
     return years, chart_data
 
 
-def get_filtered_trend_data(
-    db, country_ids, domain_ids, filter_type, filter_ids,
-    session_user
-):
-    # import from common.py
-    years = get_last_7_years()
-    # import from common.py
-    country_domain_timelines = get_country_domain_timelines(
-        db, country_ids, domain_ids, years)
-    chart_data = []
-    count_flag = 0
-    for filter_id in filter_ids:
-        year_wise_count = [
-            [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]
-        ]
-        for country_wise_timeline in country_domain_timelines:
-            country_id = country_wise_timeline[0]
-            domain_wise_timelines = country_wise_timeline[1]
-            for domain_wise_timeline in domain_wise_timelines:
-                domain_id = domain_wise_timeline[0]
-                start_end_dates = domain_wise_timeline[1]
-                for index, dates in enumerate(start_end_dates):
-                    columns = "count(*) as total, " + \
-                        " sum(case when approve_status is null then 0 " + \
-                        " else 1 end) as complied"
-                    condition = "due_date between %s and %s "
-                    condition_val = [
-                        dates["start_date"], dates["end_date"]
-                    ]
-                    fn = get_compliance_history_ids_for_trend_chart
-                    (
-                        compliance_history_ids, unit_ids
-                    ) = fn(
-                        db, country_id, domain_id,
-                        session_user, filter_id, filter_type
-                    )
-                    if(
-                        len(compliance_history_ids) > 0 and
-                        len(unit_ids) > 0
-                    ):
-                        (
-                            comp_hist_cond, comp_hist_cond_val
-                        ) = db.generate_tuple_condition(
-                            "compliance_history_id",
-                            compliance_history_ids
-                        )
-                        (
-                            unit_cond, unit_cond_val
-                        ) = db.generate_tuple_condition(
-                            "unit_id", unit_ids
-                        )
-                        condition += " and %s " % comp_hist_cond
-                        condition += " and %s " % unit_cond
-                        condition_val.extend(
-                            [comp_hist_cond_val, unit_cond_val]
-                        )
-                        rows = db.get_data(
-                            tblComplianceHistory, columns,
-                            condition, condition_val
-                        )
-                        if len(rows) > 0:
-                            row = rows[0]
-                            total_compliances = int(row["total"])
-                            complied_comp = int(row["complied"]) if (
-                                row["complied"] != None) else 0
-                            year_wise_count[index][0] += total_compliances if(
-                                total_compliances is not None) else 0
-                            year_wise_count[index][1] += complied_comp if(
-                                complied_comp is not None) else 0
-        compliance_chart_data = []
-        for index, count_of_year in enumerate(year_wise_count):
-            count_flag += int(count_of_year[0])
-            compliance_chart_data.append(
-                dashboard.CompliedMap(
-                    year=years[index],
-                    total_compliances=int(count_of_year[0]),
-                    complied_compliances_count=int(count_of_year[1])
-                ))
-        chart_data.append(dashboard.TrendData(
-            filter_id=filter_id,
-            complied_compliance=compliance_chart_data
-        ))
-    return years, chart_data, count_flag
-
-
 def get_trend_chart_drill_down(
     db, country_ids, domain_ids, filter_ids,
     filter_type, year
@@ -572,6 +494,10 @@ def get_trend_chart_drill_down(
 
     elif filter_type == "Division":
         filter_type_ids = " AND find_in_set(u.division_id, %s) "
+        where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+    elif filter_type == "Category" :
+        filter_type_ids = " AND find_in_set(u.category_id, %s) "
         where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
     elif filter_type == "Unit":
@@ -592,6 +518,8 @@ def get_trend_chart_drill_down(
         " where legal_entity_id = u.legal_entity_id ) as legal_entity_name, " + \
         " (SELECT division_name FROM tbl_divisions " + \
         " where division_id = u.division_id ) as division_name, " + \
+        " (SELECT category_name FROM tbl_categories " + \
+        " where category_id = u.categpry_id ) as category_name, " + \
         " concat(unit_code, '-', unit_name) as unit_name," + \
         " address, u.unit_id " + \
         " FROM tbl_compliance_history tch " + \
@@ -620,6 +548,7 @@ def get_trend_chart_drill_down(
         business_group_name = d["business_group_name"]
         legal_entity_name = d["legal_entity_name"]
         division_name = d["division_name"]
+        category_name = d["category_name"]
         unit_name = d["unit_name"]
         address = d["address"]
         assignee_name = d["employee_name"]
@@ -643,7 +572,7 @@ def get_trend_chart_drill_down(
         saved_trend = trend_comp.get(unit_id)
         if saved_trend is None :
             trend_comp[unit_id] = dashboard.TrendDrillDownData(
-                business_group_name, legal_entity_name, division_name,
+                business_group_name, legal_entity_name, division_name, category_name,
                 unit_name, address, {level_1_statutory : [comp_info]}
             )
         else :
@@ -658,202 +587,6 @@ def get_trend_chart_drill_down(
             trend_comp[unit_id] = saved_trend
 
     return trend_comp.values()
-
-
-def get_trend_chart_drill_down1(
-    db, country_ids, domain_ids, filter_ids,
-    filter_type, year
-):
-    # Getting Unit ids
-    rows = None
-    country_ids = ",".join(str(x) for x in country_ids)
-    domain_ids = ",".join(str(x) for x in domain_ids)
-
-    if filter_type == "Group":
-        columns = ["DISTINCT unit_id as unit_id"]
-        condition = "country_id in (%s) and domain_id in (%s)"
-        condition_val = [
-            country_ids, domain_ids
-        ]
-        rows = db.get_data(
-            tblClientStatutories, columns, condition, condition_val
-        )
-    else:
-        columns = "DISTINCT tcs.unit_id"
-        tables = [tblClientStatutories, tblUnits]
-        aliases = ["tcs", "tu"]
-        join_type = "left join "
-        join_conditions = ["tcs.unit_id = tu.unit_id"]
-        where_condition = "tu.country_id in (%s) and domain_id in (%s)" % (
-            country_ids, domain_ids)
-        if filter_type == "BusinessGroup":
-            where_condition += " and business_group_id in(%s)" % filter_ids
-        elif filter_type == "LegalEntity":
-            where_condition += " and legal_entity_id in (%s)" % filter_ids
-        elif filter_type == "Division":
-            where_condition += " and  division_id in (%s) " % filter_ids
-        elif filter_type == "Unit":
-            where_condition += " and  tcs.unit_id in (%s) " % filter_ids
-        rows = db.get_data_from_multiple_tables(
-            columns, tables, aliases,
-            join_type, join_conditions,
-            where_condition
-        )
-    unit_ids = [
-        int(row["unit_id"]) for row in rows
-    ]
-    drill_down_data = []
-    for unit_id in unit_ids:
-        # Getting Unit details
-        unit_detail_columns = "tu.country_id, domain_ids, " + \
-            " business_group_id, legal_entity_id, division_id, " + \
-            " unit_code, unit_name, address"
-        unit_detail_condition = "tu.unit_id = %s"
-        unit_detail_condition_val = [unit_id]
-        tables = "%s tu" % (
-            tblUnits
-        )
-        unit_rows = db.get_data(
-            tables, unit_detail_columns,
-            unit_detail_condition, unit_detail_condition_val
-        )
-        unit_detail = unit_rows[0]
-        business_group_id = unit_detail["business_group_id"]
-        legal_entity_id = unit_detail["legal_entity_id"]
-        division_id = unit_detail["division_id"]
-        unit_name = "%s-%s" % (
-            unit_detail["unit_code"], unit_detail["unit_name"]
-        )
-        address = unit_detail["address"]
-
-        # Getting complied compliances for the given year
-        years = [year]
-        country_ids = [unit_detail["country_id"]]
-        domain_ids = unit_detail["domain_ids"].split(",")
-        # import from common.py
-        timelines = get_country_domain_timelines(
-            db, country_ids, domain_ids, years
-        )
-        domain_wise_timelines = timelines[0][1] if len(timelines) > 0 else []
-        for domain_wise_timeline in domain_wise_timelines:
-            domain_id = domain_wise_timeline[0]
-            start_end_dates = domain_wise_timeline[1][0]
-            start_date = start_end_dates["start_date"]
-            end_date = start_end_dates["end_date"]
-
-            # Getting compliances relevent to unit, country, domain
-            compliance_columns = ["distinct compliance_id as comp_id"]
-            compliance_condition = "compliance_opted = 1"
-            compliance_condition += " and client_statutory_id in ( " + \
-                " select client_statutory_id from %s "
-            compliance_condition = compliance_condition % tblClientStatutories
-            compliance_condition += " where unit_id = %s and domain_id = %s)"
-            compliance_condition_val = [
-                int(unit_id), int(domain_id)
-            ]
-            compliance_rows = db.get_data(
-                tblClientCompliances, compliance_columns,
-                compliance_condition, compliance_condition_val
-            )
-            compliance_ids_list = [
-                int(row["comp_id"]) for row in compliance_rows
-            ]
-            compliance_ids = ",".join(str(x) for x in compliance_ids_list)
-            if compliance_ids is not None:
-                history_columns = "tch.compliance_id, tu.employee_code, "
-                history_columns += "tu.employee_name, tc.compliance_task,"
-                history_columns += " tc.compliance_description, "
-                history_columns += " tc.document_name,"
-                history_columns += " tc.compliance_description, "
-                history_columns += " tc.statutory_mapping"
-                history_condition = " due_date between %s and %s"
-                comp_cond, comp_val = db.generate_tuple_condition(
-                    "tch.compliance_id",
-                    [int(x) for x in compliance_ids.split(",")]
-                )
-                history_condition += " AND %s" % comp_cond
-                history_condition += " and tch.unit_id = %s"
-                history_condition_val = [
-                    start_date, end_date, comp_val, unit_id]
-                tables = [
-                    tblComplianceHistory,
-                    tblUsers, tblCompliances
-                ]
-                aliases = ["tch", "tu", "tc"]
-                join_type = "left join"
-                join_condition = [
-                    "tch.completed_by = tu.user_id",
-                    "tch.compliance_id = tc.compliance_id"
-                ]
-                history_rows = db.get_data_from_multiple_tables(
-                    history_columns, tables, aliases,
-                    join_type, join_condition,
-                    history_condition, history_condition_val
-                )
-                level_1_statutory_wise_compliances = {}
-                for history_row in history_rows:
-                    assignee_name = history_row["employee_name"]
-                    if history_row["employee_code"] is not None:
-                        assignee_name = "%s-%s" % (
-                            history_row["employee_code"],
-                            history_row["employee_name"]
-                        )
-                    compliance_name = history_row["compliance_task"]
-                    if history_row["document_name"] is not None:
-                        compliance_name = "%s-%s" % (
-                            history_row["document_name"],
-                            history_row["compliance_task"]
-                        )
-                    description = history_row["compliance_description"]
-                    statutories = history_row["statutory_mapping"].split(">>")
-                    level_1_statutory = statutories[0]
-                    if(
-                        level_1_statutory not in
-                        level_1_statutory_wise_compliances
-                    ):
-                        level_1_statutory_wise_compliances[
-                            level_1_statutory
-                        ] = []
-                    level_1_statutory_wise_compliances[
-                        level_1_statutory
-                    ].append(dashboard.TrendCompliance(
-                        compliance_name, description, assignee_name
-                        )
-                    )
-        if len(level_1_statutory_wise_compliances) > 0:
-            business_group_name = None
-            legal_entity_name = None
-            division_name = None
-            if business_group_id is not None:
-                rows = db.get_data(
-                    tblBusinessGroups, ["business_group_name"],
-                    "business_group_id=%s", [business_group_id]
-                )
-                if rows:
-                    business_group_name = rows[0]["business_group_name"]
-            if division_id is not None:
-                rows = db.get_data(
-                    tblDivisions, ["division_name"],
-                    "division_id=%s", [division_id]
-                )
-                if rows:
-                    division_name = rows[0]["division_name"]
-            rows = db.get_data(
-                tblLegalEntities, ["legal_entity_name"],
-                "legal_entity_id=%s", [legal_entity_id]
-            )
-            if rows:
-                legal_entity_name = rows[0]["legal_entity_name"]
-
-            drill_down_data.append(
-                dashboard.TrendDrillDownData(
-                        business_group_name,
-                        legal_entity_name, division_name,
-                        unit_name, address,
-                        level_1_statutory_wise_compliances
-                    )
-                )
-    return drill_down_data
 
 
 def get_compliances_details_for_status_chart(
@@ -942,6 +675,9 @@ def frame_compliance_details_query(
     elif filter_type == "Division":
         where_qry += " AND find_in_set(T3.division_id, %s) "
 
+    elif filter_type == "Category" :
+        where_qry += " AND find_in_set(T3.category_id, %s) "
+
     elif filter_type == "Unit":
         where_qry += " AND find_in_set(T3.unit_id, %s) "
     if type(filter_id) is int :
@@ -999,6 +735,8 @@ def frame_compliance_details_query(
         " unit_name, " + \
         " (select division_name from tbl_divisions " + \
         " where division_id = T3.division_id)division_name, " + \
+        " (select category_name from tbl_categories " + \
+        " where category_id = T3.category_id)category_name, " + \
         " (select legal_entity_name from tbl_legal_entities " + \
         " where legal_entity_id = T3.legal_entity_id)legal_entity_name, " + \
         " (select business_group_name from tbl_business_groups " + \
@@ -1208,7 +946,8 @@ def return_compliance_details_drill_down(
             )
             drill_down_data = dashboard.DrillDownData(
                 r["business_group_name"], r["legal_entity_name"],
-                r["division_name"], unit_name, address,
+                r["division_name"], r["category_name"],
+                unit_name, address,
                 r["industry_name"],
                 level_compliance
             )
@@ -1501,6 +1240,10 @@ def get_not_complied_chart(db, request, session_user):
         filter_type_ids = "AND find_in_set(T4.division_id, %s)"
         where_qry_val.append(",".join([str(x) for x in _filter_ids]))
 
+    elif filter_type == "Category":
+        filter_type_ids = "AND find_in_set(T4.category_id, %s)"
+        where_qry_val.append(",".join([str(x) for x in _filter_ids]))
+
     elif filter_type == "Unit":
         filter_type_ids = "AND find_in_set(T4.unit_id, %s)"
         where_qry_val.append(",".join([str(x) for x in _filter_ids]))
@@ -1562,6 +1305,13 @@ def get_not_complied_chart(db, request, session_user):
                 continue
             if i["division_id"] not in request.filter_ids:
                 continue
+
+        elif filter_type == "Category":
+            if i["category_id"] == 0:
+                continue
+            if i["category_id"] not in request.filter_ids:
+                continue
+
         elif filter_type == "Unit":
             if i["unit_id"] == 0:
                 continue
@@ -1642,7 +1392,7 @@ def get_not_complied_drill_down(
             )
             drill_down_data = dashboard.DrillDownData(
                 r["business_group_name"], r["legal_entity_name"],
-                r["division_name"], unit_name, address,
+                r["division_name"], r["category_name"], unit_name, address,
                 r["industry_name"],
                 level_compliance
             )
@@ -1727,7 +1477,11 @@ def get_compliance_applicability_chart(
         param.append(",".join(str(i) for i in filter_id))
 
     elif filter_type == "Division":
-        filter_type_qry = "AND find-in_set(T2.division_id, %s)"
+        filter_type_qry = "AND find_in_set(T2.division_id, %s)"
+        param.append(",".join(str(i) for i in filter_id))
+
+    elif filter_type == "Category":
+        filter_type_qry = "AND find_in_set(T2.category_id, %s)"
         param.append(",".join(str(i) for i in filter_id))
 
     elif filter_type == "Unit":
@@ -1894,6 +1648,10 @@ def get_compliance_applicability_drill_down(
         where_type_qry = "AND find_in_set(T3.division_id, %s) "
         param.append(",".join([str(x) for x in filter_id]))
 
+    elif filter_type == "Category":
+        where_type_qry = "AND find_in_set(T3.category_id, %s) "
+        param.append(",".join([str(x) for x in filter_id]))
+
     elif filter_type == "Unit":
         where_type_qry = "AND find_in_set(T3.unit_id, %s )"
         param.append(",".join([str(x) for x in filter_id]))
@@ -1996,163 +1754,73 @@ def get_compliance_applicability_drill_down(
 
     return level_1_wise_compliance.values()
 
-
-#
-#   Notifications
-#
-def get_notifications(
-    db, notification_type, start_count, to_count,
-    session_user
+def get_reminders(
+    db, notification_type, start_count, to_count, session_user, session_category
 ):
-    users = get_all_users(db)
+    query = "(Select '0' as row_number,'0' as notification_id, " + \
+            "IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),concat('Your contract with Compfie for the legal entity ',legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
+            "Before contract expiration you can download documents <a href=#>here</a>'),'') as notification_text, " + \
+            "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg Where %s = 1 OR %s = 2 AND %s = 1 ) " + \
+            "UNION ALL " + \
+            "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 1 " + \
+            "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+            "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s) "
+    rows = db.select_all(query, [session_category, session_category, notification_type, session_user, notification_type, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        notification_id = int(r["notification_id"])
+        notification_text = r["notification_text"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.RemindersSuccess(notification_id, notification_text, created_on)
+        notifications.append(notification)
+    return notifications
 
-    def get_user_info_str(user_id):
-        u_info = users.get(user_id)
-        if u_info is None:
-            return None
-        data = "%s - %s, %s - %s " % (
-            u_info.get("employee_code"),
-            u_info.get("employee_name"),
-            u_info.get("contact_no"),
-            u_info.get("email_id")
-        )
-        return data
+def get_escalations(
+    db, notification_type, start_count, to_count, session_user, session_category
+):
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
+            "Where nlu.user_id = %s " + \
+            "AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+            "order by nl.notification_id desc) as t1, " + \
+            "(SELECT @rownum := 0) r) as t " + \
+            "where t.rank >= %s and t.rank <= %s"
+    rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        notification_id = int(r["notification_id"])
+        notification_text = r["notification_text"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.EscalationsSuccess(notification_id, notification_text, created_on)
+        notifications.append(notification)
+    return notifications
 
-    notification_type_id = None
-    if notification_type == "Notification":
-        notification_type_id = 1
-    elif notification_type == "Reminder":
-        notification_type_id = 2
-    elif notification_type == "Escalation":
-        notification_type_id = 3
-    user_ids = [session_user]
-    if is_primary_admin(db, session_user) is True:
-        user_ids.append(0)
-    query = " SELECT nul.notification_id as notification_id, " + \
-            " notification_text, created_on, extra_details, " + \
-            " statutory_provision, assignee, " + \
-            " IFNULL(concurrence_person, -1), " + \
-            " approval_person, nl.compliance_id, compliance_task, " + \
-            " document_name, compliance_description, penal_consequences,  " + \
-            " read_status, due_date, completion_date, approve_status, " + \
-            " (select concat(unit_code, '-', unit_name, ',', address) " + \
-            " from tbl_units where " + \
-            " unit_id = nl.unit_id) " + \
-            " FROM tbl_notification_user_log nul " + \
-            " LEFT JOIN tbl_notifications_log nl " + \
-            " ON (nul.notification_id = nl.notification_id) " + \
-            " LEFT JOIN tbl_compliances tc " + \
-            " ON (tc.compliance_id = nl.compliance_id) " + \
-            " LEFT JOIN tbl_compliance_history tch " + \
-            " ON (tch.compliance_id = nl.compliance_id AND " + \
-            " tch.unit_id = nl.unit_id) "
-    user_condition, user_val = db.generate_tuple_condition(
-        "user_id", user_ids
-    )
-    conditions = " WHERE notification_type_id = %s " + \
-        " AND " + user_condition + \
-        " AND (compliance_history_id is null " + \
-        " OR  compliance_history_id = CAST(REPLACE( " + \
-        " SUBSTRING_INDEX(extra_details, '-', 1), " + \
-        " ' ','') AS UNSIGNED)) " + \
-        " ORDER BY read_status ASC, nul.notification_id DESC " + \
-        " limit %s, %s"
-
-    rows = db.select_all(query + conditions, [
-        notification_type_id, user_val,
-        start_count, to_count
-    ])
-    columns_list = [
-        "notification_id", "notification_text", "created_on",
-        "extra_details", "statutory_provision",
-        "assignee", "concurrence_person", "approval_person",
-        "compliance_id", "compliance_task", "document_name",
-        "compliance_description", "penal_consequences", "read_status",
-        "due_date", "completion_date", "approve_status", "unit_details"
-    ]
-
-    notifications = convert_to_dict(rows, columns_list)
-    notifications_list = []
-    for notification in notifications:
-        notification_id = notification["notification_id"]
-        read_status = bool(int(notification["read_status"]))
-        extra_details_with_history_id = notification[
-            "extra_details"].split("-")
-        compliance_history_id = int(extra_details_with_history_id[0])
-        extra_details = extra_details_with_history_id[1]
-        if compliance_history_id not in [0, "0", None, "None", ""]:
-            due_date_as_date = notification["due_date"]
-            due_date = datetime_to_string_time(due_date_as_date)
-            completion_date = notification["completion_date"]
-            approve_status = notification["approve_status"]
-            delayed_days = "-"
-            if completion_date is None or approve_status == 0:
-                no_of_days, delayed_days = calculate_ageing(due_date_as_date)
-            else:
-                r = relativedelta.relativedelta(
-                    convert_datetime_to_date(due_date_as_date),
-                    convert_datetime_to_date(completion_date)
-                )
-                delayed_days = "-"
-                if r.days < 0 and r.hours < 0 and r.minutes < 0:
-                    delayed_days = "Overdue by %s days" % abs(r.days)
-            if "Overdue" not in delayed_days:
-                delayed_days = "-"
-            # diff = get_date_time() - due_date_as_datetime
-            statutory_provision = notification[
-                "statutory_provision"].split(">>")
-            level_1_statutory = statutory_provision[0]
-
-            notification_text = notification["notification_text"]
-            updated_on = datetime_to_string(notification["created_on"])
-            unit_details = notification["unit_details"].split(",")
-            unit_name = unit_details[0]
-            unit_address = unit_details[1]
-            assignee = get_user_info_str(notification["assignee"])
-            concurrence_person = get_user_info_str(
-                notification["concurrence_person"]
-            )
-            approval_person = get_user_info_str(
-                notification["approval_person"]
-            )
-            compliance_name = notification["compliance_task"]
-            if(
-                notification["document_name"] is not None and
-                notification["document_name"].replace(" ", "") != "None"
-            ):
-                compliance_name = "%s - %s" % (
-                    notification["document_name"],
-                    notification["compliance_task"]
-                )
-            compliance_description = notification["compliance_description"]
-            penal_consequences = notification["penal_consequences"]
-            due_date = datetime_to_string_time(notification["due_date"])
-        else:
-            penal_consequences = None
-            delayed_days = None
-            due_date = None
-            compliance_description = None
-            approval_person = None
-            compliance_name = None
-            concurrence_person = None
-            assignee = None
-            unit_name = None
-            unit_address = None
-            level_1_statutory = None
-            extra_details = notification["extra_details"].split("-")[1]
-            read_status = bool(0)
-            updated_on = datetime_to_string(get_date_time_in_date())
-            notification_text = notification["notification_text"]
-        notifications_list.append(
-            dashboard.Notification(
-                notification_id, read_status, notification_text, extra_details,
-                updated_on, level_1_statutory, unit_name, unit_address,
-                assignee, concurrence_person, approval_person, compliance_name,
-                compliance_description, due_date, delayed_days,
-                penal_consequences
-            )
-        )
-    return notifications_list
+def get_messages(
+    db, notification_type, start_count, to_count, session_user, session_category
+):
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
+            "Where nlu.user_id = %s " + \
+            "AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+            "order by nl.notification_id desc) as t1, " + \
+            "(SELECT @rownum := 0) r) as t " + \
+            "where t.rank >= %s and t.rank <= %s"
+    rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        notification_id = int(r["notification_id"])
+        notification_text = r["notification_text"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.MessagesSuccess(notification_id, notification_text, created_on)
+        notifications.append(notification)
+    return notifications
 
 
 def update_notification_status(
@@ -2855,294 +2523,46 @@ def need_to_display_deletion_popup(db):
         return False, ""
 
 
-def get_compliance_history_ids_for_trend_chart(
-    db, country_id, domain_id, session_user,
-    filter_id=None, filter_type=None
-):
-    # Units related to the selected country and domain
-    unit_columns = "unit_id"
-    unit_condition = "country_id = %s "
-    unit_condition_val = [country_id]
+# def get_dashboard_notification_counts(
+#     db, session_user
+# ):
+#     user_ids = [session_user]
+#     if is_primary_admin(db, session_user) is True:
+#         user_ids.append(0)
+#     user_condition, user_val = db.generate_tuple_condition(
+#         "user_id", user_ids
+#     )
+#     query = " SELECT tnl.notification_id FROM tbl_notifications_log tnl " + \
+#         " INNER JOIN tbl_notification_user_log tnul ON " + \
+#         " tnl.notification_id = tnul.notification_id " + \
+#         " WHERE "+user_condition+" AND read_status = 0 "
+#     param = [user_val]
+#     notification_condition = " AND notification_type_id = 1"
+#     escalation_condition = " AND notification_type_id = 3"
+#     reminder_condition = " AND notification_type_id = 2"
 
-    # unit_condition += " AND  find_in_set( " + \
-    #     " %s, domain_ids) "
-    # unit_condition_val.append(domain_id)
+#     notification_query = "%s %s" % (query, notification_condition)
+#     reminder_query = "%s %s" % (query, reminder_condition)
+#     escalation_query = "%s %s" % (query, escalation_condition)
+#     notification_rows = db.select_all(notification_query, param)
+#     reminder_rows = db.select_all(reminder_query, param)
+#     escalation_rows = db.select_all(escalation_query, param)
 
-    # if not is_primary_admin(db, session_user):
-    #     unit_condition += " AND unit_id in ( " + \
-    #         " SELECT unit_id from tbl_user_units where " + \
-    #         " user_id=%s) "
-    #     unit_condition_val.append(session_user)
+#     notification_count = len(notification_rows)
+#     reminder_count = len(reminder_rows)
+#     escalation_count = len(escalation_rows)
 
-    if filter_type is not None:
-        if filter_type == "BusinessGroup":
-            unit_condition += " AND business_group_id =%s "
-        elif filter_type == "LegalEntity":
-            unit_condition += " AND legal_entity_id =%s "
-        elif filter_type == "Division":
-            unit_condition += " AND division_id =%s"
-        elif filter_type == "Unit":
-            unit_condition += " AND unit_id =%s "
-        unit_condition_val.append(filter_id)
-    unit_result_rows = db.get_data(
-        tblUnits, unit_columns, unit_condition, unit_condition_val
-    )
-    unit_ids = []
-    for row in unit_result_rows:
-        unit_ids.append(row["unit_id"])
-
-    # result = get_client_statutory_ids_and_unit_ids_for_trend_chart(
-    #     db, country_id, domain_id, filter_id, filter_type
-    # )
-    # client_statutory_ids = result[0]
-
-    query = " SELECT compliance_history_id FROM " + \
-        " tbl_compliance_history WHERE find_in_set(compliance_id, " + \
-        " ( SELECT compliance_id FROM tbl_compliances  " + \
-        "  WHERE domain_id = %s )) AND find_in_set(unit_id, ( " + \
-        " SELECT unit_id FROM tbl_units WHERE " + unit_condition + \
-        " )"
-
-    param = [domain_id] + unit_condition_val
-    print query % tuple(param)
-    result = db.select_all(query, param)
-    compliance_history_ids = [
-        row["compliance_history_id"] for row in result
-    ]
-    return compliance_history_ids, unit_ids
-
-
-def get_client_statutory_ids_and_unit_ids_for_trend_chart(
-    db, country_id, domain_id, filter_id=None, filter_type=None
-):
-    columns = ["client_statutory_id", "unit_id"]
-    condition = "country_id= %s and domain_id = %s"
-    condition += " and unit_id in (select unit_id from  tbl_units where "
-    condition_val = [
-        country_id, domain_id
-    ]
-    if filter_type is not None:
-        if filter_type == "BusinessGroup":
-            condition += " business_group_id =%s and country_id =%s)"
-        elif filter_type == "LegalEntity":
-            condition += " legal_entity_id =%s and country_id =%s)"
-        elif filter_type == "Division":
-            condition += " division_id =%s and country_id =%s)"
-        elif filter_type == "Unit":
-            condition += " unit_id =%s and country_id =%s)"
-        condition_val.append(filter_id)
-    else:
-        condition += " country_id = %s )"
-    condition_val.append(country_id)
-    rows = db.get_data(
-        tblClientStatutories, columns, condition, condition_val
-    )
-    client_statutories = []
-    unit_ids = []
-    for row in rows:
-        statu_id = int(row["client_statutory_id"])
-        unit_id = int(row["unit_id"])
-        if statu_id not in client_statutories:
-            client_statutories.append(statu_id)
-        if unit_id not in unit_ids:
-            unit_ids.append(unit_id)
-    return (
-        ",".join(str(x) for x in client_statutories),
-        ",".join(str(x) for x in unit_ids)
-    )
-
-
-def get_client_compliance_count(db):
-    q = "select count(*) as ccomp from tbl_compliances"
-    row = db.select_one(q)
-    return row["ccomp"]
+#     return notification_count, reminder_count, escalation_count
 
 
 def get_dashboard_notification_counts(
-    db, session_user
+    db, session_user, notification_type
 ):
-    user_ids = [session_user]
-    if is_primary_admin(db, session_user) is True:
-        user_ids.append(0)
-    user_condition, user_val = db.generate_tuple_condition(
-        "user_id", user_ids
-    )
-    query = " SELECT tnl.notification_id FROM tbl_notifications_log tnl " + \
-        " INNER JOIN tbl_notification_user_log tnul ON " + \
-        " tnl.notification_id = tnul.notification_id " + \
-        " WHERE "+user_condition+" AND read_status = 0 "
-    param = [user_val]
-    notification_condition = " AND notification_type_id = 1"
-    escalation_condition = " AND notification_type_id = 3"
-    reminder_condition = " AND notification_type_id = 2"
+    query = "SELECT count(*) as total_count FROM tbl_notification_types tnt " + \
+            "INNER JOIN tbl_notifications_log tnl ON tnl.notification_type_id = tnt.notification_type_id " + \
+            "INNER JOIN tbl_notifications_user_log tnul ON tnul.notification_id = tnl.notification_id " + \
+            "WHERE tnl.notification_type_id = %s AND tnul.read_status = 0 AND tnul.user_id = %s "
+    notification_rows = db.select_one(query, [notification_type,session_user])
+    total_count = int(notification_rows["total_count"])
 
-    notification_query = "%s %s" % (query, notification_condition)
-    reminder_query = "%s %s" % (query, reminder_condition)
-    escalation_query = "%s %s" % (query, escalation_condition)
-    notification_rows = db.select_all(notification_query, param)
-    reminder_rows = db.select_all(reminder_query, param)
-    escalation_rows = db.select_all(escalation_query, param)
-
-    notification_count = len(notification_rows)
-    reminder_count = len(reminder_rows)
-    escalation_count = len(escalation_rows)
-
-    return notification_count, reminder_count, escalation_count
-
-
-#
-#   Notifications
-#
-def get_messages(
-    db, notification_type, start_count, to_count,
-    session_user
-):
-    users = get_all_users(db)
-
-    def get_user_info_str(user_id):
-        u_info = users.get(user_id)
-        if u_info is None:
-            return None
-        data = "%s - %s, %s - %s " % (
-            u_info.get("employee_code"),
-            u_info.get("employee_name"),
-            u_info.get("contact_no"),
-            u_info.get("email_id")
-        )
-        return data
-
-    notification_type_id = None
-    if notification_type == "Notification":
-        notification_type_id = 1
-    elif notification_type == "Reminder":
-        notification_type_id = 2
-    elif notification_type == "Escalation":
-        notification_type_id = 3
-    user_ids = [session_user]
-    if is_primary_admin(db, session_user) is True:
-        user_ids.append(0)
-    query = " SELECT nul.notification_id as notification_id, " + \
-            " notification_text, created_on, extra_details, " + \
-            " statutory_provision, assignee, " + \
-            " IFNULL(concurrence_person, -1), " + \
-            " approval_person, nl.compliance_id, compliance_task, " + \
-            " document_name, compliance_description, penal_consequences,  " + \
-            " read_status, due_date, completion_date, approve_status, " + \
-            " (select concat(unit_code, '-', unit_name, ',', address) " + \
-            " from tbl_units where " + \
-            " unit_id = nl.unit_id) " + \
-            " FROM tbl_notification_user_log nul " + \
-            " LEFT JOIN tbl_notifications_log nl " + \
-            " ON (nul.notification_id = nl.notification_id) " + \
-            " LEFT JOIN tbl_compliances tc " + \
-            " ON (tc.compliance_id = nl.compliance_id) " + \
-            " LEFT JOIN tbl_compliance_history tch " + \
-            " ON (tch.compliance_id = nl.compliance_id AND " + \
-            " tch.unit_id = nl.unit_id) "
-    user_condition, user_val = db.generate_tuple_condition(
-        "user_id", user_ids
-    )
-    conditions = " WHERE notification_type_id = %s " + \
-        " AND " + user_condition + \
-        " AND (compliance_history_id is null " + \
-        " OR  compliance_history_id = CAST(REPLACE( " + \
-        " SUBSTRING_INDEX(extra_details, '-', 1), " + \
-        " ' ','') AS UNSIGNED)) " + \
-        " ORDER BY read_status ASC, nul.notification_id DESC " + \
-        " limit %s, %s"
-
-    rows = db.select_all(query + conditions, [
-        notification_type_id, user_val,
-        start_count, to_count
-    ])
-    columns_list = [
-        "notification_id", "notification_text", "created_on",
-        "extra_details", "statutory_provision",
-        "assignee", "concurrence_person", "approval_person",
-        "compliance_id", "compliance_task", "document_name",
-        "compliance_description", "penal_consequences", "read_status",
-        "due_date", "completion_date", "approve_status", "unit_details"
-    ]
-
-    notifications = convert_to_dict(rows, columns_list)
-    notifications_list = []
-    for notification in notifications:
-        notification_id = notification["notification_id"]
-        read_status = bool(int(notification["read_status"]))
-        extra_details_with_history_id = notification[
-            "extra_details"].split("-")
-        compliance_history_id = int(extra_details_with_history_id[0])
-        extra_details = extra_details_with_history_id[1]
-        if compliance_history_id not in [0, "0", None, "None", ""]:
-            due_date_as_date = notification["due_date"]
-            due_date = datetime_to_string_time(due_date_as_date)
-            completion_date = notification["completion_date"]
-            approve_status = notification["approve_status"]
-            delayed_days = "-"
-            if completion_date is None or approve_status == 0:
-                no_of_days, delayed_days = calculate_ageing(due_date_as_date)
-            else:
-                r = relativedelta.relativedelta(
-                    convert_datetime_to_date(due_date_as_date),
-                    convert_datetime_to_date(completion_date)
-                )
-                delayed_days = "-"
-                if r.days < 0 and r.hours < 0 and r.minutes < 0:
-                    delayed_days = "Overdue by %s days" % abs(r.days)
-            if "Overdue" not in delayed_days:
-                delayed_days = "-"
-            # diff = get_date_time() - due_date_as_datetime
-            statutory_provision = notification[
-                "statutory_provision"].split(">>")
-            level_1_statutory = statutory_provision[0]
-
-            notification_text = notification["notification_text"]
-            updated_on = datetime_to_string(notification["created_on"])
-            unit_details = notification["unit_details"].split(",")
-            unit_name = unit_details[0]
-            unit_address = unit_details[1]
-            assignee = get_user_info_str(notification["assignee"])
-            concurrence_person = get_user_info_str(
-                notification["concurrence_person"]
-            )
-            approval_person = get_user_info_str(
-                notification["approval_person"]
-            )
-            compliance_name = notification["compliance_task"]
-            if(
-                notification["document_name"] is not None and
-                notification["document_name"].replace(" ", "") != "None"
-            ):
-                compliance_name = "%s - %s" % (
-                    notification["document_name"],
-                    notification["compliance_task"]
-                )
-            compliance_description = notification["compliance_description"]
-            penal_consequences = notification["penal_consequences"]
-            due_date = datetime_to_string_time(notification["due_date"])
-        else:
-            penal_consequences = None
-            delayed_days = None
-            due_date = None
-            compliance_description = None
-            approval_person = None
-            compliance_name = None
-            concurrence_person = None
-            assignee = None
-            unit_name = None
-            unit_address = None
-            level_1_statutory = None
-            extra_details = notification["extra_details"].split("-")[1]
-            read_status = bool(0)
-            updated_on = datetime_to_string(get_date_time_in_date())
-            notification_text = notification["notification_text"]
-        notifications_list.append(
-            dashboard.Notification(
-                notification_id, read_status, notification_text, extra_details,
-                updated_on, level_1_statutory, unit_name, unit_address,
-                assignee, concurrence_person, approval_person, compliance_name,
-                compliance_description, due_date, delayed_days,
-                penal_consequences
-            )
-        )
-    return notifications_list
+    return total_count

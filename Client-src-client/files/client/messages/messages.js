@@ -1,17 +1,43 @@
-var MessageList;
 var from_count = 0;
 var page_count = 50;
-// User List render process
-function loadMessages() {
+
+function loadMessages(data) {
     var isEmpty = true;
     $('.tbody-message-list').find('tr').remove();
-    $.each(MessageList, function(k, v) {
+    $.each(data, function(k, v) {
         isEmpty = false;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
-        $('.message-content', rowClone).text(v.message_heading + ' - ' + v.message_text);
+
+        rowClone.on('click', function(e) {
+            /*mirror.updateNotificationStatus(v.compliance_id, 1 function(error, response) {
+                if (error == null) {
+                    $('.popup-statutory').text(response.s_pro);
+                    $('.popup-compliancetask').text(response.c_task);
+                    $('.popup-description').text(response.descrip);
+                    $('.popup-penalconse').text(response.p_cons);
+                    $('.popup-frequency').text(response.freq);
+                    $('.popup-occurance').text(response.summary);
+                    $('.popup-applicablelocation').text(response.locat);
+                    $('.popup-referencelink a span').text(response.refer);
+                    $('.popup-referencelink a').attr('href', response.refer);
+                    Custombox.open({
+                        target: '#custom-modal',
+                        effect: 'contentscale',
+                    });
+                    updateNotificationStatus(v.notification_id, v.user_id, true);
+                    e.preventDefault();
+                } else {
+                    displayMessage(error);
+                }
+            });*/
+            Custombox.open({
+                target: '#custom-modal',
+                effect: 'contentscale',
+            });
+        });
+        $('.message-content', rowClone).text(v.notification_text);
         $('.message-time', rowClone).text(v.created_on);
-        $('.message-user', rowClone).text('User: ' + v.created_by);
         $('.tbody-message-list').append(rowClone);
     });
 
@@ -23,14 +49,11 @@ function loadMessages() {
 
 }
 
-// page load
 function initialize() {
-    mirror.getMessages(from_count, page_count, function(error, response) {
-        if (error != null) {
-            displayMessage(error);
-        } else {
-            MessageList = response.messages;
-            loadMessages();
+    client_mirror.getNotifications(LEIDS, 4, 0, 50, function(error, response) {
+        if (error == null) {
+            data = response.messages;
+            loadMessages(data);
         }
     });
 }

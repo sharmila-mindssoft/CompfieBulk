@@ -479,4 +479,9 @@ api_params = {
     "start_count": make_int_field(),
     "end_count": make_int_field(),
     "notification_type": make_int_field(),
+    "notification_id": make_int_field(is_optional=True),
+    "reminders": make_vector_type_field(module="dashboard", klass_name="RemindersSuccess", is_optional=True),
+    "escalations": make_vector_type_field(module="dashboard", klass_name="EscalationsSuccess", is_optional=True),
+    "messages": make_vector_type_field(module="dashboard", klass_name="MessagesSuccess", is_optional=True),
+    
 }

@@ -75,7 +75,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     elif type(request) is dashboard.GetNotifications:
         logger.logClientApi("GetNotifications", "process begin")
         result = process_get_notifications(
-            db, request, session_user
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetNotifications", "process end")
 
@@ -215,21 +215,19 @@ def process_compliance_applicability_drill_down(
     return dashboard.GetComplianceApplicabilityStatusDrillDownSuccess(
         result_list
     )
-
-
-def process_get_notifications(db, request, session_user):
-    legal_entity_ids = request.legal_entity_ids
-    notifications = None
-    (
-        notification_count, reminder_count, escalation_count
-    ) = get_dashboard_notification_counts(
-        db, session_user
-    )
-    to_count = RECORD_DISPLAY_COUNT
-
-    notifications = get_notifications( db, request.notification_type, request.start_count, request.end_count, session_user )
-    return dashboard.GetNotificationsSuccess(notifications=notifications)
-
+    
+def process_get_notifications(db, request, session_user, session_category):
+    notification_type = request.notification_type
+    total_count = get_dashboard_notification_counts(db, session_user, notification_type)
+    if request.notification_type == 1: # Reminders
+        reminders = get_reminders(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
+        return dashboard.GetRemindersSuccess(reminders, total_count)
+    elif request.notification_type == 3: # Escalations
+        escalations = get_escalations(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
+        return dashboard.GetEscalationsSuccess(escalations, total_count)
+    elif request.notification_type == 4: # Messages
+        messages = get_messages(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
+        return dashboard.GetMessagesSuccess(messages, total_count)
 
 def process_update_notification_status(db, request, session_user):
     update_notification_status(

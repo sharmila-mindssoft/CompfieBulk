@@ -160,52 +160,67 @@ function initializeNavBar() {
         if (form.form_name == "Reminders") {
             var liObject = $('#nav-bar-templates .reminders li').clone();
             $('.cssmenu .menu-ul').append(liObject);
+            $('.reminder-menu').on('click', function(event) {
+                $('.reminder-items-ul').empty();
+                client_mirror.getNotifications(LEIDS, 1, 0, 2, function(error, response) {
+                    if (error == null) {
+                        data = response.reminders;
+                        $.each(data, function(k, v) {
+                            var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                            $('.statu-heading', msgObject).text(limits(v.notification_text, 22));
+                            $('.statu-content', msgObject).text(v.created_on);
+                            $('.slink', msgObject).attr('href', '/reminders');
+                            $('.reminder-items-ul').append(msgObject);
+                        });
+                        $('.reminder-items-ul').find(".divider:last").remove();
+                    }
+                });
+            });
         } else if (form.form_name == "Statutory Notifications") {
             var liObject = $('#nav-bar-templates .notifications li').clone();
             $('.cssmenu .menu-ul').append(liObject);
         } else if (form.form_name == "Escalations") {
             var liObject = $('#nav-bar-templates .escalations li').clone();
             $('.cssmenu .menu-ul').append(liObject);
+            $('.escalation-menu').on('click', function(event) {
+                $('.escalation-items-ul').empty();
+                client_mirror.getNotifications(LEIDS, 3, 0, 2, function(error, response) {
+                    if (error == null) {
+                        data = response.escalations;
+                        $.each(data, function(k, v) {
+                            var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                            $('.statu-heading', msgObject).text(limits(v.notification_text, 22));
+                            $('.statu-content', msgObject).text(v.created_on);
+                            $('.slink', msgObject).attr('href', '/escalations');
+                            $('.escalation-items-ul').append(msgObject);
+                        });
+                        $('.escalation-items-ul').find(".divider:last").remove();
+                    }
+                });
+            });
         } else if (form.form_name == "Messages") {
             var liObject = $('#nav-bar-templates .messages li').clone();
             $('.cssmenu .menu-ul').append(liObject);
             $('.message-menu').on('click', function(event) {
-                /*$('.msg-items-ul').empty();
-                var partHeading = "Sample Title";
-                var partText = "Sample Messages";
-                var msgObject = $('#nav-bar-templates .notifications-list li').clone();
-                for(var i=0; i<= 5; i++) {
-                    $('.statu-heading', msgObject).text(partHeading);
-                    $('.statu-content', msgObject).text(partText);
-                    $('.slink').attr('href', '/message');
-                    $('.msg-items-ul').append(msgObject);
-                }
-                //$('.msg-items-ul .divider').last().html();*/
-
                 $('.msg-items-ul').empty();
-                le_ids = [1];
-                n_type = 3;
-                f_count = 0;
-                t_count = 2;
-                client-mirror.getNotifications(le_ids, n_type, f_count, t_count function(error, response) {
+                client_mirror.getNotifications(LEIDS, 4, 0, 2, function(error, response) {
                     if (error == null) {
-
+                        data = response.messages;
+                        $.each(data, function(k, v) {
+                            var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                            $('.statu-heading', msgObject).text(limits(v.notification_text, 22));
+                            $('.statu-content', msgObject).text(v.created_on);
+                            $('.slink', msgObject).attr('href', '/message');
+                            $('.msg-items-ul').append(msgObject);
+                        });
+                        $('.msg-items-ul').find(".divider:last").remove();
                     }
                 });
-
             });
         }
     }
 }
-// function showDeletionPopup(notification_text) {
-//   $('.overlay-nav-bar').css('visibility', 'visible');
-//   $('.overlay-nav-bar').css('opacity', '1');
-//   $('#msg').html(notification_text);
-//   $('.close').click(function () {
-//     $('.overlay-nav-bar').css('visibility', 'hidden');
-//     $('.overlay-nav-bar').css('opacity', '0');
-//   });
-// }
+
 function persistNavBar() {
     frms = window.location.href.split('/');
     ac_menu = client_mirror.getPageUrl();

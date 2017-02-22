@@ -187,7 +187,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        alert(body.toSource());
+        //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -618,8 +618,9 @@ function initClientMirror() {
         var callerName = 'client_admin_settings';
         clientApiRequest(callerName, request, callback);
     }
+
     /* Notifications */
-    function getNotifications(le_ids, notification_type, start_count, end_count callback) {
+    function getNotifications(le_ids, notification_type, start_count, end_count, callback) {
         callerName = 'client_dashboard';
         var request = [
             'GetNotifications', {
