@@ -114,12 +114,10 @@ function updateComplianceStatusStackBarChart(data, id) {
 //
 // Escalation chart
 //
-function updateEscalationChart(data) {
-  $('.chart-container').show();
-  data = prepareEscalationChartdata(data);
-  xAxis = data[0];
-  chartDataSeries = data[1];
-  chartTitle = data[2];
+function updateEscalationChart(data, id) {  
+  xAxis = data['xaxis'];
+  chartDataSeries = data['widget_data'];
+  chartTitle = data['chart_title'];
   highchart = new Highcharts.Chart({
     colors: [
       '#F58835',
@@ -127,7 +125,7 @@ function updateEscalationChart(data) {
     ],
     chart: {
       type: 'column',
-      renderTo: 'status-container'
+      renderTo: 'cardbox'+id
     },
     title: { text: chartTitle },
     credits: { enabled: false },
@@ -157,19 +155,21 @@ function updateEscalationChart(data) {
     },
     series: chartDataSeries
   });
-  $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
-    var year = this.textContent || this.innerText;
-    loadEscalationDrillDown(year);  // setChart(value);
-  });
+  // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+  //   var year = this.textContent || this.innerText;
+  //   loadEscalationDrillDown(year);  // setChart(value);
+  // });
 }
 //
 // Not complied
 //
-function updateNotCompliedChart(data) {
-  data = prepareNotCompliedChart(data);  
-  chartDataSeries = data[0];
-  chartTitle = data[1];
-  total = data[2];
+function updateNotCompliedChart(data, id) {
+  // data = prepareNotCompliedChart(data);  
+  var tot = 0;
+  chartDataSeries = data['widget_data'];
+  chartTitle = data['chart_title'];
+  $.each(chartDataSeries, function(k, v) { tot=tot+v["y"]; return tot;});
+  total = tot;
   highchart = new Highcharts.Chart({
     colors: [
       '#FF9C80',
@@ -178,7 +178,7 @@ function updateNotCompliedChart(data) {
       '#DD070C'
     ],
     chart: {
-      renderTo: 'status-container',
+      renderTo: 'cardbox'+id,
       type: 'pie',
       options3d: {
         enabled: true,
@@ -220,14 +220,14 @@ function updateNotCompliedChart(data) {
 // Trend  chart
 //
 function updateTrendChart(data) {
-  data = prepareTrendChartData(data);
+  //data = prepareTrendChartData(data);
   print_data = JSON.stringify(data, null, ' ');
-  xAxis = data[0];
-  chartTitle = data[1];
-  chartDataSeries = data[2];
+  xAxis = data['xaxis'];
+  chartTitle = data['chart_title'];
+  chartDataSeries = data['widget_data'];
   var highchart;
   highchart = new Highcharts.Chart({
-    chart: { renderTo: 'status-container' },
+    chart: { renderTo: 'cardbox'+id },
     title: { text: chartTitle },
     credits: { enabled: false },
     xAxis: {
@@ -280,25 +280,25 @@ function updateTrendChart(data) {
     },
     series: chartDataSeries
   });
-  $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
-    var value = this.textContent || this.innerText;
-    name = value;
-    loadTrendChartDrillDown(value);
-    $('.btn-back').show();
-    $('.btn-back').on('click', function () {
-      // updateTrendChart(data);
-      loadTrendChart();
-      $('.btn-back').hide();
-    });  // setChart(value);
-  });
+  // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+  //   var value = this.textContent || this.innerText;
+  //   name = value;
+  //   loadTrendChartDrillDown(value);
+  //   $('.btn-back').show();
+  //   $('.btn-back').on('click', function () {
+  //     // updateTrendChart(data);
+  //     loadTrendChart();
+  //     $('.btn-back').hide();
+  //   });  // setChart(value);
+  // });
 }
 //
 // Compliance applicability status
 //
 function updateComplianceApplicabilityChart(data) {
-  data = prepareComplianceApplicability(data);
-  chartTitle = data[1];
-  chartDataSeries = data[0];
+  //data = prepareComplianceApplicability(data);
+  chartTitle = data['chart_title'];
+  chartDataSeries = data['widget_data'];
   total = data[2];
   highchart = new Highcharts.Chart({
     colors: [
@@ -308,7 +308,7 @@ function updateComplianceApplicabilityChart(data) {
     ],
     chart: {
       type: 'pie',
-      renderTo: 'status-container',
+      renderTo: 'cardbox'+id,
       options3d: {
         enabled: true,
         alpha: 55
@@ -354,24 +354,24 @@ function loadComplianceStatusChart(data, id){
   updateComplianceStatusStackBarChart(data, id);
 }
 
-function loadEscalationChart(){
-
+function loadEscalationChart(data, id){
+  updateEscalationChart(data, id)
 }
 
-function loadNotCompliedChart(){
-
+function loadNotCompliedChart(data, id){
+  updateNotCompliedChart(data, id)
 }
 
 function loadTrendChart(){
-  
+  updateTrendChart(data, id);
 }
 
 function loadComplianceApplicabilityChart(){
-  
+  updateTrendChart(data, id); 
 }
 
 function userScoreCard(){
-  
+  updateComplianceApplicabilityChart(data, id);
 }
 
 function domainScoreCard(){
@@ -435,16 +435,21 @@ function loadChart(){
 
   });
   $.each(widget_info, function(k,v){
-      settings = widgetSettings();
-      settings[v.w_id](function(error, data){
+    settings = widgetSettings();
+    settings[v.w_id](function(error, data){
+      if(error == null){
         console.log(v.w_id+"---"+data);
-          var cardbox = $(".chart-card-box li");
-          var cardboxclone = cardbox.clone();
-          $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
-          $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
-          $(".dragdrophandles").append(cardboxclone);          
-          widgetLoadChart()[v.w_id](data, v.w_id);
-      })
+        var cardbox = $(".chart-card-box li");
+        var cardboxclone = cardbox.clone();
+        $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+        $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
+        $(".dragdrophandles").append(cardboxclone);          
+        widgetLoadChart()[v.w_id](data, v.w_id);  
+      }
+      else{
+        console.log(error);
+      }      
+    });
   });
 }
 
