@@ -50,14 +50,11 @@ StatusReportConsolidated = function() {
 
 StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this = this;
-    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"business_group":[{"b_g_id":1,"b_g_name":"RG Business Group","c_id":1,"is_active":true},{"b_g_id":2,"b_g_name":"ABC Business Group","c_id":1,"is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"b_g_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"b_g_id":null,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._countries = object.countries;
-    t_this._business_group = object.business_group;
-    t_this._entities = object.entities;
-    t_this._divisions = object.divisions;
-    t_this._categorys = object.categorys;
-    t_this._domains = object.domains;
+    /*var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"business_group":[{"b_g_id":1,"b_g_name":"RG Business Group","c_id":1,"is_active":true},{"b_g_id":2,"b_g_name":"ABC Business Group","c_id":1,"is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"b_g_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"b_g_id":null,"is_active":true}]}';
+    var object = jQuery.parseJSON(jsondata);*/
+    t_this._countries = client_mirror.getUserCountry();
+    t_this._business_group = client_mirror.getUserBusinessGroup();
+    t_this._entities = client_mirror.getUserLegalEntity();
 };
 
 function PageControls() {
@@ -69,6 +66,7 @@ function PageControls() {
             displayMessage(message.domainname_required);
         var condition_fields = ["is_active"];
         var condition_values = [true];
+        //alert(text_val +' - '+countryList.toSource() +' - '+)
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -77,11 +75,9 @@ function PageControls() {
     businessGroup.keyup(function(e) {
         var text_val = businessGroup.val().trim();
         var businessGroupList = REPORT._business_group;
-        if (businessGroupList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["is_active", "c_id"];
-        var condition_values = [true, countryId.val()];
-        commonAutoComplete(e, acBusinessGroup, businessGroupId, text_val, businessGroupList, "b_g_name", "b_g_id", function(val) {
+        var condition_fields = ["c_id"];
+        var condition_values = [countryId.val()];
+        commonAutoComplete(e, acBusinessGroup, businessGroupId, text_val, businessGroupList, "bg_name", "bg_id", function(val) {
             onBusinessGroupAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -89,10 +85,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["is_active", "c_id", "b_g_id"];
-        var condition_values = [true, countryId.val(), businessGroupId.val()];
+        var condition_fields = ["c_id", "bg_id"];
+        var condition_values = [countryId.val(), businessGroupId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -103,8 +97,8 @@ function PageControls() {
         var divisionList = REPORT._divisions;
         if (divisionList.length == 0 && text_val != '')
             displayMessage(message.domainname_required);
-        var condition_fields = ["is_active", "le_id"];
-        var condition_values = [true, legalEntity.val()];
+        var condition_fields = [];
+        var condition_values = [];
         commonAutoComplete(e, acDivision, divisionId, text_val, divisionList, "div_name", "div_id", function(val) {
             onDivisionAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -115,37 +109,38 @@ function PageControls() {
         var categoryList = REPORT._categorys;
         if (categoryList.length == 0)
             displayMessage(message.category_required);
-        var condition_fields = ["is_active", "le_id", "div_id"];
-        var condition_values = [true, legalEntity.val(), divisionId.val()];
-        commonAutoComplete(e, acCategory, categoryId, text_val, categoryList, "c_name", "c_id", function(val) {
+        var condition_fields = ["div_id"];
+        var condition_values = [divisionId.val()];
+        commonAutoComplete(e, acCategory, categoryId, text_val, categoryList, "cat_name", "cat_id", function(val) {
             onCategoryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
+
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
-        var condition_fields = ["is_active", "le_id", "div_id", "c_id"];
-        var condition_values = [true, legalEntity.val(), divisionId.val(), categoryId.val()];
+        var condition_fields = ["is_active", "le_id"];
+        var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
             onDomainAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
 
     showButton.click(function() {
-        if (REPORT.validate()) {
-            reportView.show();
-            showAnimation(reportView);
-            REPORT.fetchReportValues();
-            REPORT.showReportValues();
-        }
+        var csv = false;
+        processSubmit(csv);
     });
 
     exportButton.click(function() {
-        if (REPORT.validate()) {
-            REPORT.fetchReportValues();
-            REPORT.exportReportValues();
-        }
+        var csv = true;
+        processSubmit(csv);
     });
+}
+
+processSubmit = function(csv) {
+    if (REPORT.validate()) {
+        REPORT.fetchReportValues(csv);
+    }
 }
 
 clearElement = function(arr) {
@@ -206,15 +201,15 @@ StatusReportConsolidated.prototype.loadSearch = function() {
 
 StatusReportConsolidated.prototype.fetchDivisionCategoryDomainList = function(le_id) {
     t_this = this;
-    if(le_id != "") {
-        var jsondata = '{"divisions":[{"div_id":1,"div_name":"RG Divisions One","le_id":1,"is_active":true},{"div_id":2,"div_name":"RG Divisions Two","le_id":1,"is_active":true}],"categorys":[{"c_id":1,"c_name":"RG Category One","le_id":1,"div_id":1,"is_active":true},{"c_id":2,"c_name":"Rg Category Two","le_id":1,"div_id":null,"is_active":true}],"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"div_id":null,"c_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":1,"div_id":1,"c_id":null,"is_active":true},{"d_id":3,"d_name":"Economic Law","le_id":1,"div_id":1,"c_id":1,"is_active":true},{"d_id":3,"d_name":"Industrial Law","le_id":1,"div_id":null,"c_id":null,"is_active":true}]}';
-        var object = jQuery.parseJSON(jsondata);
-        t_this._divisions = object.divisions;
-        t_this._categorys = object.categorys;
-        t_this._domains = object.domains;
-    } else {
-        displayMessage(message.legalentity_required);
-    }
+    client_mirror.getStatutorySettingsUnitWiseFilters(parseInt(le_id), function(error, response) {
+        if (error == null) {
+            t_this._domains = response.domains;
+            t_this._divisions = response.div_infos;
+            t_this._categorys = response.cat_infos;
+        } else {
+            t_this.possibleFailures(error);
+        }
+    });
 };
 //country businessGroup legalEntity division category domain
 StatusReportConsolidated.prototype.validate = function() {
@@ -268,11 +263,33 @@ showAnimation = function(element) {
         });
 }
 
-StatusReportConsolidated.prototype.fetchReportValues = function() {
+StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
     t_this = this;
-    var jsondata = '{"data_lists":[{"c_id":1,"b_g_id":1,"le_id":1,"div_id":1,"cat_id":1,"dom_id":1,"domain_name":"Labour Law","domain_lists":[{"unit_name":"UN001 - Unit One","inprogress":4,"complied":3,"delayed_complied":2,"not_complied":1,"un_assigned":4,"not_opted":2,"total":16},{"unit_name":"UN002 - Unit Two","inprogress":6,"complied":4,"delayed_complied":0,"not_complied":1,"un_assigned":4,"not_opted":2,"total":17}],"assigned":50,"un_assigned":20,"not_opted":5,"total":85},{"c_id":1,"b_g_id":1,"le_id":1,"div_id":1,"cat_id":1,"dom_id":2,"domain_name":"Finance Law","domain_lists":[{"unit_name":"UN003 - Unit Three","inprogress":5,"complied":4,"delayed_complied":0,"not_complied":0,"un_assigned":4,"not_opted":2,"total":15}],"assigned":43,"un_assigned":15,"not_opted":30,"total":88},{"c_id":1,"b_g_id":1,"le_id":1,"div_id":1,"cat_id":1,"dom_id":3,"domain_name":"Employee Law","domain_lists":[{"unit_name":"UN003 - Unit Four","inprogress":5,"complied":4,"delayed_complied":0,"not_complied":0,"un_assigned":4,"not_opted":2,"total":15},{"unit_name":"UN005 - Unit Five","inprogress":5,"complied":4,"delayed_complied":0,"not_complied":0,"un_assigned":4,"not_opted":2,"total":15}],"assigned":35,"un_assigned":20,"not_opted":15,"total":70}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._report_data = object.data_lists;
+    var c_id = parseInt(countryId.val());
+    var bg_id = parseInt(businessGroupId.val());
+    if (!bg_id) bg_id = null
+    var le_id = parseInt(legalEntityId.val());
+    var d_id = parseInt(domainId.val());
+    var div_id = parseInt(divisionId.val());
+    if (!div_id) div_id = null
+    var cat_id = parseInt(categoryId.val());
+    if (!cat_id) cat_id = null
+
+    client_mirror.getDomainScoreCard(c_id, bg_id, le_id, d_id, div_id, cat_id, csv, function(error, response) {
+        if (error == null) {
+            t_this._report_data = response.domain_score_card_list;
+            if (csv == false) {
+                reportView.show();
+                showAnimation(reportView);
+                REPORT.showReportValues();
+            } else {
+                REPORT.exportReportValues();
+            }
+        } else {
+            t_this.possibleFailures(error);
+        }
+    });
+
 };
 
 StatusReportConsolidated.prototype.showReportValues = function() {
@@ -283,28 +300,34 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     countryName.html(country.val());
     var j = 1;
     reportTableTbody.find('tr').remove();
+    reportTableTbodyNew.find('tr').remove();
+    $('.domain-table-view').hide();
     var assigned_count = 0;
     var un_assigned_count = 0;
     var not_opted_count = 0;
     var row_total_count = 0;
     $.each(data, function(k, v) {
+        var row_total = 0;
         //sno domain-name assigned un-assigned not-opted row-total
         var cloneone = $('#template #report-table .report-row').clone();
         $('.sno', cloneone).text(j);
         $('.domain-name', cloneone).text(v.domain_name);
         $('.domain-name', cloneone).on('click', function() {
-            t_this.showDomainDetails(v.dom_id);
+            t_this.showDomainDetails(v.domain_id);
         });
-        $('.assigned', cloneone).text(v.assigned);
-        $('.un-assigned', cloneone).text(v.un_assigned);
-        $('.not-opted', cloneone).text(v.not_opted);
-        $('.row-total', cloneone).text(v.total);
+        $('.assigned', cloneone).text(v.assigned_count);
+        $('.un-assigned', cloneone).text(v.unassigned_count);
+        $('.not-opted', cloneone).text(v.not_opted_count);
+        
+        
+        assigned_count = assigned_count + v.assigned_count;
+        un_assigned_count = un_assigned_count + v.unassigned_count;
+        not_opted_count = not_opted_count + v.not_opted_count;
+        row_total = row_total_count + v.unassigned_count + v.not_opted_count;
+        row_total_count = row_total_count = row_total;
+        $('.row-total', cloneone).text(row_total);
         reportTableTbody.append(cloneone);
         j = j + 1;
-        assigned_count = assigned_count + v.assigned;
-        un_assigned_count = un_assigned_count + v.un_assigned;
-        not_opted_count = not_opted_count + v.not_opted;
-        row_total_count = row_total_count + v.total;
 
         var inprogress_new_count = 0;
         var complied_new_count = 0;
@@ -314,25 +337,27 @@ StatusReportConsolidated.prototype.showReportValues = function() {
         var not_opted_new_count = 0;
         var row_total_new_count = 0;
         var i = 0
-        $.each(v.domain_lists, function(k1, v1) {
+        $.each(v.units_wise_count, function(k1, v1) {
+            var row_total_new = 0;
             var clonetwo = $('#template #report-table .report-new-row').clone();
-            clonetwo.addClass("domain-"+v.dom_id);
-            $('.unit-name', clonetwo).text(v1.unit_name);
-            $('.inprogress', clonetwo).text(v1.inprogress);
-            $('.complied', clonetwo).text(v1.complied);
-            $('.delayed-complied', clonetwo).text(v1.delayed_complied);
-            $('.not-complied', clonetwo).text(v1.not_complied);
-            $('.un-assigned', clonetwo).text(v1.un_assigned);
-            $('.not-opted', clonetwo).text(v1.not_opted);
-            $('.row-total', clonetwo).text(v1.total);
+            clonetwo.addClass("domain-"+v.domain_id);
+            $('.unit-name', clonetwo).text(v1.unit);
+            $('.inprogress', clonetwo).text(v1.inprogress_count);
+            $('.complied', clonetwo).text(v1.complied_count);
+            $('.delayed-complied', clonetwo).text(v1.delayed_count);
+            $('.not-complied', clonetwo).text(v1.overdue_count);
+            $('.un-assigned', clonetwo).text(v1.unassigned_count);
+            $('.not-opted', clonetwo).text(v1.not_opted_count);
+            inprogress_new_count = inprogress_new_count + v1.inprogress_count;
+            complied_new_count = complied_new_count + v1.complied_count;
+            delayed_new_count = delayed_new_count + v1.delayed_count;
+            not_complied_new_count = not_complied_new_count + v1.overdue_count;
+            un_assigned_new_count = un_assigned_new_count + v1.unassigned_count;
+            not_opted_new_count = not_opted_new_count + v1.not_opted_count;
+            row_total_new = v1.inprogress_count + v1.complied_count + v1.delayed_count + v1.overdue_count + v1.unassigned_count + v1.not_opted_count;
+            row_total_new_count = row_total_new_count = row_total_new;
+            $('.row-total', clonetwo).text(row_total_new);
             reportTableTbodyNew.append(clonetwo);
-            inprogress_new_count = inprogress_new_count + v1.inprogress;
-            complied_new_count = complied_new_count + v1.complied;
-            delayed_new_count = delayed_new_count + v1.delayed_complied;
-            not_complied_new_count = not_complied_new_count + v1.not_complied;
-            un_assigned_new_count = un_assigned_new_count + v1.un_assigned;
-            not_opted_new_count = not_opted_new_count + v1.not_opted;
-            row_total_new_count = row_total_new_count + v1.total;
             i = i + 1;
         });
         if(i > 1) {

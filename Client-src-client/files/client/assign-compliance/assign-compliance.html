@@ -1,0 +1,708 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<style>
+.input-box {
+    width: 100px;
+}
+</style>
+
+<div class="content-page">
+<div class="content">
+<div class="container page_font_size_13">
+    <div class="row" id="animationSandbox">
+        <div class="col-sm-12">
+            <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Assign Compliance</h3>
+                    <div class="portlet-widgets">
+                        
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+                        <div id="basicwizard">
+                            <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab m-b-0">
+                                <li class="tab-step-1 active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. Select Unit</a></li>
+                                <li class="tab-step-2 disabled" ><a href="#tab2" data-toggle="tab">2. Select Compliance Task</a></li>
+                                <li class="tab-step-3 disabled" ><a href="#tab3" data-toggle="tab">3. Select Assignee</a></li>
+                            </ul>
+                            <div class="tab-content b-0 m-b-0">
+                                <div class="tab-pane m-t-0 fade active in " id="tab1">
+                                        <div class="col-sm-12 scroll_box no-padding">
+                                            <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader" width="100%" cellspacing="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="width-31">
+                                                            <h6 class="m-t-0">Legal Entity <span class="mandatory">*</span></h6>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <input class="form-control input-sm" placeholder="Enter Legal Entity" type="text">
+                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                            </div>
+                                                            <ul class="list-unstyled  box-height-150" id="legalentity">
+                                                                <!-- <li class="active">RG Legal Entity<i class="fa fa-check pull-right"></i></li> -->
+                                                            </ul>
+                                                        </td>
+                                                        <td class="width-34">
+                                                            <h6 class="m-t-0">Division</h6>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <input class="form-control input-sm" placeholder="Enter Division" type="text">
+                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                            </div>
+                                                            <ul class="list-unstyled  box-height-150" id="division">
+                                                                <!-- <li class="active">RG Division 01<i class="fa fa-check pull-right"></i></li>
+                                                                <li>RG Division 02</li>
+                                                                <li>RG Division 03</li>
+                                                                <li>RG Division 04</li>
+                                                                <li>RG Division 05</li> -->
+                                                            </ul>
+                                                        </td>
+                                                        <td class="width-33">
+                                                            <h6 class="m-t-0">Category</h6>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <input class="form-control input-sm" placeholder="Enter Category" type="text">
+                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                            </div>
+                                                            <ul class="list-unstyled  box-height-150" id="category">
+                                                                <!-- <li>RG Category 01</li>
+                                                                <li>RG Category 02</li>
+                                                                <li>RG Category 03</li>
+                                                                <li>RG Category 04</li>
+                                                                <li>RG Category 05</li> -->
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-sm-12 scroll_box no-padding">
+                                            <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader m-b-0" width="100%" cellspacing="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="width-31">
+                                                            <h6 class="m-t-0">Domain <span class="mandatory">*</span></h6>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <input class="form-control input-sm" placeholder="Enter Domain" type="text">
+                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                            </div>
+                                                            <ul class="list-unstyled  box-height-150" id="domain">
+                                                                <!-- <li class="active">Labour Law<i class="fa fa-check pull-right"></i></li>
+                                                                <li>Finance Law</li>
+                                                                <li>Industial Law</li> -->
+                                                            </ul>
+                                                        </td>
+                                                        <td class="width-34">
+                                                            <h6 class="m-t-0">Unit <span class="mandatory">*</span></h6>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <input class="form-control input-sm" placeholder="Enter Unit" type="text">
+                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                            </div>
+                                                            <ul class="list-unstyled box-height-150" id="unit">
+                                                               <!--  <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1001 - Corporate Office</li>
+                                                                <li class="active"><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1003 - Regional Office - South <i class="fa fa-check pull-right"></i></li>
+                                                                <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1004 - Branch Office - 1</li>
+                                                                <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1005 - Branch Office - 2</li>
+                                                                <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1006 - Branch Office - 3</li>
+                                                                <li class="active"><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1007 - Branch Office - 4<i class="fa fa-check pull-right"></i></li>
+                                                                <li class="active"><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1008 - Branch Office - 5<i class="fa fa-check pull-right"></i></li>
+                                                                <li class="active"><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1008 - Branch Office - 6<i class="fa fa-check pull-right"></i></li>
+                                                                <li class="active"><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1008 - Branch Office - 7<i class="fa fa-check pull-right"></i></li> -->
+                                                            </ul>
+                                                        </td>
+                                                        <td class="width-33">
+                                                            <h6 class="m-t-0">Compliance Frequency <span class="mandatory">*</span></h6>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <input class="form-control input-sm" placeholder="Enter Compliance Frequency" type="text">
+                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                            </div>
+                                                            <ul class="list-unstyled  box-height-150" id="frequency">
+                                                                <!-- <li>One Time</li>
+                                                                <li>Review</li>
+                                                                <li>Flexi Review</li>
+                                                                <li>Periodical</li>
+                                                                <li>On Occurrence</li> -->
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="tab-pane m-t-0 fade box-height-350" id="tab2">
+                                    <div class="row">
+                                        <div class="panel-group col-lg-12 m-b-0 tbody-accordion-list" id="accordion" role="tablist" aria-multiselectable="true">
+                                        </div>
+
+                                        <!-- <div class="panel-group col-lg-12 m-b-0" id="accordion" role="tablist" aria-multiselectable="true">
+                                            <div class="panel panel-default bx-shadow-none">
+                                                <div class="panel-heading p-0" role="tab" id="headingOne">
+                                                    <h4 class="panel-title">
+                                                        <div class="checkbox checkbox-primary m-b-0 m-t-5 m-l-5 tab-checkbox">
+                                                            <input id="checkbox1" type="checkbox" class="text-center">
+                                                            <label for="checkbox1" class="text-bold"></label>
+                                                        </div>
+                                                        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5"> The Batteries Act </a>
+                                                        <div class="clearfix"></div>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                                    <div class="panel-body no-padding">
+                                                      <div class="dataTable_wrapper top-lightborder">
+                                                        <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                                                          <thead>
+                                                            <tr>
+                                                              <th width="1%">&nbsp;</th>
+                                                              <th width="15%">Compliance Task</th>
+                                                              <th width="06%" class="text-center">Applicable Units</th>
+                                                              <th width="10%">Compliance Frequency</th>
+                                                              <th width="12%">Statutory Date/Schedule</th>
+                                                              <th width="08%">Trigger Before (Days) <span class="mandatory">*</span></th>
+                                                              <th width="06%">Due Date <span class="mandatory">*</span></th>
+                                                              <th width="06%">Validity Date</th>
+                                                            </tr>
+                                                          </thead>
+                                                          <tbody>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox1" type="checkbox" class="text-center" checked="checked">
+                                                                    <label for="checkbox1"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned"></i> FORM I - Half yearly returns Submission</td>
+                                                              <td class="text-center"><a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">3 / 3</a></td>
+                                                              <td>Periodical</td>
+                                                              <td>Every Year 1st January</td>
+                                                              <td>20 Days<i class="fa fa-pencil pull-right"></i></td>
+                                                              <td><input class="form-control input-sm" value="01-Jan-2017" type="text"></td>
+                                                              <td><input class="form-control input-sm" value="01-Jan-2018" type="text"></td>
+                                                              
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox2" type="checkbox" class="text-center" checked="checked">
+                                                                    <label for="checkbox2"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"></i> FORM II - Registration</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>One Time</td>
+                                                              <td>10th March</td>
+                                                              <td>20 Days<i class="fa fa-pencil pull-right"></i></td>
+                                                              <td><input class="form-control input-sm" value="10-Mar-2017" type="text"></td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox3" type="checkbox" class="text-center" checked="checked">
+                                                                    <label for="checkbox3"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether undertaking submitted by importer to authority."></i> FORM III - Undertaking submission</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>Review</td>
+                                                              <td>Repeats Every 1 Month(s)</td>
+                                                              <td>10 Days<i class="fa fa-pencil pull-right"></i></td>
+                                                              <td><input class="form-control input-sm" value="10-Dec-2016" type="text"></td>
+                                                              <td><input class="form-control input-sm" value="01-Dec-2016" type="text"></td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox4" type="checkbox" class="text-center">
+                                                                    <label for="checkbox4"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM V - Dealer Half yearly returns</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>On Occurrence</td>
+                                                              <td>To complete within 6 hours</td>
+                                                              <td>&nbsp;</td>
+                                                              <td>&nbsp;</td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                             <tr>
+                                                              <td colspan="100%">
+                                                                <mark class="p-l-10 p-r-10">Tamilnadu State Act</mark>
+                                                              </td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox5" type="checkbox" class="text-center">
+                                                                    <label for="checkbox5"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether registration obtained for dealers"></i> FORM IV - Dealer Registration</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>Periodical</td>
+                                                              <td>Every 31st March, 30th June, 20th September, 31th December</td>
+                                                              <td class="view-trigger-days">20 Days, 20 Days, 20 Days, 15 Days <i class="fa fa-pencil pull-right edit-trigger c-pointer" onclick="trigger_change('1')"></i></td>
+                                                              <td style="display:none;" class="edit-trigger-days">20 Days, 20 Days, 20 Days, 15 Days 
+                                                              <i class="fa fa-times text-muted pull-right close-tigger c-pointer" onclick="trigger_change('2')"></i>
+                                                                <div class="form-group">
+                                                                <div class="col-sm-7 no-padding"><input class="form-control input-sm" value="20" type="text">
+                                                                </div>
+                                                                <label class="col-sm-1 control-label t-a-l">Days</label></div>
+                                                                <div class="form-group">
+                                                                <div class="col-sm-7 no-padding"><input class="form-control input-sm" value="20" type="text">
+                                                                </div>
+                                                                <label class="col-sm-1 control-label t-a-l">Days</label></div>
+                                                                <div class="form-group">
+                                                                <div class="col-sm-7 no-padding"><input class="form-control input-sm" value="20" type="text">
+                                                                </div>
+                                                                <label class="col-sm-1 control-label t-a-l">Days</label></div>
+                                                                <div class="form-group">
+                                                                <div class="col-sm-7 no-padding"><input class="form-control input-sm" value="15" type="text">
+                                                                </div>
+                                                                <label class="col-sm-1 control-label t-a-l">Days</label></div>
+                                                                </td>
+                                                              <td><input class="form-control input-sm" value="31-Dec-2016" type="text"></td>
+                                                              <td><input class="form-control input-sm" value="31-Dec-2016" type="text"></td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox6" type="checkbox" class="text-center">
+                                                                    <label for="checkbox6"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether registration and renewal obtained by recycler"></i> FORM VI - Recycler Registration and Review</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>Flexi Review</td>
+                                                              <td>Repeats Every 2 Month(s)</td>
+                                                              <td><input class="form-control input-sm" value="25" type="text"></td>
+                                                              <td><input class="form-control input-sm" value="01-Dec-2016" type="text"></td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td class="text-center">&nbsp;</td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by recyclers"></i> FORM VII - Recycler Half yearly returns</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>Flexi Review</td>
+                                                              <td>&nbsp;</td>
+                                                              <td>&nbsp;</td>
+                                                              <td>&nbsp;</td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                          </tbody>
+                                                        </table>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default bx-shadow-none">
+                                                <div class="panel-heading p-0" role="tab" id="headingTwo">
+                                                    <h4 class="panel-title">
+                                                        <div class="checkbox checkbox-primary m-b-0 m-t-5 m-l-5 tab-checkbox">
+                                                            <input id="checkbox1" type="checkbox" class="text-center">
+                                                            <label for="checkbox1"></label>
+                                                        </div>
+                                                        <a class="collapsed p-5" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"  aria-expanded="false" aria-controls="collapseTwo">
+                                                            Indian Partnership Act, 1932
+                                                        </a>
+                                                        <div class="clearfix"></div>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                                    <div class="panel-body no-padding">
+                                                      <div class="dataTable_wrapper top-lightborder">
+                                                        <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                                                          <thead>
+                                                            <tr>
+                                                              <th width="1%">&nbsp;</th>
+                                                              <th width="15%">Compliance Task</th>
+                                                              <th width="06%" class="text-center">Applicable Units</th>
+                                                              <th width="12%">Compliance Frequency</th>
+                                                              <th width="12%">Statutory Date/Schedule</th>
+                                                              <th width="08%">Trigger Before (Days)</th>
+                                                              <th width="06%">Due Date</th>
+                                                              <th width="06%" class="text-center">Validity Date</th>
+                                                            </tr>
+                                                          </thead>
+                                                          <tbody>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox7" type="checkbox" class="text-center">
+                                                                    <label for="checkbox7"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned"></i> FORM I - Half yearly returns Submission</td>
+                                                              <td class="text-center"><a href="#" >3 / 3</a></td>
+                                                              <td>Periodical</td>
+                                                              <td>Every Year 1st January</td>
+                                                              <td>20 Days<i class="fa fa-pencil pull-right"></i></td>
+                                                              <td><input class="form-control input-sm" value="01-Jan-2017" type="text"></td>
+                                                              <td><input class="form-control input-sm" value="01-Jan-2018" type="text"></td>
+                                                              
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox8" type="checkbox" class="text-center">
+                                                                    <label for="checkbox8"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"></i> FORM II - Registration</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>One Time</td>
+                                                              <td>10th March</td>
+                                                              <td>20 Days<i class="fa fa-pencil pull-right"></i></td>
+                                                              <td><input class="form-control input-sm" value="10-Mar-2017" type="text"></td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox9" type="checkbox" class="text-center">
+                                                                    <label for="checkbox9"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether undertaking submitted by importer to authority."></i> FORM III - Undertaking submission</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>Review</td>
+                                                              <td>Repeats Every 1 Month(s)</td>
+                                                              <td>10 Days<i class="fa fa-pencil pull-right"></i></td>
+                                                              <td><input class="form-control input-sm" value="10-Dec-2016" type="text"></td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox10" type="checkbox" class="text-center">
+                                                                    <label for="checkbox10"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM V - Dealer Half yearly returns</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>On Occurrence</td>
+                                                              <td>To complete within 6 hours</td>
+                                                              <td>&nbsp;</td>
+                                                              <td>&nbsp;</td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                          </tbody>
+                                                        </table>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default bx-shadow-none">
+                                                <div class="panel-heading p-0" role="tab" id="headingTwo">
+                                                    <h4 class="panel-title">
+                                                        <div class="checkbox checkbox-primary m-b-0 m-t-5 m-l-5 tab-checkbox"> 
+                                                            <input id="checkbox1" type="checkbox" class="text-center">
+                                                            <label for="checkbox1"></label> 
+                                                        </div>
+                                                        <a class="collapsed p-5" role="button" data-toggle="collapse" ata-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree" >
+                                                            The Factories Act, 1948
+                                                        </a>
+                                                        <div class="clearfix"></div>
+                                                    </h4>
+                                                </div>
+                                                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                                                    <div class="panel-body no-padding">
+                                                      <div class="dataTable_wrapper top-lightborder">
+                                                        <table class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                                                          <thead>
+                                                            <trno-bgheader no-border                                                              <th width="1%">&nbsp;</th>
+                                                              <th width="15%">Compliance Task</th>
+                                                              <th width="06%" class="text-center">Applicable Units</th>
+                                                              <th width="12%">Compliance Frequency</th>
+                                                              <th width="12%">Statutory Date/Schedule</th>
+                                                              <th width="08%">Trigger Before (Days)</th>
+                                                              <th width="06%">Due Date</th>
+                                                              <th width="06%" class="text-center">Validity Date</th>
+                                                            </tr>
+                                                          </thead>
+                                                          <tbody>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox11" type="checkbox" class="text-center" checked="checked">
+                                                                    <label for="checkbox11"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned"></i> FORM I - Half yearly returns Submission</td>
+                                                              <td class="text-center"><a href="#" >3 / 3</a></td>
+                                                              <td>Periodical</td>
+                                                              <td>Every Year 1st January</td>
+                                                              <td>20 Days<i class="fa fa-pencil pull-right"></i></td>
+                                                              <td><input class="form-control input-sm" value="01-Jan-2017" type="text"></td>
+                                                              <td><input class="form-control input-sm" value="01-Jan-2018" type="text"></td>
+                                                              
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox12" type="checkbox" class="text-center" checked="checked">
+                                                                    <label for="checkbox12"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether registration for importers obtained for importing lead acid battery or primary Lead"></i> FORM II - Registration</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>One Time</td>
+                                                              <td>10th March</td>
+                                                              <td>20 Days<i class="fa fa-pencil pull-right"></i></td>
+                                                              <td><input class="form-control input-sm" value="10-Mar-2017" type="text"></td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox13" type="checkbox" class="text-center" checked="checked">
+                                                                    <label for="checkbox13"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether undertaking submitted by importer to authority."></i> FORM III - Undertaking submission</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>Review</td>
+                                                              <td>Repeats Every 1 Month(s)</td>
+                                                              <td>10 Days<i class="fa fa-pencil pull-right"></i></td>
+                                                              <td><input class="form-control input-sm" value="10-Dec-2016" type="text"></td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                            <tr>
+                                                              <td>
+                                                                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                                                    <input id="checkbox14" type="checkbox" class="text-center" checked="checked">
+                                                                    <label for="checkbox14"></label>
+                                                                </div>
+                                                              </td>
+                                                              <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM V - Dealer Half yearly returns</td>
+                                                              <td class="text-center"><a href="">3 / 3</a></td>
+                                                              <td>On Occurrence</td>
+                                                              <td>To complete within 6 hours</td>
+                                                              <td>&nbsp;</td>
+                                                              <td>&nbsp;</td>
+                                                              <td>&nbsp;</td>
+                                                            </tr>
+                                                          </tbody>
+                                                        </table>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                     <div class="total_count_view default-display-none">
+                                         <br> 
+                                         <span class="total_count" style="padding-left:10px;"></span> 
+                                         <span class="selected_count pull-right" style="padding-right:10px;"> Selected Compliance: 0 </span>
+                                    </div>
+                             </div>
+                                <div class="tab-pane m-t-0 fade box-height-350" id="tab3">
+                                    <div class="row">
+                                        <div class="col-sm-12 scroll_box">
+                                            <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list no-bgheader m-b-0" width="100%" cellspacing="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="width-31">
+                                                            <h6 class="m-t-0 text-center">Assignee <span class="mandatory">*</span></h6>
+                                                            <select class="form-control input-sm m-b-10" id="assignee_unit">
+                                                              <!-- <option>All</option>
+                                                              <option>RG0001 - Corporate Office</option>
+                                                              <option>RG0002 - Regional Office</option>
+                                                              <option selected="selected">RG0003 - Branch Office - Madurai</option>
+                                                              <option>RG0004 - Branch Office - Chennai</option>
+                                                              <option>RG0005 - Branch Office - Selam</option> -->
+                                                            </select>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <input class="form-control input-sm" placeholder="Search" type="text">
+                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                            </div>
+                                                            <ul class="list-unstyled" id="assignee">
+                                                                
+                                                            </ul>
+                                                        </td>
+                                                        <td class="width-34 c-view">
+                                                            <h6 class="m-t-0 text-center">Concurrence</h6>
+                                                            <select class="form-control input-sm m-b-10" id="concurrence_unit">
+                                                              
+                                                            </select>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <input class="form-control input-sm" placeholder="Search" type="text">
+                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                            </div>
+                                                            <ul class="list-unstyled" id="concurrence">
+                                                                
+                                                            </ul>
+                                                        </td>
+                                                        <td class="width-33">
+                                                            <h6 class="m-t-0 text-center">Approval</h6>
+                                                            <select class="form-control input-sm m-b-10" id="approval_unit">
+                                                             
+                                                            </select>
+                                                            <div class="form-group has-feedback m-b-0">
+                                                                <input class="form-control input-sm" placeholder="Search" type="text">
+                                                                <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                            </div>
+                                                            <ul class="list-unstyled" id="approval">
+                                                                
+                                                            </ul>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <center style="padding-top:10px;">
+                                    <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light default-display-none btn-showmore" >Show More</button>
+                                </center>
+
+                                <ul class="pager wizard m-b-0">
+                                    <li id="btn-previous" class="previous"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
+                                    <li id="btn-next" class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                    <li id="btn-submit" class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
+                                    <!-- <li class="finish pull-right"><a href="#" class="btn btn-info waves-effect waves-light">Save</a> &nbsp; </li> -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<div id="templates">
+    <div class="ul-row">
+        <ul>
+            <li></li>
+        </ul>
+    </div>
+
+    <div id="act-templates" class="default-display-none">
+      <div class="panel panel-default bx-shadow-none p-head">
+        <div class="panel-heading p-10 acc-title" role="tab">
+            <h4 class="m-b-0 m-t-0">
+                <div class="checkbox checkbox-primary m-b-0 m-t-5 m-l-5 tab-checkbox">
+                    <input type="checkbox" class="text-center act-checkbox">
+                    <label class="text-bold"></label>
+                </div>
+                <div class="panel-title">
+                    <a role="button" data-toggle="collapse"
+                        data-parent="#accordion" 
+                        aria-expanded="true" >
+                        <span></span>
+                    </a>
+                </div>
+              
+            </h4>
+        </div>
+        <div class="panel-collapse collapse in coll-title" role="tabpanel">
+            <div class="panel-body no-padding">
+                <div class="dataTable_wrapper">
+                    <!-- <table id="datatable-fixed-header" class="table dt-responsive table-list m-b-0 legal-table" width="100%" cellspacing="0"> -->
+                    <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
+                        <thead>
+                            <tr>
+                              <th width="1%">&nbsp;</th>
+                              <th width="15%">Compliance Task</th>
+                              <th width="06%" class="text-center">Applicable Units</th>
+                              <th width="10%">Compliance Frequency</th>
+                              <th width="12%">Statutory Date/Schedule</th>
+                              <th width="08%">Trigger Before (Days) <span class="mandatory">*</span></th>
+                              <th width="06%">Due Date <span class="mandatory">*</span></th>
+                              <th width="06%">Validity Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="tbody-compliance-list">                               
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="compliances">
+        <table class="table-compliances">
+          <tr class="sub-title-row">
+            <td colspan="100%">
+                <div class="col-sm-2 no-padding">
+                    <mark class="p-l-10 p-r-10 sub-title"></mark>
+                </div>
+            </td>
+          </tr>
+          <tr class="row-compliances">
+              <input type="hidden" class="combineid-class" />
+              <input type="hidden" class="appl_unit" />
+
+              <td class="text-center">
+                <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                    <input type="checkbox" class="comp-checkbox">
+                    <label></label>
+                </div>
+              </td>
+
+              <td>
+                <i class="fa fa-info-circle text-primary c-pointer desc" data-toggle="tooltip" title=""></i> 
+                <span class="compliancetask"> </span>
+              </td>
+
+              <td class="text-center applicableunits"> </td>
+
+              <td class="frequency"> </td>
+
+              <td class="summary"> </td>
+
+              <td class="trigger"> </td>
+
+              <td class="duedate"> </td>
+
+              <td class="validitydate">
+                <input type="text" value="" class="input-box vdate" readonly="readonly" />
+              </td>
+
+          </tr>
+        </table>
+      </div>
+
+
+</div>
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+    </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Applicable Units</h4>
+    <div class="custom-modal-text">
+        <div role="form">
+            <p class="form-control-static text-left">RG1001 - Corporate Office - 15/9, New Delhi, New Delhi, North Region, India</p>
+            <p class="form-control-static text-left">RG1002 - Regional Office - 24-1/4, South Delhi Municipal Corporation, Delhi</p>
+            <p class="form-control-static text-left">RG1003 - Branch Office - 12, KK nagar, Chennai, Tamil Nadu, South Region</p>
+        </div>
+    </div>
+</div>
+<!-- <script src="/files/client/common/js/custombox/custombox.min.js"></script>
+ -->
+<script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
+<!-- <script type="text/javascript">
+    var resizefunc = [];
+    $(document).ready(function() {
+        $('#basicwizard').bootstrapWizard({'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'});
+
+        
+    });
+</script>
+ -->
+<script type="text/javascript" src="/script/assign-compliance/assign-compliance.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#basicwizard .nav-tabs li a').click(function() {
+          return false;
+        });
+    });
+</script>
+{% endblock %}

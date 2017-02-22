@@ -249,6 +249,11 @@ CREATE TABLE `tbl_user_sessions` (
   PRIMARY KEY (`session_token`),
   UNIQUE KEY(`user_id`, `session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_user_legal_entities` (
+  `user_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  UNIQUE KEY (`user_id`, `legal_entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
@@ -293,6 +298,10 @@ CREATE TABLE `tbl_reminder_settings` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY(`client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_widget_settings`(
+ `user_id` int(11) PRIMARY KEY NOT NULL,
+  `widget_data` TEXT DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
@@ -335,11 +344,11 @@ INSERT INTO tbl_forms VALUES(25, 3, 'Statutory Notification List', "/statutory-n
 INSERT INTO tbl_forms VALUES(26, 3, 'Service Provider Details', "/service-provider-details", 26, null);
 INSERT INTO tbl_forms VALUES(27, 3, 'Audit Trail', "/audit-trail", 27, null);
 INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 28, null);
-INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/view-profile", 29, null);
+INSERT INTO tbl_forms VALUES(29, 4, 'View Profile', "/view-profile", 29, null);
 INSERT INTO tbl_forms VALUES(30, 4, 'Client View Profile', "/client-view-profile", 30, null);
 INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 31, null);
 INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 32, null);
-INSERT INTO tbl_forms VALUES(33, 4, 'themes', "/themes", 33, null);
+INSERT INTO tbl_forms VALUES(33, 4, 'Themes', "/themes", 33, null);
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
 INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-details", 35, null);
 INSERT INTO tbl_forms VALUES(36, 4, 'Reminders', "/reminders", 36, null);

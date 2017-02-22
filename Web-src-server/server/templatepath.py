@@ -20,7 +20,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Widgets ---------------------------------------------------------------------
     (
         "/home",
-        "files/client/home/home.html",
+        "files/client/widgets/widgets.html",
         None, {}
     ),
     # Welcome ---------------------------------------------------------------------
@@ -32,7 +32,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Dashboard ---------------------------------------------------------------------
     (
         "/dashboard",
-        "files/client/client-home/client-home.html",
+        "files/client/dashboard/dashboard.html",
         None, {}
     ),
     # Master ---------------------------------------------------------------------
@@ -74,12 +74,12 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/assign-compliance",
-        "files/client/assign-compliance/assigncompliance.html",
+        "files/client/assign-compliance/assign-compliance.html",
         None, {}
     ),
     (
         "/reassign-compliance",
-        "files/client/reassign-compliance/reassigncompliance.html",
+        "files/client/reassign-compliance/reassign-compliance.html",
         None, {}
     ),
     (
@@ -205,13 +205,13 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     # My Accounts ---------------------------------------------------------------------
     (
-        "/view-profile",
-        "files/client/view-profile/view-profile.html",
+        "/profile",
+        "files/client/profile/profile.html",
         None, {}
     ),
     (
-        "/client-view-profile",
-        "files/client/client-view-profile/client-view-profile.html",
+        "/profile",
+        "files/client/profile/profile.html",
         None, {}
     ),
     (

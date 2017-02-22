@@ -189,7 +189,7 @@ class ReplicationBase(object):
             "tbl_units_organizations": 3,
             "tbl_compliances": 22,
             "tbl_client_statutories": 3,
-            "tbl_client_compliances": 13,
+            "tbl_client_compliances": 10,
             "tbl_statutory_notifications": 5,
             # "tbl_statutory_notifications_units": 6,
             "tbl_countries": 2,
@@ -224,7 +224,7 @@ class ReplicationBase(object):
             #     print self._domains
             #     print "=-=-=-"
             self._db.commit()
-        except Exception, e :
+        except Exception, e:
             # print e
             self._domains = None
             self._db.rollback()
@@ -298,7 +298,7 @@ class ReplicationBase(object):
 
         except Exception, e:
             pass
-            print e
+            # print e
             logger.logClient("client.py", "insert", e)
         self._temp_count = changes[-1].audit_trail_id
 

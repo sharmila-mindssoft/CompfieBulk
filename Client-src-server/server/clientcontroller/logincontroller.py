@@ -55,7 +55,7 @@ def process_login_request(
 
     elif type(request) is clientlogin.ChangePassword:
         logger.logClientApi("ResetPassword", "begin")
-        result = process_change_password(db, request)
+        result = process_change_password(db, company_id, request)
         logger.logClientApi("ResetPassword", "end")
 
     elif type(request) is clientlogin.Logout:
@@ -336,11 +336,16 @@ def process_reset_password(db, request):
         return clientlogin.InvalidResetToken()
 
 
-def process_change_password(db, request):
+def process_change_password(db, company_id, request):
     client_info = request.session_token.split("-")
+
+    # session_token = "%s-%s" % (
+    #     client_info[0], client_info[2]
+    # )
     session_token = "%s-%s" % (
-        client_info[0], client_info[2]
+        company_id, client_info[2]
     )
+    print session_token
     # client_id = int(client_info[0])
     session_user = db.validate_session_token(session_token)
     if verify_password(db, request.current_password, session_user):

@@ -183,11 +183,11 @@ CREATE TABLE `tbl_client_compliances` (
   `domain_id` int(11) DEFAULT NULL,
   `statutory_name` varchar(150) DEFAULT NULL,
   `statutory_applicable_status` tinyint(4) DEFAULT '0',
-  `statutory_opted_status` tinyint(4) DEFAULT '0',
+  `statutory_opted_status` tinyint(4) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `compliance_id` int(11) NOT NULL,
   `compliance_applicable_status` tinyint(4) DEFAULT '0',
-  `compliance_opted_status` tinyint(4) DEFAULT '0',
+  `compliance_opted_status` tinyint(4) DEFAULT NULL,
   `not_opted_remarks` varchar(500) DEFAULT NULL,
   `opted_by` int(11) DEFAULT NULL,
   `opted_on` timestamp NULL DEFAULT NULL,
@@ -248,6 +248,11 @@ CREATE TABLE `tbl_notifications_log` (
   `extra_details` longtext,
   `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE tbl_notifications_user_log(
+  `notification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `read_status` tinyint(4) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_service_providers` (
   `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
@@ -290,6 +295,11 @@ CREATE TABLE `tbl_users` (
   `is_disable` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`user_id`),
   CONSTRAINT `category_fk2` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_user_legal_entities` (
+  `user_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  UNIQUE KEY (`user_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
@@ -347,7 +357,6 @@ CREATE TABLE `tbl_compliance_dates_history` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_assign_compliances` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -369,6 +378,7 @@ CREATE TABLE `tbl_assign_compliances` (
   `trigger_before_days` int(11) DEFAULT NULL,
   `due_date` date DEFAULT NULL,
   `validity_date` date DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
   CONSTRAINT `legalentity_fk1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `country_fk2` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `domain_fk3` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
@@ -437,44 +447,42 @@ CREATE TABLE `tbl_compliance_activity_log` (
   `unit_id` int(11) DEFAULT NULL,
   `compliance_id` int(11) DEFAULT NULL,
   `compliance_history_id` int(11) DEFAULT NULL,
-  `activity_date` date DEFAULT NULL,
+  `activity_by` int(11) DEFAULT NULL,
   `activity_on` timestamp NULL DEFAULT NULL,
+  `action` varchar(500) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`compliance_activity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_status_chart_unitwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
-  `complied` int(11) DEFAULT NULL,
-  `delayed` int(11) DEFAULT NULL,
-  `inprogress` int(11) DEFAULT NULL,
-  `overdue` int(11) DEFAULT NULL,
+  `complied_count` int(11) DEFAULT NULL,
+  `delayed_count` int(11) DEFAULT NULL,
+  `inprogress_count` int(11) DEFAULT NULL,
+  `overdue_count` int(11) DEFAULT NULL,
   `chart_year` int(11) DEFAULT NULL,
   `month_from` int(11) DEFAULT NULL,
   `month_to` int(11) DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`, `chart_year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_status_chart_userwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `complied` int(11) DEFAULT NULL,
-  `delayed` int(11) DEFAULT NULL,
-  `inprogress` int(11) DEFAULT NULL,
-  `overdue` int(11) DEFAULT NULL,
+  `complied_count` int(11) DEFAULT NULL,
+  `delayed_count` int(11) DEFAULT NULL,
+  `inprogress_count` int(11) DEFAULT NULL,
+  `overdue_count` int(11) DEFAULT NULL,
   `chart_year` int(11) DEFAULT NULL,
   `month_from` int(11) DEFAULT NULL,
   `month_to` int(11) DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`, `user_id`, `chart_year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_notcomplied_chart_unitwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -486,7 +494,6 @@ CREATE TABLE `tbl_notcomplied_chart_unitwise` (
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_notcomplied_chart_userwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -499,7 +506,6 @@ CREATE TABLE `tbl_notcomplied_chart_userwise` (
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_applicability_chart` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -548,3 +554,7 @@ INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
 INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "Flexi Review");
 INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
+INSERT INTO tbl_notification_types VALUES(1, "Notification");
+INSERT INTO tbl_notification_types VALUES(2, "Reminder");
+INSERT INTO tbl_notification_types VALUES(3, "Escalation");
+INSERT INTO tbl_notification_types VALUES(4, "Messages");

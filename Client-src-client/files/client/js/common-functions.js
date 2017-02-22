@@ -3,6 +3,12 @@ var m_names = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 
 //Load count values in pagination selectbox
 var pageList = [25, 50, 100];
 
+var UserTypeString = '[{"id":1,"name":"Assignee"},{"id":2,"name":"Concurrence"},{"id":3,"name":"Approval"}]';
+var UserTypes = jQuery.parseJSON(UserTypeString);
+
+var ComplianceTaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
+
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
         var Id = pageList[i];
@@ -125,11 +131,11 @@ function isCommon(inputElm) {
 function isAlphanumeric(inputElm) {
   //allowed => alphanumeric
   return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
-}
+}*/
 function isNumbers(inputElm) {
   //allowed => only numbers
   return inputElm.val().replace(/[^0-9]/gi, '');
-}*/
+}
 
 function isNonZeroNumbers(inputElm) {
     //allowed => only numbers
@@ -447,3 +453,21 @@ $(function() {
       });
   });
 });
+
+function hyphenatedToUpperCamelCase(a) {
+  var b = parseHyphenated(a);
+  return hypToUpperCamelCase(b);
+}
+
+function parseHyphenated(a) {
+  return a.split('-');
+}
+function hypToUpperCamelCase(d) {
+  var a = [];
+  for (var b = 0; b < d.length; ++b) {
+    var c = d[b];
+    c = c[0].toUpperCase() + c.slice(1);
+    a.push(c);
+  }
+  return a.join('');
+}

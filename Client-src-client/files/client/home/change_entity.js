@@ -1,17 +1,20 @@
 
 function getLegalEntityChange(LE_ID, LE_NAME){
     var sEntity = [];
+    var USER_LE = client_mirror.getUserLegalEntity();
     if(LE_ID != 'all'){
-        sEntity.push(parseInt(LE_ID))
-    }else{
-        var USER_LE = client_mirror.getUserLegalEntity();
         $.each(USER_LE, function(key, value) {
-            sEntity.push(value.le_id);
+            if(value.le_id == LE_ID){
+                sEntity.push(value);
+            }
         });
+    }else{
+        var sEntity = USER_LE;
     }
-    window.sessionStorage.selectedEntity = sEntity;
+
+    window.sessionStorage.selectedEntity = JSON.stringify(sEntity, null, ' ');
     window.sessionStorage.selectedEntityName = LE_NAME;
-    location.reload();
+    location.reload(window.sessionStorage.selectedEntity);
 }
 
 function loadLegalEntityListChange(){

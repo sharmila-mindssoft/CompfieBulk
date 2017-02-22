@@ -1170,8 +1170,8 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_client_statutories_update` AFTER UPDATE ON `tbl_client_statutories`
  FOR EACH ROW BEGIN
     SET @action = 0;
-    set @legal_entity_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id);
-    set @domain_id = (select domain_id from tbl_client_compliances where client_statutory_id = new.client_statutory_id);
+    set @legal_entity_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id limit 1);
+    set @domain_id = (select domain_id from tbl_client_compliances where client_statutory_id = new.client_statutory_id limit 1);
 
     IF old.status <> new.status and new.status = 3 then
         INSERT INTO tbl_audit_log(action,
@@ -1344,20 +1344,6 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                     1,
                     'tbl_client_compliances');
 
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0,
-                    NEW.legal_entity_id,
-                    NEW.client_compliance_id,
-                    'is_submitted',
-                    NEW.is_submitted,
-                    'tbl_client_compliances');
 
         INSERT INTO tbl_audit_log(action,
                                  client_id,
@@ -1366,37 +1352,7 @@ CREATE TRIGGER `after_tbl_client_compliances_update` AFTER UPDATE ON `tbl_client
                                  column_name,
                                  value,
                                  tbl_name)
-            VALUES (@action,
-                    0,
-                    NEW.legal_entity_id,
-                    NEW.client_compliance_id,
-                    'submitted_by',
-                    NEW.submitted_by,
-                    'tbl_client_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            VALUES (@action,
-                    0,
-                    NEW.legal_entity_id,
-                    NEW.client_compliance_id,
-                    'submitted_on',
-                    NEW.submitted_on,
-                    'tbl_client_compliances');
-
-        INSERT INTO tbl_audit_log(action,
-                                 client_id,
-                                 legal_entity_id,
-                                 tbl_auto_id,
-                                 column_name,
-                                 value,
-                                 tbl_name)
-            SELECT @action, new.client_id, new.legal_entity_id, NEW.client_compliance_id,
+            SELECT @action, 0, new.legal_entity_id, NEW.client_compliance_id,
               'statutory_name', case parent_names when '' then statutory_name else concat(parent_names, ' >> ', statutory_name) end as statutory_name,
               'tbl_client_compliances'
               FROM tbl_statutories
