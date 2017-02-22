@@ -2002,5 +2002,5 @@ def get_user_widget_settings(db, user_id, user_category):
     return data
 
 def save_user_widget_settings(db, user_id, widget_data):
-    q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s)"
+    q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
     db.execute(q, [user_id, widget_data])

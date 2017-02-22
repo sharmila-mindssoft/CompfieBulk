@@ -2301,7 +2301,7 @@ function initClientMirror() {
     function getWidgetComplianceChart(callback){
          var request = [
             "GetComplianceChart", {
-                "le_id": getLEids();
+                "le_ids": getLEids()
             }
         ];
         callerName = "widgets";
@@ -2310,7 +2310,7 @@ function initClientMirror() {
     function getWidgetEscalationChart(callback){
          var request = [
             "GetEscalationChart", {
-                "le_id": getLEids();
+                "le_ids": getLEids()
             }
         ];
         callerName = "widgets";
@@ -2319,7 +2319,7 @@ function initClientMirror() {
     function getWidgetNotCompliedChart(callback){
          var request = [
             "GetNotCompliedChart", {
-                "le_id": getLEids();
+                "le_ids": getLEids()
             }
         ];
         callerName = "widgets";
@@ -2328,7 +2328,7 @@ function initClientMirror() {
     function getWidgetRiskChart(callback){
          var request = [
             "GetRiskChart", {
-                "le_id": getLEids();
+                "le_ids": getLEids()
             }
         ];
         callerName = "widgets";
@@ -2337,7 +2337,7 @@ function initClientMirror() {
     function getWidgetTrendChart(callback){
          var request = [
             "GetTrendChart", {
-                "le_id": getLEids();
+                "le_ids": getLEids()
             }
         ];
         callerName = "widgets";
