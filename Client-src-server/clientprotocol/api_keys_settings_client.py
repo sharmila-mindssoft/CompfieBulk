@@ -454,7 +454,7 @@ api_params = {
     "completed_date": make_text_field(),
 
     "description": make_text_field(),
-    "complied": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
+    "complied_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
     "delayed_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
     "inprogress_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
     "not_complied_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),

@@ -1819,6 +1819,7 @@ function loadCharts() {
     $('.chart-container-inner').show();
     $('.report-container-inner').hide();
   }
+  $(".assignee-wise").empty();
   if (chartType == 'compliance_status') {
     PageTitle.val("Compliance Status");
     loadComplianceStatusChart();
@@ -1830,6 +1831,7 @@ function loadCharts() {
     loadNotCompliedChart();
   } else if (chartType == 'compliance_report') {
     PageTitle.html("Assignee Wise Compliances");
+    $(".drilldown-container").empty();
     loadAssigneeWiseCompliance();
   } else if (chartType == 'trend_chart') {
     PageTitle.html("Trend Chart");

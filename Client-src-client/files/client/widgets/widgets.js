@@ -1,3115 +1,1368 @@
-$(document).ready(function() {
-    $("#domainradio").prop('checked', true);
-    $("#year-para").hide();
-});
-$(document).ready(function() {
-    $(".textboxdomain").show();
-    $(".textboxgroup").hide();
-    $(".textboxlegalentity").hide();
-    $(".textboxdivision").hide();
-    $(".textboxunit").hide();
-    $(".textboxbusiness").hide();
-    $(".textboxdate").show();
-    $("#previousyear").show();
-    $("#nextyear").show();
-    //radioGroup radioBusinessGroup radioLegalEntity radioDivision radiocategorys radioUnit radioConsolidated
 
-    $("#radioGroup").click(function() {
-        $(".textboxbusiness").hide();
-        $(".textboxlegalentity").hide();
-        $(".textboxdivision").hide();
-        $(".textboxunit").hide();
+var CHART_FILTERS_DATA = null;
+var COUNTRIES = {};
+var DOMAINS = {};
+var BUSINESS_GROUPS = {};
+var LEGAL_ENTITIES = {};
+var DIVISIONS = {};
+var CATEGORIES = {};
+var UNITS = {};
+var DOMAIN_INFO = {};
+var GROUP_NAME = null;
+var COMPLIANCE_STATUS_DATA;
+var COMPLIANCE_STATUS_DRILL_DOWN_DATE = null;
+var ESCALATION_DATA = null;
+var ESCALATION_STATUS_DRILL_DOWN_DATA = null;
+var TREND_CHART_DATA = null;
+var NOT_COMPLIED_DATA = null;
+var NOT_COMPLIED_DRILL_DOWN_DATA = null;
+var COMPLIANCE_APPLICABILITY_DATA = null;
+var COMPLIANCE_APPLICABILITY_DRILL_DOWN = null;
+var COUNTRYLIST = null;
+var BUSINESSGROUPSLIST = null;
+var LEGALENTITYLIST = null;
+var DIVISIONLIST = null;
+var CATEGORYLIST = null;
+var USERLIST = null;
+var UNITLIST = null;
+var DOMAINLIST = null;
+var PAGESIZE = 500;
+var STARTCOUNT = 0;
+var ENDCOUNT;
+var SNO = 0;
+var FULLARRAYLIST = [];
+var ACCORDIONCOUNT = 0;
+var ACCORDIONCOUNTNC = 0;
+var ACCORDIONCOUNTD = 0;
+var RECORDCOUNT = 0;
+var snoAssignee = 0;
+var totalRecordAssignee;
+var lastAct = '';
+var lastStatus = '';
+var CS_STATUS = null;
+var CS_FILTERTYPEID = null;
+var CS_FILTERTYPENAME = null;
+var CS_LAST_UNITNAME = null;
+var CS_LAST_LEVEL1 = null;
+var ES_YEAR = null;
+var ES_STATUS = null;
+var ES_STATUS1 = null;
+var ES_NC_UNITNAME = null;
+var ES_NC_LEVEL1 = null;
+var ES_NC_COUNT = 1;
+var ES_D_UNITNAME = null;
+var ES_D_LEVEL1 = null;
+var ES_D_COUNT = 1;
+var NC_TYPE = null;
+var NC_UNITNAME = null;
+var NC_LEVEL1 = null;
+var TC_YEAR = null;
+var TC_UNIT = null;
+var TC_LEVEL1 = null;
+var CAS_TYPE = null;
+var CAS_LEVEL1 = null;
+var CAS_UNITNAME = null;
 
-        $("#previousyear").show();
-        $("#nextyear").show();
+var PageTitle = $('.page-title');
+// Assignee wise compliance (AWC) Autocomplete variable declaration
+var ACCountry = $('#ac-country');
+var ACBusinessGroup = $('#ac-businessgroup');
+var ACLegalEntity = $('#ac-legalentity');
+var ACDivision = $('#ac-division');
+var ACUnit = $('#ac-unit');
+var ACUser = $('#ac-user');
 
-        $("#radioGroup").prop("checked", true);
-        $("#radioBusinessGroup").prop("checked", false);
-        $("#radioLegalEntity").prop("checked", false);
-        $("#radioDivision").prop("checked", false);
-        $("#radiocategorys").prop("checked", false);
-        $("#radioUnit").prop("checked", false);
-        $("#radioConsolidate").prop("checked", false);
-        $("#radioConsolidated").prop("checked", false);
+// AWC Input field variable declaration
+var CountryVal = $('#awc-country');
+var Country = $('#awc-country-id');
+var BusinessGroupVal = $('#awc-businessgroup');
+var BusinessGroup = $('#awc-businessgroup-id');
+var LegalEntityVal = $('#awc-legalentity');
+var LegalEntity = $('#awc-legalentity-id');
+var DivisionVal = $('#awc-division');
+var Division = $('#awc-division-id');
+var UnitVal = $('#awc-unit');
+var Unit = $('#awc-unit-id');
+var UserVal = $('#awc-user');
+var User = $('#awc-user-id');
 
-        $(".textboxbusiness").multiselect('destroy');
-        $(".textboxlegalentity").multiselect('destroy');
-        $(".textboxdivision").multiselect('destroy');
-        $(".textboxcategory").multiselect('destroy');
-        $(".textboxunit").multiselect('destroy');
+var chartInput = new ChartInput();
 
-        loadGroup();
-    });
-    $("#radioBusinessGroup").click(function() {
-        $(".textboxbusiness").show();
-        $(".textboxlegalentity").hide();
-        $(".textboxdivision").hide();
-        $(".textboxunit").hide();
-
-        $("#previousyear").show();
-        $("#nextyear").show();
-
-        $("#radioGroup").prop("checked", false);
-        $("#radioBusinessGroup").prop("checked", true);
-        $("#radioLegalEntity").prop("checked", false);
-        $("#radioDivision").prop("checked", false);
-        $("#radiocategorys").prop("checked", false);
-        $("#radioUnit").prop("checked", false);
-        $("#radioConsolidate").prop("checked", false);
-        $("#radioConsolidated").prop("checked", false);
-
-        $(".textboxbusiness").multiselect('rebuild');
-        $(".textboxlegalentity").multiselect('destroy');
-        $(".textboxdivision").multiselect('destroy');
-        $(".textboxcategory").multiselect('destroy');
-        $(".textboxunit").multiselect('destroy');
-
-        loadBusinessGroup();
-    });
-    $("#radioLegalEntity").click(function() {
-        $(".textboxbusiness").hide();
-        $(".textboxlegalentity").show();
-        $(".textboxdivision").hide();
-        $(".textboxunit").hide();
-
-        $("#previousyear").show();
-        $("#nextyear").show();
-
-        $("#radioGroup").prop("checked", false);
-        $("#radioBusinessGroup").prop("checked", false);
-        $("#radioLegalEntity").prop("checked", true);
-        $("#radioDivision").prop("checked", false);
-        $("#radiocategorys").prop("checked", false);
-        $("#radioUnit").prop("checked", false);
-        $("#radioConsolidate").prop("checked", false);
-        $("#radioConsolidated").prop("checked", false);
-
-        $(".textboxbusiness").multiselect('destroy');
-        $(".textboxlegalentity").multiselect('rebuild');
-        $(".textboxdivision").multiselect('destroy');
-        $(".textboxcategory").multiselect('destroy');
-        $(".textboxunit").multiselect('destroy');
-
-        loadLegalEntity();
-    });
-    $("#radioDivision").click(function() {
-        $(".textboxbusiness").hide();
-        $(".textboxlegalentity").hide();
-        $(".textboxdivision").show();
-        $(".textboxunit").hide();
-
-        $("#previousyear").show();
-        $("#nextyear").show();
-
-        $("#radioGroup").prop("checked", false);
-        $("#radioBusinessGroup").prop("checked", false);
-        $("#radioLegalEntity").prop("checked", false);
-        $("#radioDivision").prop("checked", true);
-        $("#radiocategorys").prop("checked", false);
-        $("#radioUnit").prop("checked", false);
-        $("#radioConsolidate").prop("checked", false);
-        $("#radioConsolidated").prop("checked", false);
-
-        $(".textboxbusiness").multiselect('destroy');
-        $(".textboxlegalentity").multiselect('destroy');
-        $(".textboxdivision").multiselect('rebuild');
-        $(".textboxcategory").multiselect('destroy');
-        $(".textboxunit").multiselect('destroy');
-
-        loadDivision();
-    });
-    $("#radiocategorys").click(function() {
-        $(".textboxbusiness").hide();
-        $(".textboxlegalentity").hide();
-        $(".textboxdivision").hide();
-        $(".textboxunit").show();
-
-        $("#previousyear").show();
-        $("#nextyear").show();
-        
-        $("#radioGroup").prop("checked", false);
-        $("#radioBusinessGroup").prop("checked", false);
-        $("#radioLegalEntity").prop("checked", false);
-        $("#radioDivision").prop("checked", false);
-        $("#radiocategorys").prop("checked", true);
-        $("#radioUnit").prop("checked", false);
-        $("#radioConsolidate").prop("checked", false);
-        $("#radioConsolidated").prop("checked", false);
-
-        $(".textboxbusiness").multiselect('destroy');
-        $(".textboxlegalentity").multiselect('destroy');
-        $(".textboxdivision").multiselect('destroy');
-        $(".textboxcategory").multiselect('rebuild');
-        $(".textboxunit").multiselect('destroy');
-
-        loadLegalCategorys();
-    });
-    $("#radioUnit").click(function() {
-        $(".textboxgroup").hide();
-        $(".textboxlegalentity").hide();
-        $(".textboxdivision").hide();
-        $(".textboxunit").show();
-        $(".textboxbusiness").hide();
-        $("#previousyear").show();
-        $("#nextyear").show();
-        
-        $("#radioGroup").prop("checked", false);
-        $("#radioBusinessGroup").prop("checked", false);
-        $("#radioLegalEntity").prop("checked", false);
-        $("#radioDivision").prop("checked", false);
-        $("#radiocategorys").prop("checked", false);
-        $("#radioUnit").prop("checked", true);
-        $("#radioConsolidate").prop("checked", false);
-        $("#radioConsolidated").prop("checked", false);
-
-        $(".textboxbusiness").multiselect('destroy');
-        $(".textboxlegalentity").multiselect('destroy');
-        $(".textboxdivision").multiselect('destroy');
-        $(".textboxcategory").multiselect('destroy');
-        $(".textboxunit").multiselect('rebuild');
-
-        loadUnit();
-    });
-    $("#radioConsolidated").click(function() {
-        $(".textboxgroup").hide();
-        $(".textboxlegalentity").hide();
-        $(".textboxdivision").hide();
-        $(".textboxunit").hide();
-        $(".textboxbusiness").hide();
-        $("#previousyear").hide();
-        $("#nextyear").hide();
-
-        $("#radioGroup").prop("checked", false);
-        $("#radioBusinessGroup").prop("checked", false);
-        $("#radioLegalEntity").prop("checked", false);
-        $("#radioDivision").prop("checked", false);
-        $("#radiocategorys").prop("checked", false);
-        $("#radioUnit").prop("checked", false);
-        $("#radioConsolidate").prop("checked", true);
-        loadConsolidated();
-    });
-
-
-    $('#radioDate').click(function() {
-        if ($(".textboxdate").is(":hidden")) {
-            $(".textboxdate").show();
-            $("#radioDate").prop('checked', true);
-        } else {
-            $(".textboxdate").hide();
-            $("#radioDate").prop('checked', false);
+//
+// Compliance status
+//
+function updateComplianceStatusStackBarChart(data) {
+  var xAxisName = data[0];
+  var xAxis = data[1];
+  var chartDataSeries = data[2];
+  var chartTitle = data[3];
+  var drilldownSeries = data[4];
+  var yAxisname = [
+    'Complied',
+    'Delayed Compliance',
+    'Inprogress',
+    'Not Complied'
+  ];
+  var highchart;
+  highchart = new Highcharts.Chart({
+    chart: {
+      renderTo: 'status-container',
+      type: 'bar'
+    },
+    title: { text: chartTitle },
+    credits: { enabled: false },
+    xAxis: {
+      categories: xAxis,
+      title: { text: xAxisName },
+      labels: {
+        style: {
+          cursor: 'pointer',
+          color: 'blue',
+          textDecoration: 'underline'
+        },
+        useHTML: true,
+        formatter: function () {
+          return '<div id="label_' + this.value + '">' + this.value + '</div>';
         }
-    });
-    $('#domainradio').click(function() {
-        if ($(".textboxdomain").is(":hidden")) {
-            $(".textboxdomain").show();
-            $("#domainradio").prop('checked', true);
-        } else {
-            $(".textboxdomain").hide();
-            $("#domainradio").prop('checked', false);
+      },
+      tooltip: { pointFormat: 'sfosdfksdfjds' }
+    },
+    yAxis: {
+      min: 0,
+      title: { text: 'Total compliances' },
+      allowDecimals: false,
+      reversedStacks: false
+    },
+    tooltip: {
+      headerFormat: '<b>{point.series.name}</b>: {point.percentage:.0f}% ',
+      pointFormat: '({point.y} out of {point.stackTotal})'
+    },
+    plotOptions: {
+      series: { pointWidth: 35 },
+      bar: {
+        stacking: 'normal',
+        cursor: 'pointer',
+        dataLabels: {
+          enabled: true,
+          color: '#000000',
+          style: {
+            textShadow: null,
+            color: '#000000'
+          },
+          format: '{point.y}'
+        },
+        point: {
+          events: {
+          }
         }
-    });
-    $('#countryradio').click(function() {
-        if ($(".textboxcountry").is(":hidden")) {
-            $(".textboxcountry").show();
-            $("#countryradio").prop('checked', true);
-        } else {
-            $(".textboxcountry").hide();
-            $("#countryradio").prop('checked', false);
-        }
-    });
-
-
-    loadGroup();
-    $("#viewaspie").hide();
-
-    $("#previous").click(function() {
-        if ($("#radioGroup").is(':checked')) {} else if ($("#radioLegalEntity").is(':checked')) {
-            loadLegalEntity();
-        } else if ($("#radioDivision").is(':checked')) {
-            loadDivision();
-        } else if ($("#radioUnit").is(':checked')) {
-            loadUnit();
-        }
-    })
-
-    $("#next").click(function() {
-        if ($("#radioGroup").is(':checked')) {
-
-        } else if ($("#radioLegalEntity").is(':checked')) {
-            loadLegalEntityNext();
-        } else if ($("#radioDivision").is(':checked')) {
-            loadDivisionNext();
-        } else if ($("#radioUnit").is(':checked')) {
-            loadUnitNext();
-        }
-    })
-
-    $("#previousyear").click(function() {
-        if ($("#radioGroup").is(':checked')) {
-            loadGroup();
-        } else if ($("#radioLegalEntity").is(':checked')) {
-            loadLegalEntity();
-        } else if ($("#radioDivision").is(':checked')) {
-            loadDivision();
-        } else if ($("#radioUnit").is(':checked')) {
-            loadUnit();
-        } else if ($("#radioBusinessGroup").is(':checked')) {
-            loadBusinessGroup();
-        }
-    })
-
-    $("#nextyear").click(function() {
-        if ($("#radioGroup").is(':checked')) {
-            loadGroup();
-        } else if ($("#radioLegalEntity").is(':checked')) {
-            loadLegalEntity();
-        } else if ($("#radioDivision").is(':checked')) {
-            loadDivision();
-        } else if ($("#radioUnit").is(':checked')) {
-            loadUnit();
-        } else if ($("#radioBusinessGroup").is(':checked')) {
-            loadBusinessGroup();
-        }
-    })
-
-    $("#viewaspie").click(function() {
-        if ($("#radioGroup").is(':checked')) {
-            loadCountrySpecific();
-        } else if ($("#radioLegalEntity").is(':checked')) {
-            loadLegalEntitySingleSelectionPie();
-        } else if ($("#radioDivision").is(':checked')) {
-            loadLegalEntitySingleSelectionPie();
-        } else if ($("#radioUnit").is(':checked')) {
-            loadLegalEntitySingleSelectionPie();
-        }
-    })
-
-    $("#viewasbar").click(function() {
-        if ($("#radioGroup").is(':checked')) {
-            loadCountrySpecificBar();
-        } else if ($("#radioLegalEntity").is(':checked')) {
-            loadLegalEntitySingleSelection($("#hidden").val());
-        } else if ($("#radioDivision").is(':checked')) {
-            loadLegalEntitySingleSelection($("#hidden").val());
-        } else if ($("#radioUnit").is(':checked')) {
-            loadLegalEntitySingleSelection($("#hidden").val());
-        }
-
-    })
-
-    $("#back").click(function() {
-        $("#next").show();
-        $("#previous").show();
-        if ($("#radioGroup").is(':checked')) {
-            var value = $("#hidden").val();
-            if (value == "singlepie") {
-                loadCountrySpecific();
-            } else if (value == "singlebar") {
-                loadCountrySpecificBar();
-            } else {
-                loadGroup();
-            }
-        } else if ($("#radioLegalEntity").is(':checked')) {
-            loadLegalEntity();
-        } else if ($("#radioDivision").is(':checked')) {
-            loadDivision();
-        } else if ($("#radioUnit").is(':checked')) {
-            loadUnit();
-        }
-    })
-
-    $("#go-co").click(function() {
-        var values = $("#country").val();
-        if (values.length == 1) {
-            loadLegalEntitySingleSelection(values[0])
-        } else {
-            loadGroup();
-        }
-    })
-
-    $("#radioGroup").click(function() {
-        loadGroup();
-    })
-
-    $("#radioLegalEntity").click(function() {
-        loadLegalEntity();
-    })
-
-    $("#radioDivision").click(function() {
-        loadDivision();
-    })
-
-    $("#radioUnit").click(function() {
-        loadUnit();
-    })
-
-    $("#radioBusinessGroup").click(function() {
-        loadBusinessGroup();
-    })
-
-    $(".task-status-tab").click(function() {
-        $("#year-para").hide();
-        $(".task-status-tab").addClass("active")
-            //$(".actwise-tab").removeClass("active")
-        $(".ageing-tab").removeClass("active")
-        $(".compliance-tab").removeClass("active")
-        $(".esc-tab").removeClass("active")
-        $(".usecom-tab").removeClass("active")
-        $(".trend-tab").removeClass("active")
-        $(".graph-box").show();
-        $(".grid-table-dash").hide();
-        $(".grid-table-dash1").hide();
-        $("#level-filter").fadeIn();
-        $("#viewaspie").hide();
-        $("#unit-auto").hide();
-        $("#entity-auto").hide();
-        $("#division-auto").hide();
-        $(".SumoSelect").show();
-        $("#next").show();
-        $("#previous").show();
-        loadGroup();
-    })
-})
-
-function loadLegalEntitySingleSelectionPie() {
-    $("#viewaspie").hide();
-    $("#viewasbar").show();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    var name = $("#hidden").val();
-    $(function() {
-        $('#container').highcharts({
-
-            colors: ['#3ec845', '#fe6271', '#fbca35', '#F32D2B'],
-            chart: {
-                type: 'pie' /*,
-                options3d: {
-                    enabled: true,
-                    alpha: 45,
-                    beta: 0
-                }*/
-            },
-            title: {
-                text: name
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.y}</b> <br>Total Compliances: 70'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    depth: 35,
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.percentage:.0f}%'
-                    },
-                    showInLegend: true,
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                $("#hidden").val("singlepie");
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            series: [{
-                type: 'pie',
-                name: 'Compliance',
-                data: [{
-                    name: "Complied",
-                    y: 15,
-                    drilldown: "Complied"
-                }, {
-                    name: "Delayed Compliance",
-                    y: 15,
-                    drilldown: "Delayed"
-                }, {
-                    name: "In progress",
-                    y: 18,
-                    drilldown: "Inprogress"
-                }, {
-                    name: "Not Complied",
-                    y: 22,
-                    drilldown: "NotComplied"
-                }, ]
-            }]
-        });
-    });
-}
-
-function loadLegalEntitySingleSelection(name) {
-    $(function() {
-        $("#viewaspie").show();
-        $("#viewasbar").hide();
-        $("#hidden").val(name);
-        $("#container").show();
-        $("#imgcontainer").hide();
-        $('#container').highcharts({
-            // colors:['#239e13','#a3d202','#faf216','#e70808'],
-            colors: ['#3ec845', '#fe6271', '#fbca35', '#F32D2B', ],
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: name
-            },
-            xAxis: {
-                type: 'category',
-                title: {
-                    text: 'Compliance Status'
-                },
-            },
-            yAxis: {
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                column: {
-                    dataLabels: {
-                        enabled: true,
-                        style: {
-                            textShadow: null,
-                        },
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                $("#hidden").val("singlebar");
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-                series: {
-                    borderWidth: 0,
-                    dataLabels: {
-                        enabled: true,
-
-                        formatter: function() {
-                                var dataSum = (5 + 2 + 8 + 3);
-                                var pcnt = (this.y / dataSum) * 100;
-                                return Highcharts.numberFormat(pcnt, 0) + '%';
-                            }
-                    }
-                }
-            },
-
-            tooltip: {
-                headerFormat: '<b>{series.name}</b>:{point.percentage:.0f}%<br/>',
-                pointFormat: 'Total Compliances: 18'
-            },
-
-            series: [{
-                name: "Compliance - Group wise",
-                colorByPoint: true,
-                data: [{
-                    name: "Complied",
-                    y: 5,
-                    drilldown: "Complied"
-                }, {
-                    name: "Delayed Compliance",
-                    y: 2,
-                    drilldown: "Delayed"
-                }, {
-                    name: "In progress",
-                    y: 8,
-                    drilldown: "Inprogress"
-                }, {
-                    name: "Not Complied",
-                    y: 3,
-                    drilldown: "NotComplied"
-                }]
-            }],
-        });
-    });
-}
-
-function loadLegalEntityNext() {
-    $("#previous").show();
-    $("#next").show();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        var inprogress_data = [10];
-        var pending_data = [10];
-        var completed_data = [10];
-        var not_Complied = [10];
-        inprogress_data[0] = {
-            name: 'KG Hospitals',
-            y: 20,
-            drilldown: "Inprogress"
-        };
-        pending_data[0] = {
-            name: 'KG Hospitals',
-            y: 20,
-            drilldown: "Delayed"
-        };
-        completed_data[0] = {
-            id: 'fin',
-            name: 'KG Hospitals',
-            y: 10,
-            drilldown: "Complied"
-        };
-        not_Complied[0] = {
-            name: 'KG Hospitals',
-            y: 30,
-            drilldown: "NotComplied"
-        };
-
-        inprogress_data[1] = {
-            name: 'KG Bakeries',
-            y: 12,
-        };
-        pending_data[1] = {
-            name: 'KG Bakeries',
-            y: 18,
-        };
-        completed_data[1] = {
-            id: 'fin',
-            name: 'KG Bakeries',
-            y: 27
-        };
-        not_Complied[1] = {
-            name: "KG Bakeries",
-            y: 13
-        }
-
-        inprogress_data[2] = {
-            name: 'KG Hotels',
-            y: 15
-        };
-        pending_data[2] = {
-            name: 'KG Hotels',
-            y: 25
-        };
-        completed_data[2] = {
-            id: 'fin',
-            name: 'KG Hotels',
-            y: 10
-        };
-        not_Complied[2] = {
-            name: "KG Hotels",
-            y: 10
-        }
-
-        inprogress_data[3] = {
-            name: 'KG Schools',
-            y: 10
-        };
-        pending_data[3] = {
-            name: 'KG Schools',
-            y: 24
-        };
-        completed_data[3] = {
-            id: 'fin',
-            name: 'KG Schools',
-            y: 24
-        };
-        not_Complied[3] = {
-            name: "KG Schools",
-            y: 17
-        }
-
-        inprogress_data[4] = {
-            name: 'KG University',
-            y: 24
-        };
-        pending_data[4] = {
-            name: 'KG University',
-            y: 23
-        };
-        completed_data[4] = {
-            id: 'fin',
-            name: 'KG University',
-            y: 31
-        };
-        not_Complied[4] = {
-            name: "KG Mobiles",
-            y: 13
-        }
-
-
-        $('#container').highcharts({
-            colors: ['#3ec845', '#fe6271', '#fbca35', '#F32D2B', ],
-            chart: {
-                type: 'bar',
-            },
-            title: {
-                text: 'Legal entity wise Compliances'
-            },
-            xAxis: {
-                categories: ['KG Hospitals', 'KG Bakeries', 'KG Hotels', 'KG Schools', 'KG University'],
-                title: {
-                    text: 'Legal entities'
-                },
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "KG Autoparts") {
-                            $("#hidden").val("KG Autoparts");
-                            var link = '<a href="#"  id="' + name + '" onclick=loadLegalEntitySingleSelectionPie(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true
-            },
-            tooltip: {
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                        },
-                        // format:'{point.percentage:.0f}%'
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Complied',
-                data: completed_data
-            }, {
-                name: 'Delayed Compliance',
-                data: pending_data
-            }, {
-                name: 'In progress',
-                data: inprogress_data
-            }, {
-                name: 'Not Complied',
-                data: not_Complied
-            }]
-        });
-    });
-}
-
-function loadLegalEntity() {
-    $("#previous").show();
-    $("#next").show();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        var inprogress_data = [10];
-        var pending_data = [10];
-        var completed_data = [10];
-        var not_Complied = [10];
-        var values = $("#legal-entity").val();
-        if (values.length > 1) {
-            for (var i = 0; i < 7; i++) {
-                if (values[i] == "KG Transports") {
-                    inprogress_data[i] = {
-                        name: 'KG Transports',
-                        y: 24,
-                        drilldown: "EntityInprogress"
-                    };
-                    pending_data[i] = {
-                        name: 'KG Transports',
-                        y: 13,
-                        drilldown: "EntityDelayed"
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Transports',
-                        y: 18,
-                        drilldown: "EntityComplied"
-                    };
-                    not_Complied[i] = {
-                        name: 'KG Transports',
-                        y: 22,
-                        drilldown: "NotComplied"
-                    };
-                } else if (values[i] == "KG Autoparts") {
-                    inprogress_data[i] = {
-                        name: 'KG Autoparts',
-                        y: 15,
-                    };
-                    pending_data[i] = {
-                        name: 'KG Autoparts',
-                        y: 23,
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Autoparts',
-                        y: 12
-                    };
-                    not_Complied[i] = {
-                        name: "KG Autoparts",
-                        y: 18
-                    };
-                } else if (values[i] == "KG Booking") {
-                    inprogress_data[i] = {
-                        name: 'KG Booking',
-                        y: 23
-                    };
-                    pending_data[i] = {
-                        name: 'KG Booking',
-                        y: 22
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Booking',
-                        y: 19
-                    };
-                    not_Complied[i] = {
-                        name: "KG Booking",
-                        y: 21
-                    };
-                } else if (values[i] == "KG Electricals") {
-                    inprogress_data[i] = {
-                        name: 'KG Electricals',
-                        y: 23
-                    };
-                    pending_data[i] = {
-                        name: 'KG Electricals',
-                        y: 10
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Electricals',
-                        y: 18
-                    };
-                    not_Complied[i] = {
-                        name: "KG Electricals",
-                        y: 22
-                    };
-                } else if (values[i] == "KG Mobiles") {
-                    inprogress_data[i] = {
-                        name: 'KG Mobiles',
-                        y: 24
-                    };
-                    pending_data[i] = {
-                        name: 'KG Mobiles',
-                        y: 24
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Mobiles',
-                        y: 13
-                    };
-                    not_Complied[i] = {
-                        name: "KG Mobiles",
-                        y: 21
-                    }
-                } else if (values[i] == "KG HealthCare") {
-                    inprogress_data[i] = {
-                        name: 'KG HealthCare',
-                        y: 20
-                    };
-                    pending_data[i] = {
-                        name: 'KG HealthCare',
-                        y: 25
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG HealthCare',
-                        y: 22
-                    };
-                    not_Complied[i] = {
-                        name: "KG HealthCare",
-                        y: 18
-                    };
-                } else if (values[i] == "KG HR Services") {
-                    inprogress_data[i] = {
-                        name: 'KG HR Services',
-                        y: 22
-                    };
-                    pending_data[i] = {
-                        name: 'KG HR Services',
-                        y: 18
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG HR Services',
-                        y: 22
-                    };
-                    not_Complied[i] = {
-                        name: "KG HR Services",
-                        y: 23
-                    }
-                } else {
-                    continue;
-                }
-            }
-
-        } else if (values.length <= 0) {
-            alert("Select atleast one legal entity to load chart");
-        } else {
-            loadLegalEntitySingleSelection(values[0]);
-        }
-
-        $('#container').highcharts({
-            // colors:['#239e13','#a3d202','#faf216','#e70808'],
-            //colors:['#125900','#FF7700','#FFDA0F','#D10018'],
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
-            chart: {
-                type: 'bar',
-            },
-            title: {
-                text: 'Legal entity wise Compliances'
-            },
-            xAxis: {
-                categories: ['KG Transports', 'KG Autoparts', 'KG Booking', 'KG Electricals', 'KG Mobiles', 'KG HR Services', 'KG HealthCare'],
-                endOnTick: true,
-                title: {
-                    text: 'Legal entities'
-                },
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "KG Booking") {
-                            $("#hidden").val("KG Booking");
-                            var link = '<a href="#"  id="' + name + '" onclick=loadLegalEntitySingleSelectionPie(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false,
-                endOnTick: true,
-            },
-            legend: {
-                reversed: true
-            },
-            tooltip: {
-                // headerFormat: '<b>{point.x}</b><br/>',
-                // pointFormat: '{series.name}: {point.y} out of Total: {point.stackTotal}'
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                        },
-                        // format:'{point.percentage:.0f}%'
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Not Complied',
-                data: not_Complied
-            }, {
-                name: 'In progress',
-                data: inprogress_data
-            }, {
-                name: 'Delayed Compliance',
-                data: pending_data
-            }, {
-                name: 'Complied',
-                data: completed_data
-            }]
-        });
-    });
-}
-
-function loadDivisionNext() {
-    $("#previous").show();
-    $("#next").show();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        var inprogress_data = [10];
-        var pending_data = [10];
-        var completed_data = [10];
-        var not_Complied = [10];
-        inprogress_data[0] = {
-            name: 'KG HR Unit',
-            y: 30,
-            drilldown: "Inprogress"
-        };
-        pending_data[0] = {
-            name: 'KG HR Unit',
-            y: 20,
-            drilldown: "Delayed"
-        };
-        completed_data[0] = {
-            id: 'fin',
-            name: 'KG HR Unit',
-            y: 10,
-            drilldown: "Complied"
-        };
-        not_Complied[0] = {
-            name: 'KG HR Unit',
-            y: 20,
-            drilldown: "NotComplied"
-        };
-
-        inprogress_data[1] = {
-            name: 'KG Development',
-            y: 21,
-        };
-        pending_data[1] = {
-            name: 'KG Development',
-            y: 29,
-        };
-        completed_data[1] = {
-            id: 'fin',
-            name: 'KG Development',
-            y: 16
-        };
-        not_Complied[1] = {
-            name: "KG Development",
-            y: 28
-        }
-
-
-        $('#container').highcharts({
-            // colors:['#239e13','#a3d202','#faf216','#e70808'],
-            //colors:['#125900','#FF7700','#FFDA0F','#D10018'],
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
-            chart: {
-                type: 'bar',
-
-            },
-            title: {
-                text: 'Division wise Compliances'
-            },
-            xAxis: {
-                categories: ['KG HR Unit', 'KG Development'],
-                title: {
-                    text: 'Division'
-                },
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "KG Security") {
-                            $("#hidden").val("KG Security");
-                            var link = '<a href="#"  id="' + name + '" onclick=loadLegalEntitySingleSelectionPie(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true
-            },
-            tooltip: {
-                // headerFormat: '<b>{point.x}</b><br/>',
-                // pointFormat: '{series.name}: {point.y} out of Total: {point.stackTotal}'
-                headerFormat: '<b>{point.name}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                        },
-                        // format:'{point.percentage:.0f}%'
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Complied',
-                data: completed_data
-            }, {
-                name: 'Delayed Compliance',
-                data: pending_data
-            }, {
-                name: 'In progress',
-                data: inprogress_data
-            }, {
-                name: 'Not Complied',
-                data: not_Complied
-            }]
-        });
-    });
-}
-
-
-function loadDivision() {
-    $("#previous").show();
-    $("#next").show();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        var inprogress_data = [10];
-        var pending_data = [10];
-        var completed_data = [10];
-        var not_Complied = [10];
-        var values = $("#division").val();
-        if (values.length > 1) {
-            for (var i = 0; i < values.length; i++) {
-                if (values[i] == "KG Manufacturing") {
-                    inprogress_data[i] = {
-                        name: 'KG Manufacturing',
-                        y: 24,
-                        drilldown: "Inprogress"
-                    };
-                    pending_data[i] = {
-                        name: 'KG Manufacturing',
-                        y: 22,
-                        drilldown: "DivisionDelayed"
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Manufacturing',
-                        y: 25,
-                        drilldown: "DivisionComplied"
-                    };
-                    not_Complied[i] = {
-                        name: 'KG Manufacturing',
-                        y: 23,
-                        drilldown: "NotComplied"
-                    };
-                } else if (values[i] == "KG Quality Checking") {
-                    inprogress_data[i] = {
-                        name: 'KG Quality Checking',
-                        y: 18,
-                    };
-                    pending_data[i] = {
-                        name: 'KG Quality Checking',
-                        y: 15,
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Quality Checking',
-                        y: 23
-                    };
-                    not_Complied[i] = {
-                        name: "KG Quality Checking",
-                        y: 24
-                    }
-                } else if (values[i] == "KG Sales") {
-                    inprogress_data[i] = {
-                        name: 'KG Sales',
-                        y: 25
-                    };
-                    pending_data[i] = {
-                        name: 'KG Sales',
-                        y: 13
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Sales',
-                        y: 26
-                    };
-                    not_Complied[i] = {
-                        name: "KG Sales",
-                        y: 14
-                    }
-                } else if (values[i] == "KG Testing") {
-                    inprogress_data[i] = {
-                        name: 'KG Testing',
-                        y: 15
-                    };
-                    pending_data[i] = {
-                        name: 'KG Testing',
-                        y: 12
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Testing',
-                        y: 23
-                    };
-                    not_Complied[i] = {
-                        name: "KG Testing",
-                        y: 24
-                    }
-                } else if (values[i] == "KG Administration") {
-                    inprogress_data[i] = {
-                        name: 'KG Administration',
-                        y: 22
-                    };
-                    pending_data[i] = {
-                        name: 'KG Administration',
-                        y: 36
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Administration',
-                        y: 13
-                    };
-                    not_Complied[i] = {
-                        name: "KG Administration",
-                        y: 14
-                    }
-                } else if (values[i] == "KG Security") {
-                    inprogress_data[i] = {
-                        name: 'KG Security',
-                        y: 22
-                    };
-                    pending_data[i] = {
-                        name: 'KG Security',
-                        y: 26
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Security',
-                        y: 23
-                    };
-                    not_Complied[i] = {
-                        name: "KG Security",
-                        y: 14
-                    }
-                } else if (values[i] == "KG Research") {
-                    inprogress_data[i] = {
-                        name: 'KG Research',
-                        y: 32
-                    };
-                    pending_data[i] = {
-                        name: 'KG Research',
-                        y: 16
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'KG Research',
-                        y: 13
-                    };
-                    not_Complied[i] = {
-                        name: "KG Research",
-                        y: 14
-                    }
-                } else {
-                    continue;
-                }
-
-            }
-        } else if (values.length <= 0) {
-            alert("Select atleast one division to load chart");
-        } else {
-            loadLegalEntitySingleSelection(values[0]);
-        }
-
-        $('#container').highcharts({
-            // colors:['#239e13','#a3d202','#faf216','#e70808'],
-            //colors:['#125900','#FF7700','#FFDA0F','#D10018'],
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845'],
-            chart: {
-                type: 'bar',
-            },
-            title: {
-                text: 'Division wise Compliances'
-            },
-            xAxis: {
-                categories: ['KG Manufacturing', 'KG Sales', 'KG Quality Checking', 'KG Administration', 'KG Testing', 'KG Security', 'KG Research'],
-                title: {
-                    text: 'Divisions'
-                },
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "KG Manufacturing") {
-                            $("#hidden").val("KG Manufacturing");
-                            var link = '<a href="#"  id="' + name + '" onclick=loadLegalEntitySingleSelectionPie(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true
-            },
-            tooltip: {
-                // headerFormat: '<b>{point.x}</b><br/>',
-                // pointFormat: '{series.name}: {point.y} out of Total: {point.stackTotal}'
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                        },
-                        // format:'{point.percentage:.0f}%'
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Not Complied',
-                data: not_Complied
-            }, {
-                name: 'In progress',
-                data: inprogress_data
-            }, {
-                name: 'Delayed Compliance',
-                data: pending_data
-            }, {
-                name: 'Complied1',
-                data: completed_data
-            }]
-        });
-    });
-}
-
-function loadUnit() {
-    $("#previous").show();
-    $("#next").show();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        var inprogress_data = [10];
-        var pending_data = [10];
-        var completed_data = [10];
-        var not_Complied = [10];
-        var values = $("#unit").val();
-        if (values.length > 1) {
-            for (var i = 0; i < values.length; i++) {
-
-                if (values[i] == "Branch Office - 1") {
-                    inprogress_data[i] = {
-                        name: 'Branch Office - 1',
-                        y: 23,
-                        drilldown: "UnitInprogress"
-                    };
-                    pending_data[i] = {
-                        name: 'Branch Office - 1',
-                        y: 22,
-                        drilldown: "UnitDelayed"
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'Branch Office - 1',
-                        y: 19,
-                        drilldown: "UnitComplied"
-                    };
-                    not_Complied[i] = {
-                        name: 'Branch Office - 1',
-                        y: 31,
-                        drilldown: "UnitNotComplied"
-                    };
-                } else if (values[i] == "Branch Office - 2") {
-                    inprogress_data[i] = {
-                        name: 'Branch Office - 2',
-                        y: 19,
-                    };
-                    pending_data[i] = {
-                        name: 'Branch Office - 2',
-                        y: 27,
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'Branch Office - 2',
-                        y: 28
-                    };
-                    not_Complied[i] = {
-                        name: "Branch Office - 2",
-                        y: 15
-                    }
-                } else if (values[i] == "Branch Office - 3") {
-                    inprogress_data[i] = {
-                        name: 'Branch Office - 3',
-                        y: 15
-                    };
-                    pending_data[i] = {
-                        name: 'Branch Office - 3',
-                        y: 23
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'Branch Office - 3',
-                        y: 16
-                    };
-                    not_Complied[i] = {
-                        name: "Branch Office - 3",
-                        y: 23
-                    }
-                } else if (values[i] == "Branch Office - 4") {
-                    inprogress_data[i] = {
-                        name: 'Branch Office - 4',
-                        y: 25
-                    };
-                    pending_data[i] = {
-                        name: 'Branch Office - 4',
-                        y: 32
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'Branch Office - 4',
-                        y: 13
-                    };
-                    not_Complied[i] = {
-                        name: "Branch Office - 4",
-                        y: 24
-                    }
-                } else if (values[i] == "Branch Office - 5") {
-                    inprogress_data[i] = {
-                        name: 'Branch Office - 5',
-                        y: 12
-                    };
-                    pending_data[i] = {
-                        name: 'Branch Office - 5',
-                        y: 26
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'Branch Office - 5',
-                        y: 33
-                    };
-                    not_Complied[i] = {
-                        name: "Branch Office - 5",
-                        y: 14
-                    }
-                } else if (values[i] == "Branch Office - 6") {
-                    inprogress_data[i] = {
-                        name: 'Branch Office - 6',
-                        y: 12
-                    };
-                    pending_data[i] = {
-                        name: 'Branch Office - 6',
-                        y: 26
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'Branch Office - 6',
-                        y: 13
-                    };
-                    not_Complied[i] = {
-                        name: "Branch Office - 6",
-                        y: 24
-                    }
-                } else if (values[i] == "Branch Office - 7") {
-                    inprogress_data[i] = {
-                        name: 'Branch Office - 7',
-                        y: 32
-                    };
-                    pending_data[i] = {
-                        name: 'Branch Office - 7',
-                        y: 16
-                    };
-                    completed_data[i] = {
-                        id: 'fin',
-                        name: 'Branch Office - 7',
-                        y: 23
-                    };
-                    not_Complied[i] = {
-                        name: "Branch Office - 7",
-                        y: 24
-                    }
-                }
-            }
-        } else if (values.length <= 0) {
-            alert("Select atleast one unit to load chart");
-        } else {
-            loadLegalEntitySingleSelection(values[0]);
-        }
-        $('#container').highcharts({
-            // colors:['#239e13','#a3d202','#faf216','#e70808'],
-            //colors:['#125900','#FF7700','#FFDA0F','#D10018'],
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
-            chart: {
-                type: 'bar',
-            },
-            title: {
-                text: 'Unit wise Compliances'
-            },
-            xAxis: {
-                categories: ['Branch Office - 1', 'Branch Office - 2', 'Branch Office - 3', 'Branch Office - 4', 'Branch Office - 5', 'Branch Office - 6', 'Branch Office - 7'],
-                title: {
-                    text: 'Units'
-                },
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "Branch Office - 1") {
-                            $("#hidden").val("Branch Office - 1");
-                            var link = '<a href="#"  id="' + name + '" onclick=loadLegalEntitySingleSelectionPie(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true
-            },
-            tooltip: {
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                        },
-                        // format:'{point.percentage:.0f}%'
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Not Complied',
-                data: not_Complied
-            }, {
-                name: 'In progress',
-                data: inprogress_data
-            }, {
-                name: 'Delayed Compliance',
-                data: pending_data
-            }, {
-                name: 'Complied',
-                data: completed_data
-            }]
-        });
-    });
-}
-
-function loadUnitNext() {
-    $("#previous").show();
-    $("#next").show();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        var inprogress_data = [10];
-        var pending_data = [10];
-        var completed_data = [10];
-        var not_Complied = [10];
-        inprogress_data[0] = {
-            name: 'KG Namakal Unit',
-            y: 20,
-            drilldown: "Inprogress"
-        };
-        pending_data[0] = {
-            name: 'KG Namakal Unit',
-            y: 16,
-            drilldown: "Delayed"
-        };
-        completed_data[0] = {
-            id: 'fin',
-            name: 'KG Namakal Unit',
-            y: 25,
-            drilldown: "Complied"
-        };
-        not_Complied[0] = {
-            name: 'KG Namakal Unit',
-            y: 23,
-            drilldown: "NotComplied"
-        };
-
-        inprogress_data[1] = {
-            name: 'Suseendram, Kanyakumari',
-            y: 18,
-        };
-        pending_data[1] = {
-            name: 'Suseendram, Kanyakumari',
-            y: 22,
-        };
-        completed_data[1] = {
-            id: 'fin',
-            name: 'Suseendram, Kanyakumari',
-            y: 25
-        };
-        not_Complied[1] = {
-            name: "Suseendram, Kanyakumari",
-            y: 21
-        }
-
-        inprogress_data[2] = {
-            name: 'Nagercoil, Kanyakumari',
-            y: 15
-        };
-        pending_data[2] = {
-            name: 'Nagercoil, Kanyakumari',
-            y: 23
-        };
-        completed_data[2] = {
-            id: 'fin',
-            name: 'Nagercoil, Kanyakumari',
-            y: 26
-        };
-        not_Complied[2] = {
-            name: "Nagercoil, Kanyakumari",
-            y: 18
-        }
-
-        inprogress_data[3] = {
-            name: 'Naloor, Tuticorin',
-            y: 15
-        };
-        pending_data[3] = {
-            name: 'Naloor, Tuticorin',
-            y: 22
-        };
-        completed_data[3] = {
-            id: 'fin',
-            name: 'Naloor, Tuticorin',
-            y: 31
-        };
-        not_Complied[3] = {
-            name: "Naloor, Tuticorin",
-            y: 23
-        };
-
-
-        $('#container').highcharts({
-            // colors:['#239e13','#a3d202','#faf216','#e70808'],
-            // colors:['#125900','#FF7700','#FFDA0F','#D10018'],
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
-            chart: {
-                type: 'bar',
-
-            },
-            title: {
-                text: 'Unitwise Compliances'
-            },
-            xAxis: {
-                categories: ['KG Namakal unit', 'Suseendram, Kanyakumari', 'Nagercoil, Kanyakumari', 'Naloor, Tuticorin'],
-                title: {
-                    text: 'Units'
-                },
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "KG Autoparts") {
-                            $("#hidden").val("KG Autoparts");
-                            var link = '<a href="#"  id="' + name + '" onclick=loadLegalEntitySingleSelectionPie(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true
-            },
-            tooltip: {
-                // headerFormat: '<b>{point.x}</b><br/>',
-                // pointFormat: '{series.name}: {point.y} out of Total: {point.stackTotal}'
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: "#000000",
-                        style: {
-                            textShadow: null,
-                        },
-                        // format:'{point.percentage:.0f}%'
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Complied',
-                data: completed_data
-            }, {
-                name: 'Delayed Compliance',
-                data: pending_data
-            }, {
-                name: 'In progress',
-                data: inprogress_data
-            }, {
-                name: 'Not Complied',
-                data: not_Complied
-            }]
-        });
-    });
-}
-
-function loadDrillDownData(name) {
-    $("#viewaspie").hide();
-    $("#viewasbar").hide();
-    $("#next").hide();
-    $("#previous").hide();
-    $("#nextyear").hide();
-    $("#previousyear").hide();
-    $("#back").show();
-    $("#container").hide();
-    $("#imgcontainer").show();
-    var img_name = "";
-    var margin_style = "";
-    if (name == "EntityInprogress") {
-        img_name = "/images/dash-list/task-entity-inprogress.png";
-        name = "KG Booking";
-        com_name = "In progress ";
-    } else if (name == "EntityComplied") {
-        img_name = "/images/dash-list/task-entity-Complied.png";
-        name = "KG Booking";
-        com_name = "Complied ";
-        margin_style = "margin-left:3px";
-    } else if (name == "EntityDelayed") {
-        img_name = "/images/dash-list/task-entity-delayed.png";
-        name = "KG Booking";
-        com_name = "Delayed ";
-        margin_style = "margin-left:3px";
-    } else if (name == "Inprogress") {
-        img_name = "/images/dash-list/task-group-inprogress.png";
-        name = "India";
-        com_name = "In progress ";
-    } else if (name == "Delayed") {
-        img_name = "/images/dash-list/task-group-delayed.png";
-        name = "India";
-        com_name = "Delayed ";
-    } else if (name == "NotComplied") {
-        img_name = "/images/dash-list/task-group-notComplied.png";
-        name = "India";
-        com_name = "Not Complied ";
-    } else if (name == "Complied") {
-        location.href="/dashboard/group-complied";
-        // img_name = "/images/dash-list/task-group-complied.png";
-        name = "India";
-        com_name = "Complied ";
-    } else if (name == "busInprogress") {
-        img_name = "/images/dash-list/task-business-inprogress.png";
-        name = "Business Group 1";
-        com_name = "In progress ";
-    } else if (name == "busDelayed") {
-        img_name = "/images/dash-list/task-business-delayed.png";
-        name = "Business Group 1";
-        com_name = "Delayed Compliance";
-    } else if (name == "busNotComplied") {
-        img_name = "/images/dash-list/task-business-notComplied.png";
-        name = "Business Group 1 ";
-        com_name = "Not Complied ";
-    } else if (name == "busComplied") {
-        img_name = "/images/dash-list/task-business-Complied.png";
-        name = "Business Group 1";
-        com_name = "Complied ";
-    } else if (name == "UnitComplied") {
-        img_name = "/images/dash-list/task-unit-Complied.png";
-        name = "Branch Office 1";
-        com_name = "Complied ";
-    } else if (name == "UnitDelayed") {
-        img_name = "/images/dash-list/task-unit-delayed.png";
-        name = "Branch Office 1";
-        com_name = "Delayed";
-    } else if (name == "DivisionComplied") {
-        img_name = "/images/dash-list/task-division-Complied.png";
-        name = "KG Manufacturing";
-        com_name = "Complied ";
-    } else if (name == "DivisionDelayed") {
-        img_name = "/images/dash-list/task-division-delayed.png";
-        name = "KG Manufacturing";
-        com_name = "Delayed";
-    } else if (name == "unitesc") {
-        img_name = "/images/dash-list/escalations-unit-delayed.png";
-        name = "South gate, Madurai - escalations";
-        margin_style = "margin-left:200px";
-    } else if (name == "divisionesc") {
-        img_name = "/images/dash-list/escalations-division-delayed.png";
-        name = "KG Manufacturing - escalations";
-        margin_style = "margin-left:100px";
-    } else if (name == "entityesc") {
-        img_name = "/images/dash-list/escalations-entity-delayed.png";
-        name = "KG - escalations";
-        margin_style = "margin-left:55px";
-    } else if (name == "groupesc") {
-        img_name = "/images/dash-list/escalations-group-delayed.png";
-        name = "KG Groups - escalations";
-    } else if (name == "unit") {
-        img_name = "/images/dash-list/lienceopportunity-unit-not.png";
-        name = "South gate, Madurai - Applicable Compliance tasls";
-        margin_style = "margin-left:200px";
-    } else if (name == "division") {
-        img_name = "/images/dash-list/lienceopportunity-division-not.png";
-        name = "Manufacturing division - Applicable Compliances";
-        margin_style = "margin-left:150px";
-    } else if (name == "entity") {
-        img_name = "/images/dash-list/lienceopportunity-entity-not.png";
-        name = "KG Entity- Applicable Compliances";
-        margin_style = "margin-left:40px";
-    } else if (name == "group") {
-        img_name = "/images/dash-list/lienceopportunity-group-not.png";
-        name = "KG Groups - Applicable Compliances";
-    } else if (name == "Jan") {
-        if ($("#radioGroup").is(':checked')) {
-            img_name = "/images/dash-list/drill-group-completed.png";
-        } else if ($("#radioLegalEntity").is(':checked')) {
-            img_name = "/images/dash-list/drill-entity-completed.png";
-            margin_style = "margin-left:30px";
-        } else if ($("#radioDivision").is(':checked')) {
-            img_name = "/images/dash-list/drill-division-completed.png";
-            margin_style = "margin-left:120px";
-        } else if ($("#radioUnit").is(':checked')) {
-            img_name = "/images/dash-list/drill-unit-completed.png";
-            margin_style = "margin-left:140px";
-        }
-        // img_name = "/images/any-completed-drill.png";
-        name = "";
+      }
+    },
+    colors: [
+      '#A5D17A',
+      '#F58835',
+      '#F0F468',
+      '#F32D2B'
+    ],
+    series: chartDataSeries
+  });
+  $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+    var value = this.textContent || this.innerText;
+    name = value;
+    data_series = drilldownSeries[name];
+    var title = chartTitle + ' - ' + name;
+    // updateComplianceStatusPieChart(data_series, title, 'pie', name);
+    complianceDrillDown(data_series, title, name);  // setChart(value);
+  });
+  year = chartInput.getChartYear();
+  if (year == 0) {
+    year = chartInput.getCurrentYear();
+  }
+  domain_ids = chartInput.getDomains();
+  domain_names = [];
+  for (var x = 0; x < domain_ids.length; x++) {
+    id = domain_ids[x];
+    domain_names.push(DOMAINS[id]);
+  }
+  $.each(DOMAIN_INFO, function (key, value) {
+    frame_title = 'Year : ' + year + '\n';
+    for (var i = 0; i < value.length; i++) {
+      info = value[i];
+      if (domain_names.indexOf(info.domain_name) != -1) {
+        frame_title += '' + info.domain_name + ' : ' + info.period_from + ' to ' + info.period_to + '\n';
+      }
     }
-    var htmlstr = '<div style="' + margin_style + '" align="left"><table width="100%" style="margin-left:10px;"><tr><td style="margin-left:10px;font-size:1em" width="100%">Compliances - Country: ' + name + ', Status: ' + com_name + '</td></tr></table><br><img src=' + img_name + '></div>';
-    $(function() {
-        $('#imgcontainer').html(htmlstr);
+    $('#label_' + key).attr({
+      placement: 'bottom',
+      title: frame_title
     });
+  });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
 }
-
-function loadCountrySpecificBar(value) {
-    $("#viewaspie").show();
-    $("#viewasbar").hide();
-    $("#back").show();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        $('#container').highcharts({
-            // colors:['#239e13','#a3d202','#faf216','#e70808'],
-            colors: ['#3ec845', '#fe6271', '#fbca35', '#F32D2B', ],
-            chart: {
-                type: 'column'
-            },
-            title: {
-                text: 'Country wise Compliances - India'
-            },
-            xAxis: {
-                type: 'category',
-                title: {
-                    text: 'Compliance Status'
-                },
-            },
-            yAxis: {
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                column: {
-                    dataLabels: {
-                        enabled: true,
-                        style: {
-                            textShadow: null,
-                        },
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    $("#hidden").val("singlebar");
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-                series: {
-                    borderWidth: 0,
-                    dataLabels: {
-                        enabled: true,
-                    }
-                }
-            },
-
-            tooltip: {
-                headerFormat: '',
-                pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f} Out of 70'
-
-            },
-
-            series: [{
-                name: "Compliances - Group wise",
-                colorByPoint: true,
-                data: [{
-                    name: "Complied",
-                    y: 15,
-                    drilldown: "Complied"
-                }, {
-                    name: "Delayed Compliance",
-                    y: 15,
-                    drilldown: "Delayed"
-                }, {
-                    name: "In progress",
-                    y: 18,
-                    drilldown: "Inprogress"
-                }, {
-                    name: "Not Complied",
-                    y: 22,
-                    drilldown: "NotComplied"
-                }]
-            }],
-        });
-    });
-
-}
-
-function loadCountrySpecific(value) {
-    $("#viewaspie").hide();
-    $("#back").show();
-    $("#viewasbar").show();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        $('#container').highcharts({
-            colors: ['#3ec845', '#fe6271', '#fbca35', '#F32D2B'],
-            chart: {
-                type: 'pie' ,
-                options3d: {
-                    enabled: true,
-                    alpha: 45,
-                    beta: 0
-                }
-            },
-            title: {
-                text: "Country wise Compliances - India"
-            },
-            tooltip: {
-                headerFormat: '',
-                pointFormat: '{point.name}:{point.y} Out of 70'
-
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    depth: 35,
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.percentage:.0f}%'
-                    },
-                    showInLegend: true,
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                $("#hidden").val("singlepie");
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            series: [{
-                type: 'pie',
-                name: 'Compliance',
-                data: [{
-                    name: "Complied",
-                    y: 15,
-                    drilldown: "Complied"
-                }, {
-                    name: "Delayed Compliance",
-                    y: 15,
-                    drilldown: "Delayed"
-                }, {
-                    name: "In progress",
-                    y: 18,
-                    drilldown: "Inprogress"
-                }, {
-                    name: "Not Complied",
-                    y: 22,
-                    drilldown: "NotComplied"
-                }, ]
-            }]
-        });
-    });
-}
-
-
-function loadGroup() {
-    $("#viewaspie").hide();
-    $("#back").hide();
-    $("#viewasbar").hide();
-    $(".SumoSelect").show();
-    $("#entity-auto").hide();
-    $("#division-auto").hide();
-    $("#unit-auto").hide();
-    $("#previous").hide();
-    $("#next").hide();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    var values = $("#country").val();
-    var inprogress_data = [10];
-    var pending_data = [10];
-    var completed_data = [10];
-    var not_Complied = [10];
-
-    if (values.length <= 1) {
-        loadLegalEntitySingleSelection(values[0]);
-    } else if (values.length > 1) {
-        for (var i = 0; i < values.length; i++) {
-            if (values[i] == "India") {
-                inprogress_data[i] = {
-                    name: 'India',
-                    y: 23,
-                    drilldown: "Inprogress"
-                };
-                pending_data[i] = {
-                    name: 'India',
-                    y: 22,
-                    drilldown: "Delayed"
-                };
-                completed_data[i] = {
-                    id: 'fin',
-                    name: 'India',
-                    y: 19,
-                    drilldown: "Complied"
-                };
-                not_Complied[i] = {
-                    name: 'India',
-                    y: 31,
-                    drilldown: "NotComplied"
-                };
-            } else if (values[i] == "US") {
-                inprogress_data[i] = {
-                    name: 'US',
-                    y: 19,
-                };
-                pending_data[i] = {
-                    name: 'US',
-                    y: 27,
-                };
-                completed_data[i] = {
-                    name: 'US',
-                    y: 28
-                };
-                not_Complied[i] = {
-                    name: "US",
-                    y: 15
-                }
-            } else if (values[i] == "Singapore") {
-                inprogress_data[i] = {
-                    name: 'Singapore',
-                    y: 15
-                };
-                pending_data[i] = {
-                    name: 'Singapore',
-                    y: 23
-                };
-                completed_data[i] = {
-                    name: 'Singapore',
-                    y: 16
-                };
-                not_Complied[i] = {
-                    name: "Singapore",
-                    y: 23
-                }
-            } else if (values[i] == "Malaysia") {
-                inprogress_data[i] = {
-                    name: 'Malaysia',
-                    y: 25
-                };
-                pending_data[i] = {
-                    name: 'Malaysia',
-                    y: 32
-                };
-                completed_data[i] = {
-                    name: 'Malaysia',
-                    y: 13
-                };
-                not_Complied[i] = {
-                    name: "Malaysia",
-                    y: 24
-                }
-            } else if (values[i] == "China") {
-                inprogress_data[i] = {
-                    name: 'China',
-                    y: 12
-                };
-                pending_data[i] = {
-                    name: 'China',
-                    y: 26
-                };
-                completed_data[i] = {
-                    id: 'fin',
-                    name: 'China',
-                    y: 33
-                };
-                not_Complied[i] = {
-                    name: "China",
-                    y: 14
-                }
-            }
+//
+// Escalation chart
+//
+function updateEscalationChart(data) {
+  $('.chart-container').show();
+  data = prepareEscalationChartdata(data);
+  xAxis = data[0];
+  chartDataSeries = data[1];
+  chartTitle = data[2];
+  highchart = new Highcharts.Chart({
+    colors: [
+      '#F58835',
+      '#F32D2B'
+    ],
+    chart: {
+      type: 'column',
+      renderTo: 'status-container'
+    },
+    title: { text: chartTitle },
+    credits: { enabled: false },
+    xAxis: {
+      categories: xAxis,
+      crosshair: true
+    },
+    yAxis: {
+      min: 0,
+      title: { text: 'Total Compliances' },
+      allowDecimals: false
+    },
+    plotOptions: {
+      series: {
+        pointWidth: 40,
+        groupPadding: 0.4,
+        pointPadding: -0,
+        pointPlacement: -0
+      },
+      column: {
+        dataLabels: {
+          enabled: true,
+          textShadow: null,
+          format: '{point.y}'
         }
+      }
+    },
+    series: chartDataSeries
+  });
+  $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+    var year = this.textContent || this.innerText;
+    loadEscalationDrillDown(year);  // setChart(value);
+  });
+}
+//
+// Not complied
+//
+function updateNotCompliedChart(data) {
+  data = prepareNotCompliedChart(data);  
+  chartDataSeries = data[0];
+  chartTitle = data[1];
+  total = data[2];
+  highchart = new Highcharts.Chart({
+    colors: [
+      '#FF9C80',
+      '#F2746B',
+      '#FB4739',
+      '#DD070C'
+    ],
+    chart: {
+      renderTo: 'status-container',
+      type: 'pie',
+      options3d: {
+        enabled: true,
+        alpha: 55
+      }
+    },
+    title: { text: chartTitle },
+    xAxis: { categories: true },
+    credits: { enabled: false },
+    tooltip: {
+      headerFormat: '',
+      pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b> out of ' + total
+    },
+    legend: { enabled: true },
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        depth: 35,
+        dataLabels: {
+          enabled: true,
+          format: '{point.percentage: .0f}%'
+        },
+        showInLegend: true,
+        point: {
+          events: {            
+          }
+        }
+      }
+    },
+    series: [{
+        name: 'compliance',
+        colorByPoint: true,
+        data: chartDataSeries
+      }]
+  });
+}
+//
+// Trend  chart
+//
+function updateTrendChart(data) {
+  data = prepareTrendChartData(data);
+  print_data = JSON.stringify(data, null, ' ');
+  xAxis = data[0];
+  chartTitle = data[1];
+  chartDataSeries = data[2];
+  var highchart;
+  highchart = new Highcharts.Chart({
+    chart: { renderTo: 'status-container' },
+    title: { text: chartTitle },
+    credits: { enabled: false },
+    xAxis: {
+      categories: xAxis,
+      title: { text: 'Year' },
+      labels: {
+        style: {
+          cursor: 'pointer',
+          color: 'blue',
+          textDecoration: 'underline'
+        }
+      }
+    },
+    yAxis: {
+      min: 0,
+      title: { text: 'Compliance (%)' },
+      labels: {
+        formatter: function () {
+          return this.value + '%';
+        }
+      },
+      allowDecimals: false
+    },
+    tooltip: {
+      crosshair: true,
+      shared: true,
+      backgroundColor: '#FCFFC5',
+      headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
+      pointFormat: '({point.point.y} out of {point.stackTotal})',
+      formatter: function () {
+        var s = '<b>' + this.x + '</b>', sum = 0;
+        $.each(this.points, function (i, point) {
+          total = point.point.t;
+          tasks = Math.round(point.point.y * 100 / total, 2);
+          color = point.color;
+          s += '<br/><span style="color:' + color + '"> <b>' + point.series.name + '</b> </span>: ' + tasks + '% (' + point.point.y + ' out of ' + total + ')';
+          sum += point.y;
+        });
+        return s;
+      }
+    },
+    plotOptions: {
+      spline: {
+        marker: {
+          radius: 4,
+          lineColor: '#666666',
+          lineWidth: 1
+        }
+      }
+    },
+    series: chartDataSeries
+  });
+  $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+    var value = this.textContent || this.innerText;
+    name = value;
+    loadTrendChartDrillDown(value);
+    $('.btn-back').show();
+    $('.btn-back').on('click', function () {
+      // updateTrendChart(data);
+      loadTrendChart();
+      $('.btn-back').hide();
+    });  // setChart(value);
+  });
+}
+//
+// Compliance applicability status
+//
+function updateComplianceApplicabilityChart(data) {
+  data = prepareComplianceApplicability(data);
+  chartTitle = data[1];
+  chartDataSeries = data[0];
+  total = data[2];
+  highchart = new Highcharts.Chart({
+    colors: [
+      '#66FF66',
+      '#FFDC52',
+      '#CE253C'
+    ],
+    chart: {
+      type: 'pie',
+      renderTo: 'status-container',
+      options3d: {
+        enabled: true,
+        alpha: 55
+      }
+    },
+    title: { text: chartTitle },
+    xAxis: { categories: true },
+    credits: { enabled: false },
+    tooltip: {
+      headerFormat: '',
+      pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
+    },
+    legend: { enabled: true },
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        depth: 35,
+        dataLabels: {
+          enabled: true,
+          format: '{point.percentage: .0f}%'
+        },
+        showInLegend: true,
+        point: {
+          events: {
+            click: function () {
+              var drilldown = this.drilldown;
+              loadComplianceApplicabilityDrillDown(drilldown);
+            }
+          }
+        }
+      }
+    },
+    series: [{
+        name: 'compliance',
+        colorByPoint: true,
+        data: chartDataSeries
+      }]
+  });
+}
+//
+// chartInput
+//
+function ChartInput() {
+  this.chart_type = 'compliance_status';
+  // Possiblities: "compliance_status", "escalations", "not_complied", "compliance_report", "trend_chart", "applicability_status"
+  this.country_selected = false;
+  this.countries = [];
+  this.domain_selected = false;
+  this.domains = [];
+  this.date_selected = false;
+  this.from_date = '';
+  this.to_date = '';
+  this.filter_type = 'group';
+  // Possibilities: "group", "business_group", "legal_entity", "division", "unit", "consolidated"
+  this.business_groups = [];
+  this.legal_entities = [];
+  this.divisions = [];
+  this.units = [];
+  this.chart_year = 0;
+  // previous_year = 1, current_year = 0, next_year = -1
+  this.current_year = new Date().getFullYear();
+  this.range_index = 7;
+  this.escalation_year = 0;
+  this.setChartType = function (v) {
+    this.chart_type = v;
+  };
+  this.getChartType = function () {
+    return this.chart_type;
+  };
+  this.setCountrySelected = function (v) {
+    this.country_selected = v;
+  };
+  this.setCountries = function (country_id, isAdd) {
+    country_id = parseInt(country_id);
+    index = this.countries.indexOf(country_id);
+    if (index >= 0 && !isAdd) {
+      this.countries.splice(index, 1);
+      return;
+    }
+    if (isAdd) {
+      this.countries.push(country_id);
+    }
+  };
+  this.setCountriesAll = function (countries) {
+    this.countries = copyArray(countries);
+  };
+  this.getCountries = function () {
+    if (this.country_selected) {
+      if (this.countries.length > 0)
+        return copyArray(this.countries);
+      else
+        return [];
     } else {
-        alert("Select atleast one unit to load chart");
+      get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+      countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+      chartInput.setCountriesAll(countries);
+      return countries;
     }
-    $(function() {
-        var chart = new Highcharts.Chart({
-        //$('#container').highcharts({
-            colors: ['#F32D2B', '#fbca35', '#F2746B', '#3ec845', ], /*fe6271*/
-            chart: {
-                renderTo: 'container',
-                type: 'bar' /*,
-                options3d: { 
-                    enabled: true,
-                    alpha: 20,
-                    beta: 10,
-                    depth: 31
-                }*/
-            },
-            title: {
-                text: 'Country wise Compliances'
-            },
-            xAxis: {
-                title: {
-                    text: 'Countries'
-                },
-                categories: ['India', 'US', 'Singapore', 'Malaysia', 'China'],
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "India") {
-                            var link = '<abbr class="page-load" style="width:200px" title="Year: 2014\nFinance : April to March\nIndustrial Law : January to Dececmber\nLabour Law : January to December"><a href="#"  id="' + name + '" onclick=loadCountrySpecific(this.id)>' +
-                                name + '</a><abbr>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true,
-                itemStyle: {
-                    fontWeight:'normal',
-                    fontSize:'11px'
-                }
-            },
-            tooltip: {
-                headerFormat: '<b>{point.x}</b>: {point.percentage:.0f}% ',
-                pointFormat: '({point.y} Out of {point.stackTotal})'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                            color: '#000000'
-                        },
-                        // format:'{point.percentage:.0f}%'
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                $("#hidden").val("group");
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Not Complied',
-                data: not_Complied
-            }, {
-                name: 'In progress',
-                data: inprogress_data
-            }, {
-                name: 'Delayed compliance',
-                data: pending_data
-            }, {
-                name: 'Complied',
-                data: completed_data
-            }]
-        });
-        function showValues() {
-            $('#alpha-value').html(chart.options.chart.options3d.alpha);
-            $('#beta-value').html(chart.options.chart.options3d.beta);
-            $('#depth-value').html(chart.options.chart.options3d.depth);
-        }
-
-        // Activate the sliders
-        $('#sliders input').on('input change', function () {
-            chart.options.chart.options3d[this.id] = this.value;
-            showValues();
-            chart.redraw(false);
-        });
-
-        showValues();
-    });
+  };
+  this.setDomainSelected = function (v) {
+    this.domain_selected = v;
+  };
+  this.setDomains = function (domain_id, isAdd) {
+    domain_id = parseInt(domain_id);
+    index = this.domains.indexOf(domain_id);
+    if (index >= 0 && !isAdd) {
+      this.domains.splice(index, 1);
+      return;
+    }
+    if (isAdd) {
+      this.domains.push(domain_id);
+    }
+  };
+  this.setDomainsAll = function (domains) {
+    this.domains = copyArray(domains);
+  };
+  this.getDomains = function () {
+    if (this.domain_selected) {
+      if (this.domains.length > 0)
+        return copyArray(this.domains);
+      else
+        return [];
+    } else {
+      domains = get_ids(CHART_FILTERS_DATA.d_info, 'd_id');
+      chartInput.setDomainsAll(domains);
+      return domains;
+    }
+  };
+  this.setDateSelected = function (v) {
+    this.date_selected = v;
+  };
+  this.setFromDate = function (v) {
+    this.from_date = v;
+  };
+  this.getFromDate = function () {
+    if (this.date_selected)
+      return this.from_date;
+    else
+      return null;
+  };
+  this.setToDate = function (v) {
+    this.to_date = v;
+  };
+  this.getToDate = function () {
+    if (this.date_selected)
+      return this.to_date;
+    else
+      return null;
+  };
+  this.setFilterType = function (v) {
+    this.filter_type = v;
+  };
+  this.getFilterType = function () {
+    return this.filter_type;
+  };
+  this.setBusinessGroups = function (v, isAdd, isSingle) {
+    v = parseInt(v);
+    index = this.business_groups.indexOf(v);
+    if (index >= 0 && !isAdd) {
+      this.business_groups.splice(index, 1);
+      return;
+    }
+    if (isSingle) {
+      this.business_groups = [v];
+    } else {
+      if (isAdd) {
+        this.business_groups.push(v);
+      }
+    }
+  };
+  this.setBusinessGroupsAll = function (business_groups) {
+    this.business_groups = copyArray(business_groups);
+  };
+  this.getBusinessGroups = function () {
+    if (this.business_groups.length > 0)
+      return copyArray(this.business_groups);
+    else {
+      if (this.filter_type == 'business_group') {
+        ids = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
+        if (this.chart_type == 'compliance_status')
+          return ids;
+        else
+          return [ids[0]];
+      } else
+        return [];
+    }
+  };
+  this.setLegalEntities = function (v, isAdd, isSingle) {
+    v = parseInt(v);
+    index = this.legal_entities.indexOf(v);
+    if (index >= 0 && !isAdd) {
+      this.legal_entities.splice(index, 1);
+      return;
+    }
+    if (isSingle) {
+      this.legal_entities = [v];
+    } else {
+      if (isAdd) {
+        this.legal_entities.push(v);
+      }
+    }
+  };
+  this.setLegalEntitiesAll = function (legal_entities) {
+    this.legal_entities = copyArray(legal_entities);
+  };
+  this.getLegalEntity = function () {
+    var selectedLegalentity = client_mirror.getSelectedLegalEntity();
+    return selectedLegalentity[0]['le_id'];
+  };
+  this.getLegalEntities = function () {
+    leids = client_mirror.getSelectedLegalEntity();
+    this.legal_entities = $.map(leids, function(element,index) {return element.le_id});
+    if (this.legal_entities.length > 0)
+      return copyArray(this.legal_entities);
+    else {
+      if (this.filter_type == 'legal_entity') {
+        ids = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
+        if (this.chart_type == 'compliance_status')
+          return ids;
+        else
+          return [ids[0]];
+      } else
+        return [];
+    }
+  };
+  this.setDivisions = function (v, isAdd, isSingle) {
+    v = parseInt(v);
+    index = this.divisions.indexOf(v);
+    if (index >= 0 && !isAdd) {
+      this.divisions.splice(index, 1);
+      return;
+    }
+    if (isSingle) {
+      this.divisions = [v];
+    } else {
+      if (isAdd) {
+        this.divisions.push(v);
+      }
+    }
+  };
+  this.setDivisionsAll = function (divisions) {
+    this.divisions = copyArray(divisions);
+  };
+  this.getDivisions = function () {
+    if (this.divisions.length > 0)
+      return copyArray(this.divisions);
+    else {
+      if (this.filter_type == 'division') {
+        ids = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
+        if (this.chart_type == 'compliance_status')
+          return ids;
+        else
+          return [ids[0]];
+      } else
+        return [];
+    }
+  };
+  this.setCategory = function (v, isAdd, isSingle) {
+    v = parseInt(v);
+    index = this.categories.indexOf(v);
+    if (index >= 0 && !isAdd) {
+      this.categories.splice(index, 1);
+      return;
+    }
+    if (isSingle) {
+      this.categories = [v];
+    } else {
+      if (isAdd) {
+        this.categories.push(v);
+      }
+    }
+  };
+  this.setCategoryAll = function (categories) {
+    this.categories = copyArray(categories);
+  };
+  this.getCategories = function () {
+    if (this.categories.length > 0)
+      return copyArray(this.categories);
+    else {
+      if (this.filter_type == 'category') {
+        ids = get_ids(CHART_FILTERS_DATA.cat_info, 'cat_id');
+        if (this.chart_type == 'compliance_status')
+          return ids;
+        else
+          return [ids[0]];
+      } else
+        return [];
+    }
+  };
+  this.setUnits = function (v, isAdd, isSingle) {
+    v = parseInt(v);
+    index = this.units.indexOf(v);
+    if (index >= 0 && !isAdd) {
+      this.units.splice(index, 1);
+      return;
+    }
+    if (isSingle) {
+      this.units = [v];
+    } else {
+      if (isAdd) {
+        this.units.push(v);
+      }
+    }
+  };
+  this.setUnitsAll = function (units) {
+    this.units = copyArray(units);
+  };
+  this.getUnits = function () {
+    if (this.units.length > 0)
+      return copyArray(this.units);
+    else {
+      if (this.filter_type == 'unit') {
+        ids = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+        if (this.chart_type == 'compliance_status')
+          return ids;
+        else
+          return [ids[0]];
+      } else
+        return [];
+    }
+  };
+  this.setChartYear = function (v) {
+    this.chart_year = v;
+  };
+  this.getChartYear = function () {
+    return this.chart_year;
+  };
+  this.setCurrentYear = function (v) {
+    this.current_year = v;
+  };
+  this.getCurrentYear = function () {
+    return this.current_year;
+  };
+  this.setRangeIndex = function (v) {
+    this.range_index += v;
+  };
+  this.getRangeIndex = function () {
+    return this.range_index;
+  };
+  this.resetRangeIndex = function () {
+    this.range_index = 7;
+  };
+  this.setEscalationYearDrilldown = function (v) {
+    this.escalation_year = v;
+  };
+  this.getEscalationYearDrilldown = function () {
+    return this.escalation_year;
+  };
+}
+function clearMessage() {
+  $('.chart-error-message').text('');
+}
+function displayMessage(message) {
+  $('.chart-error-message').text(message);
+}
+function hideLoader() {
+  $('.loading-indicator-spin').hide();
+}
+function displayLoader() {
+  $('.loading-indicator-spin').hide();
+}
+function getOptionElement(v, t, selected) {
+  var option = $('<option></option>');
+  option.val(v);
+  option.text(t);
+  if (selected) {
+    option.attr('selected', true);
+  }
+  return option;
+}
+function get_ids(source, key) {
+  var ids = [];
+  for (var i = 0; i < source.length; i++) {
+    var item = source[i];
+    ids.push(item[key]);
+  }
+  return ids;
+}
+function copyArray(array) {
+  return array.slice(0);
 }
 
-function loadBusinessGroup() {
-    $("#viewaspie").hide();
-    $("#back").hide();
-    $("#viewasbar").hide();
-    $(".SumoSelect").show();
-    $("#entity-auto").hide();
-    $("#division-auto").hide();
-    $("#unit-auto").hide();
-    $("#previous").hide();
-    $("#next").hide();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        $('#container').highcharts({
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
-            // colors:['#2E9559','rgba(255, 191, 0, 1)','rgba(255, 255, 0, 0.9)','rgba(255, 0, 0, 0.8)'],
-            chart: {
-                type: 'bar',
-
-            },
-            title: {
-                text: 'Business Group wise Compliances'
-            },
-            xAxis: {
-                title: {
-                    text: 'Business Groups'
-                },
-                categories: ['KG Business group 1', 'KG Business group 2', 'KG Business group 3', 'KG Business group 4', 'KG Business group 5'],
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "India") {
-                            var link = '<a href="#"  id="' + name + '" onclick=loadCountrySpecific(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true,
-                itemStyle: {
-                    fontWeight:'normal',
-                    fontSize:'11px'
-                }
-            },
-            tooltip: {
-                // headerFormat: '<b>{point.x}</b><br/>',
-                // pointFormat: '{series.name}: {point.y} out of {point.stackTotal}'
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                            color: '#000000'
-                        },
-                        // format:'{point.percentage:.0f}%'
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Not Complied',
-                data: [{
-                    y: 22,
-                    drilldown: "busNotComplied",
-                }, {
-                    y: 15,
-                }, {
-                    y: 30,
-                }, {
-                    y: 10,
-                }, {
-                    y: 20,
-                }, ]
-            }, {
-                name: 'In progress',
-                data: [{
-                    y: 18,
-                    drilldown: "busInprogress",
-                }, {
-                    y: 25,
-                }, {
-                    y: 10,
-                }, {
-                    y: 25,
-                }, {
-                    y: 30,
-                }, ]
-            }, {
-                name: 'Delayed Compliance',
-                data: [{
-                    y: 15,
-                    drilldown: "busDelayed",
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 15,
-                }, {
-                    y: 10,
-                }, ]
-            }, {
-                name: 'Complied',
-                data: [{
-                    y: 15,
-                    drilldown: "busComplied",
-                }, {
-                    y: 30,
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 30,
-                }, ]
-            }, ]
-        });
+//
+// Prepare chart data
+//
+function parseComplianceStatusApiInput() {
+  var countryIds = chartInput.getCountries();
+  var domainIds = chartInput.getDomains();
+  // TODO: Validation of empty Country / Domain list.
+  var filter_type = chartInput.getFilterType();
+  var filterIds = getFilterIds(filter_type);
+  var filterType = filter_type.replace('_', '-');
+  filterType = hyphenatedToUpperCamelCase(filterType);
+  var fromDate = chartInput.getFromDate();
+  var toDate = chartInput.getToDate();
+  var chart_year = chartInput.getChartYear();
+  if (chart_year == 0) {
+    chart_year = chartInput.getCurrentYear();
+  }
+  var legalEntityIds = chartInput.getLegalEntities();
+  var requestData = {
+    'c_ids': countryIds,
+    'd_ids': domainIds,
+    'filter_type': filterType,
+    'filter_ids': filterIds,
+    'from_date': fromDate,
+    'to_date': toDate,
+    'chart_year': chart_year, 
+    'le_ids': legalEntityIds
+  };
+  return requestData;
+}
+function prepareComplianceStatusChartData(chart_data) {
+  // var currentYear = (new Date()).getFullYear();
+  // var yearInput = chartInput.getCurrentYear()
+  chartYear = chartInput.getChartYear();
+  if (chartYear == 0)
+    yearInput = chartInput.getCurrentYear();
+  else {
+    yearInput = chartYear;
+  }
+  // var yearInput = currentYear - chartInput.getChartYear();
+  var chartTitle = getFilterTypeTitle();
+  var domainsInput = chartInput.getDomains();
+  var countriesInput = chartInput.getCountries();
+  var xAxis = [];
+  var xAxisIds = [];
+  var yAxisComplied = [];
+  var yAxisDelayed = [];
+  var yAxisInprogress = [];
+  var yAxisNotComplied = [];
+  for (var i = 0; i < chart_data.length; i++) {
+    var chartData = chart_data[i];
+    var filter_type_id = chartData.filter_type_id;
+    filterTypeInput = getFilterTypeInput();
+    // if (!(filter_type_id in filterTypeInput))
+    //     continue;
+    if (filterTypeInput.indexOf(filter_type_id) == -1)
+      continue;
+    var filterTypeName = getFilterTypeName(filter_type_id);
+    var compliedCount = 0;
+    var delayedCount = 0;
+    var inprogressCount = 0;
+    var notCompliedCount = 0;
+    for (var j = 0; j < chartData.c_data.length; j++) {
+      var item = chartData.c_data[j];
+      if (parseInt(item.year) != yearInput)
+        continue;
+      compliedCount += item.complied_count;
+      delayedCount += item.delayed_compliance_count;
+      inprogressCount += item.inprogress_compliance_count;
+      notCompliedCount += item.not_complied_count;
+    }
+    ;
+    if (compliedCount == 0 && delayedCount == 0 && inprogressCount == 0 && notCompliedCount == 0) {
+      continue;
+    }
+    xAxis.push(filterTypeName);
+    xAxisIds.push(filter_type_id);
+    yAxisComplied.push(compliedCount);
+    yAxisDelayed.push(delayedCount);
+    yAxisInprogress.push(inprogressCount);
+    yAxisNotComplied.push(notCompliedCount);
+  }
+  // if (xAxis.length == 0)
+  //     return null;
+  var xAxisName = getXAxisName();
+  var yAxis = [
+    'Complied',
+    'Delayed Compliance',
+    'Inprogress',
+    'Not Complied'
+  ];
+  var yAxisData = [
+    yAxisComplied,
+    yAxisDelayed,
+    yAxisInprogress,
+    yAxisNotComplied
+  ];
+  function sum_values(arr) {
+    var sum = arr.reduce(function (pv, cv) {
+      return pv + cv;
+    }, 0);
+    return sum;
+  }
+  if (chartTitle == 'Consolidated') {
+    data_series = [];
+    for (var i = 0; i < yAxis.length; i++) {
+      if (sum_values(yAxisData[i]) == 0)
+        v_visible = false;
+      else
+        v_visible = true;
+      data_series.push({
+        'name': yAxis[i],
+        'y': sum_values(yAxisData[i]),
+        'visible': v_visible
+      });
+    }
+    return data_series;
+  }
+  var chartDataSeries = [];
+  for (var i = 0; i < yAxis.length; i++) {
+    values = yAxisData[i];
+    y_list = [];
+    for (var x = 0; x < values.length; x++) {
+      if (values[x] == 0)
+        v_visible = false;
+      else
+        v_visible = true;
+      y_list.push({
+        'y': values[x],
+        'drilldown': yAxis[i],
+        'filter_type_id': xAxisIds[x],
+        'visible': v_visible
+      });
+    }
+    chartDataSeries.push({
+      'name': yAxis[i],
+      'data': y_list
     });
+  }
+  var xAxisDrillDownSeries = {};
+  for (var j = 0; j < xAxis.length; j++) {
+    data_list = [];
+    for (var x1 = 0; x1 < yAxis.length; x1++) {
+      value = yAxisData[x1][j];
+      if (value == 0)
+        v_visible = false;
+      else
+        v_visible = true;
+      data_list.push({
+        'name': yAxis[x1],
+        'y': value,
+        'filter_id': xAxisIds[j],
+        'drilldown': xAxis[j],
+        'visible': v_visible
+      });
+    }
+    xAxisDrillDownSeries[xAxis[j]] = data_list;
+  }
+  chartTitle = chartTitle + ' wise compliances';
+  return [
+    xAxisName,
+    xAxis,
+    chartDataSeries,
+    chartTitle,
+    xAxisDrillDownSeries
+  ];
+}
+// Escalation
+function prepareEscalationChartdata(source_data) {  
+  var chartTitle = getFilterTypeTitle();
+  var xAxis = [];
+  function set_value(dict, key, value) {
+    var temp = dict[key];
+    if (typeof temp === 'undefined')
+      temp = 0;
+    temp = parseInt(temp) + parseInt(value);
+    dict[key] = temp;
+  }
+  chart_data = source_data.es_chart_data;
+  var chartDataSeries = [];
+  delayed_data = [];
+  not_complied_data = [];
+  $.each(chart_data, function (i, value) {
+    delayed = value.delayed_compliance_count;
+    not_complied = value.not_complied_count;
+    year = value.chart_year;
+    if (delayed == 0 && not_complied == 0) {
+    } else {
+      if (delayed == 0)
+        v_visible = false;
+      else
+        v_visible = true;
+      delayed_data.push({
+        'y': delayed,
+        'drilldown': 'Delayed Compliance',
+        'year': year,
+        'visible': v_visible
+      });
+      if (not_complied == 0)
+        v_visible = false;
+      else
+        v_visible = true;
+      not_complied_data.push({
+        'y': not_complied,
+        'drilldown': 'Not Complied',
+        'year': year,
+        'visible': v_visible
+      });
+      xAxis.push(year);
+    }
+  });
+  chartDataSeries.push({
+    'name': 'Delayed Compliance',
+    'data': delayed_data
+  });
+  chartDataSeries.push({
+    'name': 'Not Complied',
+    'data': not_complied_data
+  });
+  var filterTypeInput = getFilterTypeInput();
+  if (chartTitle == 'Country') {
+    chartTitle = 'Escalation of ' + GROUP_NAME;
+  } else {
+    filter_names = [];
+    for (var i = 0; i < filterTypeInput.length; i++) {
+      name = getFilterTypeName(filterTypeInput[i]);
+      filter_names.push(name);
+    }
+    chartTitle = 'Escalation of ' + chartTitle + ' ' + filter_names;
+  }
+  return [
+    xAxis,
+    chartDataSeries,
+    chartTitle
+  ];
+}
+// Trend Chart
+function prepareTrendChartData(source_data) {
+  var chartTitle = getFilterTypeTitle();
+  var xAxis = [];
+  var xAxisIds = [];
+  var chartDataSeries = [];
+  var total_count = [];
+
+  //xAxis = source_data.years;
+  for (var i = 0; i < source_data.trend_data.length; i++) {
+    chartData = source_data.trend_data[i];
+    var filter_type_id = chartData.filter_id;
+    var filterTypeInput = getFilterTypeInput();
+    if (filterTypeInput.indexOf(filter_type_id) == -1)
+      continue;
+    var filterTypeName = getFilterTypeName(filter_type_id);
+        
+    //compliance_info = chartData.complied_compliance;
+    data = [];
+//   for (var j = 0; j < compliance_info.length; j++) {
+      //compliance_count.push(compliance_info[j].complied_compliances_count);
+    total_count.push(chartData.total_compliances);
+      data.push({
+        y: chartData.complied_compliances_count,
+        t: chartData.total_compliances
+      });
+    //}
+
+    chartDataSeries.push({
+      'name': filterTypeName,
+      'data': data,
+      'total': total_count
+    });
+    xAxis.push(chartData.chart_year);
+  }
+  chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
+  
+  return [
+    xAxis,
+    chartTitle,
+    chartDataSeries
+  ];
+}
+function prepareNotCompliedChart(source_data) {
+  var chartTitle = getFilterTypeTitle();
+  var chartDataSeries = [];
+  count = 0;
+  $.each(source_data, function (key, item) {
+    count += item;
+    if (item == 0)
+      v_visible = false;
+    else
+      v_visible = true;
+    if (key == 'T_31_to_60_days_count') {
+      chartDataSeries.push({
+        name: 'Below 60',
+        y: item,
+        drilldown: 'Below 60',
+        visible: v_visible
+      });
+    } else if (key == 'T_0_to_30_days_count') {
+      chartDataSeries.push({
+        name: 'Below 30',
+        y: item,
+        drilldown: 'Below 30',
+        visible: v_visible
+      });
+    } else if (key == 'T_61_to_90_days_count') {
+      chartDataSeries.push({
+        name: 'Below 90',
+        y: item,
+        drilldown: 'Below 90',
+        visible: v_visible
+      });
+    } else if (key == 'Above_90_days_count') {
+      chartDataSeries.push({
+        name: 'Above 90',
+        y: item,
+        drilldown: 'Above 90',
+        visible: v_visible
+      });
+    }
+  });
+  if (count == 0)
+    chartDataSeries = [];
+  var filterTypeInput = getFilterTypeInput();
+  if (chartTitle == 'Country') {
+    chartTitle = 'Over due compliance of ' + GROUP_NAME;
+  } else {
+    filter_names = [];
+    for (var i = 0; i < filterTypeInput.length; i++) {
+      name = getFilterTypeName(filterTypeInput[i]);
+      filter_names.push(name);
+    }
+    chartTitle = 'Over due compliance of ' + chartTitle + ' ' + filter_names;
+  }
+  return [
+    chartDataSeries,
+    chartTitle,
+    count
+  ];
+}
+function prepareComplianceApplicability(source_data) {
+  chartDataSeries = [];
+  chartTitle = getFilterTypeTitle();
+  rejected_count = source_data.rejected_count;
+  not_complied_count = source_data.not_complied_count;
+  unassign_count = source_data.unassign_count;
+  not_opted = source_data.not_opted_count;
+  total = parseInt(rejected_count) + parseInt(not_complied_count) + parseInt(unassign_count) + parseInt(not_opted);
+  if (rejected_count == 0 && not_complied_count == 0 && unassign_count == 0 && not_opted == 0) {
+  } else {
+    if (rejected_count == 0)
+      v_visible = false;
+    else
+      v_visible = true;
+    chartDataSeries.push({
+      name: 'Rejected',
+      y: rejected_count,
+      drilldown: 'Rejected',
+      visible: v_visible
+    });
+    if (not_complied_count == 0)
+      v_visible = false;
+    else
+      v_visible = true;
+    chartDataSeries.push({
+      name: 'Not Complied',
+      y: not_complied_count,
+      drilldown: 'Not Complied',
+      visible: v_visible
+    });
+    if (unassign_count == 0)
+      v_visible = false;
+    else
+      v_visible = true;
+    chartDataSeries.push({
+      name: 'Unassigned',
+      y: unassign_count,
+      drilldown: 'Unassigned',
+      visible: v_visible
+    });
+    if (not_opted == 0)
+      v_visible = false;
+    else
+      v_visible = true;
+    chartDataSeries.push({
+      name: 'Not Opted',
+      y: not_opted,
+      drilldown: 'Not Opted',
+      visible: v_visible
+    });
+  }
+  var filterTypeInput = getFilterTypeInput();
+  if (chartTitle == 'Country') {
+    chartTitle = 'Risk Chart of ' + GROUP_NAME;
+  } else {
+    filter_names = [];
+    for (var i = 0; i < filterTypeInput.length; i++) {
+      name = getFilterTypeName(filterTypeInput[i]);
+      filter_names.push(name);
+    }
+    chartTitle = 'Risk Chart of ' + chartTitle + ' ' + filter_names;
+  }
+  return [
+    chartDataSeries,
+    chartTitle,
+    total
+  ];
+}
+// Load chart
+function loadComplianceStatusChart() {
+  var requestData = parseComplianceStatusApiInput();
+  client_mirror.getComplianceStatusChartData(requestData, function (status, data) {
+    // TODO: API Error Validation
+    COMPLIANCE_STATUS_DATA = data.chart_data;
+    if (COMPLIANCE_STATUS_DATA.length > 7) {
+      data1 = [];
+      for (i = 0; i < 7; i++) {
+        if (COMPLIANCE_STATUS_DATA.length > i)
+          data1.push(COMPLIANCE_STATUS_DATA[i]);
+      }
+      updateComplianceStatusChart(data1);
+    } else {
+      updateComplianceStatusChart(COMPLIANCE_STATUS_DATA);
+    }
+    chartInput.resetRangeIndex();
+    hideLoader();
+    range = chartInput.getRangeIndex();
+    if (COMPLIANCE_STATUS_DATA.length <= range) {
+      hidePreviousNext();
+    } else {
+      showPreviousNext();
+    }
+    $('.btn-previous').hide();
+  });
+}
+function loadEscalationChart() {
+  var filter_type = chartInput.getFilterType();
+  var filterType = filter_type.replace('_', '-');
+  filterType = hyphenatedToUpperCamelCase(filterType);
+  if (filterType == 'Group') {
+    filter_ids = chartInput.getCountries();
+  } else {
+    filter_ids = getFilterIds(filter_type);
+  }
+  legalEntityIds = chartInput.getLegalEntities();
+  var requestData = {
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
+    'filter_type': filterType,
+    'filter_ids': filter_ids,
+    'le_ids': legalEntityIds
+  };
+  client_mirror.getEscalationChartData(requestData, function (status, data) {
+    ESCALATION_DATA = data;
+    updateEscalationChart(data);
+  });
+}
+function loadTrendChart() {
+  var filter_type = chartInput.getFilterType();
+  var filter_ids = getFilterIds(filter_type);
+  var filterType = filter_type.replace('_', '-');
+  filterType = hyphenatedToUpperCamelCase(filterType);
+  if (filterType == 'Group') {
+    filter_ids = chartInput.getCountries();
+  }
+  var legalEntityIds = chartInput.getLegalEntities();
+  var requestData = {
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
+    'filter_type': filterType,
+    'filter_ids': filter_ids,
+    'le_ids': legalEntityIds
+  };
+  client_mirror.getTrendChart(requestData, function (status, data) {
+    TREND_CHART_DATA = data;
+    updateTrendChart(data);
+  });
+}
+function loadNotCompliedChart() {
+  var filter_type = chartInput.getFilterType();
+  var filter_ids = getFilterIds(filter_type);
+  var filterType = filter_type.replace('_', '-');
+  filterType = hyphenatedToUpperCamelCase(filterType);
+  if (filterType == 'Group') {
+    filter_ids = chartInput.getCountries();
+  }
+  var legalEntityIds = chartInput.getLegalEntities();
+  var requestData = {
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
+    'filter_type': filterType,
+    'filter_ids': filter_ids,
+    'le_ids': legalEntityIds
+  };
+  client_mirror.getNotCompliedData(requestData, function (status, data) {
+    NOT_COMPLIED_DATA = data;
+    updateNotCompliedChart(data);
+  });
+}
+function loadComplianceApplicabilityChart() {
+  var filter_type = chartInput.getFilterType();
+  var filter_ids = getFilterIds(filter_type);
+  var filter_type = chartInput.getFilterType().replace('_', '-');
+  filterType = hyphenatedToUpperCamelCase(filter_type);
+  if (filterType == 'Group') {
+    filter_ids = chartInput.getCountries();
+  }
+  var requestData = {
+    'c_ids': chartInput.getCountries(),
+    'd_ids': chartInput.getDomains(),
+    'filter_type': filterType,
+    'filter_ids': filter_ids,
+    'le_ids': chartInput.getLegalEntities()
+
+  };
+  client_mirror.getComplianceApplicabilityChart(requestData, function (status, data) {
+    COMPLIANCE_APPLICABILITY_DATA = data;
+    updateComplianceApplicabilityChart(data);
+  });
+}
+function loadAssigneeWiseCompliance() {
+  client_mirror.getAssigneewiseComplianesFilters(function (status, data) {
+    updateAssigneeWiseComplianceFiltersList(data);
+  });
+}
+function loadCharts() {
+  // displayLoader();
+  hideButtons();
+  $('.drilldown-container').hide();
+  $('.graph-container.compliance-status').show();
+  var chartType = chartInput.getChartType();
+  chartInput.setChartYear(0);
+  if (chartType == 'compliance_report') {
+    $('.chart-container-inner').hide();
+    $('.report-container-inner').show();
+  } else {
+    if (chartType == 'compliance_status') {
+      $('.chart-filters').show();
+      $('.chart-filters-autocomplete').hide();
+      $('.graph-selections-bottom').show();
+      $('#DateSelection').show();
+      $('.btn-consolidated').show();
+    } else {
+      $('.chart-filters').show();
+      $('.chart-filters-autocomplete').hide();
+      $('.graph-selections-bottom').hide();
+      $('#DateSelection').hide();
+      $('.btn-consolidated').hide();
+    }
+    $('.chart-container-inner').show();
+    $('.report-container-inner').hide();
+  }
+  $(".assignee-wise").empty();
+  if (chartType == 'compliance_status') {
+    PageTitle.val("Compliance Status");
+    loadComplianceStatusChart();
+  } else if (chartType == 'escalations') {
+    PageTitle.html("Escalation");
+    loadEscalationChart();
+  } else if (chartType == 'not_complied') {
+    PageTitle.html("Not Complied");
+    loadNotCompliedChart();
+  } else if (chartType == 'compliance_report') {
+    PageTitle.html("Assignee Wise Compliances");
+    $(".drilldown-container").empty();
+    loadAssigneeWiseCompliance();
+  } else if (chartType == 'trend_chart') {
+    PageTitle.html("Trend Chart");
+    loadTrendChart();
+  } else if (chartType == 'applicability_status') {
+    PageTitle.html("Risk Report");
+    loadComplianceApplicabilityChart();
+  } else if (chartType == 'assignee_wise_compliance') {
+    PageTitle.html("Assignee Wise Compliances");
+    loadAssignessWiseComplianceChart();
+  } else {
+    hideLoader();
+  }
 }
 
+function loadSidebarMenu(){
+  client_mirror.
 
-function loadLegalEntity() {
-    $("#viewaspie").hide();
-    $("#back").hide();
-    $("#viewasbar").hide();
-    $(".SumoSelect").show();
-    $("#entity-auto").hide();
-    $("#division-auto").hide();
-    $("#unit-auto").hide();
-    $("#previous").hide();
-    $("#next").hide();
-    $("#container").show();
-    $("#imgcontainer").hide();
-
-
-    $(function() {
-        $('#container').highcharts({
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
-            chart: {
-                type: 'bar',
-            },
-            title: {
-                text: 'Legal entity wise Compliances'
-            },
-            xAxis: {
-                title: {
-                    text: 'Legal Entity'
-                },
-                categories: ['KG Transports', 'KG Autoparts', 'KG Booking', 'KG Electricals', 'KG Mobiles', 'KG HR Services', 'KG HealthCare'],
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "India") {
-                            var link = '<a href="#"  id="' + name + '" onclick=loadCountrySpecific(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true,
-                itemStyle: {
-                    fontWeight:'normal',
-                    fontSize:'11px'
-                }
-            },
-            tooltip: {
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                            color: '#000000'
-                        },
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Not Complied',
-                data: [{
-                    y: 22,
-                    drilldown: "busNotComplied",
-                }, {
-                    y: 15,
-                }, {
-                    y: 30,
-                }, {
-                    y: 10,
-                }, {
-                    y: 20,
-                }, ]
-            }, {
-                name: 'In progress',
-                data: [{
-                    y: 18,
-                    drilldown: "busInprogress",
-                }, {
-                    y: 25,
-                }, {
-                    y: 10,
-                }, {
-                    y: 25,
-                }, {
-                    y: 30,
-                }, ]
-            }, {
-                name: 'Delayed Compliance',
-                data: [{
-                    y: 15,
-                    drilldown: "busDelayed",
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 15,
-                }, {
-                    y: 10,
-                }, ]
-            }, {
-                name: 'Complied',
-                data: [{
-                    y: 15,
-                    drilldown: "busComplied",
-                }, {
-                    y: 30,
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 30,
-                }, ]
-            }, ]
-        });
-    });
 }
 
-function loadDivision() {
-    $("#viewaspie").hide();
-    $("#back").hide();
-    $("#viewasbar").hide();
-    $(".SumoSelect").show();
-    $("#entity-auto").hide();
-    $("#division-auto").hide();
-    $("#unit-auto").hide();
-    $("#previous").hide();
-    $("#next").hide();
-    $("#container").show();
-    $("#imgcontainer").hide();
+$(document).ready(function () {
+  hideLoader();
+  loadSidebarMenu();
 
-
-    $(function() {
-        $('#container').highcharts({
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
-            chart: {
-                type: 'bar',
-            },
-            title: {
-                text: 'Division wise Compliances'
-            },
-            xAxis: {
-                title: {
-                    text: 'Division'
-                },
-                categories: ['KG Manufacturing', 'KG Sales', 'KG Quality Checking', 'KG Administration', 'KG Testing', 'KG Security', 'KG Research'],
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "India") {
-                            var link = '<a href="#"  id="' + name + '" onclick=loadCountrySpecific(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true,
-                itemStyle: {
-                    fontWeight:'normal',
-                    fontSize:'11px'
-                }
-            },
-            tooltip: {
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                            color: '#000000'
-                        },
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Not Complied',
-                data: [{
-                    y: 22,
-                    drilldown: "busNotComplied",
-                }, {
-                    y: 15,
-                }, {
-                    y: 30,
-                }, {
-                    y: 10,
-                }, {
-                    y: 20,
-                }, ]
-            }, {
-                name: 'In progress',
-                data: [{
-                    y: 18,
-                    drilldown: "busInprogress",
-                }, {
-                    y: 25,
-                }, {
-                    y: 10,
-                }, {
-                    y: 25,
-                }, {
-                    y: 30,
-                }, ]
-            }, {
-                name: 'Delayed Compliance',
-                data: [{
-                    y: 15,
-                    drilldown: "busDelayed",
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 15,
-                }, {
-                    y: 10,
-                }, ]
-            }, {
-                name: 'Complied',
-                data: [{
-                    y: 15,
-                    drilldown: "busComplied",
-                }, {
-                    y: 30,
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 30,
-                }, ]
-            }, ]
-        });
-    });
-}
-
-function loadLegalCategorys() {
-    $("#viewaspie").hide();
-    $("#back").hide();
-    $("#viewasbar").hide();
-    $(".SumoSelect").show();
-    $("#entity-auto").hide();
-    $("#division-auto").hide();
-    $("#unit-auto").hide();
-    $("#previous").hide();
-    $("#next").hide();
-    $("#container").show();
-    $("#imgcontainer").hide();
-
-
-    $(function() {
-        $('#container').highcharts({
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
-            chart: {
-                type: 'bar',
-            },
-            title: {
-                text: 'Category wise Compliances'
-            },
-            xAxis: {
-                title: {
-                    text: 'Category'
-                },
-                categories: ['KG Category 1', 'KG Category 2', 'KG Category 3', 'KG Category 4', 'KG Category 5', 'KG Category 6', 'KG Category 7'],
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "India") {
-                            var link = '<a href="#"  id="' + name + '" onclick=loadCountrySpecific(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true,
-                itemStyle: {
-                    fontWeight:'normal',
-                    fontSize:'11px'
-                }
-            },
-            tooltip: {
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                            color: '#000000'
-                        },
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Not Complied',
-                data: [{
-                    y: 22,
-                    drilldown: "busNotComplied",
-                }, {
-                    y: 15,
-                }, {
-                    y: 30,
-                }, {
-                    y: 10,
-                }, {
-                    y: 20,
-                }, ]
-            }, {
-                name: 'In progress',
-                data: [{
-                    y: 18,
-                    drilldown: "busInprogress",
-                }, {
-                    y: 25,
-                }, {
-                    y: 10,
-                }, {
-                    y: 25,
-                }, {
-                    y: 30,
-                }, ]
-            }, {
-                name: 'Delayed Compliance',
-                data: [{
-                    y: 15,
-                    drilldown: "busDelayed",
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 15,
-                }, {
-                    y: 10,
-                }, ]
-            }, {
-                name: 'Complied',
-                data: [{
-                    y: 15,
-                    drilldown: "busComplied",
-                }, {
-                    y: 30,
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 30,
-                }, ]
-            }, ]
-        });
-    });
-}
-
-
-
-function loadUnit() {
-    $("#viewaspie").hide();
-    $("#back").hide();
-    $("#viewasbar").hide();
-    $(".SumoSelect").show();
-    $("#entity-auto").hide();
-    $("#division-auto").hide();
-    $("#unit-auto").hide();
-    $("#previous").hide();
-    $("#next").hide();
-    $("#container").show();
-    $("#imgcontainer").hide();
-
-
-    $(function() {
-        $('#container').highcharts({
-            colors: ['#F32D2B', '#fbca35', '#fe6271', '#3ec845', ],
-            chart: {
-                type: 'bar',
-            },
-            title: {
-                text: 'Units wise Compliances'
-            },
-            xAxis: {
-                title: {
-                    text: 'Units'
-                },
-                categories: ['Branch Office 1', 'Branch Office  2', 'Branch Office  3', 'Branch Office  4', 'Branch Office  5', 'Branch Office  6', 'Branch Office 7'],
-                labels: {
-                    useHTML: true,
-                    formatter: function() {
-                        var name = this.value;
-                        if (name == "India") {
-                            var link = '<a href="#"  id="' + name + '" onclick=loadCountrySpecific(this.id)>' +
-                                name + '</a>'
-                            return link;
-                        } else {
-                            var link = '<span  id="' + name + '" >' +
-                                name + '</span>'
-                            return link;
-                        }
-                    }
-                },
-            },
-            yAxis: {
-                min: 0,
-                title: {
-                    text: 'Total Compliances'
-                },
-                allowDecimals: false
-            },
-            legend: {
-                reversed: true,
-                itemStyle: {
-                    fontWeight:'normal',
-                    fontSize:'11px'
-                }
-            },
-            tooltip: {
-                headerFormat: '<b>{point.x}</b><br/>',
-                pointFormat: '{series.name}: {point.percentage:.0f}%<br>Total Compliances: {point.stackTotal}'
-            },
-            plotOptions: {
-                series: {
-                    stacking: 'normal',
-                    dataLabels: {
-                        enabled: true,
-                        color: '#000000',
-                        style: {
-                            textShadow: null,
-                            color: '#000000'
-                        },
-                        format: '{point.y}'
-                    },
-                    point: {
-                        events: {
-                            click: function() {
-                                var drilldown = this.drilldown;
-                                if (drilldown) {
-                                    loadDrillDownData(drilldown);
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            series: [{
-                name: 'Not Complied',
-                data: [{
-                    y: 22,
-                    drilldown: "busNotComplied",
-                }, {
-                    y: 15,
-                }, {
-                    y: 30,
-                }, {
-                    y: 10,
-                }, {
-                    y: 20,
-                }, ]
-            }, {
-                name: 'In progress',
-                data: [{
-                    y: 18,
-                    drilldown: "busInprogress",
-                }, {
-                    y: 25,
-                }, {
-                    y: 10,
-                }, {
-                    y: 25,
-                }, {
-                    y: 30,
-                }, ]
-            }, {
-                name: 'Delayed Compliance',
-                data: [{
-                    y: 15,
-                    drilldown: "busDelayed",
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 15,
-                }, {
-                    y: 10,
-                }, ]
-            }, {
-                name: 'Complied',
-                data: [{
-                    y: 15,
-                    drilldown: "busComplied",
-                }, {
-                    y: 30,
-                }, {
-                    y: 20,
-                }, {
-                    y: 20,
-                }, {
-                    y: 30,
-                }, ]
-            }, ]
-        });
-    });
-}
-
-
-function loadConsolidated(value) {
-    $("#viewaspie").hide();
-    $("#back").hide();
-    $("#viewasbar").hide();
-    $("#container").show();
-    $("#imgcontainer").hide();
-    $(function() {
-        $('#container').highcharts({
-            colors: ['#3ec845', '#fe6271', '#fbca35', '#F32D2B'],
-            chart: {
-                type: 'pie' ,
-                options3d: {
-                    enabled: true,
-                    alpha: 45,
-                    beta: 0
-                }
-            },
-            title: {
-                text: "Consolidated Chart"
-            },
-            tooltip: {
-                headerFormat: '',
-                pointFormat: '{point.name}:{point.y} Out of 70'
-
-            },
-            legend: {
-                reversed: true,
-                itemStyle: {
-                    fontWeight:'normal',
-                    fontSize:'11px'
-                }
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    depth: 35,
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.percentage:.0f}%'
-                    },
-                    showInLegend: true,
-                    point: {
-
-                    }
-                }
-            },
-            series: [{
-                type: 'pie',
-                name: 'Compliance',
-                data: [{
-                    name: "Complied",
-                    y: 15,
-                    drilldown: "Complied"
-                }, {
-                    name: "Delayed compliance",
-                    y: 15,
-                    drilldown: "Delayed"
-                }, {
-                    name: "In progress",
-                    y: 18,
-                    drilldown: "Inprogress"
-                }, {
-                    name: "Not Complied",
-                    y: 22,
-                    drilldown: "NotComplied"
-                }, ]
-            }]
-        });
-    });
-}
+});
