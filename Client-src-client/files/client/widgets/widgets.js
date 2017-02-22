@@ -437,13 +437,18 @@ function loadChart(){
   $.each(widget_info, function(k,v){
     settings = widgetSettings();
     settings[v.w_id](function(error, data){
-      console.log(v.w_id+"---"+data);
-      var cardbox = $(".chart-card-box li");
-      var cardboxclone = cardbox.clone();
-      $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
-      $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
-      $(".dragdrophandles").append(cardboxclone);          
-      widgetLoadChart()[v.w_id](data, v.w_id);
+      if(error == null){
+        console.log(v.w_id+"---"+data);
+        var cardbox = $(".chart-card-box li");
+        var cardboxclone = cardbox.clone();
+        $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+        $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
+        $(".dragdrophandles").append(cardboxclone);          
+        widgetLoadChart()[v.w_id](data, v.w_id);  
+      }
+      else{
+        console.log(error);
+      }      
     });
   });
 }
