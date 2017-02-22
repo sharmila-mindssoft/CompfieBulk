@@ -133,24 +133,6 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         )
         logger.logClientApi("------", str(time.time()))
 
-    elif type(request) is clientreport.GetRiskReportFilters:
-        logger.logClientApi(
-            "GetRiskReportFilters  - " + str(client_id), "process begin")
-        logger.logClientApi("------", str(time.time()))
-        result = get_risk_report_filters(db, request, session_user, client_id)
-        logger.logClientApi("GetRiskReportFilters", "process end")
-        logger.logClientApi("------", str(time.time()))
-
-    elif type(request) is clientreport.GetRiskReport:
-        logger.logClientApi(
-            "GetRiskReport  - " + str(client_id),
-            "process begin"
-        )
-        logger.logClientApi("------", str(time.time()))
-        result = get_risk_report(db, request, session_user, client_id)
-        logger.logClientApi("GetRiskReport", "process end")
-        logger.logClientApi("------", str(time.time()))
-
     elif type(request) is clientreport.GetReassignedHistoryReportFilters:
         logger.logClientApi(
             "GetReassignedHistoryReportFilters  - " + str(client_id),
@@ -452,6 +434,30 @@ def process_client_report_requests(request, db, session_user, client_id, le_id):
         logger.logClientApi("GetAuditTrailReportData", "process end")
         logger.logClientApi("------", str(time.time()))
 
+    elif type(request) is clientreport.GetRiskReportFilters:
+        logger.logClientApi(
+            "GetRiskReportFilters  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_risk_report_filters(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetRiskReportFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+
+    elif type(request) is clientreport.GetRiskReportData:
+        logger.logClientApi(
+            "GetRiskReportData  - " + str(client_id),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_risk_report_data(
+            db, request, session_user, client_id
+        )
+        logger.logClientApi("GetRiskReportData", "process end")
+        logger.logClientApi("------", str(time.time()))
+
     return result
 
 
@@ -664,30 +670,6 @@ def get_compliancedetails_report(db, request, session_user, client_id):
         )
 
 
-def get_risk_report_filters(db, request, session_user, client_id):
-    user_company_info = get_user_company_details(db, session_user)
-    unit_ids = user_company_info[0]
-    division_ids = user_company_info[1]
-    legal_entity_ids = user_company_info[2]
-    business_group_ids = user_company_info[3]
-    country_list = get_countries_for_user(db, session_user)
-    domain_list = get_domains_for_user(db, session_user)
-    business_group_list = get_business_groups_for_user(db, business_group_ids)
-    legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
-    division_list = get_divisions_for_user(db, division_ids)
-    unit_list = get_units_for_user(db, unit_ids)
-    level_1_statutories_list = get_client_level_1_statutoy(db, session_user)
-    return clientreport.GetRiskReportFiltersSuccess(
-        countries=country_list,
-        domains=domain_list,
-        business_groups=business_group_list,
-        legal_entities=legal_entity_list,
-        divisions=division_list,
-        units=unit_list,
-        level1_statutories=level_1_statutories_list
-    )
-
-
 def get_reassignedhistory_report_filters(db, request, session_user, client_id):
     #user_company_info = get_user_company_details(db, session_user)
     #unit_ids = user_company_info[0]
@@ -731,57 +713,6 @@ def get_reassignedhistory_report(db, request, session_user, client_id):
     else:
         converter = ConvertJsonToCSV(
             db, request, session_user, "Reassign"
-        )
-        return clientreport.ExportToCSVSuccess(
-            link=converter.FILE_DOWNLOAD_PATH
-        )
-
-
-def get_risk_report(db, request, session_user, client_id):
-    country_id = request.country_id
-    domain_id = request.domain_id
-    business_group_id = request.business_group_id
-    legal_entity_id = request.legal_entity_id
-    division_id = request.division_id
-    unit_id = request.unit_id
-    level_1_statutory_name = request.level_1_statutory_name
-    statutory_status = request.statutory_status
-    from_count = request.from_count
-    page_count = request.page_count
-    compliance_list = []
-    if request.csv is False:
-        if statutory_status == 1:  # Delayed compliance
-            total, compliance_list = get_delayed_compliances_with_count(
-                db, country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user, from_count, page_count
-            )
-        if statutory_status == 2:  # Not complied
-            total, compliance_list = get_not_complied_compliances_with_count(
-                db, country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user, from_count, page_count
-            )
-        if statutory_status == 3:  # Not opted
-            total, compliance_list = get_not_opted_compliances_with_count(
-                db, country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id, level_1_statutory_name,
-                session_user, from_count, page_count
-            )
-        if statutory_status == 4:  # Unassigned
-            total, compliance_list = get_unassigned_compliances_with_count(
-                db, country_id, domain_id, business_group_id,
-                legal_entity_id, division_id, unit_id,
-                level_1_statutory_name,
-                session_user, from_count, page_count
-            )
-        return clientreport.GetRiskReportSuccess(
-            total, compliance_list
-
-        )
-    else:
-        converter = ConvertJsonToCSV(
-            db, request, session_user, "RiskReport"
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
@@ -1233,3 +1164,41 @@ def get_audit_trail_report_data(db, request, session_user, client_id):
     else:
         result = process_audit_trail_report(db, request)
         return clientreport.GetAuditTrailReportDataSuccess(audit_activities=result)
+
+###############################################################################################
+# Objective: To get risk report filters
+# Parameter: request object and the client id
+# Result: list of record sets which contains domains, division, categories, and units
+###############################################################################################
+def get_risk_report_filters(db, request, session_user, client_id):
+    country_id = request.country_id
+    business_group_id = request.business_group_id
+    legal_entity_id = request.legal_entity_id
+    domain_list = get_domains_for_le(db, legal_entity_id)
+    divsions_list = get_divisions_for_unit_list(db, business_group_id, legal_entity_id)
+    categories_list = get_categories_for_unit_list(db, business_group_id, legal_entity_id)
+    units_list = get_units_list(db, country_id, business_group_id, legal_entity_id)
+    act_list = get_acts_for_le_domain(db, legal_entity_id, country_id)
+    task_list = get_task_for_le_domain(db, legal_entity_id)
+    compliance_status = get_risk_compiance_status(db)
+    return clientreport.GetRiskReportFiltersSuccess(
+        domains=domain_list, divisions=divsions_list, categories=categories_list,
+        units_list=units_list, act_legal_entity=act_list, compliance_task_list=task_list,
+        compliance_task_status=compliance_status)
+
+###############################################################################################
+# Objective: To get legal entity wise compliances data under selected legal entity
+# Parameter: request object and the client id
+# Result: list of record sets which contains risk compliance list with the status
+###############################################################################################
+def get_risk_report_data(db, request, session_user, client_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "RiskReport"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = process_risk_report(db, request)
+        return clientreport.GetRiskReportSuccess(risk_report=result)
