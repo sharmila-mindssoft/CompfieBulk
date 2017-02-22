@@ -1913,21 +1913,24 @@ class DrillDownData(object):
 #         }
 
 class RemindersSuccess(object):
-    def __init__(self, notification_id, notification_text, created_on):
+    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
+        self.legal_entity_id = legal_entity_id
         self.notification_id = notification_id
         self.notification_text = notification_text
         self.created_on = created_on
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["notification_id", "notification_text", "created_on"])
+        data = parse_dictionary(data, ["legal_entity_id", "notification_id", "notification_text", "created_on"])
+        legal_entity_id = data.get("legal_entity_id")
         notification_id = data.get("notification_id")
         notification_text = data.get("notification_text")
         created_on = data.get("created_on")
-        return RemindersSuccess(notification_id, notification_text, created_on)
+        return RemindersSuccess(legal_entity_id, notification_id, notification_text, created_on)
 
     def to_structure(self):
         return {
+            "legal_entity_id" : self.legal_entity_id,
             "notification_id" : self.notification_id,
             "notification_text" : self.notification_text,
             "created_on" : self.created_on,

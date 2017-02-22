@@ -196,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        //alert(body.toSource());
+        alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -642,10 +642,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function updateNotificationStatus(notification_id, has_read, callback) {
+    function updateNotificationStatus(le_id, notification_id, has_read, callback) {
         callerName = 'client_dashboard';
         var request = [
             'UpdateNotificationStatus', {
+                'le_id':le_id,
                 'notification_id': notification_id,
                 'has_read': has_read
             }

@@ -10,7 +10,7 @@ function loadMessages(data) {
         var rowClone = tableRow.clone();
 
         rowClone.on('click', function(e) {
-            /*mirror.updateNotificationStatus(v.compliance_id, 1 function(error, response) {
+            /*mirror.updateNotificationStatus(le_id, v.compliance_id, 1 function(error, response) {
                 if (error == null) {
                     $('.popup-statutory').text(response.s_pro);
                     $('.popup-compliancetask').text(response.c_task);
