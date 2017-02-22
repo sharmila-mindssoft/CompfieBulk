@@ -585,9 +585,13 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
     from_count = request.r_count
     to_count = RECORD_DISPLAY_COUNT
 
-    level_1_name, statutories = get_assign_compliance_statutories_for_units(
-        db, unit_ids, domain_id, f_ids, session_user, from_count, to_count
-    )
-    return clienttransactions.GetComplianceForUnitsSuccess(
-        level_1_name, statutories
+    # level_1_name, statutories = get_assign_compliance_statutories_for_units(
+    #     db, unit_ids, domain_id, f_ids, session_user, from_count, to_count
+    # )
+    reassign_compliances = get_reassign_compliance_for_units(
+        db, domain_id, unit_ids, user_id, user_type, session_user, from_count, to_count
+    ) 
+
+    return clienttransactions.GetReAssignComplianceForUnitsSuccess(
+        reassign_compliances
     )

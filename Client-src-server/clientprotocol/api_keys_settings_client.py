@@ -412,4 +412,14 @@ api_params = {
     "overdue_count": make_int_field(length=10000),
     "reassign_units": make_vector_type_field(module="clienttransactions", klass_name="REASSIGN_COMPLIANCE_UNITS"),
     "no_of_compliances": make_int_field(length=100000),
+    "task_type": make_text_field(is_optional=True),
+    "reassign_compliances": make_vector_type_field(module="clienttransactions", klass_name="REASSIGN_COMPLIANCES"),
+    'c_h_id': make_int_field(is_optional=True),
+    "o_assignee": make_int_field(is_optional=True),
+    "o_concurrence_person": make_int_field(is_optional=True),
+    "o_approval_person": make_int_field(is_optional=True),
+    "r_from": make_int_field(),
+    "reassigned_compliance": make_vector_type_field(module="clienttransactions", klass_name="REASSIGNED_COMPLIANCE"),
+
+
 }

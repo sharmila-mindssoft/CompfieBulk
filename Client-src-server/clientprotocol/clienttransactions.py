@@ -567,55 +567,46 @@ class GetAssigneeCompliances(Request):
             "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
+
 class ReassignCompliance(Request):
-    def __init__(self, r_from, assignee, a_name, c_person, a_person, compliances, r_reason, new_units):
-        self.reassigned_from = r_from
+    def __init__(self, legal_entity_id, r_from, assignee, assignee_name, concurrence_person, approval_person, reassigned_compliance, reason):
+        self.legal_entity_id = legal_entity_id
+        self.r_from = r_from
         self.assignee = assignee
-        self.assignee_name = a_name
-        self.concurrence_person = c_person
-        self.approval_person = a_person
-        self.compliances = compliances
-        self.reassigned_reason = r_reason
-        self.new_units = new_units
+        self.assignee_name = assignee_name
+        self.concurrence_person = concurrence_person
+        self.approval_person = approval_person
+        self.reassigned_compliance = reassigned_compliance
+        self.reason = reason
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "r_from", "assignee", "a_name",
-            "c_person", "a_person", "compliances", "r_reason",
-            "n_units"
+            "le_id", "r_from", "assignee", "assignee_name",
+            "concurrence_person", "approval_person", "reassigned_compliance", "reason"
         ])
-        reassigned_from = data.get("r_from")
-        reassigned_from = parse_structure_UnsignedIntegerType_32(reassigned_from)
-        assignee = data.get("assignee")
-        assignee = parse_structure_UnsignedIntegerType_32(assignee)
-        assignee_name = data.get("a_name")
-        assignee_name = parse_structure_CustomTextType_250(assignee_name)
-        concurrence_person = data.get("c_person")
-        concurrence_person = parse_structure_OptionalType_SignedIntegerType_8(concurrence_person)
-        approval_person = data.get("a_person")
-        approval_person = parse_structure_UnsignedIntegerType_32(approval_person)
-        compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE(compliances)
-        reassigned_reason = data.get("r_reason")
-        reassigned_reason = parse_structure_CustomTextType_500(reassigned_reason)
-        new_units = data.get("n_units")
-        new_units = parse_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(new_units)
+        
         return ReassignCompliance(
-            reassigned_from, assignee, assignee_name, concurrence_person,
-            approval_person, compliances, reassigned_reason, new_units
+            data.get("le_id"),
+            data.get("r_from"),
+            data.get("assignee"),
+            data.get("assignee_name"),
+            data.get("concurrence_person"),
+            data.get("approval_person"),
+            data.get("reassigned_compliance"),
+            data.get("reason")
         )
 
     def to_inner_structure(self):
         return {
-            "r_from": to_structure_SignedIntegerType_8(self.reassigned_from),
-            "assignee": to_structure_SignedIntegerType_8(self.assignee),
-            "a_name": to_structure_CustomTextType_250(self.assignee_name),
-            "c_person": to_structure_OptionalType_SignedIntegerType_8(self.concurrence_person),
-            "a_person": to_structure_SignedIntegerType_8(self.approval_person),
-            "compliances": to_structure_VectorType_RecordType_clienttransactions_REASSIGNED_COMPLIANCE(self.compliances),
-            "r_reason": to_structure_CustomTextType_500(self.reassigned_reason),
-            "n_units": to_structure_OptionalType_VectorType_RecordType_clienttransactions_NewUnitSettings(self.new_units)
+            "le_id": self.legal_entity_id,
+            "r_from": self.r_from,
+            "assignee": self.assignee,
+            "assignee_name": self.assignee_name,
+            "concurrence_person": self.concurrence_person,
+            "approval_person": self.approval_person,
+            "reassigned_compliance": self.reassigned_compliance,
+            "reason": self.reason
         }
 
 class GetComplianceApprovalList(Request):
@@ -1717,17 +1708,21 @@ class GetReAssignComplianceUnitsSuccess(Response):
             "reassign_units": self.units,
         }
 
-class GetReassignComplianceForUnitsSuccess(Response):
-    def __init__(self):
-        pass
+class GetReAssignComplianceForUnitsSuccess(Response):
+    def __init__(self, reassign_compliances):
+        self.reassign_compliances = reassign_compliances
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, [])
-        return GetReassignComplianceForUnitsSuccess()
+        data = parse_dictionary(data, ["reassign_compliances"])
+        return GetReAssignComplianceForUnitsSuccess(
+            data.get("reassign_compliances"),
+        )
 
     def to_inner_structure(self):
-        return {}
+        return {
+            "reassign_compliances": self.reassign_compliances,
+        }
 
 def _init_Response_class_map():
     classes = [
@@ -1742,7 +1737,7 @@ def _init_Response_class_map():
         GetAssignComplianceUnitsSuccess,
         GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
         GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess,
-        GetReAssignComplianceUnitsSuccess
+        GetReAssignComplianceUnitsSuccess, GetReAssignComplianceForUnitsSuccess
     ]
     class_map = {}
     for c in classes:
@@ -1827,40 +1822,46 @@ class ASSIGNED_COMPLIANCE(object):
 
 class REASSIGNED_COMPLIANCE(object):
     def __init__(
-        self, u_id, c_id,
-        c_name,
-        c_history_id, d_date
+        self, u_id, comp_id,
+        compliance_name,
+        c_h_id, d_date, o_assignee, o_concurrence_person,
+        o_approval_person
     ):
-        self.unit_id = u_id
-        self.compliance_id = c_id
-        self.compliance_name = c_name
-        self.compliance_history_id = c_history_id
-        self.due_date = d_date
+        self.u_id = u_id
+        self.comp_id = comp_id
+        self.compliance_name = compliance_name
+        self.c_h_id = c_h_id
+        self.d_date = d_date
+        self.o_assignee = o_assignee
+        self.o_concurrence_person = o_concurrence_person
+        self.o_approval_person = o_approval_person
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["u_id", "c_id", "c_name",  "c_history_id", "d_date"])
-        unit_id = data.get("u_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
-        compliance_id = data.get("c_id")
-        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
-        compliance_name = data.get("c_name")
-        compliance_name = parse_structure_CustomTextType_500(compliance_name)
-        compliance_history_id = data.get("c_history_id")
-        compliance_history_id = parse_structure_OptionalType_UnsignedIntegerType_32(compliance_history_id)
-        due_date = data.get("d_date")
-        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
+        data = parse_dictionary(data, ["u_id", "comp_id", "compliance_name",  "c_h_id", "d_date", "o_assignee", "o_concurrence_person", "o_approval_person"])
+        u_id = data.get("u_id")
+        comp_id = data.get("comp_id")
+        compliance_name = data.get("compliance_name")
+        c_h_id = data.get("c_h_id")
+        d_date = data.get("d_date")
+        o_assignee = data.get("o_assignee")
+        o_concurrence_person = data.get("o_concurrence_person")
+        o_approval_person = data.get("o_approval_person")
+
         return REASSIGNED_COMPLIANCE(
-            unit_id, compliance_id, compliance_name, compliance_history_id, due_date
+            u_id, comp_id, compliance_name, c_h_id, d_date, o_assignee, o_concurrence_person, o_approval_person
         )
 
     def to_structure(self):
         return {
-            "u_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "c_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "c_name": to_structure_CustomTextType_500(self.compliance_name),
-            "c_history_id": to_structure_OptionalType_UnsignedIntegerType_32(self.compliance_history_id),
-            "d_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
+            "u_id": self.u_id,
+            "comp_id": self.comp_id,
+            "compliance_name": self.compliance_name,
+            "c_h_id": self.c_h_id,
+            "d_date": self.d_date,
+            "o_assignee": self.o_assignee,
+            "o_concurrence_person": self.o_concurrence_person,
+            "o_approval_person": self.o_approval_person,
         }
 
 #
@@ -2769,4 +2770,95 @@ class REASSIGN_COMPLIANCE_UNITS(object):
             "postal_code": self.postal_code,
             "user_type_id": self.user_type_id,
             "no_of_compliances": self.no_of_compliances
+        }
+
+#
+# REASSIGN_COMPLIANCES
+#
+
+class REASSIGN_COMPLIANCES(object):
+    def __init__(
+        self, u_id, u_name, act_name, task_type, compliance_name, comp_id, f_id, frequency, compliance_description,
+        summary, trigger_before_days,assignee, assignee_name, concurrence_person, concurrer_name, approval_person, approver_name, 
+        c_h_id, d_date, v_date
+    ):
+        self.u_id = u_id
+        self.u_name = u_name
+        self.act_name = act_name
+        self.task_type = task_type
+        self.compliance_name = compliance_name
+        self.comp_id = comp_id
+        self.f_id = f_id
+        self.frequency = frequency
+        self.compliance_description = compliance_description
+        self.summary = summary
+        self.trigger_before_days = trigger_before_days
+        self.assignee = assignee
+        self.assignee_name = assignee_name
+        self.concurrence_person = concurrence_person
+        self.concurrer_name = concurrer_name
+        self.approval_person = approval_person
+        self.approver_name = approver_name
+        self.c_h_id = c_h_id
+        self.d_date = d_date
+        self.v_date = v_date
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "u_id", "u_name", "act_name", "task_type", "compliance_name", "comp_id", "f_id", "frequency", "compliance_description",
+            "summary", "trigger_before_days","assignee", "assignee_name", "concurrence_person", "concurrer_name", "approval_person", "approver_name", 
+            "c_h_id", "d_date", "v_date"
+        ])
+        u_id = data.get("u_id")
+        u_name = data.get("u_name")
+        act_name = data.get("act_name")
+        task_type = data.get("task_type")
+        compliance_name = data.get("compliance_name")
+        comp_id = data.get("comp_id")
+        f_id = data.get("f_id")
+        frequency = data.get("frequency")
+        compliance_description = data.get("compliance_description")
+        summary = data.get("summary")
+        trigger_before_days = data.get("trigger_before_days")
+        assignee = data.get("assignee")
+        assignee_name = data.get("assignee_name")
+        concurrence_person = data.get("concurrence_person")
+        concurrer_name = data.get("concurrer_name")
+        approval_person = data.get("approval_person")
+        approver_name = data.get("approver_name")
+        c_h_id = data.get("c_h_id")
+        d_date = data.get("d_date")
+        v_date = data.get("v_date")
+
+
+        return ASSIGN_COMPLIANCE_UNITS(
+            unit_id, unit_name, address, task_type, compliance_name, comp_id, f_id, frequency, compliance_description,
+            summary, trigger_before_days,assignee, assignee_name, concurrence_person, concurrer_name, approval_person, approver_name, 
+            c_h_id, d_date, v_date
+        )
+
+    def to_structure(self):
+        return {
+            "u_id": self.u_id,
+            "u_name": self.u_name,
+            "act_name": self.act_name,
+            "task_type": self.task_type,
+            "compliance_name": self.compliance_name,
+            "comp_id": self.comp_id,
+            "f_id": self.f_id,
+            "frequency": self.frequency,
+            "compliance_description": self.compliance_description,
+            "summary": self.summary,
+            "trigger_before_days": self.trigger_before_days,
+            "assignee": self.assignee,
+            "assignee_name": self.assignee_name,
+            "concurrence_person": self.concurrence_person,
+            "concurrer_name": self.concurrer_name,
+            "approval_person": self.approval_person,
+            "approver_name": self.approver_name,
+            "c_h_id": self.c_h_id,
+            "d_date": self.d_date,
+            "v_date": self.v_date
+
         }
