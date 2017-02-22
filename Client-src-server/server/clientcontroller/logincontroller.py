@@ -68,6 +68,16 @@ def process_login_request(
         result = process_update_profile(db, request)
         logger.logClientApi("UpdateUserProfile", "end")
 
+    elif type(request) is clientlogin.CheckRegistrationToken:
+        print "login-controller>>72"
+        result = process_validate_rtoken(db, request)
+
+    elif type(request) is clientlogin.SaveRegistration:
+        result = process_save_logindetails(db, request)
+
+    elif type(request) is clientlogin.CheckUsername:
+        result = process_check_username(db, request)
+
     return result
 
 
@@ -355,3 +365,40 @@ def process_update_profile(db, request):
     session_user = db.validate_session_token(session_token)
     update_profile(db, request.contact_no, request.address, session_user)
     return clientlogin.UpdateUserProfileSuccess(request.contact_no, request.address)
+
+#############################################################################
+# Check Registration Token Valid
+#############################################################################
+def process_validate_rtoken(db, request):
+    token = request.reset_token
+    if validate_email_token(db, token):
+        captcha_text = generate_random(CAPTCHA_LENGTH)
+        return clientlogin.CheckRegistrationTokenSuccess(captcha_text)
+    else:
+        return clientlogin.InvalidSessionToken()
+#############################################################################
+# Check Registration Token Valid
+#############################################################################
+def process_save_logindetails(db, request):
+    username = request.username
+    password = request.password
+    # duplication username validation
+    if check_username_duplicate(db, username) is False:
+        return clientlogin.UsernameAlreadyExists()
+    else:
+        encrypt_password = encrypt(password)
+        token = request.token
+        if save_login_details(db, token, username, encrypt_password):
+            return clientlogin.SaveRegistrationSuccess()
+        else:
+            return clientlogin.InvalidSessionToken()
+#############################################################################
+# Check Registration Token Valid
+#############################################################################
+def process_check_username(db, request):
+    uname = request.username
+
+    if check_username_duplicate(db, uname):
+        return clientlogin.CheckUsernameSuccess()
+    else :
+        return clientlogin.UsernameAlreadyExists()
