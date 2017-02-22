@@ -633,7 +633,7 @@ LegalEntityWiseReport.prototype.showReportValues = function() {
             unitname = v.unit_name;
         }
 
-        if (actname != v.l_name) {
+        if (actname != v.statutory_mapping) {
             var clonetwo = $('#template #report-table .row-two').clone();
             $('.act-name', clonetwo).text(v.statutory_mapping);
             reportTableTbody.append(clonetwo);
