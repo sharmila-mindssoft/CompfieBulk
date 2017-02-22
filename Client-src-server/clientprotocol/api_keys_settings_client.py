@@ -462,8 +462,11 @@ api_params = {
     "assignee_id": make_int_field(),
     "start_count": make_int_field(),
     "w_id": make_int_field(),
+    "w_name": make_text_field(),
+    "active_status": make_bool_field(),
     "width": make_text_field(),
     "height": make_text_field(),
     "pin_status": make_bool_field(),
-    "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo")
+    "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo"),
+    "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList")
 }

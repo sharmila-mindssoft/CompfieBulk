@@ -84,12 +84,25 @@ class GetRiskChart(Request):
             "le_ids": self.legal_entity_ids
         }
 
+class GetTrendChart(Request):
+    def __init__(self, legal_entity_ids):
+        self.legal_entity_ids = legal_entity_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_ids"])
+        return GetTrendChart(data.get("le_ids"))
+
+    def to_inner_structure(self):
+        return {
+            "le_ids": self.legal_entity_ids
+        }
 
 def _init_Request_class_map():
     classes = [
 
         GetComplianceChart, GetEscalationChart, GetNotCompliedChart,
-        GetRiskChart
+        GetRiskChart, GetTrendChart
     ]
     class_map = {}
     for c in classes:
@@ -128,7 +141,7 @@ class Response(object):
         raise NotImplementedError
 
 
-class GetComplianceChartSuccess(Request):
+class ChartSuccess(Response):
     def __init__(self, chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chart_data):
         self.chart_title = chart_title
         self.xaxis_name = xaxis_name
@@ -143,103 +156,7 @@ class GetComplianceChartSuccess(Request):
             "chart_title", "xaxis_name", "xaxis", "yaxis_name", "yaxis",
             "widget_data"
         ])
-        return GetComplianceChartSuccess(
-            data.get("chart_title"), data.get("xaxis_name"),
-            data.get("xaxis"), data.get("yaxis_name"), data.get("yaxis"),
-            data.get("widget_data")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "chart_title": self.chart_title,
-            "xaxis_name": self.xaxis_name,
-            "xaxis": self.xaxis,
-            "yaxis_name": self.yaxis_name,
-            "yaxis": self.yaxis,
-            "widget_data": self.chart_data
-        }
-
-
-class GetEscalationChartSuccess(Request):
-    def __init__(self, chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chart_data):
-        self.chart_title = chart_title
-        self.xaxis_name = xaxis_name
-        self.xaxis = xaxis
-        self.yaxis_name = yaxis_name
-        self.yaxis = yaxis
-        self.chart_data = chart_data
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "chart_title", "xaxis_name", "xaxis", "yaxis_name", "yaxis",
-            "widget_data"
-        ])
-        return GetEscalationChartSuccess(
-            data.get("chart_title"), data.get("xaxis_name"),
-            data.get("xaxis"), data.get("yaxis_name"), data.get("yaxis"),
-            data.get("widget_data")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "chart_title": self.chart_title,
-            "xaxis_name": self.xaxis_name,
-            "xaxis": self.xaxis,
-            "yaxis_name": self.yaxis_name,
-            "yaxis": self.yaxis,
-            "widget_data": self.chart_data
-        }
-
-
-class GetNotCompliedChartSuccess(Request):
-    def __init__(self, chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chart_data):
-        self.chart_title = chart_title
-        self.xaxis_name = xaxis_name
-        self.xaxis = xaxis
-        self.yaxis_name = yaxis_name
-        self.yaxis = yaxis
-        self.chart_data = chart_data
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "chart_title", "xaxis_name", "xaxis", "yaxis_name", "yaxis",
-            "widget_data"
-        ])
-        return GetNotCompliedChartSuccess(
-            data.get("chart_title"), data.get("xaxis_name"),
-            data.get("xaxis"), data.get("yaxis_name"), data.get("yaxis"),
-            data.get("widget_data")
-        )
-
-    def to_inner_structure(self):
-        return {
-            "chart_title": self.chart_title,
-            "xaxis_name": self.xaxis_name,
-            "xaxis": self.xaxis,
-            "yaxis_name": self.yaxis_name,
-            "yaxis": self.yaxis,
-            "widget_data": self.chart_data
-        }
-
-
-class GetRiskChartSuccess(Request):
-    def __init__(self, chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chart_data):
-        self.chart_title = chart_title
-        self.xaxis_name = xaxis_name
-        self.xaxis = xaxis
-        self.yaxis_name = yaxis_name
-        self.yaxis = yaxis
-        self.chart_data = chart_data
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-            "chart_title", "xaxis_name", "xaxis", "yaxis_name", "yaxis",
-            "widget_data"
-        ])
-        return GetRiskChartSuccess(
+        return ChartSuccess(
             data.get("chart_title"), data.get("xaxis_name"),
             data.get("xaxis"), data.get("yaxis_name"), data.get("yaxis"),
             data.get("widget_data")
@@ -258,9 +175,8 @@ class GetRiskChartSuccess(Request):
 
 def _init_Response_class_map():
     classes = [
-        GetComplianceChartSuccess,
-        GetEscalationChartSuccess,
-        GetNotCompliedChartSuccess
+        ChartSuccess
+
     ]
     class_map = {}
     for c in classes:
