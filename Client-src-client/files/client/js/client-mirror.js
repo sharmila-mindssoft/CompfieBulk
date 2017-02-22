@@ -1029,12 +1029,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, callback) {
+    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, legalEntityIds, callback) {
         var request = [
             'GetAssigneewiseYearwiseCompliances', {
-                'country_id': country_id,
-                'unit_id': unit_id,
-                'user_id': user_id
+                'c_id': country_id,
+                'u_id': unit_id,
+                'usr_id': user_id,
+                'le_ids': legalEntityIds,
+
             }
         ];
         callerName = 'client_dashboard';
@@ -1054,15 +1056,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, callback) {
+    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, legalEntityIds, callback) {
         var request = [
             'GetAssigneeWiseComplianceDrillDown', {
-                'country_id': country_id,
+                'c_id': country_id,
                 'assignee_id': assignee_id,
-                'domain_id': domain_id,
-                'year': year,
+                'd_id': domain_id,
+                'chart_year': year,
                 'unit_id': unit_id,
-                'start_count': start_count
+                'start_count': start_count,
+                'le_ids': legalEntityIds
             }
         ];
         callerName = 'client_dashboard';

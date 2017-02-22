@@ -479,13 +479,13 @@ class GetAssigneeWiseComplianceDrillDown(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "assignee_id",
-            "d_id", "chart_year", "u_id", "start_count", "le_ids"
+            "d_id", "chart_year", "unit_id", "start_count", "le_ids"
         ])
         country_id = data.get("c_id")
         assignee_id = data.get("assignee_id")
         domain_id = data.get("d_id")
         year = data.get("chart_year")
-        unit_id = data.get("u_id")
+        unit_id = data.get("unit_id")
         start_count = data.get("start_count")
         legal_entity_ids = data.get("le_ids")
         return GetAssigneeWiseComplianceDrillDown(
@@ -499,7 +499,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
             "assignee_id": self.assignee_id,
             "d_id": self.domain_id,
             "chart_year": self.year,
-            "u_id": self.unit_id,
+            "unit_id": self.unit_id,
             "start_count" : self.start_count,
             "le_ids": self.legal_entity_ids
         }

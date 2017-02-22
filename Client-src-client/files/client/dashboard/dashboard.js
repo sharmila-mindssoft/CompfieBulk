@@ -1621,7 +1621,7 @@ function showFiltersResults(csv) {
             parseInt(country), businessgroupid, legalentityids,
             divisionid, unitid, userid, csv,
             function (status, data) {
-                chart_data = data['chart_data'];
+                chart_data = data['assingee_data'];
                 download_url = data['link'];
                 if(chart_data){
                     updateAssigneeWiseComplianceList(chart_data);
@@ -1641,23 +1641,42 @@ function updateAssigneeWiseComplianceList(data) {
   $('.table-assignee-wise-compliance-list').show();
   $('#pagination-assignee').hide();
   $('.compliance_count_assignee').text('');
+  $(".assignee-wise").empty();
   var aSno = 0;
-  var country_assignee = parseInt($('#country').val().trim());
+  var country_assignee = parseInt(Country.val().trim());
+  //assingee_data
+  var tablethead = $('#templates .report-container-inner .table-assignee-wise-compliance-list');
+  var clonethead = tablethead.clone();
+  $('.assignee-wise').append(clonethead);
+
   $.each(data, function (key, value) {
+      
     var tableRowHeadingth = $('#templates .assignee-wise-compliance-list .unitHeading');
     var cloneHeadingth = tableRowHeadingth.clone();
     $('.unit-name', cloneHeadingth).text(value.unit_name);
     $('.tbody-assignee-wise-compliance-list').append(cloneHeadingth);
+
     var assigneewiselist = value.assignee_wise_details;
     $.each(assigneewiselist, function (ke, valu) {
       var tableRow = $('#templates .assignee-wise-compliance-list .userHeading ');
       var clone = tableRow.clone();
       var name_assignee = valu.assignee_name;
       $('.assignee-name-for-popup', clone).html(name_assignee);
-      $(clone, '.assignee-name-for-popup').on('click', function (e) {
-        $('#popup-year').show();
-        showPopup(country_assignee, value.unit_id, valu.user_id, valu.assignee_name);
+      $('.assignee-name-for-popup', clone).click(function() {
+        Custombox.open({
+            target: '#year-modal',          
+            effect:'slit',
+            overlaySpeed:100,
+            overlayColor:'#36404a',
+            complete: function() {
+              showPopup(country_assignee, value.unit_id, valu.user_id, valu.assignee_name);
+            },
+        });
       });
+      // $('.assignee-name-for-popup', clone).on('click', function (e) {
+      //   //$('#popup-year').show();
+      //   showPopup(country_assignee, value.unit_id, valu.user_id, valu.assignee_name);
+      // });
       $('.tbody-assignee-wise-compliance-list').append(clone);
       var list = valu.domain_wise_details;
       $.each(list, function (k, val) {
@@ -1695,6 +1714,7 @@ function updateAssigneeWiseComplianceList(data) {
   });
 }
 function updateComplianceList(country_id, user_id, domain_id, year, unit_id, start_count, assigneename, domain_name) {
+  console.log("domain_id++"+domain_id);
   displayLoader();
   $('.popupoverlay').css('visibility', 'hidden');
   $('.popupoverlay').css('opacity', '0');
@@ -1719,10 +1739,11 @@ function updateComplianceList(country_id, user_id, domain_id, year, unit_id, sta
     dispDomain = domain_name;
   if (year != null && year != 'null')
     dispYear = year;
+  legalentityids = chartInput.getLegalEntities(); 
   $('.comp-list-year', cloneHeadingth).text(dispYear);
   $('.comp-list-domain', cloneHeadingth).text(dispDomain);
   $('.compliance-details-drilldown').append(cloneHeadingth);
-  client_mirror.getAssigneewiseCompliancesDrilldown(country_id, user_id, domain_id, year, unit_id, start_count, function (status, data) {
+  client_mirror.getAssigneewiseCompliancesDrilldown(country_id, user_id, domain_id, year, unit_id, start_count, legalentityids, function (status, data) {
     listingCompliance(data, userid, year);
     hideLoader();
   });
@@ -1829,15 +1850,16 @@ function listingCompliance(data, userid, year) {
 }
 function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee) {
   $('.tbody-popup-list tr').remove();
-  $('.popupoverlay').css('visibility', 'visible');
-  $('.popupoverlay').css('opacity', '1');
+  // $('.popupoverlay').css('visibility', 'visible');
+  // $('.popupoverlay').css('opacity', '1');
   $('.year-heading').text(name_assignee);
   window.scrollTo(0, 0);
   var popupsno = 0;
-  client_mirror.getAssigneewiseYearwiseComplianes(country_assignee, unit_assignee, user_assignee, function (error, response) {
+  legalEntityIds = chartInput.getLegalEntities();
+  client_mirror.getAssigneewiseYearwiseComplianes(country_assignee, unit_assignee, user_assignee, legalEntityIds, function (error, response) {
     if (error == null) {
       if (popupsno == 0) {
-        var yearWiseDetails = response.chart_data;
+        var yearWiseDetails = response.year_wise_data;
         $.each(yearWiseDetails, function (k, val) {
           var tableRow = $('#templates .year-wise-compliance-list-popup .tablerow');
           var cloneval = tableRow.clone();
@@ -1850,7 +1872,7 @@ function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee
           $('.popup-inprogress-count', cloneval).html(val.inprogress_compliance_count);
           $('.popup-not-complied-count', cloneval).html(val.not_complied_count);
           $('.popup-click-drilldown', cloneval).on('click', function () {
-            updateComplianceList(country_assignee, user_assignee, null, parseInt(val.year), unit_assignee, 0, name_assignee, null);
+            updateComplianceList(country_assignee, user_assignee, 1, parseInt(val.year), unit_assignee, 0, name_assignee, null);
           });
           $('.tbody-popup-list').append(cloneval);
         });
@@ -1860,14 +1882,15 @@ function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee
     }
   });
   $('.close').click(function () {
-    $('.popupoverlay').css('visibility', 'hidden');
-    $('.popupoverlay').css('opacity', '0');
+    // $('.popupoverlay').css('visibility', 'hidden');
+    // $('.popupoverlay').css('opacity', '0');
+    Custombox.close();
   });
 }
 function showPopupCompDelayed(country_id, unit_id, user_id, domain_id, name_assignee) {
   $('.tbody-popup-reassigned-list tr').remove();
-  $('.popupoverlay1').css('visibility', 'visible');
-  $('.popupoverlay1').css('opacity', '1');
+  // $('.popupoverlay1').css('visibility', 'visible');
+  // $('.popupoverlay1').css('opacity', '1');
   $('.comp-delayed-heading').text(name_assignee);
   window.scrollTo(0, 0);
   var popupdelayedsno = 0;
@@ -1895,8 +1918,9 @@ function showPopupCompDelayed(country_id, unit_id, user_id, domain_id, name_assi
     }
   });
   $('.close').click(function () {
-    $('.popupoverlay1').css('visibility', 'hidden');
-    $('.popupoverlay1').css('opacity', '0');
+    // $('.popupoverlay1').css('visibility', 'hidden');
+    // $('.popupoverlay1').css('opacity', '0');
+    Custombox.close();
   });
 }
 //drilldown load function
