@@ -570,14 +570,14 @@ ServiceProviderWiseReport.prototype.showReportValues = function() {
         is_null = false;
         $('.client-logo').attr("src", v.logo_url);
 
-        if (unitname != v.u_name) {
+        if (unitname != v.unit_name) {
             var cloneone = $('#template #report-table .row-one').clone();
             $('.unit-name', cloneone).text(v.unit_name);
             reportTableTbody.append(cloneone);
             unitname = v.unit_name;
         }
 
-        if (actname != v.l_name) {
+        if (actname != v.statutory_mapping) {
             var clonetwo = $('#template #report-table .row-two').clone();
             $('.act-name', clonetwo).text(v.statutory_mapping);
             reportTableTbody.append(clonetwo);
