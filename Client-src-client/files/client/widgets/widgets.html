@@ -42,339 +42,7 @@ $(function() {
             <div class="row">
                 <div class="col-lg-12">
                     <ul class="dragdrophandles">
-                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
-                            <div class="dragbox" id="item1">
-                                <h2>
-                    <a href="/dashboard" >Compliance Status Graph</a> 
-                    <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> 
-                    <a href="#" class="pins"><i class="ti-pin2" title="pin"></i></a> 
-                    <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> 
-                </h2>
-                                <div class="dragbox-content">
-                                    <div id="compliance" style="width:100%; height:100%; margin: 0 auto"></div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizablerisk">
-                            <div class="dragbox" id="item6">
-                                <h2><a href="/dashboard/risk-chart" >Risk Chart</a><a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin-alt " title="unpin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                                <div class="dragbox-content">
-                                    <div id="riskchart" style="width:100%; height:100%; margin: 0 auto"></div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizableesc">
-                            <div class="dragbox" id="item2">
-                                <h2><a href="/dashboard/escalation" >Escalations Graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                                <div class="dragbox-content">
-                                    <div id="escalation" style="width:100%; height:100%; margin: 0 auto"></div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizablecompappli">
-                            <div class="dragbox" id="item5">
-                                <h2><a href="/dashboard/compliance-applicability" >Compliance Applicability Status graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a> <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                                <div class="dragbox-content">
-                                    <div id="complianceappliability" style="width:100%; height:100%; margin: 0 auto"></div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizabletrendchart">
-                            <div class="dragbox" id="item4">
-                                <h2><a href="/dashboard/trend-chart" >Trend Chart</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                                <div class="dragbox-content">
-                                    <div id="trendchart" style="width:100%; height:100%; margin: 0 auto"></div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizablenotcomp">
-                            <div class="dragbox" id="item3">
-                                <h2><a href="/dashboard/not-complied" >Not Complied Graph</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                                <div class="dragbox-content">
-                                    <div id="notcomplied" style="width:100%; height:100%; margin: 0 auto"></div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
-                            <div class="dragbox" id="item7">
-                                <h2><a href="/report/work-flow-score-card" >User Scorecard</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                                <div class="dragbox-content">
-                                    <table class="table min-table highlight" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th width="40%">Role</th>
-                                                <th class="text-center" width="20%">Assignee</th>
-                                                <th class="text-center" width="20%">Concur</th>
-                                                <th class="text-center" width="20%">Approve</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Labour Law</td>
-                                                <td class="text-center">50</td>
-                                                <td class="text-center">20</td>
-                                                <td class="text-center">35</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Finance Law</td>
-                                                <td class="text-center">20</td>
-                                                <td class="text-center">30</td>
-                                                <td class="text-center">20</td>
-                                            </tr>
-                                            <tr>
-                                                <td>ILS</td>
-                                                <td class="text-center">10</td>
-                                                <td class="text-center">40</td>
-                                                <td class="text-center">30</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="font-bold">Total</td>
-                                                <td class="font-bold text-center">80</td>
-                                                <td class="font-bold text-center">90</td>
-                                                <td class="font-bold text-center">85</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
-                            <div class="dragbox" id="item8">
-                                <h2><a href="/report/domain-score-card" >Domain Scorecard</a><a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a>  <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                                <div class="dragbox-content">
-                                    <select class="form-control input-sm m-b-5" style="">
-                                        <option>RG Legal Entity</option>
-                                        <option>RG Legal Entity 02</option>
-                                        <option>RG Legal Entity 03</option>
-                                        <option>RG Legal Entity 04</option>
-                                        <option>RG Legal Entity 05</option>
-                                    </select>
-                                    <table class="table min-table highlight" cellspacing="0">
-                                        <thead>
-                                            <tr>
-                                                <th>Domain</th>
-                                                <th class="text-center">Assigned</th>
-                                                <th class="text-center">Unassigned</th>
-                                                <th class="text-center">Not&nbsp;Opted</th>
-                                                <th class="text-center"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Labour&nbsp;Law</td>
-                                                <td class="text-center">50</td>
-                                                <td class="text-center">20</td>
-                                                <td class="text-center">15</td>
-                                                <td class="text-center font-bold">85</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Finance&nbsp;Law</td>
-                                                <td class="text-center">43</td>
-                                                <td class="text-center">15</td>
-                                                <td class="text-center">30</td>
-                                                <td class="text-center font-bold">88</td>
-                                            </tr>
-                                            <tr>
-                                                <td>ILS</td>
-                                                <td class="text-center">35</td>
-                                                <td class="text-center">20</td>
-                                                <td class="text-center">15</td>
-                                                <td class="text-center font-bold">70</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="font-bold">Total</td>
-                                                <td class="font-bold text-center">128</td>
-                                                <td class="font-bold text-center">55</td>
-                                                <td class="font-bold text-center">60</td>
-                                                <td class="font-bold text-center">243</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </li>
-                        {% if user != "viewOnlyAdmin" %}
-                        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
-                            <div class="dragbox" id="item9">
-                                <h2><a href="/compliance-task-details" >Calendar view</a> <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> <a href="#" class="pins"><i class=" ti-pin2"  title="pin"></i></a>  <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> </h2>
-                                <div class="dragbox-content">
-                                    <div class="cal table-responsive">
-                                        <select class="form-control input-sm m-b-5" style="">
-                                            <option>RG Legal Entity</option>
-                                            <option>RG Legal Entity 02</option>
-                                            <option>RG Legal Entity 03</option>
-                                            <option>RG Legal Entity 04</option>
-                                            <option>RG Legal Entity 05</option>
-                                        </select>
-                                        <table class="cal-table">
-                                            <caption class="cal-caption">
-                                                <a href="##" class="prev"><i class="ti-angle-double-left "></i></a>
-                                                <a href="##" class="next"><i class="ti-angle-double-right "></i></a> October - 2016
-                                            </caption>
-                                            <tbody class="cal-body">
-                                                <tr>
-                                                    <th><span>SUN</span></th>
-                                                    <th><span>MON</span></th>
-                                                    <th><span>TUE</span></th>
-                                                    <th><span>WED</span></th>
-                                                    <th><span>THU</span></th>
-                                                    <th><span>FRI</span></th>
-                                                    <th><span>SAT</span></th>
-                                                </tr>
-                                                <tr>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td>
-                                                        <div class="date">1</div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="date">2</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">3</div>
-                                                    </td>
-                                                    <td class="cal-selected">
-                                                        <div class="date">4</div>
-                                                        <div class="count-round due-date" data-toggle="tooltip" data-original-title="300+ Unassigned Compliances"></div>
-                                                        <div class="count-round inprogress" data-toggle="tooltip" data-original-title="5 Inprogress Compliances"></div>
-                                                        <div class="count-round over-due" data-toggle="tooltip" data-original-title="55 Not Complied"></div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">5</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">6</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">7</div>
-                                                        <div class="count-round due-date" data-toggle="tooltip" data-original-title="2 Inprogress Compliances"></div>
-                                                        <div class="count-round empty-space"></div>
-                                                        <div class="count-round upcomming" data-toggle="tooltip" data-original-title="3 Upcomming Compliances"></div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">8</div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="date">9</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">10</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">11</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">12</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">13</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">14</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">15</div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="date">16</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">17</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">18</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">19</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">20</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">21</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">22</div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="date">23</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">24</div>
-                                                        <div class="count-round empty-space"></div>
-                                                        <div class="count-round empty-space"></div>
-                                                        <div class="count-round upcomming" data-toggle="tooltip" data-original-title="2 Upcomming Compliances"></div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">25</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">26</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">27</div>
-                                                        <div class="count-round due-date" data-toggle="tooltip" data-original-title="2 Upcomming Compliances"></div>
-                                                        <div class="count-round empty-space"></div>
-                                                        <div class="count-round empty-space"></div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">28</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">29</div>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <div class="date">30</div>
-                                                    </td>
-                                                    <td>
-                                                        <div class="date">31</div>
-                                                    </td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                    <td class="cal-off">&nbsp;</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <br>
-                                    <div style="font-size:10px; ">
-                                        <div style="display: inline-block; margin-right: 10px; ">
-                                            <div style="background: #c69ee2;height: 12px; width: 12px; border-radius: 25px;float: left;margin-right: 5px;  "></div>
-                                            <div style="float: left;">Due Date</div>
-                                        </div>
-                                        <div style="display: inline-block;margin-right: 10px; ">
-                                            <div style="background:  #f0f468;height: 12px; width: 12px; border-radius: 25px;float: left;margin-right: 5px;"></div>
-                                            <div style="float: left;">Inprogress</div>
-                                        </div>
-                                        <div style="display: inline-block; margin-right: 10px;">
-                                            <div style="background:  #f32d2b;height: 12px; width: 12px;border-radius: 25px;float: left;margin-right: 5px;"></div>
-                                            <div style="float: left;">Over Due</div>
-                                        </div>
-                                        <div style="display: inline-block;margin-right: 10px; ">
-                                            <div style="background:  #87ceeb;height: 12px; width: 12px; border-radius: 25px;float: left;margin-right: 5px;"></div>
-                                            <div style="float: left;">Upcoming</div>
-                                        </div> &nbsp;
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        {% endif %}
+                      
                     </ul>
                 </div>
             </div>
@@ -387,13 +55,29 @@ $(function() {
 <div id="templates">
     <div class="ul-sidebarmenu">
         <ul>
-        <li class="has_sub menu_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item1"><i class="zmdi "></i> <span>  </span> </a> </li>
+        <li class="has_sub menu_widgets active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item1"><i class="zmdi"></i> <span>  </span> </a> </li>
         </ul>
     </div>
+    <div class="chart-card-box">
+        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
+            <div class="dragbox" id="item1">
+                <h2>
+                    <a class="chart-title">Compliance Status Graph</a> 
+                    <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> 
+                    <a href="#" class="pins"><i class="ti-pin2" title="pin"></i></a> 
+                    <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> 
+                </h2>
+                <div class="dragbox-content">
+                    <div id="" style="width:100%; height:100%; margin: 0 auto"></div>
+                </div>
+            </div>
+        </li>
+    </div>
 </div>
-<script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
+<script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
 <script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
 <script src="/files/client/common/js/sortable/jquery.sortable.js"></script>

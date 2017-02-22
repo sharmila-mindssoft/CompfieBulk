@@ -1,16 +1,16 @@
 var PageTitle = $('.page-title');
 var widget_info;
 var widget_list;
-
+var SIDEBAR_MAP = {};
 //
 // Compliance status
 //
-function updateComplianceStatusStackBarChart(data) {
-  var xAxisName = data[0];
-  var xAxis = data[1];
-  var chartDataSeries = data[2];
-  var chartTitle = data[3];
-  var drilldownSeries = data[4];
+function updateComplianceStatusStackBarChart(data, id) {  
+  var xAxisName = data['xaxis_name'];
+  var xAxis = data['xaxis'];
+  var chartDataSeries = data['widget_data'];
+  var chartTitle = data['chart_title'];
+  //var drilldownSeries = data[4];
   var yAxisname = [
     'Complied',
     'Delayed Compliance',
@@ -20,7 +20,7 @@ function updateComplianceStatusStackBarChart(data) {
   var highchart;
   highchart = new Highcharts.Chart({
     chart: {
-      renderTo: 'status-container',
+      renderTo: 'cardbox'+id,
       type: 'bar'
     },
     title: { text: chartTitle },
@@ -79,37 +79,37 @@ function updateComplianceStatusStackBarChart(data) {
     ],
     series: chartDataSeries
   });
-  $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
-    var value = this.textContent || this.innerText;
-    name = value;
-    data_series = drilldownSeries[name];
-    var title = chartTitle + ' - ' + name;
-    // updateComplianceStatusPieChart(data_series, title, 'pie', name);
-    complianceDrillDown(data_series, title, name);  // setChart(value);
-  });
-  year = chartInput.getChartYear();
-  if (year == 0) {
-    year = chartInput.getCurrentYear();
-  }
-  domain_ids = chartInput.getDomains();
-  domain_names = [];
-  for (var x = 0; x < domain_ids.length; x++) {
-    id = domain_ids[x];
-    domain_names.push(DOMAINS[id]);
-  }
-  $.each(DOMAIN_INFO, function (key, value) {
-    frame_title = 'Year : ' + year + '\n';
-    for (var i = 0; i < value.length; i++) {
-      info = value[i];
-      if (domain_names.indexOf(info.domain_name) != -1) {
-        frame_title += '' + info.domain_name + ' : ' + info.period_from + ' to ' + info.period_to + '\n';
-      }
-    }
-    $('#label_' + key).attr({
-      placement: 'bottom',
-      title: frame_title
-    });
-  });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
+  // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
+  //   var value = this.textContent || this.innerText;
+  //   name = value;
+  //   data_series = drilldownSeries[name];
+  //   var title = chartTitle + ' - ' + name;
+  //   // updateComplianceStatusPieChart(data_series, title, 'pie', name);
+  //   complianceDrillDown(data_series, title, name);  // setChart(value);
+  // });
+  // year = chartInput.getChartYear();
+  // if (year == 0) {
+  //   year = chartInput.getCurrentYear();
+  // }
+  // domain_ids = chartInput.getDomains();
+  // domain_names = [];
+  // for (var x = 0; x < domain_ids.length; x++) {
+  //   id = domain_ids[x];
+  //   domain_names.push(DOMAINS[id]);
+  // }
+  // $.each(DOMAIN_INFO, function (key, value) {
+  //   frame_title = 'Year : ' + year + '\n';
+  //   for (var i = 0; i < value.length; i++) {
+  //     info = value[i];
+  //     if (domain_names.indexOf(info.domain_name) != -1) {
+  //       frame_title += '' + info.domain_name + ' : ' + info.period_from + ' to ' + info.period_to + '\n';
+  //     }
+  //   }
+  //   $('#label_' + key).attr({
+  //     placement: 'bottom',
+  //     title: frame_title
+  //   });
+  // });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
 }
 //
 // Escalation chart
@@ -350,11 +350,35 @@ function updateComplianceApplicabilityChart(data) {
   });
 }
 
-function loadComplianceStatusChart(){
-
+function loadComplianceStatusChart(data, id){
+  updateComplianceStatusStackBarChart(data, id);
 }
 
 function loadEscalationChart(){
+
+}
+
+function loadNotCompliedChart(){
+
+}
+
+function loadTrendChart(){
+  
+}
+
+function loadComplianceApplicabilityChart(){
+  
+}
+
+function userScoreCard(){
+  
+}
+
+function domainScoreCard(){
+  
+}
+
+function calenderView(){
   
 }
 
@@ -404,15 +428,22 @@ function loadChart(){
     $(".menu_widgets a span", liclone).text(v.w_name);
     $(".menu_widgets i", liclone).addClass(charticon()[v.w_id]);
     if(v.active_status = true){
-      $(".menu_widgets", liclone).addClass("active_widgets");
+      $(".menu_widgets", liclone).removeClass("active_widgets");
     }
+    SIDEBAR_MAP[v.w_id] = v.w_name;
     $("#sidebar-menu").append(liclone);
 
   });
   $.each(widget_info, function(k,v){
       settings = widgetSettings();
-      settings[v.w_id](function(data){
-          widgetLoadChart()[v.w_id](data);
+      settings[v.w_id](function(error, data){
+        console.log(v.w_id+"---"+data);
+          var cardbox = $(".chart-card-box li");
+          var cardboxclone = cardbox.clone();
+          $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+          $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
+          $(".dragdrophandles").append(cardboxclone);          
+          widgetLoadChart()[v.w_id](data, v.w_id);
       })
   });
 }
