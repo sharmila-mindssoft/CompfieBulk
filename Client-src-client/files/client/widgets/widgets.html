@@ -13,7 +13,7 @@ $(function() {
         <div id="sidebar-menu">
             <ul>
                 <li class="text-muted menu-title">Widgets List</li>
-                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item1"><i class="zmdi zmdi-chart"></i> <span> Compliance Status </span> </a> </li>
+               <!--  <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item1"><i class="zmdi zmdi-chart"></i> <span> Compliance Status </span> </a> </li>
                 <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item2"><i class="zmdi zmdi-chart"></i> <span> Escalation </span> </a> </li>
                 <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item3"><i class="zmdi zmdi-chart"></i> <span> Not Complied </span> </a> </li>
                 <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item4"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
@@ -23,7 +23,7 @@ $(function() {
                 <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item8"><i class="zmdi zmdi-layers"></i> <span>Domain Scorecard</span> </a> </li>
                 {% if user != "viewOnlyAdmin" %}
                 <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item9"><i class="zmdi zmdi-calendar"></i> <span> Calendar view </span> </a> </li>
-                {% endif %}
+                {% endif %} -->
             </ul>
             <div class="clearfix"></div>
         </div>
@@ -383,6 +383,14 @@ $(function() {
     <!-- content -->
 </div>
 </div>
+
+<div id="templates">
+    <div class="ul-sidebarmenu">
+        <ul>
+        <li class="has_sub menu_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item1"><i class="zmdi "></i> <span>  </span> </a> </li>
+        </ul>
+    </div>
+</div>
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
@@ -391,7 +399,6 @@ $(function() {
 <script src="/files/client/common/js/sortable/jquery.sortable.js"></script>
 <!-- <script src="/files/client/common/js/resize/jquery-ui.js"></script> -->
 <script type="text/javascript" src="/files/client/widgets/widgets.js"></script>
-<script type="text/javascript" src="/files/client/widgets/widget-chart-plugin.js"></script>
 
 <style type="text/css">
 .highcharts-legend-item text {

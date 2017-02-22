@@ -315,7 +315,7 @@ class API(object):
             actual_data = data[1]
 
             # print company_id
-            # print actual_data
+            print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
             )
@@ -514,16 +514,16 @@ class API(object):
             # print " ------------ &&&&& "
             if hasattr(request_data.request, "legal_entity_ids") :
                 le_ids = request_data.request.legal_entity_ids
-                # print "-------"
-                # print le_ids
+                print "-------"
+                print le_ids
 
                 for le in le_ids :
                     db_cons = self._le_databases.get(le)
 
                     if db_cons is None:
                         print 'connection pool is none'
-                        continue
-                        # self._send_response("Company not found", 404)
+                        # continue
+                        self._send_response("Company not found", 404)
 
                     _db_con = db_cons.get_connection()
                     _db = Database(_db_con)
@@ -533,9 +533,11 @@ class API(object):
 
                     _db.begin()
                     try:
+                        print "begin process"
                         response_data = unbound_method(
                             self, request_data, _db, session_user, session_category
                         )
+                        print response_data
 
                         _db.commit()
                         _db_con.close()
@@ -543,6 +545,7 @@ class API(object):
                         merge_data(response_data, request_data)
 
                     except Exception, e:
+                        print " --------------"
                         logger.logClientApi(e, "handle_api_request")
                         logger.logClientApi(traceback.format_exc(), "")
                         print(traceback.format_exc())
