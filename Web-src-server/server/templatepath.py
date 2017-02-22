@@ -56,6 +56,11 @@ CLIENT_TEMPLATE_PATHS = [
         "files/client/unit-closure/unit_closure.html",
         None, {}
     ),
+    (
+        r"/userregistration/([a-zA-Z-0-9]+)/([a-zA-Z-0-9]+)",
+        "files/client/login/user-create-login-details.html",
+        None, {}
+    ),
     # transactions ---------------------------------------------------------------------
     (
         "/statutory-settings",
