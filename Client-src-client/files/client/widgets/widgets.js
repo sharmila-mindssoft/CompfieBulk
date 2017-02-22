@@ -219,7 +219,7 @@ function updateNotCompliedChart(data, id) {
 //
 // Trend  chart
 //
-function updateTrendChart(data) {
+function updateTrendChart(data, id) {
   //data = prepareTrendChartData(data);
   print_data = JSON.stringify(data, null, ' ');
   xAxis = data['xaxis'];
@@ -295,7 +295,7 @@ function updateTrendChart(data) {
 //
 // Compliance applicability status
 //
-function updateComplianceApplicabilityChart(data) {
+function updateComplianceApplicabilityChart(data, id) {
   //data = prepareComplianceApplicability(data);
   chartTitle = data['chart_title'];
   chartDataSeries = data['widget_data'];
@@ -304,6 +304,7 @@ function updateComplianceApplicabilityChart(data) {
     colors: [
       '#66FF66',
       '#FFDC52',
+      '#CE253C'
       '#CE253C'
     ],
     chart: {
@@ -362,23 +363,23 @@ function loadNotCompliedChart(data, id){
   updateNotCompliedChart(data, id)
 }
 
-function loadTrendChart(){
+function loadTrendChart(data, id){
   updateTrendChart(data, id);
 }
 
-function loadComplianceApplicabilityChart(){
-  updateTrendChart(data, id); 
+function loadComplianceApplicabilityChart(data, id){
+  updateComplianceApplicabilityChart(data, id); 
 }
 
-function userScoreCard(){
-  updateComplianceApplicabilityChart(data, id);
-}
-
-function domainScoreCard(){
+function userScoreCard(data, id)){
   
 }
 
-function calenderView(){
+function domainScoreCard(data, id)){
+  
+}
+
+function calenderView(data, id)){
   
 }
 
@@ -436,14 +437,15 @@ function loadChart(){
   });
   $.each(widget_info, function(k,v){
     settings = widgetSettings();
+    var cardbox = $(".chart-card-box li");
+    var cardboxclone = cardbox.clone();
+    $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+    $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
+    $(".dragdrophandles").append(cardboxclone);          
     settings[v.w_id](function(error, data){
       if(error == null){
         console.log(v.w_id+"---"+data);
-        var cardbox = $(".chart-card-box li");
-        var cardboxclone = cardbox.clone();
-        $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
-        $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
-        $(".dragdrophandles").append(cardboxclone);          
+       
         widgetLoadChart()[v.w_id](data, v.w_id);  
       }
       else{
