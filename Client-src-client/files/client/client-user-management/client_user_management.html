@@ -2,6 +2,8 @@
 <link href="/files/client/common/css/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 <link href="/css/jquery-ui.css" rel="stylesheet" type="text/css">
+<!-- Multiselect -->
+<link href="/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
     <div class="content">
         <div class="container">
@@ -519,9 +521,9 @@
                             <div id="bg-primary1" class="panel-collapse collapse in">
                                 <div class="portlet-body">
                                     <div id="basicwizard">
-                                        <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
-                                            <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. User Details</a></li>
-                                            <li><a href="#tab2" data-toggle="tab">2. Select Unit</a></li>
+                                        <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted user_management_tab">
+                                            <li class="tab-step-1 active"><a href="#tab1" data-toggle="tab" aria-expanded="true">1. User Details</a></li>
+                                            <li class="tab-step-2 disabled"><a href="#tab2" data-toggle="tab">2. Select Unit</a></li>
                                         </ul>
                                         <div class="tab-content m-b-0">
                                             <div class="tab-pane fade active in" id="tab1" style="border:1px solid #acacac;">
@@ -533,35 +535,47 @@
                                                                 <div class="col-sm-6">
                                                                     <select class="form-control input-sm" id="ddlUserCategory">
                                                                         <option>Select</option>
-                                                      
-                                                    </select>
+                                                                        </select>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group has-feedback view-seating-unit" style="display:none;">
                                                                 <label class="col-sm-4 control-label">Seating Unit <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <input class="form-control input-sm" value="RG1001 - Corporate Office" type="text">
+                                                                    <input class="form-control input-sm" id="txtSeatingUnit" type="text">
                                                                     <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                                    <input id="hdnSeatingUnit" type="hidden">
+                                                                    <div id="divSeatingUnit" class="ac-textbox default-display-none">
+                                                                        <ul style="width:94%;"></ul>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group has-feedback view-service-provider" style="display:none;">
                                                                 <label class="col-sm-4 control-label">Service Provider <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <input class="form-control input-sm" value="ART Solutions" type="text">
+                                                                    <input class="form-control input-sm" id="txtServiceProvider" type="text">
                                                                     <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                                    <input id="hdnServiceProvider" type="hidden">
+                                                                    <div id="divServiceProvider" class="ac-textbox default-display-none">
+                                                                        <ul style="width:94%;"></ul>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group has-feedback">
                                                                 <label class="col-sm-4 control-label">User Group <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <input type="text" class="form-control input-sm" placeholder="Enter User Group" value="Manager">
+                                                                    <input id="" type="hidden">
+                                                                    <input type="text" class="form-control input-sm" placeholder="Enter User Group" id="txtUserGroup">
                                                                     <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                                    <input id="hdnUserGroup" type="hidden">
+                                                                    <div id="divUserGroup" class="ac-textbox default-display-none">
+                                                                        <ul style="width:94%;"></ul>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label class="col-sm-4 control-label">Email ID <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <input class="form-control input-sm" type="text" value="siva@domain.com">
+                                                                    <input class="form-control input-sm" type="text" id="txtEmailID">
                                                                     <span class="help-desk"><small>[We will use this email ID to contact you about your account.]</small></span>
                                                                 </div>
                                                             </div>
@@ -571,29 +585,29 @@
                                                             <div class="form-group">
                                                                 <label class="col-sm-4 control-label">Employee Name <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <input class="form-control input-sm" value="Sivaraman" type="text">
+                                                                    <input class="form-control input-sm" id="txtEmployeeName" type="text">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group clearfix m-b-10">
                                                                 <label class="col-sm-4 control-label">Employee ID <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <input class="form-control input-sm" value="EMP001" type="text">
+                                                                    <input class="form-control input-sm" id="txtEmployeeId" type="text">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group view-user-level" style="display:none;">
                                                                 <label class="col-sm-4 control-label">User Level <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <select class="form-control input-sm">
-                                                  <option>Level 1 (Low)</option>
-                                                  <option>Level 2</option>
-                                                  <option selected="selected">Level 3</option>
-                                                  <option>Level 4</option>
-                                                  <option>Level 5</option>
-                                                  <option>Level 6</option>
-                                                  <option>Level 7</option>
-                                                  <option>Level 8</option>
-                                                  <option>Level 9</option>
-                                                  <option>Level 10 (High)</option>
+                                                                    <select class="form-control input-sm" id="ddlUserLevel">
+                                                  <option value="1">Level 1 (Low)</option>
+                                                  <option value="2">Level 2</option>
+                                                  <option value="3">Level 3</option>
+                                                  <option value="4">Level 4</option>
+                                                  <option value="5">Level 5</option>
+                                                  <option value="6">Level 6</option>
+                                                  <option value="7">Level 7</option>
+                                                  <option value="8">Level 8</option>
+                                                  <option value="9">Level 9</option>
+                                                  <option value="10">Level 10 (High)</option>
                                                 </select>
                                                                 </div>
                                                             </div>
@@ -601,13 +615,13 @@
                                                                 <label class="col-sm-4 control-label">Contact No</label>
                                                                 <div class="col-sm-6">
                                                                     <div class="col-md-3 no-padding">
-                                                                        <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
+                                                                        <input type="text" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91" id="txtContactNo1">
                                                                     </div>
                                                                     <div class="col-md-3 no-padding">
-                                                                        <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="000" value="452">
+                                                                        <input type="text" name="example-input-small" class="form-control input-sm" placeholder="000" id="txtContactNo2">
                                                                     </div>
                                                                     <div class="col-md-6 no-padding">
-                                                                        <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="1234567" value="1234567">
+                                                                        <input type="text" name="example-input-small" class="form-control input-sm" placeholder="1234567" id="txtContactNo3">
                                                                     </div>
                                                                     <span class="help-desk"><small>[+91 452 1234567]</small></span>
                                                                 </div>
@@ -616,10 +630,10 @@
                                                                 <label class="col-sm-4 control-label">Mobile No <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
                                                                     <div class="col-md-3 no-padding">
-                                                                        <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91">
+                                                                        <input type="text" name="example-input-small" class="form-control input-sm" placeholder="+00" value="+91" id="txtMobileNo1">
                                                                     </div>
                                                                     <div class="col-md-9 no-padding">
-                                                                        <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="9876543210" value="9876543210">
+                                                                        <input type="text" name="example-input-small" class="form-control input-sm" placeholder="9876543210" id="txtMobileNo2">
                                                                     </div>
                                                                     <span class="help-desk"><small>[+91 9876543210]</small></span>
                                                                 </div>
@@ -637,43 +651,20 @@
                                                             <div class="form-group select-business-group">
                                                                 <label class="col-sm-4 control-label">Business Group</label>
                                                                 <div class="col-sm-6">
-                                                                    <select class="form-control input-sm example-multiple" multiple="multiple">
-                                                        <option value="1" selected="">RG Business Group 01</option>
-                                                        <option value="2" selected="">RG Business Group 02</option>
-                                                        <option value="3">RG Business Group 03</option>
-                                                    </select>
+                                                                    <select class="form-control input-sm example-multiple" id="ddlBusinessGroup" multiple="multiple"> </select>
+
                                                                 </div>
                                                             </div>
                                                             <div class="form-group select-legal-entity has-feedback">
                                                                 <label class="col-sm-4 control-label">Legal Entity <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <select class="example-multiple-optgroups" multiple="multiple">
-                                                        <optgroup label="RG Busness Group 01">
-                                                            <option value="4" selected="">RG Legal Entity</option>
-                                                            <option value="5" selected="">RG Legal Entity 02</option>
-                                                            <option value="6">RG Legal Entity 03</option>
-                                                        </optgroup>
-                                                        <optgroup label="RG Busness Group 02">
-                                                            <option value="1">RG Legal Entity 04</option>
-                                                            <option value="2">RG Legal Entity 05</option>
-                                                            <option value="3">RG Legal Entity 06</option>
-                                                        </optgroup>
-                                                    </select>
+                                                                    <select class="example-multiple-optgroups" id="ddlLegalEntity" multiple="multiple"> </select>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group select-division">
                                                                 <label class="col-sm-4 control-label">Division</label>
                                                                 <div class="col-sm-6">
-                                                                    <select class="example-multiple-optgroups" multiple="multiple">
-                                                        <optgroup label="RG Legal Entity">
-                                                            <option value="4" selected="">RG Division 01</option>
-                                                            <option value="5">RG Division 02</option>
-                                                        </optgroup>
-                                                        <optgroup label="RG Legal Entity 02">
-                                                            <option value="1">RG Division 03</option>
-                                                            <option value="2">RG Division 04</option>
-                                                        </optgroup>
-                                                    </select>
+                                                                    <select class="example-multiple-optgroups" id="ddlDivision" multiple="multiple"> </select>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -681,26 +672,14 @@
                                                             <div class="form-group select-category">
                                                                 <label class="col-sm-4 control-label">Category</label>
                                                                 <div class="col-sm-6">
-                                                                    <select class="example-multiple-optgroups" multiple="multiple">
-                                                        <optgroup label="RG Legal Entity">
-                                                            <option value="4" selected="">RG Category 01</option>
-                                                            <option value="5">RG Category 02</option>
-                                                        </optgroup>
-                                                        <optgroup label="RG Legal Entity 02">
-                                                            <option value="1">RG Category 03</option>
-                                                            <option value="2">RG Category 04</option>
-                                                        </optgroup>
+                                                                    <select class="example-multiple-optgroups" id="ddlCategory" multiple="multiple">
                                                     </select>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group select-domain clearfix m-b-10">
                                                                 <label class="col-sm-4 control-label">Domain <span class="mandatory">*</span></label>
                                                                 <div class="col-sm-6">
-                                                                    <select class="example-multiple" multiple="multiple">
-                                                        <option value="Labour Law" selected="">Labour Law</option>
-                                                        <option value="Finance Law" selected="">Finance Law </option>
-                                                        <option value="Industrial Law">Industrial Law</option>
-                                                    </select>
+                                                                    <select class="example-multiple" id="ddlDomain" multiple="multiple"> </select>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -723,24 +702,14 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-sm-6 no-padding-right">
-                                                                            <div class="checkbox checkbox-primary checkbox-white m-b-0 m-t-10 pull-right">
-                                                                                <input id="checkbox3" type="checkbox">
-                                                                                <label for="checkbox3"></label>
+                                                                            <div class="checkbox checkbox-primary checkbox-single pull-right m-b-0">
+                                                                                <input id="singleCheckbox2" value="option2" type="checkbox" class="select_all">
+                                                                                <label></label>
                                                                             </div>
                                                                         </div>
                                                                         <div class="clear"></div>
-                                                                        <ul class="list-unstyled">
-                                                                            <li class="heading">KG Autoparts </li>
-                                                                            <li>VRM1001 - Corporate Office, 871, South street, Delhi</li>
-                                                                            <li class="active">VRM1003 - Regional Office - South, 16, North Street, Mambalam, Chennai <i class="fa fa-check pull-right"></i></li>
-                                                                            <li>VRM1004 - Branch Office - 1, 85, First Floor, Hani Complex, Bangalore</li>
-                                                                            <li>VRM1005 - Branch Office - 2, KK nagar, Madurai</li>
-                                                                            <li>VRM1006 - Branch Office - 3, 28,Ramnagar, Delhi</li>
-                                                                            <li class="heading">KG Transports <i class="fa fa-check pull-right"></i> </li>
-                                                                            <li class="active">VRM1007 - Branch Office - 4, 28 West Street, Hydrabad<i class="fa fa-check pull-right"></i></li>
-                                                                            <li class="active">VRM1008 - Branch Office - 5, 12 RJ Complex, Main road, T.Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
-                                                                            <li class="active">VRM1008 - Branch Office - 6, 13 CRP Complex, Anna Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
-                                                                            <li class="active">VRM1008 - Branch Office - 7, 14 CRM Complex, Main road, KK.Nagar, Chennai<i class="fa fa-check pull-right"></i></li>
+                                                                        <ul class="list-unstyled p-t-0 unit-list" height="100%">
+
                                                                         </ul>
                                                                     </td>
                                                                 </tr>
@@ -752,9 +721,8 @@
                                             </div>
                                             <ul class="pager wizard m-b-0">
                                                 <li class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
-                                                <li class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
-                                                <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
-                                                <!-- <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Save</a> &nbsp; </li> -->
+                                                <li class="next"><a href="#" id="btnNext" class="btn btn-primary waves-effect waves-light">Next</a></li>
+                                                <li class="finish pull-right"><a href="#" id="btnSubmit" class="btn btn-primary waves-effect waves-light">Submit</a></li>
                                             </ul>
                                         </div>
                                     </div>
@@ -770,7 +738,11 @@
     </div>
 </div>
 <div id="template">
-
+    <div class="unit-row">
+        <ul>
+            <li></li>
+        </ul>
+    </div>
 </div>
 
 <!-- js -->
@@ -781,5 +753,22 @@
 <script src="/js/custombox/custombox.min.js "></script>
 <script src="/js/js-sorting.js "></script>
 <script src="js/jquery-ui.js "></script>
+
+<!-- Multiselect -->
+<script src="/js/multiselect/bootstrap-multiselect.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.example-multiple-optgroups').multiselect({
+            buttonWidth: '100%',
+            enableClickableOptGroups: true
+                /*,
+                           enableCollapsibleOptGroups: true*/
+        });
+        $('.example-multiple').multiselect({
+            buttonWidth: '100%'
+        });
+    });
+</script>
+
 
 {% endblock %}
