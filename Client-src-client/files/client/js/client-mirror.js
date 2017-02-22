@@ -647,35 +647,6 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-    /* Risk Report */
-    function getRiskReportFilters(callback) {
-        var request = [
-            'GetRiskReportFilters',
-            {}
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_name, statutory_status, csv, from_count, page_count, callback) {
-        var request = [
-            'GetRiskReport', {
-                'country_id': country_id,
-                'domain_id': domain_id,
-                'business_group_id': business_group_id,
-                'legal_entity_id': legal_entity_id,
-                'division_id': division_id,
-                'unit_id': unit_id,
-                'level_1_statutory_name': level_1_statutory_name,
-                'statutory_status': statutory_status,
-                'csv': csv,
-                'from_count': from_count,
-                'page_count': page_count
-            }
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
 
     function progress(percent, $element) {
         var progressBarWidth = percent * $element.width() / 100;
@@ -2404,6 +2375,47 @@ function initClientMirror() {
         callerName = 'client_master_filters';
     }
 
+    /* Risk report - updated*/
+    function getRiskReportFilters(country_id, business_group_id, le_id, callback) {
+        var request = [
+            'GetRiskReportFilters',
+            {
+                'country_id': country_id,
+                'business_group_id': business_group_id,
+                'legal_entity_id' : le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getRiskReportData(
+        country_id, business_group_id, legal_entity_id, domain_id, division_id,
+        category_id, unit_id, statutory_mapping, compliance_id,
+        task_status, csv, from_count, page_count, callback
+    ){
+        var request = [
+            'GetRiskReportData',
+            {
+                'country_id': country_id,
+                'business_group_id': business_group_id,
+                'legal_entity_id' : legal_entity_id,
+                'domain_id': domain_id,
+                'division_id': division_id,
+                'category_id': category_id,
+                'unit_id': unit_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2497,8 +2509,6 @@ function initClientMirror() {
         updateNotificationStatus: updateNotificationStatus,
         getCurrentComplianceDetail: getCurrentComplianceDetail,
         getUpcomingComplianceDetail: getUpcomingComplianceDetail,
-        getRiskReportFilters: getRiskReportFilters,
-        getRiskReport: getRiskReport,
         getReassignedHistoryReportFilters: getReassignedHistoryReportFilters,
         getReassignedHistoryReport: getReassignedHistoryReport,
         updateComplianceDetail: updateComplianceDetail,
@@ -2564,6 +2574,8 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         updateUserProfile: updateUserProfile,
         getStatutorySettingsFilters: getStatutorySettingsFilters,
+        getRiskReportFilters: getRiskReportFilters,
+        getRiskReportData: getRiskReportData,
     };
 }
 var client_mirror = initClientMirror();
