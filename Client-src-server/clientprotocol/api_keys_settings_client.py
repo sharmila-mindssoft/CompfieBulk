@@ -377,8 +377,8 @@ api_params = {
     "is_disable":make_bool_field(),
     "reason":make_text_field(),
     "unblock":make_text_field(),
-    "u_level":make_int_field(),
-    "s_unit":make_int_field(),
+    "u_level":make_int_field(is_optional=True),
+    "s_unit":make_int_field(is_optional=True),
     "is_sp":make_bool_field(),
     "sp_id":make_int_field(is_optional=True),
 
