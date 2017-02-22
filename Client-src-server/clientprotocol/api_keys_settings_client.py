@@ -182,12 +182,17 @@ api_params = {
     "unit_status": make_string_field(is_optional=True),
     "assignee": make_int_field(is_optional=True),
     "assignee_name": make_text_field(is_optional=True),
+    "assigned_on": make_text_field(is_optional=True),
     "concurrence_person": make_int_field(is_optional=True),
+    "concurred_on": make_text_field(is_optional=True),
     "concurrer_name": make_text_field(is_optional=True),
+    "admin_incharge": make_text_field(is_optional=True),
     "approval_person": make_int_field(is_optional=True),
     "approver_name": make_text_field(is_optional=True),
+    "approved_on": make_text_field(is_optional=True),
     "due_from_date": make_text_field(is_optional=True),
     "due_to_date": make_text_field(is_optional=True),
+    "start_date": make_text_field(is_optional=True),
     "activity_date": make_text_field(is_optional=True),
     "activity_status": make_string_field(is_optional=True),
     "documents": make_text_field(is_optional=True),
@@ -228,6 +233,7 @@ api_params = {
     "employee_code": make_text_field(is_optional=True),
     "employee_name": make_string_field(),
     "link": make_text_field(length=500, is_optional=True),
+    "penal_consequences": make_text_field(length=1000, is_optional=True),
 
 
     "countries": make_vector_type_field(module="clientcore", klass_name="Country"),
@@ -285,6 +291,7 @@ api_params = {
     "audit_forms_list": make_vector_type_field(module="clientmasters", klass_name="AuditTrailForms"),
     "log_trace_activities": make_vector_type_field(module="clientmasters", klass_name="LoginTraceActivities"),
     "user_profile": make_vector_type_field(module="clientmasters", klass_name="UserProfile"),
+    "risk_report": make_vector_type_field(module="clientreport", klass_name="RiskReport"),
 
     "frequency_id": make_int_field(),
     "frequency": make_string_field(),
