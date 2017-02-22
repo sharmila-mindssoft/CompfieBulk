@@ -44,14 +44,6 @@ serviceProviderPage.prototype.showList = function() {
     addScreen.hide();
     viewScreen.show();
     this.fetchServiceProviders();
-
-    //  FilterUserGroupName.val('');
-    //  FilterCategoryName.val('');
-    //  FormList.hide();
-
-    //  Search_status.removeClass();
-    //  Search_status.addClass('fa');
-    //  Search_status.text('All');
 };
 
 serviceProviderPage.prototype.fetchServiceProviders = function() {
@@ -275,18 +267,20 @@ key_search = function(mainList) {
     key_two = filterContactPerson.val().toLowerCase();
     key_three = filterContactNo.val().toLowerCase();
     key_four = filterEmailID.val().toLowerCase();
-    key_five = filterRemarks.val().toLowerCase();
-
-    //d_status = Search_status_ul.find('li.active').attr('value');
+    d_status = search_status_ul.find('li.active').attr('value');
+    // key_five = filterRemarks.val().toLowerCase();
     var fList = [];
     for (var entity in mainList) {
-        uGName = mainList[entity].s_p_name;
-        cNames = mainList[entity].cont_person;
-        //dStatus = mainList[entity].is_active;
-        if ((~uGName.toLowerCase().indexOf(key_one)) && (~cNames.toLowerCase().indexOf(key_two)) && (~cNames.toLowerCase().indexOf(key_three)) && (~cNames.toLowerCase().indexOf(key_four)) && (~cNames.toLowerCase().indexOf(key_five))) {
-            //if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
-            fList.push(mainList[entity]);
-            //}
+        s_p_name = mainList[entity].s_p_name;
+        cont_person = mainList[entity].cont_person;
+        cont_no = mainList[entity].cont_no;
+        e_id = mainList[entity].e_id;
+        dStatus = mainList[entity].is_active;
+
+        if ((~s_p_name.toLowerCase().indexOf(key_one)) && (~cont_person.toLowerCase().indexOf(key_two)) && (~cont_no.toLowerCase().indexOf(key_three)) && (~e_id.toLowerCase().indexOf(key_four))) {
+            if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
+                fList.push(mainList[entity]);
+            }
         }
     }
     return fList
@@ -362,6 +356,25 @@ PageControls = function() {
     });
 
     filterRemarks.keyup(function() {
+        fList = key_search(sp_page._serviceProviderList);
+        sp_page.renderList(fList);
+    });
+
+    search_status_ul.click(function(event) {
+        search_status_li.each(function(index, el) {
+            $(el).removeClass('active');
+        });
+        $(event.target).parent().addClass('active');
+
+        var currentClass = $(event.target).find('i').attr('class');
+        search_status.removeClass();
+        if (currentClass != undefined) {
+            search_status.addClass(currentClass);
+            search_status.text('');
+        } else {
+            search_status.addClass('fa');
+            search_status.text('All');
+        }
         fList = key_search(sp_page._serviceProviderList);
         sp_page.renderList(fList);
     });
