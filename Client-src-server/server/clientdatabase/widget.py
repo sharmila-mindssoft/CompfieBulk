@@ -315,3 +315,6 @@ def frame_not_complied_chart(data):
             "y": above_90_days
         })
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
+
+def get_userwise_score_card(db, user_id):
+    pass

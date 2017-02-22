@@ -64,6 +64,15 @@ function initClientMirror() {
         return info;
     }
 
+    function getLEids() {
+        le_ids = []
+        le_data = getSelectedLegalEntity();
+        $.each(le_data, function(i,v) {
+            le_ids.push(v.le_id);
+        });
+        return le_ids;
+    }
+
     function updateUserInfo(response) {
         var info = getUserInfo();
         info.contact_no = response.contact_no;
@@ -934,7 +943,7 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-    // Domain Score Card End 
+    // Domain Score Card End
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -1526,7 +1535,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    
+
     function statutoryDates(date, month, triggerBefore, repeatBy) {
         var statutoryDate = {};
         statutoryDate.statutory_date = date;
@@ -1680,7 +1689,7 @@ function initClientMirror() {
             }
         }
     }
-    
+
     function getAssigneeWiseCompliances(assignee, record_count, callback) {
         var request = [
             'GetAssigneeCompliances', {
@@ -2268,6 +2277,72 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    // Widget api call begin
+    function getUserWidgetData(callback) {
+        var request = [
+            "GetUserWidgetData", {}
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function SaveUserWidgetData(widget_info, callback) {
+        var request = [
+            "SaveWidgetData", {
+                "widget_info": widget_info
+            }
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetComplianceChart(callback){
+         var request = [
+            "GetComplianceChart", {
+                "le_id": getLEids();
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetEscalationChart(callback){
+         var request = [
+            "GetEscalationChart", {
+                "le_id": getLEids();
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetNotCompliedChart(callback){
+         var request = [
+            "GetNotCompliedChart", {
+                "le_id": getLEids();
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetRiskChart(callback){
+         var request = [
+            "GetRiskChart", {
+                "le_id": getLEids();
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetTrendChart(callback){
+         var request = [
+            "GetTrendChart", {
+                "le_id": getLEids();
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    // Widget api call end
+
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2437,6 +2512,14 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         updateUserProfile: updateUserProfile,
         getReassignComplianceFilters: getReassignComplianceFilters,
+
+        getUserWidgetData: getUserWidgetData,
+        SaveUserWidgetData: SaveUserWidgetData,
+        getWidgetComplianceChart: getWidgetComplianceChart,
+        getWidgetEscalationChart: getWidgetEscalationChart,
+        getWidgetNotCompliedChart: getWidgetNotCompliedChart,
+        getWidgetRiskChart: getWidgetRiskChart,
+        getWidgetTrendChart: getWidgetTrendChart,
     };
 }
 
