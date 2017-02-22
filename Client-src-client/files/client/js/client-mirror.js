@@ -1934,12 +1934,12 @@ function initClientMirror() {
 
     /* Legal entity wise report - updated*/
     function getLegalEntityWiseReportFilters(country_id, le_id, callback) {
-        console.log(country_id+' - '+le_id);
+        console.log(country_id + ' - ' + le_id);
         var request = [
             'GetLegalEntityWiseReportFilters',
             {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -1950,12 +1950,12 @@ function initClientMirror() {
         country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
         compliance_id, frequency_id, user_type, user_id, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
             'GetLegalEntityWiseReport',
             {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'domain_id': domain_id,
                 'unit_id': unit_id,
                 'statutory_mapping': statutory_mapping,
@@ -1974,6 +1974,7 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+
     function getReviewSettingsFilters(le_id, callback) {
         var request = [
             'GetReviewSettingsFilters',
@@ -1991,7 +1992,7 @@ function initClientMirror() {
             'GetDomainWiseReportFilters',
             {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2002,12 +2003,12 @@ function initClientMirror() {
         country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
         compliance_id, frequency_id, user_type, user_id, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
             'GetDomainWiseReport',
             {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'domain_id': domain_id,
                 'unit_id': unit_id,
                 'statutory_mapping': statutory_mapping,
@@ -2033,7 +2034,7 @@ function initClientMirror() {
             'GetUnitWiseReportFilters',
             {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2044,12 +2045,12 @@ function initClientMirror() {
         country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
         compliance_id, frequency_id, user_type, user_id, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
             'GetUnitWiseReport',
             {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'unit_id': unit_id,
                 'domain_id': domain_id,
                 'statutory_mapping': statutory_mapping,
@@ -2075,7 +2076,7 @@ function initClientMirror() {
             'GetServiceProviderWiseReportFilters',
             {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2086,12 +2087,12 @@ function initClientMirror() {
         country_id, legal_entity_id, sp_id, domain_id, unit_id, statutory_mapping,
         compliance_id, user_id, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
             'GetServiceProviderWiseReport',
             {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'sp_id': sp_id,
                 'domain_id': domain_id,
                 'unit_id': unit_id,
@@ -2116,7 +2117,7 @@ function initClientMirror() {
             'GetUserWiseReportFilters',
             {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2127,12 +2128,12 @@ function initClientMirror() {
         country_id, legal_entity_id, user_id, domain_id, unit_id, statutory_mapping,
         compliance_id, frequency_id, user_type, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
             'GetUserWiseReport',
             {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'user_id': user_id,
                 'domain_id': domain_id,
                 'unit_id': unit_id,
@@ -2164,7 +2165,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback){
+    function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback) {
         var request = [
             'GetReviewSettingsComplianceFilters',
             {
@@ -2178,6 +2179,17 @@ function initClientMirror() {
         callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
+    // User Management Prerequisite
+    function getUserManagement_Prerequisite(callback) {
+        callerName = 'client_masters';
+        var request = [
+            'UserManagementPrerequisite',
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
 
     return {
         log: log,
@@ -2316,7 +2328,8 @@ function initClientMirror() {
         getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
         getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
         getDomainWiseReportFilters: getDomainWiseReportFilters,
-        getDomainWiseReport: getDomainWiseReport
+        getDomainWiseReport: getDomainWiseReport,
+        getUserManagement_Prerequisite: getUserManagement_Prerequisite
     };
 }
 var client_mirror = initClientMirror();
