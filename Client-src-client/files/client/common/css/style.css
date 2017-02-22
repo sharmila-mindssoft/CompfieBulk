@@ -884,3 +884,20 @@ button.btn-success {
     width: 25px;
 }
 */
+
+.escalation-status-text {
+  background: #ccc;
+  color: #343434;
+  font-weight: bold;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+.table > thead > tr > th {
+    background-color: #47a1ef;
+    border-bottom: 2px solid #e0e0e0;
+    color: #f7f9fa !important;
+    vertical-align: middle;
+}
+.compliance_count_assignee {
+  clear: both;
+}

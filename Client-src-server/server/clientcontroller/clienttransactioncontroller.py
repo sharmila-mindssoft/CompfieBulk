@@ -1,3 +1,4 @@
+import json
 from clientprotocol import (clienttransactions, clientcore)
 from server.constants import RECORD_DISPLAY_COUNT
 
@@ -12,7 +13,8 @@ from server.clientdatabase.general import (
     get_compliance_name_by_id, validate_compliance_due_date,
     get_country_wise_domain_month_range, get_group_name, get_domains_info,
     get_assignees,
-    get_client_users, get_units_for_user, get_user_based_units
+    get_client_users, get_units_for_user, get_user_based_units,
+    save_user_widget_settings, get_user_widget_settings, get_widget_list
 )
 
 from server.clientdatabase.dashboard import (
@@ -493,11 +495,17 @@ def process_client_master_filters_request(request, db, session_user, session_cat
     elif type(request) is clienttransactions.GetUserToAssignCompliance :
         result = process_get_user_to_assign(db, request)
 
-    if type(request) is clienttransactions.GetChartFilters:
+    elif type(request) is clienttransactions.GetChartFilters:
         result = process_get_chart_filters(db, session_user, session_category)
 
-    if type(request) is clienttransactions.GetAssigneewiseComplianesFilters :
+    elif type(request) is clienttransactions.GetAssigneewiseComplianesFilters :
         result = process_assigneewise_compliances_filters(db, session_user, session_category)
+
+    elif type(request) is clienttransactions.GetUserWidgetData :
+        result = process_get_widget_data(db, session_user, session_category)
+
+    elif type(request) is clienttransactions.SaveWidgetData :
+        result = process_save_widget_data(db, request, session_user)
 
     return result
 
@@ -547,7 +555,6 @@ def process_get_chart_filters(db, session_user, session_category):
         domain_info, group_name, cat_info
     )
 
-
 def process_assigneewise_compliances_filters(
     db, session_user, session_category
 ):
@@ -579,3 +586,34 @@ def process_reassign_compliance_filters(db, request, session_user, session_categ
         legal_entity_users=users_list
     )
 
+def process_get_widget_data(db, session_user, session_category):
+    data = get_user_widget_settings(db, session_user, session_category)
+    forms = get_widget_list(db)
+    result = []
+    frm_result = []
+    w_ids = []
+    for d in data :
+        w_ids.append(d["w_id"])
+        result.append(clienttransactions.WidgetInfo(
+            d["w_id"], d["width"], d["height"], d["pin_status"]
+        ))
+
+    for f in forms :
+        active = False
+        if f["form_id"] in w_ids :
+            active = True
+        frm_result.append(clienttransactions.WidgetList(
+            f["form_id"], f["form_name"], active
+        ))
+
+    return clienttransactions.GetUserWidgetDataSuccess(result, frm_result)
+
+
+def process_save_widget_data(db, request, session_user):
+    widget_data = request.widget_data
+    w_data = []
+    for d in widget_data :
+        w_data.append(d.to_structure())
+    w_data = json.dumps(w_data)
+    save_user_widget_settings(db, session_user, w_data)
+    return clienttransactions.SaveWidgetDataSuccess()

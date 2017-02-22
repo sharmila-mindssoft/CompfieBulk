@@ -456,7 +456,7 @@ api_params = {
     "completed_task_count": make_vector_type_field(module="clientcore", klass_name="GetCompletedTaskCountSuccess", is_optional=True),
     "inprogress_within_duedate_task_count": make_vector_type_field(module="clientcore", klass_name="GetInprogressWithinDuedateTaskCountSuccess", is_optional=True),
     "over_due_task_count": make_vector_type_field(module="clientcore", klass_name="GetOverDueTaskCountSuccess", is_optional=True),
-    "messages": make_vector_type_field(module="clientcore", klass_name="messages", is_optional=True),
+    # "messages": make_vector_type_field(module="clientcore", klass_name="messages", is_optional=True),
     "users": make_vector_type_field(module="clientcore", klass_name="LegalEntityUser"),
     "assingee_data": make_vector_type_field(module="dashboard", klass_name="AssigneeChartData"),
     "assignee_wise_details": make_vector_type_field(module="dashboard", klass_name="AssigneeWiseDetails"),
@@ -483,5 +483,12 @@ api_params = {
     "reminders": make_vector_type_field(module="dashboard", klass_name="RemindersSuccess", is_optional=True),
     "escalations": make_vector_type_field(module="dashboard", klass_name="EscalationsSuccess", is_optional=True),
     "messages": make_vector_type_field(module="dashboard", klass_name="MessagesSuccess", is_optional=True),
-    
+    "w_id": make_int_field(),
+    "w_name": make_text_field(),
+    "active_status": make_bool_field(),
+    "width": make_text_field(),
+    "height": make_text_field(),
+    "pin_status": make_bool_field(),
+    "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo"),
+    "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList"),
 }

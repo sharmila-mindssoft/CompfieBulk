@@ -64,6 +64,15 @@ function initClientMirror() {
         return info;
     }
 
+    function getLEids() {
+        le_ids = []
+        le_data = getSelectedLegalEntity();
+        $.each(le_data, function(i,v) {
+            le_ids.push(v.le_id);
+        });
+        return le_ids;
+    }
+
     function updateUserInfo(response) {
         var info = getUserInfo();
         info.contact_no = response.contact_no;
@@ -938,7 +947,7 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-    // Domain Score Card End 
+    // Domain Score Card End
 
 
     // Legal Entity Wise Score Card Start
@@ -1064,19 +1073,19 @@ function initClientMirror() {
             'GetAssigneewiseComplianesFilters',
             {}
         ];
-        callerName = 'client_dashboard';
+        callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
     }
 
     function getAssigneewiseComplianes(country_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, csv, callback) {
         var request = [
             'GetAssigneeWiseCompliancesChart', {
-                'country_id': country_id,
-                'business_group_id': business_group_id,
-                'legal_entity_id': legal_entity_id,
-                'division_id': division_id,
+                'c_id': country_id,
+                'bg_id': business_group_id,
+                'le_ids': legal_entity_id,
+                'div_id': division_id,
                 'unit_id': unit_id,
-                'user_id': user_id,
+                'usr_id': user_id,
                 'csv': csv
             }
         ];
@@ -1084,12 +1093,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, callback) {
+    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, legalEntityIds, callback) {
         var request = [
             'GetAssigneewiseYearwiseCompliances', {
-                'country_id': country_id,
-                'unit_id': unit_id,
-                'user_id': user_id
+                'c_id': country_id,
+                'u_id': unit_id,
+                'usr_id': user_id,
+                'le_ids': legalEntityIds,
+
             }
         ];
         callerName = 'client_dashboard';
@@ -1109,15 +1120,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, callback) {
+    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, legalEntityIds, callback) {
         var request = [
             'GetAssigneeWiseComplianceDrillDown', {
-                'country_id': country_id,
+                'c_id': country_id,
                 'assignee_id': assignee_id,
-                'domain_id': domain_id,
-                'year': year,
+                'd_id': domain_id,
+                'chart_year': year,
                 'unit_id': unit_id,
-                'start_count': start_count
+                'start_count': start_count,
+                'le_ids': legalEntityIds
             }
         ];
         callerName = 'client_dashboard';
@@ -2308,6 +2320,72 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    // Widget api call begin
+    function getUserWidgetData(callback) {
+        var request = [
+            "GetUserWidgetData", {}
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function SaveUserWidgetData(widget_info, callback) {
+        var request = [
+            "SaveWidgetData", {
+                "widget_info": widget_info
+            }
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetComplianceChart(callback){
+         var request = [
+            "GetComplianceChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetEscalationChart(callback){
+         var request = [
+            "GetEscalationChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetNotCompliedChart(callback){
+         var request = [
+            "GetNotCompliedChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetRiskChart(callback){
+         var request = [
+            "GetRiskChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetTrendChart(callback){
+         var request = [
+            "GetTrendChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    // Widget api call end
+
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2481,6 +2559,14 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         updateUserProfile: updateUserProfile,
         getReassignComplianceFilters: getReassignComplianceFilters,
+
+        getUserWidgetData: getUserWidgetData,
+        SaveUserWidgetData: SaveUserWidgetData,
+        getWidgetComplianceChart: getWidgetComplianceChart,
+        getWidgetEscalationChart: getWidgetEscalationChart,
+        getWidgetNotCompliedChart: getWidgetNotCompliedChart,
+        getWidgetRiskChart: getWidgetRiskChart,
+        getWidgetTrendChart: getWidgetTrendChart,
     };
 }
 

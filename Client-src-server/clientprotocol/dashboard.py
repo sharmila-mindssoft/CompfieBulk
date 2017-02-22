@@ -368,14 +368,14 @@ class GetAssigneeWiseCompliancesChart(Request):
         data = parse_dictionary(
             data, [
                 "c_id", "bg_id", "le_ids", "div_id",
-                "u_id", "usr_id", "csv"
+                "unit_id", "usr_id", "csv"
             ]
         )
         country_id = data.get("c_id")
         business_group_id = data.get("bg_id")
         legal_entity_ids = data.get("le_ids")
         division_id = data.get("div_id")
-        unit_id = data.get("u_id")
+        unit_id = data.get("unit_id")
         user_id = data.get("usr_id")
         csv = data.get("csv")
         return GetAssigneeWiseCompliancesChart(
@@ -389,7 +389,7 @@ class GetAssigneeWiseCompliancesChart(Request):
             "bg_id": self.business_group_id,
             "le_ids": self.legal_entity_ids,
             "div_id": self.division_id,
-            "u_id": self.unit_id,
+            "unit_id": self.unit_id,
             "usr_id": self.user_id,
             "csv": self.csv
         }
@@ -479,13 +479,13 @@ class GetAssigneeWiseComplianceDrillDown(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "assignee_id",
-            "d_id", "chart_year", "u_id", "start_count", "le_ids"
+            "d_id", "chart_year", "unit_id", "start_count", "le_ids"
         ])
         country_id = data.get("c_id")
         assignee_id = data.get("assignee_id")
         domain_id = data.get("d_id")
         year = data.get("chart_year")
-        unit_id = data.get("u_id")
+        unit_id = data.get("unit_id")
         start_count = data.get("start_count")
         legal_entity_ids = data.get("le_ids")
         return GetAssigneeWiseComplianceDrillDown(
@@ -499,7 +499,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
             "assignee_id": self.assignee_id,
             "d_id": self.domain_id,
             "chart_year": self.year,
-            "u_id": self.unit_id,
+            "unit_id": self.unit_id,
             "start_count" : self.start_count,
             "le_ids": self.legal_entity_ids
         }

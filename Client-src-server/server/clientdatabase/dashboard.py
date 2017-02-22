@@ -1282,6 +1282,7 @@ def get_not_complied_chart(db, request, session_user):
     order = "ORDER BY T1.due_date "
 
     rows = db.select_all("%s %s" % (query, order), param)
+    print "rows--", rows
     not_complied = rows
     current_date = datetime.datetime.today()
     below_30 = 0
@@ -1535,7 +1536,7 @@ def make_not_opted_drill_down_query():
         " concat(T2.unit_code, ' - ', T2.unit_name) as unit_name " + \
         " from tbl_client_compliances as T1 " + \
         " inner join tbl_units as T2 on T1.unit_id = T2.unit_id" + \
-        " inner join tbl_compliances as T3 on T1.compliance_id = T3.compliance_id " + \
+        " inner join tbl_compliances as T3 on T1.compliance_id = T3.compliance_id and" + \
         " T3.domain_id = T1.domain_id " + \
         " where ifnull(T1.compliance_opted_status,0) = 0 " + \
         " AND find_in_set(T2.country_id, %s) " + \
@@ -1913,12 +1914,15 @@ def get_assigneewise_compliances_list(
         condition += " AND tu.unit_id = %s"
         condition_val.append(unit_id)
     else:
+
         units = get_user_unit_ids(db, session_user)
-        unit_condition, unit_condition_val = db.generate_tuple_condition(
-            "tu.unit_id", units
-        )
-        condition = " %s AND %s " % (condition, unit_condition)
-        condition_val.append(unit_condition_val)
+        condition += " AND find_in_set(tu.unit_id, %s)"
+        condition_val.append(",".join([str(x) for x in units]))
+        # unit_condition, unit_condition_val = db.generate_tuple_condition(
+        #     "tu.unit_id", units
+        # )
+        # condition = " %s AND %s " % (condition, unit_condition)
+        # condition_val.append(unit_condition_val)
     if assignee_id is not None:
         condition += " AND tch.completed_by = %s"
         condition_val.append(assignee_id)

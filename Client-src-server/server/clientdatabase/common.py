@@ -31,7 +31,7 @@ def get_country_domain_timelines_dict(
             condition = "country_id = %s and domain_id = %s "
             condition_val = [country_id, domain_id]
             rows = db.get_data(
-                tblClientConfiguration, columns,
+                tblClientConfigurations, columns,
                 condition, condition_val
             )
             if len(rows) > 0:
@@ -83,7 +83,7 @@ def get_country_domain_timelines(
             condition = "country_id = %s and domain_id = %s "
             condition_val = [country_id, domain_id]
             rows = db.get_data(
-                tblClientConfiguration, columns,
+                tblClientConfigurations, columns,
                 condition, condition_val
             )
             if len(rows) > 0:
