@@ -215,7 +215,7 @@ function initClientMirror() {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
                     console.log(status)
-                        redirect_login();
+                    redirect_login();
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);
@@ -646,7 +646,7 @@ function initClientMirror() {
         callerName = 'client_dashboard';
         var request = [
             'UpdateNotificationStatus', {
-                'le_id':le_id,
+                'le_id': le_id,
                 'notification_id': notification_id,
                 'has_read': has_read
             }
@@ -1254,11 +1254,21 @@ function initClientMirror() {
         return result;
     }
 
-    function saveServiceProvider(serviceProviderDetail, callback) {
+    function saveServiceProvider(s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address, callback) {
         callerName = 'client_masters';
         var request = [
             'SaveServiceProvider',
-            serviceProviderDetail
+            {
+                "s_p_name": s_p_name,
+                "s_p_short": s_p_short,
+                "cont_from": cont_from,
+                "cont_to": cont_to,
+                "cont_person": cont_person,
+                "cont_no": cont_no,
+                "mob_no": mob_no,
+                "e_id": e_id,
+                "address": address
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -2188,7 +2198,7 @@ function initClientMirror() {
 
     function getServiceProviderDetailsReport(
         sp_id, user_id, s_p_status, from_count, page_count, callback
-    ){
+    ) {
         var request = [
             'GetServiceProviderDetailsReport', {
                 'sp_id': sp_id,
@@ -2335,7 +2345,7 @@ function initClientMirror() {
     function saveReviewSettingsComplianceDict(
         compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days,
         statu_dates, old_repeat_by, old_repeat_type_id, old_due_date, statu_dates
-    ){
+    ) {
         return {
             'comp_id': compliance_id,
             'le_id': le_id,
@@ -2432,7 +2442,7 @@ function initClientMirror() {
             {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2443,13 +2453,13 @@ function initClientMirror() {
         country_id, business_group_id, legal_entity_id, domain_id, division_id,
         category_id, unit_id, statutory_mapping, compliance_id,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
             'GetRiskReportData',
             {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'domain_id': domain_id,
                 'division_id': division_id,
                 'category_id': category_id,
