@@ -491,4 +491,5 @@ api_params = {
     "pin_status": make_bool_field(),
     "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo"),
     "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList"),
+    "has_read": make_bool_field(),
 }

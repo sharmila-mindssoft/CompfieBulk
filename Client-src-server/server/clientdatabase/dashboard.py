@@ -1783,7 +1783,7 @@ def get_reminders(
 def get_escalations(
     db, notification_type, start_count, to_count, session_user, session_category
 ):
-    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
             "from tbl_notifications_log as nl " + \
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
             "Where nlu.user_id = %s " + \
@@ -1795,17 +1795,18 @@ def get_escalations(
     #print rows
     notifications = []
     for r in rows :
+        legal_entity_id = int(r["legal_entity_id"])
         notification_id = int(r["notification_id"])
         notification_text = r["notification_text"]
         created_on = datetime_to_string(r["created_on"])
-        notification = dashboard.EscalationsSuccess(notification_id, notification_text, created_on)
+        notification = dashboard.EscalationsSuccess(legal_entity_id, notification_id, notification_text, created_on)
         notifications.append(notification)
     return notifications
 
 def get_messages(
     db, notification_type, start_count, to_count, session_user, session_category
 ):
-    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
             "from tbl_notifications_log as nl " + \
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
             "Where nlu.user_id = %s " + \
@@ -1817,15 +1818,33 @@ def get_messages(
     #print rows
     notifications = []
     for r in rows :
+        legal_entity_id = int(r["legal_entity_id"])
         notification_id = int(r["notification_id"])
         notification_text = r["notification_text"]
         created_on = datetime_to_string(r["created_on"])
-        notification = dashboard.MessagesSuccess(notification_id, notification_text, created_on)
+        notification = dashboard.MessagesSuccess(legal_entity_id, notification_id, notification_text, created_on)
         notifications.append(notification)
     return notifications
 
 
 def update_notification_status(
+    db, notification_id, has_read, session_user
+):
+    user_ids = [session_user]
+    if is_primary_admin(db, session_user) is True:
+        user_ids.append(0)
+    columns = ["read_status"]
+    values = [1 if has_read is True else 0]
+    condition = " notification_id = %s AND "
+    user_condition, user_condition_val = db.generate_tuple_condition(
+        "user_id", user_ids)
+    condition = condition + user_condition
+    values.extend([notification_id, user_condition_val])
+    db.update(
+        tblNotificationUserLog, columns, values, condition
+    )
+
+def notification_details(
     db, notification_id, has_read, session_user
 ):
     user_ids = [session_user]

@@ -5,6 +5,7 @@ function loadMessages(data) {
     var isEmpty = true;
     $('.tbody-message-list').find('tr').remove();
     $.each(data, function(k, v) {
+        le_id = v.le_id
         isEmpty = false;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
