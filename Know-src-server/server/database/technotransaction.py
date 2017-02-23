@@ -538,7 +538,7 @@ def resave_registraion_token(db, client_id, email_id):
     expiry_date = addHours(int(REGISTRATION_EXPIRY), current_time_stamp)
 
     link = "%suserregistration/%s/%s" % (
-        CLIENT_URL, short_name, registration_token
+        CLIENT_URL, short_name, registration_token 
     )
     print link
 
