@@ -452,9 +452,9 @@ userManagementPage.prototype.clearValues = function() {
     // ddlCategory.empty();
     // ddlDomain.empty();
 
-    legalEntity_ids = [];
-    businessGroup_ids = [];
-    Domain_ids = [];
+    // legalEntity_ids = [];
+    // businessGroup_ids = [];
+    // Domain_ids = [];
 
     ddlUserCategory.focus();
 };
