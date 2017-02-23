@@ -105,7 +105,7 @@ api_params = {
     "emp_code": make_string_field(is_optional=True),
     "con_no": make_text_field(is_optional=True),
     "mob_no": make_text_field(is_optional=True),
-    "address": make_text_field(is_optional=True),
+    "address": make_text_field(length=500, is_optional=True),
     "menu":  make_map_type_vector_type("clientcore", "Form"),
     "user_level": make_int_field(is_optional=True),
     "sp_id": make_int_field(is_optional=True),
