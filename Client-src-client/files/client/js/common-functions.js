@@ -276,6 +276,7 @@ function commonAutoComplete(
                     }else{
                         condition_result = (list_val[i][value] == condition_values[key]);
                     }
+
                     validation_results.push(
                         condition_result
                     )
@@ -289,13 +290,22 @@ function commonAutoComplete(
                     }
                 });
             }
-            if (~list_val[i][field_name].toLowerCase().indexOf(
-                    text_val.toLowerCase()
-                ) && validation_result)
-                suggestions.push([
-                    list_val[i][id_name],
-                    list_val[i][field_name]
-                ]);
+            if (list_val[i][field_name]!= null && (~list_val[i][field_name].toLowerCase().indexOf(
+                text_val.toLowerCase())) && validation_result){
+                var occur = -1;
+                for(var j=0;j<suggestions.length;j++){
+                    if(suggestions[j][1] == list_val[i][field_name]){
+                        occur = 1;
+                        break;
+                    }
+                }
+                if(occur < 0){
+                    suggestions.push([
+                        list_val[i][id_name],
+                        list_val[i][field_name]
+                    ]);
+                }
+            }
         }
         var str = '';
         for (var i in suggestions) {
