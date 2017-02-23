@@ -2808,3 +2808,134 @@ class Users(object):
             "sp_short_name": self.sp_short_name
         }
 
+#
+# REASSIGN_COMPLIANCE_UNITS
+#
+
+class REASSIGN_COMPLIANCE_UNITS(object):
+    def __init__(
+        self, unit_id, unit_name, address, postal_code, user_type_id, no_of_compliances
+    ):
+        self.unit_id = unit_id
+        self.unit_name = unit_name
+        self.address = address
+        self.postal_code = postal_code
+        self.user_type_id = user_type_id
+        self.no_of_compliances = no_of_compliances
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "u_id", "u_name", "address", "postal_code", "user_type_id", "no_of_compliances"
+        ])
+        unit_id = data.get("u_id")
+        unit_name = data.get("u_name")
+        address = data.get("address")
+        postal_code = data.get("postal_code")
+        user_type_id = data.get("user_type_id")
+        no_of_compliances = data.get("no_of_compliances")
+
+        return ASSIGN_COMPLIANCE_UNITS(
+            unit_id, unit_name, address, postal_code, user_type_id, no_of_compliances
+        )
+
+    def to_structure(self):
+        return {
+            "u_id": self.unit_id,
+            "u_name": self.unit_name,
+            "address": self.address,
+            "postal_code": self.postal_code,
+            "user_type_id": self.user_type_id,
+            "no_of_compliances": self.no_of_compliances
+        }
+
+#
+# REASSIGN_COMPLIANCES
+#
+
+class REASSIGN_COMPLIANCES(object):
+    def __init__(
+        self, u_id, u_name, act_name, task_type, compliance_name, comp_id, f_id, frequency, compliance_description,
+        summary, trigger_before_days,assignee, assignee_name, concurrence_person, concurrer_name, approval_person, approver_name, 
+        c_h_id, d_date, v_date
+    ):
+        self.u_id = u_id
+        self.u_name = u_name
+        self.act_name = act_name
+        self.task_type = task_type
+        self.compliance_name = compliance_name
+        self.comp_id = comp_id
+        self.f_id = f_id
+        self.frequency = frequency
+        self.compliance_description = compliance_description
+        self.summary = summary
+        self.trigger_before_days = trigger_before_days
+        self.assignee = assignee
+        self.assignee_name = assignee_name
+        self.concurrence_person = concurrence_person
+        self.concurrer_name = concurrer_name
+        self.approval_person = approval_person
+        self.approver_name = approver_name
+        self.c_h_id = c_h_id
+        self.d_date = d_date
+        self.v_date = v_date
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "u_id", "u_name", "act_name", "task_type", "compliance_name", "comp_id", "f_id", "frequency", "compliance_description",
+            "summary", "trigger_before_days","assignee", "assignee_name", "concurrence_person", "concurrer_name", "approval_person", "approver_name", 
+            "c_h_id", "d_date", "v_date"
+        ])
+        u_id = data.get("u_id")
+        u_name = data.get("u_name")
+        act_name = data.get("act_name")
+        task_type = data.get("task_type")
+        compliance_name = data.get("compliance_name")
+        comp_id = data.get("comp_id")
+        f_id = data.get("f_id")
+        frequency = data.get("frequency")
+        compliance_description = data.get("compliance_description")
+        summary = data.get("summary")
+        trigger_before_days = data.get("trigger_before_days")
+        assignee = data.get("assignee")
+        assignee_name = data.get("assignee_name")
+        concurrence_person = data.get("concurrence_person")
+        concurrer_name = data.get("concurrer_name")
+        approval_person = data.get("approval_person")
+        approver_name = data.get("approver_name")
+        c_h_id = data.get("c_h_id")
+        d_date = data.get("d_date")
+        v_date = data.get("v_date")
+
+
+        return ASSIGN_COMPLIANCE_UNITS(
+            unit_id, unit_name, address, task_type, compliance_name, comp_id, f_id, frequency, compliance_description,
+            summary, trigger_before_days,assignee, assignee_name, concurrence_person, concurrer_name, approval_person, approver_name, 
+            c_h_id, d_date, v_date
+        )
+
+    def to_structure(self):
+        return {
+            "u_id": self.u_id,
+            "u_name": self.u_name,
+            "act_name": self.act_name,
+            "task_type": self.task_type,
+            "compliance_name": self.compliance_name,
+            "comp_id": self.comp_id,
+            "f_id": self.f_id,
+            "frequency": self.frequency,
+            "compliance_description": self.compliance_description,
+            "summary": self.summary,
+            "trigger_before_days": self.trigger_before_days,
+            "assignee": self.assignee,
+            "assignee_name": self.assignee_name,
+            "concurrence_person": self.concurrence_person,
+            "concurrer_name": self.concurrer_name,
+            "approval_person": self.approval_person,
+            "approver_name": self.approver_name,
+            "c_h_id": self.c_h_id,
+            "d_date": self.d_date,
+            "v_date": self.v_date
+
+        }
