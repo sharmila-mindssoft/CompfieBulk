@@ -423,27 +423,30 @@ class GetComplianceTotalToAssign(Request):
         }
 
 class GetComplianceForUnits(Request):
-    def __init__(self, legal_entity_id, unit_ids, domain_id, record_count):
+    def __init__(self, legal_entity_id, unit_ids, domain_id, record_count, frequency_ids):
         self.legal_entity_id = legal_entity_id
         self.unit_ids = unit_ids
         self.domain_id = domain_id
         self.record_count = record_count
+        self.frequency_ids = frequency_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "u_ids", "d_id"])
+        data = parse_dictionary(data, ["le_id", "u_ids", "d_id", "f_ids"])
         legal_entity_id = data.get("le_id")
         unit_ids = data.get("u_ids")
         domain_id = data.get("d_id")
         record_count = data.get("r_count")
-        return GetComplianceForUnits(legal_entity_id, unit_ids, domain_id, record_count)
+        frequency_ids = data.get("f_ids")
+        return GetComplianceForUnits(legal_entity_id, unit_ids, domain_id, record_count, frequency_ids)
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
             "u_ids": self.unit_ids,
             "d_id": self.domain_id,
-            "r_count": self.record_count
+            "r_count": self.record_count,
+            "f_ids": self.frequency_ids
         }
 
 class NewUnitSettings(object):
@@ -895,6 +898,119 @@ class SaveReviewSettingsComplianceDict(Request):
             "old_statu_dates": self.old_statu_dates,
         }
 
+class GetChartFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetChartFilters()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+class GetReassignComplianceFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")
+        return GetReassignComplianceFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
+
+class GetAssigneewiseComplianesFilters(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetAssigneewiseComplianesFilters()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
+class GetUserWidgetData(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [])
+        return GetUserWidgetData()
+
+    def to_inner_structure(self):
+        return {}
+
+class WidgetInfo(object):
+    def __init__(self, widget_id, width, height, pin_status):
+        self.widget_id = widget_id
+        self.width = width
+        self.height = height
+        self.pin_status = pin_status
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["w_id", "width", "height", "pin_status"])
+        return WidgetInfo(
+            data.get("w_id"), data.get("width"),
+            data.get("height"), data.get("pin_status")
+        )
+
+    def to_structure(self):
+        return {
+            "w_id": self.widget_id,
+            "width": self.width,
+            "height": self.height,
+            "pin_status": self.pin_status
+        }
+
+class WidgetList(object):
+    def __init__(self, widget_id, widget_name, active_status):
+        self.widget_id = widget_id
+        self.widget_name = widget_name
+        self.active_status = active_status
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["w_id", "w_name", "active_status"])
+        return WidgetList(
+            data.get("w_id"), data.get("w_name"),
+            data.get("active_status")
+        )
+
+    def to_structure(self):
+        return {
+            "w_id": self.widget_id,
+            "w_name": self.widget_name,
+            "active_status": self.active_status
+        }
+
+
+class SaveWidgetData(Request):
+    def __init__(self, widget_data):
+        self.widget_data = widget_data
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["widget_info"])
+        return SaveWidgetData(data.get("widget_info"))
+
+    def to_inner_structure(self):
+        return {
+            "widget_info": self.widget_data
+        }
+
 
 def _init_Request_class_map():
 
@@ -908,7 +1024,10 @@ def _init_Request_class_map():
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
         SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
-        GetUserToAssignCompliance
+
+        GetAssigneewiseComplianesFilters,
+        GetUserToAssignCompliance, GetChartFilters,
+        GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData
     ]
 
     class_map = {}
@@ -1540,6 +1659,154 @@ class ChangeStatutorySettingsLockSuccess(Request):
         return {
         }
 
+class GetChartFiltersSuccess(Response):
+    def __init__(
+        self, countries, domains, business_groups,
+        legal_entities, divisions, units, domain_month,
+        group_name, categories
+    ):
+        self.countries = countries
+        self.domains = domains
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.divisions = divisions
+        self.units = units
+        self.domain_month = domain_month
+        self.group_name = group_name
+        self.categories = categories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "countries", "d_info", "bg_groups",
+            "le_did_infos", "div_infos", "assign_units" "d_months", "g_name",
+            "cat_info"
+        ])
+        countries = data.get("countries")
+        domains = data.get("d_info")
+        business_groups = data.get("bg_groups")
+        legal_entities = data.get("le_did_infos")
+        divisions = data.get("div_infos")
+        units = data.get("assign_units")
+        domain_month = data.get("d_months")
+        group_name = data.get("g_name")
+        cat_info = data.get("cat_info")
+        return GetChartFiltersSuccess(
+            countries, domains, business_groups, legal_entities,
+            divisions, units, domain_month, group_name, cat_info
+        )
+
+    def to_inner_structure(self):
+        return {
+            "countries": self.countries,
+            "d_info": self.domains,
+            "bg_groups": self.business_groups,
+            "le_did_infos": self.legal_entities,
+            "div_infos": self.divisions,
+            "assign_units": self.units,
+            "d_months": self.domain_month,
+            "g_name": self.group_name,
+            "cat_info": self.categories
+        }
+
+
+class GetAssigneewiseComplianesFiltersSuccess(Response):
+    def __init__(
+        self, countries, business_groups, legal_entities, divisions,
+        units, users, domains, categories
+    ):
+        self.countries = countries
+        self.business_groups = business_groups
+        self.legal_entities = legal_entities
+        self.divisions = divisions
+        self.units = units
+        self.users = users
+        self.domains = domains
+        self.categories = categories
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "countries", "business_groups", "legal_entities", "client_divisions",
+            "units", "users", "d_info", "client_categories"
+        ])
+        countries = data.get("countries")
+        business_groups = data.get("business_groups")
+        legal_entities = data.get("legal_entities")
+        divisions = data.get("client_divisions")
+        categories = data.get("client_categories")
+        units = data.get("units")
+        users = data.get("users")
+        domains = data.get("d_info")
+
+        return GetAssigneewiseComplianesFiltersSuccess(
+            countries, business_groups, legal_entities, divisions, units, users, domains, categories
+        )
+
+    def to_inner_structure(self):
+        return {
+            "countries": self.countries,
+            "business_groups": self.business_groups,
+            "legal_entities": self.legal_entities,
+            "client_divisions": self.divisions,
+            "client_categories": self.categories,
+            "units": self.units,
+            "users": self.users,
+            "d_info": self.domains
+        }
+
+
+class GetReassignComplianceFiltersSuccess(Response):
+    def __init__(self, domains, units, legal_entity_users):
+        self.domains = domains
+        self.units = units
+        self.legal_entity_users = legal_entity_users
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["domains", "units", "legal_entity_users"])
+        domains = data.get("domains")
+        units = data.get("units")
+        legal_entity_users = data.get("legal_entity_users")
+        return GetReassignComplianceFiltersSuccess(domains, units, legal_entity_users)
+
+    def to_inner_structure(self):
+        return {
+            "domains": self.domains,
+            "units": self.units,
+            "legal_entity_users": self.legal_entity_users
+        }
+
+class GetUserWidgetDataSuccess(Response):
+    def __init__(self, widget_order_info, widget_list):
+        self.widget_order_info = widget_order_info
+        self.widget_list = widget_list
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["widget_info", "widget_list"])
+        return GetUserWidgetDataSuccess(
+            data.get("widget_info"), data.get("widget_list")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "widget_info": self.widget_order_info,
+            "widget_list": self.widget_list
+        }
+
+class SaveWidgetDataSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [])
+        return SaveWidgetDataSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
 def _init_Response_class_map():
     classes = [
         GetStatutorySettingsSuccess, GetSettingsCompliancesSuccess, UpdateStatutorySettingsSuccess,
@@ -1551,7 +1818,9 @@ def _init_Response_class_map():
         GetAssigneeCompliancesSuccess, ComplianceUpdateFailed,
         GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess,
         GetAssignComplianceUnitsSuccess,
-        GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess
+        GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
+        GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess, GetAssigneewiseComplianesFilters,
+        GetUserWidgetDataSuccess, SaveWidgetDataSuccess
     ]
     class_map = {}
     for c in classes:
@@ -2538,3 +2807,4 @@ class Users(object):
             "sp_name": self.service_provider_name,
             "sp_short_name": self.sp_short_name
         }
+

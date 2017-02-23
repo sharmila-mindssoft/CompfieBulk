@@ -179,27 +179,27 @@ CREATE TABLE `tbl_user_group_forms` (
 CREATE TABLE `tbl_service_providers` (
   `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
-  `address` varchar(500) DEFAULT NULL,
-  `short_name` varchar(20) DEFAULT NULL,
-  `contract_from` date DEFAULT NULL,
-  `contract_to` date DEFAULT NULL,
-  `contact_person` varchar(50) DEFAULT NULL,
-  `contact_no` varchar(20) DEFAULT NULL,
-  `mobile_no` varchar(20) DEFAULT NULL,
+  `short_name` varchar(20) NOT NULL,
+  `contract_from` date NOT NULL,
+  `contract_to` date NOT NULL,
+  `contact_person` varchar(50) NOT NULL,
+  `contact_no` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `is_active` tinyint(1) DEFAULT '1',
+  `mobile_no` varchar(20) DEFAULT NULL,
+  `address` varchar(500) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `status_changed_by` int(11) DEFAULT NULL,
   `status_changed_on` timestamp NULL DEFAULT NULL,
-  `is_blocked` tinyint(1) DEFAULT '0',
+  `is_blocked` tinyint(1) NOT NULL DEFAULT '0',
   `blocked_by` int(11) DEFAULT NULL,
   `blocked_on` timestamp NULL DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` int(11) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_by` int(11) NOT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`service_provider_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) NOT NULL,
@@ -249,6 +249,11 @@ CREATE TABLE `tbl_user_sessions` (
   PRIMARY KEY (`session_token`),
   UNIQUE KEY(`user_id`, `session_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_user_legal_entities` (
+  `user_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  UNIQUE KEY (`user_id`, `legal_entity_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
@@ -293,6 +298,14 @@ CREATE TABLE `tbl_reminder_settings` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY(`client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_widget_settings`(
+ `user_id` int(11) PRIMARY KEY NOT NULL,
+  `widget_data` TEXT DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_widget_forms`(
+  `form_id` int(11) PRIMARY KEY NOT NULL,
+  `form_name` TEXT NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
@@ -533,3 +546,13 @@ INSERT INTO tbl_session_types VALUES(4, "blackberry");
 INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");
+
+-- tbl_widget_forms
+INSERT INTO tbl_widget_forms VALUES(1, "Compliance Status");
+INSERT INTO tbl_widget_forms VALUES(2, "Escalations");
+INSERT INTO tbl_widget_forms VALUES(3, "Not Complied");
+INSERT INTO tbl_widget_forms VALUES(4, "Trend Chart");
+INSERT INTO tbl_widget_forms VALUES(5, "Risk Chart");
+INSERT INTO tbl_widget_forms VALUES(6, "User Scorecard");
+INSERT INTO tbl_widget_forms VALUES(7, "Domain Scorecard");
+INSERT INTO tbl_widget_forms VALUES(8, "Calendar View");

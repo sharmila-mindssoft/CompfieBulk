@@ -6,7 +6,7 @@ import jinja2
 import base64
 import random
 import string
-import mysql.connector.pooling
+from mysql.connector import pooling
 from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
@@ -34,7 +34,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    IS_DEVELOPMENT, SESSION_CUTOFF
+    IS_DEVELOPMENT, SESSION_CUTOFF, KNOWLEDGE_DB_POOL_SIZE
 )
 
 from server.templatepath import (
@@ -77,7 +77,8 @@ def api_request(request_data_type):
     return wrapper
 
 def make_pool(pool_name, db_conf):
-    return mysql.connector.pooling.MySQLConnectionPool(
+    # pooling.CNX_POOL_MAXSIZE = KNOWLEDGE_DB_POOL_SIZE
+    return pooling.MySQLConnectionPool(
         pool_name=pool_name,
         pool_reset_session=True,
         pool_size=32,
@@ -139,7 +140,7 @@ class API(object):
             s = json.dumps(data, indent=2)
         else:
             s = response_data
-        print s
+
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)
@@ -159,7 +160,7 @@ class API(object):
             data = request.data[5:]
             data = data.decode('base64')
             data = json.loads(data)
-            print data
+
             request_data = request_data_type.parse_structure(
                 data
             )
@@ -236,13 +237,11 @@ class API(object):
     @csrf.exempt
     @api_request(DistributionRequest)
     def handle_server_list(self, request, db):
-        print request
         return CompanyServerDetails(gen.get_servers(db))
 
     @csrf.exempt
     @api_request(DistributionRequest)
     def handle_group_server_list(self, request, db):
-        print request
         return CompanyServerDetails(gen.get_group_servers(db))
 
     @csrf.exempt
@@ -378,7 +377,6 @@ class API(object):
         #         return True
 
         info = request.files
-        print info
         response_data = controller.process_uploaded_file(info, "knowledge")
         return response_data
 

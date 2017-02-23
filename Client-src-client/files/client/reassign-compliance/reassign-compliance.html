@@ -1,0 +1,194 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+    <div class="row">
+        <div id="animationSandbox">
+            <div class="col-sm-1"></div>
+            <div class="col-sm-10">
+            
+                <div class="portlet">
+                <div class="portlet-heading bg-info">
+                    <h3 class="portlet-title">Reassign Compliance</h3>
+                    <div class="portlet-widgets">
+                        <!--a href="#" onclick="location.href='/service-provider/list'">
+                            <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+                        </a-->
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+					
+                <div id="bg-primary1" class="panel-collapse collapse in">
+                    <div class="portlet-body">
+
+                        <div class="form-horizontal group-border-dashed" action="#" novalidate="">
+	                        <div class="col-lg-6">
+	                        	<div class="form-group has-feedback">
+		                            <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Legal Entity:<span class="mandatory">*</span></label>
+		                            <div class="col-sm-6 controls">
+		                                <p class="form-control-static legal-entity-name default-display-none"></p>
+		                                <div class="legal-entity-name-ac default-display-none">
+		                                    <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1">
+		                                    <i class="form-control-feedback fa fa-search"></i>
+		                                    <input type="hidden" id="legal_entity_id" value="">
+		                                    <div id="ac-entity" class="ac-textbox default-display-none">
+		                                        <ul class="width85Percent"></ul>
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+	                       
+	                            <div class="form-group has-feedback">
+	                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Domain:<span class="mandatory">*</span> </label>
+	                                <div class="col-sm-6 controls">
+                                        <input class="form-control input-sm" type="text" id="domain_name" tabindex="2">
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="domain_id">
+                                        <div id="ac-domain" class="ac-textbox default-display-none">
+                                            <ul class="width85Percent"></ul>
+                                        </div>
+	                                </div>
+	                            </div>
+
+	                            <div class="form-group has-feedback">
+	                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">User:<span class="mandatory">*</span> </label>
+	                                <div class="col-sm-6 controls">
+	                                    <input class="form-control input-sm" type="text" id="user_name" tabindex="3">
+	                                    <i class="form-control-feedback fa fa-search"></i>
+	                                    <input type="hidden" id="user_id">
+	                                    <div id="ac-user" class="ac-textbox default-display-none">
+	                                        <ul class="width85Percent"></ul>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+	                        <div class="col-lg-6">
+	                        	<div class="form-group">
+		                            <label class="col-sm-4 control-label" for="example-input-small">User Type: </label>
+		                            <div class="col-sm-6 controls">
+		                                <select class="form-control input-sm" tabindex="4">
+		                                  <option selected="selected">All</option>
+		                                  <option>Assignee</option>
+		                                  <option>Concurrence</option>
+		                                  <option>Approver</option>
+		                                </select>
+		                            </div>
+		                        </div>
+
+		                        <div class="form-group has-feedback">
+	                                <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Unit: </label>
+	                                <div class="col-sm-6 controls">
+	                                    <input class="form-control input-sm" type="text" id="unit_name" tabindex="5">
+	                                    <i class="form-control-feedback fa fa-search"></i>
+	                                    <input type="hidden" id="unit_id">
+	                                    <div id="ac-unit" class="ac-textbox default-display-none">
+	                                        <ul class="width85Percent"></ul>
+	                                    </div>
+	                                </div>
+	                            </div>  
+		                    </div>
+	                     <center>
+	                        <div class="form-group">
+	                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
+	                        </div>
+	                    </center>
+	                </div>
+
+                    <div class="table-responsive">
+                    <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th width="50%">Unit</th>
+                                <th width="20%" class="text-center">No. of Compliance Tasks</th>
+                                <th width="12%" class="text-center">Reassign</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="3"><mark class="p-l-10 p-r-10">Assignee</mark></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                  <div class="f-l">
+                                    <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                        <input id="checkbox3" type="checkbox" checked="">
+                                        <label for="checkbox3"></label>
+                                    </div>
+                                  </div>
+                                    <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="18, Anna Nagar, Madurai, 625015"></i> VRM1003 - Branch Office - Madurai
+                                </td>
+                                <td class="text-center">4</td>
+                                <td rowspan="2" class="v-align-middle text-center"><button class="btn btn-primary waves-effect waves-light" type="button" onclick="parent.location='/reassigntask/edit'" > Reassign </button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                  <div class="f-l">
+                                    <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                        <input id="checkbox3" type="checkbox" checked="">
+                                        <label for="checkbox3"></label>
+                                    </div>
+                                  </div>
+                                    <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="18, Anna Nagar, Madurai, 625015"></i> VRM1003 - VRM1004 - Branch Office - Chennai
+                                </td>
+                                <td class="text-center">5</td>
+                                <!-- <td><button class="btn btn-primary waves-effect waves-light" type="button" onclick="parent.location='/reassigntask/edit'" > Reassign </button></td> -->
+                            </tr>
+                            <tr>
+                                <td colspan="3"><mark class="p-l-10 p-r-10">Concurrence</mark></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                  <div class="f-l">
+                                    <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                        <input id="checkbox3" type="checkbox">
+                                        <label for="checkbox3"></label>
+                                    </div>
+                                  </div>
+                                    <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="18, Anna Nagar, Madurai, 625015"></i> VRM1003 - VRM1002 - Branch Office - Kovai
+                                </td>
+                                <td class="text-center">4</td>
+                                <td rowspan="2" class="v-align-middle text-center"><button class="btn btn-primary waves-effect waves-light" type="button"> Reassign </button></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                  <div class="f-l">
+                                    <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                        <input id="checkbox3" type="checkbox">
+                                        <label for="checkbox3"></label>
+                                    </div>
+                                  </div>
+                                    <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="18, Anna Nagar, Madurai, 625015"></i> VRM1003 - VRM1004 - Branch Office - Chennai
+                                </td>
+                                <td class="text-center">3</td>
+                                <!-- <td><button class="btn btn-primary waves-effect waves-light" type="button" onclick="parent.location='/reassigntask/edit'" > Reassign </button></td> -->
+                            </tr>
+                            <tr>
+                                <td colspan="3"><mark class="p-l-10 p-r-10">Approver</mark></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                  <div class="f-l">
+                                    <div class="checkbox checkbox-primary m-b-0 m-t-0">
+                                        <input id="checkbox3" type="checkbox">
+                                        <label for="checkbox3"></label>
+                                    </div>
+                                  </div>
+                                    <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="18, Anna Nagar, Madurai, 625015"></i> VRM1003 - VRM1001 - Branch Office - Salem
+                                </td>
+                                <td class="text-center">4</td>
+                                <td class="text-center"><button class="btn btn-primary waves-effect waves-light" type="button" onclick="parent.location='/reassigntask/edit'"> Reassign </button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="m-b-0">Showing units: 4</p>
+                    </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="/script/reassign-compliance/reassign-compliance.js"></script>
+{% endblock %}

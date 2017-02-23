@@ -56,7 +56,6 @@
                                         <center>
                                             <div class="form-group m-b-0">
                                                 <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button"> Show </button>
-                                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button"> Export </button>
                                             </div>
                                         </center>
                                     </div>
@@ -139,19 +138,9 @@
                                         <div class="col-sm-12">
                                             <h6 class="task-name"></h6>
                                         </div>
-                                        <table id="datatable-responsive" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
-                                            <thead>
-                                                <tr class="bg-lightdark">
-                                                    <th width="15%" class="task-title"></th>
-                                                    <th width="10%" class="text-center">To Complete</th>
-                                                    <th width="10%" class="text-center">To Concur</th>
-                                                    <th width="10%" class="text-center">To Approve</th>
-                                                    <th width="10%" class="text-center">Total(Task)</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="report-table-tbody">
-                                            </tbody>
-                                        </table>
+                                        <div id="status-details">
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -163,22 +152,163 @@
     </div>
 </div>
 <div id="template">
-    <table id="report-table">
-        <tr class="report-row">
-            <td class="task-row-title">RG1004 - Branch Office</td>
-            <td class="text-center to-complete">5</td>
-            <td class="text-center to-concur">3</td>
-            <td class="text-center to-approve">1</td>
-            <td class="font-bold text-center total-task">9</td>
-        </tr>
-        <tr class="report-total-row">
-            <td class="font-bold">Total</td>
-            <td class="text-center font-bold to-complete-total">8</td>
-            <td class="text-center font-bold to-concur-total">10</td>
-            <td class="text-center font-bold to-approve-total">7</td>
-            <td class="text-center font-bold grand-total">25</td>
-        </tr>
+    <table id="inprogress-unit-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+        <thead>
+            <tr class="bg-lightdark">
+                <th width="15%" class="task-title">Units</th>
+                <th width="10%" class="text-center">To Complete</th>
+                <th width="10%" class="text-center">To Concur</th>
+                <th width="10%" class="text-center">To Approve</th>
+                <th width="10%" class="text-center">Total(Task)</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+            <tr class="report-row">
+                <td class="task-row-title"></td>
+                <td class="text-center to-complete"></td>
+                <td class="text-center to-concur"></td>
+                <td class="text-center to-approve"></td>
+                <td class="font-bold text-center total-task"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="report-total-row" style="display: none;">
+                <td  width="15%" class="font-bold">Total</td>
+                <td  width="10%" class="text-center font-bold to-complete-total"></td>
+                <td  width="10%" class="text-center font-bold to-concur-total"></td>
+                <td  width="10%" class="text-center font-bold to-approve-total"></td>
+                <td  width="10%" class="text-center font-bold grand-total"></td>
+            </tr>
+        </tfoot>
     </table>
+
+    <table id="inprogress-user-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+        <thead>
+            <tr class="bg-lightdark">
+                <th width="15%" class="task-title">Users</th>
+                <th width="10%" class="text-center">To Complete</th>
+                <th width="10%" class="text-center">To Concur</th>
+                <th width="10%" class="text-center">To Approve</th>
+                <th width="10%" class="text-center">Total(Task)</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+            <tr class="report-row">
+                <td class="task-row-title"></td>
+                <td class="text-center to-complete"></td>
+                <td class="text-center to-concur"></td>
+                <td class="text-center to-approve"></td>
+                <td class="font-bold text-center total-task"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="report-total-row" style="display: none;">
+                <td width="15%" class="font-bold">Total</td>
+                <td width="10%" class="text-center font-bold to-complete-total"></td>
+                <td width="10%" class="text-center font-bold to-concur-total"></td>
+                <td width="10%" class="text-center font-bold to-approve-total"></td>
+                <td width="10%" class="text-center font-bold grand-total"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <table id="completed-unit-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+        <thead>
+            <tr class="bg-lightdark">
+                <th width="15%" class="task-title">Units</th>
+                <th width="10%" class="text-center">Delayed Count</th>
+                <th width="10%" class="text-center">Complied Count</th>
+                <th width="10%" class="text-center">Total(Task)</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+            <tr class="report-row">
+                <td class="task-row-title"></td>
+                <td class="text-center delayed-count"></td>
+                <td class="text-center complied-count"></td>
+                <td class="font-bold text-center total-task"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="report-total-row" style="display: none;">
+                <td  width="15%" class="font-bold">Total</td>
+                <td  width="10%" class="text-center font-bold delayed-count-total"></td>
+                <td  width="10%" class="text-center font-bold complied-count-total"></td>
+                <td  width="10%" class="text-center font-bold grand-total"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+
+    <table id="completed-user-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+        <thead>
+            <tr class="bg-lightdark">
+                <th width="15%" class="task-title">Users</th>
+                <th width="10%" class="text-center">Delayed Count</th>
+                <th width="10%" class="text-center">Complied Count</th>
+                <th width="10%" class="text-center">Total(Task)</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+            <tr class="report-row">
+                <td class="task-row-title"></td>
+                <td class="text-center delayed-count"></td>
+                <td class="text-center complied-count"></td>
+                <td class="font-bold text-center total-task"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="report-total-row" style="display: none;">
+                <td  width="15%" class="font-bold">Total</td>
+                <td  width="10%" class="text-center font-bold delayed-count-total"></td>
+                <td  width="10%" class="text-center font-bold complied-count-total"></td>
+                <td  width="10%" class="text-center font-bold grand-total"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <table id="overdue-unit-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+        <thead>
+            <tr class="bg-lightdark">
+                <th width="15%" class="task-title">Users</th>
+                <th width="10%" class="text-center">Overdue Count</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+            <tr class="report-row">
+                <td class="task-row-title"></td>
+                <td class="text-center overdue-count"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="report-total-row" style="display: none;">
+                <td  width="15%" class="font-bold">Total</td>
+                <td  width="10%" class="text-center font-bold overdue-count-total"></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <table id="overdue-user-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
+        <thead>
+            <tr class="bg-lightdark">
+                <th width="15%" class="task-title">Users</th>
+                <th width="10%" class="text-center">Overdue Count</th>
+            </tr>
+        </thead>
+        <tbody class="table-body">
+            <tr class="report-row">
+                <td class="task-row-title"></td>
+                <td class="text-center overdue-count"></td>
+            </tr>
+        </tbody>
+        <tfoot>
+            <tr class="report-total-row" style="display: none;">
+                <td  width="15%" class="font-bold">Total</td>
+                <td  width="10%" class="text-center font-bold overdue-count-total"></td>
+            </tr>
+        </tfoot>
+    </table>
+
 </div>
 <script src="/js/toastr/toastr.min.js"></script>
 <script src="/script/legal-entity-wise-score-card/legal_entity_wise_score_card.js"></script>

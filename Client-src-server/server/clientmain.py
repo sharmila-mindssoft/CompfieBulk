@@ -2,21 +2,17 @@ import os
 import json
 import time
 import traceback
-# from tornado.web import StaticFileHandler
-# from tornado.httpclient import AsyncHTTPClient
 import mysql.connector.pooling
 from flask import Flask, request, Response
 
 from functools import wraps
 
-# from basics.webserver import WebServer
-# from basics.ioloop import IOLoop
 from clientprotocol import (
     clientadminsettings, clientmasters, clientreport,
     clienttransactions, dashboard,
-    clientlogin, general, clientuser, clientmobile
+    clientlogin, general, clientuser, clientmobile,
+    widgetprotocol
 )
-# from server.clientdatabase import ClientDatabase
 from server.dbase import Database
 import clientcontroller as controller
 import mobilecontroller as mobilecontroller
@@ -30,16 +26,6 @@ import logger
 
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
 app = Flask(__name__)
-
-#
-# cors_handler
-#
-def cors_handler(response):
-    response.set_header("Access-Control-Allow-Origin", "*")
-    response.set_header("Access-Control-Allow-Headers", "Content-Type")
-    response.set_header("Access-Control-Allow-Methods", "POST")
-    response.set_status(204)
-    response.send("")
 
 
 #
@@ -57,13 +43,20 @@ def api_request(
             )
         return wrapped
     return wrapper
-'''
-    as of now group db has connected for all the request, as per the LE db base operation
-    method decorator will have flag which define either group db call or legal entity db call.
-    when group db call will be processed as per the currennt code flow
-    For LE db call either the hable_api_will be looped or intermediate contrller will be added to
-    perform multi legalentity request parlally
-'''
+
+
+def global_api_request(
+    request_data_type, is_group=True, need_category=False
+):
+    def wrapper(f):
+        @wraps(f)
+        def wrapped(self):
+            return self.handle_global_api_request(
+                f, request_data_type, is_group, need_category
+            )
+        return wrapped
+    return wrapper
+
 
 class API(object):
     def __init__(
@@ -71,10 +64,8 @@ class API(object):
         address,
         knowledge_server_address,
     ):
-        # self._io_loop = io_loop
         self._address = address
         self._knowledge_server_address = knowledge_server_address
-        # self._http_client = http_client
         self._group_databases = {}
         self._le_databases = {}
         self._replication_managers_for_group = {}
@@ -84,7 +75,7 @@ class API(object):
             5000,
             self.server_added
         )
-        print "Databases initialize"
+        # print "Databases initialize"
 
         self._ip_address = None
         # self._remove_old_session()
@@ -132,8 +123,6 @@ class API(object):
         )
 
     def server_added(self, servers):
-        # server added should not be called in timeout function , pending : need to update from knowledge server.
-        print "**" * 100
         self._group_databases = {}
         self._le_databases = {}
         self._replication_managers_for_group = {}
@@ -145,7 +134,7 @@ class API(object):
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
-                print self._address
+                # print self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
                     if company.is_group is True:
                         if self._group_databases.get(company_id) is not None :
@@ -181,21 +170,16 @@ class API(object):
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
 
-            print "after connection created"
-            print self._group_databases
-            print self._le_databases
-            # After database connection client poll for replication
-
             def client_added(clients):
                 for c, client in clients.iteritems():
                     _client_id = client.client_id
-                    print _client_id
+                    # print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
                     # _domain_id = client.domain_id
 
                     if client.is_group is True:
-                        print "client added"
+                        # print "client added"
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
                             continue
@@ -306,8 +290,7 @@ class API(object):
             company_id = int(data[0])
             actual_data = data[1]
 
-            print company_id
-            print actual_data
+            # print company_id
             request_data = request_data_type.parse_structure(
                 actual_data
             )
@@ -315,6 +298,7 @@ class API(object):
                 company_id = request_data.request.legal_entity_id
 
         except Exception, e:
+            print e
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
 
@@ -392,8 +376,6 @@ class API(object):
                 if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
                     return respond(clientlogin.InvalidCurrentPassword())
 
-        else :
-            session_user = None
         # request process in controller
         if is_group :
             print "Group DB"
@@ -442,9 +424,133 @@ class API(object):
             # response.set_status(400)
             # response.send(str(e))
 
+    def handle_global_api_request(self, unbound_method, request_data_type, is_group, need_category):
+        le_ids = []
+
+        def respond(response_data):
+            return self._send_response(response_data, 200)
+
+        performed_les = []
+        # global performed_response
+        performed_response = None
+
+        def merge_data(p_response, data, request_data):
+            if p_response is None :
+                p_response = data
+            else :
+                # merge chart from the processed LE database
+                if type(request_data.request) is dashboard.GetComplianceStatusChart :
+                    p_response.chart_data.extend(data.chart_data)
+
+                elif type(request_data.request) is dashboard.GetEscalationsChart :
+                    p_response.chart_data.extend(data.chart_data)
+
+                elif type(request_data.request) is dashboard.GetNotCompliedChart :
+
+                    p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
+                    p_response.T_31_to_60_days_count += data.T_31_to_60_days_count
+                    p_response.T_61_to_90_days_count += data.T_61_to_90_days_count
+                    p_response.Above_90_days_count += data.Above_90_days_count
+
+                elif type(request_data.request) is dashboard.GetTrendChart :
+                    p_response.data.extend(data.data)
+
+                elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusChart :
+                    p_response.unassign_count += data.unassign_count
+                    p_response.not_opted_count += data.not_opted_count
+                    p_response.rejected_count += data.rejected_count
+                    p_response.not_complied_count += data.not_complied_count
+
+                # merge drilldown from the processed LE database
+                elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
+                    p_response.drill_down_data.extend(data.drill_down_data)
+
+                elif type(request_data.request) is dashboard.GetEscalationsDrillDownData :
+                    p_response.delayed.extend(data.delayed)
+                    p_response.not_complied.extend(data.not_complied)
+
+                elif type(request_data.request) is dashboard.GetNotCompliedDrillDown :
+                    p_response.drill_down_data.extend(data.drill_down_data)
+
+                elif type(request_data.request) is dashboard.GetTrendChartDrillDownData :
+                    p_response.drill_down_data.extend(data.drill_down_data)
+
+                elif type(request_data.request) is dashboard.GetComplianceApplicabilityStatusDrillDown :
+                    p_response.drill_down_data.extend(data.drill_down_data)
+
+                elif type(request_data.request) is widgetprotocol.GetComplianceChart :
+                    p_response = controller.merge_compliance_chart_widget(p_response, data)
+
+                elif type(request_data.request) is widgetprotocol.GetEscalationChart :
+                    p_response = controller.merge_escalation_chart_widget(p_response, data)
+                else :
+                    pass
+            return p_response
+
+        try :
+            # print "try"
+            request_data, company_id = self._parse_request(request_data_type, is_group)
+            session = request_data.session_token
+            session_user, client_id, session_category = self._validate_user_session(session)
+            if hasattr(request_data.request, "legal_entity_ids") :
+                le_ids = request_data.request.legal_entity_ids
+                performed_les = []
+                performed_response = None
+
+                for le in le_ids :
+                    db_cons = self._le_databases.get(le)
+
+                    if db_cons is None:
+                        performed_les.append(le)
+                        print 'connection pool is none'
+                        continue
+                        # return self._send_response("Company not found", 404)
+
+                    _db_con = db_cons.get_connection()
+                    _db = Database(_db_con)
+                    if _db_con is None:
+                        performed_les.append(le)
+                        continue
+                        # return self._send_response("Company not found", 404)
+
+                    _db.begin()
+                    try:
+                        response_data = unbound_method(
+                            self, request_data, _db, session_user, session_category
+                        )
+
+                        _db.commit()
+                        _db_con.close()
+                        performed_les.append(le)
+                        performed_response = merge_data(performed_response, response_data, request_data)
+
+                    except Exception, e:
+                        print " --------------"
+                        logger.logClientApi(e, "handle_api_request")
+                        logger.logClientApi(traceback.format_exc(), "")
+                        print(traceback.format_exc())
+                        logger.logClient("error", "clientmain.py-handle-api", e)
+                        logger.logClient("error", "clientmain.py", traceback.format_exc())
+                        if str(e).find("expected a") is False :
+                            _db.rollback()
+                            _db_con.close()
+                        performed_response = str(e)
+                        # return self._send_response(str(e), 400)
+
+                if len(le_ids) == len(performed_les) :
+                    return respond(performed_response)
+
+            else :
+                print "le-ids not found"
+                return self._send_response("le-ids not found", 400)
+
+        except Exception, e :
+            print(traceback.format_exc())
+            return self._send_response(str(e), 400)
+
     @api_request(clientlogin.Request, need_client_id=True, is_group=True)
     def handle_login(self, request, db, client_id, user_ip):
-        print self._ip_address
+        # print self._ip_address
 
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
@@ -461,11 +567,11 @@ class API(object):
     def handle_client_transaction(self, request, db, session_user, session_category):
         return controller.process_client_transaction_requests(request, db, session_user, session_category)
 
-    @api_request(clientreport.RequestFormat)
-    def handle_client_reports(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_report_requests(request, db, session_user, client_id, le_id)
+    @api_request(clientreport.RequestFormat, is_group=False, need_category=True)
+    def handle_client_reports(self, request, db, session_user, session_category):
+        return controller.process_client_report_requests(request, db, session_user, session_category)
 
-    @api_request(dashboard.RequestFormat, is_group=True, need_category=True)
+    @global_api_request(dashboard.RequestFormat, is_group=True, need_category=True)
     def handle_client_dashboard(self, request, db, session_user, session_category):
         return controller.process_client_dashboard_requests(request, db, session_user, session_category)
 
@@ -485,6 +591,10 @@ class API(object):
     def handle_mobile_request(self, request, db, session_user, client_id, le_id):
         return mobilecontroller.process_client_mobile_request(request, db)
 
+    @global_api_request(widgetprotocol.RequestFormat, is_group=True, need_category=True)
+    def handle_widget_request(self, request, db, session_user, session_category):
+        return controller.process_client_widget_requests(request, db, session_user, session_category)
+
 
 def handle_isalive():
     return Response("Application is alive", status=200, mimetype="application/json")
@@ -494,25 +604,12 @@ def handle_isalive():
 #
 def run_server(address, knowledge_server_address):
     ip, port = address
-    # io_loop = IOLoop()
 
     def delay_initialize():
-        # http_client = AsyncHTTPClient(
-        #     io_loop.inner(),
-        #     max_clients=1000
-        # )
-
-        # web_server = WebServer(io_loop)
-        # src_server_path = os.path.join(ROOT_PATH, "Src-server")
-        # server_path = os.path.join(src_server_path, "server")
-        # client_docs_path = os.path.join(server_path, "clientdocuments")
-        # exported_reports_path = os.path.join(ROOT_PATH, "exported_reports")
 
         api = API(
-            # io_loop,
             address,
             knowledge_server_address,
-            # http_client
         )
 
         api_urls_and_handlers = [
@@ -527,27 +624,14 @@ def run_server(address, knowledge_server_address):
             ("/api/general", api.handle_general),
             ("/api/client_user", api.handle_client_user),
             ("/api/mobile", api.handle_mobile_request),
+            ("/api/widgets", api.handle_widget_request),
             # (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
-            # web_server.url(url, POST=handler, OPTIONS=cors_handler)
             app.add_url_rule(url, view_func=handler, methods=['POST'])
 
-        # web_server.low_level_url(
-        #     r"/client/client_documents/(.*)",
-        #     StaticFileHandler,
-        #     dict(path=client_docs_path)
-        # )
-
-        # web_server.low_level_url(
-        #     r"/download/csv/(.*)", StaticFileHandler,
-        #     dict(path=exported_reports_path)
-        # )
         print "Listening at: %s:%s" % (ip, port)
-        # web_server.start(port, backlog=1000)
 
-    # io_loop.add_callback(delay_initialize)
-    # io_loop.run()
     delay_initialize()
     settings = {
         "threaded": True

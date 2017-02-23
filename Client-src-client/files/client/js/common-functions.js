@@ -3,6 +3,18 @@ var m_names = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 
 //Load count values in pagination selectbox
 var pageList = [25, 50, 100];
 
+var UserTypeString = '[{"id":1,"name":"Assignee"},{"id":2,"name":"Concurrence"},{"id":3,"name":"Approval"}]';
+var UserTypes = jQuery.parseJSON(UserTypeString);
+
+var ComplianceTaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
+
+var LEARRAYS = client_mirror.getSelectedLegalEntity();
+var LEIDS = [];
+$.each(LEARRAYS, function(key, value) {
+    LEIDS.push(value.le_id);
+});
+
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
         var Id = pageList[i];
@@ -258,6 +270,13 @@ function commonAutoComplete(
                 $.each(condition_fields, function(key, value) {
                     var condition_result;
                     if(jQuery.type( list_val[i][value] ) == 'array'){
+                        if (list_val[i][value] == null || list_val[i][value].length == undefined || list_val[i][value] == "" || list_val[i][value] == " ") {
+                            condition_result = (list_val[i][value] == condition_values[key]);
+                            if (condition_values[key] == "")
+                                condition_result = (list_val[i][value] == null);
+                        }
+                    else
+                    {
                         condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
                     }else if(jQuery.type( condition_values[key] ) == 'array'){
                         condition_result = ($.inArray(list_val[i][value], condition_values[key]) >= 0);
@@ -265,9 +284,10 @@ function commonAutoComplete(
                         condition_result = (list_val[i][value] == condition_values[key]);
                     }
 
-                    validation_results.push(
-                        condition_result
-                    )
+                        validation_results.push(
+                            condition_result
+                        )
+                    }
                 });
                 validation_result = null;
                 $.each(validation_results, function(key, value) {
@@ -457,3 +477,28 @@ $(function() {
       });
   });
 });
+
+function hyphenatedToUpperCamelCase(a) {
+  var b = parseHyphenated(a);
+  return hypToUpperCamelCase(b);
+}
+
+function parseHyphenated(a) {
+  return a.split('-');
+}
+function hypToUpperCamelCase(d) {
+  var a = [];
+  for (var b = 0; b < d.length; ++b) {
+    var c = d[b];
+    c = c[0].toUpperCase() + c.slice(1);
+    a.push(c);
+  }
+  return a.join('');
+}
+
+function limits(str,num) {
+    if(str.length >= parseInt(num))
+        return str.substr(0, parseInt(num))+'...';
+    else
+        return str;
+}

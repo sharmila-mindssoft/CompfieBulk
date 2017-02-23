@@ -48,15 +48,24 @@ var domainName = $("#domain-name");
 var reportTableTbody = $("#report-table-tbody");
 var template = $("#template");
 var reportTable = $("#report-table");
-var totalRecord = $("#total-record");
 var REPORT = null;
+
+var ItemsPerPage = $('#items_per_page');
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
+var on_current_page = 1;
+var f_count = 0;
 
 function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._countries;
+        if (countryList.length == 0 && text_val != '')
+            displayMessage(message.domainname_required);
         var condition_fields = ["is_active"];
         var condition_values = [true];
+        //alert(text_val +' - '+countryList.toSource() +' - '+)
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -65,9 +74,9 @@ function PageControls() {
     businessGroup.keyup(function(e) {
         var text_val = businessGroup.val().trim();
         var businessGroupList = REPORT._business_group;
-        var condition_fields = ["is_active", "c_id"];
-        var condition_values = [true, countryId.val()];
-        commonAutoComplete(e, acBusinessGroup, businessGroupId, text_val, businessGroupList, "b_g_name", "b_g_id", function(val) {
+        var condition_fields = ["c_id"];
+        var condition_values = [countryId.val()];
+        commonAutoComplete(e, acBusinessGroup, businessGroupId, text_val, businessGroupList, "bg_name", "bg_id", function(val) {
             onBusinessGroupAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -75,8 +84,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        var condition_fields = ["is_active", "c_id", "b_g_id"];
-        var condition_values = [true, countryId.val(), businessGroupId.val()];
+        var condition_fields = ["c_id", "bg_id"];
+        var condition_values = [countryId.val(), businessGroupId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -87,7 +96,7 @@ function PageControls() {
         var domainList = REPORT._domains;
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, legalEntityId.val()];
-        commonAutoComplete(e, acDomain, domainId, text_val, domainList, "dom_name", "d_id", function(val) {
+        commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
             onDomainAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -95,8 +104,8 @@ function PageControls() {
     division.keyup(function(e) {
         var text_val = division.val().trim();
         var divisionList = REPORT._divisions;
-        var condition_fields = ["is_active", "d_id"];
-        var condition_values = [true, domainId.val()];
+        var condition_fields = ["le_id"];
+        var condition_values = [legalEntityId.val()];
         commonAutoComplete(e, acDivision, divisionId, text_val, divisionList, "div_name", "div_id", function(val) {
             onDivisionAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -105,8 +114,8 @@ function PageControls() {
     category.keyup(function(e) {
         var text_val = category.val().trim();
         var categoryList = REPORT._categorys;
-        var condition_fields = ["is_active", "div_id", "d_id"];
-        var condition_values = [true, divisionId.val(), domainId.val()];
+        var condition_fields = ["div_id", "le_id"];
+        var condition_values = [divisionId.val(), legalEntityId.val()];
         commonAutoComplete(e, acCategory, categoryId, text_val, categoryList, "cat_name", "cat_id", function(val) {
             onCategoryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -115,9 +124,9 @@ function PageControls() {
     unit.keyup(function(e) {
         var text_val = unit.val().trim();
         var unitList = REPORT._units;
-        var condition_fields = ["is_active", "div_id", "d_id", "cat_id" ];
-        var condition_values = [true, divisionId.val(), domainId.val(), categoryId.val()];
-        commonAutoComplete(e, acUnit, unitId, text_val, unitList, "u_name", "u_id", function(val) {
+        var condition_fields = ["d_ids"];
+        var condition_values = [domainId.val()];
+        commonAutoComplete(e, acUnit, unitId, text_val, unitList, "unit_name", "unit_id", function(val) {
             onUnitAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -125,9 +134,9 @@ function PageControls() {
     act.keyup(function(e) {
         var text_val = act.val().trim();
         var actList = REPORT._acts;
-        var condition_fields = ["is_active", "div_id", "d_id", "cat_id", "u_id"];
-        var condition_values = [true, divisionId.val(), domainId.val(), categoryId.val(), unitId.val()];
-        commonAutoComplete(e, acAct, actId, text_val, actList, "act_name", "act_id", function(val) {
+        var condition_fields = ["d_id"];
+        var condition_values = [domainId.val()];
+        commonAutoComplete(e, acAct, actId, text_val, actList, "act", "act", function(val) {
             onActAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -135,29 +144,38 @@ function PageControls() {
     complianceTask.keyup(function(e) {
         var text_val = complianceTask.val().trim();
         var complianceTaskList = REPORT._compliance_task;
-        var condition_fields = ["is_active", "div_id", "d_id", "cat_id", "u_id", "act_id"];
-        var condition_values = [true, divisionId.val(), domainId.val(), categoryId.val(), unitId.val(), actId.val()];
-        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "com_task", "com_id", function(val) {
+        var condition_fields = ["d_id"];
+        var condition_values = [domainId.val()];
+        commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "compliance_id", function(val) {
             onComplianceTaskAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
 
     showButton.click(function() {
-        //if (REPORT.validate()) {
-            reportView.show();
-            showAnimation(reportView);
-            REPORT.fetchReportValues();
-            REPORT.showReportValues();
-        //}
+        var csv = false;
+        on_current_page = 1;
+        processSubmit(csv);
     });
 
     exportButton.click(function() {
-        if (REPORT.validate()) {
-            REPORT.fetchReportValues()
-            REPORT.exportReportValues();
-        }
+        var csv = true;
+        processSubmit(csv);
     });
 
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        f_count = 0;
+        on_current_page = 1;
+        createPageView(t_this._total_count);
+        var csv = false;
+        processSubmit(csv);
+    });
+}
+
+processSubmit = function(csv) {
+    if (REPORT.validate()) {
+        REPORT.fetchReportValues(csv);
+    }
 }
 
 clearElement = function(arr) {
@@ -195,7 +213,7 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domainId.val(val[0]);
     domain.focus();
     clearElement([division, divisionId, category, categoryId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
-    REPORT.fetchDivisionList(val[0]);
+    //REPORT.fetchDivisionList(val[0]);
 }
 
 onDivisionAutoCompleteSuccess = function(REPORT, val) {
@@ -203,7 +221,7 @@ onDivisionAutoCompleteSuccess = function(REPORT, val) {
     divisionId.val(val[0]);
     division.focus();
     clearElement([category, categoryId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
-    REPORT.fetchCategoryList(val[0], domainId.val());
+    //REPORT.fetchCategoryList(val[0], domainId.val());
 }
 
 onCategoryAutoCompleteSuccess = function(REPORT, val) {
@@ -211,7 +229,7 @@ onCategoryAutoCompleteSuccess = function(REPORT, val) {
     categoryId.val(val[0]);
     category.focus();
     clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
-    REPORT.fetchUnitList(val[0], divisionId.val(), domainId.val());
+    //REPORT.fetchUnitList(val[0], divisionId.val(), domainId.val());
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
@@ -219,7 +237,7 @@ onUnitAutoCompleteSuccess = function(REPORT, val) {
     unitId.val(val[0]);
     unit.focus();
     clearElement([act, actId, complianceTask, complianceTaskId]);
-    REPORT.fetchActList(val[0], categoryId.val(), divisionId.val(), domainId.val());
+    //REPORT.fetchActList(val[0], categoryId.val(), divisionId.val(), domainId.val());
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
@@ -227,7 +245,7 @@ onActAutoCompleteSuccess = function(REPORT, val) {
     actId.val(val[0]);
     act.focus();
     clearElement([complianceTask, complianceTaskId]);
-    REPORT.fetchComplianceaskList(val[0], unitId.val(), categoryId.val(), divisionId.val(), domainId.val());
+    //REPORT.fetchComplianceaskList(val[0], unitId.val(), categoryId.val(), divisionId.val(), domainId.val());
 }
 
 onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
@@ -236,7 +254,7 @@ onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
     complianceTask.focus();
 }
 
-StatusReportConsolidated = function() {
+StatutorySettingsUnitWise = function() {
     this._countries = [];
     this._business_group = [];
     this._entities = [];
@@ -249,9 +267,10 @@ StatusReportConsolidated = function() {
     this._frequencies = [];
     this._compliance_task_status = [];
     this._report_data = [];
+    this._total_count = [];
 }
 
-StatusReportConsolidated.prototype.loadSearch = function() {
+StatutorySettingsUnitWise.prototype.loadSearch = function() {
     reportView.hide();
     clearElement([country, countryId, businessGroup, businessGroupId, legalEntity, legalEntityId, domain, domainId, division, divisionId, category, categoryId, unit, unitId, act, actId, complianceTask, complianceTaskId]);
     complianceFrequency.empty();
@@ -259,118 +278,56 @@ StatusReportConsolidated.prototype.loadSearch = function() {
     this.fetchSearchList();
 };
 
-StatusReportConsolidated.prototype.fetchSearchList = function() {
+StatutorySettingsUnitWise.prototype.fetchSearchList = function() {
     t_this = this;
-    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"business_group":[{"b_g_id":1,"b_g_name":"RG Business Group","c_id":1,"is_active":true},{"b_g_id":2,"b_g_name":"ABC Business Group","c_id":1,"is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"b_g_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"b_g_id":1,"is_active":true}],"frequencies":[{"f_id":1,"f_name":"Periodical"},{"f_id":2,"f_name":"Review"},{"f_id":3,"f_name":"Flexi Review"},{"f_id":4,"f_name":"One Time"}],"user_type":[{"user_type_id":1,"user_type_name":"Assignee"},{"user_type_id":2,"user_type_name":"Concurrence"},{"user_type_id":3,"user_type_name":"Approval"}],"compliance_task_status":[{"comp_task_status_id":1,"comp_task_status":"Complied"},{"comp_task_status_id":2,"comp_task_status":"Delayed Compliances"},{"comp_task_status_id":3,"comp_task_status":"Inprogress"},{"comp_task_status_id":4,"comp_task_status":"Not Complied"}],"service_providers":[{"s_p_id":1,"s_p_name":"String","s_p_shrot":"short"}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._countries = object.countries;
-    t_this._business_group = object.business_group;
-    t_this._entities = object.entities;
-    t_this._frequencies = object.frequencies;
-    t_this._complianceTaskStatus = object.compliance_task_status;
 
-    t_this.renderComplianceFrequencyList(t_this._frequencies);
+    t_this._countries = client_mirror.getUserCountry();
+    t_this._business_group = client_mirror.getUserBusinessGroup();
+    t_this._entities = client_mirror.getUserLegalEntity();
+    t_this._complianceTaskStatus = ComplianceTaskStatuses; // common-functions.js
     t_this.renderComplianceTaskStatusList(t_this._complianceTaskStatus);
 };
 
-StatusReportConsolidated.prototype.fetchDomainList = function(le_id) {
+StatutorySettingsUnitWise.prototype.fetchDomainList = function(le_id) {
     t_this = this;
-    var jsondata = '{"domains":[{"d_id":1,"dom_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"dom_name":"Finance Law","le_id":2,"is_active":true},{"d_id":3,"dom_name":"Employee Law","le_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._domains = object.domains;
-};
-
-StatusReportConsolidated.prototype.fetchDivisionList = function(d_id) {
-    t_this = this;
-    var jsondata = '{"divisions":[{"div_id":1,"div_name":"Labour Law","d_id":1,"is_active":true},{"div_id":2,"div_name":"Finance Law","d_id":1,"is_active":true},{"div_id":3,"div_name":"Employee Law","d_id":2,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._divisions = object.divisions;
-};
-
-StatusReportConsolidated.prototype.fetchCategoryList = function(div_id, d_id) {
-    t_this = this;
-    var jsondata = '{"categorys":[{"cat_id":1,"cat_name":"RG Category one","d_id":1,"div_id":1,"is_active":true},{"cat_id":2,"cat_name":"RG Category two","d_id":1,"div_id":1,"is_active":true},{"cat_id":3,"cat_name":"ABC Category","d_id":2,"div_id":2,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._categorys = object.categorys;
-};
-
-StatusReportConsolidated.prototype.fetchUnitList = function(cat_id, div_id, d_id) {
-    t_this = this;
-    var jsondata = '{"units":[{"u_id":1,"u_name":"RG1034 - RG Madurai Unit","u_code":"RG1034","address":"12 RJ Complex, Main road, Madurai, 625022","div_id":1,"d_id":1,"cat_id":1,"is_active":true},{"u_id":2,"u_name":"RG1035 - RG Dindugal Unit","u_code":"RG1035","address":"10 RG Complex, Main road, Dindugal, 623020","div_id":1,"d_id":1,"cat_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._units = object.units;
-};
-
-StatusReportConsolidated.prototype.fetchActList = function(unit_id, cat_id, div_id, d_id) {
-    t_this = this;
-    var jsondata = '{"acts":[{"act_id":1,"act_name":"The Batteries Act","div_id":1,"d_id":1,"cat_id":1,"u_id":1,"is_active":true},{"act_id":2,"act_name":"Indian Partnership Act, 1932","div_id":1,"d_id":1,"cat_id":1,"u_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._acts = object.acts;
-};
-
-StatusReportConsolidated.prototype.fetchComplianceaskList = function(act_id, unit_id, cat_id, div_id, d_id) {
-    t_this = this;
-    var jsondata = '{"compliance_task":[{"com_id":1,"com_task":"FORM I - Half yearly returns Submission","div_id":1,"d_id":1,"cat_id":1,"u_id":1,"act_id":1,"is_active":true},{"com_id":2,"com_task":"FORM II - Registration","div_id":1,"d_id":1,"cat_id":1,"u_id":1,"act_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._compliance_task = object.compliance_task;
+    client_mirror.getStatutorySettingsUnitWiseFilters(parseInt(le_id), function(error, response) {
+        if (error == null) {
+            t_this._domains = response.domains;
+            t_this._units = response.units;
+            t_this._acts = response.acts;
+            t_this._compliance_task = response.compliances;
+            t_this._divisions = response.div_infos;
+            t_this._categorys = response.cat_infos;
+            t_this._frequencies = response.compliance_frequency;
+            t_this.renderComplianceFrequencyList(t_this._frequencies);
+        } else {
+            t_this.possibleFailures(error);
+        }
+    });
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-StatusReportConsolidated.prototype.renderComplianceFrequencyList = function(data) {
+StatutorySettingsUnitWise.prototype.renderComplianceFrequencyList = function(data) {
     t_this = this;
     complianceFrequency.empty();
     var complianceFrequencyList = '<option value="0">All</option>';
     $.each(data, function(i, e) {
-        complianceFrequencyList = complianceFrequencyList + '<option value="' + e.f_id + '"> ' + e.f_name + ' </option>';
+        complianceFrequencyList = complianceFrequencyList + '<option value="' + e.frequency_id + '"> ' + e.frequency + ' </option>';
     });
     complianceFrequency.html(complianceFrequencyList);
 };
 
-StatusReportConsolidated.prototype.renderComplianceTaskStatusList = function(data) {
+StatutorySettingsUnitWise.prototype.renderComplianceTaskStatusList = function(data) {
     t_this = this;
     complianceTaskStatus.empty();
-    var complianceTaskStatusList = '<option value="0">All</option>';
+    var complianceTaskStatusList = '<option value="All">All</option>';
     $.each(data, function(i, e) {
-        complianceTaskStatusList = complianceTaskStatusList + '<option value="' + e.comp_task_status_id + '"> ' + e.comp_task_status + ' </option>';
+        complianceTaskStatusList = complianceTaskStatusList + '<option value="' + e.name + '"> ' + e.name + ' </option>';
     });
     complianceTaskStatus.html(complianceTaskStatusList);
 };
 
-StatusReportConsolidated.prototype.validate = function() {
+StatutorySettingsUnitWise.prototype.validate = function() {
     if (country) {
         if (isNotEmpty(country, message.country_required) == false)
             return false;
@@ -441,14 +398,55 @@ showAnimation = function(element) {
         });
 }
 
-StatusReportConsolidated.prototype.fetchReportValues = function() {
+StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv) {
     t_this = this;
-    var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":1,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Notifications","frequency":"On Occurrence","due_date":"","task_status":"Not Opted","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Praveen","due_date":"30-Jan-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":2,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Annual Returns","frequency":"Periodical","due_date":"","task_status":"Assigned","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":3,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Notifications","frequency":"On Occurrence","due_date":"","task_status":"Not Opted","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Praveen","due_date":"30-Jan-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":4,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Notifications","frequency":"On Occurrence","due_date":"","task_status":"Not Opted","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Praveen","due_date":"30-Jan-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]}]}';
+    /*var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":1,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Notifications","frequency":"On Occurrence","due_date":"","task_status":"Not Opted","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Praveen","due_date":"30-Jan-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":2,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Annual Returns","frequency":"Periodical","due_date":"","task_status":"Assigned","doc_list":[{"doc_name":"Document 2","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":3,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Notifications","frequency":"On Occurrence","due_date":"","task_status":"Not Opted","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Praveen","due_date":"30-Jan-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"comp_id":4,"u_name":"Unit: RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","comp_task":"Notifications","frequency":"On Occurrence","due_date":"","task_status":"Not Opted","doc_list":[{"doc_name":"Document 1","doc_url":"http://localhost:8083/statutory-settings-unit-wise-report"}],"upcoming_dates":[{"user_name":"Mr. Praveen","due_date":"30-Jan-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Apr-2017"},{"user_name":"Mr. Ramkumar","due_date":"31-Oct-2017"}]}]}';
     var object = jQuery.parseJSON(jsondata);
-    t_this._report_data = object.data_lists;
+    t_this._report_data = object.data_lists;*/
+
+    var c_id = parseInt(countryId.val());
+    var bg_id = parseInt(businessGroupId.val());
+    if (!bg_id) bg_id = null
+    var le_id = parseInt(legalEntityId.val());
+    var d_id = parseInt(domainId.val());
+    var div_id = parseInt(divisionId.val());
+    if (!div_id) div_id = null
+    var cat_id = parseInt(categoryId.val());
+    if (!cat_id) cat_id = null
+    var u_id = parseInt(unitId.val());
+    if (!u_id) u_id = null
+    var act = actId.val();
+    if (!act) act = null
+    var compliance_task_id = parseInt(complianceTaskId.val());
+    if (!compliance_task_id) compliance_task_id = null
+    var comp_fre_id = parseInt(complianceFrequency.val());
+    var comp_task_status_id = complianceTaskStatus.val();
+
+    var t_count = parseInt(ItemsPerPage.val());
+    if (on_current_page == 1) { f_count = 0 } else { f_count = (on_current_page - 1) * t_count; }
+
+    client_mirror.getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id,
+        comp_fre_id, comp_task_status_id, f_count, t_count, csv,
+        function(error, response) {
+            if (error == null) {
+                t_this._report_data = response.statutory_settings_unit_Wise_list;
+                t_this._total_count = response.total_count;
+                if (csv == false) {
+                    reportView.show();
+                    showAnimation(reportView);
+                    REPORT.showReportValues();
+                    if (f_count == 0)
+                        createPageView(t_this._total_count);
+                } else {
+                    REPORT.exportReportValues();
+                }
+            } else {
+                t_this.possibleFailures(error);
+            }
+        });
 };
 
-StatusReportConsolidated.prototype.showReportValues = function() {
+StatutorySettingsUnitWise.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
     clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
@@ -457,59 +455,113 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     domainName.html(domain.val());
     var j = 0;
     reportTableTbody.find('tr').remove();
-    var unitname = "";
+    var unitId = "";
     var actname = "";
+    var complianceId = "";
+    var tree = "";
     $.each(data, function(k, v) {
-        j = j + 1;
-        if (unitname != v.u_name) {
+        if (unitId != v.unit_id) {
             var cloneone = $('#template #report-table .row-one').clone();
-            $('.unit-name', cloneone).text(v.u_name);
+            $('.unit-name', cloneone).text(v.unit);
             reportTableTbody.append(cloneone);
-            unitname = v.u_name;
+            unitId = v.unit_id;
         }
 
-        if (actname != v.l_name) {
+        if (actname != v.act_name) {
             var clonetwo = $('#template #report-table .row-two').clone();
-            $('.act-name', clonetwo).text(v.l_name);
+            $('.act-name', clonetwo).text(v.act_name);
             reportTableTbody.append(clonetwo);
-            actname = v.l_name;
+            actname = v.act_name;
         }
+        if (complianceId != v.compliance_id) {
+            j = j + 1;
+            var clonethree = $('#template #report-table .row-three').clone();
+            $('.sno', clonethree).text(j);
+            $('.compliance-task', clonethree).text(v.compliance_task);
+            $('.frequency', clonethree).text(v.frequency);
+            $('.due-date', clonethree).text(v.due_date);
+            $('.compliance-task-status', clonethree).text(v.task_status);
+            /*if (v.doc_list.length > 0) {
+                $.each(v.doc_list, function(k1, v1) {
+                    $('.uploaded-document a', clonethree).text(v1.doc_name).attr("href", v1.doc_url);
+                });
+            } else {
+                $('.uploaded-document', clonethree).text('-');
+            }*/
 
-        var clonethree = $('#template #report-table .row-three').clone();
-        $('.sno', clonethree).text(j);
-        $('.compliance-task', clonethree).text(v.compliance_task);
-        $('.frequency', clonethree).text(v.frequency);
-        $('.due-date', clonethree).text(v.due_date);
-        $('.compliance-task-status', clonethree).text(v.task_status);
-        if (v.doc_list.length > 0) {
-            $.each(v.doc_list, function(k1, v1) {
-                $('.uploaded-document a', clonethree).text(v1.doc_name).attr("href", v1.doc_url);
-            });
+            if (v.document_name != "")
+                $('.uploaded-document', clonethree).text(v.document_name);
+            else
+                $('.uploaded-document', clonethree).text('-');
+            $(clonethree).attr("id", "tree" + v.compliance_id);
+            reportTableTbody.append(clonethree);
+            complianceId = v.compliance_id;
         } else {
-            $('.uploaded-document', clonethree).text('-');
+            if (tree == v.compliance_id) {
+                var clonefive = $('#template #report-table .row-five').clone();
+                $('.user-name', clonefive).text(v.user_name);
+                $('.due-date', clonefive).text(v.due_date);
+                $('.tree' + v.compliance_id + ' .tree-body').append(clonefive);
+            } else {
+                var clonefour = $('#template #report-table .row-four').clone();
+                $(clonefour).addClass("tree" + v.compliance_id);
+                $('.user-name', clonefour).text(v.user_name);
+                $('.due-date', clonefour).text(v.due_date);
+                reportTableTbody.append(clonefour);
+                tree = v.compliance_id
+            }
+            complianceId = v.compliance_id;
         }
-        reportTableTbody.append(clonethree);
 
-        var clonefour = $('#template #report-table .row-four').clone();
-        $.each(v.upcoming_dates, function(k2, v2) {
-
-            var clonefive = $('#template #report-table .row-five').clone();
-            $('.user-name', clonefive).text(v2.user_name);
-            $('.due-date', clonefive).text(v2.due_date);
-
-            $('.tree-row', clonefour).append(clonefive);
-        });
-        reportTableTbody.append(clonefour);
-        
     });
-    totalRecord.html(j);
+    showPagePan(f_count, j, t_this._total_count);
 };
 
-StatusReportConsolidated.prototype.exportReportValues = function() {
+treeShowHide = function(e, tree) {
+    if ($('.' + tree)) {
+        if ($('.' + tree).is(":visible") == true)
+            $('.' + tree).hide();
+        else
+            $('.' + tree).show();
+    }
+};
+
+showPagePan = function(start, end, total) {
+    var firstCount = parseInt(start) + 1;
+    var showText = 'Showing ' + firstCount + ' to ' + end + ' of ' + total + ' entries ';
+    CompliacneCount.text(showText);
+    PaginationView.show();
+};
+
+hidePagePan = function() {
+    CompliacneCount.text('');
+    PaginationView.hide();
+}
+
+createPageView = function(total_records) {
+    perPage = parseInt(ItemsPerPage.val());
+    Pagination.empty();
+    Pagination.removeData('twbs-pagination');
+    Pagination.unbind('page');
+
+    Pagination.twbsPagination({
+        totalPages: Math.ceil(total_records / perPage),
+        visiblePages: visiblePageCount,
+        onPageClick: function(event, page) {
+            cPage = parseInt(page);
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
+                processSubmit();
+            }
+        }
+    });
+};
+
+StatutorySettingsUnitWise.prototype.exportReportValues = function() {
     alert('export');
 };
 
-StatusReportConsolidated.prototype.possibleFailures = function(error) {
+StatutorySettingsUnitWise.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
         this.displayMessage("Domain name exists");
     } else {
@@ -517,9 +569,10 @@ StatusReportConsolidated.prototype.possibleFailures = function(error) {
     }
 };
 
-REPORT = new StatusReportConsolidated();
+REPORT = new StatutorySettingsUnitWise();
 
 $(document).ready(function() {
     PageControls();
     REPORT.loadSearch();
+    loadItemsPerPage();
 });

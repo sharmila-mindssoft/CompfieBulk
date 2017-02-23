@@ -89,7 +89,6 @@
                                         <center>
                                             <div class="form-group m-b-0">
                                                 <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button"> Show </button>
-                                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button"> Export </button>
                                             </div>
                                         </center>
                                     </div>
@@ -98,13 +97,12 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="compliance_animation">
                         <div id="report-view" style="display: none;">
                             <div class="card-box details">
                                 <div class="table-responsive">
                                     <div class="col-sm-12">
-                                        <div class="col-sm-12 text-center"><img class="rpt-logo" id="client-logo" ></div>
+                                        <div class="col-sm-12 text-center"><img class="rpt-logo" id="client-logo"></div>
                                         <div class="col-sm-12 text-center">
                                             <h4>Domain Score Card</h4></div>
                                         <div class="col-sm-6 text-center">
@@ -124,7 +122,6 @@
                                             </tr>
                                         </thead>
                                         <tbody id="report-table-tbody">
-                                            
                                         </tbody>
                                     </table>
                                     <div class="domain-table-view" style="display: none;">
@@ -149,7 +146,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="report-table-tbody-new">
-                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -167,7 +163,9 @@
     <table id="report-table">
         <tr class="report-row">
             <td class="sno"></td>
-            <td><a class="labour-view c-pointer domain-name"></a></td>
+            <td>
+                <a class="labour-view c-pointer domain-name"></a>
+            </td>
             <td class="text-center assigned"></td>
             <td class="text-center un-assigned"></td>
             <td class="text-center not-opted"></td>

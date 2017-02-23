@@ -20,7 +20,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Widgets ---------------------------------------------------------------------
     (
         "/home",
-        "files/client/home/home.html",
+        "files/client/widgets/widgets.html",
         None, {}
     ),
     # Welcome ---------------------------------------------------------------------
@@ -38,7 +38,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Master ---------------------------------------------------------------------
     (
         "/service-provider",
-        "files/client/service-provider/service_provider_list.html",
+        "files/client/service-provider/service_provider.html",
         None, {}
     ),
     (
@@ -48,12 +48,17 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/client-user-management",
-        "files/client/client-user-management/client-user-management.html",
+        "files/client/client-user-management/client_user_management.html",
         None, {}
     ),
     (
         "/unit-closure",
         "files/client/unit-closure/unit_closure.html",
+        None, {}
+    ),
+    (
+        r"/userregistration/([a-zA-Z-0-9]+)/([a-zA-Z-0-9]+)",
+        "files/client/login/user-create-login-details.html",
         None, {}
     ),
     # transactions ---------------------------------------------------------------------
@@ -69,12 +74,12 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/assign-compliance",
-        "files/client/assign-compliance/assigncompliance.html",
+        "files/client/assign-compliance/assign-compliance.html",
         None, {}
     ),
     (
         "/reassign-compliance",
-        "files/client/reassign-compliance/reassigncompliance.html",
+        "files/client/reassign-compliance/reassign-compliance.html",
         None, {}
     ),
     (
@@ -235,7 +240,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Message ---------------------------------------------------------------------
     (
         "/message",
-        "files/client/message/message.html",
+        "files/client/messages/messages.html",
         None, {}
     )
 ]

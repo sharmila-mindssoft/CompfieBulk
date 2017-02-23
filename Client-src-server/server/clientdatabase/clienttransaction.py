@@ -62,7 +62,8 @@ __all__ = [
     "update_new_statutory_settings_lock",
     "total_compliance_for_units",
     "get_clien_users_by_unit_and_domain",
-    "get_approve_level"
+    "get_approve_level",
+    "get_all_frequency"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -280,7 +281,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
 def return_compliance_for_statutory_settings(
     db, unit_ids, domain_id, f_id, from_count, to_count
 ):
-    q = "select count(t1.compliance_id)ccount from tbl_client_compliances as t1 " + \
+    q = "select count(distinct t1.compliance_id)ccount from tbl_client_compliances as t1 " + \
         " where find_in_set(t1.unit_id, %s) and t1.domain_id = %s"
     row = db.select_one(q, [",".join([str(x) for x in unit_ids]), domain_id])
     if row :
@@ -459,8 +460,8 @@ def update_statutory_settings(db, data, session_user):
             client_compliance_id, le_id,
             unit_id, domain_id,
             compliance_id,
-            statutory_opted_status, not_applicable_remarks,
-            opted_status, remarks,
+            statutory_opted_status, str(not_applicable_remarks),
+            opted_status, str(remarks),
             int(session_user), str(updated_on), 0,
             1, int(session_user), updated_on, 0
         )
@@ -486,7 +487,7 @@ def update_statutory_settings(db, data, session_user):
             " A.submitted_by = %s , A.submitted_on = %s " + \
             " where A.unit_id = %s and A.domain_id = %s "
 
-        print q
+        # print q
         for u in unit_ids :
             db.execute(q, [session_user, updated_on, u, domain_id])
 
@@ -524,7 +525,6 @@ def execute_bulk_insert(db, value_list, s_status):
     db.on_duplicate_key_update(
         table, ",".join(column), value_list, update_column
     )
-
 
 def update_new_statutory_settings(db, unit_id, domain_id, user_id):
     q = "Update tbl_client_statutories set updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"
@@ -737,10 +737,11 @@ def total_compliance_for_units(db, unit_ids, domain_id):
 
 
 def get_assign_compliance_statutories_for_units(
-    db, sunit_ids, domain_id, session_user, from_count, to_count
+    db, sunit_ids, domain_id, sf_ids, session_user, from_count, to_count
 ):
 
     unit_ids = ",".join([str(x) for x in sunit_ids])
+    f_ids = ",".join([str(y) for y in sf_ids])
     if session_user == get_admin_id(db):
         session_user = '%'
 
@@ -757,6 +758,7 @@ def get_assign_compliance_statutories_for_units(
         " WHERE " + \
         " find_in_set(A.unit_id, %s) " + \
         " AND A.domain_id = %s " + \
+        " AND find_in_set(C.frequency_id, %s) " + \
         " AND A.compliance_opted_status = 1 AND A.is_submitted = 1 " + \
         " AND C.is_active = 1 " + \
         " AND AC.compliance_id is null " + \
@@ -765,7 +767,7 @@ def get_assign_compliance_statutories_for_units(
         " '>>',  - 1) , A.compliance_id  "
 
     qry_applicable_val = [
-        unit_ids, domain_id
+        unit_ids, domain_id, f_ids
     ]
 
     # compliance info for the selected units and domain
@@ -797,6 +799,7 @@ def get_assign_compliance_statutories_for_units(
         " and t2.unit_id = AC.unit_id " + \
         " WHERE find_in_set(t2.unit_id, %s) " + \
         " AND t2.domain_id = %s " + \
+        " AND find_in_set(t3.frequency_id, %s) " + \
         " AND t2.compliance_opted_status = 1 AND t2.is_submitted = 1" + \
         " AND t3.is_active = 1 " + \
         " AND AC.compliance_id IS NULL " + \
@@ -811,6 +814,7 @@ def get_assign_compliance_statutories_for_units(
     rows = db.select_all(query, [
         unit_ids,
         domain_id,
+        f_ids,
         from_count,
         to_count
     ])
@@ -833,9 +837,12 @@ def get_assign_compliance_statutories_for_units(
         " FROM tbl_compliance_dates as t1 WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s"
 
     if len(sunit_ids) > 1 :
-        nrows = db.select_all(q, [unit_ids, domain_id])
-    else :
         nrows = []
+    else :
+        if (4 in sf_ids or 3 in sf_ids) :
+            nrows = db.select_all(q, [unit_ids, domain_id])
+        else :
+            nrows = []
 
     return return_assign_compliance_data(rows, applicable_units, nrows)
 
@@ -985,7 +992,7 @@ def save_assigned_compliance(db, request, session_user):
                 trigger_before, str(due_date), str(validity_date)
             ]
             if concurrence is not None:
-                value.append(concurrence)
+                value.extend([concurrence, int(session_user), created_on])
             value_list.append(tuple(value))
 
     # db.bulk_insert("tbl_assigned_compliances", columns, value_list)
@@ -993,6 +1000,8 @@ def save_assigned_compliance(db, request, session_user):
         "tbl_assign_compliances", ",".join(columns),
         value_list, update_column
     )
+
+
     # if new_unit_settings is not None:
     #     update_user_settings(db, new_unit_settings)
 
@@ -1027,6 +1036,7 @@ def save_assigned_compliance(db, request, session_user):
             legal_entity_id=le_id, unit_id=u
         )
 
+    print get_email_id_for_users(db, assignee)
     receiver = get_email_id_for_users(db, assignee)[1]
 
     notify_assign_compliance = threading.Thread(
@@ -1037,14 +1047,14 @@ def save_assigned_compliance(db, request, session_user):
     )
     notify_assign_compliance.start()
 
-    bg_task_start = threading.Thread(
-        target=self.start_new_task,
-        args=[
-            current_date.date(), country_id
-        ]
-    )
+    # bg_task_start = threading.Thread(
+    #     target=self.start_new_task,
+    #     args=[
+    #         current_date.date(), country_id
+    #     ]
+    # )
     # print "bg_task_start begin"
-    bg_task_start.start()
+    # bg_task_start.start()
     # self.start_new_task(current_date.date(), country_id)
 
     return clienttransactions.SaveAssignedComplianceSuccess()
@@ -2547,6 +2557,12 @@ def update_user_settings(db, new_units):
             db.bulk_insert(
                 tblUserCountries, country_columns, country_values_list
             )
+
+
+def get_all_frequency(db):
+    query = "SELECT frequency_id, frequency from tbl_compliance_frequency "
+    rows = db.select_all(query)
+    return return_get_review_settings_frequency(rows)
 
 
 def get_review_settings_frequency(db):

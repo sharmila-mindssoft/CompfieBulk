@@ -188,7 +188,7 @@ class CheckRegistrationToken(Request):
             "reset_token": self.reset_token,
         }
 
-class SaveRegistraion(Request):
+class SaveRegistration(Request):
     def __init__(self, token, username, password, captcha):
         self.token = token
         self.username = username
@@ -202,7 +202,7 @@ class SaveRegistraion(Request):
         username = data.get("uname")
         pword = data.get("pword")
         captcha = data.get("captcha")
-        return SaveRegistraion(token, username, pword, captcha)
+        return SaveRegistration(token, username, pword, captcha)
 
     def to_inner_structure(self):
         return {
@@ -231,7 +231,7 @@ def _init_Request_class_map():
     classes = [
         Login, ForgotPassword, ResetTokenValidation, ResetPassword,
         ChangePassword, Logout, UpdateUserProfile, CheckRegistrationToken,
-        SaveRegistraion, CheckUsername
+        SaveRegistration, CheckUsername
     ]
     class_map = {}
     for c in classes:
@@ -637,14 +637,14 @@ class CheckRegistrationTokenSuccess(Response):
         }
 
 
-class SaveRegistraionSuccess(Response):
+class SaveRegistrationSuccess(Response):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return SaveRegistraionSuccess()
+        return SaveRegistrationSuccess()
 
     def to_inner_structure(self):
         return {
@@ -699,7 +699,7 @@ def _init_Response_class_map():
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
         NotConfigured, LegalEntityNotAvailable, ContractNotYetStarted, UpdateUserProfileSuccess,
         CheckRegistrationTokenSuccess, InvalidCaptcha,
-        SaveRegistraionSuccess, CheckUsernameSuccess, UsernameAlreadyExists
+        SaveRegistrationSuccess, CheckUsernameSuccess, UsernameAlreadyExists
     ]
     class_map = {}
     for c in classes:
