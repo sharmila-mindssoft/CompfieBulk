@@ -3029,3 +3029,4 @@ class REASSIGN_COMPLIANCES(object):
             "v_date": self.v_date
 
         }
+        
