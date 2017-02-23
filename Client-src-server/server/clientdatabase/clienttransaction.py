@@ -63,7 +63,9 @@ __all__ = [
     "total_compliance_for_units",
     "get_clien_users_by_unit_and_domain",
     "get_approve_level",
-    "get_all_frequency"
+    "get_all_frequency",
+    "get_units_to_reassig",
+    "get_reassign_compliance_for_units",
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
