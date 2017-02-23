@@ -234,6 +234,7 @@ def get_compliance_status(
     param = [",".join([str(x) for x in country_ids]), ",".join([str(x) for x in domain_ids])]
     param.extend(where_qry_val)
     q = "%s %s %s" % (query, where_qry1, order)
+    print q % tuple(param)
     rows = db.select_all(q, param)
 
     return filter_ids, rows

@@ -73,7 +73,7 @@ def get_user_based_countries(db, user_id, user_category):
     param = []
     if user_category > 1 :
         query += " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id " + \
-            " INNER JOIN tbl_user_domains as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
+            " INNER JOIN tbl_user_legal_entities as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
             " where t3.user_id = %s Order by t1.country_name"
         param = [user_id]
 
@@ -97,10 +97,10 @@ def get_user_based_legal_entity(db, user_id, user_category):
         rows = db.select_all(q, None)
         domains = db.select_all(q1, None)
     else :
-        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+        q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
 
-        q1 += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+        q1 += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
 
         rows = db.select_all(q, [user_id])
@@ -132,7 +132,7 @@ def get_user_based_division(db, user_id, user_category):
     if user_category == 1 :
         rows = db.select_all(q, None)
     else :
-        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+        q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
         rows = db.select_all(q, [user_id])
 
@@ -153,7 +153,7 @@ def get_user_based_category(db, user_id, user_category):
     if user_category == 1 :
         rows = db.select_all(q, None)
     else :
-        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+        q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
         rows = db.select_all(q, [user_id])
 
