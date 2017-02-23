@@ -93,7 +93,6 @@ def get_service_provider_details_list(db):
     rows = db.get_data(
         tblServiceProviders, columns, condition, condition_val, order
     )
-    print rows
     return return_service_provider_details(rows)
 
 ############################################################################
