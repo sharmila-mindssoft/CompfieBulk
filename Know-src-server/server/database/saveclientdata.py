@@ -7,7 +7,6 @@ __all__ = [
     "SaveRegistrationData"
 ]
 
-
 class ClientdbConect(object):
     def __init__(self):
         self._k_db = None
