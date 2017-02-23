@@ -38,12 +38,10 @@ class CompanyManager(object) :
         self._token = None
         # self.get_token(ip, port)
         self._poll_url = "http://%s:%s/knowledge/group-server-list" % (ip, port)
-        print self._poll_url
         # print self._poll_url
         body = json.dumps(
             GetCompanyServerDetails().to_structure(), indent=2
         )
-        print body
         body = body.encode('base64')
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         body = key + body
@@ -56,7 +54,6 @@ class CompanyManager(object) :
             request_timeout=10
         )
         self._request_body = request
-        print request.body
         self._io_loop.add_callback(self._poll)
 
     def get_token(self, ip, port):
@@ -110,7 +107,6 @@ class CompanyManager(object) :
             try:
                 data = response.body[6:]
                 data = str(data).decode('base64')
-                print data
                 r = Response.parse_structure(
                     json.loads(data)
                 )
@@ -145,12 +141,10 @@ class CompanyManager(object) :
         return company_id
 
     def _get_company_id_from_url(self, url):
-        print url
         for company_id, company in self._servers.iteritems():
             if company.is_group is False :
                 continue
 
-            print company.short_url
             if company.short_url == url:
                 return company_id
         return 0
