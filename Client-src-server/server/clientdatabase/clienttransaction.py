@@ -2382,6 +2382,7 @@ def return_compliance_to_reassign(data):
         )
 
 
+
 def reassign_compliance(db, request, session_user):
     legal_entity_id = request.legal_entity_id
     reassigned_from = request.r_from
