@@ -529,6 +529,7 @@ def resave_registraion_token(db, client_id, email_id):
     #     condition = "client_id = %s and verification_type_id = %s"
     #     condition_val = [client_id, 1]
     #     db.delete(tblClientEmailVerification, condition, condition_val)
+    #
     #     return True
 
     short_name = get_short_name(db, client_id)
