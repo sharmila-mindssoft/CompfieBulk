@@ -215,7 +215,7 @@ function initClientMirror() {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
                     console.log(status)
-                        // redirect_login();
+                        redirect_login();
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);
@@ -227,7 +227,7 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
                     alert('Server connection not found');
-                    // redirect_login();
+                    redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
                 }
