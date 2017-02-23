@@ -18,7 +18,7 @@ function initClientMirror() {
 
     function parseJSON(data) {
         if (data == undefined)
-            redirect_login();
+            return data;
         else
             return JSON.parse(data);
     }
@@ -44,7 +44,7 @@ function initClientMirror() {
     //     window.sessionStorage["userInfo"] = toJSON(info);
     // }
     function clearSession() {
-        delete window.sessionStorage.userInfo;
+        // delete window.sessionStorage.userInfo;
         delete window.localStorage.shortName;
         delete window.sessionStorage.CLIENT_NOTIFICATION_COUNT;
         delete window.sessionStorage.CLIENT_REMINDER_COUNT;
@@ -136,7 +136,7 @@ function initClientMirror() {
         if (info != null) {
             return info.menu;
         } else {
-            login_url = '/login/' + window.localStorage.recent_short_name;
+            // alert(info);
             window.location.href = login_url;
         }
     }
@@ -196,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        alert(body.toSource());
+        //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -215,7 +215,7 @@ function initClientMirror() {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
                     console.log(status)
-                        // redirect_login();
+                        redirect_login();
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);
@@ -227,7 +227,7 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
                     alert('Server connection not found');
-                    // redirect_login();
+                    redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
                 }
@@ -969,7 +969,7 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-    // Work Flow Score Card End     
+    // Work Flow Score Card End
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -1794,7 +1794,6 @@ function initClientMirror() {
             }
         ];
         callerName = 'client_masters';
-        console.log(request)
         clientApiRequest(callerName, request, callback);
     }
 
@@ -2399,7 +2398,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    
+
     function getWidgetRiskChart(callback) {
         var request = [
             "GetRiskChart", {

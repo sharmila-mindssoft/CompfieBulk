@@ -668,13 +668,14 @@ def get_legal_entity_info(db, user_id, user_category_id):
     else :
         q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
             "t1.business_group_id, t1.country_id, t3.country_name, " + \
-            "t1.client_id, t1.business_group_id, t1.country_id, t3.country_name, " + \
+            "t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
             "inner join tbl_user_legal_entities as t2 on " + \
-            "t1.legal_entity_id = t1.legal_entity_id " + \
+            "t1.legal_entity_id = t2.legal_entity_id " + \
             "inner join tbl_countries t3 on t1.country_id = t3.country_id " + \
             "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
+
         rows = db.select_all(q, [user_id])
         # print "------------------ User ---------------"
     le_list = []
@@ -1947,6 +1948,8 @@ def get_users_forms(db, user_id, user_category):
             " on t1.user_group_id = t2.user_group_id " + \
             " where t2.user_id = %s"
         param = [user_id]
+    print q
+    print param
     rows = db.select_all(q, param)
     f_ids = []
     for r in rows :
@@ -1959,6 +1962,8 @@ def get_widget_rights(db, user_id, user_category):
     showCalendar = False
     showUserScore = False
     showDomainScore = False
+    print forms
+    print " \n"
     if 34 in forms :
         showDashboard = True
 
@@ -1980,6 +1985,8 @@ def get_widget_list(db):
 
 def get_user_widget_settings(db, user_id, user_category):
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
+    print "--- \n"
+    print showDashboard, showCalendar, showUserScore, showDomainScore
     q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
     rows = db.select_one(q, [user_id])
     data = []
