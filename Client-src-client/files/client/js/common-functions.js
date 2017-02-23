@@ -9,6 +9,12 @@ var UserTypes = jQuery.parseJSON(UserTypeString);
 var ComplianceTaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 
+var LEARRAYS = client_mirror.getSelectedLegalEntity();
+var LEIDS = [];
+$.each(LEARRAYS, function(key, value) {
+    LEIDS.push(value.le_id);
+});
+
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
         var Id = pageList[i];
@@ -270,6 +276,7 @@ function commonAutoComplete(
                     }else{
                         condition_result = (list_val[i][value] == condition_values[key]);
                     }
+
                     validation_results.push(
                         condition_result
                     )
@@ -283,13 +290,22 @@ function commonAutoComplete(
                     }
                 });
             }
-            if (~list_val[i][field_name].toLowerCase().indexOf(
-                    text_val.toLowerCase()
-                ) && validation_result)
-                suggestions.push([
-                    list_val[i][id_name],
-                    list_val[i][field_name]
-                ]);
+            if (list_val[i][field_name]!= null && (~list_val[i][field_name].toLowerCase().indexOf(
+                text_val.toLowerCase())) && validation_result){
+                var occur = -1;
+                for(var j=0;j<suggestions.length;j++){
+                    if(suggestions[j][1] == list_val[i][field_name]){
+                        occur = 1;
+                        break;
+                    }
+                }
+                if(occur < 0){
+                    suggestions.push([
+                        list_val[i][id_name],
+                        list_val[i][field_name]
+                    ]);
+                }
+            }
         }
         var str = '';
         for (var i in suggestions) {
@@ -470,4 +486,11 @@ function hypToUpperCamelCase(d) {
     a.push(c);
   }
   return a.join('');
+}
+
+function limits(str,num) {
+    if(str.length >= parseInt(num))
+        return str.substr(0, parseInt(num))+'...';
+    else
+        return str; 
 }

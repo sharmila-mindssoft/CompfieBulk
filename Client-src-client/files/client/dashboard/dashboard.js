@@ -102,6 +102,7 @@ function updateComplianceStatusChart(data_input) {
     $('.div-drilldown-container').hide();
     $('.chart-container').show();
     $('.graph-selections-bottom').show();
+    $('.div-assignee-wise-compliance').hide();
     currentYear = chartInput.getCurrentYear();
     chartYear = chartInput.getChartYear();
     range = chartInput.getRangeIndex();
@@ -136,6 +137,7 @@ function updateDrillDown(status, data, filterTypeName) {
   $('.graph-selections-bottom').hide();
   $('.div-drilldown-container').show();
   $('.btn-back').show();
+  $('.div-assignee-wise-compliance').hide();
   showDrillDownRecord(status, data, filterTypeName);
 }
 function updateEscalationDrillDown(data, year) {
@@ -143,6 +145,7 @@ function updateEscalationDrillDown(data, year) {
   $('.div-drilldown-container').show();
   $('.drilldown-container').show();
   $('.btn-back').show();
+  $('.div-assignee-wise-compliance').hide();
   showEscalationDrillDownRecord(data, year);
 }
 function updateNotCompliedDrillDown(status, data) {
@@ -159,6 +162,7 @@ function updateComplianceApplicabilityDrillDown(status, data, type) {
   $('.div-drilldown-container').show();
   $('.drilldown-container').show();
   $('.btn-back').show();
+  $('.div-assignee-wise-compliance').hide();
   showComplianceApplicabilityDrillDownRecord_set(data, type);
 }
 function showComplianceApplicabilityDrillDownRecord_set(data, type) {
@@ -166,6 +170,7 @@ function showComplianceApplicabilityDrillDownRecord_set(data, type) {
   $('.drilldown-title').text(GROUP_NAME + ' - ' + type + ' Compliances');
   // $('.table-thead-drilldown-list').empty();
   $('.drilldown-container').empty();
+  $('.div-assignee-wise-compliance').hide();
   //$('.escalation-drilldown-list .td-escalation').empty();
   showComplianceApplicabilityDrillDownRecord_headingList();
   showComplianceApplicabilityDrillDownRecord(data, type);
@@ -258,6 +263,7 @@ function showmorerecords() {
     $('.btn-back').on('click', function () {
       $('.chart-container').show();
       $('.div-drilldown-container').hide();
+      $('.div-assignee-wise-compliance').hide();
       loadTrendChart();
     });
     client_mirror.getTrendChartDrillDown(requestData, function (status, data) {
@@ -539,6 +545,7 @@ function notCompliedDrilldown(status, data) {
     $('.chart-container').hide();
     $('.div-drilldown-container').hide();
     $('.drilldown-container').hide();
+    $('.div-assignee-wise-compliance').hide();
     loadNotCompliedChart();
   });
   if (data == '') {
@@ -600,7 +607,7 @@ function notCompliedDrilldown(status, data) {
 }
 function showEscalationDrillDownRecord(data, year) {
   var filter_type = chartInput.getFilterType();
-  //$('.table-thead-drilldown-list').empty();
+  $('.div-assignee-wise-compliance').hide();
   $('.drilldown-container').empty();
   $('.escalation-drilldown-container').empty();
   $('.drilldown-title').text('Escalations of ' + GROUP_NAME + ' for the year ' + year);
@@ -862,7 +869,7 @@ function escalationDrilldownnotcomplied(status, data) {
 function escalationDrilldowndelayed(status, data) {
   if (data[status] == '') {
     $('#pagination').hide();
-    accordianTypedelayed('accordionD', 'accordion-toggle', 'accordion-delayed-content');
+    //accordianTypedelayed('accordionD', 'accordion-toggle', 'accordion-delayed-content');
   } else {
     $('#pagination').show();
   }
@@ -940,6 +947,7 @@ function updateTrendChartDrillDown(status, data, year) {
   $('.graph-selections-bottom').hide();
   $('.div-drilldown-container').show();
   $('.drilldown-container').show();
+  $('.div-assignee-wise-compliance').hide();
   $('.btn-back').show();
  
   showTrendChartDrillDownRecord(status, data, year);
@@ -1194,6 +1202,7 @@ function showDrillDownRecord(status, data, filterTypeName) {
   $(".chart-container").hide();
   $(".div-drilldown-container").show();
   $(".drilldown-container").show();
+  $('.div-assignee-wise-compliance').hide();
   //clear escalation data
   $('.escalation-drilldown-list .td-escalation').empty();
   var data = data.drill_down_data;
@@ -1457,6 +1466,7 @@ function updateAssigneeWiseComplianceFiltersList(data) {
   $('.chart-container').hide();
   $('.div-drilldown-container').show();
   $('.drilldown-container').show();
+
   // $('.popupoverlay').css('visibility', 'hidden');
   // $('.popupoverlay').css('opacity', '0');
   $('#pagination').hide();

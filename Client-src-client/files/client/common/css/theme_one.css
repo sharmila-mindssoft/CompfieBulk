@@ -1401,3 +1401,13 @@ div.DTS tbody tr.even {
 .panel-title td[data-toggle=collapse].collapsed:before {
   content: '\f055';
 }
+
+.selections, .chart-container, .drilldown-container, .btn-back, .btn-pie-chart, .btn-bar-chart {
+  display: none;
+}
+
+.division-filter, .category-filter, .unit-filter, 
+.legal-entity-filter, .bg-filter {
+  display: none;
+  min-width: 70%;
+}

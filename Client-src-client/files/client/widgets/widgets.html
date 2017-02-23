@@ -73,6 +73,58 @@ $(function() {
             </div>
         </li>
     </div>
+    <div class="user-score-card-templates">
+        <table class="table min-table highlight" cellspacing="0">
+            <thead>
+                <tr>
+                    <th width="40%">Role</th>
+                    <th class="text-center" width="20%">Assignee</th>
+                    <th class="text-center" width="20%">Concur</th>
+                    <th class="text-center" width="20%">Approve</th>
+                </tr>
+            </thead>
+            <tbody class="tbody-usc">
+            </tbody>
+        </table>
+        <tr class="usc-tr"> 
+            <td class="usc-role"></td>
+            <td class="text-center usc-assignee"></td>
+            <td class="text-center usc-concur"></td>
+            <td class="text-center usc-approve"></td>
+        </tr>            
+    </div>
+    <div class="domain-score-card-templates">
+        <select class="form-control input-sm m-b-5" style="">
+        </select>
+         <table class="table min-table highlight" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Domain</th>
+                    <th class="text-center">Assigned</th>
+                    <th class="text-center">Unassigned</th>
+                    <th class="text-center">Not&nbsp;Opted</th>
+                    <th class="text-center"></th>
+                </tr>
+            </thead>
+            <tbody class="tbody-dsc">
+            </tbody>
+        </table>
+        <tr class="dsc-tr">
+            <td class="dsc-domain"></td>
+            <td class="text-center dsc-assigned"></td>
+            <td class="text-center dsc-unassigned"></td>
+            <td class="text-center dsc-notopted"></td>
+            <td class="text-center font-bold dsc-subtotal"></td>
+        </tr>
+         <tr class="dsc-total">
+            <td ></td>
+            <td class="text-center dsc-total-assigned"></td>
+            <td class="text-center dsc-total-unassigned"></td>
+            <td class="text-center dsc-total-notopted"></td>
+            <td class="text-center font-bold dsc-grandtotal"></td>
+        </tr>
+
+    </div>
 </div>
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>

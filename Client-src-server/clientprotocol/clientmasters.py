@@ -93,93 +93,103 @@ class GetServiceProviders(Request):
     def to_inner_structure(self):
         return {
         }
-
+#============================================================================================
 class SaveServiceProvider(Request):
-    def __init__(self, service_provider_name, address, contract_from, contract_to, contact_person, contact_no):
+    def __init__(self, service_provider_name, short_name, contract_from, contract_to, contact_person, 
+    contact_no, mobile_no, email_id, address):
         self.service_provider_name = service_provider_name
-        self.address = address
+        self.short_name = short_name
         self.contract_from = contract_from
         self.contract_to = contract_to
         self.contact_person = contact_person
         self.contact_no = contact_no
+        self.mobile_no = mobile_no
+        self.email_id = email_id
+        self.address = address
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "s_name", "add", "c_from", "c_to",
-                "c_person", "c_no"
-            ]
+                "s_p_name", "s_p_short", "cont_from", "cont_to", "cont_person", "cont_no", "mob_no", "e_id", "address"
+                ]
         )
-        service_provider_name = data.get("s_name")
-        service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
-        address = data.get("add")
-        address = parse_structure_OptionalType_CustomTextType_250(address)
-        contract_from = data.get("c_from")
-        contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("c_to")
-        contract_to = parse_structure_CustomTextType_20(contract_to)
-        contact_person = data.get("c_person")
-        contact_person = parse_structure_CustomTextType_50(contact_person)
-        contact_no = data.get("c_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
+        service_provider_name = data.get("s_p_name")
+        short_name = data.get("s_p_short")
+        contract_from = data.get("cont_from")
+        contract_to = data.get("cont_to")
+        contact_person = data.get("cont_person")
+        contact_no = data.get("cont_no")
+        mobile_no = data.get("mob_no")
+        email_id = data.get("e_id")
+        address = data.get("address")
         return SaveServiceProvider(
-            service_provider_name, address, contract_from, contract_to, contact_person,
-            contact_no
+            service_provider_name, short_name, contract_from, contract_to, contact_person,
+            contact_no, mobile_no, email_id, address
         )
 
     def to_inner_structure(self):
         return {
-            "service_provider_name": to_structure_CustomTextType_50(self.service_provider_name),
-            "address": to_structure_OptionalType_CustomTextType_250(self.address),
-            "contract_from": to_structure_CustomTextType_20(self.contract_from),
-            "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "contact_person": to_structure_CustomTextType_50(self.contact_person),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
+            "service_provider_name": self.service_provider_name,
+            "short_name": self.short_name,
+            "contact_person": self.contact_person,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "contact_no": self.contact_no,
+            "mobile_no": self.mobile_no,
+            "email_id": self.email_id,
+            "address": self.address,
         }
-
+#============================================================================================
 class UpdateServiceProvider(Request):
-    def __init__(self, service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no):
+    def __init__(self, service_provider_id, service_provider_name, short_name, contract_from,
+    contract_to, contact_person, contact_no, mobile_no, email_id, address):
         self.service_provider_id = service_provider_id
         self.service_provider_name = service_provider_name
-        self.address = address
+        self.short_name = short_name
         self.contract_from = contract_from
         self.contract_to = contract_to
         self.contact_person = contact_person
         self.contact_no = contact_no
+        self.mobile_no = mobile_no
+        self.email_id = email_id
+        self.address = address
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-                "s_id", "s_name", "add", "c_from", "c_to", "c_person", "c_no"
+                "s_p_id", "s_p_name", "s_p_short", "cont_from", "cont_to", "cont_person", "cont_no", "mob_no", "e_id", "address"
             ]
         )
-        service_provider_id = data.get("s_id")
-        service_provider_id = parse_structure_UnsignedIntegerType_32(service_provider_id)
-        service_provider_name = data.get("s_name")
-        service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
-        address = data.get("add")
-        address = parse_structure_OptionalType_CustomTextType_250(address)
-        contract_from = data.get("c_from")
-        contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("c_to")
-        contract_to = parse_structure_CustomTextType_20(contract_to)
-        contact_person = data.get("c_person")
-        contact_person = parse_structure_CustomTextType_50(contact_person)
-        contact_no = data.get("c_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
-        return UpdateServiceProvider(service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no)
+        service_provider_id = data.get("s_p_id")
+        service_provider_name = data.get("s_p_name")
+        short_name = data.get("s_p_short")
+        contract_from = data.get("cont_from")
+        contract_to = data.get("cont_to")
+        contact_person = data.get("cont_person")
+        contact_no = data.get("cont_no")
+        mobile_no = data.get("mob_no")
+        email_id = data.get("e_id")
+        address = data.get("address")
+                
+        return UpdateServiceProvider(
+            service_provider_id, service_provider_name, short_name, contract_from, contract_to, contact_person,
+            contact_no, mobile_no, email_id, address
+        )
 
     def to_inner_structure(self):
         return {
-            "service_provider_id": to_structure_SignedIntegerType_8(self.service_provider_id),
-            "service_provider_name": to_structure_CustomTextType_50(self.service_provider_name),
-            "address": to_structure_CustomTextType_250(self.address),
-            "contract_from": to_structure_CustomTextType_20(self.contract_from),
-            "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "contact_person": to_structure_CustomTextType_50(self.contact_person),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
+            "service_provider_id": self.service_provider_id,
+            "service_provider_name": self.service_provider_name,
+            "short_name": self.short_name,
+            "contact_person": self.contact_person,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "contact_no": self.contact_no,
+            "mobile_no": self.mobile_no,
+            "email_id": self.email_id,
+            "address": self.address,
         }
-
+#============================================================================================
 class ChangeServiceProviderStatus(Request):
     def __init__(self, service_provider_id, is_active):
         self.service_provider_id = service_provider_id
@@ -199,6 +209,22 @@ class ChangeServiceProviderStatus(Request):
             "s_id": to_structure_SignedIntegerType_8(self.service_provider_id),
             "active": to_structure_Bool(self.is_active),
         }
+
+########################################################
+# Get User Management List
+class UserManagementPrerequisite(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UserManagementPrerequisite()
+
+    def to_inner_structure(self):
+        return {
+        }
+########################################################
 
 class GetUserPrivileges(Request):
     def __init__(self):
@@ -291,71 +317,68 @@ class GetClientUsers(Request):
     def to_inner_structure(self):
         return {
         }
-
+# -----------------------------------------------------------------------------------------------------------------
+# Save Client Users
 class SaveClientUser(Request):
-    def __init__(self, email_id, user_group_id, employee_name,
-        employee_code, contact_no, seating_unit_id, user_level,
-        country_ids, domain_ids, unit_ids, is_service_provider,
-        service_provider_id):
-        self.email_id = email_id
+    def __init__(self, user_category, user_group_id, email_id, employee_name,
+        employee_code, contact_no, mobile_no, user_level, seating_unit_id, 
+        is_service_provider, service_provider_id, user_domain_ids, user_unit_ids,
+        user_entity_ids):       
+        self.user_category = user_category
         self.user_group_id = user_group_id
+        self.email_id = email_id
         self.employee_name = employee_name
         self.employee_code = employee_code
         self.contact_no = contact_no
-        self.seating_unit_id = seating_unit_id
+        self.mobile_no = mobile_no
         self.user_level = user_level
-        self.country_ids = country_ids
-        self.domain_ids = domain_ids
-        self.unit_ids = unit_ids
+        self.seating_unit_id = seating_unit_id
         self.is_service_provider = is_service_provider
         self.service_provider_id = service_provider_id
+        self.user_domain_ids = user_domain_ids
+        self.user_unit_ids =user_unit_ids
+        self.user_entity_ids =user_entity_ids
 
     @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["email", "ug_id", "emp_n", "emp_c", "cn",
-            "s_u_id", "ul", "c_ids", "d_ids", "u_ids", "sp", "sp_id"])
-        email_id = data.get("email")
-        email_id = parse_structure_CustomTextType_100(email_id)
-        user_group_id = data.get("ug_id")
-        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
-        employee_name = data.get("emp_n")
-        employee_name = parse_structure_CustomTextType_50(employee_name)
-        employee_code = data.get("emp_c")
-        employee_code = parse_structure_OptionalType_CustomTextType_50(employee_code)
-        contact_no = data.get("cn")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
-        seating_unit_id = data.get("s_u_id")
-        seating_unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(seating_unit_id)
-        user_level = data.get("ul")
-        user_level = parse_structure_CustomIntegerType_1_10(user_level)
-        country_ids = data.get("c_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("d_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
-        unit_ids = data.get("u_ids")
-        unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
-        is_service_provider = data.get("sp")
-        is_service_provider = parse_structure_Bool(is_service_provider)
+    def parse_inner_structure(data):        
+        data = parse_dictionary(data, ["u_cat_id", "u_g_id", "email_id", "emp_name", "emp_code",
+        "cont_no", "mob_no", "u_level", "s_unit", "is_sp", "sp_id", "user_domain_ids", "user_unit_ids", "user_entity_ids"])
+        user_category = data.get("u_cat_id")
+        user_group_id = data.get("u_g_id")
+        email_id = data.get("email_id")
+        employee_name = data.get("emp_name")
+        employee_code = data.get("emp_code")
+        contact_no = data.get("cont_no")
+        mobile_no = data.get("mob_no")
+        user_level = data.get("u_level")
+        seating_unit_id = data.get("s_unit")
+        is_service_provider = data.get("is_sp")        
         service_provider_id = data.get("sp_id")
-        service_provider_id = parse_structure_OptionalType_UnsignedIntegerType_32(service_provider_id)
-        return SaveClientUser(email_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, user_level, country_ids, domain_ids, unit_ids, is_service_provider, service_provider_id)
+        user_domain_ids = data.get("user_domain_ids")
+        user_unit_ids = data.get("user_unit_ids")
+        user_entity_ids = data.get("user_entity_ids")
+        
+        return SaveClientUser(user_category, user_group_id, email_id, employee_name, employee_code, contact_no, mobile_no, user_level,
+                              seating_unit_id, is_service_provider, service_provider_id, user_domain_ids, user_unit_ids, user_entity_ids)
 
     def to_inner_structure(self):
         return {
-            "email_id": to_structure_CustomTextType_100(self.email_id),
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
-            "employee_name": to_structure_CustomTextType_50(self.employee_name),
-            "employee_code": to_structure_OptionalType_CustomTextType_50(self.employee_code),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
-            "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids),
-            "is_service_provider": to_structure_Bool(self.is_service_provider),
-            "service_provider_id": to_structure_OptionalType_UnsignedIntegerType_32(self.service_provider_id),
+            "user_category" : self.user_category,
+            "user_group_id" : self.user_group_id,
+            "email_id" : self.email_id,
+            "employee_name" : self.employee_name,
+            "employee_code" : self.employee_code,
+            "contact_no" : self.contact_no,
+            "mobile_no" : self.mobile_no,
+            "user_level" : self.user_level,
+            "seating_unit_id" : self.seating_unit_id,
+            "is_service_provider" : self.is_service_provider,
+            "service_provider_id" : self.service_provider_id,
+            "user_domain_ids" : self.user_domain_ids,
+            "user_unit_ids" : self.user_unit_ids,
+            "user_entity_ids" : self.user_entity_ids,
         }
-
+# --------------------------------------------------------------------------------------------------
 class UpdateClientUser(Request):
     def __init__(self, user_id, user_group_id, employee_name,
         employee_code, contact_no, seating_unit_id,
@@ -788,6 +811,7 @@ def _init_Request_class_map():
         ChangeUserPrivilegeStatus, GetClientUsers, SaveClientUser, UpdateClientUser,
         UpdateClientUserStatus, GetUnits, CloseUnit, GetAuditTrails,
         GetUnitClosureData, SaveUnitClosureData, GetUnitClosureUnitData,
+        UserManagementPrerequisite,
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
         GetUserProfile, UpdateUserProfile
@@ -835,12 +859,12 @@ class GetServiceProvidersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["service_providers"])
         service_providers = data.get("service_providers")
-        service_providers = parse_structure_VectorType_RecordType_core_ServiceProviderDetails(service_providers)
+        
         return GetServiceProvidersSuccess(service_providers)
 
     def to_inner_structure(self):
         return {
-            "service_providers": to_structure_VectorType_RecordType_core_ServiceProviderDetails(self.service_providers),
+            "service_providers": self.service_providers,
         }
 
 class SaveServiceProviderSuccess(Response):
@@ -855,7 +879,9 @@ class SaveServiceProviderSuccess(Response):
     def to_inner_structure(self):
         return {
         }
-
+#################################################################
+# Service Provider Short Name + Service Provider Name Exists
+#################################################################
 class ServiceProviderNameAlreadyExists(Response):
     def __init__(self):
         pass
@@ -907,7 +933,62 @@ class ChangeServiceProviderStatusSuccess(Response):
     def to_inner_structure(self):
         return {
         }
+##############################################################################
+# User Management Add - Prerequisite
+##############################################################################
+class GetUserManagementPrerequisiteSuccess(Response):
+    def __init__(self, user_category, user_group, business_group,
+                 legal_entity, group_division, group_category,
+                 legal_Domains, legal_units):
+        self.user_category = user_category
+        self.user_group = user_group
+        self.business_group = business_group
+        self.legal_entity = legal_entity
+        self.group_division = group_division
+        self.group_category = group_category
+        self.legal_Domains = legal_Domains
+        self.legal_units = legal_units
 
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["um_user_category", "um_user_group",
+                                       "um_business_group", "um_legal_entity",
+                                       "um_group_division", "um_group_category",
+                                       "um_legal_domain", "um_legal_units"])
+        user_category = data.get("um_user_category")
+        user_group = data.get("um_user_group")
+        business_group = data.get("um_business_group")
+        legal_entity = data.get("um_legal_entity")
+        group_division = data.get("um_group_division")
+        group_category = data.get("um_group_category")
+        legal_Domains = data.get("um_legal_domain")
+        legal_units = data.get("um_legal_units")
+
+        user_category = user_category
+        user_group = user_group
+        business_group = business_group
+        legal_entity = legal_entity
+        group_division = group_division
+        group_category = group_category
+        legal_Domains = legal_Domains
+        legal_units = legal_units
+        return GetUserManagementPrerequisiteSuccess(user_category, user_group,
+                                                    business_group, legal_entity,
+                                                    group_division, group_category,
+                                                    legal_Domains, legal_units)
+
+    def to_inner_structure(self):
+        return {
+            "um_user_category": self.user_category,
+            "um_user_group": self.user_group,
+            "um_business_group": self.business_group,
+            "um_legal_entity": self.legal_entity,
+            "um_group_division": self.group_division,
+            "um_group_category": self.group_category,
+            "um_legal_domain": self.legal_Domains,
+            "um_legal_units": self.legal_units
+        }
+##############################################################################
 class GetUserPrivilegesSuccess(Response):
     def __init__(self, forms, user_groups, user_category):
         self.forms = forms
@@ -1567,6 +1648,7 @@ def _init_Response_class_map():
         CannotPromoteServiceProvider, ReassignCompliancesBeforeDeactivate,
         CannotChangeStatusOfContractExpiredSP, CannotCloseUnit, GetUnitClosureUnitDataSuccess,
         GetUnitClosureDataSuccess, SaveUnitClosureSuccess, InvalidUnitId,
+        GetUserManagementPrerequisiteSuccess,
         GetServiceProviderDetailsFilterSuccess,
         GetServiceProviderDetailsReportSuccess, GetAuditTrailFilterSuccess,
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,

@@ -427,23 +427,23 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv) {
 
     client_mirror.getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id,
         comp_fre_id, comp_task_status_id, f_count, t_count, csv,
-    function(error, response) {
-        if (error == null) {
-            t_this._report_data = response.statutory_settings_unit_Wise_list;
-            t_this._total_count = response.total_count;
-            if (csv == false) {
-                reportView.show();
-                showAnimation(reportView);
-                REPORT.showReportValues();
-                if (f_count == 0)
-                    createPageView(t_this._total_count);
+        function(error, response) {
+            if (error == null) {
+                t_this._report_data = response.statutory_settings_unit_Wise_list;
+                t_this._total_count = response.total_count;
+                if (csv == false) {
+                    reportView.show();
+                    showAnimation(reportView);
+                    REPORT.showReportValues();
+                    if (f_count == 0)
+                        createPageView(t_this._total_count);
+                } else {
+                    REPORT.exportReportValues();
+                }
             } else {
-                REPORT.exportReportValues();
+                t_this.possibleFailures(error);
             }
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
+        });
 };
 
 StatutorySettingsUnitWise.prototype.showReportValues = function() {

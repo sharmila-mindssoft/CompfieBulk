@@ -1,5 +1,7 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/jquery-ui.css">
 <div class="content-page">
 <div class="content">
 <div class="container">
@@ -25,15 +27,15 @@
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="10-Jul-2016">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                                <input type="text" class="form-control input-sm from-date" id="from_date" placeholder="DD-MM-YYYY" tabindex="10" readonly="readonly">
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="20-Jul-2016">
-                                <i class="fa-1-2x form-control-feedback fa fa-calendar-check-o"></i>
+                                <input type="text" class="form-control input-sm to-date" id="to_date" placeholder="DD-MM-YYYY" tabindex="11" readonly="readonly">
+                                <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                     </div>
@@ -41,16 +43,20 @@
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" placeholder="Enter User">
+                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="4">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                 <input type="hidden" id="user-id" value="">
+                                 <div id="ac-user" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <center>
                             <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="6"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button" tabindex="7"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -58,26 +64,17 @@
                 </form>
                 </div>
                 </div>
-                <script type="text/javascript">
-                    function show_div() {
-                        $('.details').show();
-                        $('#compliance_animation')
-                          .removeClass().addClass('bounceInLeft animated')
-                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                          $(this).removeClass();
-                        });
-                    }
-                </script>
                 </div>
+
                 <div id="compliance_animation">
-                <div class="card-box details" style="display: none;">
-                <div class="table-responsive">
+                <div id="report-view" style="display: none;">
+                <div class="card-box">
+                <div class="table-responsive ">
                     <div class="col-sm-12">
-                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><img class="rpt-logo m-t-0 client-logo"></div>
                         <div class="col-sm-12 text-center"><h4>Login Trace</h4></div>
-                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
-                        <div class="col-sm-4 text-center"><h6>From Date : 10-Jul-2016</h6></div>
-                        <div class="col-sm-4 text-center"><h6>To Date : 20-Jul-2016</h6></div>
+                        <div class="col-sm-4 text-center"><h6>From Date : <span class="from-header"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>To Date : <span class="to-header"></span></h6></div>
                     </div>
                     <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
@@ -88,47 +85,55 @@
                                 <th width="20%">Info</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>18-Jul-2016 12:15</td>
-                                <td>Login</td>
-                                <td>Login Succeeded for User "Ragavan".[IP: 192.168.111.14]</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>16-Jul-2016 15:25</td>
-                                <td>Login</td>
-                                <td>Login Succeeded for User "Saravanan".[IP: 192.168.111.10]</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>15-Jul-2016 10:30</td>
-                                <td>Login</td>
-                                <td>Login failed. [IP: 192.168.111.55]</td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>14-Jul-2016 12:15</td>
-                                <td>Logout</td>
-                                <td>Logout Succeeded for User "Vinoth".[IP: 192.168.111.88]</td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>13-Jul-2016 15:25</td>
-                                <td>Login</td>
-                                <td>Login Succeeded for User "Vinoth".[IP: 192.168.111.88]</td>
-                            </tr>
-                        </tbody>
+                          <tbody id="report-table-tbody">
+
+                            </tbody>
                     </table>
-                    <p class="rpt-count m-b-0">Total : 5 record(s)</p>
+                    <table class="pagination-view default-display-none">
+                      <tr>
+                        <td>
+                          <span class="compliance_count"> </span>
+                          <span class="divider-view"> | </span>
+                          <span class="items-per-page">
+                          Show
+                          <select id="items_per_page">
+                          </select>
+                          entries
+                          </span>
+                        </td>
+                        <td style="width:200px;"></td>
+                        <td style="text-align:right;padding-right:10px;">
+                          <ul id="pagination-rpt"></ul>
+                        </td>
+                      </tr>
+                    </table>
+                </div>
                 </div>
             </div>
-            </div>
         </div>
-        <!-- end col -->
+        <!-- end col http://localhost:8083/home/usha/aparajitha-saas/Client-src-server/server/clientlogo/images-b0c75f5c2fb7407186e5db006164ff5c.jpeg -->
     </div>
 </div>
 </div>
 </div>
+<div id="template">
+    <table id="report-table">
+        <tr class="row-three">
+            <td class="sno"></td>
+            <td class="activity-date"></td>
+            <td class="form-name"></td>
+            <td class="form-action"></td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/login-trace/login_trace.js"></script>
+<script src="js/jquery-ui.js"></script>
 {% endblock %}

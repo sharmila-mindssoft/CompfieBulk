@@ -21,7 +21,7 @@ var legalEntityName = $("#legal-entity-name");
 var countryName = $("#country-name");
 var domainName = $("#domain-name");
 
-var reportTableTbody = $("#report-table-tbody");
+var statusDetails = $("#status-details");
 var template = $("#template");
 var reportTable = $("#report-table");
 var REPORT = null;
@@ -35,10 +35,12 @@ LEWiseScoreCard = function() {
 
 LEWiseScoreCard.prototype.fetchSearchList = function() {
     t_this = this;
-    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"is_active":true}]}';
+    /*var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._countries = object.countries;
-    t_this._entities = object.entities;
+    t_this._entities = object.entities;*/
+    t_this._countries = client_mirror.getUserCountry();
+    t_this._entities = client_mirror.getUserLegalEntity();
 };
 
 function PageControls() {
@@ -58,10 +60,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["is_active", "c_id"];
-        var condition_values = [true, countryId.val()];
+        var condition_fields = ["c_id"];
+        var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -78,21 +78,20 @@ function PageControls() {
     });
 
     showButton.click(function() {
-        if (REPORT.validate()) {
-            reportView.show();
-            taskDetails.hide();
-            showAnimation(reportView);
-            REPORT.fetchReportValues();
-            REPORT.showReportValues();
-        }
+        var csv = false;
+        processSubmit(csv);
     });
 
     exportButton.click(function() {
-        if (REPORT.validate()) {
-            REPORT.fetchReportValues();
-            REPORT.exportReportValues();
-        }
+        var csv = true;
+        processSubmit(csv);
     });
+}
+
+processSubmit = function(csv) {
+    if (REPORT.validate()) {
+        REPORT.fetchReportValues(csv);
+    }
 }
 
 clearElement = function(arr) {
@@ -132,13 +131,20 @@ LEWiseScoreCard.prototype.loadSearch = function() {
 
 LEWiseScoreCard.prototype.fetchDomainList = function(le_id) {
     t_this = this;
-    if(le_id != "") {
+    /*if(le_id != "") {
         var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":1,"is_active":true},{"d_id":3,"d_name":"Economic Law","le_id":1,"is_active":true}]}';
         var object = jQuery.parseJSON(jsondata);
         t_this._domains = object.domains;
     } else {
         displayMessage(message.legalentity_required);
-    }
+    }*/
+    client_mirror.getLEWiseScoreCardFilters(parseInt(le_id), function(error, response) {
+        if (error == null) {
+            t_this._domains = response.domains;
+        } else {
+            t_this.possibleFailures(error);
+        }
+    });
 };
 //country legalEntity domain
 LEWiseScoreCard.prototype.validate = function() {
@@ -176,11 +182,30 @@ showAnimation = function(element) {
         });
 }
 
-LEWiseScoreCard.prototype.fetchReportValues = function() {
+LEWiseScoreCard.prototype.fetchReportValues = function(csv) {
     t_this = this;
-    var jsondata = '{"data_lists":[{"c_id":1,"le_id":1,"dom_id":1,"inprogress_count":25,"inprogress_unit_wise":[{"unit_name":"RG1001 - Corporate Office","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"unit_name":"RG1002 - Regional Office","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"unit_name":"RG1004 - Branch Office","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"inprogress_user_wise":[{"user_name":"Sathish","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"user_name":"Arun","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"user_name":"Mani","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"completed_count":10,"completed_unit_wise":[{"unit_name":"RG1001 - Corporate Office","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"unit_name":"RG1002 - Regional Office","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"unit_name":"RG1004 - Branch Office","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"completed_user_wise":[{"user_name":"Sathish","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"user_name":"Arun","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"user_name":"Mani","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"overdue_count":15,"overdue_unit_wise":[{"unit_name":"RG1001 - Corporate Office","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"unit_name":"RG1002 - Regional Office","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"unit_name":"RG1004 - Branch Office","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"overdue_user_wise":[{"user_name":"Sathish","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"user_name":"Arun","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"user_name":"Mani","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}]}]}';
+    /*var jsondata = '{"data_lists":[{"c_id":1,"le_id":1,"dom_id":1,"inprogress_count":25,"inprogress_unit_wise":[{"unit_name":"RG1001 - Corporate Office","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"unit_name":"RG1002 - Regional Office","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"unit_name":"RG1004 - Branch Office","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"inprogress_user_wise":[{"user_name":"Sathish","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"user_name":"Arun","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"user_name":"Mani","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"completed_count":10,"completed_unit_wise":[{"unit_name":"RG1001 - Corporate Office","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"unit_name":"RG1002 - Regional Office","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"unit_name":"RG1004 - Branch Office","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"completed_user_wise":[{"user_name":"Sathish","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"user_name":"Arun","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"user_name":"Mani","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"overdue_count":15,"overdue_unit_wise":[{"unit_name":"RG1001 - Corporate Office","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"unit_name":"RG1002 - Regional Office","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"unit_name":"RG1004 - Branch Office","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"overdue_user_wise":[{"user_name":"Sathish","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"user_name":"Arun","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"user_name":"Mani","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}]}]}';
     var object = jQuery.parseJSON(jsondata);
-    t_this._report_data = object.data_lists;
+    t_this._report_data = object.data_lists;*/
+
+    var c_id = parseInt(countryId.val());
+    var le_id = parseInt(legalEntityId.val());
+    var d_id = parseInt(domainId.val());
+
+    client_mirror.getLEWiseScoreCard(c_id, le_id, d_id, csv, function(error, response) {
+        if (error == null) {
+            t_this._report_data = response.le_wise_score_card_list;
+            if (csv == false) {
+                reportView.show();
+                showAnimation(reportView);
+                REPORT.showReportValues();
+            } else {
+                REPORT.exportReportValues();
+            }
+        } else {
+            t_this.possibleFailures(error);
+        }
+    });
 };
 
 LEWiseScoreCard.prototype.showReportValues = function() {
@@ -190,13 +215,12 @@ LEWiseScoreCard.prototype.showReportValues = function() {
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     domainName.html(domain.val());
-    var total = 0;
     $.each(data, function(k, v) {
         $('.inprogress-count').text(v.inprogress_count);
         $('.completed-count').text(v.completed_count);
         $('.overdue-count').text(v.overdue_count);
-        total = parseInt(v.inprogress_count) + parseInt(v.completed_count) + parseInt(v.over_due_count);
-
+        var total = parseInt(v.inprogress_count) + parseInt(v.completed_count) + parseInt(v.overdue_count);
+        $('.total-count').html(total);
         $('.inprogress-unit-view').on('click', function() {
             t_this.inprogressUnitView(v.inprogress_unit_wise);
         });
@@ -218,84 +242,246 @@ LEWiseScoreCard.prototype.showReportValues = function() {
             t_this.overdueUserView(v.overdue_user_wise);
         });
     });
-    $('.total-count').html(total);
 };
 
 LEWiseScoreCard.prototype.inprogressUnitView = function(data) {
     t_this = this;
-    $('.task-name').html("Unit wise Inprogress Task Count");
-    $('.task-title').html("Unit");
-    t_this.renderReportDetails(data);
-};
-
-LEWiseScoreCard.prototype.inprogressUserView = function(data) {
-    t_this = this;
-    $('.task-name').html("User wise Inprogress Task Count");
-    $('.task-title').html("Users");
-    t_this.renderReportDetails(data);
-};
-
-LEWiseScoreCard.prototype.completedUnitView = function(data) {
-    t_this = this;
-    $('.task-name').html("Unit wise Completed Task Count");
-    $('.task-title').html("Unit");
-    t_this.renderReportDetails(data);
-};
-
-LEWiseScoreCard.prototype.completedUserView = function(data) {
-    t_this = this;
-    $('.task-name').html("User wise Completed Task Count");
-    $('.task-title').html("Users");
-    t_this.renderReportDetails(data);
-};
-
-LEWiseScoreCard.prototype.overdueUnitView = function(data) {
-    t_this = this;
-    $('.task-name').html("Unit wise Over due Task Count");
-    $('.task-title').html("Unit");
-    t_this.renderReportDetails(data);
-};
-
-LEWiseScoreCard.prototype.overdueUserView = function(data) {
-    t_this = this;
-    $('.task-name').html("User wise Over due Task Count");
-    $('.task-title').html("Users");
-    t_this.renderReportDetails(data);
-};
-
-LEWiseScoreCard.prototype.renderReportDetails = function(data) {
+    statusDetails.empty();
     taskDetails.show();
-    reportTableTbody.find('tr').remove();
+    $('.task-name').html("Unit wise Inprogress Task Count");
     var to_complete_total = 0;
     var to_concur_total = 0;
     var to_approve_total = 0;
     var grand_total = 0;
     var j =0;
+    var clone = $('#template #inprogress-unit-table').clone();
+    var name = "";
     $.each(data, function(k, v) {
-        var cloneone = $('#template #report-table .report-row').clone();
-        if(v.unit_name)
-            $('.task-row-title', cloneone).text(v.unit_name);
-        else
-            $('.task-row-title', cloneone).text(v.user_name);
-        $('.to-complete', cloneone).text(v.to_complete);
-        $('.to-concur', cloneone).text(v.to_concur);
-        $('.to-approve', cloneone).text(v.to_approve);
-        $('.total-task', cloneone).text(v.total_task);
-        reportTableTbody.append(cloneone);
+        var total_task = parseInt(v.to_complete) + parseInt(v.to_approve) + parseInt(v.to_concur)
+        if(name != "") {
+            var cloneone = $('.report-row', clone).last().clone();
+            $('.task-row-title', cloneone).text(v.unit);
+            $('.to-complete', cloneone).text(v.to_complete);
+            $('.to-concur', cloneone).text(v.to_concur);
+            $('.to-approve', cloneone).text(v.to_approve);
+            $('.total-task', cloneone).text(total_task);
+            $('.table-body', clone).append(cloneone);
+            name = name + v.unit;
+        } else {
+            $('.task-row-title', clone).text(v.unit);
+            $('.to-complete', clone).text(v.to_complete);
+            $('.to-concur', clone).text(v.to_concur);
+            $('.to-approve', clone).text(v.to_approve);
+            $('.total-task', clone).text(total_task);
+            name = name + v.unit;
+        }
         to_complete_total = to_complete_total + parseInt(v.to_complete);
         to_concur_total = to_concur_total + parseInt(v.to_concur);
         to_approve_total = to_approve_total + parseInt(v.to_approve);
-        grand_total = grand_total + parseInt(v.total_task);
+        grand_total = grand_total + total_task;
         j = j + 1;
     });
     if(j > 1) {
-        var clonetwo = $('#template #report-table .report-total-row').clone();
-        $('.to-complete-total', clonetwo).text(to_complete_total);
-        $('.to-concur-total', clonetwo).text(to_concur_total);
-        $('.to-approve-total', clonetwo).text(to_approve_total);
-        $('.grand-total', clonetwo).text(grand_total);
-        reportTableTbody.append(clonetwo);
+        $('.to-complete-total', clone).text(to_complete_total);
+        $('.to-concur-total', clone).text(to_concur_total);
+        $('.to-approve-total', clone).text(to_approve_total);
+        $('.grand-total', clone).text(grand_total);
+        $('.report-total-row', clone).attr("style", "");
     }
+    statusDetails.append(clone);
+};
+
+LEWiseScoreCard.prototype.inprogressUserView = function(data) {
+    t_this = this;
+    statusDetails.empty();
+    taskDetails.show();
+    $('.task-name').html("User wise Inprogress Task Count");
+    var to_complete_total = 0;
+    var to_concur_total = 0;
+    var to_approve_total = 0;
+    var grand_total = 0;
+    var j =0;
+    var clone = $('#template #inprogress-user-table').clone();
+    var name = "";
+    $.each(data, function(k, v) {
+        var total_task = parseInt(v.to_complete) + parseInt(v.to_approve) + parseInt(v.to_concur)
+        if(name != "") {
+            var cloneone = $('.report-row', clone).last().clone();
+            $('.task-row-title', cloneone).text(v.user_name);
+            $('.to-complete', cloneone).text(v.to_complete);
+            $('.to-concur', cloneone).text(v.to_concur);
+            $('.to-approve', cloneone).text(v.to_approve);
+            $('.total-task', cloneone).text(total_task);
+            $('.table-body', clone).append(cloneone);
+            name = name + v.user_name;
+        } else {
+            $('.task-row-title', clone).text(v.user_name);
+            $('.to-complete', clone).text(v.to_complete);
+            $('.to-concur', clone).text(v.to_concur);
+            $('.to-approve', clone).text(v.to_approve);
+            $('.total-task', clone).text(total_task);
+            name = name + v.user_name;
+        }
+        to_complete_total = to_complete_total + parseInt(v.to_complete);
+        to_concur_total = to_concur_total + parseInt(v.to_concur);
+        to_approve_total = to_approve_total + parseInt(v.to_approve);
+        grand_total = grand_total + total_task;
+        j = j + 1;
+    });
+    if(j > 1) {
+        $('.to-complete-total', clone).text(to_complete_total);
+        $('.to-concur-total', clone).text(to_concur_total);
+        $('.to-approve-total', clone).text(to_approve_total);
+        $('.grand-total', clone).text(grand_total);
+        $('.report-total-row', clone).attr("style", "");
+    }
+    statusDetails.append(clone);
+};
+
+LEWiseScoreCard.prototype.completedUnitView = function(data) {
+    t_this = this;
+    statusDetails.empty();
+    taskDetails.show();
+    $('.task-name').html("Unit wise Completed Task Count");
+    var delayed_count_total = 0;
+    var complied_count_total = 0;
+    var grand_total = 0;
+    var j =0;
+    var clone = $('#template #completed-unit-table').clone();
+    var name = "";
+    $.each(data, function(k, v) {
+        var total_task = parseInt(v.delayed_count) + parseInt(v.complied_count)
+        if(name != "") {
+            var cloneone = $('.report-row', clone).last().clone();
+            $('.task-row-title', cloneone).text(v.unit);
+            $('.delayed-count', cloneone).text(v.delayed_count);
+            $('.complied-count', cloneone).text(v.complied_count);
+            $('.total-task', cloneone).text(total_task);
+            $('.table-body', clone).append(cloneone);
+            name = name + v.unit;
+        } else {
+            $('.task-row-title', clone).text(v.unit);
+            $('.delayed-count', clone).text(v.delayed_count);
+            $('.complied-count', clone).text(v.complied_count);
+            $('.total-task', clone).text(total_task);
+            name = name + v.unit;
+        }
+        delayed_count_total = delayed_count_total + parseInt(v.delayed_count);
+        complied_count_total = complied_count_total + parseInt(v.complied_count);
+        grand_total = grand_total + total_task;
+        j = j + 1;
+    });
+    if(j > 1) {
+        $('.delayed-count-total', clone).text(delayed_count_total);
+        $('.complied-count-total', clone).text(complied_count_total);
+        $('.grand-total', clone).text(grand_total);
+        $('.report-total-row', clone).attr("style", "");
+    }
+    statusDetails.append(clone);
+};
+
+LEWiseScoreCard.prototype.completedUserView = function(data) {
+    t_this = this;
+    statusDetails.empty();
+    taskDetails.show();
+    $('.task-name').html("User wise Completed Task Count");
+    var delayed_count_total = 0;
+    var complied_count_total = 0;
+    var grand_total = 0;
+    var j =0;
+    var clone = $('#template #completed-user-table').clone();
+    var name = "";
+    $.each(data, function(k, v) {
+        var total_task = parseInt(v.delayed_count) + parseInt(v.complied_count)
+        if(name != "") {
+            var cloneone = $('.report-row', clone).last().clone();
+            $('.task-row-title', cloneone).text(v.user_name);
+            $('.delayed-count', cloneone).text(v.delayed_count);
+            $('.complied-count', cloneone).text(v.complied_count);
+            $('.total-task', cloneone).text(total_task);
+            $('.table-body', clone).append(cloneone);
+            name = name + v.user_name;
+        } else {
+            $('.task-row-title', clone).text(v.user_name);
+            $('.delayed-count', clone).text(v.delayed_count);
+            $('.complied-count', clone).text(v.complied_count);
+            $('.total-task', clone).text(total_task);
+            name = name + v.user_name;
+        }
+        delayed_count_total = delayed_count_total + parseInt(v.delayed_count);
+        complied_count_total = complied_count_total + parseInt(v.complied_count);
+        grand_total = grand_total + total_task;
+        j = j + 1;
+    });
+    if(j > 1) {
+        $('.delayed-count-total', clone).text(delayed_count_total);
+        $('.complied-count-total', clone).text(complied_count_total);
+        $('.grand-total', clone).text(grand_total);
+        $('.report-total-row', clone).attr("style", "");
+    }
+    statusDetails.append(clone);
+};
+
+LEWiseScoreCard.prototype.overdueUnitView = function(data) {
+    t_this = this;
+    statusDetails.empty();
+    taskDetails.show();
+    $('.task-name').html("Unit wise Overdue Task Count");
+    var overdue_total = 0;
+    var j =0;
+    var clone = $('#template #overdue-unit-table').clone();
+    var name = "";
+    $.each(data, function(k, v) {
+        if(name != "") {
+            var cloneone = $('.report-row', clone).last().clone();
+            $('.task-row-title', cloneone).text(v.unit);
+            $('.overdue-count', cloneone).text(v.overdue_count);
+            $('.table-body', clone).append(cloneone);
+            name = name + v.unit;
+        } else {
+            $('.task-row-title', clone).text(v.unit);
+            $('.overdue-count', clone).text(v.overdue_count);
+            name = name + v.unit;
+        }
+        overdue_total = overdue_total + parseInt(v.overdue_count);
+        j = j + 1;
+    });
+    if(j > 1) {
+        $('.overdue-count-total', clone).text(overdue_total);
+        $('.report-total-row', clone).attr("style", "");
+    }
+    statusDetails.append(clone);
+};
+
+LEWiseScoreCard.prototype.overdueUserView = function(data) {
+    t_this = this;
+    statusDetails.empty();
+    taskDetails.show();
+    $('.task-name').html("Completed wise Completed Task Count");
+    var overdue_total = 0;
+    var j =0;
+    var clone = $('#template #overdue-user-table').clone();
+    var name = "";
+    $.each(data, function(k, v) {
+        if(name != "") {
+            var cloneone = $('.report-row', clone).last().clone();
+            $('.task-row-title', cloneone).text(v.user_name);
+            $('.overdue-count', cloneone).text(v.overdue_count);
+            $('.table-body', clone).append(cloneone);
+            name = name + v.user_name;
+        } else {
+            $('.task-row-title', clone).text(v.user_name);
+            $('.overdue-count', clone).text(v.overdue_count);
+            name = name + v.user_name;
+        }
+        overdue_total = overdue_total + parseInt(v.overdue_count);
+        j = j + 1;
+    });
+    if(j > 1) {
+        $('.overdue-count-total', clone).text(overdue_total);
+        $('.report-total-row', clone).attr("style", "");
+    }
+    statusDetails.append(clone);
 };
 
 LEWiseScoreCard.prototype.exportReportValues = function() {
