@@ -236,6 +236,50 @@ def process_client_report_requests(request, db, session_user, session_category):
         )
         logger.logClientApi("GetDomainScoreCard", "process end")
         logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetLEWiseScoreCardFilters:
+
+        logger.logClientApi(
+            "GetLEWiseScoreCardFilters  - " + str(session_user),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_le_wise_score_card_filters(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetLEWiseScoreCardFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetLEWiseScoreCard:
+        logger.logClientApi(
+            "GetLEWiseScoreCard  - " + str(session_user), "process begin"
+        ) 
+        logger.logClientApi("------", str(time.time()))
+        result = get_le_wise_score_card(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetLEWiseScoreCard", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetWorkFlowScoreCardFilters:
+
+        logger.logClientApi(
+            "GetWorkFlowScoreCardFilters  - " + str(session_user),
+            "process begin"
+        )
+        logger.logClientApi("------", str(time.time()))
+        result = get_work_flow_score_card_filters(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetWorkFlowScoreCardFilters", "process end")
+        logger.logClientApi("------", str(time.time()))
+    elif type(request) is clientreport.GetWorkFlowScoreCard:
+        logger.logClientApi(
+            "GetWorkFlowScoreCard  - " + str(session_user), "process begin"
+        ) 
+        logger.logClientApi("------", str(time.time()))
+        result = get_work_flow_score_card(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetWorkFlowScoreCard", "process end")
+        logger.logClientApi("------", str(time.time()))
     elif type(request) is clientreport.GetLoginTrace:
         logger.logClientApi(
             "GetLoginTrace  - " + str(session_user), "process begin"
@@ -946,6 +990,61 @@ def get_domain_score_card(db, request, session_user, session_category):
             link=converter.FILE_DOWNLOAD_PATH
         )
 # Domain Score Card End
+
+
+# Legal Entity Wise Score Card Start
+def get_le_wise_score_card_filters(db, request, session_user, session_category):
+    domain_list = get_domains_for_user(db, session_user, session_category)
+
+    return clientreport.GetLEWiseScoreCardFiltersSuccess(
+        domains=domain_list
+    )
+
+def get_le_wise_score_card(db, request, session_user, session_category):
+    if not request.csv:
+        country_id = request.c_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
+
+        le_wise_score_card_list = report_le_wise_score_card(
+            db, country_id, legal_entity_id, domain_id, session_user
+        )
+        return clientreport.GetLEWiseScoreCardSuccess(le_wise_score_card_list)
+    else:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "Reassign"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+# Legal Entity Wise Score Card End
+
+
+# Work Flow Score Card Start
+def get_work_flow_score_card_filters(db, request, session_user, session_category):
+    domain_list = get_domains_for_user(db, session_user, session_category)
+    return clientreport.GetWorkFlowScoreCardFiltersSuccess(
+        domains=domain_list
+    )
+
+def get_work_flow_score_card(db, request, session_user, session_category):
+    if not request.csv:
+        country_id = request.c_id
+        legal_entity_id = request.legal_entity_id
+        domain_id = request.d_id
+
+        work_flow_score_card_list = report_work_flow_score_card(
+            db, country_id, legal_entity_id, domain_id, session_user
+        )
+        return clientreport.GetWorkFlowScoreCardSuccess(work_flow_score_card_list)
+    else:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "Reassign"
+        )
+        return clientreport.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+# Work Flow Score Card End
 
 def get_risk_report(db, request, session_user, session_category):
     country_id = request.country_id

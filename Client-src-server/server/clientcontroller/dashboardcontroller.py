@@ -75,7 +75,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     elif type(request) is dashboard.GetNotifications:
         logger.logClientApi("GetNotifications", "process begin")
         result = process_get_notifications(
-            db, request, session_user
+            db, request, session_user, session_category
         )
         logger.logClientApi("GetNotifications", "process end")
 
@@ -85,12 +85,6 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
             db, request, session_user
         )
         logger.logClientApi("UpdateNotificationStatus", "process end")
-
-    # elif type(request) is dashboard.GetAssigneewiseComplianesFilters:
-
-    #     result = process_assigneewise_compliances_filters(
-    #         db, request, session_user
-    #     )
 
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart:
         result = process_assigneewise_compliances(
@@ -122,7 +116,6 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         logger.logClientApi("CheckContractExpiration", "process end")
 
     return result
-
 
 def process_compliance_status_chart(db, request, session_user):
 
@@ -223,39 +216,23 @@ def process_compliance_applicability_drill_down(
         result_list
     )
 
-
-def process_get_notifications(db, request, session_user):
-    notifications = None
-    (
-        notification_count, reminder_count, escalation_count
-    ) = get_dashboard_notification_counts(
-        db,
-        session_user
-    )
-    to_count = RECORD_DISPLAY_COUNT
+def process_get_notifications(db, request, session_user, session_category):
     notification_type = request.notification_type
-    if notification_type == "Notification":
-        if notification_count == 0:
-            to_count = 30
-    elif notification_type == "Reminder":
-        if reminder_count == 0:
-            to_count = 30
-    elif notification_type == "Escalation":
-        if escalation_count == 0:
-            to_count = 30
-
-    notifications = get_notifications(
-        db, notification_type, request.start_count, to_count,
-        session_user
-    )
-    return dashboard.GetNotificationsSuccess(notifications=notifications)
-
+    total_count = get_dashboard_notification_counts(db, session_user, notification_type)
+    if request.notification_type == 1: # Reminders
+        reminders = get_reminders(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
+        return dashboard.GetRemindersSuccess(reminders, total_count)
+    elif request.notification_type == 3: # Escalations
+        escalations = get_escalations(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
+        return dashboard.GetEscalationsSuccess(escalations, total_count)
+    elif request.notification_type == 4: # Messages
+        messages = get_messages(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
+        return dashboard.GetMessagesSuccess(messages, total_count)
 
 def process_update_notification_status(db, request, session_user):
-    update_notification_status(
-        db, request.notification_id, request.has_read,
-        session_user
-    )
+    # if request.has_read == True:
+        # update_notification_status(db, request.notification_id, request.has_read, session_user)
+    notification_details = notification_details(db, request.notification_id, request.has_read, session_user)
     return dashboard.UpdateNotificationStatusSuccess()
 
 
@@ -389,6 +366,33 @@ def process_assigneewise_compliances_drilldown(
 # and escalation count
 ########################################################
 def check_contract_expiration(
+    db, request, session_user
+):
+    no_of_days_left = get_no_of_days_left_for_contract_expiration(
+        db
+    )
+    if no_of_days_left < 0:
+        no_of_days_left = 0
+    (
+        notification_count, reminder_count, escalation_count
+    ) = get_dashboard_notification_counts(
+        db,
+        session_user
+    )
+    show_popup, notification_text = need_to_display_deletion_popup(db)
+    return dashboard.CheckContractExpirationSuccesss(
+        no_of_days_left=no_of_days_left,
+        notification_count=notification_count,
+        reminder_count=reminder_count,
+        escalation_count=escalation_count,
+        show_popup=show_popup,
+        notification_text=notification_text
+    )
+
+########################################################
+#To get the messages selected legal entity in menu
+########################################################
+def process_get_messages(
     db, request, session_user
 ):
     no_of_days_left = get_no_of_days_left_for_contract_expiration(

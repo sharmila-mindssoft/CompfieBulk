@@ -34,7 +34,7 @@ def frame_compliance_status(data) :
     xaxis_name = "Countries"
     yaxis_name = "Total Compliances"
     xaxis = []
-    yaxis = ["Inprogress", "Complied", "Delayed Compliance", "Not Complied"]
+    yaxis = ["Complied", "Delayed Compliance ", "Inprogress", "Not Complied"]
     chartdata = []
     complied_data = []
     delayed_data = []
@@ -49,16 +49,15 @@ def frame_compliance_status(data) :
 
     chartdata.append({
         "name": yaxis[0],
-        "data": inprogress_data
-    })
-
-    chartdata.append({
-        "name": yaxis[1],
         "data": complied_data
     })
     chartdata.append({
-        "name": yaxis[2],
+        "name": yaxis[1],
         "data": delayed_data
+    })
+    chartdata.append({
+        "name": yaxis[2],
+        "data": inprogress_data
     })
     chartdata.append({
         "name": yaxis[3],
@@ -90,9 +89,9 @@ def get_escalation_count(db, le_ids, user_id, user_category):
         param = [",".join([str(x) for x in years]), user_id]
 
     rows = db.select_all(q, param)
-    return frame_escalation_count(rows)
+    return frame_escalation_count(rows, years)
 
-def frame_escalation_count(data):
+def frame_escalation_count(data, years):
     chart_title = "Escalation"
     xaxis_name = "Years"
     xaxis = []
@@ -102,22 +101,28 @@ def frame_escalation_count(data):
     delayed = []
     not_complied = []
 
-    for d in data :
-        year = str(d["chart_year"])
-        xaxis.append(year)
-        yaxis.append(year)
+    for y in years :
+        xaxis.append(str(y))
         delayed.append(
             {
-                "y": int(d["delay_count"]) if d["delay_count"] is not None else 0,
-                "year": d["chart_year"]
+                "y": 0,
+                "year": str(y)
             }
         )
         not_complied.append(
             {
-                "y": int(d["over_count"]) if d["over_count"] is not None else 0,
-                "year": d["chart_year"]
+                "y": 0,
+                "year": str(y)
             }
         )
+
+    for d in data :
+        y = str(d["chart_year"])
+        yaxis.append(y)
+        for idx, y1 in enumerate(years) :
+            if str(y) == str(y1) :
+                delayed[idx]["y"] += int(d["delay_count"]) if d["delay_count"] is not None else 0
+                not_complied[idx]["y"] += int(d["over_count"]) if d["over_count"] is not None else 0
 
     chartdata = []
     chartdata.append(

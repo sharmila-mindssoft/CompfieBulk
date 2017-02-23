@@ -55,46 +55,43 @@
 <script src="/js/datatables/jquery.datatables.init.js"></script> -->
 
 <script type="text/javascript">
-$(document).ready(function() {
-  //Tooltip jquery
-    $('[data-toggle="tooltip"]').tooltip();
+    $(document).ready(function() {
+        //Tooltip jquery
+        $('[data-toggle="tooltip"]').tooltip();
 
-    //-----------------------------//
+        //-----------------------------//
 
-    function testAnim(x) {
-      $('#animationSandbox')
-      .removeClass().addClass(x + ' animated')
-      .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-      $(this).removeClass();
-      });
-  };
+        function testAnim(x) {
+            $('#animationSandbox')
+                .removeClass().addClass(x + ' animated')
+                .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
+                    $(this).removeClass();
+                });
+        };
 
-    //Form Animation start
-    $('.js--triggerAnimation').click(function(e) {
-      e.preventDefault();
-      var anim = $('.js--animations').val();
-      testAnim(anim);
+        //Form Animation start
+        $('.js--triggerAnimation').click(function(e) {
+            e.preventDefault();
+            var anim = $('.js--animations').val();
+            testAnim(anim);
+        });
+
+        $('.js--animations').change(function() {
+            var anim = $(this).val();
+            testAnim(anim);
+        });
+
+        //setTimeout(function () {
+        //testAnim('fadeInDownBig');
+        //}, 1000);
+
+        //-----------------------------//
+
+        /*var pathName = $(location). attr("pathname");
+        if(pathName != "/home" && pathName != "/dashboard" ) ///dashboard/escalation
+          $(".content-page").css("margin-left", "0px");*/
+
+        $(".content-page").addClass('m-l-0');
+
     });
-
-    $('.js--animations').change(function(){
-      var anim = $(this).val();
-      testAnim(anim);
-    });
-
-    //setTimeout(function () {
-         //testAnim('fadeInDownBig');
-  //}, 1000);
-
-  //-----------------------------//
-
-  /*var pathName = $(location). attr("pathname");
-  if(pathName != "/home" && pathName != "/dashboard" ) ///dashboard/escalation
-    $(".content-page").css("margin-left", "0px");*/
-
-  $(".content-page").addClass('m-l-0');
-
-});
-
 </script>
-
-
