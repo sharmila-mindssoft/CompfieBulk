@@ -290,9 +290,12 @@ CREATE TABLE `tbl_users` (
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,
+  `address` varchar(500) DEFAULT NULL,
   `is_active` tinyint(4) DEFAULT '1',
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
+  `disabled_on` timestamp NULL DEFAULT NULL,
+  `reason` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   CONSTRAINT `category_fk2` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
