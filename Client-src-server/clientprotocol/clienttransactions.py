@@ -484,7 +484,7 @@ class SaveAssignedCompliance(Request):
         self, assignee, assignee_name,
         concurrence_person, concurrence_person_name,
         approval_person, approval_person_name,
-        compliances, legal_entity_id, domain_id,
+        compliances, legal_entity_id, domain_id,        
 
     ):
         self.assignee = assignee
@@ -916,6 +916,8 @@ class GetReassignComplianceFilters(Request):
         return {
             "le_id": self.legal_entity_id
         }
+
+
 
 class GetReAssignComplianceUnits(Request):
     def __init__(self, legal_entity_id, d_id, usr_id, user_type_id, unit_id):
