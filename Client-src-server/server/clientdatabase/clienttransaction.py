@@ -2394,7 +2394,6 @@ def reassign_compliance(db, request, session_user):
     created_on = get_date_time_in_date()
     reassigned_date = created_on.strftime("%Y-%m-%d")
     created_by = int(session_user)
-    
 
     # new_unit_settings = request.new_units
     compliance_names = []
@@ -2457,6 +2456,7 @@ def reassign_compliance(db, request, session_user):
 
         # if concurrence not in [None, "None", 0, "null", "NULL"]:
         #     update_assign_column.append("concurrence_person")
+        # 
         #     update_assign_val.append(concurrence)
 
         where_qry = " unit_id = %s AND compliance_id = %s "
@@ -2526,6 +2526,7 @@ def reassign_compliance(db, request, session_user):
     return clienttransactions.ReassignComplianceSuccess()
 
 
+# update_user_settings
 def update_user_settings(db, new_units):
     for n in new_units:
         user_id = n.user_id
