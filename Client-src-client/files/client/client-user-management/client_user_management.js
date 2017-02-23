@@ -446,11 +446,11 @@ userManagementPage.prototype.clearValues = function() {
     txtMobileNo1.val('');
     txtMobileNo2.val('');
 
-    ddlBusinessGroup.empty();
-    ddlLegalEntity.empty();
-    ddlDivision.empty();
-    ddlCategory.empty();
-    ddlDomain.empty();
+    // ddlBusinessGroup.empty();
+    // ddlLegalEntity.empty();
+    // ddlDivision.empty();
+    // ddlCategory.empty();
+    // ddlDomain.empty();
 
     legalEntity_ids = [];
     businessGroup_ids = [];
@@ -717,7 +717,7 @@ userManagementPage.prototype.validateMandatory = function() {
         return false;
     }
     if (ddlLegalEntity.val() == null) {
-        displayMessage("select legal entity");
+        displayMessage(message.legalentity_required);
         ddlLegalEntity.focus();
         return false;
     } else {}
