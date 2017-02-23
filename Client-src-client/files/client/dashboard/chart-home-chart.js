@@ -1143,11 +1143,11 @@ function initializeFilters() {
       loadCharts();
     }
   });
-  $('.common-filter .btn-go input').on('click', function () {
+  $('.btn-go input').on('click', function () {
     var chart_type = chartInput.getChartType();
     loadCharts();
   });
-  $('.specific-filter .btn-go input').on('click', function () {
+  $('.btn-go input').on('click', function () {
     loadCharts();
   });
   $('.btn-previous-year').on('click', function (event) {

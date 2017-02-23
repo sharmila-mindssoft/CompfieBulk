@@ -124,18 +124,13 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/service-provider-wise-compliance",
-        "files/client/service-provider-wise-compliance/serviceproviderwisecompliance.html",
-        None, {}
-    ),
-     (
-        "/user-wise-report",
-        "files/client/user-wise-report/user_wise_report.html",
+        "/service-provider-wise-report",
+        "files/client/service-provider-wise-report/service_provider_wise_report.html",
         None, {}
     ),
     (
-        "/user-wise-compliance",
-        "files/client/user-wise-compliance/user-wise-compliance.html",
+        "/user-wise-report",
+        "files/client/user-wise-report/user_wise_report.html",
         None, {}
     ),
     (
@@ -175,7 +170,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/risk-report",
-        "files/client/risk-report/risk-report.html",
+        "files/client/risk-report/risk_report.html",
         None, {}
     ),
     (
@@ -184,23 +179,23 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/statutory-notification-list",
-        "files/client/statutory-notification-list/statutory-notification-list.html",
+        "/statutory-notifications-list",
+        "files/client/statutory-notifications-list/statutory-notifications-list.html",
         None, {}
     ),
     (
         "/service-provider-details",
-        "files/client/service-provider-details/service-provider-details.html",
+        "files/client/service-provider-details/service_provider_details.html",
         None, {}
     ),
     (
-        "/audit-trail",
-        "files/client/audit-trail/audit-trail.html",
+        "/audit-trail-client",
+        "files/client/audit-trail-client/audit_trail_client.html",
         None, {}
     ),
     (
         "/login-trace",
-        "files/client/login-trace/login-trace.html",
+        "files/client/login-trace/login_trace.html",
         None, {}
     ),
     # My Accounts ---------------------------------------------------------------------

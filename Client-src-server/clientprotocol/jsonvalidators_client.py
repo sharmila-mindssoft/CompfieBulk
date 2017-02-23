@@ -408,7 +408,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        # print field_name, val
+        print field_name, val
         # print param, val, field_name
 
         if param is None:
