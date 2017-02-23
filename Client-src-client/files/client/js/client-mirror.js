@@ -18,7 +18,7 @@ function initClientMirror() {
 
     function parseJSON(data) {
         if (data == undefined)
-            redirect_login();
+            return data;
         else
             return JSON.parse(data);
     }
@@ -44,7 +44,7 @@ function initClientMirror() {
     //     window.sessionStorage["userInfo"] = toJSON(info);
     // }
     function clearSession() {
-        delete window.sessionStorage.userInfo;
+        // delete window.sessionStorage.userInfo;
         delete window.localStorage.shortName;
         delete window.sessionStorage.CLIENT_NOTIFICATION_COUNT;
         delete window.sessionStorage.CLIENT_REMINDER_COUNT;
@@ -136,7 +136,7 @@ function initClientMirror() {
         if (info != null) {
             return info.menu;
         } else {
-            login_url = '/login/' + window.localStorage.recent_short_name;
+            // alert(info);
             window.location.href = login_url;
         }
     }
@@ -969,7 +969,7 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-    // Work Flow Score Card End     
+    // Work Flow Score Card End
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -1797,7 +1797,6 @@ function initClientMirror() {
             }
         ];
         callerName = 'client_masters';
-        console.log(request)
         clientApiRequest(callerName, request, callback);
     }
 
@@ -2404,7 +2403,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    
+
     function getWidgetRiskChart(callback) {
         var request = [
             "GetRiskChart", {
@@ -2465,8 +2464,8 @@ function initClientMirror() {
         ];
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
-    }        
-    
+    }
+
     return {
         log: log,
         toJSON: toJSON,
