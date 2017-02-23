@@ -232,6 +232,7 @@ function persistNavBar() {
 
 }
 $(document).ready(function() {
+    console.log("NAV BAR");
     initializeNavBar();
     //persistNavBar();
 });

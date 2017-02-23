@@ -55,6 +55,7 @@ function initClientMirror() {
 
     function getUserInfo() {
         var info = window.sessionStorage.userInfo;
+        console.log(info)
         user = parseJSON(info);
         return user;
     }
@@ -136,7 +137,7 @@ function initClientMirror() {
         if (info != null) {
             return info.menu;
         } else {
-            login_url = '/login/' + window.localStorage.recent_short_name;
+            // alert(info);
             window.location.href = login_url;
         }
     }
@@ -969,7 +970,7 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-    // Work Flow Score Card End     
+    // Work Flow Score Card End
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -2404,7 +2405,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    
+
     function getWidgetRiskChart(callback) {
         var request = [
             "GetRiskChart", {
@@ -2465,8 +2466,8 @@ function initClientMirror() {
         ];
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
-    }        
-    
+    }
+
     return {
         log: log,
         toJSON: toJSON,
