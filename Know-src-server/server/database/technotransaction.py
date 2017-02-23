@@ -7,7 +7,7 @@ from server.common import (
     generate_and_return_password,
     addHours, new_uuid
 )
-from server.constants import REGISTRATION_EXPIRY, KNOWLEDGE_URL
+from server.constants import REGISTRATION_EXPIRY, KNOWLEDGE_URL, CLIENT_URL
 from server.emailcontroller import EmailHandler as email
 
 __all__ = [
@@ -530,13 +530,13 @@ def resave_registraion_token(db, client_id, email_id):
     #     db.delete(tblClientEmailVerification, condition, condition_val)
     #
     #     return True
-    short_name = get_short_name(db, client_id) # short name
+    short_name = get_short_name(db, client_id)  # short name
     current_time_stamp = get_current_date()
     registration_token = new_uuid()
     expiry_date = addHours(int(REGISTRATION_EXPIRY), current_time_stamp)
 
-    link = "%s/userregistration/%s" % (
-        KNOWLEDGE_URL, registration_token
+    link = "%s/userregistration/%s/%s" % (
+        CLIENT_URL, short_name, registration_token
     )
 
     notify_user_thread = threading.Thread(

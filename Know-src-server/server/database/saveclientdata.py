@@ -84,5 +84,3 @@ class SaveRegistrationData(ClientdbConect):
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
             raise client_process_error("E026")
-
-
