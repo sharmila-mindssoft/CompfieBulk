@@ -269,13 +269,14 @@ function commonAutoComplete(
                 validation_results = [];
                 $.each(condition_fields, function(key, value) {
                     var condition_result;
-                    if (list_val[i][value] == null || list_val[i][value].length == undefined || list_val[i][value] == "" || list_val[i][value] == " ") {
-                        condition_result = (list_val[i][value] == condition_values[key]);
-                        if (condition_values[key] == "")
-                            condition_result = (list_val[i][value] == null);
-                    } else {
+                    if(jQuery.type( list_val[i][value] ) == 'array'){
                         condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);
+                    }else if(jQuery.type( condition_values[key] ) == 'array'){
+                        condition_result = ($.inArray(list_val[i][value], condition_values[key]) >= 0);
+                    }else{
+                        condition_result = (list_val[i][value] == condition_values[key]);
                     }
+
                     validation_results.push(
                         condition_result
                     )
@@ -289,13 +290,22 @@ function commonAutoComplete(
                     }
                 });
             }
-            if (~list_val[i][field_name].toLowerCase().indexOf(
-                    text_val.toLowerCase()
-                ) && validation_result)
-                suggestions.push([
-                    list_val[i][id_name],
-                    list_val[i][field_name]
-                ]);
+            if (list_val[i][field_name]!= null && (~list_val[i][field_name].toLowerCase().indexOf(
+                text_val.toLowerCase())) && validation_result){
+                var occur = -1;
+                for(var j=0;j<suggestions.length;j++){
+                    if(suggestions[j][1] == list_val[i][field_name]){
+                        occur = 1;
+                        break;
+                    }
+                }
+                if(occur < 0){
+                    suggestions.push([
+                        list_val[i][id_name],
+                        list_val[i][field_name]
+                    ]);
+                }
+            }
         }
         var str = '';
         for (var i in suggestions) {

@@ -30,6 +30,7 @@ function clearCaptcha() {
 function initSession(userProfile, shortName) {
   setLandingPage(userProfile);
   window.sessionStorage.userInfo = JSON.stringify(userProfile, null, ' ');
+  console.log(window.sessionStorage.userInfo);
   if (shortName !== null) {
     window.localStorage.shortName = shortName;
   }
@@ -120,7 +121,6 @@ function processLogin(username, password, shortName, callback) {
       'short_name': shortName,
     }
   ];
-  console.log(request);
   var requestFrame = [
     shortName,
     request

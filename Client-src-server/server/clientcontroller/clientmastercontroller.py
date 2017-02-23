@@ -800,7 +800,7 @@ def get_login_trace_report_data(db, request, session_user, client_id):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_login_trace_report(db, request)
+        result = process_login_trace_report(db, request, client_id)
         return clientmasters.GetLoginTraceReportDataSuccess(log_trace_activities=result)
 
 

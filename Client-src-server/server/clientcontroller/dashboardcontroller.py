@@ -215,7 +215,7 @@ def process_compliance_applicability_drill_down(
     return dashboard.GetComplianceApplicabilityStatusDrillDownSuccess(
         result_list
     )
-    
+
 def process_get_notifications(db, request, session_user, session_category):
     notification_type = request.notification_type
     total_count = get_dashboard_notification_counts(db, session_user, notification_type)
@@ -230,10 +230,9 @@ def process_get_notifications(db, request, session_user, session_category):
         return dashboard.GetMessagesSuccess(messages, total_count)
 
 def process_update_notification_status(db, request, session_user):
-    update_notification_status(
-        db, request.notification_id, request.has_read,
-        session_user
-    )
+    # if request.has_read == True:
+        # update_notification_status(db, request.notification_id, request.has_read, session_user)
+    notification_details = notification_details(db, request.notification_id, request.has_read, session_user)
     return dashboard.UpdateNotificationStatusSuccess()
 
 

@@ -5,12 +5,13 @@ function loadMessages(data) {
     var isEmpty = true;
     $('.tbody-message-list').find('tr').remove();
     $.each(data, function(k, v) {
+        le_id = v.le_id
         isEmpty = false;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
 
         rowClone.on('click', function(e) {
-            /*mirror.updateNotificationStatus(v.compliance_id, 1 function(error, response) {
+            /*mirror.updateNotificationStatus(le_id, v.compliance_id, 1 function(error, response) {
                 if (error == null) {
                     $('.popup-statutory').text(response.s_pro);
                     $('.popup-compliancetask').text(response.c_task);

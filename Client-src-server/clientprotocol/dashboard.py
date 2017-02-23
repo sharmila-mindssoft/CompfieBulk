@@ -742,23 +742,24 @@ class GetNotifications(Request):
         }
 
 class UpdateNotificationStatus(Request):
-    def __init__(self, notification_id, has_read):
+    def __init__(self, legal_entity_id, notification_id, has_read):
+        self.legal_entity_id = legal_entity_id
         self.notification_id = notification_id
         self.has_read = has_read
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["notification_id", "has_read"])
+        data = parse_dictionary(data, ["le_id", "notification_id", "has_read"])
+        legal_entity_id = data.get("le_id")
         notification_id = data.get("notification_id")
-        notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
         has_read = data.get("has_read")
-        has_read = parse_structure_Bool(has_read)
-        return UpdateNotificationStatus(notification_id, has_read)
+        return UpdateNotificationStatus(legal_entity_id, notification_id, has_read)
 
     def to_inner_structure(self):
         return {
-            "notification_id": to_structure_SignedIntegerType_8(self.notification_id),
-            "has_read": to_structure_Bool(self.has_read),
+            "le_id": self.legal_entity_id,
+            "notification_id": self.notification_id,
+            "has_read": self.has_read,
         }
 
 def _init_Request_class_map():
@@ -1913,63 +1914,72 @@ class DrillDownData(object):
 #         }
 
 class RemindersSuccess(object):
-    def __init__(self, notification_id, notification_text, created_on):
+    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
+        self.legal_entity_id = legal_entity_id
         self.notification_id = notification_id
         self.notification_text = notification_text
         self.created_on = created_on
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["notification_id", "notification_text", "created_on"])
+        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "created_on"])
+        legal_entity_id = data.get("le_id")
         notification_id = data.get("notification_id")
         notification_text = data.get("notification_text")
         created_on = data.get("created_on")
-        return RemindersSuccess(notification_id, notification_text, created_on)
+        return RemindersSuccess(legal_entity_id, notification_id, notification_text, created_on)
 
     def to_structure(self):
         return {
+            "le_id" : self.legal_entity_id,
             "notification_id" : self.notification_id,
             "notification_text" : self.notification_text,
             "created_on" : self.created_on,
         }
 
 class EscalationsSuccess(object):
-    def __init__(self, notification_id, notification_text, created_on):
+    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
+        self.legal_entity_id = legal_entity_id
         self.notification_id = notification_id
         self.notification_text = notification_text
         self.created_on = created_on
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["notification_id", "notification_text", "created_on"])
+        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "created_on"])
+        legal_entity_id = data.get("le_id")
         notification_id = data.get("notification_id")
         notification_text = data.get("notification_text")
         created_on = data.get("created_on")
-        return EscalationsSuccess(notification_id, notification_text, created_on)
+        return EscalationsSuccess(notification_id, notification_id, notification_text, created_on)
 
     def to_structure(self):
         return {
+            "le_id" : self.legal_entity_id,
             "notification_id" : self.notification_id,
             "notification_text" : self.notification_text,
             "created_on" : self.created_on,
         }
 
 class MessagesSuccess(object):
-    def __init__(self, notification_id, notification_text, created_on):
+    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
+        self.legal_entity_id = legal_entity_id
         self.notification_id = notification_id
         self.notification_text = notification_text
         self.created_on = created_on
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["notification_id", "notification_text", "created_on"])
+        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "created_on"])
+        legal_entity_id = data.get("le_id")
         notification_id = data.get("notification_id")
         notification_text = data.get("notification_text")
         created_on = data.get("created_on")
-        return MessagesSuccess(notification_id, notification_text, created_on)
+        return MessagesSuccess(legal_entity_id, notification_id, notification_text, created_on)
 
     def to_structure(self):
         return {
+            "le_id" : self.legal_entity_id,
             "notification_id" : self.notification_id,
             "notification_text" : self.notification_text,
             "created_on" : self.created_on,
