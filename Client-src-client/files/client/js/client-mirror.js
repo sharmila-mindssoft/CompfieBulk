@@ -196,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        //alert(body.toSource());
+
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -226,7 +226,7 @@ function initClientMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
-                    alert('Server connection not found');
+                    // alert('Server connection not found');
                     redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
@@ -748,7 +748,7 @@ function initClientMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
-                    alert('Server connection not found');
+                    // alert('Server connection not found');
                     redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
@@ -1740,27 +1740,30 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate) {
+    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate, oAssignee, oConcurrence, oApprover) {
         return {
             'u_id': uID,
-            'c_id': cID,
-            'c_name': cNAME,
-            'c_history_id': cHistoryId,
-            'd_date': dDate
+            'comp_id': cID,
+            'compliance_name': cNAME,
+            'c_h_id': cHistoryId,
+            'd_date': dDate,
+            'o_assignee': oAssignee,
+            'o_concurrence_person': oConcurrence,
+            'o_approval_person': oApprover
         };
     }
 
-    function saveReassignCompliance(rFrom, rTo, aName, cPerson, aPerson, cList, reason, newUnits, callback) {
+    function saveReassignCompliance(legalEntityId, rFrom, rTo, aName, cPerson, aPerson, cList, reason, callback) {
         request = [
             'ReassignCompliance', {
+                'le_id': legalEntityId,
                 'r_from': rFrom,
                 'assignee': rTo,
-                'a_name': aName,
-                'c_person': cPerson,
-                'a_person': aPerson,
-                'compliances': cList,
-                'r_reason': reason,
-                'n_units': newUnits
+                'assignee_name': aName,
+                'concurrence_person': cPerson,
+                'approval_person': aPerson,
+                'reassigned_compliance': cList,
+                'reason': reason
             }
         ];
         callerName = 'client_transaction';
