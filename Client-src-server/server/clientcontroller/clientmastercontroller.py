@@ -474,53 +474,54 @@ def process_change_user_privilege_status(db, request, session_user):
 # To get the list of all users with details
 ########################################################
 def process_get_client_users(db, request, session_user):
-    user_company_info = get_user_company_details(
-        db, session_user
-    )
-    unit_ids = user_company_info[0]
-    division_ids = user_company_info[1]
-    legal_entity_ids = user_company_info[2]
-    business_group_ids = user_company_info[3]
-    user_country_list = get_countries_for_user(db, session_user)
-    user_domain_list = get_domains_for_user(db, session_user)
-    country_list = get_countries(db)
-    domain_list = get_domains(db)
-    business_group_list = get_business_groups_for_user(
-        db,
-        business_group_ids
-    )
-    legal_entity_list = get_legal_entities_for_user(
-        db,
-        legal_entity_ids
-    )
-    division_list = get_divisions_for_user(
-        db,
-        division_ids
-    )
-    unit_list = get_units_for_user(db, None)
-    session_user_unit_list = get_units_for_user(db, unit_ids)
-    user_group_list = get_user_privileges(db)
-    user_list = get_user_details(db)
-    service_provider_list = get_service_providers(db)
-    remaining_licence = get_no_of_remaining_licence(db)
-    is_primary_user = is_primary_admin(db, session_user)
+    users_list = getUserManagementList(db)
+    # service_provider_list = get_service_provider_details_list(db)    
+    # user_company_info = get_user_company_details(
+    #     db, session_user
+    # )
+    # unit_ids = user_company_info[0]
+    # division_ids = user_company_info[1]
+    # legal_entity_ids = user_company_info[2]
+    # business_group_ids = user_company_info[3]
+    # session_user_unit_list = get_units_for_user(db, unit_ids)
+    # user_list = get_user_details(db)
+    # service_provider_list = get_service_providers(db)
+    # service_providers=service_provider_list
+    # remaining_licence = get_no_of_remaining_licence(db)
+    # remaining_licence=remaining_licence
+    # is_primary_user = is_primary_admin(db, session_user)
+    # is_primary_admin=is_primary_user
+    # domain_list = get_domains(db)
+    # domains=domain_list,
+    # user_domain_list = get_domains_for_user(db, session_user)
+    # user_domains=user_domain_list,
+    # country_list = get_countries(db)
+    # countries=country_list,
+    # business_group_list = get_business_groups_for_user(
+    #     db,
+    #     business_group_ids
+    # )
+    # business_groups=business_group_list,
+    # division_list = get_divisions_for_user(
+    #     db,
+    #     division_ids
+    # )
+    # divisions=division_list,
+    # user_group_list = get_user_privileges(db)
+    # user_groups=user_group_list,
+    # legal_entity_list = get_legal_entities_for_user(
+    #     db,
+    #     legal_entity_ids
+    # )
+    # legal_entities=legal_entity_list,
+    # user_countries=user_country_list,
+    # user_country_list = get_countries_for_user(db, session_user)
+    # unit_list = get_units_for_user(db, None)
+    # units=unit_list,
     return clientmasters.GetClientUsersSuccess(
-        user_countries=user_country_list,
-        user_domains=user_domain_list,
-        countries=country_list,
-        domains=domain_list,
-        business_groups=business_group_list,
-        legal_entities=legal_entity_list,
-        divisions=division_list,
-        units=unit_list,
-        session_user_units=session_user_unit_list,
-        user_groups=user_group_list,
-        users=user_list,
-        service_providers=service_provider_list,
-        remaining_licence=remaining_licence,
-        is_primary_admin=is_primary_user
+        # session_user_units=session_user_unit_list,
+        # users=user_list
     )
-
 
 ########################################################
 # To validate and save a user
@@ -535,7 +536,7 @@ def process_save_client_user(db, request, session_user, client_id):
     #     user_id=None
     # ):
     #     return clientmasters.EmployeeCodeAlreadyExists()
-    if save_user(db, request, session_user, client_id):        
+    if save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
 
 ########################################################
