@@ -18,7 +18,7 @@ function initClientMirror() {
 
     function parseJSON(data) {
         if (data == undefined)
-            redirect_login();
+            return data;
         else
             return JSON.parse(data);
     }
@@ -44,7 +44,7 @@ function initClientMirror() {
     //     window.sessionStorage["userInfo"] = toJSON(info);
     // }
     function clearSession() {
-        delete window.sessionStorage.userInfo;
+        // delete window.sessionStorage.userInfo;
         delete window.localStorage.shortName;
         delete window.sessionStorage.CLIENT_NOTIFICATION_COUNT;
         delete window.sessionStorage.CLIENT_REMINDER_COUNT;
@@ -55,7 +55,6 @@ function initClientMirror() {
 
     function getUserInfo() {
         var info = window.sessionStorage.userInfo;
-        console.log(info)
         user = parseJSON(info);
         return user;
     }
@@ -1798,7 +1797,6 @@ function initClientMirror() {
             }
         ];
         callerName = 'client_masters';
-        console.log(request)
         clientApiRequest(callerName, request, callback);
     }
 
