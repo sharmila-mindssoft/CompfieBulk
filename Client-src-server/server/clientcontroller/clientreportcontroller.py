@@ -486,84 +486,84 @@ def process_client_report_requests(request, db, session_user, session_category):
 
     elif type(request) is clientreport.GetUnitListReportFilters:
         logger.logClientApi(
-            "GetUnitListReportFilters  - " + str(client_id),
+            "GetUnitListReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_unit_list_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user
         )
         logger.logClientApi("GetUnitListReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetUnitListReport:
         logger.logClientApi(
-            "GetUnitListReport  - " + str(client_id),
+            "GetUnitListReport  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_unit_list_report(
-            db, request, session_user, client_id
+            db, request, session_user
         )
         logger.logClientApi("GetUnitListReport", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetStatutoryNotificationsListReportFilters:
         logger.logClientApi(
-            "GetStatutoryNotificationsListReportFilters  - " + str(client_id),
+            "GetStatutoryNotificationsListReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_statutory_notifications_list_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user
         )
         logger.logClientApi("GetStatutoryNotificationsListReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetStatutoryNotificationsListReportData:
         logger.logClientApi(
-            "GetStatutoryNotificationsListReportData  - " + str(client_id),
+            "GetStatutoryNotificationsListReportData  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_statutory_notification_list_report(
-            db, request, session_user, client_id
+            db, request, session_user
         )
         logger.logClientApi("GetStatutoryNotificationsListReportData", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetAuditTrailReportData:
         logger.logClientApi(
-            "GetAuditTrailReportData  - " + str(client_id),
+            "GetAuditTrailReportData  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_audit_trail_report_data(
-            db, request, session_user, client_id
+            db, request, session_user
         )
         logger.logClientApi("GetAuditTrailReportData", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetRiskReportFilters:
         logger.logClientApi(
-            "GetRiskReportFilters  - " + str(client_id),
+            "GetRiskReportFilters  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_risk_report_filters(
-            db, request, session_user, client_id
+            db, request, session_user
         )
         logger.logClientApi("GetRiskReportFilters", "process end")
         logger.logClientApi("------", str(time.time()))
 
     elif type(request) is clientreport.GetRiskReportData:
         logger.logClientApi(
-            "GetRiskReportData  - " + str(client_id),
+            "GetRiskReportData  - " + str(session_user),
             "process begin"
         )
         logger.logClientApi("------", str(time.time()))
         result = get_risk_report_data(
-            db, request, session_user, client_id
+            db, request, session_user
         )
         logger.logClientApi("GetRiskReportData", "process end")
         logger.logClientApi("------", str(time.time()))
@@ -1398,7 +1398,7 @@ def get_user_wise_report(db, request, session_user, session_category):
 # Parameter: request object and the client id
 # Result: list of record sets which contains division, category, unit, domain and organization
 ###############################################################################################
-def get_unit_list_report_filters(db, request, session_user, client_id):
+def get_unit_list_report_filters(db, request, session_user):
     country_id = request.country_id
     business_group_id = request.business_group_id
     legal_entity_id = request.legal_entity_id
@@ -1417,7 +1417,7 @@ def get_unit_list_report_filters(db, request, session_user, client_id):
 # Parameter: request object and the client id
 # Result: list of record sets which contains units and its status
 ###############################################################################################
-def get_unit_list_report(db, request, session_user, client_id):
+def get_unit_list_report(db, request, session_user):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "UnitListReport"
@@ -1434,7 +1434,7 @@ def get_unit_list_report(db, request, session_user, client_id):
 # Parameter: request object and the client id
 # Result: list of record sets which contains domains and acts
 ###############################################################################################
-def get_statutory_notifications_list_report_filters(db, request, session_user, client_id):
+def get_statutory_notifications_list_report_filters(db, request, session_user):
     country_id = request.country_id
     legal_entity_id = request.legal_entity_id
     domain_list = get_domains_for_le(db, legal_entity_id)
@@ -1449,7 +1449,7 @@ def get_statutory_notifications_list_report_filters(db, request, session_user, c
 # Parameter: request object and the client id
 # Result: list of record sets which contains act and compliance tasks
 ###############################################################################################
-def get_statutory_notification_list_report(db, request, session_user, client_id):
+def get_statutory_notification_list_report(db, request, session_user):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "StatutoryNotificationListReport"
@@ -1466,7 +1466,7 @@ def get_statutory_notification_list_report(db, request, session_user, client_id)
 # Parameter: request object and the client id
 # Result: list of record sets which contains activity log of forms
 ###############################################################################################
-def get_audit_trail_report_data(db, request, session_user, client_id):
+def get_audit_trail_report_data(db, request, session_user):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "AuditTrailReport"
@@ -1483,7 +1483,7 @@ def get_audit_trail_report_data(db, request, session_user, client_id):
 # Parameter: request object and the client id
 # Result: list of record sets which contains domains, division, categories, and units
 ###############################################################################################
-def get_risk_report_filters(db, request, session_user, client_id):
+def get_risk_report_filters(db, request, session_user):
     country_id = request.country_id
     business_group_id = request.business_group_id
     legal_entity_id = request.legal_entity_id
@@ -1504,7 +1504,7 @@ def get_risk_report_filters(db, request, session_user, client_id):
 # Parameter: request object and the client id
 # Result: list of record sets which contains risk compliance list with the status
 ###############################################################################################
-def get_risk_report_data(db, request, session_user, client_id):
+def get_risk_report_data(db, request, session_user):
     if request.csv:
         converter = ConvertJsonToCSV(
             db, request, session_user, "RiskReport"
