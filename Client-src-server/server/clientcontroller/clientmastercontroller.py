@@ -4,10 +4,9 @@ from clientprotocol import (clientmasters, clientcore, clientreport)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
 from server.clientdatabase.general import (
-    get_domains_for_user, verify_password,
-    get_countries_for_user, get_countries, get_domains,
+    verify_password,
     get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_units_for_user, have_compliances,
+    get_divisions_for_user, have_compliances,
     is_seating_unit, get_user_company_details, is_primary_admin,
     is_service_proivder_user, is_old_primary_admin
     )
@@ -19,7 +18,7 @@ __all__ = [
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_master_requests(request, db, session_user, client_id):
+def process_client_master_requests(request, db, session_user, client_id, le_ids_dbase):
     request = request.request
 
     if type(request) is clientmasters.GetServiceProviders:

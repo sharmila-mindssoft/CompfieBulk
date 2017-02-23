@@ -290,6 +290,7 @@ CREATE TABLE `tbl_users` (
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,
+  `is_service_provider` tinyint(4) DEFAULT '0',
   `is_active` tinyint(4) DEFAULT '1',
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
