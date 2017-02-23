@@ -196,6 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
+
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -1704,27 +1705,30 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate) {
+    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate, oAssignee, oConcurrence, oApprover) {
         return {
             'u_id': uID,
-            'c_id': cID,
-            'c_name': cNAME,
-            'c_history_id': cHistoryId,
-            'd_date': dDate
+            'comp_id': cID,
+            'compliance_name': cNAME,
+            'c_h_id': cHistoryId,
+            'd_date': dDate,
+            'o_assignee': oAssignee,
+            'o_concurrence_person': oConcurrence,
+            'o_approval_person': oApprover
         };
     }
 
-    function saveReassignCompliance(rFrom, rTo, aName, cPerson, aPerson, cList, reason, newUnits, callback) {
+    function saveReassignCompliance(legalEntityId, rFrom, rTo, aName, cPerson, aPerson, cList, reason, callback) {
         request = [
             'ReassignCompliance', {
+                'le_id': legalEntityId,
                 'r_from': rFrom,
                 'assignee': rTo,
-                'a_name': aName,
-                'c_person': cPerson,
-                'a_person': aPerson,
-                'compliances': cList,
-                'r_reason': reason,
-                'n_units': newUnits
+                'assignee_name': aName,
+                'concurrence_person': cPerson,
+                'approval_person': aPerson,
+                'reassigned_compliance': cList,
+                'reason': reason
             }
         ];
         callerName = 'client_transaction';
@@ -2280,6 +2284,35 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getReAssignComplianceUnits(legalEntityId, domainId, userId, userType, unitId, callback) {
+        var request = [
+            'GetReAssignComplianceUnits', {
+                'le_id': legalEntityId,
+                'd_id': domainId,
+                'usr_id': userId,
+                'user_type_id': userType,
+                'unit_id': unitId
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getReAssignComplianceForUnits(legalEntityId, domainId, userId, userType, unitIds, recordCount, callback) {
+        var request = [
+            'GetReAssignComplianceForUnits', {
+                'le_id': legalEntityId,
+                'd_id': domainId,
+                'usr_id': userId,
+                'user_type_id': userType,
+                'u_ids': unitIds,
+                'r_count': recordCount
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     // Widget api call begin
     function getUserWidgetData(callback) {
         var request = [
@@ -2344,7 +2377,6 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     // Widget api call end
-
 
     return {
         log: log,
@@ -2515,7 +2547,8 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         updateUserProfile: updateUserProfile,
         getReassignComplianceFilters: getReassignComplianceFilters,
-
+        getReAssignComplianceUnits: getReAssignComplianceUnits,
+        getReAssignComplianceForUnits: getReAssignComplianceForUnits,
         getUserWidgetData: getUserWidgetData,
         SaveUserWidgetData: SaveUserWidgetData,
         getWidgetComplianceChart: getWidgetComplianceChart,

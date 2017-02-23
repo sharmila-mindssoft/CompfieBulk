@@ -376,6 +376,8 @@ var message = {
   "maximum_compliance_selection_reached": "Maximum limit reached for processing. Please unselect few unit(s)",
   "maximum_compliance_selection_reached_select_all": "Maximum limit reached for processing.",
   "unit_selection_should_be_same_domain": "Please select same domain unit(s).",
+  'user_required': 'User Required',
+
 };
 
 function clearMessage() {
