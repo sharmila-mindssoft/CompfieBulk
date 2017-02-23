@@ -264,6 +264,19 @@ def process_get_forms(db, cat_id):
         forms.append(form)
     return process_user_menus(forms)
 
+########################################################
+# To get all client Menu to load in User privilege form
+########################################################
+def process_get_user_category(db):
+    result_rows = get_user_category(db)
+    user_category_list = []
+    for row in result_rows:
+        user_category_id = int(row["user_category_id"])
+        user_category_name = row["user_category_name"]
+        user_category_list.append(
+            clientcore.ClientUsercategory(user_category_id, user_category_name)
+        )
+    return user_category_list
 
 ########################################################
 # User Management - Load User Category

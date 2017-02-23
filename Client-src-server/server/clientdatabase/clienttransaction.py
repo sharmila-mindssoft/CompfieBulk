@@ -63,9 +63,7 @@ __all__ = [
     "total_compliance_for_units",
     "get_clien_users_by_unit_and_domain",
     "get_approve_level",
-    "get_all_frequency",
-    "get_units_to_reassig",
-    "get_reassign_compliance_for_units",
+    "get_all_frequency"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -2383,85 +2381,62 @@ def return_compliance_to_reassign(data):
 
 
 def reassign_compliance(db, request, session_user):
-    legal_entity_id = request.legal_entity_id
-    reassigned_from = request.r_from
+    reassigned_from = request.reassigned_from
     assignee = request.assignee
     concurrence = request.concurrence_person
     approval = request.approval_person
-    compliances = request.reassigned_compliance
-    reassigned_reason = request.reason
+    compliances = request.compliances
+    reassigned_reason = request.reassigned_reason
     created_on = get_date_time_in_date()
     reassigned_date = created_on.strftime("%Y-%m-%d")
     created_by = int(session_user)
-    
-
-    # new_unit_settings = request.new_units
+    new_unit_settings = request.new_units
     compliance_names = []
     compliance_ids = []
     reassing_columns = [
-        "legal_entity_id", "unit_id", "compliance_id", "old_assignee", 
-        "old_concurrer", "old_approver", "assignee",
-        "concurrer", "approver", "remarks", "assigned_by", "assigned_on"
+        "unit_id", "compliance_id", "assignee",
+        "reassigned_from", "reassigned_date", "remarks",
+        "created_by", "created_on"
     ]
     for c in compliances:
-        unit_id = c.u_id
-        compliance_id = c.comp_id
+        unit_id = c.unit_id
+        compliance_id = c.compliance_id
         compliance_ids.append(compliance_id)
         compliance_names.append(c.compliance_name)
-        due_date = c.d_date
+        due_date = c.due_date
         if due_date is not None:
             due_date = datetime.datetime.strptime(due_date, "%d-%b-%Y").date()
 
-        history_id = c.c_h_id
-        o_assignee = c.o_assignee
-        o_concurrence = c.o_concurrence_person
-        o_approval = c.o_approval_person
-
+        history_id = c.compliance_history_id
         values = [
-            legal_entity_id, unit_id, compliance_id, o_assignee, o_concurrence,
-            o_approval, assignee, concurrence, approval, reassigned_reason, created_by,
+            unit_id, compliance_id, assignee, reassigned_from,
+            reassigned_date, reassigned_reason, created_by,
             created_on
         ]
-
         result = db.insert(
             tblReassignedCompliancesHistory, reassing_columns, values
         )
         if result is False:
             raise client_process_error("E016")
 
-        update_assign_column = []
-        update_assign_val = []
-
-        if assignee != o_assignee:
-            update_assign_column.append("assignee")
-            update_assign_val.append(assignee)
-            update_assign_column.append("is_reassigned")
-            update_assign_val.append(1)
-
-        if concurrence is not None and concurrence != o_concurrence:
-            update_assign_column.append("concurrence_person")
-            update_assign_val.append(concurrence)
-            update_assign_column.append("c_is_reassigned")
-            update_assign_val.append(1)
-
-        if approval != o_approval:
-            update_assign_column.append("approval_person")
-            update_assign_val.append(approval)
-            update_assign_column.append("a_is_reassigned")
-            update_assign_val.append(1)
-
+        update_assign_column = [
+            "assignee", "is_reassigned", "approval_person",
+        ]
+        update_assign_val = [
+            assignee, 1, approval,
+        ]
         if due_date is not None:
             update_assign_column.append("due_date")
             update_assign_val.append(due_date)
 
-        # if concurrence not in [None, "None", 0, "null", "NULL"]:
-        #     update_assign_column.append("concurrence_person")
-        #     update_assign_val.append(concurrence)
+        if concurrence not in [None, "None", 0, "null", "NULL"]:
+            update_assign_column.append("concurrence_person")
+            update_assign_val.append(concurrence)
 
         where_qry = " unit_id = %s AND compliance_id = %s "
         update_assign_val.extend([unit_id, compliance_id])
         db.update(
-            tblAssignCompliances, update_assign_column,
+            tblAssignedCompliances, update_assign_column,
             update_assign_val, where_qry
         )
 
@@ -2477,51 +2452,51 @@ def reassign_compliance(db, request, session_user):
             update_qry_val = [assignee, approval, compliance_id, unit_id]
             db.execute(qry, update_qry_val)
 
-    # if new_unit_settings is not None:
-    #     update_user_settings(db, new_unit_settings)
+    if new_unit_settings is not None:
+        update_user_settings(db, new_unit_settings)
 
-    # compliance_names = " <br> ".join(compliance_names)
-    # if is_admin(db, assignee):
-    #     action = " Following compliances has reassigned to %s <br> %s" % (
-    #         request.assignee_name,
-    #         compliance_names
-    #     )
-    #     cc = None
-    # else :
-    #     if concurrence is None:
-    #         action = " Following compliances has reassigned to " + \
-    #             " assignee - %s and approval-person - %s <br> %s" % (
-    #                 request.assignee_name,
-    #                 get_user_name_by_id(db, request.approval_person),
-    #                 compliance_names
-    #             )
-    #         cc = [
-    #             get_email_id_for_users(db, request.approval_person)[1],
-    #         ]
-    #     else:
-    #         action = " Following compliances has reassigned " + \
-    #             " to assignee - %s concurrence-person - %s " + \
-    #             " approval-person - %s <br> %s"
-    #         action = action % (
-    #                 request.assignee_name,
-    #                 get_user_name_by_id(db, request.concurrence_person),
-    #                 get_user_name_by_id(db, request.approval_person),
-    #                 compliance_names
-    #             )
-    #         cc = [
-    #             get_email_id_for_users(db, request.concurrence_person)[1],
-    #             get_email_id_for_users(db, request.approval_person)[1]
-    #         ]
-    # activity_text = action.replace("<br>", " ")
-    # db.save_activity(session_user, 8, json.dumps(activity_text))
-    # receiver = get_email_id_for_users(db, assignee)[1]
-    # notify_reassing_compliance = threading.Thread(
-    #     target=email.notify_assign_compliance,
-    #     args=[
-    #         receiver, request.assignee_name, action, cc
-    #     ]
-    # )
-    # notify_reassing_compliance.start()
+    compliance_names = " <br> ".join(compliance_names)
+    if is_admin(db, assignee):
+        action = " Following compliances has reassigned to %s <br> %s" % (
+            request.assignee_name,
+            compliance_names
+        )
+        cc = None
+    else :
+        if concurrence is None:
+            action = " Following compliances has reassigned to " + \
+                " assignee - %s and approval-person - %s <br> %s" % (
+                    request.assignee_name,
+                    get_user_name_by_id(db, request.approval_person),
+                    compliance_names
+                )
+            cc = [
+                get_email_id_for_users(db, request.approval_person)[1],
+            ]
+        else:
+            action = " Following compliances has reassigned " + \
+                " to assignee - %s concurrence-person - %s " + \
+                " approval-person - %s <br> %s"
+            action = action % (
+                    request.assignee_name,
+                    get_user_name_by_id(db, request.concurrence_person),
+                    get_user_name_by_id(db, request.approval_person),
+                    compliance_names
+                )
+            cc = [
+                get_email_id_for_users(db, request.concurrence_person)[1],
+                get_email_id_for_users(db, request.approval_person)[1]
+            ]
+    activity_text = action.replace("<br>", " ")
+    db.save_activity(session_user, 8, json.dumps(activity_text))
+    receiver = get_email_id_for_users(db, assignee)[1]
+    notify_reassing_compliance = threading.Thread(
+        target=email.notify_assign_compliance,
+        args=[
+            receiver, request.assignee_name, action, cc
+        ]
+    )
+    notify_reassing_compliance.start()
     return clienttransactions.ReassignComplianceSuccess()
 
 
@@ -2812,181 +2787,3 @@ def save_review_settings_compliance(db, compliances, session_user):
                         )
             db.save_activity(session_user, frmReviewSettings, action, c["legal_entity_id"], unit_id)
             return result
-
-def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_user, session_category):
-
-    if session_category <= 3 :
-        query = "select * From (" + \
-            "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
-            "count(ac.compliance_id) as no_of_compliances, " + \
-            "'1' as user_type " + \
-            "from tbl_assign_compliances as ac " + \
-            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
-            "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
-            "Where ac.assignee = %s and ac.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
-            "UNION ALL " + \
-            "(select ac.unit_id,concat(unt.unit_code,' - ', unt.unit_name,' - ', SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
-            "count(ac.compliance_id) as no_of_compliances," + \
-            "'2' as user_type " + \
-            "from tbl_assign_compliances as ac " + \
-            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
-            "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
-            "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
-            "UNION ALL " + \
-            "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
-            "count(ac.compliance_id) as no_of_compliances, " + \
-            "'3' as user_type " + \
-            "from tbl_assign_compliances as ac " + \
-            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
-            "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
-            "Where ac.approval_person = %s and ac.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person)) as t1 " + \
-            "Where IF(%s > 0,user_type = %s, 1) " + \
-            "ORDER BY user_type,unit_id;"
-        param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type]
-
-    else :
-        # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
-        #     "t2.ccount, t2.domain_id " + \
-        #     " from tbl_units t1 " + \
-        #     " left join  " + \
-        #     " (select count(t1.compliance_id) as ccount, t1.unit_id, t1.domain_id from tbl_client_compliances as t1 " + \
-        #     " left join tbl_assign_compliances as t2 on t1.compliance_id = t2.compliance_id  " + \
-        #     " and t1.unit_id = t2.unit_id group by t1.unit_id) as t2 " + \
-        #     " on t1.unit_id = t2.unit_id  " + \
-        #     " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id" + \
-        #     " inner join tbl_user_domains as t4 on t2.domain_id = t4.domain_id and t3.user_id = t4.user_id" + \
-        #     " where t2.ccount > 0 and t2.domain_id = %s and t4.user_id = %s" + \
-        #     " order by t1.unit_code, t1.unit_name"
-        # param = [domain_id, session_user]
-
-        query = "select * From (" + \
-            "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
-            "count(ac.compliance_id) as no_of_compliances, " + \
-            "'1' as user_type " + \
-            "from tbl_assign_compliances as ac " + \
-            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
-            "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
-            "Where ac.assignee = %s and ac.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
-            "UNION ALL " + \
-            "(select ac.unit_id,concat(unt.unit_code,' - ', unt.unit_name,' - ', SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
-            "count(ac.compliance_id) as no_of_compliances," + \
-            "'2' as user_type " + \
-            "from tbl_assign_compliances as ac " + \
-            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
-            "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
-            "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
-            "UNION ALL " + \
-            "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
-            "count(ac.compliance_id) as no_of_compliances, " + \
-            "'3' as user_type " + \
-            "from tbl_assign_compliances as ac " + \
-            "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
-            "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
-            "Where ac.approval_person = %s and ac.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person)) as t1 " + \
-            "Where IF(%s > 0,user_type = %s, 1) " + \
-            "ORDER BY user_type,unit_id;"
-        param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type] 
-
-    row = db.select_all(query, param)
-    return return_units_for_reassign_compliance(row)
-
-def return_units_for_reassign_compliance(result):
-    unit_list = []
-    for r in result:
-        unit_list.append(
-            clienttransactions.REASSIGN_COMPLIANCE_UNITS(
-                r["unit_id"], r["unit_name"],
-                r["address"], r["postal_code"],
-                int(r["user_type"]), r["no_of_compliances"]
-            )
-        )
-    return unit_list
-
-def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_type, session_user, from_count, to_count):
-    query = "select ac.unit_id, concat(unit_code,' - ',unit_name) as unit,SUBSTRING(REPLACE(SUBSTRING_INDEX(com.statutory_mapping,'>>',1),'\"]',''),3) as act_name, " + \
-        "(CASE WHEN IFNULL(ch.start_date,date_sub(ac.due_date, INTERVAL ac.trigger_before_days DAY)) > curdate() THEN 'Upcoming Task' ELSE 'Current Task' END) cur_up, " + \
-        "concat(com.document_name,' - ',com.compliance_task) as compliance_name,ac.compliance_id, " + \
-        "com.frequency_id,(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as freq_name, " + \
-        "com.compliance_description, " + \
-        "com.statutory_dates, com.repeats_every, " + \
-        "com.repeats_type_id, com.duration, com.duration_type_id, " + \
-        "(select repeat_type from tbl_compliance_repeat_type where repeat_type_id = com.repeats_type_id) as repeat_type, " + \
-        "(select duration_type from tbl_compliance_duration_type where duration_type_id = com.duration_type_id) as duration_type , " + \
-        "ac.trigger_before_days, " + \
-        "(select employee_name from tbl_users where user_id = IFNULL(ch.completed_by,ac.assignee)) as assignee_name, " + \
-        "(select employee_name from tbl_users where user_id = IFNULL(ch.concurred_by,ac.concurrence_person)) as concur_name, " + \
-        "(select employee_name from tbl_users where user_id = IFNULL(ch.approved_by,ac.approval_person)) as approver_name, " + \
-        "ac.due_date,ac.validity_date, " + \
-        "ch.compliance_history_id,IFNULL(ch.due_date,ac.due_date) as due_date,iFNULL(ch.validity_date,ac.validity_date) as validity_date, " + \
-        "IFNULL(ch.approve_status,0) as approve_status, ac.assignee, ac.concurrence_person, ac.approval_person " + \
-        "from tbl_assign_compliances as ac " + \
-        "inner join tbl_compliances as com on ac.compliance_id = com.compliance_id " + \
-        "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
-        "inner join tbl_client_compliances as cc on ac.compliance_id = cc.compliance_id and ac.unit_id = cc.unit_id and IFNULL(cc.compliance_opted_status,0) = 1 " + \
-        "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id  " + \
-        "and ac.assignee = ch.completed_by and iFNULL(ch.approve_status,0) <> 1 " + \
-        "where ac.domain_id = %s and find_in_set(ac.unit_id, %s) " + \
-        "and (CASE %s WHEN 1 THEN ac.assignee = %s  " + \
-        "WHEN 2 THEN ac.concurrence_person = %s  " + \
-        "ELSE ac.approval_person = %s END) " + \
-        "ORDER BY ac.unit_id,SUBSTRING(REPLACE(SUBSTRING_INDEX(com.statutory_mapping,'>>',1),'\"]',''),3), " + \
-        "(CASE WHEN IFNULL(ch.start_date,date_sub(ac.due_date, INTERVAL ac.trigger_before_days DAY)) > curdate() THEN 'Upcoming Task' ELSE 'Current Task' END), " + \
-        "concat(com.document_name,' - ',com.compliance_task),com.frequency_id " +\
-        "limit %s, %s ;"
-    param = [domain_id, ",".join([str(x) for x in unit_ids]), user_type, user_id, user_id, user_id, from_count, to_count]
-
-    row = db.select_all(query, param)
-    return return_compliance_for_reassign(row)
-
-def return_compliance_for_reassign(result):
-    complaicne_list = []
-    for r in result:
-        if r["due_date"] is not None:
-            due_date = datetime_to_string(r["due_date"])
-        else:
-            due_date = None
-
-        if r["validity_date"] is not None:
-            validity_date = datetime_to_string(r["validity_date"])
-        else:
-            validity_date = None
-
-        statutory_dates = r["statutory_dates"]
-        statutory_dates = json.loads(statutory_dates)
-        date_list = []
-        for date in statutory_dates:
-            s_date = clientcore.StatutoryDate(
-                date["statutory_date"],
-                date["statutory_month"],
-                date["trigger_before_days"],
-                date.get("repeat_by")
-            )
-            date_list.append(s_date)
-
-        summary, datas, trigger = make_summary(date_list, r["frequency_id"], r)
-
-        complaicne_list.append(
-            clienttransactions.REASSIGN_COMPLIANCES(
-                r["unit_id"], r["unit"],
-                r["act_name"], r["cur_up"], r["compliance_name"],
-                int(r["compliance_id"]), r["frequency_id"],  r["freq_name"],
-                r["compliance_description"],  summary,  r["trigger_before_days"],
-                r["assignee"], r["assignee_name"], r["concurrence_person"],r["concur_name"],
-                r["approval_person"] ,r["approver_name"] , r["compliance_history_id"],
-                due_date, validity_date
-            )
-        )
-    return complaicne_list
-    

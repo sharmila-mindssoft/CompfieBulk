@@ -196,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
+        //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -215,7 +215,7 @@ function initClientMirror() {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
                     console.log(status)
-                        // redirect_login();
+                        redirect_login();
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);
@@ -227,7 +227,7 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
                     alert('Server connection not found');
-                    // redirect_login();
+                    redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
                 }
@@ -646,7 +646,7 @@ function initClientMirror() {
         callerName = 'client_dashboard';
         var request = [
             'UpdateNotificationStatus', {
-                'le_id':le_id,
+                'le_ids':le_id,
                 'notification_id': notification_id,
                 'has_read': has_read
             }
@@ -1730,30 +1730,27 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate, oAssignee, oConcurrence, oApprover) {
+    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate) {
         return {
             'u_id': uID,
-            'comp_id': cID,
-            'compliance_name': cNAME,
-            'c_h_id': cHistoryId,
-            'd_date': dDate,
-            'o_assignee': oAssignee,
-            'o_concurrence_person': oConcurrence,
-            'o_approval_person': oApprover
+            'c_id': cID,
+            'c_name': cNAME,
+            'c_history_id': cHistoryId,
+            'd_date': dDate
         };
     }
 
-    function saveReassignCompliance(legalEntityId, rFrom, rTo, aName, cPerson, aPerson, cList, reason, callback) {
+    function saveReassignCompliance(rFrom, rTo, aName, cPerson, aPerson, cList, reason, newUnits, callback) {
         request = [
             'ReassignCompliance', {
-                'le_id': legalEntityId,
                 'r_from': rFrom,
                 'assignee': rTo,
-                'assignee_name': aName,
-                'concurrence_person': cPerson,
-                'approval_person': aPerson,
-                'reassigned_compliance': cList,
-                'reason': reason
+                'a_name': aName,
+                'c_person': cPerson,
+                'a_person': aPerson,
+                'compliances': cList,
+                'r_reason': reason,
+                'n_units': newUnits
             }
         ];
         callerName = 'client_transaction';
@@ -2302,7 +2299,6 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-
     function getReAssignComplianceUnits(legalEntityId, domainId, userId, userType, unitId, callback) {
         var request = [
             'GetReAssignComplianceUnits', {
@@ -2353,7 +2349,6 @@ function initClientMirror() {
             'old_statu_dates': old_statu_dates,
         };
     }
-
     // Widget api call begin
     function getUserWidgetData(callback) {
         var request = [
@@ -2465,7 +2460,6 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-
     return {
         log: log,
         toJSON: toJSON,

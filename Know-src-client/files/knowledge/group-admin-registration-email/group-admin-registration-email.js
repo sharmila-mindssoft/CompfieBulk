@@ -88,7 +88,7 @@ function fillGroupAdmingroupData(groupAdminList)
         if (v.ug_name == null){
           $('#btnResend', rowClone).show();
           $('#btnResend', rowClone).on('click', function() {
-            sendCredentials(v.client_id, v.email_id);
+            sendCredentials(v.client_id, v.emp_code_name, v.email_id);
           });
         }
         else {
@@ -102,9 +102,10 @@ function fillGroupAdmingroupData(groupAdminList)
         i++;
 	});
 }
-function sendCredentials(_cl_id, _e_id ) {
+function sendCredentials(_cl_id, _u_name, _e_id ) {
   req_dict = {
     'user_id': _cl_id,
+    'username': _u_name,
     'email_id': _e_id
   };
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {

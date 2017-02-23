@@ -742,24 +742,24 @@ class GetNotifications(Request):
         }
 
 class UpdateNotificationStatus(Request):
-    def __init__(self, legal_entity_id, notification_id, has_read):
-        self.legal_entity_id = legal_entity_id
+    def __init__(self, legal_entity_ids, notification_id, has_read):
+        self.legal_entity_ids = legal_entity_ids
         self.notification_id = notification_id
         self.has_read = has_read
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "notification_id", "has_read"])
-        legal_entity_id = data.get("le_id")
-        notification_id = data.get("notification_id")
+        data = parse_dictionary(data, ["le_ids", "notification_id", "has_read"])
+        legal_entity_ids = data.get("le_ids"),
+        notification_id = data.get("notification_id"),
         has_read = data.get("has_read")
-        return UpdateNotificationStatus(legal_entity_id, notification_id, has_read)
+        return UpdateNotificationStatus(legal_entity_ids, notification_id, has_read)
 
     def to_inner_structure(self):
         return {
-            "le_id": self.legal_entity_id,
+            "le_ids": self.legal_entity_ids,
             "notification_id": self.notification_id,
-            "has_read": self.has_read,
+            "has_read": self.has_read
         }
 
 def _init_Request_class_map():
@@ -1224,16 +1224,19 @@ class GetMessagesSuccess(Response):
         }
 
 class UpdateNotificationStatusSuccess(Response):
-    def __init__(self):
+    def __init__(self, notification_details):
+        self.notification_details = notification_details
         pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
+        data = parse_dictionary(data, ["notification_details"])
+        notification_details = data.get("notification_details")
         return UpdateNotificationStatusSuccess()
 
     def to_inner_structure(self):
         return {
+            "notification_details": self.notification_details
         }
 
 
@@ -1985,6 +1988,43 @@ class MessagesSuccess(object):
             "created_on" : self.created_on,
         }
 
+class NotificationDetailsSuccess(object):
+    def __init__(self, notification_id, act_name, unit, compliance_name, due_date, delayed_by, assignee_name, concurrer_name, approver_name):
+        self.notification_id = notification_id
+        self.act_name = act_name
+        self.unit = unit
+        self.compliance_name = compliance_name
+        self.due_date = due_date
+        self.delayed_by = delayed_by
+        self.assignee_name = assignee_name
+        self.concurrer_name = concurrer_name
+        self.approver_name = approver_name
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["notification_id", "act_name", "unit", "compliance_name", "due_date", "delayed_by", "assignee_name", "concurrer_name", "approver_name"])
+        notification_id = data.get("notification_id")
+        act_name = data.get("act_name")
+        unit = data.get("unit")
+        compliance_name = data.get("compliance_name")
+        due_date = data.get("due_date")
+        delayed_by = data.get("delayed_by")
+        assignee_name = data.get("assignee_name")
+        concurrer_name = data.get("concurrer_name")
+        approver_name = data.get("approver_name")
+        return NotificationDetailsSuccess(notification_id, act_name, unit, compliance_name, due_date, delayed_by, assignee_name, concurrer_name, approver_name)
+
+    def to_structure(self):
+        return {
+            "notification_id" : self.notification_id,
+            "act_name" : self.act_name,
+            "unit" : self.unit,
+            "compliance_name" : self.compliance_name,
+            "due_date" : self.due_date,
+            "delayed_by" : self.delayed_by,
+            "assignee_name" : self.assignee_name,
+            "concurrer_name" : self.concurrer_name,
+            "approver_name" : self.approver_name
+        }
 
 #
 # Trend DrillDownData
