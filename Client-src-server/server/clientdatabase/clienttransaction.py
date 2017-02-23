@@ -2772,9 +2772,9 @@ def save_review_settings_compliance(db, compliances, session_user):
                 values = [
                     c["legal_entity_id"], c["complaince_id"], c["f_id"], u, c["domain_id"],
                     old_statutory_dates, c["old_repeat_type_id"], c["old_repeat_by"],
-                    
+
                     c["repeat_by"], c["repeat_type_id"], statutory_dates, c["trigger_before_days"],
-                    string_to_datetime(c["due_date"]).date()                    
+                    string_to_datetime(c["due_date"]).date()
                 ]
                 result = db.insert(
                     tblComplianceDates, columns, values
