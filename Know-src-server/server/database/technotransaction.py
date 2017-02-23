@@ -532,7 +532,7 @@ def resave_registraion_token(db, client_id, email_id):
     #
     #     return True
 
-    short_name = get_short_name(db, client_id)
+    short_name = get_short_name(db, client_id) # short name
     current_time_stamp = get_current_date()
     registration_token = new_uuid()
     expiry_date = addHours(int(REGISTRATION_EXPIRY), current_time_stamp)
@@ -549,6 +549,7 @@ def resave_registraion_token(db, client_id, email_id):
     )
     notify_user_thread.start()
 
+    # SaveRegistrationData
     if short_name:
         SaveRegistrationData(db, registration_token, expiry_date, email_id, client_id)
         return True
