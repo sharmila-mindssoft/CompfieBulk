@@ -175,6 +175,8 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
     user_ids = []
     for r in row :
         user_ids.append(r["user_id"])
+    print user_ids
+    print "\n"
 
     q1 = "select distinct t1.user_id, t1.user_category_id, employee_code, employee_name, t1.user_group_id, t2.form_id,  t1.user_level," + \
         "t1.seating_unit_id, t1.service_provider_id, t4.service_provider_name, t4.short_name," + \
@@ -188,7 +190,10 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         " on t1.service_provider_id = t4.service_provider_id " + \
         "where t1.user_category_id = 1 or t2.form_id in (9, 35); "
 
+    print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
+    print row1
+
     users = []
     for r in row1 :
         user_id = r["user_id"]
