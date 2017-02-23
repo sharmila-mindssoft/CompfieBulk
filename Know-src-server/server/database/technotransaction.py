@@ -524,11 +524,12 @@ def return_groupadmin_registration_unitlist(unitslist):
 # Return Type : Return list of group admin registered email list
 ######################################################################################
 def resave_registraion_token(db, client_id, email_id):
-    def _del_olddata():
-        condition = "client_id = %s and verification_type_id = %s"
-        condition_val = [client_id, 1]
-        db.delete(tblClientEmailVerification, condition, condition_val)
-        return True
+    # def _del_olddata():
+    #     condition = "client_id = %s and verification_type_id = %s"
+    #     condition_val = [client_id, 1]
+    #     db.delete(tblClientEmailVerification, condition, condition_val)
+    #
+    #     return True
 
     current_time_stamp = get_current_date()
     registration_token = new_uuid()
