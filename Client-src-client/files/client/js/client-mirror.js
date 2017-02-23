@@ -196,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        //alert(body.toSource());
+
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -226,7 +226,7 @@ function initClientMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
-                    alert('Server connection not found');
+                    // alert('Server connection not found');
                     redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
@@ -748,7 +748,7 @@ function initClientMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
-                    alert('Server connection not found');
+                    // alert('Server connection not found');
                     redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);

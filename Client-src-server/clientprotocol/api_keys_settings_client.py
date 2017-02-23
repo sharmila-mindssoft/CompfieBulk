@@ -105,7 +105,7 @@ api_params = {
     "emp_code": make_string_field(is_optional=True),
     "con_no": make_text_field(is_optional=True),
     "mob_no": make_text_field(is_optional=True),
-    "address": make_text_field(is_optional=True),
+    "address": make_text_field(length=500, is_optional=True),
     "menu":  make_map_type_vector_type("clientcore", "Form"),
     "user_level": make_int_field(is_optional=True),
     "sp_id": make_int_field(is_optional=True),
@@ -295,7 +295,7 @@ api_params = {
     "rs_compliance_list":  make_vector_type_field(module="clientcore", klass_name="ReviewSettingsCompliance"),
     "r_every": make_int_field(is_optional=True),
     "s_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
-    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
+    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate", is_optional=True),
     "old_statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "trigger_before_days": make_int_field(is_optional=True),
     "due_date": make_text_field(length=20, is_optional=True),
@@ -403,7 +403,6 @@ api_params = {
     "assign_users": make_vector_type_field(module="clienttransactions", klass_name="Users"),
     "t_l_approve": make_bool_field(),
     "freq": make_text_field(),
-    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "applicable_units": make_vector_type_int(),
     "summary": make_text_field(is_optional=True),
     "due_date_list": make_vector_type_string(is_optional=True),
@@ -556,7 +555,7 @@ api_params = {
     "escalations": make_vector_type_field(module="dashboard", klass_name="EscalationsSuccess", is_optional=True),
     "messages": make_vector_type_field(module="dashboard", klass_name="MessagesSuccess", is_optional=True),
     "notification_details": make_vector_type_field(module="dashboard", klass_name="NotificationDetailsSuccess", is_optional=True),
-    "delayed_by":make_text_field(is_optional=True),
+    "delayed_by": make_text_field(is_optional=True),
     "w_id": make_int_field(),
     "w_name": make_text_field(),
     "active_status": make_bool_field(),
@@ -566,5 +565,5 @@ api_params = {
     "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo"),
     "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList"),
     "has_read": make_bool_field(),
-    
+
 }
