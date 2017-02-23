@@ -558,6 +558,8 @@ api_params = {
     "reminders": make_vector_type_field(module="dashboard", klass_name="RemindersSuccess", is_optional=True),
     "escalations": make_vector_type_field(module="dashboard", klass_name="EscalationsSuccess", is_optional=True),
     "messages": make_vector_type_field(module="dashboard", klass_name="MessagesSuccess", is_optional=True),
+    "notification_details": make_vector_type_field(module="dashboard", klass_name="NotificationDetailsSuccess", is_optional=True),
+    "delayed_by":make_text_field(is_optional=True),
     "w_id": make_int_field(),
     "w_name": make_text_field(),
     "active_status": make_bool_field(),
@@ -567,5 +569,6 @@ api_params = {
     "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo"),
     "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList"),
     "has_read": make_bool_field(),
+    
 }
 

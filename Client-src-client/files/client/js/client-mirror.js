@@ -646,7 +646,7 @@ function initClientMirror() {
         callerName = 'client_dashboard';
         var request = [
             'UpdateNotificationStatus', {
-                'le_id':le_id,
+                'le_ids':le_id,
                 'notification_id': notification_id,
                 'has_read': has_read
             }
