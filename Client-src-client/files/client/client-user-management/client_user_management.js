@@ -425,6 +425,40 @@ userManagementPage.prototype.showAddScreen = function() {
     addScreen.show();
 };
 
+userManagementPage.prototype.clearValues = function() {
+    ddlUserCategory.val('');
+    hdnUserGroup.val('');
+    txtUserGroup.val('');
+    divUserGroup.val('');
+    txtSeatingUnit.val('');
+    hdnSeatingUnit.val('');
+
+    txtServiceProvider.val('');
+    hdnServiceProvider.val('');
+    divServiceProvider.val('');
+    txtEmployeeName.val('');
+    txtEmployeeId.val('');
+    ddlUserLevel.val('');
+    txtEmailID.val('');
+    txtContactNo1.val('');
+    txtContactNo2.val('');
+    txtContactNo3.val('');
+    txtMobileNo1.val('');
+    txtMobileNo2.val('');
+
+    ddlBusinessGroup.empty();
+    ddlLegalEntity.empty();
+    ddlDivision.empty();
+    ddlCategory.empty();
+    ddlDomain.empty();
+
+    legalEntity_ids = [];
+    businessGroup_ids = [];
+    Domain_ids = [];
+
+    ddlUserCategory.focus();
+};
+
 userManagementPage.prototype.onChangeUserCategory = function() {
     t_this = this;
 
@@ -623,11 +657,89 @@ function showTab() {
     }
 };
 
+userManagementPage.prototype.validateMandatory = function() {
+    if (ddlUserCategory.val().trim().length == 0) {
+        displayMessage(message.user_category_required);
+        ddlUserCategory.focus();
+        return false;
+    } else {
+        if (ddlUserCategory.val().trim() == 3 || ddlUserCategory.val().trim() == 4 || ddlUserCategory.val().trim() == 5) {
+            if (hdnSeatingUnit.val().trim().length == 0) {
+                displayMessage("Select Seating Unit");
+                txtSeatingUnit.focus();
+                return false;
+            } else if (ddlUserCategory.val().trim() == 6) {
+                if (hdnServiceProvider.val().trim().length == 0) {
+                    displayMessage("Select Seating Unit");
+                    txtServiceProvider.focus();
+                    return false;
+                }
+            }
+        }
+    }
+    if (hdnUserGroup.val().trim().length == 0) {
+        displayMessage(message.usergroup_required);
+        txtUserGroup.focus();
+        return false;
+    }
+    if (txtEmailID.val().trim().length == 0) {
+        displayMessage(message.emailid_required);
+        txtEmailID.focus();
+        return false;
+    } else {
+        validateMaxLength('email_id', txtEmailID.val(), "Email id");
+        var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+        if (reg.test(txtEmailID.val().trim()) == false) {
+            displayMessage(message.invalid_emailid);
+            txtEmailID.focus();
+            return false;
+        }
+    }
+
+    if (txtEmployeeName.val().trim().length == 0) {
+        displayMessage(message.employeename_required);
+        txtEmployeeName.focus();
+        return false;
+    } else {
+        validateMaxLength('employeename', txtEmployeeName.val(), "Employee name");
+    }
+
+    if (txtEmployeeId.val().trim().length == 0) {
+        displayMessage(message.employeeid_required);
+        txtEmployeeId.focus();
+        return false;
+    } else {
+        validateMaxLength('employeeid', txtEmployeeId.val(), "Employee id");
+    }
+    if (txtMobileNo2.val().trim().length == 0) {
+        displayMessage(message.mobile_required);
+        txtMobileNo2.focus();
+        return false;
+    }
+    if (ddlLegalEntity.val() == null) {
+        displayMessage("select legal entity");
+        ddlLegalEntity.focus();
+        return false;
+    } else {}
+
+
+    if (ddlUserCategory.val().trim() == 4 || ddlUserCategory.val().trim() == 5 || ddlUserCategory.val().trim() == 6) {
+        if (ddlDomain.val() == null) {
+            displayMessage(message.domain_required);
+            ddlDomain.focus();
+            return false;
+        } else {}
+    }
+    return true;
+}
+
 //Page Control Events
 PageControls = function() {
 
     //Add Button Click Event
     addButton.click(function() {
+        um_page.clearValues();
+        btnNext.hide();
         um_page.showAddScreen();
     });
 
@@ -663,10 +775,11 @@ PageControls = function() {
 
     // //Submit Button Click Event
     btnSubmit.click(function() {
-        // if (um_page.validate()) {
-        um_page.submitProcess();
-        // um_page.showList();
-        // }
+        if (um_page.validateMandatory()) {
+            um_page.submitProcess();
+            um_page.clearValues();
+            // um_page.showList();
+        }
     });
 
     chkSelectAll.click(function() {
