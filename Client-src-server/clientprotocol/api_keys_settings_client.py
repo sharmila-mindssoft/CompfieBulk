@@ -74,12 +74,14 @@ api_params = {
     'form_url': make_string_field(length=250, validfun=is_url),
     'parent_menu': make_string_field(length=50, is_optional=True, validfun=is_alphabet),
     'form_type': make_string_field(length=50, validfun=is_alphabet),
-    'u_g_id': make_int_field(is_optional=True),
-    'u_g_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
+
+    'u_g_id': make_int_field(is_optional=True), # User Priviliges, User Management
+    'u_g_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True), # User Priviliges, User Management
+
     'is_active': make_bool_field(),
-    'u_c_id': make_int_field(),
+    'u_c_id': make_int_field(), # User Priviliges, User Management
     'f_ids': make_vector_type_int(length=1000, is_optional=True),
-    'u_c_name': make_string_field(length=50, validfun=is_alpha_numeric),
+    'u_c_name': make_string_field(length=50, validfun=is_alpha_numeric), # User Priviliges, User Management
     "forms": make_map_type("clientcore", "Menu"),
     "menus": make_map_type_vector_type("clientcore", "Form"),
     "user_groups": make_vector_type_field("clientcore", "ClientUserGroup"),
@@ -91,11 +93,13 @@ api_params = {
     "le_id": make_int_field(),
     "le_ids": make_vector_type_int(),
     "le_name": make_string_field(),
-    "bg_name": make_string_field(is_optional=True),
-    "bg_id": make_int_field(is_optional=True),
-    "cat_id": make_int_field(is_optional=True),
-    "cat_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
-    "usr_id": make_int_field(is_optional=True),
+
+    "bg_name": make_string_field(is_optional=True), # User Management, Other forms
+    "bg_id": make_int_field(is_optional=True), # User Management, Other forms
+    "cat_id": make_int_field(is_optional=True), # User Management, Other forms    
+    "cat_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True), # User Management, Other forms
+    "usr_id": make_int_field(),    
+
     "email_id": make_string_field(validfun=allow_specialchar),
     "user_email_id": make_string_field(validfun=allow_specialchar),
     "emp_name": make_string_field(is_optional=True),
@@ -118,9 +122,10 @@ api_params = {
     "c_id": make_int_field(),
     "c_ids": make_vector_type_int(),
     "c_names": make_vector_type_string(),
-    "d_id": make_int_field(is_optional=True),
+    "d_id": make_int_field(is_optional=True), # User Management , Other Forms
+
     "d_ids": make_vector_type_int(),
-    "d_name": make_string_field(),
+    "d_name": make_string_field(is_optional=True), # User Management, Other Forms
     "d_names": make_vector_type_string(),
     "div_id": make_int_field(is_optional=True),
     "div_name": make_string_field(is_optional=True),
@@ -240,6 +245,22 @@ api_params = {
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
     "client_admin": make_int_field(),
+
+    "service_providers": make_vector_type_field(module="clientcore", klass_name="ServiceProviderDetails"),
+    "s_p_id" : make_int_field(),
+    "s_p_name": make_string_field(is_optional=True),
+    "s_p_short": make_string_field(is_optional=True),
+    "cont_from": make_text_field(is_optional=True),
+    "cont_to": make_text_field(is_optional=True),
+    "cont_person": make_string_field(is_optional=True),
+    "cont_no": make_text_field(is_optional=True),
+    "mob_no": make_text_field(),
+    "e_id": make_text_field(),
+    "address": make_string_field(length=500, is_optional=True),
+    "remarks": make_string_field(is_optional=True),
+    "is_blocked": make_bool_field(),
+    "unblock_days": make_int_field(),
+
     "unit_legal_entity": make_vector_type_field(module="clientreport", klass_name="UnitLegalEntity"),
     "act_legal_entity": make_vector_type_field(module="clientreport", klass_name="ActLegalEntity"),
     "compliance_task_list": make_vector_type_field(module="clientreport", klass_name="TaskLegalEntity"),
@@ -333,6 +354,60 @@ api_params = {
     "update_statutories": make_vector_type_field(module="clienttransactions", klass_name="UpdateStatutoryCompliance"),
     "s_s": make_int_field(),
     "is_saved": make_bool_field(),
+
+    "c_name":make_text_field(),
+    "b_g_name":make_text_field(is_optional=True),
+    "le_name":make_text_field(), # User Management & Other forms
+    "cont_from":make_text_field(),
+    "cont_to":make_text_field(),
+    "total_licences":make_int_field(),
+    "used_licences":make_int_field(),
+    "le_id":make_int_field(), # User Management & Other forms
+    "user_id":make_int_field(),
+    "u_cat_id":make_int_field(),
+    "u_g_id":make_int_field(),
+    "emp_name":make_text_field(),
+    "emp_code":make_text_field(),
+    "cont_no":make_text_field(is_optional=True),
+    "mob_no":make_text_field(),
+    "email_id":make_text_field(),
+    "user_name":make_text_field(),
+    "resend_mail":make_bool_field(),
+    "is_active":make_bool_field(),
+    "is_disable":make_bool_field(),
+    "reason":make_text_field(),
+    "unblock":make_text_field(),
+    "u_level":make_int_field(is_optional=True),
+    "s_unit":make_int_field(is_optional=True),
+    "is_sp":make_bool_field(),
+    "sp_id":make_int_field(is_optional=True),
+
+    "u_dm_id":make_int_field(),# User Management
+    "u_dm_name":make_text_field(), # User Management
+    "u_unt_id":make_int_field(), # User Management
+    "u_unt_code":make_string_field(), # User Management
+    "u_unt_name":make_string_field(), # User Management
+    "u_unt_address":make_string_field(), # User Management
+    "u_unt_postal":make_string_field(), # User Management
+    "user_domain_ids": make_vector_type_field(module="clientcore", klass_name="UserDomains"), # User Management
+    "user_unit_ids": make_vector_type_field(module="clientcore", klass_name="UserUnits"), # User Management    
+    "user_entity_ids": make_vector_type_int(length=1000), # User Management
+    "um_user_category": make_vector_type_field(module="clientcore", klass_name="ClientUsercategory_UserManagement"), # User Management
+    "um_user_group": make_vector_type_field(module="clientcore", klass_name="ClientUserGroup_UserManagement"), # User Management
+    "um_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientUserLegalEntity_UserManagement"), # User Management
+    "um_business_group": make_vector_type_field(module="clientcore", klass_name="ClientUserBusinessGroup_UserManagement"), # User Management
+    "um_group_division": make_vector_type_field(module="clientcore", klass_name="ClientUserDivision_UserManagement"), # User Management
+    "um_group_category": make_vector_type_field(module="clientcore", klass_name="ClientGroupCategory_UserManagement"), # User Management
+    "um_legal_domain": make_vector_type_field(module="clientcore", klass_name="ClientLegalDomains_UserManagement"), # User Management
+    "um_legal_units": make_vector_type_field(module="clientcore", klass_name="ClientLegalUnits_UserManagement"), # User Management
+    "um_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity_UserManagement"), # User Management
+
+    "captcha": make_string_field(length=CAPTCHA_LENGTH, is_optional=True, validfun=is_alpha_numeric), # User Registration
+    "uname":  make_string_field(length=20, validfun=is_alpha_numeric, is_optional=True), # User Registration
+    "token": make_string_field(length=100, is_optional=True, validfun=is_alpha_numeric), # User Registration
+    'pword': make_text_field(length=20), # User Registration
+
+
     "assign_units": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_UNITS"),
     "comp_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
     "usr_cat_id": make_int_field(),
@@ -493,3 +568,4 @@ api_params = {
     "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList"),
     "has_read": make_bool_field(),
 }
+

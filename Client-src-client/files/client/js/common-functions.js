@@ -269,9 +269,9 @@ function commonAutoComplete(
                 validation_results = [];
                 $.each(condition_fields, function(key, value) {
                     var condition_result;
-                    if(list_val[i][value] == null || list_val[i][value].length == undefined || list_val[i][value] == "" || list_val[i][value] == " ") {
+                    if (list_val[i][value] == null || list_val[i][value].length == undefined || list_val[i][value] == "" || list_val[i][value] == " ") {
                         condition_result = (list_val[i][value] == condition_values[key]);
-                        if(condition_values[key] == "")
+                        if (condition_values[key] == "")
                             condition_result = (list_val[i][value] == null);
                     } else {
                         condition_result = ($.inArray(parseInt(condition_values[key]), list_val[i][value]) >= 0);

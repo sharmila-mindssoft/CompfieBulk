@@ -67,7 +67,7 @@ function initClientMirror() {
     function getLEids() {
         le_ids = []
         le_data = getSelectedLegalEntity();
-        $.each(le_data, function(i,v) {
+        $.each(le_data, function(i, v) {
             le_ids.push(v.le_id);
         });
         return le_ids;
@@ -950,7 +950,6 @@ function initClientMirror() {
     }
     // Domain Score Card End
 
-
     // Legal Entity Wise Score Card Start
     function getLEWiseScoreCardFilters(le_id, callback) {
         var request = [
@@ -999,7 +998,7 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
-    // Work Flow Score Card End 
+    // Work Flow Score Card End     
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -2320,6 +2319,15 @@ function initClientMirror() {
         callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+    // User Management Prerequisite
+    function getUserManagement_Prerequisite(callback) {
+        callerName = 'client_masters';
+        var request = [
+            'UserManagementPrerequisite',
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
 
     // Widget api call begin
     function getUserWidgetData(callback) {
@@ -2339,8 +2347,9 @@ function initClientMirror() {
         callerName = "client_master_filters";
         clientApiRequest(callerName, request, callback);
     }
-    function getWidgetComplianceChart(callback){
-         var request = [
+
+    function getWidgetComplianceChart(callback) {
+        var request = [
             "GetComplianceChart", {
                 "le_ids": getLEids()
             }
@@ -2348,8 +2357,9 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getWidgetEscalationChart(callback){
-         var request = [
+
+    function getWidgetEscalationChart(callback) {
+        var request = [
             "GetEscalationChart", {
                 "le_ids": getLEids()
             }
@@ -2357,8 +2367,9 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getWidgetNotCompliedChart(callback){
-         var request = [
+
+    function getWidgetNotCompliedChart(callback) {
+        var request = [
             "GetNotCompliedChart", {
                 "le_ids": getLEids()
             }
@@ -2366,8 +2377,9 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getWidgetRiskChart(callback){
-         var request = [
+
+    function getWidgetRiskChart(callback) {
+        var request = [
             "GetRiskChart", {
                 "le_ids": getLEids()
             }
@@ -2375,8 +2387,9 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getWidgetTrendChart(callback){
-         var request = [
+
+    function getWidgetTrendChart(callback) {
+        var request = [
             "GetTrendChart", {
                 "le_ids": getLEids()
             }
@@ -2560,7 +2573,7 @@ function initClientMirror() {
         getUserProfile: getUserProfile,
         updateUserProfile: updateUserProfile,
         getReassignComplianceFilters: getReassignComplianceFilters,
-
+        getUserManagement_Prerequisite: getUserManagement_Prerequisite,
         getUserWidgetData: getUserWidgetData,
         SaveUserWidgetData: SaveUserWidgetData,
         getWidgetComplianceChart: getWidgetComplianceChart,
