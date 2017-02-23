@@ -1085,6 +1085,7 @@ def _init_Request_class_map():
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
         SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
+        GetReAssignComplianceUnits,
 
         GetAssigneewiseComplianesFilters,
         GetUserToAssignCompliance, GetChartFilters,

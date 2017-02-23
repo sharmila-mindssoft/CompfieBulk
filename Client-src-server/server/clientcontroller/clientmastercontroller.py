@@ -210,7 +210,7 @@ def process_change_service_provider_status(
         request.service_provider_id,
         is_active, session_user
     ):
-        return clientmasters.ChangeServiceProviderStatusSuccess() 
+        return clientmasters.ChangeServiceProviderStatusSuccess()
 
 ########################################################
 # User Management Add Prerequisite
@@ -405,7 +405,7 @@ def process_UserManagement_LegalUnits(db):
                                                        unit_name, address, postal_code)
         )
     return unitList
-    
+
 ########################################################
 # To get all user groups with details
 ########################################################
@@ -488,7 +488,7 @@ def process_change_user_privilege_status(db, request, session_user):
 ########################################################
 def process_get_client_users(db, request, session_user):
     users_list = getUserManagementList(db)
-    # service_provider_list = get_service_provider_details_list(db)    
+    # service_provider_list = get_service_provider_details_list(db)
     # user_company_info = get_user_company_details(
     #     db, session_user
     # )
