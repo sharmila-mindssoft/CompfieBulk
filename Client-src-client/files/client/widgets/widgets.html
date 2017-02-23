@@ -1,7 +1,8 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
-<link href="/files/client/common/css/calender-min.css" rel="stylesheet" type="text/css" />
-<!-- <link href="/files/client/common/css/resize/jquery-ui.css" rel="stylesheet" type="text/css"> -->
+<!-- <link href="/files/client/common/css/calender-min.css" rel="stylesheet" type="text/css" /> -->
+<link href="/files/client/common/css/resize/jquery-ui.css" rel="stylesheet" type="text/css"> 
+<link rel="stylesheet" href="/files/client/common/css/calender/monthly.css">
 <script type="text/javascript">
 $(function() {
     $(".left-menu-button").show();
@@ -13,17 +14,6 @@ $(function() {
         <div id="sidebar-menu">
             <ul>
                 <li class="text-muted menu-title">Widgets List</li>
-               <!--  <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item1"><i class="zmdi zmdi-chart"></i> <span> Compliance Status </span> </a> </li>
-                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item2"><i class="zmdi zmdi-chart"></i> <span> Escalation </span> </a> </li>
-                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item3"><i class="zmdi zmdi-chart"></i> <span> Not Complied </span> </a> </li>
-                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item4"><i class="zmdi zmdi-chart"></i> <span> Trend Chart </span> </a> </li>
-                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item5"><i class="zmdi zmdi-chart"></i> <span> Compliance Applicability </span> </a> </li>
-                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item6"><i class="zmdi zmdi-chart"></i> <span> Risk Chart </span> </a> </li>
-                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item7"><i class="zmdi zmdi-layers"></i> <span> User Scorecard</span> </a> </li>
-                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item8"><i class="zmdi zmdi-layers"></i> <span>Domain Scorecard</span> </a> </li>
-                {% if user != "viewOnlyAdmin" %}
-                <li class="has_sub active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item9"><i class="zmdi zmdi-calendar"></i> <span> Calendar view </span> </a> </li>
-                {% endif %} -->
             </ul>
             <div class="clearfix"></div>
         </div>
@@ -55,23 +45,23 @@ $(function() {
 <div id="templates">
     <div class="ul-sidebarmenu">
         <ul>
-        <li class="has_sub menu_widgets active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target="#item1"><i class="zmdi"></i> <span>  </span> </a> </li>
+        <li class="has_sub menu_widgets active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target=""><i class="zmdi"></i> <span>  </span> </a> </li>
         </ul>
     </div>
     <div class="chart-card-box">
-        <li class="column col-xs-12 col-sm-6 col-lg-4 resizable">
-            <div class="dragbox" id="item1">
-                <h2>
-                    <a class="chart-title">Compliance Status Graph</a> 
-                    <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> 
-                    <a href="#" class="pins"><i class="ti-pin2" title="pin"></i></a> 
-                    <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> 
-                </h2>
-                <div class="dragbox-content">
-                    <div id="" style="width:100%; height:100%; margin: 0 auto"></div>
-                </div>
-            </div>
-        </li>
+      <li class="column col-xs-12 col-sm-6 col-lg-4 resizable" >
+        <div class="dragbox" id="">
+          <h2>
+              <a class="chart-title"></a> 
+              <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> 
+              <a href="#" class="pins"><i class="ti-pin2" title="pin"></i></a> 
+              <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> 
+          </h2>
+          <div class="dragbox-content">
+              <div id="" style="width:100%; height:100%; margin: 0 auto"></div>
+          </div>
+        </div>
+      </li>
     </div>
     <div class="user-score-card-templates">
         <table class="table min-table highlight" cellspacing="0">
@@ -123,7 +113,9 @@ $(function() {
             <td class="text-center dsc-total-notopted"></td>
             <td class="text-center font-bold dsc-grandtotal"></td>
         </tr>
-
+    </div>
+    <div class="calender-templates">
+        <div class="monthly" id="mycalendar"></div>
     </div>
 </div>
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 
@@ -131,127 +123,14 @@ $(function() {
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/standalone-framework.js"></script>
-<script src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
-<script src="/files/client/common/js/sortable/jquery.sortable.js"></script>
-<!-- <script src="/files/client/common/js/resize/jquery-ui.js"></script> -->
+<script type="text/javascript" src="/files/client/common/js/sortable/jquery.sortable.js"></script>
+<script type="text/javascript" src="/files/client/common/js/resize/jquery-ui.js"></script>
+<script type="text/javascript" src="/files/client/common/js/calender/monthly.js"></script>
 <script type="text/javascript" src="/files/client/widgets/widgets.js"></script>
-
 <style type="text/css">
 .highcharts-legend-item text {
     width: 200px !important!;
     color: red !important!;
 }
 </style>
-<script type="text/javascript">
-$('#country').multiselect();
-$('#domain').multiselect();
-
-$(function() {
-    $('.resizable').resizable({
-        autoHide: true,
-        resize: function() {
-            chartCompliance.setSize(
-                this.offsetWidth - 40,
-                this.offsetHeight - 50,
-                false
-            );
-        }
-
-    });
-    $('.resizableesc').resizable({
-        autoHide: true,
-        resize: function() {
-            chartEscalation.setSize(
-                this.offsetWidth - 40,
-                this.offsetHeight - 50,
-                false
-            );
-        }
-    });
-    $('.resizablenotcomp').resizable({
-        autoHide: true,
-        resize: function() {
-            chartNotComplied.setSize(
-                this.offsetWidth - 40,
-                this.offsetHeight - 50,
-                false
-            );
-        }
-    });
-    $('.resizablecompappli').resizable({
-        autoHide: true,
-        resize: function() {
-            chartComplianceApplicability.setSize(
-                this.offsetWidth - 40,
-                this.offsetHeight - 50,
-                false
-            );
-        }
-    });
-    $('.resizabletrendchart').resizable({
-        autoHide: true,
-        resize: function() {
-            chartTrendChart.setSize(
-                this.offsetWidth - 40,
-                this.offsetHeight - 50,
-                false
-            );
-        }
-    });
-    $('.resizablerisk').resizable({
-        autoHide: true,
-        resize: function() {
-            chartRiskchart.setSize(
-                this.offsetWidth - 40,
-                this.offsetHeight - 50,
-                false
-            );
-        }
-    });
-
-
-});
-$('.toggleWidget').click(function(e) {
-    e.preventDefault();
-    console.log($(this).data('target'));
-    $($(this).data('target')).css({
-        "display": "block"
-    });
-    if ($(this).parent().hasClass("active_widgets") == false)
-        $(this).parent().addClass('active_widgets');
-});
-$('.closewidget').click(function(e) {
-    e.preventDefault();
-    var item = $(this).parent().parent();
-    var list = "#" + item.attr('id');
-    item.css({
-        "display": "none"
-    });
-
-    $(".has_sub").each(function(index) {
-        if ($(this).find('a').attr('data-target') === list) {
-            if ($(this).hasClass("active_widgets") == true)
-                $(this).removeClass('active_widgets');
-        }
-    });
-});
-$(function() {
-    $('a.maxmin').click(function() {
-        $(this).parent().siblings('.dragbox-content').toggle();
-    });
-
-    $('a.delete').click(
-        function() {
-            var sel = confirm('do you want to delete the widget?');
-            if (sel) {
-                //del code here
-            }
-        }
-    );
-
-});
-$('.dragdrophandles').sortable({
-    handle: 'h2'
-});
-</script>
 {% endblock %}
