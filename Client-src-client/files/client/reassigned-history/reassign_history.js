@@ -255,7 +255,10 @@ ReassignHistory.prototype.loadSearch = function() {
 ReassignHistory.prototype.fetchSearchList = function() {
     t_this = this;
     t_this._countries = client_mirror.getUserCountry();
-    t_this._entities = client_mirror.getUserLegalEntity();
+    //t_this._entities = client_mirror.getUserLegalEntity();
+    /*var jsondata = '[{"c_id":1,"le_name":"LG Legal Entity","le_id":1,"bg_name":"LG Business Group","bg_id":1,"c_name":"India"},{"c_id":1,"le_name":"LG Legal Entity","le_id":1,"bg_name":"LG Business Group","bg_id":1,"c_name":"India"}]';
+    var object = jQuery.parseJSON(jsondata);*/
+    t_this._entities = client_mirror.getSelectedLegalEntity();
 };
 
 ReassignHistory.prototype.fetchDomainList = function(le_id) {
@@ -502,6 +505,48 @@ ReassignHistory.prototype.possibleFailures = function(error) {
     }
 };
 
+ReassignHistory.prototype.loadEntityDetails = function(){
+    t_this = this;
+    if(t_this._entities.length > 1) {
+        alert(country.parent().html);
+        acCountry.show();
+        CountryNameLabel.hide();
+        LegalEntityNameLabel.hide();
+        LegalEntityNameAC.show();
+        BusinessGroupNameLabel.hide();
+        BusinessGroupNameAC.show();
+    }else{
+        c_name = t_this._entities[0]["c_name"];
+        c_id = t_this._entities[0]["c_id"];
+        CountryNameLabel.show();
+        acCountry.hide();
+        CountryNameLabel.text(c_name);
+        country.val(c_name);
+        countryId.val(c_id);
+        le_name = t_this._entities[0]["le_name"];
+        le_id = t_this._entities[0]["le_id"];
+        LegalEntityNameLabel.show();
+        LegalEntityNameAC.hide();
+        LegalEntityNameLabel.text(le_name);
+        LegalEntityName.val(le_name);
+        LegalEntityId.val(le_id);
+        var BG_NAME = '-';
+        if(t_this._entities[0]["bg_name"] != null){
+            BG_NAME = t_this._entities[0]["bg_name"];
+        }
+        var BG_ID = '';
+        if(t_this._entities[0]["bg_id"] != null){
+            BG_ID = t_this._entities[0]["bg_id"];
+        }
+        BusinessGroupNameLabel.show();
+        BusinessGroupNameAC.hide();
+        BusinessGroupNameLabel.text(BG_NAME);
+        BusinessGroupName.val(BG_NAME);
+        BusinessGroupId.val(BG_ID);
+        REPORT.fetchDomainList(c_id, BG_ID, le_id);
+    }
+};
+
 // call class ReassignHistory to store the REPORT object
 REPORT = new ReassignHistory();
 
@@ -511,4 +556,6 @@ $(document).ready(function() {
     // To store values in object & search list element 
     REPORT.loadSearch();
     loadItemsPerPage();
+    alert(country.parent().html());
+    REPORT.loadEntityDetails();
 });
