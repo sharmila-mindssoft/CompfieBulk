@@ -305,7 +305,6 @@ function updateComplianceApplicabilityChart(data, id) {
       '#66FF66',
       '#FFDC52',
       '#CE253C'
-      '#CE253C'
     ],
     chart: {
       type: 'pie',
@@ -371,15 +370,53 @@ function loadComplianceApplicabilityChart(data, id){
   updateComplianceApplicabilityChart(data, id); 
 }
 
-function userScoreCard(data, id)){
-  
+function userScoreCard(data, id){
+  var usc = $("#templates .ser-score-card-templates .table");
+  var uscclone = usc.clone();  
+  $("#cardbox"+id).append(uscclone);
+
+  var usc_tr = $("#templates .ser-score-card-templates .usc-tr");
+  var uscclone_tr = usc_tr.clone();  
+  $(".usc-role").html();
+  $(".usc-assignee").html();
+  $(".usc-concur").html();
+  $(".usc-approve").html();
+  $("#cardbox"+id+" .tbody-usc").append(uscclone_tr);
 }
 
-function domainScoreCard(data, id)){
-  
+function domainScoreCard(data, id){
+  var total_assigned = 0;
+  var total_unassigned = 0;
+  var total_notopted = 0;
+  var total_subtotal = 0;
+  var grandtotal = 0;
+  var dsc = $("#templates .ser-score-card-templates .table");
+  var dscclone = dsc.clone();  
+  $("#cardbox"+id).append(dscclone);
+
+  var dsc_tr = $("#templates .ser-score-card-templates .dsc-tr");
+  var dscclone_tr = dsc_tr.clone();  
+  $(".dsc-domain").html();
+  $(".dsc-assigned").html();
+  $(".dsc-unassigned").html();
+  $(".dsc-notopted").html();
+  total_subtotal = total_subtotal;
+  $(".dsc-subtotal").html(total_subtotal);
+  grandtotal = grandtotal+total_subtotal;
+  $("#cardbox"+id+" .tbody-dsc").append(dscclone_tr);
+
+  var dsc_total = $("#templates .ser-score-card-templates .dsc-tr");
+  var dscclone_total = dsc_total.clone(); 
+  $(".dsc-total-assigned").html(total_assigned);
+  $(".dsc-total-unassigned").html(total_unassigned);
+  $(".dsc-total-notopted").html(total_notopted);
+  $(".dsc-grandtotal").html(grandtotal);
+  $("#cardbox"+id+" .tbody-dsc").append(dscclone_total);
+
+
 }
 
-function calenderView(data, id)){
+function calenderView(data, id){
   
 }
 
@@ -444,8 +481,6 @@ function loadChart(){
     $(".dragdrophandles").append(cardboxclone);          
     settings[v.w_id](function(error, data){
       if(error == null){
-        console.log(v.w_id+"---"+data);
-       
         widgetLoadChart()[v.w_id](data, v.w_id);  
       }
       else{
