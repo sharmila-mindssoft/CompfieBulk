@@ -2792,7 +2792,6 @@ def save_review_settings_compliance(db, compliances, session_user):
                 values = [
                     c["legal_entity_id"], c["complaince_id"], c["f_id"], u, c["domain_id"],
                     old_statutory_dates, c["old_repeat_type_id"], c["old_repeat_by"],
-                    
                     c["repeat_by"], c["repeat_type_id"], statutory_dates, c["trigger_before_days"],
                     string_to_datetime(c["due_date"]).date()                    
                 ]
@@ -2815,6 +2814,7 @@ def save_review_settings_compliance(db, compliances, session_user):
             db.save_activity(session_user, frmReviewSettings, action, c["legal_entity_id"], unit_id)
             return result
 
+# get_units_to_reassign
 def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_user, session_category):
 
     if session_category <= 3 :
