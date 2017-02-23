@@ -599,3 +599,9 @@ def verify_password(db, user_id, encrypt_password):
     #     raise process_error("E065")
     # else
     return int(row[0]["count"])
+
+#  get_short_name
+def get_short_name(db, client_id):
+    q = "select short_name from tbl_client_groups where client_id = %s"
+    row = db.select_one(q, [client_id])
+    return row.get("short_name")

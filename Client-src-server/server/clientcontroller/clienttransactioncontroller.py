@@ -135,6 +135,13 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_reassign_compliance_filters(
             db, request, session_user, session_category
         )
+    elif type(request) is clienttransactions.GetReAssignComplianceUnits :
+        result = process_get_reassign_compliance_unit(db, request, session_user, session_category)  # GetReAssignComplianceUnits
+
+    elif type(request) is clienttransactions.GetReAssignComplianceForUnits:
+        result = process_get_reassign_compliance_for_units(
+            db, request, session_user
+        )
 
     elif type(request) is clienttransactions.GetReAssignComplianceUnits :
         result = process_get_reassign_compliance_unit(db, request, session_user, session_category)

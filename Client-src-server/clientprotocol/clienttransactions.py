@@ -584,7 +584,7 @@ class ReassignCompliance(Request):
             "le_id", "r_from", "assignee", "assignee_name",
             "concurrence_person", "approval_person", "reassigned_compliance", "reason"
         ])
-        
+
         return ReassignCompliance(
             data.get("le_id"),
             data.get("r_from"),
@@ -1107,6 +1107,7 @@ def _init_Request_class_map():
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
         SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
+
         GetReAssignComplianceUnits, GetReAssignComplianceForUnits,
         GetAssigneewiseComplianesFilters,
         GetUserToAssignCompliance, GetChartFilters,
