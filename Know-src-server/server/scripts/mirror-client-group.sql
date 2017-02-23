@@ -218,7 +218,6 @@ CREATE TABLE `tbl_users` (
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
   `disabled_on` timestamp NULL DEFAULT NULL,
-  `reason` varchar(500) DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created_on` timestamp NULL DEFAULT NULL,
   `updated_by` int(11) DEFAULT NULL,

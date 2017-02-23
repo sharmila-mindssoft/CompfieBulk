@@ -97,7 +97,7 @@ api_params = {
     "bg_id": make_int_field(is_optional=True),  # User Management, Other forms
     "cat_id": make_int_field(is_optional=True),  # User Management, Other forms
     "cat_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),  # User Management, Other forms
-    "usr_id": make_int_field(),
+    "usr_id": make_int_field(is_optional=True),
 
     "email_id": make_string_field(validfun=allow_specialchar),
     "user_email_id": make_string_field(validfun=allow_specialchar),
@@ -260,7 +260,6 @@ api_params = {
     "cont_person": make_string_field(is_optional=True),
     "cont_no": make_text_field(is_optional=True),
     "e_id": make_text_field(),
-    "address": make_string_field(length=500, is_optional=True),
     "remarks": make_string_field(is_optional=True),
     "is_blocked": make_bool_field(),
     "unblock_days": make_int_field(),
@@ -556,6 +555,8 @@ api_params = {
     "reminders": make_vector_type_field(module="dashboard", klass_name="RemindersSuccess", is_optional=True),
     "escalations": make_vector_type_field(module="dashboard", klass_name="EscalationsSuccess", is_optional=True),
     "messages": make_vector_type_field(module="dashboard", klass_name="MessagesSuccess", is_optional=True),
+    "notification_details": make_vector_type_field(module="dashboard", klass_name="NotificationDetailsSuccess", is_optional=True),
+    "delayed_by":make_text_field(is_optional=True),
     "w_id": make_int_field(),
     "w_name": make_text_field(),
     "active_status": make_bool_field(),
@@ -565,4 +566,5 @@ api_params = {
     "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo"),
     "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList"),
     "has_read": make_bool_field(),
+    
 }

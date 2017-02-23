@@ -413,6 +413,7 @@ function actstatus(element) {
     $('.a-' + id).each(function() {
     	if(cstatus){
     		if($('.comp-checkbox:checked').length > mCompliances){
+    			alert('hi')
 				$(this).prop("checked", false);
 				displayMessage(message.maximum_compliance_selection_reached_select_all);
 				return false;
@@ -438,6 +439,7 @@ function loadCompliances(){
 	if (SCOUNT <= 1) {
 	    $('.tbody-accordion-list').empty();
 	}
+
 	for (var l = 0; l < ActList.length; l++) {
 	    if(LastAct != ActList[l]){         
 	        var countrytableRow = $('#act-templates .p-head');
@@ -788,9 +790,6 @@ $('#approval').click(function (event) {
 });
 
 function loadSeatingUnits(){
-	$('#assignee').empty();
-	$('#concurrence').empty();
-	$('#approval').empty();
 	$('#assignee_unit').empty();
 	$('#assignee_unit').append('<option value=""> Select </option>');
 	$('#assignee_unit').append('<option value="all"> All </option>');
