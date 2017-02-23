@@ -7,6 +7,7 @@ __all__ = [
     "SaveRegistrationData"
 ]
 
+
 class ClientdbConect(object):
     def __init__(self):
         self._k_db = None
@@ -83,3 +84,5 @@ class SaveRegistrationData(ClientdbConect):
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
             raise client_process_error("E026")
+
+
