@@ -4,8 +4,10 @@ from server import logger
 from clientprotocol import (clientcore, general)
 from server.common import (
     datetime_to_string, get_date_time,
-    string_to_datetime, generate_and_return_password, datetime_to_string_time
+    string_to_datetime, generate_and_return_password, datetime_to_string_time,
+    get_current_date, new_uuid, addHours
 )
+from server.emailcontroller import EmailHandler as email
 from clientprotocol import clientmasters
 
 from server.clientdatabase.tables import *
@@ -16,8 +18,9 @@ from server.clientdatabase.general import (
 )
 from server.clientdatabase.savetoknowledge import *
 from server.exceptionmessage import client_process_error
+from server.constants import REGISTRATION_EXPIRY, KNOWLEDGE_URL, CLIENT_URL
 
-email = EmailHandler()
+# email = EmailHandler()
 __all__ = [
     "get_service_provider_details_list",
     "is_duplicate_service_provider",
@@ -52,6 +55,15 @@ __all__ = [
     "get_unit_closure_units_list",
     "save_unit_closure_data",
     "is_invalid_id",
+    "userManagement_GetUserCategory",
+    "userManagement_GetUserGroup",
+    "userManagement_GetLegalEntity",
+    "userManagement_GetBusinessGroup",
+    "userManagement_GetDivision",
+    "userManagement_GetGroupCategory",
+    "userManagement_GetLegalEntity_Domain",
+    "userManagement_GetLegalEntity_Units",
+    "save_user_legal_entities",
     "get_service_providers_list",
     "get_service_providers_user_list",
     "get_service_provider_status",
@@ -71,18 +83,17 @@ __all__ = [
 ############################################################################
 def get_service_provider_details_list(db):
     columns = [
-        "service_provider_id", "service_provider_name", "address",
-        "contract_from", "contract_to", "contact_person", "contact_no",
-        "is_active"
+        "service_provider_id", "service_provider_name", "short_name", "contract_from",
+        "contract_to", "contact_person", "contact_no", "email_id", "mobile_no",
+        "address", "is_active", "is_blocked", "remarks",
+        "ifnull(DATEDIFF(CURRENT_DATE(), blocked_on),0) AS unblock_days"
     ]
     condition = condition_val = None
     order = " ORDER BY service_provider_name"
     rows = db.get_data(
         tblServiceProviders, columns, condition, condition_val, order
     )
-    print rows
     return return_service_provider_details(rows)
-
 
 ############################################################################
 # To Structure the service provider data fetched from database
@@ -96,16 +107,22 @@ def return_service_provider_details(service_providers):
         service_provider_obj = clientcore.ServiceProviderDetails(
             service_provider["service_provider_id"],
             service_provider["service_provider_name"],
-            service_provider["address"],
+            service_provider["short_name"],
             datetime_to_string(service_provider["contract_from"]),
             datetime_to_string(service_provider["contract_to"]),
             service_provider["contact_person"],
             service_provider["contact_no"],
-            bool(service_provider["is_active"]))
+            service_provider["email_id"],
+            service_provider["mobile_no"],
+            service_provider["address"],
+            bool(service_provider["is_active"]),
+            bool(service_provider["is_blocked"]),
+            service_provider["unblock_days"],
+            service_provider["remarks"])
+
         results.append(service_provider_obj)
     print results
     return results
-
 
 ############################################################################
 # To Check whether the service provider name already exists
@@ -115,14 +132,14 @@ def return_service_provider_details(service_providers):
 #             - Returns False if data not exists
 #             - Returns True if data exists
 ############################################################################
-def is_duplicate_service_provider(
-    db, service_provider_id, service_provider_name
-):
-    condition = "service_provider_name = %s "
-    condition_val = [service_provider_name]
-    if service_provider_id is not None:
-        condition += " AND service_provider_id != %s"
-        condition_val.append(service_provider_id)
+def is_duplicate_service_provider(db, service_provider_id, service_provider_name,
+                                  short_name):
+    column = ["short_name", "service_provider_name"]
+    condition = "short_name = %s AND service_provider_name = %s "
+    condition_val = [short_name, service_provider_name]
+    # if service_provider_id is not None:
+        # condition += " AND service_provider_id != %s"
+        # condition_val.append(service_provider_id)
     res = db.is_already_exists(tblServiceProviders, condition, condition_val)
     return res
 
@@ -139,15 +156,15 @@ def save_service_provider(db, service_provider, session_user):
     contract_from = string_to_datetime(service_provider.contract_from)
     contract_to = string_to_datetime(service_provider.contract_to)
     columns = [
-        "service_provider_name", "address", "contract_from",
-        "contract_to", "contact_person", "contact_no",
-        "created_on", "created_by",
-        "updated_on", "updated_by"
+        "service_provider_name", "short_name", "contract_from", "contract_to",
+        "contact_person", "contact_no", "mobile_no", "email_id", "address",
+        "created_on", "created_by", "updated_on", "updated_by"
     ]
     values = [
-        service_provider.service_provider_name,
-        service_provider.address, contract_from, contract_to,
-        service_provider.contact_person, service_provider.contact_no,
+        service_provider.service_provider_name, service_provider.short_name,
+        contract_from, contract_to, service_provider.contact_person,
+        service_provider.contact_no, service_provider.mobile_no,
+        service_provider.email_id, service_provider.address,
         current_time_stamp, session_user, current_time_stamp, session_user
     ]
     service_provider_id = db.insert(tblServiceProviders, columns, values)
@@ -157,6 +174,7 @@ def save_service_provider(db, service_provider, session_user):
     action = "Created Service Provider \"%s\"" % (
         service_provider.service_provider_name
     )
+    # Audit Log Entry
     db.save_activity(session_user, 2, action)
     return service_provider_id
 
@@ -199,13 +217,16 @@ def update_service_provider(db, service_provider, session_user):
     contract_from = string_to_datetime(service_provider.contract_from)
     contract_to = string_to_datetime(service_provider.contract_to)
     columns_list = [
-        "service_provider_name", "address", "contract_from", "contract_to",
-        "contact_person", "contact_no", "updated_on", "updated_by"
-    ]
+        "service_provider_id", "service_provider_name", "short_name", "contract_from", "contract_to",
+        "contact_person", "contact_no", "mobile_no", "email_id", "address",
+        "updated_on", "updated_by"
+    ]    
     values_list = [
-        service_provider.service_provider_name, service_provider.address,
-        contract_from, contract_to, service_provider. contact_person,
-        service_provider.contact_no, current_time_stamp, session_user
+        service_provider.service_provider_id, service_provider.service_provider_name, service_provider.short_name,
+        contract_from, contract_to, service_provider.contact_person,
+        service_provider.contact_no, service_provider.mobile_no,
+        service_provider.email_id, service_provider.address,
+        current_time_stamp, session_user
     ]
     condition = "service_provider_id= %s"
     values_list.append(service_provider.service_provider_id)
@@ -238,7 +259,7 @@ def update_service_provider(db, service_provider, session_user):
     action = "Updated Service Provider \"%s\"" % (
         service_provider.service_provider_name
     )
-    db.save_activity(session_user, 2, action)
+    # db.save_activity(session_user, 2, action)
     return result
 
 
@@ -315,7 +336,73 @@ def update_service_provider_status(
     db.save_activity(session_user, 2, action)
 
     return result
+##############################################################################
+# User Management Add - Category Prerequisite
+##############################################################################
+def userManagement_GetUserCategory(db):
+    q = "SELECT user_category_id, user_category_name From tbl_user_category " + \
+        " WHERE user_category_id <> '1'"
+    row = db.select_all(q, None)
+    return row
 
+##############################################################################
+# User Management Add - User Group Prerequisite
+##############################################################################
+def userManagement_GetUserGroup(db):
+    q = "SELECT user_group_id, user_group_name, user_category_id from tbl_user_groups " + \
+        " WHERE is_active = '1'"
+    row = db.select_all(q, None)
+    return row
+
+##############################################################################
+# User Management Add - Business Group Prerequisite
+##############################################################################
+def userManagement_GetBusinessGroup(db):
+    q = "SELECT business_group_id, business_group_name from tbl_business_groups "
+    row = db.select_all(q, None)
+    return row
+
+##############################################################################
+# User Management Add - Legal Entity Prerequisite
+##############################################################################
+def userManagement_GetLegalEntity(db):
+    q = "SELECT legal_entity_id, business_group_id, legal_entity_name From tbl_legal_entities " + \
+        " WHERE is_closed ='0'"
+    row = db.select_all(q, None)
+    return row
+##############################################################################
+# User Management Add - Division Prerequisite
+##############################################################################
+def userManagement_GetDivision(db):
+    q = "SELECT division_id, division_name, legal_entity_id, business_group_id From tbl_divisions "
+    row = db.select_all(q, None)
+    return row
+##############################################################################
+# User Management Add - Category Prerequisite
+##############################################################################
+def userManagement_GetGroupCategory(db):
+    q = "SELECT category_id, category_name, legal_entity_id, "+ \
+        " business_group_id, division_id From tbl_categories "
+    row = db.select_all(q, None)
+    return row
+##############################################################################
+# User Management Add - Legal Entity Domains Prerequisite
+##############################################################################
+def userManagement_GetLegalEntity_Domain(db):
+    q = "SELECT  T01.legal_entity_id, T01.domain_id, T02.domain_name " + \
+        " From tbl_legal_entity_domains AS T01 INNER JOIN tbl_domains as T02" + \
+        " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 "
+    row = db.select_all(q, None)
+    return row
+##############################################################################
+# User Management Add - Units
+##############################################################################
+def userManagement_GetLegalEntity_Units(db):
+    q = "SELECT unit_id, business_group_id, legal_entity_id, division_id, " + \
+        " category_id, unit_code, unit_name, address, postal_code " + \
+        " From tbl_units where is_closed = '0' AND legal_entity_id = 1 "
+    row = db.select_all(q, None)
+    return row
 ##############################################################################
 # To Get list of all forms
 # Parameter(s) - Object of database
@@ -372,23 +459,11 @@ def get_user_privilege_details_list(db):
         " INNER JOIN tbl_user_category AS t2 ON t2.user_category_id = t1.user_category_id " + \
         " INNER JOIN tbl_user_group_forms AS t3 ON t3.user_group_id = t1.user_group_id" + \
         " group by t1.user_group_id"
-
-    # q = "SELECT t1.user_group_id, t1.user_category_id, t1.user_group_name, " + \
-    #    " t2.user_category_name, t1.is_active FROM tbl_user_groups as t1 " + \
-    #    " INNER JOIN tbl_user_category AS t2 ON t2.user_category_id = t1.user_category_id"
     groups = db.select_all(q, None)
-
-    # columns = ["user_group_id", "user_category_id", "user_group_name", "user_category_name", "is_active"]
-    # groups = db.get_data(
-    #     "tbl_user_groups", columns, "1 ORDER BY user_group_name"
-    # )
-
     columns = ["user_group_id", "form_id"]
     group_forms = db.get_data(
         "tbl_user_group_forms", columns, "1 ORDER BY user_group_id"
     )
-    #print groups, group_forms
-    # return groups, group_forms
     return return_user_privilage_list(groups, group_forms)
 
 
@@ -501,7 +576,7 @@ def update_user_privilege(db, user_privilege, session_user):
             values1 = [user_privilege.user_group_id, x]
             db.insert(tblUserGroupForms, columns1, values1)
     action = "Updated User Group \"%s\"" % user_privilege.user_group_name
-    db.save_activity(session_user, 3, action)
+    # db.save_activity(session_user, 3, action)
     return result
 
 ##############################################################################
@@ -752,26 +827,6 @@ def is_duplicate_employee_name(db, employee_name, user_id=None):
         condition_val.append(user_id)
     return db.is_already_exists(tblUsers, condition, condition_val)
 
-
-############################################################################
-# To Save User countries
-# Parameter(s) - Object of database, country ids, user id
-# Return Type - None / RunTimeError
-#             - Returns RuntimeError if insertion fails
-############################################################################
-def save_user_countries(db, country_ids, user_id):
-    db.delete(tblUserCountries, "user_id = %s", [user_id])
-    country_columns = ["user_id", "country_id"]
-    country_values_list = [
-        (user_id, c_id) for c_id in country_ids
-    ]
-    res = db.bulk_insert(
-        tblUserCountries, country_columns, country_values_list
-    )
-    if res is False:
-        raise client_process_error("E008")
-
-
 ############################################################################
 # To Save User Domains
 # Parameter(s) - Object of database, domain ids, user id
@@ -779,15 +834,15 @@ def save_user_countries(db, country_ids, user_id):
 #             - Returns RuntimeError if insertion fails
 ############################################################################
 def save_user_domains(db, domain_ids, user_id):
-    db.delete(tblUserDomains, "user_id = %s", [user_id])
-    domain_columns = ["user_id", "domain_id"]
+    for domain_id in domain_ids:
+        db.delete(tblUserDomains, "user_id = %s", [user_id])
+    domain_columns = ["user_id", "legal_entity_id", "domain_id"]
     domain_values_list = [
-        (user_id, int(domain_id)) for domain_id in domain_ids
+        (user_id, int(uid.legal_entity_id), int(uid.domain_id)) for uid in domain_ids
     ]
     res = db.bulk_insert(tblUserDomains, domain_columns, domain_values_list)
     if res is False:
         raise client_process_error("E009")
-
 
 ############################################################################
 # To Save User Units
@@ -797,15 +852,62 @@ def save_user_domains(db, domain_ids, user_id):
 ############################################################################
 def save_user_units(db, unit_ids, user_id):
     db.delete(tblUserUnits, "user_id = %s", [user_id])
-    unit_columns = ["user_id", "unit_id"]
+    unit_columns = ["user_id", "legal_entity_id", "unit_id"]
     unit_values_list = [
-        (user_id, int(unit_id)) for unit_id in unit_ids
+        (user_id, int(uid.legal_entity_id), int(uid.unit_id)) for uid in unit_ids
     ]
     res = db.bulk_insert(tblUserUnits, unit_columns, unit_values_list)
     if res is False:
         raise client_process_error("E010")
+############################################################################
+# To Save User Legal Entities
+# Parameter(s) - Object of database, unit ids, user id
+# Return Type - None / RunTimeError
+#             - Returns RuntimeError if insertion fails
+############################################################################
+def save_user_legal_entities(db, entity_ids, user_id):
+    db.delete(tbluserlegalentities, "user_id = %s", [user_id])
+    entity_columns = ["user_id", "legal_entity_id"]
+    entity_values_list = [(user_id, int(le_id)) for le_id in entity_ids]
+    res = db.bulk_insert(tbluserlegalentities, entity_columns, entity_values_list)
+    if res is False:
+        raise client_process_error("E010")
 
+############################################################################
+# To Save Registration Token
+# Parameter(s) - Object of database, unit ids, user id
+# Return Type - None / RunTimeError
+#             - Returns RuntimeError if insertion fails
+############################################################################
+def save_registration_token(db, short_name, user_id, emp_name, email_id):
+    def _del_olddata():
+        condition = "user_id = %s and verification_type_id = %s"
+        condition_val = [user_id, 1]
+        db.delete(tblEmailVerification, condition, condition_val)
+        return True
 
+    current_time_stamp = get_current_date()
+    registration_token = new_uuid()
+    expiry_date = addHours(int(REGISTRATION_EXPIRY), current_time_stamp)
+
+    link = "%suserregistration/%s/%s" % (
+        CLIENT_URL,short_name, registration_token
+    )
+
+    notify_user_thread = threading.Thread(
+        target=notify_user, args=[
+            short_name, email_id, emp_name, link
+        ]
+    )
+    notify_user_thread.start()
+
+    if _del_olddata():
+        q = " INSERT INTO tbl_email_verification(user_id, verification_code, " + \
+            " verification_type_id, expiry_date) VALUES (%s, %s, %s, %s)"
+        row = db.execute(q, [user_id, registration_token, 1, expiry_date])
+        return True
+    else:
+        return False
 ############################################################################
 # To Save User
 # Parameter(s) - Object of database, Object of user, session user
@@ -818,17 +920,17 @@ def save_user(db, user, session_user, client_id):
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
     columns = [
-        "user_group_id", "email_id", "password", "employee_name",
-        "employee_code", "contact_no", "user_level",
-        "is_admin", "is_service_provider", "created_by", "created_on",
+        "user_category_id", "user_group_id", "email_id", "employee_name",
+        "employee_code", "contact_no", "mobile_no", "user_level",
+        "is_service_provider", "created_by", "created_on",
         "updated_by", "updated_on"
     ]
-    encrypted_password, password = generate_and_return_password()
+
     values = [
-        user.user_group_id, user.email_id,
-        encrypted_password, user.employee_name,
-        user.employee_code.replace(" ", ""), user.contact_no, user.user_level,
-        0, user.is_service_provider, session_user, current_time_stamp,
+        user.user_category, user.user_group_id, user.email_id,
+        user.employee_name, user.employee_code.replace(" ", ""),
+        user.contact_no, user.mobile_no, user.user_level,
+        user.is_service_provider, session_user, current_time_stamp,
         session_user, current_time_stamp
     ]
     if user.is_service_provider == 1:
@@ -842,26 +944,27 @@ def save_user(db, user, session_user, client_id):
     if user_id is False:
         raise client_process_error("E007")
 
-    save_user_countries(db, user.country_ids, user_id)
-    save_user_domains(db, user.domain_ids, user_id)
-    save_user_units(db, user.unit_ids, user_id)
-    # Save user into  knowledge db
-    SaveUsers(user, user_id, client_id)
+    short_name = get_short_name(db)
+
+    save_user_domains(db, user.user_domain_ids, user_id)
+    save_user_units(db, user.user_unit_ids, user_id)
+    save_user_legal_entities(db, user.user_entity_ids, user_id)
+    save_registration_token(db, short_name, user_id, user.employee_name, user.email_id)
+
     action = "Created user \"%s - %s\"" % (
         user.employee_code, user.employee_name
     )
+    # Audit Log Entry
     db.save_activity(session_user, 4, action)
-    short_name = get_short_name(db)
-    notify_user_thread = threading.Thread(
-        target=notify_user, args=[
-            short_name, user.email_id, password,
-            user.employee_name, user.employee_code
-        ]
-    )
-    notify_user_thread.start()
+
+    # notify_user_thread = threading.Thread(
+    #     target=notify_user, args=[
+    #         short_name, user.email_id, password,
+    #         user.employee_name, user.employee_code
+    #     ]
+    # )
+    # notify_user_thread.start()
     return True
-
-
 ############################################################################
 # To Update User
 # Parameter(s) - Object of database, Object of user, session user
@@ -899,7 +1002,6 @@ def update_user(db, user, session_user, client_id):
     if result1 is False:
         raise client_process_error("E011")
 
-    save_user_countries(db, user.country_ids, user_id)
     save_user_domains(db, user.domain_ids, user_id)
     save_user_units(db, user.unit_ids, user_id)
     UpdateUsers(user, user.user_id, client_id)
@@ -1190,23 +1292,37 @@ def return_forms(db, form_ids=None):
 
 
 def get_short_name(db):
-    columns = "url_short_name"
+    columns = "short_name"
     rows = db.get_data(
         tblClientGroups, columns, "1"
     )
-    return rows[0]["url_short_name"]
+    return rows[0]["short_name"]
 
-
+###############################################################################
+# To Send the credentials to the user
+# Parameter(s) : email id, password, employee name, employee code
+# Return Type : if the email fails raises exception
+###############################################################################
 def notify_user(
-    short_name, email_id, password, employee_name, employee_code
+    short_name, email_id, emp_name, link
 ):
     try:
-        email.send_user_credentials(
-            short_name, email_id, password, employee_name, employee_code
-        )
+        email().send_registraion_link(email_id, emp_name, link)
     except Exception, e:
-        logger.logClient("error", "clientdatabase.py-notify-user", e)
-        print "Error while sending email: %s" % e
+        print "Error while sending email"
+        print e
+
+# OLD Code can remove
+# def notify_user(
+#     short_name, email_id, password, employee_name, employee_code
+# ):
+#     try:
+#         email.send_user_credentials(
+#             short_name, email_id, password, employee_name, employee_code
+#         )
+#     except Exception, e:
+#         logger.logClient("error", "clientdatabase.py-notify-user", e)
+#         print "Error while sending email: %s" % e
 
 
 ############################################################################
@@ -1404,22 +1520,30 @@ def get_service_provider_details_report_data(db, request):
     select_qry = "select t1.service_provider_id, t1.short_name, t1.service_provider_name, " + \
         "t1.contact_no, t1.email_id, t1.address, t1.contract_from, t1.contract_to, t1.is_active, " + \
         "t1.status_changed_on, t1.is_blocked, t1.blocked_on from tbl_service_providers as t1 "
-
+    where_1 = None
+    where_2 = None
     if (int(sp_id) > 0 or s_p_status != "All"):
         where_clause = "where "
         if int(sp_id) > 0:
-            where_clause = where_clause + "t1.service_provider_id = %s "
+            where_1 = "t1.service_provider_id = %s "
             condition_val.append(sp_id)
 
         if s_p_status == "Active":
-            where_clause = where_clause + "and t1.is_active = %s "
+            where_2 = "t1.is_active = %s "
             condition_val.append(1)
         elif s_p_status == "Inactive":
-            where_clause = where_clause + "and t1.is_active = %s "
+            where_2 = "t1.is_active = %s "
             condition_val.append(0)
         elif s_p_status == "Blocked":
-            where_clause = where_clause + "and t1.is_blocked = %s "
+            where_2 = "t1.is_blocked = %s "
             condition_val.append(1)
+
+        if where_1 is not None and where_2 is not None:
+            where_clause = where_clause + str(where_1)+" and "+str(where_2)
+        elif where_1 is not None:
+            where_clause = where_clause + str(where_1)
+        elif where_2 is not None:
+            where_clause = where_clause + str(where_2)
 
     if where_clause is None:
         where_clause = "order by t1.service_provider_name ASC limit %s, %s;"
@@ -1433,6 +1557,8 @@ def get_service_provider_details_report_data(db, request):
     result_sp = db.select_all(query, condition_val)
 
     where_clause = None
+    where_1 = None
+    where_2 = None
     condition_val = []
     select_qry = None
     select_qry = "select t1.service_provider_id, t1.user_id, t1.employee_name, " + \
@@ -1442,12 +1568,19 @@ def get_service_provider_details_report_data(db, request):
     if (int(sp_id) > 0 or int(user_id) > 0):
         where_clause = "where "
         if int(sp_id) > 0:
-            where_clause = where_clause + "t1.service_provider_id = %s "
+            where_1 = "t1.service_provider_id = %s "
             condition_val.append(sp_id)
 
         if int(user_id) > 0:
-            where_clause = where_clause + "t1.user_id = %s "
+            where_2 = "t1.user_id = %s "
             condition_val.append(user_id)
+
+        if where_1 is not None and where_2 is not None:
+            where_clause = where_clause + str(where_1)+" and "+str(where_2)
+        elif where_1 is not None:
+            where_clause = where_clause + str(where_1)
+        elif where_2 is not None:
+            where_clause = where_clause + str(where_2)
 
     if where_clause is None:
         where_clause = "order by t1.employee_name ASC;"
@@ -1515,7 +1648,7 @@ def get_audit_users_list(db, legal_entity_id):
     query = "select distinct(t2.user_id), t2.employee_code,t2.employee_name, " + \
         "t2.user_category_id, t2.user_group_id from tbl_user_domains as t1 inner join tbl_users as t2 " + \
         "on t2.user_id = t1.user_id or t2.user_category_id=1 where t1.legal_entity_id=%s " + \
-        "order by user_name asc;"
+        "order by employee_name asc;"
     result = db.select_all(query, [legal_entity_id])
     audit_users_list = []
     for row in result:
@@ -1552,7 +1685,7 @@ def get_audit_forms_list(db):
 ###############################################################################################
 def get_login_users_list(db):
     query = "select user_id, employee_code,employee_name, " + \
-        "user_category_id, user_group_id from tbl_users order by user_name asc;"
+        "user_category_id, user_group_id from tbl_users order by employee_name asc;"
     result = db.select_all(query, None)
     login_users_list = []
     for row in result:
@@ -1572,7 +1705,7 @@ def get_login_users_list(db):
 # Parameter: request object
 # Result: list of activities
 ###############################################################################################
-def process_login_trace_report(db, request):
+def process_login_trace_report(db, request, client_id):
     where_clause = None
     condition_val = []
     select_qry = None

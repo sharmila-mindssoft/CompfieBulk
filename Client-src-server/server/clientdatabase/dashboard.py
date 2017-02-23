@@ -36,8 +36,11 @@ __all__ = [
     "get_not_complied_drill_down",
     "get_compliance_applicability_chart",
     "get_compliance_applicability_drill_down",
-    "get_notifications",
+    "get_reminders",
+    "get_escalations",
+    "get_messages",
     "update_notification_status",
+    "notification_details",
     "get_user_company_details",
     "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances",
@@ -231,6 +234,7 @@ def get_compliance_status(
     param = [",".join([str(x) for x in country_ids]), ",".join([str(x) for x in domain_ids])]
     param.extend(where_qry_val)
     q = "%s %s %s" % (query, where_qry1, order)
+    print q % tuple(param)
     rows = db.select_all(q, param)
 
     return filter_ids, rows
@@ -1753,163 +1757,76 @@ def get_compliance_applicability_drill_down(
 
     return level_1_wise_compliance.values()
 
-
-#
-#   Notifications
-#
-def get_notifications(
-    db, notification_type, start_count, to_count,
-    session_user
+def get_reminders(
+    db, notification_type, start_count, to_count, session_user, session_category
 ):
-    users = get_all_users(db)
+    query = "(Select legal_entity_id, '0' as row_number,'0' as notification_id, " + \
+            "IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),concat('Your contract with Compfie for the legal entity ',legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
+            "Before contract expiration you can download documents <a href=#>here</a>'),'') as notification_text, " + \
+            "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg Where %s = 1 OR %s = 2 AND %s = 1 ) " + \
+            "UNION ALL " + \
+            "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 1 " + \
+            "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+            "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s) "
+    rows = db.select_all(query, [session_category, session_category, notification_type, session_user, notification_type, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        legal_entity_id = int(r["legal_entity_id"])
+        notification_id = int(r["notification_id"])
+        notification_text = r["notification_text"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.RemindersSuccess(legal_entity_id, notification_id, notification_text, created_on)
+        notifications.append(notification)
+    return notifications
 
-    def get_user_info_str(user_id):
-        u_info = users.get(user_id)
-        if u_info is None:
-            return None
-        data = "%s - %s, %s - %s " % (
-            u_info.get("employee_code"),
-            u_info.get("employee_name"),
-            u_info.get("contact_no"),
-            u_info.get("email_id")
-        )
-        return data
+def get_escalations(
+    db, notification_type, start_count, to_count, session_user, session_category
+):
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
+            "Where nlu.user_id = %s " + \
+            "AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+            "order by nl.notification_id desc) as t1, " + \
+            "(SELECT @rownum := 0) r) as t " + \
+            "where t.rank >= %s and t.rank <= %s"
+    rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        legal_entity_id = int(r["legal_entity_id"])
+        notification_id = int(r["notification_id"])
+        notification_text = r["notification_text"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.EscalationsSuccess(legal_entity_id, notification_id, notification_text, created_on)
+        notifications.append(notification)
+    return notifications
 
-    notification_type_id = None
-    if notification_type == "Notification":
-        notification_type_id = 1
-    elif notification_type == "Reminder":
-        notification_type_id = 2
-    elif notification_type == "Escalation":
-        notification_type_id = 3
-    user_ids = [session_user]
-    if is_primary_admin(db, session_user) is True:
-        user_ids.append(0)
-    query = " SELECT nul.notification_id as notification_id, " + \
-            " notification_text, created_on, extra_details, " + \
-            " statutory_provision, assignee, " + \
-            " IFNULL(concurrence_person, -1), " + \
-            " approval_person, nl.compliance_id, compliance_task, " + \
-            " document_name, compliance_description, penal_consequences,  " + \
-            " read_status, due_date, completion_date, approve_status, " + \
-            " (select concat(unit_code, '-', unit_name, ',', address) " + \
-            " from tbl_units where " + \
-            " unit_id = nl.unit_id) " + \
-            " FROM tbl_notification_user_log nul " + \
-            " LEFT JOIN tbl_notifications_log nl " + \
-            " ON (nul.notification_id = nl.notification_id) " + \
-            " LEFT JOIN tbl_compliances tc " + \
-            " ON (tc.compliance_id = nl.compliance_id) " + \
-            " LEFT JOIN tbl_compliance_history tch " + \
-            " ON (tch.compliance_id = nl.compliance_id AND " + \
-            " tch.unit_id = nl.unit_id) "
-    user_condition, user_val = db.generate_tuple_condition(
-        "user_id", user_ids
-    )
-    conditions = " WHERE notification_type_id = %s " + \
-        " AND " + user_condition + \
-        " AND (compliance_history_id is null " + \
-        " OR  compliance_history_id = CAST(REPLACE( " + \
-        " SUBSTRING_INDEX(extra_details, '-', 1), " + \
-        " ' ','') AS UNSIGNED)) " + \
-        " ORDER BY read_status ASC, nul.notification_id DESC " + \
-        " limit %s, %s"
-
-    rows = db.select_all(query + conditions, [
-        notification_type_id, user_val,
-        start_count, to_count
-    ])
-    columns_list = [
-        "notification_id", "notification_text", "created_on",
-        "extra_details", "statutory_provision",
-        "assignee", "concurrence_person", "approval_person",
-        "compliance_id", "compliance_task", "document_name",
-        "compliance_description", "penal_consequences", "read_status",
-        "due_date", "completion_date", "approve_status", "unit_details"
-    ]
-
-    notifications = convert_to_dict(rows, columns_list)
-    notifications_list = []
-    for notification in notifications:
-        notification_id = notification["notification_id"]
-        read_status = bool(int(notification["read_status"]))
-        extra_details_with_history_id = notification[
-            "extra_details"].split("-")
-        compliance_history_id = int(extra_details_with_history_id[0])
-        extra_details = extra_details_with_history_id[1]
-        if compliance_history_id not in [0, "0", None, "None", ""]:
-            due_date_as_date = notification["due_date"]
-            due_date = datetime_to_string_time(due_date_as_date)
-            completion_date = notification["completion_date"]
-            approve_status = notification["approve_status"]
-            delayed_days = "-"
-            if completion_date is None or approve_status == 0:
-                no_of_days, delayed_days = calculate_ageing(due_date_as_date)
-            else:
-                r = relativedelta.relativedelta(
-                    convert_datetime_to_date(due_date_as_date),
-                    convert_datetime_to_date(completion_date)
-                )
-                delayed_days = "-"
-                if r.days < 0 and r.hours < 0 and r.minutes < 0:
-                    delayed_days = "Overdue by %s days" % abs(r.days)
-            if "Overdue" not in delayed_days:
-                delayed_days = "-"
-            # diff = get_date_time() - due_date_as_datetime
-            statutory_provision = notification[
-                "statutory_provision"].split(">>")
-            level_1_statutory = statutory_provision[0]
-
-            notification_text = notification["notification_text"]
-            updated_on = datetime_to_string(notification["created_on"])
-            unit_details = notification["unit_details"].split(",")
-            unit_name = unit_details[0]
-            unit_address = unit_details[1]
-            assignee = get_user_info_str(notification["assignee"])
-            concurrence_person = get_user_info_str(
-                notification["concurrence_person"]
-            )
-            approval_person = get_user_info_str(
-                notification["approval_person"]
-            )
-            compliance_name = notification["compliance_task"]
-            if(
-                notification["document_name"] is not None and
-                notification["document_name"].replace(" ", "") != "None"
-            ):
-                compliance_name = "%s - %s" % (
-                    notification["document_name"],
-                    notification["compliance_task"]
-                )
-            compliance_description = notification["compliance_description"]
-            penal_consequences = notification["penal_consequences"]
-            due_date = datetime_to_string_time(notification["due_date"])
-        else:
-            penal_consequences = None
-            delayed_days = None
-            due_date = None
-            compliance_description = None
-            approval_person = None
-            compliance_name = None
-            concurrence_person = None
-            assignee = None
-            unit_name = None
-            unit_address = None
-            level_1_statutory = None
-            extra_details = notification["extra_details"].split("-")[1]
-            read_status = bool(0)
-            updated_on = datetime_to_string(get_date_time_in_date())
-            notification_text = notification["notification_text"]
-        notifications_list.append(
-            dashboard.Notification(
-                notification_id, read_status, notification_text, extra_details,
-                updated_on, level_1_statutory, unit_name, unit_address,
-                assignee, concurrence_person, approval_person, compliance_name,
-                compliance_description, due_date, delayed_days,
-                penal_consequences
-            )
-        )
-    return notifications_list
+def get_messages(
+    db, notification_type, start_count, to_count, session_user, session_category
+):
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
+            "Where nlu.user_id = %s " + \
+            "AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+            "order by nl.notification_id desc) as t1, " + \
+            "(SELECT @rownum := 0) r) as t " + \
+            "where t.rank >= %s and t.rank <= %s"
+    rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        legal_entity_id = int(r["legal_entity_id"])
+        notification_id = int(r["notification_id"])
+        notification_text = r["notification_text"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.MessagesSuccess(legal_entity_id, notification_id, notification_text, created_on)
+        notifications.append(notification)
+    return notifications
 
 
 def update_notification_status(
@@ -1928,6 +1845,39 @@ def update_notification_status(
     db.update(
         tblNotificationUserLog, columns, values, condition
     )
+
+def notification_details(
+    db, notification_id, has_read, session_user
+):
+    query = "select nl.notification_id, substring_index(com.statutory_mapping,'>>',1) as act_name, " + \
+            "(select concat(unit_code,' - ',unit_name,' - ',substring_index(geography_name,'>>',-1)) from tbl_units where unit_id = nl.unit_id) as unit, " + \
+            "concat(com.document_name,' - ',com.compliance_task) as compliance_name,date(ch.due_date) as duedate, " + \
+            "IF(ch.due_date < now() and ch.approve_status <> 1,concat(abs(datediff(now(),ch.due_date)),' Days'),'-') as delayed_by, " + \
+            "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.assignee) as assignee_name, " + \
+            "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.concurrence_person) as concur_name, " + \
+            "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.approval_person) as approver_name " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_compliances as com on nl.compliance_id = com.compliance_id " + \
+            "inner join tbl_compliance_history as ch on nl.compliance_id = ch.compliance_id and nl.unit_id = ch.unit_id and ch.compliance_history_id = substring_index(nl.extra_details,'-',1) " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id " + \
+            "Where nlu.user_id = %s AND nl.notification_id = %s"
+    rows = db.select_all(query, [session_user, notification_id])
+    #print rows
+    notifications = []
+    for r in rows :
+        notification_id = int(r["notification_id"])
+        act_name = r["act_name"]
+        unit = r["unit"]
+        compliance_name = r["compliance_name"]
+        due_date = datetime_to_string(r["duedate"])
+        delayed_by = r["delayed_by"]
+        assignee_name = r["assignee_name"]
+        concurrer_name = r["concur_name"]
+        approver_name = r["approver_name"]
+        notification = dashboard.NotificationDetailsSuccess(notification_id, act_name, unit, compliance_name, due_date, delayed_by,
+            assignee_name, concurrer_name, approver_name)
+        notifications.append(notification)
+    return notifications
 
 
 def get_user_company_details(db, user_id=None):
@@ -2616,33 +2566,46 @@ def need_to_display_deletion_popup(db):
         return False, ""
 
 
+# def get_dashboard_notification_counts(
+#     db, session_user
+# ):
+#     user_ids = [session_user]
+#     if is_primary_admin(db, session_user) is True:
+#         user_ids.append(0)
+#     user_condition, user_val = db.generate_tuple_condition(
+#         "user_id", user_ids
+#     )
+#     query = " SELECT tnl.notification_id FROM tbl_notifications_log tnl " + \
+#         " INNER JOIN tbl_notification_user_log tnul ON " + \
+#         " tnl.notification_id = tnul.notification_id " + \
+#         " WHERE "+user_condition+" AND read_status = 0 "
+#     param = [user_val]
+#     notification_condition = " AND notification_type_id = 1"
+#     escalation_condition = " AND notification_type_id = 3"
+#     reminder_condition = " AND notification_type_id = 2"
+
+#     notification_query = "%s %s" % (query, notification_condition)
+#     reminder_query = "%s %s" % (query, reminder_condition)
+#     escalation_query = "%s %s" % (query, escalation_condition)
+#     notification_rows = db.select_all(notification_query, param)
+#     reminder_rows = db.select_all(reminder_query, param)
+#     escalation_rows = db.select_all(escalation_query, param)
+
+#     notification_count = len(notification_rows)
+#     reminder_count = len(reminder_rows)
+#     escalation_count = len(escalation_rows)
+
+#     return notification_count, reminder_count, escalation_count
+
+
 def get_dashboard_notification_counts(
-    db, session_user
+    db, session_user, notification_type
 ):
-    user_ids = [session_user]
-    if is_primary_admin(db, session_user) is True:
-        user_ids.append(0)
-    user_condition, user_val = db.generate_tuple_condition(
-        "user_id", user_ids
-    )
-    query = " SELECT tnl.notification_id FROM tbl_notifications_log tnl " + \
-        " INNER JOIN tbl_notification_user_log tnul ON " + \
-        " tnl.notification_id = tnul.notification_id " + \
-        " WHERE "+user_condition+" AND read_status = 0 "
-    param = [user_val]
-    notification_condition = " AND notification_type_id = 1"
-    escalation_condition = " AND notification_type_id = 3"
-    reminder_condition = " AND notification_type_id = 2"
+    query = "SELECT count(*) as total_count FROM tbl_notification_types tnt " + \
+            "INNER JOIN tbl_notifications_log tnl ON tnl.notification_type_id = tnt.notification_type_id " + \
+            "INNER JOIN tbl_notifications_user_log tnul ON tnul.notification_id = tnl.notification_id " + \
+            "WHERE tnl.notification_type_id = %s AND tnul.read_status = 0 AND tnul.user_id = %s "
+    notification_rows = db.select_one(query, [notification_type,session_user])
+    total_count = int(notification_rows["total_count"])
 
-    notification_query = "%s %s" % (query, notification_condition)
-    reminder_query = "%s %s" % (query, reminder_condition)
-    escalation_query = "%s %s" % (query, escalation_condition)
-    notification_rows = db.select_all(notification_query, param)
-    reminder_rows = db.select_all(reminder_query, param)
-    escalation_rows = db.select_all(escalation_query, param)
-
-    notification_count = len(notification_rows)
-    reminder_count = len(reminder_rows)
-    escalation_count = len(escalation_rows)
-
-    return notification_count, reminder_count, escalation_count
+    return total_count

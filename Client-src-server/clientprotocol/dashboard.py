@@ -718,43 +718,48 @@ class GetTrendChartDrillDownData(Request):
         }
 
 class GetNotifications(Request):
-    def __init__(self, notification_type, start_count):
+    def __init__(self, legal_entity_ids, notification_type, start_count, end_count):
+        self.legal_entity_ids = legal_entity_ids
         self.notification_type = notification_type
         self.start_count = start_count
+        self.end_count = end_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["notification_type", "start_count"])
+        data = parse_dictionary(data, ["le_ids", "notification_type", "start_count", "end_count"])
+        legal_entity_ids = data.get("le_ids")
         notification_type = data.get("notification_type")
-        notification_type = parse_structure_CustomTextType_20(notification_type)
         start_count = data.get("start_count")
-        start_count = parse_structure_UnsignedIntegerType_32(start_count)
-        return GetNotifications(notification_type, start_count)
+        end_count = data.get("end_count")
+        return GetNotifications(legal_entity_ids, notification_type, start_count, end_count)
 
     def to_inner_structure(self):
         return {
-            "notification_type": to_structure_CustomTextType_20(self.notification_type),
-            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
+            "le_ids": self.legal_entity_ids,
+            "notification_type": self.notification_type,
+            "start_count": self.start_count,
+            "end_count": self.end_count
         }
 
 class UpdateNotificationStatus(Request):
-    def __init__(self, notification_id, has_read):
+    def __init__(self, legal_entity_ids, notification_id, has_read):
+        self.legal_entity_ids = legal_entity_ids
         self.notification_id = notification_id
         self.has_read = has_read
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["notification_id", "has_read"])
-        notification_id = data.get("notification_id")
-        notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
+        data = parse_dictionary(data, ["le_ids", "notification_id", "has_read"])
+        legal_entity_ids = data.get("le_ids"),
+        notification_id = data.get("notification_id"),
         has_read = data.get("has_read")
-        has_read = parse_structure_Bool(has_read)
-        return UpdateNotificationStatus(notification_id, has_read)
+        return UpdateNotificationStatus(legal_entity_ids, notification_id, has_read)
 
     def to_inner_structure(self):
         return {
-            "notification_id": to_structure_SignedIntegerType_8(self.notification_id),
-            "has_read": to_structure_Bool(self.has_read),
+            "le_ids": self.legal_entity_ids,
+            "notification_id": self.notification_id,
+            "has_read": self.has_read
         }
 
 def _init_Request_class_map():
@@ -1164,33 +1169,74 @@ class GetTrendChartDrillDownDataSuccess(Response):
             "t_drill_down_data": self.drill_down_data,
         }
 
-class GetNotificationsSuccess(Response):
-    def __init__(self, notifications):
-        self.notifications = notifications
+class GetRemindersSuccess(Response):
+    def __init__(self, reminders, total_count):
+        self.reminders = reminders
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["notifications"])
-        notifications = data.get("notifications")
-        notifications = parse_structure_VectorType_RecordType_dashboard_Notification(notifications)
-        return GetNotificationsSuccess(notifications)
+        data = parse_dictionary(data, ["reminders", "total_count"])
+        reminders = data.get("reminders")
+        total_count = data.get("total_count")
+        return GetRemindersSuccess(reminders, total_count)
 
     def to_inner_structure(self):
         return {
-            "notifications": to_structure_VectorType_RecordType_dashboard_Notification(self.notifications),
+            "reminders": self.reminders,
+            "total_count": self.total_count
+        }
+
+class GetEscalationsSuccess(Response):
+    def __init__(self, escalations, total_count):
+        self.escalations = escalations
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["escalations", "total_count"])
+        escalations = data.get("escalations")
+        total_count = data.get("total_count")
+        return GetEscalationsSuccess(escalations, total_count)
+
+    def to_inner_structure(self):
+        return {
+            "escalations": self.escalations,
+            "total_count": self.total_count
+        }
+
+class GetMessagesSuccess(Response):
+    def __init__(self, messages, total_count):
+        self.messages = messages
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["messages", "total_count"])
+        messages = data.get("messages")
+        total_count = data.get("total_count")
+        return GetMessagesSuccess(messages, total_count)
+
+    def to_inner_structure(self):
+        return {
+            "messages": self.messages,
+            "total_count": self.total_count
         }
 
 class UpdateNotificationStatusSuccess(Response):
-    def __init__(self):
+    def __init__(self, notification_details):
+        self.notification_details = notification_details
         pass
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
+        data = parse_dictionary(data, ["notification_details"])
+        notification_details = data.get("notification_details")
         return UpdateNotificationStatusSuccess()
 
     def to_inner_structure(self):
         return {
+            "notification_details": self.notification_details
         }
 
 
@@ -1207,7 +1253,9 @@ def _init_Response_class_map():
         GetComplianceApplicabilityStatusDrillDownSuccess,
         GetNotCompliedDrillDownSuccess,
         GetTrendChartDrillDownDataSuccess,
-        GetNotificationsSuccess,
+        GetRemindersSuccess,
+        GetEscalationsSuccess,
+        GetMessagesSuccess,
         UpdateNotificationStatusSuccess,
         CheckContractExpirationSuccesss,
         GetAssigneewiseYearwiseCompliancesSuccess
@@ -1776,96 +1824,206 @@ class DrillDownData(object):
 # Notification
 #
 
-class Notification(object):
-    def __init__(
-        self, notification_id, read_status, notification_text, extra_details,
-        updated_on, level_1_statutory, unit_name, unit_address, assignee,
-        concurrence_person, approval_person, compliance_name,
-        compliance_description, due_date, delayed_days, penal_consequences
-    ):
+# class Notification(object):
+#     def __init__(
+#         self, notification_id, read_status, notification_text, extra_details,
+#         updated_on, level_1_statutory, unit_name, unit_address, assignee,
+#         concurrence_person, approval_person, compliance_name,
+#         compliance_description, due_date, delayed_days, penal_consequences
+#     ):
+#         self.notification_id = notification_id
+#         self.read_status = read_status
+#         self.notification_text = notification_text
+#         self.extra_details = extra_details
+#         self.updated_on = updated_on
+#         self.level_1_statutory = level_1_statutory
+#         self.unit_name = unit_name
+#         self.unit_address = unit_address
+#         self.assignee = assignee
+#         self.concurrence_person = concurrence_person
+#         self.approval_person = approval_person
+#         self.compliance_name = compliance_name
+#         self.compliance_description = compliance_description
+#         self.due_date = due_date
+#         self.delayed_days = delayed_days
+#         self.penal_consequences = penal_consequences
+
+#     @staticmethod
+#     def parse_structure(data):
+#         data = parse_dictionary(data, [
+#             "notification_id", "read_status", "notification_text",
+#             "extra_details", "updated_on", "level_1_statutory", "unit_name",
+#             "unit_address", "assignee", "concurrence_person", "approval_person",
+#             "compliance_name", "compliance_description", "due_date", "delayed_days",
+#             "penal_consequences"
+#         ])
+#         notification_id = data.get("notification_id")
+#         notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
+#         read_status = data.get("read_status")
+#         read_status = parse_structure_Bool(read_status)
+#         notification_text = data.get("notification_text")
+#         notification_text = parse_structure_CustomTextType_500(notification_text)
+#         extra_details = data.get("extra_details")
+#         extra_details = parse_structure_OptionalType_CustomTextType_500(extra_details)
+#         updated_on = data.get("updated_on")
+#         updated_on = parse_structure_CustomTextType_20(updated_on)
+#         level_1_statutory = data.get("level_1_statutory")
+#         level_1_statutory = parse_structure_OptionalType_CustomTextType_500(level_1_statutory)
+#         unit_name = data.get("unit_name")
+#         unit_name = parse_structure_OptionalType_CustomTextType_50(unit_name)
+#         unit_address = data.get("unit_address")
+#         unit_address = parse_structure_OptionalType_CustomTextType_500(unit_address)
+#         assignee = data.get("assignee")
+#         assignee = parse_structure_OptionalType_CustomTextType_100(assignee)
+#         concurrence_person = data.get("concurrence_person")
+#         concurrence_person = parse_structure_OptionalType_CustomTextType_100(concurrence_person)
+#         approval_person = data.get("approval_person")
+#         approval_person = parse_structure_OptionalType_CustomTextType_100(approval_person)
+#         compliance_name = data.get("compliance_name")
+#         compliance_name = parse_structure_OptionalType_CustomTextType_500(compliance_name)
+#         compliance_description = data.get("compliance_description")
+#         compliance_description = parse_structure_OptionalType_CustomTextType_500(compliance_description)
+#         due_date = data.get("due_date")
+#         due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
+#         delayed_days = data.get("delayed_days")
+#         delayed_days = parse_structure_OptionalType_CustomTextType_500(delayed_days)
+#         penal_consequences = data.get("penal_consequences")
+#         penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
+#         return Notification(
+#             notification_id, read_status, notification_text, extra_details,
+#             updated_on, level_1_statutory, unit_name, unit_address, assignee,
+#             concurrence_person, approval_person, compliance_name,
+#             compliance_description, due_date, delayed_days, penal_consequences
+#         )
+
+#     def to_structure(self):
+#         return {
+#             "notification_id" : to_structure_UnsignedIntegerType_32(self.notification_id),
+#             "read_status" : to_structure_Bool(self.read_status),
+#             "notification_text" : to_structure_CustomTextType_500(self.notification_text),
+#             "extra_details" : to_structure_OptionalType_CustomTextType_500(self.extra_details),
+#             "updated_on" : to_structure_CustomTextType_20(self.updated_on),
+#             "level_1_statutory" : to_structure_OptionalType_CustomTextType_500(self.level_1_statutory),
+#             "unit_name" : to_structure_OptionalType_CustomTextType_50(self.unit_name),
+#             "unit_address" : to_structure_OptionalType_CustomTextType_100(self.unit_address),
+#             "assignee" : to_structure_OptionalType_CustomTextType_100(self.assignee),
+#             "concurrence_person" : to_structure_OptionalType_CustomTextType_100(self.concurrence_person),
+#             "approval_person" : to_structure_OptionalType_CustomTextType_100(self.approval_person),
+#             "compliance_name" : to_structure_OptionalType_CustomTextType_500(self.compliance_name),
+#             "compliance_description" : to_structure_OptionalType_CustomTextType_500(self.compliance_description),
+#             "due_date" : to_structure_OptionalType_CustomTextType_20(self.due_date),
+#             "delayed_days" : to_structure_OptionalType_CustomTextType_500(self.delayed_days),
+#             "penal_consequences" : to_structure_OptionalType_CustomTextType_500(self.penal_consequences)
+#         }
+
+class RemindersSuccess(object):
+    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
+        self.legal_entity_id = legal_entity_id
         self.notification_id = notification_id
-        self.read_status = read_status
         self.notification_text = notification_text
-        self.extra_details = extra_details
-        self.updated_on = updated_on
-        self.level_1_statutory = level_1_statutory
-        self.unit_name = unit_name
-        self.unit_address = unit_address
-        self.assignee = assignee
-        self.concurrence_person = concurrence_person
-        self.approval_person = approval_person
-        self.compliance_name = compliance_name
-        self.compliance_description = compliance_description
-        self.due_date = due_date
-        self.delayed_days = delayed_days
-        self.penal_consequences = penal_consequences
+        self.created_on = created_on
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, [
-            "notification_id", "read_status", "notification_text",
-            "extra_details", "updated_on", "level_1_statutory", "unit_name",
-            "unit_address", "assignee", "concurrence_person", "approval_person",
-            "compliance_name", "compliance_description", "due_date", "delayed_days",
-            "penal_consequences"
-        ])
+        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "created_on"])
+        legal_entity_id = data.get("le_id")
         notification_id = data.get("notification_id")
-        notification_id = parse_structure_UnsignedIntegerType_32(notification_id)
-        read_status = data.get("read_status")
-        read_status = parse_structure_Bool(read_status)
         notification_text = data.get("notification_text")
-        notification_text = parse_structure_CustomTextType_500(notification_text)
-        extra_details = data.get("extra_details")
-        extra_details = parse_structure_OptionalType_CustomTextType_500(extra_details)
-        updated_on = data.get("updated_on")
-        updated_on = parse_structure_CustomTextType_20(updated_on)
-        level_1_statutory = data.get("level_1_statutory")
-        level_1_statutory = parse_structure_OptionalType_CustomTextType_500(level_1_statutory)
-        unit_name = data.get("unit_name")
-        unit_name = parse_structure_OptionalType_CustomTextType_50(unit_name)
-        unit_address = data.get("unit_address")
-        unit_address = parse_structure_OptionalType_CustomTextType_500(unit_address)
-        assignee = data.get("assignee")
-        assignee = parse_structure_OptionalType_CustomTextType_100(assignee)
-        concurrence_person = data.get("concurrence_person")
-        concurrence_person = parse_structure_OptionalType_CustomTextType_100(concurrence_person)
-        approval_person = data.get("approval_person")
-        approval_person = parse_structure_OptionalType_CustomTextType_100(approval_person)
-        compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_OptionalType_CustomTextType_500(compliance_name)
-        compliance_description = data.get("compliance_description")
-        compliance_description = parse_structure_OptionalType_CustomTextType_500(compliance_description)
-        due_date = data.get("due_date")
-        due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
-        delayed_days = data.get("delayed_days")
-        delayed_days = parse_structure_OptionalType_CustomTextType_500(delayed_days)
-        penal_consequences = data.get("penal_consequences")
-        penal_consequences = parse_structure_OptionalType_CustomTextType_500(penal_consequences)
-        return Notification(
-            notification_id, read_status, notification_text, extra_details,
-            updated_on, level_1_statutory, unit_name, unit_address, assignee,
-            concurrence_person, approval_person, compliance_name,
-            compliance_description, due_date, delayed_days, penal_consequences
-        )
+        created_on = data.get("created_on")
+        return RemindersSuccess(legal_entity_id, notification_id, notification_text, created_on)
 
     def to_structure(self):
         return {
-            "notification_id" : to_structure_UnsignedIntegerType_32(self.notification_id),
-            "read_status" : to_structure_Bool(self.read_status),
-            "notification_text" : to_structure_CustomTextType_500(self.notification_text),
-            "extra_details" : to_structure_OptionalType_CustomTextType_500(self.extra_details),
-            "updated_on" : to_structure_CustomTextType_20(self.updated_on),
-            "level_1_statutory" : to_structure_OptionalType_CustomTextType_500(self.level_1_statutory),
-            "unit_name" : to_structure_OptionalType_CustomTextType_50(self.unit_name),
-            "unit_address" : to_structure_OptionalType_CustomTextType_100(self.unit_address),
-            "assignee" : to_structure_OptionalType_CustomTextType_100(self.assignee),
-            "concurrence_person" : to_structure_OptionalType_CustomTextType_100(self.concurrence_person),
-            "approval_person" : to_structure_OptionalType_CustomTextType_100(self.approval_person),
-            "compliance_name" : to_structure_OptionalType_CustomTextType_500(self.compliance_name),
-            "compliance_description" : to_structure_OptionalType_CustomTextType_500(self.compliance_description),
-            "due_date" : to_structure_OptionalType_CustomTextType_20(self.due_date),
-            "delayed_days" : to_structure_OptionalType_CustomTextType_500(self.delayed_days),
-            "penal_consequences" : to_structure_OptionalType_CustomTextType_500(self.penal_consequences)
+            "le_id" : self.legal_entity_id,
+            "notification_id" : self.notification_id,
+            "notification_text" : self.notification_text,
+            "created_on" : self.created_on,
+        }
+
+class EscalationsSuccess(object):
+    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
+        self.legal_entity_id = legal_entity_id
+        self.notification_id = notification_id
+        self.notification_text = notification_text
+        self.created_on = created_on
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "created_on"])
+        legal_entity_id = data.get("le_id")
+        notification_id = data.get("notification_id")
+        notification_text = data.get("notification_text")
+        created_on = data.get("created_on")
+        return EscalationsSuccess(notification_id, notification_id, notification_text, created_on)
+
+    def to_structure(self):
+        return {
+            "le_id" : self.legal_entity_id,
+            "notification_id" : self.notification_id,
+            "notification_text" : self.notification_text,
+            "created_on" : self.created_on,
+        }
+
+class MessagesSuccess(object):
+    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
+        self.legal_entity_id = legal_entity_id
+        self.notification_id = notification_id
+        self.notification_text = notification_text
+        self.created_on = created_on
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "created_on"])
+        legal_entity_id = data.get("le_id")
+        notification_id = data.get("notification_id")
+        notification_text = data.get("notification_text")
+        created_on = data.get("created_on")
+        return MessagesSuccess(legal_entity_id, notification_id, notification_text, created_on)
+
+    def to_structure(self):
+        return {
+            "le_id" : self.legal_entity_id,
+            "notification_id" : self.notification_id,
+            "notification_text" : self.notification_text,
+            "created_on" : self.created_on,
+        }
+
+class NotificationDetailsSuccess(object):
+    def __init__(self, notification_id, act_name, unit, compliance_name, due_date, delayed_by, assignee_name, concurrer_name, approver_name):
+        self.notification_id = notification_id
+        self.act_name = act_name
+        self.unit = unit
+        self.compliance_name = compliance_name
+        self.due_date = due_date
+        self.delayed_by = delayed_by
+        self.assignee_name = assignee_name
+        self.concurrer_name = concurrer_name
+        self.approver_name = approver_name
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["notification_id", "act_name", "unit", "compliance_name", "due_date", "delayed_by", "assignee_name", "concurrer_name", "approver_name"])
+        notification_id = data.get("notification_id")
+        act_name = data.get("act_name")
+        unit = data.get("unit")
+        compliance_name = data.get("compliance_name")
+        due_date = data.get("due_date")
+        delayed_by = data.get("delayed_by")
+        assignee_name = data.get("assignee_name")
+        concurrer_name = data.get("concurrer_name")
+        approver_name = data.get("approver_name")
+        return NotificationDetailsSuccess(notification_id, act_name, unit, compliance_name, due_date, delayed_by, assignee_name, concurrer_name, approver_name)
+
+    def to_structure(self):
+        return {
+            "notification_id" : self.notification_id,
+            "act_name" : self.act_name,
+            "unit" : self.unit,
+            "compliance_name" : self.compliance_name,
+            "due_date" : self.due_date,
+            "delayed_by" : self.delayed_by,
+            "assignee_name" : self.assignee_name,
+            "concurrer_name" : self.concurrer_name,
+            "approver_name" : self.approver_name
         }
 
 #

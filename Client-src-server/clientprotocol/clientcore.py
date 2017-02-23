@@ -2199,6 +2199,7 @@ class ServiceProvider(object):
         self.service_provider_id = service_provider_id
         self.service_provider_name = service_provider_name
         self.is_active = is_active
+        
 
     @staticmethod
     def parse_structure(data):
@@ -2219,47 +2220,65 @@ class ServiceProvider(object):
         }
 
 class ServiceProviderDetails(object):
-    def __init__(self, service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no, is_active):
+    def __init__(self, service_provider_id, service_provider_name, short_name, contract_from,  
+    contract_to, contact_person, contact_no, email_id, mobile_no, address, 
+    is_active, is_blocked, unblock_days, remarks):
         self.service_provider_id = service_provider_id
         self.service_provider_name = service_provider_name
-        self.address = address
+        self.short_name = short_name
         self.contract_from = contract_from
         self.contract_to = contract_to
         self.contact_person = contact_person
         self.contact_no = contact_no
+        self.email_id = email_id
+        self.mobile_no = mobile_no
+        self.address = address
         self.is_active = is_active
+        self.is_blocked = is_blocked
+        self.unblock_days = unblock_days
+        self.remarks = remarks
+        
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["service_provider_id", "service_provider_name", "address", "contract_from", "contract_to", "contact_person", "contact_no", "is_active"])
+        data = parse_dictionary(data, ["service_provider_id", "service_provider_name", "short_name", "contract_from",
+          "contact_person", "contact_no", "mobile_no",
+          "email_id", "address", "is_active", "is_blocked", "unblock_days", "remarks"])
         service_provider_id = data.get("service_provider_id")
-        service_provider_id = parse_structure_OptionalType_SignedIntegerType_8(service_provider_id)
         service_provider_name = data.get("service_provider_name")
-        service_provider_name = parse_structure_CustomTextType_50(service_provider_name)
-        address = data.get("address")
-        address = parse_structure_OptionalType_CustomTextType_250(address)
-        contract_from = data.get("contract_from")
-        contract_from = parse_structure_CustomTextType_20(contract_from)
-        contract_to = data.get("contract_to")
-        contract_to = parse_structure_CustomTextType_20(contract_to)
-        contact_person = data.get("contact_person")
-        contact_person = parse_structure_CustomTextType_50(contact_person)
-        contact_no = data.get("contact_no")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
-        is_active = data.get("is_active")
-        is_active = parse_structure_OptionalType_Bool(is_active)
-        return ServiceProviderDetails(service_provider_id, service_provider_name, address, contract_from, contract_to, contact_person, contact_no, is_active)
+        short_name =  data.get("short_name")
+        contract_from =  data.get("contract_from")
+        contract_to =  data.get("contract_to")
+        contact_person =  data.get("contact_person")
+        contact_no =  data.get("contact_no")
+        mobile_no =  data.get("mobile_no")
+        email_id =  data.get("email_id")
+        address =  data.get("address")
+        is_active =  data.get("is_active")
+        is_blocked =  data.get("is_blocked")
+        unblock_days =  data.get("unblock_days")
+        remarks = data.get("remarks")
+        
+        
+        return ServiceProviderDetails(service_provider_id, service_provider_name, short_name, contract_from,
+         contract_to, contact_person, contact_no, mobile_no, email_id, address, is_active, is_blocked, unblock_days, remarks )
 
     def to_structure(self):
         return {
-            "service_provider_id": to_structure_OptionalType_SignedIntegerType_8(self.service_provider_id),
-            "service_provider_name": to_structure_CustomTextType_250(self.service_provider_name),
-            "address": to_structure_OptionalType_CustomTextType_250(self.address),
-            "contract_from": to_structure_CustomTextType_20(self.contract_from),
-            "contract_to": to_structure_CustomTextType_20(self.contract_to),
-            "contact_person": to_structure_CustomTextType_250(self.contact_person),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "is_active": to_structure_OptionalType_Bool(self.is_active),
+            "s_p_id": self.service_provider_id,
+            "s_p_name": self.service_provider_name,
+            "s_p_short": self.short_name,
+            "cont_from": self.contract_from,
+            "cont_to": self.contract_to,
+            "cont_person": self.contact_person,
+            "cont_no": self.contact_no,
+            "mob_no": self.mobile_no,
+            "e_id": self.email_id,
+            "address": self.address,
+            "is_active": self.is_active,
+            "is_blocked": self.is_blocked,
+            "unblock_days": self.unblock_days,            
+            "remarks": self.remarks            
         }
 
 #
@@ -3979,7 +3998,6 @@ class ClientUsercategory(object):
             "u_c_id": self.user_category_id,
             "u_c_name": self.user_category_name,
         }
-
 #
 # Unit closure - Legal Entity
 #
@@ -4260,6 +4278,321 @@ class LegalEntityUser(object):
             "employee_name": self.employee_name,
             "is_active": self.is_active
         }
+# ==================================================
+# User Management Form
+# ==================================================
+
+class UserDomains(object):
+    def __init__(
+        self, legal_entity_id, domain_id
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "le_id", "d_id"
+        ])
+        legal_entity_id = data.get("le_id")
+        domain_id = data.get("d_id")
+        
+        return UserDomains(
+            legal_entity_id, domain_id
+        )
+
+    def to_structure(self):
+        data = {
+            "le_id": self.legal_entity_id,
+            "d_id": self.domain_id            
+        }
+        print "data>>", data
+        return data
+# ==================================================
+# User Management Form
+# ==================================================
+class UserUnits(object):
+    def __init__(
+        self, legal_entity_id, unit_id
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "le_id", "u_id"
+        ])
+        legal_entity_id = data.get("le_id")
+        unit_id = data.get("u_id")
+        
+        return UserUnits(
+            legal_entity_id, unit_id
+        )
+
+    def to_structure(self):
+        data = {
+            "le_id": self.legal_entity_id,
+            "u_id": self.unit_id            
+        }
+        return data
+
+# ==================================================
+# User Management Form
+# ==================================================
+class UserEntities(object):
+    def __init__(
+        self, legal_entity_id
+    ):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "le_id"
+        ])
+        legal_entity_id = data.get("le_id")        
+        
+        return UserEntities(
+            legal_entity_id
+        )
+
+    def to_structure(self):
+        data = {
+            "le_id": self.legal_entity_id,            
+        }
+        return data
+##############################################################################
+# User Management Add - Category Prerequisite
+##############################################################################
+class ClientUsercategory_UserManagement(object):
+    def __init__(self, user_category_id, user_category_name):
+        self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_category_id", "user_category_name"])
+        user_category_id = data.get("user_category_id")
+        user_category_name = data.get("user_category_name")
+        return ClientUsercategory_UserManagement(user_category_id, user_category_name)
+
+    def to_structure(self):
+        return {
+            "u_c_id": self.user_category_id,
+            "u_c_name": self.user_category_name,
+        }
+
+##############################################################################
+# User Management Add - User Group Prerequisite
+##############################################################################
+class ClientUserGroup_UserManagement(object):
+    def __init__(self, user_group_id, user_group_name, user_category_id):
+        self.user_group_id = user_group_id
+        self.user_group_name = user_group_name
+        self.user_category_id = user_category_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_group_id", "user_group_name", "user_category_id"])
+        user_group_id = data.get("user_group_id")
+        user_group_name = data.get("user_group_name")
+        user_category_id = data.get("user_category_id")
+        return ClientUserGroup_UserManagement(user_group_id, user_group_name, user_category_id)
+
+    def to_structure(self):
+        return {
+            "u_g_id": self.user_group_id,
+            "u_g_name": self.user_group_name,
+            "u_c_id": self.user_category_id
+        }
+##############################################################################
+# User Management Add - Business Group
+##############################################################################
+class ClientUserBusinessGroup_UserManagement(object):
+    def __init__(self, business_group_id, business_group_name):        
+        self.business_group_id = business_group_id
+        self.business_group_name = business_group_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["business_group_id", "business_group_name"])        
+        business_group_id = data.get("business_group_id")
+        business_group_name = data.get("business_group_name")
+        return ClientUserBusinessGroup_UserManagement(business_group_id, business_group_name)
+
+    def to_structure(self):
+        return {            
+            "bg_id": self.business_group_id,
+            "bg_name": self.business_group_name            
+        }
+##############################################################################
+# User Management Add - Legal Entity
+##############################################################################
+class ClientUserLegalEntity_UserManagement(object):
+    def __init__(self, legal_entity_id, business_group_id, legal_entity_name):
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+        self.legal_entity_name = legal_entity_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id", "business_group_id", "user_category_id"])
+        legal_entity_id = data.get("legal_entity_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_name = data.get("legal_entity_name")
+        return ClientUserLegalEntity_UserManagement(legal_entity_id, business_group_id, legal_entity_name)
+
+    def to_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id,
+            "le_name": self.legal_entity_name            
+        }
+##############################################################################
+# User Management Add - Division
+##############################################################################
+class ClientUserDivision_UserManagement(object):
+    def __init__(self, division_id, division_name, legal_entity_id, business_group_id):        
+        self.division_id = division_id
+        self.division_name = division_name
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["division_id", "division_name", 
+                                       "legal_entity_id", "business_group_id"])
+        division_id = data.get("division_id")
+        division_name = data.get("division_name")
+        legal_entity_id = data.get("legal_entity_id")
+        business_group_id = data.get("business_group_id")
+        return ClientUserDivision_UserManagement(division_id, division_name, legal_entity_id, business_group_id)
+
+    def to_structure(self):
+        return {            
+            "d_id": self.division_id,
+            "d_name": self.division_name,
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id            
+        }
+##############################################################################
+# User Management Add - Category
+##############################################################################
+class ClientGroupCategory_UserManagement(object):
+    def __init__(self, category_id, category_name, legal_entity_id, business_group_id, division_id):        
+        self.category_id = category_id
+        self.category_name = category_name
+        self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+        self.division_id = division_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["category_id", "category_name","legal_entity_id", 
+        "business_group_id", "division_id"])        
+        category_id = data.get("category_id")
+        category_name = data.get("category_name")
+        legal_entity_id = data.get("legal_entity_id")
+        business_group_id = data.get("business_group_id")
+        division_id = data.get("division_id")        
+        return ClientGroupCategory_UserManagement(category_id, category_name, legal_entity_id,
+        business_group_id, division_id)
+
+    def to_structure(self):
+        return {
+            "cat_id": self.category_id,
+            "cat_name": self.category_name,
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id,
+            "d_id": self.division_id
+        }
+##############################################################################
+# User Management Add - Domains
+##############################################################################
+class ClientLegalDomains_UserManagement(object):
+    def __init__(self, legal_entity_id, domain_id, domain_name):        
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+        self.domain_name = domain_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["category_id", "category_name","legal_entity_id", 
+        "business_group_id", "division_id"])
+        legal_entity_id = data.get("legal_entity_id")
+        domain_id = data.get("domain_id")
+        domain_name = data.get("domain_name")        
+        return ClientLegalDomains_UserManagement(legal_entity_id, domain_id, domain_name)
+
+    def to_structure(self):
+        return {            
+            "le_id": self.legal_entity_id,
+            "u_dm_id": self.domain_id,
+            "u_dm_name": self.domain_name
+        }
+##############################################################################
+# User Management Add - Units
+##############################################################################
+class ClientLegalUnits_UserManagement(object):
+    def __init__(self, unit_id, business_group_id, legal_entity_id, division_id,
+                category_id, unit_code, unit_name, address, postal_code):        
+        self.unit_id = unit_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id        
+        self.category_id = category_id
+        self.unit_code = unit_code
+        self.unit_name = unit_name
+        self.address = address
+        self.postal_code = postal_code
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "business_group_id","legal_entity_id", 
+        "division_id", "category_id", "unit_code", "unit_name", "address", "postal_code"])
+        
+        unit_id = data.get("unit_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        division_id = data.get("division_id")
+        category_id = data.get("category_id")
+        unit_code = data.get("unit_code")
+        unit_name = data.get("unit_name")
+        address = data.get("address")
+        postal_code = data.get("postal_code")
+        return ClientLegalUnits_UserManagement(unit_id, business_group_id, legal_entity_id, division_id,
+                                                category_id, unit_code, unit_name, address, postal_code)
+
+    def to_structure(self):
+        return {
+            "u_unt_id": self.unit_id,
+            "bg_id": self.business_group_id,
+            "le_id": self.legal_entity_id,
+            "d_id": self.division_id,
+            "cat_id": self.category_id,
+            "u_unt_code": self.unit_code,
+            "u_unt_name": self.unit_name,
+            "u_unt_address": self.address,
+            "u_unt_postal": self.postal_code
+        }
+##############################################################################
+# User Management Add - Legal Entities
+##############################################################################
+class ClientLegalEntity_UserManagement(object):
+    def __init__(self, legal_entity_id):        
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["legal_entity_id"])
+        legal_entity_id = data.get("legal_entity_id")        
+        return ClientLegalEntity_UserManagement(legal_entity_id)
+
+    def to_structure(self):
+        return {            
+            "le_id": self.legal_entity_id
+        }
 
 class ReassignedHistoryReportSuccess(object):
     def __init__(
@@ -4420,6 +4753,8 @@ class GetStatutorySettingsUnitWiseSuccess(object):
             "unit_id": self.unit_id
         }
 
+
+# Domain Score Card Start
 class GetDomainScoreCardSuccess(object):
     def __init__(self, domain_id, domain_name, not_opted_count, unassigned_count, assigned_count, units_count):
         self.domain_id = domain_id
@@ -4484,3 +4819,309 @@ class GetDomainWiseUnitScoreCardSuccess(object):
             "inprogress_count": self.inprogress_count,
             "overdue_count": self.overdue_count
         }
+# Domain Score Card End
+
+# Legal Entity Wise Score Card Start
+class GetLEWiseScoreCardSuccess(object):
+    def __init__(self, inprogress_count, completed_count, overdue_count, inprogress_unit_wise, inprogress_user_wise, 
+        completed_unit_wise, completed_user_wise, overdue_unit_wise, overdue_user_wise
+        ):
+        self.inprogress_count = inprogress_count
+        self.completed_count = completed_count
+        self.overdue_count = overdue_count
+        self.inprogress_unit_wise = inprogress_unit_wise
+        self.inprogress_user_wise = inprogress_user_wise
+        self.completed_unit_wise = completed_unit_wise
+        self.completed_user_wise = completed_user_wise
+        self.overdue_unit_wise = overdue_unit_wise
+        self.overdue_user_wise = overdue_user_wise
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["inprogress_count", "completed_count", "overdue_count", "inprogress_unit_wise", 
+            "inprogress_unit_wise", "completed_unit_wise", "completed_user_wise", "overdue_unit_wise", "overdue_user_wise"])
+        inprogress_count = data.get("inprogress_count"), 
+        completed_count = data.get("completed_count"),
+        overdue_count = data.get("overdue_count"),
+        inprogress_unit_wise = data.get("inprogress_unit_wise"),
+        inprogress_user_wise = data.get("inprogress_user_wise"),
+        completed_unit_wise = data.get("completed_unit_wise"),
+        completed_user_wise = data.get("completed_user_wise"),
+        overdue_unit_wise = data.get("overdue_unit_wise"),
+        overdue_user_wise = data.get("overdue_user_wise")
+        return GetLEWiseScoreCardSuccess(inprogress_count, completed_count, overdue_count, inprogress_unit_wise, 
+            inprogress_user_wise, completed_unit_wise, completed_user_wise, overdue_unit_wise, overdue_user_wise)
+    def to_structure(self):
+        return {
+            "inprogress_count": self.inprogress_count,
+            "completed_count": self.completed_count,
+            "overdue_count": self.overdue_count,
+            "inprogress_unit_wise": self.inprogress_unit_wise,
+            "inprogress_user_wise": self.inprogress_user_wise,
+            "completed_unit_wise": self.completed_unit_wise,
+            "completed_user_wise": self.completed_user_wise,
+            "overdue_unit_wise": self.overdue_unit_wise,
+            "overdue_user_wise": self.overdue_user_wise
+        }
+
+class GetInprogressUnitWiseCountSuccess(object):
+    def __init__(self, unit_id, unit, to_complete, to_concur, to_approve):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "to_complete", "to_concur", "to_approve"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        to_complete = data.get("to_complete"),
+        to_concur = data.get("to_concur"),
+        to_approve = data.get("to_approve")
+        return GetInprogressUnitWiseCountSuccess(unit_id, unit, to_complete, to_concur, to_approve)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
+        }
+
+class GetInprogressUserWiseCountSuccess(object):
+    def __init__(self, user_id, user_name, to_complete, to_concur, to_approve):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "user_name", "to_complete", "to_concur", "to_approve"])
+        user_id = data.get("user_id"), 
+        user_name = data.get("user_name"),
+        to_complete = data.get("to_complete"),
+        to_concur = data.get("to_concur"),
+        to_approve = data.get("to_approve")
+        return GetInprogressUserWiseCountSuccess(user_id, user_name, to_complete, to_concur, to_approve)
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
+        }
+
+class GetCompletedUnitWiseCountSuccess(object):
+    def __init__(self, unit_id, unit, complied_count, delayed_count):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.complied_count = complied_count
+        self.delayed_count = delayed_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "complied_count", "delayed_count"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        complied_count = data.get("complied_count"),
+        delayed_count = data.get("delayed_count")
+        return GetCompletedUnitWiseCountSuccess(unit_id, unit, complied_count, delayed_count)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "complied_count": self.complied_count,
+            "delayed_count": self.delayed_count
+        }
+
+class GetCompletedUserWiseCountSuccess(object):
+    def __init__(self, user_id, user_name, complied_count, delayed_count):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.complied_count = complied_count
+        self.delayed_count = delayed_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "user_name", "complied_count", "delayed_count"])
+        user_id = data.get("user_id"), 
+        user_name = data.get("user_name"),
+        complied_count = data.get("complied_count"),
+        delayed_count = data.get("delayed_count")
+        return GetCompletedUserWiseCountSuccess(user_id, user_name, complied_count, delayed_count)
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "complied_count": self.complied_count,
+            "delayed_count": self.delayed_count
+        }
+
+class GetOverdueUnitWiseCountSuccess(object):
+    def __init__(self, unit_id, unit, overdue_count):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.overdue_count = overdue_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "overdue_count"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        overdue_count = data.get("overdue_count")
+        return GetOverdueUnitWiseCountSuccess(unit_id, unit, overdue_count)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "overdue_count": self.overdue_count
+        }
+
+class GetOverdueUserWiseCountSuccess(object):
+    def __init__(self, user_id, user_name, overdue_count):
+        self.user_id = user_id
+        self.user_name = user_name
+        self.overdue_count = overdue_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "user_name", "overdue_count", "delayed_count"])
+        user_id = data.get("user_id"), 
+        user_name = data.get("user_name"),
+        overdue_count = data.get("overdue_count")
+        return GetOverdueUserWiseCountSuccess(user_id, user_name, overdue_count)
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_name": self.user_name,
+            "overdue_count": self.overdue_count
+        }
+
+# Legal Entity Wise Score Card Start
+
+
+# Work Flow Score Card Start
+class GetWorkFlowScoreCardSuccess(object):
+    def __init__(self, c_assignee, c_concur, c_approver, inp_assignee, inp_concur, inp_approver, 
+        ov_assignee, ov_concur, ov_approver, completed_task_count, inprogress_within_duedate_task_count, over_due_task_count
+        ):
+        self.c_assignee = c_assignee
+        self.c_concur = c_concur
+        self.c_approver = c_approver
+        self.inp_assignee = inp_assignee
+        self.inp_concur = inp_concur
+        self.inp_approver = inp_approver
+        self.ov_assignee = ov_assignee
+        self.ov_concur = ov_concur
+        self.ov_approver = ov_approver
+        self.completed_task_count = completed_task_count
+        self.inprogress_within_duedate_task_count = inprogress_within_duedate_task_count
+        self.over_due_task_count = over_due_task_count
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["c_assignee", "c_concur", "c_approver", "inp_assignee", "inp_concur", "inp_approver", 
+            "ov_assignee", "ov_concur", "ov_approver", "completed_task_count", "inprogress_within_duedate_task_count", "over_due_task_count"])
+        c_assignee = data.get("c_assignee"),
+        c_concur = data.get("c_concur"),
+        c_approver = data.get("c_approver"),
+        inp_assignee = data.get("inp_assignee"),
+        inp_concur = data.get("inp_concur"),
+        inp_approver = data.get("inp_approver"),
+        ov_assignee = data.get("ov_assignee"),
+        ov_concur = data.get("ov_concur"),
+        ov_approver = data.get("ov_approver"),
+        completed_task_count = data.get("completed_task_count"),
+        inprogress_within_duedate_task_count = data.get("inprogress_within_duedate_task_count"),
+        over_due_task_count = data.get("over_due_task_count")
+        return GetWorkFlowScoreCardSuccess(c_assignee, c_concur, c_approver, inp_assignee, inp_concur, inp_approver, 
+            ov_assignee, ov_concur, ov_approver, completed_task_count, inprogress_within_duedate_task_count, over_due_task_count)
+    def to_structure(self):
+        return {
+            "c_assignee": self.c_assignee,
+            "c_concur": self.c_concur,
+            "c_approver": self.c_approver,
+            "inp_assignee": self.inp_assignee,
+            "inp_concur": self.inp_concur,
+            "inp_approver": self.inp_approver,
+            "ov_assignee": self.ov_assignee,
+            "ov_concur": self.ov_concur,
+            "ov_approver": self.ov_approver,
+            "completed_task_count": self.completed_task_count,
+            "inprogress_within_duedate_task_count": self.inprogress_within_duedate_task_count,
+            "over_due_task_count": self.over_due_task_count
+        }
+
+class GetCompletedTaskCountSuccess(object):
+    def __init__(self, unit_id, unit, c_assignee, c_concur, c_approver):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.c_assignee = c_assignee
+        self.c_concur = c_concur
+        self.c_approver = c_approver
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "c_assignee", "c_concur", "c_approver"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        c_assignee = data.get("c_assignee"),
+        c_concur = data.get("c_concur"),
+        c_approver = data.get("c_approver")
+        return GetCompletedTaskCountSuccess(unit_id, unit, c_assignee, c_concur, c_approver)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "c_assignee": self.c_assignee,
+            "c_concur": self.c_concur,
+            "c_approver": self.c_approver
+        }
+
+class GetInprogressWithinDuedateTaskCountSuccess(object):
+    def __init__(self, unit_id, unit, inp_assignee, inp_concur, inp_approver):
+        self.unit_id = unit_id
+        self.unit = unit
+        self.inp_assignee = inp_assignee
+        self.inp_concur = inp_concur
+        self.inp_approver = inp_approver
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["unit_id", "unit", "inp_assignee", "inp_concur", "inp_approver"])
+        unit_id = data.get("unit_id"), 
+        unit = data.get("unit"),
+        inp_assignee = data.get("inp_assignee"),
+        inp_concur = data.get("inp_concur"),
+        inp_approver = data.get("inp_approver")
+        return GetInprogressWithinDuedateTaskCountSuccess(unit_id, unit, inp_assignee, inp_concur, inp_approver)
+    def to_structure(self):
+        return {
+            "unit_id": self.unit_id,
+            "unit": self.unit,
+            "inp_assignee": self.inp_assignee,
+            "inp_concur": self.inp_concur,
+            "inp_approver": self.inp_approver
+        }
+
+class GetOverDueTaskCountSuccess(object):
+    def __init__(self, user_id, unit, ov_assignee, ov_concur, ov_approver):
+        self.user_id = user_id
+        self.unit = unit
+        self.ov_assignee = ov_assignee
+        self.ov_concur = ov_concur
+        self.ov_approver = ov_approver
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "unit", "ov_assignee", "ov_concur", "ov_approver"])
+        user_id = data.get("user_id"), 
+        unit = data.get("unit"),
+        ov_assignee = data.get("ov_assignee"),
+        ov_concur = data.get("ov_concur"),
+        ov_approver = data.get("ov_approver")
+        return GetOverDueTaskCountSuccess(user_id, unit, ov_assignee, ov_concur, ov_approver)
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "unit": self.unit,
+            "ov_assignee": self.ov_assignee,
+            "ov_concur": self.ov_concur,
+            "ov_approver": self.ov_approver
+        }
+
+# Work Flow Score Card Start 

@@ -1541,7 +1541,6 @@ function prepareTrendChartData(source_data) {
   }
   chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
 
-  console.log(chartDataSeries);
   return [
     xAxis,
     chartTitle,

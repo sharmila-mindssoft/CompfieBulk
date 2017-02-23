@@ -21,6 +21,7 @@ function getLegalEntity(LE_ID, LE_NAME){
 
     window.sessionStorage.selectedEntity = JSON.stringify(sEntity, null, ' ');;
     window.sessionStorage.selectedEntityName = LE_NAME;
+    console.log(LE_NAME);
     location.href='/home';
 }
 function loadLegalEntityList(){
@@ -28,7 +29,7 @@ function loadLegalEntityList(){
     var LC_COUNT = 1;
     $('.tbody-legal-panel').empty();
     $.each(USER_LE, function(key, value) {
-        if(LC != value.c_id){         
+        if(LC != value.c_id){
             var countrytableRow = $('#act-templates .p-head');
             var clone = countrytableRow.clone();
             $('.acc-title', clone).attr('id', 'heading'+LC_COUNT);
@@ -53,8 +54,9 @@ function loadLegalEntityList(){
 }
 
 $(document).ready(function () {
-  if (!client_mirror.verifyLoggedIn())
-    return;
+  // if (!client_mirror.verifyLoggedIn())
+  //   return;
+  console.log("login success");
   USER_LE = client_mirror.getUserLegalEntity();
   loadLegalEntityList();
 });

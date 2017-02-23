@@ -33,13 +33,13 @@ app = Flask(__name__)
 #
 
 def api_request(
-    request_data_type, need_client_id=False, is_group=False, need_category=False
+    request_data_type, need_client_id=False, is_group=False, need_category=False, save_le=True
 ):
     def wrapper(f):
         @wraps(f)
         def wrapped(self):
             return self.handle_api_request(
-                f, request_data_type, need_client_id, is_group, need_category
+                f, request_data_type, need_client_id, is_group, need_category, save_le
             )
         return wrapped
     return wrapper
@@ -289,7 +289,7 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
-
+            # print actual_data
             # print company_id
             request_data = request_data_type.parse_structure(
                 actual_data
@@ -348,7 +348,7 @@ class API(object):
 
     def handle_api_request(
         self, unbound_method,
-        request_data_type, need_client_id, is_group, need_category
+        request_data_type, need_client_id, is_group, need_category, save_le
     ):
         def respond(response_data):
             return self._send_response(
@@ -402,6 +402,10 @@ class API(object):
             elif need_category :
                 response_data = unbound_method(
                     self, request_data, _db, session_user, session_category
+                )
+            elif save_le :
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, client_id, self._le_databases
                 )
             else :
                 response_data = unbound_method(
@@ -555,9 +559,9 @@ class API(object):
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
 
-    @api_request(clientmasters.RequestFormat, is_group=True)
-    def handle_client_masters(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_master_requests(request, db, session_user, client_id)
+    @api_request(clientmasters.RequestFormat, is_group=True, save_le=True)
+    def handle_client_masters(self, request, db, session_user, client_id, le_ids):
+        return controller.process_client_master_requests(request, db, session_user, client_id, le_ids)
 
     @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
     def handle_client_master_filters(self, request, db, session_user, session_category):
