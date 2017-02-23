@@ -320,7 +320,6 @@ function updateNotCompliedChart(data) {
 // Trend  chart
 //
 function updateTrendChart(data) {
-  alert("trend")
   data = prepareTrendChartData(data);
   console.log(data);
   print_data = JSON.stringify(data, null, ' ');
@@ -1143,11 +1142,11 @@ function initializeFilters() {
       loadCharts();
     }
   });
-  $('.common-filter .btn-go input').on('click', function () {
+  $('.btn-go input').on('click', function () {
     var chart_type = chartInput.getChartType();
     loadCharts();
   });
-  $('.specific-filter .btn-go input').on('click', function () {
+  $('.btn-go input').on('click', function () {
     loadCharts();
   });
   $('.btn-previous-year').on('click', function (event) {
@@ -1183,7 +1182,7 @@ function initializeFilters() {
     updateComplianceStatusChart(data);
     $('.btn-previous').show();
     if (range >= COMPLIANCE_STATUS_DATA.length) {
-      alert('next hide');
+
       $('.btn-next').hide();
     }
   });
@@ -1544,8 +1543,6 @@ function prepareTrendChartData(source_data) {
   }
   chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
 
-  alert(chartDataSeries);
-  console.log(chartDataSeries);
   return [
     xAxis,
     chartTitle,

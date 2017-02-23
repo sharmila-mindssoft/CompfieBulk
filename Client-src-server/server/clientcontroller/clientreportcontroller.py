@@ -778,15 +778,6 @@ def get_compliancedetails_report(db, request, session_user, session_category):
             compliance_details_list, total
         )
 
-
-def get_reassignedhistory_report_filters(db, request, session_user, client_id):
-    #user_company_info = get_user_company_details(db, session_user)
-    #unit_ids = user_company_info[0]
-    #country_list = get_countries_for_user(db, session_user)
-    #legal_entities_list = get_legal_entities_for_user(db, request.legal_entity_id)
-
-    domain_list = get_domains_for_user(db, session_user)
-
 # Reassigned History Report Start
 def get_reassignedhistory_report_filters(db, request, session_user, session_category):
     domain_list = get_domains_for_user(db, session_user, session_category)

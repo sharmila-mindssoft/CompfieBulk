@@ -93,7 +93,6 @@ def get_service_provider_details_list(db):
     rows = db.get_data(
         tblServiceProviders, columns, condition, condition_val, order
     )
-    print rows
     return return_service_provider_details(rows)
 
 ############################################################################
@@ -460,23 +459,11 @@ def get_user_privilege_details_list(db):
         " INNER JOIN tbl_user_category AS t2 ON t2.user_category_id = t1.user_category_id " + \
         " INNER JOIN tbl_user_group_forms AS t3 ON t3.user_group_id = t1.user_group_id" + \
         " group by t1.user_group_id"
-
-    # q = "SELECT t1.user_group_id, t1.user_category_id, t1.user_group_name, " + \
-    #    " t2.user_category_name, t1.is_active FROM tbl_user_groups as t1 " + \
-    #    " INNER JOIN tbl_user_category AS t2 ON t2.user_category_id = t1.user_category_id"
     groups = db.select_all(q, None)
-
-    # columns = ["user_group_id", "user_category_id", "user_group_name", "user_category_name", "is_active"]
-    # groups = db.get_data(
-    #     "tbl_user_groups", columns, "1 ORDER BY user_group_name"
-    # )
-
     columns = ["user_group_id", "form_id"]
     group_forms = db.get_data(
         "tbl_user_group_forms", columns, "1 ORDER BY user_group_id"
     )
-    #print groups, group_forms
-    # return groups, group_forms
     return return_user_privilage_list(groups, group_forms)
 
 

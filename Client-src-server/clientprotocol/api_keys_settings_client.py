@@ -75,13 +75,12 @@ api_params = {
     'parent_menu': make_string_field(length=50, is_optional=True, validfun=is_alphabet),
     'form_type': make_string_field(length=50, validfun=is_alphabet),
 
-    'u_g_id': make_int_field(is_optional=True), # User Priviliges, User Management
-    'u_g_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True), # User Priviliges, User Management
+    'u_g_id': make_int_field(is_optional=True),  # User Priviliges, User Management
+    'u_g_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),  # User Priviliges, User Management
 
-    'is_active': make_bool_field(),
-    'u_c_id': make_int_field(), # User Priviliges, User Management
+    'u_c_id': make_int_field(),  # User Priviliges, User Management
     'f_ids': make_vector_type_int(length=1000, is_optional=True),
-    'u_c_name': make_string_field(length=50, validfun=is_alpha_numeric), # User Priviliges, User Management
+    'u_c_name': make_string_field(length=50, validfun=is_alpha_numeric),  # User Priviliges, User Management
     "forms": make_map_type("clientcore", "Menu"),
     "menus": make_map_type_vector_type("clientcore", "Form"),
     "user_groups": make_vector_type_field("clientcore", "ClientUserGroup"),
@@ -93,12 +92,11 @@ api_params = {
     "le_id": make_int_field(),
     "le_ids": make_vector_type_int(),
     "le_name": make_string_field(),
-
-    "bg_name": make_string_field(is_optional=True), # User Management, Other forms
-    "bg_id": make_int_field(is_optional=True), # User Management, Other forms
-    "cat_id": make_int_field(is_optional=True), # User Management, Other forms
-    "cat_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True), # User Management, Other forms
-    "usr_id": make_int_field(),
+    "bg_name": make_string_field(is_optional=True),  # User Management, Other forms
+    "bg_id": make_int_field(is_optional=True),  # User Management, Other forms
+    "cat_id": make_int_field(is_optional=True),  # User Management, Other forms
+    "cat_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),  # User Management, Other forms
+    "usr_id": make_int_field(is_optional=True),
 
     "email_id": make_string_field(validfun=allow_specialchar),
     "user_email_id": make_string_field(validfun=allow_specialchar),
@@ -106,7 +104,7 @@ api_params = {
     "emp_code": make_string_field(is_optional=True),
     "con_no": make_text_field(is_optional=True),
     "mob_no": make_text_field(is_optional=True),
-    "address": make_text_field(is_optional=True),
+    "address": make_text_field(length=500, is_optional=True),
     "menu":  make_map_type_vector_type("clientcore", "Form"),
     "user_level": make_int_field(is_optional=True),
     "sp_id": make_int_field(is_optional=True),
@@ -122,16 +120,15 @@ api_params = {
     "c_id": make_int_field(),
     "c_ids": make_vector_type_int(),
     "c_names": make_vector_type_string(),
-    "d_id": make_int_field(is_optional=True), # User Management , Other Forms
+    "d_id": make_int_field(is_optional=True),  # User Management , Other Forms
 
     "d_ids": make_vector_type_int(),
-    "d_name": make_string_field(is_optional=True), # User Management, Other Forms
+    "d_name": make_string_field(is_optional=True),  # User Management, Other Forms
     "d_names": make_vector_type_string(),
     "div_id": make_int_field(is_optional=True),
     "div_name": make_string_field(is_optional=True),
     "is_closed": make_bool_field(),
     "is_new": make_bool_field(),
-    "is_active": make_bool_field(),
     "statutories": make_vector_type_field(module="clienttransactions", klass_name="UnitStatutoryCompliances"),
     "tot_count": make_int_field(length=100000),
     "applicable_statu": make_vector_type_field(module="clienttransactions", klass_name="ComplianceApplicability"),
@@ -232,7 +229,6 @@ api_params = {
     'total_count': make_int_field(is_optional=False),
     "act": make_text_field(is_optional=True),
     "c_task": make_text_field(is_optional=True),
-    "user_id": make_int_field(),
     "employee_code": make_text_field(is_optional=True),
     "employee_name": make_string_field(),
     "link": make_text_field(length=500, is_optional=True),
@@ -262,9 +258,7 @@ api_params = {
     "cont_to": make_text_field(is_optional=True),
     "cont_person": make_string_field(is_optional=True),
     "cont_no": make_text_field(is_optional=True),
-    "mob_no": make_text_field(),
     "e_id": make_text_field(),
-    "address": make_string_field(length=500, is_optional=True),
     "remarks": make_string_field(is_optional=True),
     "is_blocked": make_bool_field(),
     "unblock_days": make_int_field(),
@@ -318,7 +312,7 @@ api_params = {
     "rs_compliance_list":  make_vector_type_field(module="clientcore", klass_name="ReviewSettingsCompliance"),
     "r_every": make_int_field(is_optional=True),
     "s_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
-    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
+    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate", is_optional=True),
     "old_statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "trigger_before_days": make_int_field(is_optional=True),
     "due_date": make_text_field(length=20, is_optional=True),
@@ -416,6 +410,7 @@ api_params = {
     "u_unt_address": make_string_field(),  # User Management
     "u_unt_postal": make_string_field(),  # User Management
     "user_domain_ids": make_vector_type_field(module="clientcore", klass_name="UserDomains"),  # User Management
+
     "user_unit_ids": make_vector_type_field(module="clientcore", klass_name="UserUnits"),  # User Management
     "user_entity_ids": make_vector_type_int(length=1000),  # User Management
     "um_user_category": make_vector_type_field(module="clientcore", klass_name="ClientUsercategory_UserManagement"),  # User Management
@@ -442,7 +437,6 @@ api_params = {
     "assign_users": make_vector_type_field(module="clienttransactions", klass_name="Users"),
     "t_l_approve": make_bool_field(),
     "freq": make_text_field(),
-    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "applicable_units": make_vector_type_int(),
     "summary": make_text_field(is_optional=True),
     "due_date_list": make_vector_type_string(is_optional=True),
@@ -532,6 +526,16 @@ api_params = {
     "delayed_count": make_int_field(length=10000),
     "inprogress_count": make_int_field(length=10000),
     "overdue_count": make_int_field(length=10000),
+    "reassign_units": make_vector_type_field(module="clienttransactions", klass_name="REASSIGN_COMPLIANCE_UNITS"),
+    "no_of_compliances": make_int_field(length=100000),
+    "task_type": make_text_field(is_optional=True),
+    "reassign_compliances": make_vector_type_field(module="clienttransactions", klass_name="REASSIGN_COMPLIANCES"),
+    'c_h_id': make_int_field(is_optional=True),
+    "o_assignee": make_int_field(is_optional=True),
+    "o_concurrence_person": make_int_field(is_optional=True),
+    "o_approval_person": make_int_field(is_optional=True),
+    "r_from": make_int_field(),
+    "reassigned_compliance": make_vector_type_field(module="clienttransactions", klass_name="REASSIGNED_COMPLIANCE"),
     "le_wise_score_card_list": make_vector_type_field(module="clientcore", klass_name="GetLEWiseScoreCardSuccess", is_optional=True),
     "task_count": make_int_field(length=10000),
     "completed_count": make_int_field(length=10000),
@@ -584,6 +588,8 @@ api_params = {
     "reminders": make_vector_type_field(module="dashboard", klass_name="RemindersSuccess", is_optional=True),
     "escalations": make_vector_type_field(module="dashboard", klass_name="EscalationsSuccess", is_optional=True),
     "messages": make_vector_type_field(module="dashboard", klass_name="MessagesSuccess", is_optional=True),
+    "notification_details": make_vector_type_field(module="dashboard", klass_name="NotificationDetailsSuccess", is_optional=True),
+    "delayed_by": make_text_field(is_optional=True),
     "w_id": make_int_field(),
     "w_name": make_text_field(),
     "active_status": make_bool_field(),

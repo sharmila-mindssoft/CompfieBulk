@@ -409,7 +409,7 @@ def to_structure_dictionary_values(x):
         val = x.get(field_name)
         param = api_params.get(field_name)
         # print field_name, val
-        # print param, val, field_name
+        print param, val, field_name
 
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))

@@ -216,7 +216,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/themes",
-        "files/client/themes/themes.html",
+        "files/client/settings/themes.html",
         None, {}
     ),
     # Notification ---------------------------------------------------------------------

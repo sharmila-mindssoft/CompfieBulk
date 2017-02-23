@@ -155,18 +155,26 @@ def get_domains_for_user(db, user_id, user_category):
 
 def get_domains_info(db, user_id, user_category):
 
-    if user_category > 1 :
+    if user_category > 3 :
         query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
             "where t1.user_id = %s "
 
         rows = db.select_all(query, [user_id])
-    else:
+    elif user_category == 1 :
         query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
         rows = db.select_all(query)
+    else :
+        query = "SELECT distinct t2.domain_id, t2.domain_name, " + \
+            "t2.is_active FROM tbl_domains AS t2 " + \
+            " INNER JOIN tbl_legal_entity_domains as t3 on t2.domain_id = t3.domain_id " + \
+            "INNER JOIN tbl_user_legal_entities AS t4 ON t4.legal_entity_id = t3.legal_entity_id " + \
+            "where t4.user_id = %s "
+        rows = db.select_all(query, [user_id])
+
     results = []
     for d in rows:
         results.append(clientcore.DomainInfo(
@@ -559,9 +567,7 @@ def get_user_domains(db, user_id):
         q = "select domain_id from tbl_user_domains"
         condition = " WHERE user_id = %s"
         param = [user_id]
-    print q
-    print condition
-    print param
+
     rows = db.select_all(q + condition, param)
     d_ids = []
     for r in rows:
@@ -668,13 +674,14 @@ def get_legal_entity_info(db, user_id, user_category_id):
     else :
         q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
             "t1.business_group_id, t1.country_id, t3.country_name, " + \
-            "t1.client_id, t1.business_group_id, t1.country_id, t3.country_name, " + \
+            "t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
             "inner join tbl_user_legal_entities as t2 on " + \
-            "t1.legal_entity_id = t1.legal_entity_id " + \
+            "t1.legal_entity_id = t2.legal_entity_id " + \
             "inner join tbl_countries t3 on t1.country_id = t3.country_id " + \
             "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
+
         rows = db.select_all(q, [user_id])
         # print "------------------ User ---------------"
     le_list = []
@@ -1947,6 +1954,7 @@ def get_users_forms(db, user_id, user_category):
             " on t1.user_group_id = t2.user_group_id " + \
             " where t2.user_id = %s"
         param = [user_id]
+
     rows = db.select_all(q, param)
     f_ids = []
     for r in rows :
@@ -1959,6 +1967,8 @@ def get_widget_rights(db, user_id, user_category):
     showCalendar = False
     showUserScore = False
     showDomainScore = False
+    print forms
+    print " \n"
     if 34 in forms :
         showDashboard = True
 
@@ -1980,6 +1990,8 @@ def get_widget_list(db):
 
 def get_user_widget_settings(db, user_id, user_category):
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
+    print "--- \n"
+    print showDashboard, showCalendar, showUserScore, showDomainScore
     q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
     rows = db.select_one(q, [user_id])
     data = []

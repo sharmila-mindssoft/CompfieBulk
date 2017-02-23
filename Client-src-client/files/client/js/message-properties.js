@@ -382,7 +382,24 @@ var message = {
   "maximum_compliance_selection_reached": "Maximum limit reached for processing. Please unselect few unit(s)",
   "maximum_compliance_selection_reached_select_all": "Maximum limit reached for processing.",
   "unit_selection_should_be_same_domain": "Please select same domain unit(s).",
+  'user_required': 'User Required',
 
+  //Service Provider Master
+  'spname_required': 'Enter Service Provider Name ',
+  'spname_str': 'Service Provider Name Not Valid Characters',
+  'spname_max50': 'Service Provider Name 2-50 characters allowed',
+  'shortname_required': 'Enter Short Name ',
+  'shortname_max20': 'Short Name 2-20 characters allowed',
+
+  'contactperson_required': 'Enter Contact Person Name',
+  'contactpersonname_max50': 'Contact Person Name 2-50 characters Allowed',
+  'countrycode_required': 'Enter Country Code for Contact No.',
+  'areacode_required': 'Enter Area Code for Contact No.',
+  'contactno_required': 'Enter Contact No.',
+  'contactno_max10': 'Contact No. maximum 10 characters Allowed',
+  'mobile_max10': 'Mobile No. maximum 10 characters Allowed',
+  'email_required': 'Enter Email ID ',
+  'address_max500': 'Address maximum 500 characters Allowed',
 };
 
 function clearMessage() {
