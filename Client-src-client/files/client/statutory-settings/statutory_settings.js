@@ -714,7 +714,7 @@ function actstatus(element) {
             'comp_id': parseInt(combine_ids[0]),
             'c_o_status': c_bool(checkedVal),
             'c_remarks': null,
-            'u_name': UNIT_CS_ID[combine_ids[1]],
+            'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
             'u_id': parseInt(combine_ids[1])
         }
         console.log(SELECTED_COMPLIANCE)
@@ -752,7 +752,7 @@ function remarkstatus(element) {
                 'comp_id': parseInt(combine_ids[0]),
                 'c_o_status': c_bool(C_STATUS),
                 'c_remarks': null,
-                'u_name': UNIT_CS_ID[combine_ids[1]],
+                'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
                 'u_id': parseInt(combine_ids[1])
             }
         }
@@ -781,7 +781,7 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
         'comp_id': parseInt(combine_ids[0]),
         'c_o_status': c_bool(C_STATUS),
         'c_remarks': null,
-        'u_name': UNIT_CS_ID[combine_ids[1]],
+        'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
         'u_id': parseInt(combine_ids[1])
     }
     console.log(SELECTED_COMPLIANCE);
@@ -835,7 +835,7 @@ function mactstatus(element) {
             'comp_id': parseInt(combine_ids[0]),
             'c_o_status': c_bool(checkedVal),
             'c_remarks': null,
-            'u_name': UNIT_CS_ID[combine_ids[1]],
+            'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
             'u_id': parseInt(combine_ids[1])
         }
     });
@@ -878,7 +878,7 @@ function mcompliancestatus(element) {
         'comp_id': parseInt(combine_ids[0]),
         'c_o_status': c_bool(C_STATUS),
         'c_remarks': null,
-        'u_name': UNIT_CS_ID[combine_ids[1]],
+        'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
         'u_id': parseInt(combine_ids[1])
     }
     console.log(SELECTED_COMPLIANCE);
@@ -1105,7 +1105,7 @@ function loadSingleUnitCompliances() {
                     'comp_id': value.comp_id,
                     'c_o_status': c_bool(value1.comp_opt_status),
                     'c_remarks': null,
-                    'u_name': UNIT_CS_ID[value1.unit_id],
+                    'u_name': UNIT_CS_ID[value1.unit_id].u_name,
                     'u_id': value1.unit_id
                 }
                 console.log(SELECTED_COMPLIANCE);
@@ -1249,7 +1249,7 @@ function loadMultipleUnitCompliances() {
                     'comp_id': value.comp_id,
                     'c_o_status': c_bool(value1.comp_opt_status),
                     'c_remarks': null,
-                    'u_name': UNIT_CS_ID[value1.unit_id],
+                    'u_name': UNIT_CS_ID[value1.unit_id].u_name,
                     'u_id': value1.unit_id
                 }
                 console.log(SELECTED_COMPLIANCE);
