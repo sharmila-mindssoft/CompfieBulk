@@ -220,7 +220,7 @@ def update_service_provider(db, service_provider, session_user):
         "service_provider_id", "service_provider_name", "short_name", "contract_from", "contract_to",
         "contact_person", "contact_no", "mobile_no", "email_id", "address",
         "updated_on", "updated_by"
-    ]    
+    ]
     values_list = [
         service_provider.service_provider_id, service_provider.service_provider_name, service_provider.short_name,
         contract_from, contract_to, service_provider.contact_person,
@@ -400,7 +400,7 @@ def userManagement_GetLegalEntity_Domain(db):
 def userManagement_GetLegalEntity_Units(db):
     q = "SELECT unit_id, business_group_id, legal_entity_id, division_id, " + \
         " category_id, unit_code, unit_name, address, postal_code " + \
-        " From tbl_units where is_closed = '0' AND legal_entity_id = 1 "
+        " From tbl_units where is_closed = '0' "
     row = db.select_all(q, None)
     return row
 ##############################################################################
