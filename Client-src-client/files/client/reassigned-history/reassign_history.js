@@ -2,10 +2,12 @@
 var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
+var filterCountryName = $(".filter-country-name");
 
 var legalEntity = $("#legal-entity");
 var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
+var filterLegalEntityName = $(".filter-legal-entity-name");
 
 var domain = $("#domain");
 var domainId = $("#domain-id");
@@ -71,11 +73,11 @@ function PageControls() {
     //when click the country text box to initiate auto complete to display & get values from object 
     country.keyup(function(e) {
         var text_val = country.val().trim();
-        var countryList = REPORT._countries;
+        var countryList = REPORT._entities;
         if (countryList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+            displayMessage(message.country_required);
+        var condition_fields = [];
+        var condition_values = [];
         // to call auto complete common function to required variable to pass
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             // on success to return the ID and value  
@@ -87,7 +89,7 @@ function PageControls() {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
         if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
+            displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
@@ -98,6 +100,8 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
+        if (domainList.length == 0 && text_val != '')
+            displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
@@ -109,7 +113,7 @@ function PageControls() {
         var text_val = unit.val().trim();
         var unitList = REPORT._units;
         if (unitList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
+            displayMessage(message.unit_required);
         var condition_fields = ["d_ids"];
         var condition_values = [domainId.val()];
         commonAutoComplete(e, acUnit, unitId, text_val, unitList, "unit_name", "unit_id", function(val) {
@@ -120,8 +124,6 @@ function PageControls() {
     act.keyup(function(e) {
         var text_val = act.val().trim();
         var actList = REPORT._acts;
-        if (actList.length == 0)
-            displayMessage(message.act_required);
         var condition_fields = ["d_id"];
         var condition_values = [domainId.val()];
         commonAutoComplete(e, acAct, actId, text_val, actList, "act", "act", function(val) {
@@ -132,8 +134,6 @@ function PageControls() {
     complianceTask.keyup(function(e) {
         var text_val = complianceTask.val().trim();
         var complianceTaskList = REPORT._compliance_task;
-        if (complianceTaskList.length == 0)
-            displayMessage(message.complianceTask_required);
         var condition_fields = ["d_id"];
         var condition_values = [domainId.val()];
         commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "compliance_id", function(val) {
@@ -235,7 +235,6 @@ onUserAutoCompleteSuccess = function(REPORT, val) {
 }
 
 ReassignHistory = function() {
-    this._countries = []; // To declare empty array object 
     this._entities = [];
     this._domains = [];
     this._units = [];
@@ -254,8 +253,10 @@ ReassignHistory.prototype.loadSearch = function() {
 
 ReassignHistory.prototype.fetchSearchList = function() {
     t_this = this;
-    t_this._countries = client_mirror.getUserCountry();
-    t_this._entities = client_mirror.getUserLegalEntity();
+    /*var jsondata = '[{"c_id":1,"le_name":"LG Legal Entity","le_id":1,"bg_name":"LG Business Group","bg_id":1,"c_name":"India"},{"c_id":1,"le_name":"LG Legal Entity","le_id":1,"bg_name":"LG Business Group","bg_id":1,"c_name":"India"}]';
+    var object = jQuery.parseJSON(jsondata);
+    t_this._entities = object;*/
+    t_this._entities = client_mirror.getSelectedLegalEntity();
 };
 
 ReassignHistory.prototype.fetchDomainList = function(le_id) {
@@ -502,6 +503,31 @@ ReassignHistory.prototype.possibleFailures = function(error) {
     }
 };
 
+ReassignHistory.prototype.loadEntityDetails = function(){
+    t_this = this;
+    if(t_this._entities.length > 1) {
+        country.parent().show();
+        filterCountryName.hide();
+        
+        legalEntity.parent().show();
+        filterLegalEntityName.hide();
+    } else {
+        filterCountryName.show();
+        filterCountryName.html(t_this._entities[0]["c_name"]);
+        countryId.val(t_this._entities[0]["c_id"]);
+        country.parent().hide();
+        country.val(t_this._entities[0]["c_name"]);
+
+        filterLegalEntityName.show();
+        filterLegalEntityName.html(t_this._entities[0]["le_name"]);
+        legalEntityId.val(t_this._entities[0]["le_id"]);
+        legalEntity.parent().hide();
+        legalEntity.val(t_this._entities[0]["le_name"]);
+
+        REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
+    }
+};
+
 // call class ReassignHistory to store the REPORT object
 REPORT = new ReassignHistory();
 
@@ -510,5 +536,6 @@ $(document).ready(function() {
     PageControls();
     // To store values in object & search list element 
     REPORT.loadSearch();
+    REPORT.loadEntityDetails();
     loadItemsPerPage();
 });
