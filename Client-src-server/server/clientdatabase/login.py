@@ -260,7 +260,7 @@ def save_login_details(db, token, username, password):
         " password, is_active) VALUES (%s, %s, %s, %s, %s) "
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
-    delete_emailverification_token()
+    delete_emailverification_token(db, token)
 
     return True
 #################################################################
