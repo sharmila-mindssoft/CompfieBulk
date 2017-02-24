@@ -1856,7 +1856,7 @@ class ConvertJsonToCSV(object):
             ]
             self.write_csv(csv_headers, None)
             is_header = True
-        j = 0
+        j = 1
         for row in result:
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
@@ -1997,7 +1997,7 @@ class ConvertJsonToCSV(object):
             ]
             self.write_csv(csv_headers, None)
             is_header = True
-        j = 0
+        j = 1
         for row in result:
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
@@ -2159,7 +2159,7 @@ class ConvertJsonToCSV(object):
             ]
             self.write_csv(csv_headers, None)
             is_header = True
-        j = 0
+        j = 1
         for row in result:
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
@@ -2212,7 +2212,7 @@ class ConvertJsonToCSV(object):
 
         unit_status = request.unit_status
 
-        select_qry = "select (select business_group_name from tbl_business_groups where business_group_id = " + \
+        select_qry = "select t1.unit_id, (select business_group_name from tbl_business_groups where business_group_id = " + \
             "t1.business_group_id) as business_group_name, (select legal_entity_name from tbl_legal_entities " + \
             "where legal_entity_id = t1.legal_entity_id) as legal_entity_name, t1.unit_code, t1.unit_name, " + \
             "t1.address, t1.postal_code, " + \
@@ -2313,8 +2313,9 @@ class ConvertJsonToCSV(object):
             ]
             self.write_csv(csv_headers, None)
             is_header = True
-        j = 0
+        j = 1
         for row in result:
+            unit_id = row["unit_id"]
             unit_code = row["unit_code"]
             unit_name = row["unit_name"]
             geography_name = row["geography_name"]
@@ -2340,13 +2341,15 @@ class ConvertJsonToCSV(object):
                 city = None
 
             last = object()
+            last_1 = object()
             for row_1 in result_1:
                 if unit_id == row_1["unit_id"]:
-                    if last != (row_1["domain_name"]+" - "+row_1["organisation_name"]):
-                        last = row_1["domain_name"]+" - "+row_1["organisation_name"]
+                    if last != row_1["domain_name"]:
+                        last = row_1["domain_name"]
                         d_names.append(row_1["domain_name"])
+                    if last_1 != row_1["organisation_name"]:
+                        last_1 = row_1["organisation_name"]
                         i_names.append(row_1["organisation_name"])
-
             csv_values = [
                 j, row["business_group_name"], row["legal_entity_name"], division_name, unit_code, unit_name,
                 d_names, i_names, state, city, address, postal_code, unit_status, closed_date
@@ -2720,7 +2723,7 @@ class ConvertJsonToCSV(object):
                 ]
                 self.write_csv(csv_headers, None)
                 is_header = True
-            j = 0
+            j = 1
             for row in result:
                 task_status = None
                 statutory_mapping = json.loads(row["statutory_mapping"])
@@ -2903,7 +2906,7 @@ class ConvertJsonToCSV(object):
                 ]
                 self.write_csv(csv_headers, None)
                 is_header = True
-            j = 0
+            j = 1
             for row in result:
                 task_status = None
                 statutory_mapping = json.loads(row["statutory_mapping"])

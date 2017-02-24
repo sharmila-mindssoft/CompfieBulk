@@ -114,17 +114,17 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/unit-wise-compliance",
+        "/unit-wise-report",
         "files/client/unit-wise-report/unit_wise_report.html",
         None, {}
     ),
     (
-        "/service-provider-wise-compliance",
+        "/service-provider-wise-report",
         "files/client/service-provider-wise-report/service_provider_wise_report.html",
         None, {}
     ),
     (
-        "/user-wise-compliance",
+        "/user-wise-report",
         "files/client/user-wise-report/user_wise_report.html",
         None, {}
     ),
@@ -169,7 +169,7 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/statutory-notification-list",
+        "/statutory-notifications-list",
         "files/client/statutory-notifications-list/statutory-notifications-list.html",
         None, {}
     ),
@@ -179,7 +179,7 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/audit-trail",
+        "/audit-trail-client",
         "files/client/audit-trail-client/audit_trail_client.html",
         None, {}
     ),
