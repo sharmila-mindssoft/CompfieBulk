@@ -334,10 +334,6 @@ function updateComplianceApplicabilityChart(data, id) {
         showInLegend: true,
         point: {
           events: {
-            click: function () {
-              var drilldown = this.drilldown;
-              loadComplianceApplicabilityDrillDown(drilldown);
-            }
           }
         }
       }
@@ -371,11 +367,11 @@ function loadComplianceApplicabilityChart(data, id){
 }
 
 function userScoreCard(data, id){
-  var usc = $("#templates .ser-score-card-templates .table");
+  var usc = $("#templates .user-score-card-templates .table");
   var uscclone = usc.clone();  
   $("#cardbox"+id).append(uscclone);
 
-  var usc_tr = $("#templates .ser-score-card-templates .usc-tr");
+  var usc_tr = $("#templates .user-score-card-templates .usc-tr");
   var uscclone_tr = usc_tr.clone();  
   $(".usc-role").html();
   $(".usc-assignee").html();
@@ -390,11 +386,11 @@ function domainScoreCard(data, id){
   var total_notopted = 0;
   var total_subtotal = 0;
   var grandtotal = 0;
-  var dsc = $("#templates .ser-score-card-templates .table");
+  var dsc = $("#templates .domain-score-card-templates .table");
   var dscclone = dsc.clone();  
   $("#cardbox"+id).append(dscclone);
 
-  var dsc_tr = $("#templates .ser-score-card-templates .dsc-tr");
+  var dsc_tr = $("#templates .domain-score-card-templates .dsc-tr");
   var dscclone_tr = dsc_tr.clone();  
   $(".dsc-domain").html();
   $(".dsc-assigned").html();
@@ -405,7 +401,7 @@ function domainScoreCard(data, id){
   grandtotal = grandtotal+total_subtotal;
   $("#cardbox"+id+" .tbody-dsc").append(dscclone_tr);
 
-  var dsc_total = $("#templates .ser-score-card-templates .dsc-tr");
+  var dsc_total = $("#templates .domain-score-card-templates .dsc-tr");
   var dscclone_total = dsc_total.clone(); 
   $(".dsc-total-assigned").html(total_assigned);
   $(".dsc-total-unassigned").html(total_unassigned);
@@ -417,7 +413,16 @@ function domainScoreCard(data, id){
 }
 
 function calenderView(data, id){
-  
+  var ct = $("#templates .calender-templates div");
+  var ctclone = ct.clone();  
+  $('#mycalendar', ctclone).monthly({
+      mode: 'event',
+      //jsonUrl: 'events.json',
+      //dataType: 'json'
+      //xmlUrl: 'events.xml'
+    });
+  $("#cardbox"+id).append(ctclone);
+
 }
 
 function widgetLoadChart() {
@@ -465,6 +470,7 @@ function loadChart(){
     var liclone = sidebarli.clone();
     $(".menu_widgets a span", liclone).text(v.w_name);
     $(".menu_widgets i", liclone).addClass(charticon()[v.w_id]);
+    $(".menu_widgets a", liclone).attr("data-target", "#item"+v.w_id);
     if(v.active_status = true){
       $(".menu_widgets", liclone).removeClass("active_widgets");
     }
@@ -477,8 +483,74 @@ function loadChart(){
     var cardbox = $(".chart-card-box li");
     var cardboxclone = cardbox.clone();
     $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+    $(".dragbox").attr("id", "item"+v.w_id);
     $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
+    $(".dragbox .pins .ti-pin2", cardboxclone).click(function(e){
+      var widget_info = [];
+      $.each(".dragdrophandles li", function(i, v){
+        var width = $(this).css('width');
+        var height = $(this).css('height');
+        var id = v.w_id;
+        var pin_status = true;
+        widget_info.push(client_mirror.saveUserWidgetDataDict(id, width, height, pin_status));
+      });
+      client_mirror.saveUserWidgetData(widget_info, function(error, response){
+        if(error == null){
+          displaySuccessMessage(message.save_success);
+          $(".dragbox .pins i", cardboxclone).removeClass();
+          $(".dragbox .pins i", cardboxclone).addClass("ti-pin-alt")
+          $(".dragbox .pins i", cardboxclone).attr("title", "unpin")
+
+        }else{
+          displayMessage(error);
+        }
+      });
+
+    });
+    cardboxclone.addClass("resizable"+v.w_id); 
+    $(".resizable"+v.w_id, cardboxclone).resizable({
+      autoHide: true
+    });    
+    $('.toggleWidget', cardboxclone).click(function(e) {
+      e.preventDefault();
+      console.log($(this).data('target'));
+      $($(this).data('target')).css({
+          "display": "block"
+      });
+      if ($(this).parent().hasClass("active_widgets") == false)
+        $(this).parent().addClass('active_widgets');
+    }); 
+
+    $('.closewidget', cardboxclone).click(function(e) {
+      e.preventDefault();
+      var item = $(this).parent().parent();
+      var list = "#" + item.attr('id');
+      item.css({
+          "display": "none"
+      });
+
+      $(".has_sub", cardboxclone).each(function(index) {
+        if ($(this).find('a').attr('data-target') === list) {
+            if ($(this).hasClass("active_widgets") == true)
+                $(this).removeClass('active_widgets');
+        }
+      });
+    });
+    $('a.maxmin', cardboxclone).click(function() {
+        $(this).parent().siblings('.dragbox-content').toggle();
+    });
+
+    $('a.delete', cardboxclone).click(
+        function() {
+            var sel = confirm('do you want to delete the widget?');
+            if (sel) {
+                //del code here
+            }
+        }
+    );
+
     $(".dragdrophandles").append(cardboxclone);          
+
     settings[v.w_id](function(error, data){
       if(error == null){
         widgetLoadChart()[v.w_id](data, v.w_id);  
@@ -488,6 +560,11 @@ function loadChart(){
       }      
     });
   });
+
+}
+
+function savePinWidgetInfo(){
+
 }
 
 
@@ -507,4 +584,8 @@ function loadSidebarMenu(){
 $(document).ready(function () {
   hideLoader();
   loadSidebarMenu();
+  $('.dragdrophandles').sortable({
+      handle: 'h2'
+  });
+
 });
