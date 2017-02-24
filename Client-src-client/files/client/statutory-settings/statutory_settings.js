@@ -578,7 +578,7 @@ function loadUnits() {
             upd_by = value.usr_by;
         }
         var upd_on = '-';
-        if(value.upd_on != null){
+        if(value.usr_on != null){
             upd_on = value.usr_on;
         }
 
@@ -612,8 +612,13 @@ function loadUnits() {
             activateUnit(this);
         });
 
-        UNIT_CS_ID[value.u_id] = value.u_name;
         StatutorySettingsList.append(clone);
+
+        UNIT_CS_ID[value.u_id] = {
+            'u_name': value.u_name,
+            'u_address': value.address
+        }
+
     });
 
     if(UNITS.length == 0){
@@ -709,7 +714,7 @@ function actstatus(element) {
             'comp_id': parseInt(combine_ids[0]),
             'c_o_status': c_bool(checkedVal),
             'c_remarks': null,
-            'u_name': UNIT_CS_ID[combine_ids[1]],
+            'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
             'u_id': parseInt(combine_ids[1])
         }
         console.log(SELECTED_COMPLIANCE)
@@ -747,7 +752,7 @@ function remarkstatus(element) {
                 'comp_id': parseInt(combine_ids[0]),
                 'c_o_status': c_bool(C_STATUS),
                 'c_remarks': null,
-                'u_name': UNIT_CS_ID[combine_ids[1]],
+                'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
                 'u_id': parseInt(combine_ids[1])
             }
         }
@@ -776,7 +781,7 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
         'comp_id': parseInt(combine_ids[0]),
         'c_o_status': c_bool(C_STATUS),
         'c_remarks': null,
-        'u_name': UNIT_CS_ID[combine_ids[1]],
+        'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
         'u_id': parseInt(combine_ids[1])
     }
     console.log(SELECTED_COMPLIANCE);
@@ -830,7 +835,7 @@ function mactstatus(element) {
             'comp_id': parseInt(combine_ids[0]),
             'c_o_status': c_bool(checkedVal),
             'c_remarks': null,
-            'u_name': UNIT_CS_ID[combine_ids[1]],
+            'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
             'u_id': parseInt(combine_ids[1])
         }
     });
@@ -873,7 +878,7 @@ function mcompliancestatus(element) {
         'comp_id': parseInt(combine_ids[0]),
         'c_o_status': c_bool(C_STATUS),
         'c_remarks': null,
-        'u_name': UNIT_CS_ID[combine_ids[1]],
+        'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
         'u_id': parseInt(combine_ids[1])
     }
     console.log(SELECTED_COMPLIANCE);
@@ -1100,7 +1105,7 @@ function loadSingleUnitCompliances() {
                     'comp_id': value.comp_id,
                     'c_o_status': c_bool(value1.comp_opt_status),
                     'c_remarks': null,
-                    'u_name': UNIT_CS_ID[value1.unit_id],
+                    'u_name': UNIT_CS_ID[value1.unit_id].u_name,
                     'u_id': value1.unit_id
                 }
                 console.log(SELECTED_COMPLIANCE);
@@ -1205,8 +1210,8 @@ function loadMultipleUnitCompliances() {
             $('.combineid-class', clone4).attr('id', 'combineid' + statutoriesCount);
             $('.combineid-class', clone4).val(combineId);
 
-            $('.unit-locatiion', clone4).text("UNIT_CS_ID[value1.u_id].g_name");
-            $('.unit-name', clone4).text(/*UNIT_CS_ID[value1.u_id].unit_code + ' - ' + UNIT_CS_ID[value1.u_id].u_name + ', ' + UNIT_CS_ID[value1.u_id].address*/);
+            $('.unit-locatiion', clone4).text(UNIT_CS_ID[value1.unit_id].u_address);
+            $('.unit-name', clone4).text(UNIT_CS_ID[value1.unit_id].u_name);
 
            
             if(value1.comp_app_status){
@@ -1244,7 +1249,7 @@ function loadMultipleUnitCompliances() {
                     'comp_id': value.comp_id,
                     'c_o_status': c_bool(value1.comp_opt_status),
                     'c_remarks': null,
-                    'u_name': UNIT_CS_ID[value1.unit_id],
+                    'u_name': UNIT_CS_ID[value1.unit_id].u_name,
                     'u_id': value1.unit_id
                 }
                 console.log(SELECTED_COMPLIANCE);

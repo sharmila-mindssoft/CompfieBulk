@@ -1,14 +1,17 @@
 var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
+var filterCountryName = $(".filter-country-name");
 
 var businessGroup = $("#business-group");
 var businessGroupId = $("#business-group-id");
 var acBusinessGroup = $("#ac-business-group");
+var filterBusinessGroupName = $(".filter-business-group-name");
 
 var legalEntity = $("#legal-entity");
 var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
+var filterLegalEntityName = $(".filter-legal-entity-name");
 
 var division = $("#division");
 var divisionId = $("#division-id");
@@ -60,12 +63,12 @@ var f_count = 0;
 function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
-        var countryList = REPORT._countries;
+        var countryList = REPORT._entities;
+        //alert(countryList.toSource());
         if (countryList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
-        //alert(text_val +' - '+countryList.toSource() +' - '+)
+            displayMessage(message.country_required);
+        var condition_fields = [];
+        var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -73,7 +76,7 @@ function PageControls() {
 
     businessGroup.keyup(function(e) {
         var text_val = businessGroup.val().trim();
-        var businessGroupList = REPORT._business_group;
+        var businessGroupList = REPORT._entities;
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, acBusinessGroup, businessGroupId, text_val, businessGroupList, "bg_name", "bg_id", function(val) {
@@ -84,8 +87,11 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        var condition_fields = ["c_id", "bg_id"];
-        var condition_values = [countryId.val(), businessGroupId.val()];
+        if (legalEntityList.length == 0 && text_val != '')
+            displayMessage(message.legalentity_required);
+        var condition_fields = ["c_id"];
+        var condition_values = [countryId.val()];
+        if (businessGroupId.val() != '') { condition_fields.push("bg_id"); condition_values.push(businessGroupId.val()); }
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -94,6 +100,8 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
+        if (domainList.length == 0 && text_val != '')
+            displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
@@ -255,8 +263,6 @@ onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
 }
 
 StatutorySettingsUnitWise = function() {
-    this._countries = [];
-    this._business_group = [];
     this._entities = [];
     this._domains = [];
     this._divisions = [];
@@ -281,9 +287,10 @@ StatutorySettingsUnitWise.prototype.loadSearch = function() {
 StatutorySettingsUnitWise.prototype.fetchSearchList = function() {
     t_this = this;
 
-    t_this._countries = client_mirror.getUserCountry();
-    t_this._business_group = client_mirror.getUserBusinessGroup();
-    t_this._entities = client_mirror.getUserLegalEntity();
+    /*var jsondata = '[{"c_id":1,"le_name":"LG Legal Entity","le_id":1,"bg_name":"LG Business Group","bg_id":1,"c_name":"India"},{"c_id":2,"le_name":"LG Legal Entity Two","le_id":3,"bg_name":null,"bg_id":null,"c_name":"Sri Lanka"}]';
+    var object = jQuery.parseJSON(jsondata);
+    t_this._entities = object;*/
+    t_this._entities = client_mirror.getSelectedLegalEntity();
     t_this._complianceTaskStatus = ComplianceTaskStatuses; // common-functions.js
     t_this.renderComplianceTaskStatusList(t_this._complianceTaskStatus);
 };
@@ -563,9 +570,51 @@ StatutorySettingsUnitWise.prototype.exportReportValues = function() {
 
 StatutorySettingsUnitWise.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage("Domain name exists");
+        displayMessage("Domain name exists");
     } else {
-        this.displayMessage(error);
+        displayMessage(error);
+    }
+};
+
+StatutorySettingsUnitWise.prototype.loadEntityDetails = function(){
+    t_this = this;
+    if(t_this._entities.length > 1) {
+        country.parent().show();
+        filterCountryName.hide();
+
+        legalEntity.parent().show();
+        filterLegalEntityName.hide();
+
+        businessGroup.parent().show();
+        filterBusinessGroupName.hide();
+    } else {
+        filterCountryName.show();
+        filterCountryName.html(t_this._entities[0]["c_name"]);
+        countryId.val(t_this._entities[0]["c_id"]);
+        country.parent().hide();
+        country.val(t_this._entities[0]["c_name"]);
+
+        filterLegalEntityName.show();
+        filterLegalEntityName.html(t_this._entities[0]["le_name"]);
+        legalEntityId.val(t_this._entities[0]["le_id"]);
+        legalEntity.parent().hide();
+        legalEntity.val(t_this._entities[0]["le_name"]);
+        
+        var BG_NAME = '-';
+        if(t_this._entities[0]["bg_name"] != null) 
+            BG_NAME = t_this._entities[0]["bg_name"];
+        
+        var BG_ID = '';
+        if(t_this._entities[0]["bg_id"] != null)
+            BG_ID = t_this._entities[0]["bg_id"];
+
+        filterBusinessGroupName.show();
+        filterBusinessGroupName.html(BG_NAME);
+        businessGroupId.val(BG_ID);
+        businessGroup.parent().hide();
+        businessGroup.val(BG_NAME);
+
+        REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
     }
 };
 
@@ -574,5 +623,6 @@ REPORT = new StatutorySettingsUnitWise();
 $(document).ready(function() {
     PageControls();
     REPORT.loadSearch();
+    REPORT.loadEntityDetails();
     loadItemsPerPage();
 });

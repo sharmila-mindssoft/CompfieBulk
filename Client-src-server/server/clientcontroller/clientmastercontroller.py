@@ -249,10 +249,10 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
 ########################################################
 def process_get_forms(db, cat_id):
     result_rows = get_forms(db, cat_id)
+    # print result_rows;
     forms = []
     for row in result_rows:
-        parent_menu = None if (
-            row["parent_menu"] == None) else row["parent_menu"]
+        parent_menu = None if (row["parent_menu"] == None) else row["parent_menu"]
         form = clientcore.Form(
             form_id=row["form_id"],
             form_name=row["form_name"],
@@ -695,6 +695,8 @@ def reorder_menu(menus):
     new_menu = collections.OrderedDict()
     if "Home" in menus:
         new_menu["Home"] = menus["Home"]
+    if "Dashboard" in menus:
+        new_menu["Dashboard"] = menus["Dashboard"]
     if "Master" in menus:
         new_menu["Master"] = menus["Master"]
     if "Transaction" in menus:

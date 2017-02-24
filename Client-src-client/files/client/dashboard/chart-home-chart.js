@@ -321,7 +321,6 @@ function updateNotCompliedChart(data) {
 //
 function updateTrendChart(data) {
   data = prepareTrendChartData(data);
-  console.log(data);
   print_data = JSON.stringify(data, null, ' ');
   xAxis = data[0];
   chartTitle = data[1];
@@ -1142,11 +1141,11 @@ function initializeFilters() {
       loadCharts();
     }
   });
-  $('.btn-go input').on('click', function () {
+  $('.btn-go .btn').on('click', function () {
     var chart_type = chartInput.getChartType();
     loadCharts();
   });
-  $('.btn-go input').on('click', function () {
+  $('.btn-go .btn').on('click', function () {
     loadCharts();
   });
   $('.btn-previous-year').on('click', function (event) {
@@ -1182,7 +1181,6 @@ function initializeFilters() {
     updateComplianceStatusChart(data);
     $('.btn-previous').show();
     if (range >= COMPLIANCE_STATUS_DATA.length) {
-
       $('.btn-next').hide();
     }
   });

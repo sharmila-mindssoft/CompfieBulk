@@ -196,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
+        //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -2371,7 +2371,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function SaveUserWidgetData(widget_info, callback) {
+    function saveUserWidgetDataDict(w_id, width, height, pinstatus){
+        return {
+            "w_id": w_id,
+            "width": width,
+            "height": height,
+            "pin_status": pin_status
+        }
+    }
+
+    function saveUserWidgetData(widget_info, callback) {
         var request = [
             "SaveWidgetData", {
                 "widget_info": widget_info
@@ -2431,6 +2440,16 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
+    function getWidgetCalender(callback){
+         var request = [
+            "GetWidgetCalender", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
     // Widget api call end
 
     /* Risk report - updated*/
@@ -2649,12 +2668,14 @@ function initClientMirror() {
         getReAssignComplianceForUnits: getReAssignComplianceForUnits,
         getUserManagement_Prerequisite: getUserManagement_Prerequisite,
         getUserWidgetData: getUserWidgetData,
-        SaveUserWidgetData: SaveUserWidgetData,
+        saveUserWidgetDataDict: saveUserWidgetDataDict,
+        saveUserWidgetData: saveUserWidgetData,
         getWidgetComplianceChart: getWidgetComplianceChart,
         getWidgetEscalationChart: getWidgetEscalationChart,
         getWidgetNotCompliedChart: getWidgetNotCompliedChart,
         getWidgetRiskChart: getWidgetRiskChart,
         getWidgetTrendChart: getWidgetTrendChart,
+        getWidgetCalender: getWidgetCalender,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
     };
