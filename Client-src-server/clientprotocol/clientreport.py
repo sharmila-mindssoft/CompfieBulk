@@ -775,7 +775,7 @@ class GetReassignedHistoryReportFilters(Request):
 
 class GetReassignedHistoryReport(Request):
     def __init__(
-        self, c_id, legal_entity_id, d_id, unit_id, act, compliance_id, 
+        self, c_id, legal_entity_id, d_id, unit_id, act, compliance_id,
         usr_id, from_date, to_date, csv, f_count, t_count
     ):
         self.c_id = c_id
@@ -794,7 +794,7 @@ class GetReassignedHistoryReport(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_id", "le_id", "d_id", "unit_id", "act", "compliance_id", 
+            "c_id", "le_id", "d_id", "unit_id", "act", "compliance_id",
             "usr_id", "from_date", "to_date", "csv", "f_count", "t_count"]
         )
         c_id = data.get("c_id")
@@ -809,8 +809,8 @@ class GetReassignedHistoryReport(Request):
         csv = data.get("csv")
         f_count = data.get("f_count")
         t_count = data.get("t_count")
-        return GetReassignedHistoryReport( 
-            c_id, legal_entity_id, d_id, unit_id, act, compliance_id, 
+        return GetReassignedHistoryReport(
+            c_id, legal_entity_id, d_id, unit_id, act, compliance_id,
             usr_id, from_date, to_date, csv, f_count, t_count)
 
     def to_inner_structure(self):
@@ -847,7 +847,7 @@ class GetStatusReportConsolidatedFilters(Request):
 
 class GetStatusReportConsolidated(Request):
     def __init__(
-        self, c_id, legal_entity_id, d_id, unit_id, act, compliance_id, frequency_id, user_type_id, status_name, 
+        self, c_id, legal_entity_id, d_id, unit_id, act, compliance_id, frequency_id, user_type_id, status_name,
         usr_id, from_date, to_date, csv, f_count, t_count
     ):
         self.c_id = c_id
@@ -887,7 +887,7 @@ class GetStatusReportConsolidated(Request):
         csv = data.get("csv")
         f_count = data.get("f_count")
         t_count = data.get("t_count")
-        return GetStatusReportConsolidated( 
+        return GetStatusReportConsolidated(
             c_id, legal_entity_id, d_id, unit_id, act, compliance_id, frequency_id, user_type_id, status_name,
             usr_id, from_date, to_date, csv, f_count, t_count)
 
@@ -928,7 +928,7 @@ class GetStatutorySettingsUnitWiseFilters(Request):
 
 class GetStatutorySettingsUnitWise(Request):
     def __init__(
-        self, c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, 
+        self, c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act,
         compliance_id, frequency_id, status_name, csv, f_count, t_count
     ):
         self.c_id = c_id
@@ -949,7 +949,7 @@ class GetStatutorySettingsUnitWise(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "c_id", "bg_id", "le_id", "d_id", "unit_id", "div_id", "cat_id", "act", "compliance_id", 
+            "c_id", "bg_id", "le_id", "d_id", "unit_id", "div_id", "cat_id", "act", "compliance_id",
             "frequency_id", "status_name", "csv", "f_count", "t_count"]
         )
         c_id = data.get("c_id")
@@ -966,8 +966,8 @@ class GetStatutorySettingsUnitWise(Request):
         csv = data.get("csv")
         f_count = data.get("f_count")
         t_count = data.get("t_count")
-        return GetStatutorySettingsUnitWise( 
-            c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, compliance_id, 
+        return GetStatutorySettingsUnitWise(
+            c_id, bg_id, legal_entity_id, d_id, unit_id, div_id, cat_id, act, compliance_id,
             frequency_id, status_name, csv, f_count, t_count)
 
     def to_inner_structure(self):
@@ -1028,7 +1028,7 @@ class GetDomainScoreCard(Request):
         div_id = data.get("div_id")
         cat_id = data.get("cat_id")
         csv = data.get("csv")
-        return GetDomainScoreCard( 
+        return GetDomainScoreCard(
             c_id, bg_id, legal_entity_id, d_id, div_id, cat_id, csv)
 
     def to_inner_structure(self):
@@ -1077,7 +1077,7 @@ class GetLEWiseScoreCard(Request):
         legal_entity_id = data.get("le_id")
         d_id = data.get("d_id")
         csv = data.get("csv")
-        return GetLEWiseScoreCard( 
+        return GetLEWiseScoreCard(
             c_id, legal_entity_id, d_id, csv)
 
     def to_inner_structure(self):
@@ -1123,7 +1123,7 @@ class GetWorkFlowScoreCard(Request):
         legal_entity_id = data.get("le_id")
         d_id = data.get("d_id")
         csv = data.get("csv")
-        return GetWorkFlowScoreCard( 
+        return GetWorkFlowScoreCard(
             c_id, legal_entity_id, d_id, csv)
 
     def to_inner_structure(self):

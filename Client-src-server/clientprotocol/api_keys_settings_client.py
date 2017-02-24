@@ -92,7 +92,6 @@ api_params = {
     "le_id": make_int_field(),
     "le_ids": make_vector_type_int(),
     "le_name": make_string_field(),
-
     "bg_name": make_string_field(is_optional=True),  # User Management, Other forms
     "bg_id": make_int_field(is_optional=True),  # User Management, Other forms
     "cat_id": make_int_field(is_optional=True),  # User Management, Other forms
@@ -101,7 +100,7 @@ api_params = {
 
     "email_id": make_string_field(validfun=allow_specialchar),
     "user_email_id": make_string_field(validfun=allow_specialchar),
-    "emp_name": make_string_field(is_optional=True),
+    "emp_name": make_text_field(is_optional=True),
     "emp_code": make_string_field(is_optional=True),
     "con_no": make_text_field(is_optional=True),
     "mob_no": make_text_field(is_optional=True),
@@ -275,7 +274,7 @@ api_params = {
     "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
     "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "unit_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
-    "sp_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviders"),
+    "sp_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProviders"),
     "sp_domains_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderDomains"),
     "sp_unit_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderUnits"),
     "sp_act_task_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderActList"),
@@ -286,6 +285,24 @@ api_params = {
     "users_units_list": make_vector_type_field(module="clientreport", klass_name="UserUnits"),
     "user_act_task_list": make_vector_type_field(module="clientreport", klass_name="UsersActList"),
     "user_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
+    "divisions": make_vector_type_field(module="clientreport", klass_name="Divisions"),
+    "categories": make_vector_type_field(module="clientreport", klass_name="Category"),
+    "units_list": make_vector_type_field(module="clientreport", klass_name="UnitList"),
+    "domains_organisations_list": make_vector_type_field(module="clientreport", klass_name="DomainsOrganisation"),
+    "unit_status_list": make_vector_type_field(module="clientreport", klass_name="UnitStatus"),
+    "unit_list_report": make_vector_type_field(module="clientreport", klass_name="UnitListReport"),
+    "stat_notf_list_report": make_vector_type_field(module="clientreport", klass_name="StatutoryNotificationReport"),
+    "sp_user_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProviderUsers"),
+    "sp_status_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProvidersStatus"),
+    "sp_details_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProvidersDetailsList"),
+    "audit_activities": make_vector_type_field(module="clientreport", klass_name="AuditTrailActivities"),
+    "audit_users_list": make_vector_type_field(module="clientmasters", klass_name="AuditTrailUsers"),
+    "audit_forms_list": make_vector_type_field(module="clientmasters", klass_name="AuditTrailForms"),
+    "log_trace_activities": make_vector_type_field(module="clientmasters", klass_name="LoginTraceActivities"),
+    "user_profile": make_vector_type_field(module="clientmasters", klass_name="UserProfile"),
+    "risk_report": make_vector_type_field(module="clientreport", klass_name="RiskReport"),
+
+    "frequency_id": make_int_field(),
     "frequency": make_string_field(),
     "rs_unit_list": make_vector_type_field(module="clientcore", klass_name="ReviewSettingsUnits"),
     "u_code": make_string_field(),
@@ -319,7 +336,6 @@ api_params = {
     "to_date": make_text_field(length=20, is_optional=True),
     "assigned_date": make_text_field(length=20, is_optional=True),
     "assigned": make_string_field(),
-    "reason": make_string_field(),
     "f_count": make_int_field(),
     "t_count": make_int_field(),
     'total': make_int_field(is_optional=False),
@@ -362,21 +378,23 @@ api_params = {
     "total_licences": make_int_field(),
     "used_licences": make_int_field(),
     "u_cat_id": make_int_field(),
-
     "resend_mail": make_bool_field(),
     "is_disable": make_bool_field(),
+    "reason": make_text_field(),
+    "unblock": make_text_field(),
     "u_level": make_int_field(is_optional=True),
     "s_unit": make_int_field(is_optional=True),
     "is_sp": make_bool_field(),
 
     "u_dm_id": make_int_field(),  # User Management
-    "u_dm_name": make_text_field(),   # User Management
-    "u_unt_id": make_int_field(),   # User Management
-    "u_unt_code": make_string_field(),   # User Management
-    "u_unt_name": make_string_field(),   # User Management
-    "u_unt_address": make_string_field(),   # User Management
-    "u_unt_postal": make_string_field(),   # User Management
-    "user_domain_ids": make_vector_type_field(module="clientcore", klass_name="UserDomains"),   # User Management
+    "u_dm_name": make_text_field(),  # User Management
+    "u_unt_id": make_int_field(),  # User Management
+    "u_unt_code": make_string_field(),  # User Management
+    "u_unt_name": make_string_field(),  # User Management
+    "u_unt_address": make_string_field(),  # User Management
+    "u_unt_postal": make_string_field(),  # User Management
+    "user_domain_ids": make_vector_type_field(module="clientcore", klass_name="UserDomains"),  # User Management
+
     "user_unit_ids": make_vector_type_field(module="clientcore", klass_name="UserUnits"),  # User Management
     "user_entity_ids": make_vector_type_int(length=1000),  # User Management
     "um_user_category": make_vector_type_field(module="clientcore", klass_name="ClientUsercategory_UserManagement"),  # User Management
@@ -565,5 +583,4 @@ api_params = {
     "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo"),
     "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList"),
     "has_read": make_bool_field(),
-
 }
