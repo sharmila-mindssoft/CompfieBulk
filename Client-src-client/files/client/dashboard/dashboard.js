@@ -146,6 +146,7 @@ function updateEscalationDrillDown(data, year) {
   $('.drilldown-container').show();
   $('.btn-back').show();
   $('.div-assignee-wise-compliance').hide();
+  $('.drilldown-container').empty();
   showEscalationDrillDownRecord(data, year);
 }
 function updateNotCompliedDrillDown(status, data) {
@@ -744,10 +745,11 @@ function escalationDrilldown(status, data) {
       $('.escalation-status-text span', cloneh2).css({ 'margin-top': '40px' });
       $('.escalation-status-text span', cloneh2).html('Not Complied compliances');
       $('.drilldown-container').append(cloneh2);
-
+      alert("hi 1");
       var tableHeading = $('#templates .escalation-status .table-compliance-status');
       var cloneHeading = tableHeading.clone();
       $('.drilldown-container').append(cloneHeading);
+      alert("hi 2");
       // var tableFilter = $('#templates .escalation-status .tr-filter');
       // var cloneFilter = tableFilter.clone();
       // $('.thead-itncel').append(cloneFilter);
@@ -794,6 +796,7 @@ function escalationDrilldownnotcomplied(status, data) {
   // } else {
   //   $('#pagination').show();
   // }
+  alert("hi 3");
   console.log(" --"+data[status]);
   if (typeof data[status] != 'undefined') {
     $.each(data[status], function (key, value) {
@@ -810,7 +813,7 @@ function escalationDrilldownnotcomplied(status, data) {
             $('.coll-title', cloneUnit).addClass('in');
         }
         $('.div-compliance-list').append(cloneUnit);
-
+        alert("hi 4");
         var tableActTbody = $('#templates .escalation-status .table-row-accordian-unit .compliance-list-inner tbody');
         var cloneActTbody = tableActTbody.clone();
         cloneActTbody.attr('id', 'collapse'+ACCORDIONCOUNTNC);
@@ -1204,6 +1207,7 @@ function showDrillDownRecord(status, data, filterTypeName) {
   $(".drilldown-container").show();
   $('.div-assignee-wise-compliance').hide();
   //clear escalation data
+  $(".drilldown-container").empty();
   $('.escalation-drilldown-list .td-escalation').empty();
   var data = data.drill_down_data;
   var filter_type = chartInput.getFilterType();
@@ -1416,7 +1420,7 @@ function complianceStatusDrilldown(status, data) {
       if (CS_LAST_LEVEL1 != ke) {
         var tableLevel1 = $('#templates .compliance-status .table-row-list .tr-level1');
         var cloneLevel1 = tableLevel1.clone();
-        $('.heading', cloneLevel1).html(ke);
+        $('.heading', cloneLevel1).html(ke+"80213");
         $(' #collapse'+actCount).append(cloneLevel1);
         CS_LAST_LEVEL1 = ke;
       }
