@@ -2492,6 +2492,23 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+
+    function changeStatutorySettingsLock(
+        le_id, d_id, u_id, lock, password, callback
+    ) {
+        var request = [
+            'ChangeStatutorySettingsLock', {
+                'le_id': le_id,
+                'd_id': d_id,
+                'u_id': u_id,
+                'lock': lock,
+                'password': password
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2678,6 +2695,7 @@ function initClientMirror() {
         getWidgetCalender: getWidgetCalender,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
+        changeStatutorySettingsLock: changeStatutorySettingsLock,
     };
 }
 
