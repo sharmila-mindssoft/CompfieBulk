@@ -7,7 +7,6 @@ __all__ = [
     "SaveRegistrationData"
 ]
 
-
 class ClientdbConect(object):
     def __init__(self):
         self._k_db = None
@@ -40,7 +39,7 @@ class SaveRegistrationData(ClientdbConect):
         self.process_save_token()
 
     def get_client_info(self):
-        rows = get_group_server_info(self.know_db)
+        rows = get_group_server_info(self.know_db, self.client_id)
         if rows :
             r = rows[0]
             print r

@@ -50,33 +50,22 @@ class ClientReplicationManager(object) :
         self._clients = {}
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/knowledge/client-list" % (ip, port)
-        # print
-        # print self._poll_url
+
         self._request_body = json.dumps(
             GetClientChanges().to_structure(), indent=2
         )
-        # print self._request_body
-        # print body
-        # request = HTTPRequest(
-        #     self._poll_url, method="POST", body=body,
-        #     headers={"Content-Type": "application/json"},
-        #     request_timeout=10
-        # )
 
     def _start(self):
         self._poll()
-        # self._io_loop.add_callback(self._poll)
 
     def _poll(self) :
-        # self._http_client.fetch(self._request_body, self._poll_response)
 
         def on_timeout():
             req_data = self._request_body
             # print req_data
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
             req_data = base64.b64encode(req_data)
-            # print req_data
-            # print " ----"
+
             req_data = key+req_data
 
             response = requests.post(self._poll_url, data=req_data)
@@ -94,10 +83,6 @@ class ClientReplicationManager(object) :
         if self._first_time:
             self._first_time = False
             on_timeout()
-            # return
-        # self._io_loop.add_timeout(
-        #     time.time() + self._timeout_seconds, on_timeout
-        # )
 
     def _poll_response(self, response, status_code) :
         # print response.error
@@ -106,6 +91,7 @@ class ClientReplicationManager(object) :
         if status_code == 200 :
             r = None
             try :
+                print json.loads(response)
                 r = Response.parse_structure(
                     json.loads(response)
                 )
@@ -115,9 +101,10 @@ class ClientReplicationManager(object) :
                 return
 
             assert r is not None
-            self._clients = {}
+            self._clients = []
             for client in r.clients :
-                self._clients[client.client_id] = client
+                # self._clients[client.client_id] = client
+                self._clients.append(client)
             self._replication_added_callback(self._clients)
 
         else :
@@ -134,12 +121,13 @@ class ClientReplicationManager(object) :
 class ReplicationBase(object):
     def __init__(
         self, knowledge_server_address,
-        db, is_group
+        db, is_group, client_id
     ) :
         # self._io_loop = io_loop
         self._knowledge_server_address = knowledge_server_address
         # self._http_client = http_client
         self._db = db
+        self._client_id = client_id
         self._is_group = is_group
         self._received_count = None
         self._temp_count = 0
@@ -225,7 +213,7 @@ class ReplicationBase(object):
             #     print "=-=-=-"
             self._db.commit()
         except Exception, e:
-            # print e
+            print e
             self._domains = None
             self._db.rollback()
         # assert self._domains is not None
@@ -282,8 +270,12 @@ class ReplicationBase(object):
 
         try :
             # print domain_id, self._domains
-            # print tbl_name
-            # print query
+            if self._is_group :
+                print "Replication for client ", self._client_id
+            else :
+                print "Replication for legal entity ", self._client_id
+            print tbl_name
+            print query
             if tbl_name != "tbl_compliances" :
                 self._db.execute(query)
             elif tbl_name == "tbl_compliances" and domain_id in self._domains :
@@ -388,11 +380,15 @@ class ReplicationManagerWithBase(ReplicationBase):
     ) :
         super(ReplicationManagerWithBase, self).__init__(
             knowledge_server_address,
-            db, is_group
+            db, is_group, client_id
         )
         self._get_received_count()
         self._client_id = client_id
         self._is_group = is_group
+        if self._is_group :
+            print "Group db replication ", self._client_id
+        else :
+            print "LE db repliction ", self._client_id
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/knowledge/replication" % (ip, port)
         self._poll_old_data_url = "http://%s:%s/knowledge/delreplicated" % (ip, port)

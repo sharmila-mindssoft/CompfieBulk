@@ -33,23 +33,20 @@ class Request(object):
 
 
 class ResendGroupAdminRegnMail(Request):
-    def __init__(self, user_id, username, email_id):
+    def __init__(self, user_id, email_id):
         self.user_id = user_id
         self.email_id = email_id
-        self.username = username
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "username", "email_id"])
+        data = parse_dictionary(data, ["user_id", "email_id"])
         user_id = data.get("user_id")
-        username = data.get("username")
         email_id = data.get("email_id")
-        return ResendGroupAdminRegnMail(user_id, username, email_id)
+        return ResendGroupAdminRegnMail(user_id, email_id)
 
     def to_inner_structure(self):
         return {
             "user_id": self.user_id,
-            "username": self.username,
             "email_id": self.email_id
         }
 
