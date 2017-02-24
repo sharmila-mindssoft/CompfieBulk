@@ -100,7 +100,7 @@ api_params = {
 
     "email_id": make_string_field(validfun=allow_specialchar),
     "user_email_id": make_string_field(validfun=allow_specialchar),
-    "emp_name": make_string_field(is_optional=True),
+    "emp_name": make_text_field(is_optional=True),
     "emp_code": make_string_field(is_optional=True),
     "con_no": make_text_field(is_optional=True),
     "mob_no": make_text_field(is_optional=True),
@@ -336,7 +336,6 @@ api_params = {
     "to_date": make_text_field(length=20, is_optional=True),
     "assigned_date": make_text_field(length=20, is_optional=True),
     "assigned": make_string_field(),
-    "reason": make_string_field(),
     "f_count": make_int_field(),
     "t_count": make_int_field(),
     'total': make_int_field(is_optional=False),
@@ -375,32 +374,17 @@ api_params = {
     "s_s": make_int_field(),
     "is_saved": make_bool_field(),
 
-    "c_name": make_text_field(),
     "b_g_name": make_text_field(is_optional=True),
-    "le_name": make_text_field(),  # User Management & Other forms
-    "cont_from": make_text_field(),
-    "cont_to": make_text_field(),
     "total_licences": make_int_field(),
     "used_licences": make_int_field(),
-    "le_id": make_int_field(),  # User Management & Other forms
-    "user_id": make_int_field(),
     "u_cat_id": make_int_field(),
-    "u_g_id": make_int_field(),
-    "emp_name": make_text_field(),
-    "emp_code": make_text_field(),
-    "cont_no": make_text_field(is_optional=True),
-    "mob_no": make_text_field(),
-    "email_id": make_text_field(),
-    "user_name": make_text_field(),
     "resend_mail": make_bool_field(),
-    "is_active": make_bool_field(),
     "is_disable": make_bool_field(),
     "reason": make_text_field(),
     "unblock": make_text_field(),
     "u_level": make_int_field(is_optional=True),
     "s_unit": make_int_field(is_optional=True),
     "is_sp": make_bool_field(),
-    "sp_id": make_int_field(is_optional=True),
 
     "u_dm_id": make_int_field(),  # User Management
     "u_dm_name": make_text_field(),  # User Management
