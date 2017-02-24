@@ -110,7 +110,7 @@ function sendCredentials(_cl_id, _e_id ) {
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
-      displaySuccessMessage(msg.resend);
+      displaySuccessMessage(message.resend);
     }
     else {
       displayMessage(error);
