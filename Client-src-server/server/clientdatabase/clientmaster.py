@@ -413,7 +413,7 @@ def get_forms(db, cat_id):
         " t1.form_order, t2.form_type, t1.parent_menu FROM tbl_forms as t1 " + \
         " INNER JOIN  tbl_form_type as t2 ON t2.form_type_id = t1.form_type_id" + \
         " INNER JOIN tbl_form_category as t3 ON t1.form_id = t3.form_id " + \
-        " WHERE t3.user_category_id = %s"
+        " WHERE t3.user_category_id = %s Order by t1.form_type_id DESC"
     row = db.select_all(q, [cat_id])
     return row
 
