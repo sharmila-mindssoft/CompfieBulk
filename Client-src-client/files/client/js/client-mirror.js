@@ -196,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
+        //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -1257,8 +1257,7 @@ function initClientMirror() {
     function saveServiceProvider(s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address, callback) {
         callerName = 'client_masters';
         var request = [
-            'SaveServiceProvider',
-            {
+            'SaveServiceProvider', {
                 "s_p_name": s_p_name,
                 "s_p_short": s_p_short,
                 "cont_from": cont_from,
@@ -2312,6 +2311,7 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
+
     function getReAssignComplianceUnits(legalEntityId, domainId, userId, userType, unitId, callback) {
         var request = [
             'GetReAssignComplianceUnits', {
@@ -2455,8 +2455,7 @@ function initClientMirror() {
     /* Risk report - updated*/
     function getRiskReportFilters(country_id, business_group_id, le_id, callback) {
         var request = [
-            'GetRiskReportFilters',
-            {
+            'GetRiskReportFilters', {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
                 'legal_entity_id': le_id
@@ -2472,8 +2471,7 @@ function initClientMirror() {
         task_status, csv, from_count, page_count, callback
     ) {
         var request = [
-            'GetRiskReportData',
-            {
+            'GetRiskReportData', {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
                 'legal_entity_id': legal_entity_id,
@@ -2492,6 +2490,23 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+
+    function changeStatutorySettingsLock(
+        le_id, d_id, u_id, lock, password, callback
+    ) {
+        var request = [
+            'ChangeStatutorySettingsLock', {
+                'le_id': le_id,
+                'd_id': d_id,
+                'u_id': u_id,
+                'lock': lock,
+                'password': password
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2678,6 +2693,7 @@ function initClientMirror() {
         getWidgetCalender: getWidgetCalender,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
+        changeStatutorySettingsLock: changeStatutorySettingsLock,
     };
 }
 

@@ -413,7 +413,7 @@ def get_forms(db, cat_id):
         " t1.form_order, t2.form_type, t1.parent_menu FROM tbl_forms as t1 " + \
         " INNER JOIN  tbl_form_type as t2 ON t2.form_type_id = t1.form_type_id" + \
         " INNER JOIN tbl_form_category as t3 ON t1.form_id = t3.form_id " + \
-        " WHERE t3.user_category_id = %s"
+        " WHERE t3.user_category_id = %s Order by t1.form_type_id DESC"
     row = db.select_all(q, [cat_id])
     return row
 
@@ -426,7 +426,6 @@ def get_user_category(db):
     q = "SELECT user_category_id, user_category_name FROM tbl_user_category"
     row = db.select_all(q, None)
     return row
-
 
 ##############################################################################
 # To check whether the user privilege already exists or not
@@ -1822,3 +1821,35 @@ def update_profile(db, session_user, request):
     db.save_activity(session_user, 4, action)
 
     return True
+##################################################################
+# Get Client User List - User Management
+##################################################################
+# def get_user_management_details(db, country_id, legal_entity_id, domain_id, session_user):
+
+#     q = " Select T01.country_id, T01.country_name, T02.legal_entity_id, T02.legal_entity_name, " + \
+#         " T02.contract_from, T02.contract_to,T02.total_licence, T02.used_licence, " + \
+#         " T03.business_group_id, T03.business_group_name From tbl_countries AS T01 " + \
+#         " INNER JOIN tbl_legal_entities AS T02 ON T01.country_id = T02.country_id " + \
+#         " LEFT JOIN tbl_business_groups AS T03 ON T03.business_group_id = T02.business_group_id" + \
+#         " Where T01.country_id like %s AND IFNULL(T02.business_group_id,'') " + \
+#         " like %s AND T02.legal_entity_id like %s "
+
+#     legal_entity_count = db.select_all(query, [country_id, business_group_id, legal_entity_id])
+
+#     user_details = []
+#     for u_details in legal_entity_count:
+#         c_name = int(u_details["c_name"])
+#         b_g_name = int(u_details["b_g_name"])
+#         le_name = int(u_details["le_name"])
+#         cont_from = int(u_details["cont_from"])
+#         cont_to = int(u_details["cont_to"])
+#         total_licences = int(u_details["total_licences"])
+#         used_licences = int(u_details["used_licences"])
+#         le_id = int(u_details["le_id"])
+
+#     compliance = clientcore.GetUserManagement_List_Success(c_name, b_g_name, b_g_name, le_name,
+#                                                            cont_from, cont_to, total_licences,
+#                                                            used_licences, le_id,completed_task_count)
+#     compliances.append(compliance)
+#     return compliances
+

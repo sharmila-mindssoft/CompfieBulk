@@ -617,7 +617,7 @@ class API(object):
 
     @api_request(clientuser.RequestFormat)
     def handle_client_user(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_user_request(request, db)
+        return controller.process_client_user_request(request, db, session_user)
 
     @api_request(clientmobile.RequestFormat)
     def handle_mobile_request(self, request, db, session_user, client_id, le_id):
