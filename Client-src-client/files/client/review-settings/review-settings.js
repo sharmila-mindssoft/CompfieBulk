@@ -562,7 +562,7 @@ SubmitButton.on("click", function(){
                     if(duedate != ''){
                         var split_date = duedate.split("-");
                         statu['statutory_date'] = split_date[0];
-                        statu['statutory_month'] = months.old_split_date[1];
+                        statu['statutory_month'] = months.split_date[1];
                     }
                     if(trigger != ""){
                         statu['trigger_before_days'] = trigger;   

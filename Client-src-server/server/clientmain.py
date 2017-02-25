@@ -2,7 +2,8 @@ import os
 import json
 import time
 import traceback
-import mysql.connector.pooling
+# import mysql.connector.pooling
+import mysql.connector
 from flask import Flask, request, Response
 
 from functools import wraps
@@ -33,13 +34,13 @@ app = Flask(__name__)
 #
 
 def api_request(
-    request_data_type, need_client_id=False, is_group=False, need_category=False
+    request_data_type, need_client_id=False, is_group=False, need_category=False, save_le=True
 ):
     def wrapper(f):
         @wraps(f)
         def wrapped(self):
             return self.handle_api_request(
-                f, request_data_type, need_client_id, is_group, need_category
+                f, request_data_type, need_client_id, is_group, need_category, save_le
             )
         return wrapped
     return wrapper
@@ -109,11 +110,19 @@ class API(object):
         except Exception:
             pass
 
-    def client_connection_pool(self, data, le_id, poolname):
-        return mysql.connector.pooling.MySQLConnectionPool(
-            pool_name=str(le_id) + poolname,
-            pool_size=32,
-            pool_reset_session=True,
+    def client_connection_pool(self, data):
+        # return mysql.connector.pooling.MySQLConnectionPool(
+        #     pool_name=str(le_id) + poolname,
+        #     pool_size=10,
+        #     pool_reset_session=True,
+        #     autocommit=False,
+        #     user=data.db_username,
+        #     password=data.db_password,
+        #     host=data.db_ip.ip_address,
+        #     database=data.db_name,
+        #     port=data.db_ip.port
+        # )
+        return mysql.connector.connect(
             autocommit=False,
             user=data.db_username,
             password=data.db_password,
@@ -142,8 +151,8 @@ class API(object):
                         else :
                             # group db connections
                             try:
-                                db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
-                                self._group_databases[company_id] = db_cons
+                                # db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
+                                self._group_databases[company_id] = company
                                 print " %s added in connection pool" % company_id
                             except Exception, e:
                                 # when db connection failed continue to the next server
@@ -158,8 +167,8 @@ class API(object):
                             continue
                         else :
                             try:
-                                db_cons = self.client_connection_pool(company, company_id, "con_pool_le")
-                                self._le_databases[company_id] = db_cons
+                                # db_cons = self.client_connection_pool(company, company_id, "con_pool_le")
+                                self._le_databases[company_id] = company
                                 print " %s added in le connection pool" % company_id
                             except Exception, e:
                                 # when db connection failed continue to the next server
@@ -170,25 +179,30 @@ class API(object):
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
 
-            print self._group_databases
             print self._le_databases
+            print self._group_databases
             def client_added(clients):
-                for c, client in clients.iteritems():
+                print clients
+                for client in clients:
                     _client_id = client.client_id
                     # print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
                     # _domain_id = client.domain_id
-
+                    print client.to_structure()
+                    print " \n "
                     if client.is_group is True:
                         # print "client added"
                         db_cons_info = self._group_databases.get(_client_id)
+                        print db_cons_info
                         if db_cons_info is None :
                             continue
-                        db_cons = db_cons_info.get_connection()
+                        # db_cons = db_cons_info.get_connection()
+                        db_cons = self.client_connection_pool(db_cons_info)
 
                         client_db = Database(db_cons)
                         if client_db is not None :
+                            print _client_id
                             if is_new_data is True and is_new_domain is False :
                                 # replication for group db only master data
                                 rep_man = ReplicationManagerWithBase(
@@ -203,9 +217,11 @@ class API(object):
                                     self._replication_managers_for_group[_client_id] = rep_man
                     else :
                         db_cons_info = self._le_databases.get(_client_id)
+                        print db_cons_info
                         if db_cons_info is None :
                             continue
-                        db_cons = db_cons_info.get_connection()
+                        # db_cons = db_cons_info.get_connection()
+                        db_cons = self.client_connection_pool(db_cons_info)
                         le_db = Database(db_cons)
                         if le_db is not None :
                             if is_new_data is True and is_new_domain is False :
@@ -313,7 +329,10 @@ class API(object):
     def _validate_user_session(self, session):
         session_token = session.split('-')
         client_id = int(session_token[0])
-        _group_db_cons = self._group_databases.get(client_id).get_connection()
+        _group_db_info = self._group_databases.get(client_id)
+        if _group_db_info is None :
+            raise Exception("Client Not Found")
+        _group_db_cons = self.client_connection_pool(_group_db_info)
         _group_db = Database(_group_db_cons)
         try :
             _group_db.begin()
@@ -333,7 +352,10 @@ class API(object):
     def _validate_user_password(self, session, user_id, usr_pwd):
         session_token = session.split('-')
         client_id = int(session_token[0])
-        _group_db_cons = self._group_databases.get(client_id).get_connection()
+        _group_db_info = self._group_databases.get(client_id)
+        if _group_db_info is None :
+            raise Exception("Client Not Found")
+        _group_db_cons = self.client_connection_pool(_group_db_info)
         _group_db = Database(_group_db_cons)
         is_valid = False
         try :
@@ -350,7 +372,7 @@ class API(object):
 
     def handle_api_request(
         self, unbound_method,
-        request_data_type, need_client_id, is_group, need_category
+        request_data_type, need_client_id, is_group, need_category, save_le
     ):
         def respond(response_data):
             return self._send_response(
@@ -381,17 +403,20 @@ class API(object):
         # request process in controller
         if is_group :
             print "Group DB"
-            db_cons = self._group_databases.get(company_id)
+            db_cons_info = self._group_databases.get(company_id)
         else :
             print "LE Db"
-            db_cons = self._le_databases.get(company_id)
+            db_cons_info = self._le_databases.get(company_id)
 
-        if db_cons is None:
+        if db_cons_info is None:
             print 'connection pool is none'
             self._send_response("Company not found", 404)
 
-        _db_con = db_cons.get_connection()
+        # _db_con = db_cons.get_connection()
+        _db_con = self.client_connection_pool(db_cons_info)
+        print db_cons_info
         _db = Database(_db_con)
+        print _db
         if _db_con is None:
             self._send_response("Company not found", 404)
 
@@ -404,6 +429,10 @@ class API(object):
             elif need_category :
                 response_data = unbound_method(
                     self, request_data, _db, session_user, session_category
+                )
+            elif save_le :
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, client_id, self._le_databases
                 )
             else :
                 response_data = unbound_method(
@@ -501,15 +530,16 @@ class API(object):
                 print le_ids
                 for le in le_ids :
                     print le
-                    db_cons = self._le_databases.get(le)
+                    db_cons_info = self._le_databases.get(le)
 
-                    if db_cons is None:
+                    if db_cons_info is None:
                         performed_les.append(le)
                         print 'connection pool is none'
                         continue
                         # return self._send_response("Company not found", 404)
 
-                    _db_con = db_cons.get_connection()
+                    # _db_con = db_cons.get_connection()
+                    _db_con = self.client_connection_pool(db_cons_info)
                     _db = Database(_db_con)
                     if _db_con is None:
                         performed_les.append(le)
@@ -558,9 +588,9 @@ class API(object):
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
 
-    @api_request(clientmasters.RequestFormat, is_group=True)
-    def handle_client_masters(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_master_requests(request, db, session_user, client_id)
+    @api_request(clientmasters.RequestFormat, is_group=True, save_le=True)
+    def handle_client_masters(self, request, db, session_user, client_id, le_ids):
+        return controller.process_client_master_requests(request, db, session_user, client_id, le_ids)
 
     @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
     def handle_client_master_filters(self, request, db, session_user, session_category):
@@ -588,7 +618,7 @@ class API(object):
 
     @api_request(clientuser.RequestFormat)
     def handle_client_user(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_user_request(request, db)
+        return controller.process_client_user_request(request, db, session_user)
 
     @api_request(clientmobile.RequestFormat)
     def handle_mobile_request(self, request, db, session_user, client_id, le_id):

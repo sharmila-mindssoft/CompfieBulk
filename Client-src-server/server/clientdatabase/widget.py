@@ -41,11 +41,12 @@ def frame_compliance_status(data) :
     not_complied_data = []
     inprogress_data = []
     d = data[0]
-    xaxis.append(d["country_name"])
-    complied_data.append({"y": int(d["comp_count"]) if d["comp_count"] is not None else 0})
-    not_complied_data.append({"y": int(d["over_count"]) if d["over_count"] is not None else 0})
-    inprogress_data.append({"y": int(d["inp_count"]) if d["inp_count"] is not None else 0})
-    delayed_data.append({"y": int(d["delay_count"]) if d["delay_count"] is not None else 0})
+    if d["country_id"] is not None :
+        xaxis.append(d["country_name"])
+        complied_data.append({"y": int(d["comp_count"]) if d["comp_count"] is not None else 0})
+        not_complied_data.append({"y": int(d["over_count"]) if d["over_count"] is not None else 0})
+        inprogress_data.append({"y": int(d["inp_count"]) if d["inp_count"] is not None else 0})
+        delayed_data.append({"y": int(d["delay_count"]) if d["delay_count"] is not None else 0})
 
     chartdata.append({
         "name": yaxis[0],

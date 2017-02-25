@@ -1739,27 +1739,30 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate) {
+    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate, oAssignee, oConcurrence, oApprover) {
         return {
             'u_id': uID,
-            'c_id': cID,
-            'c_name': cNAME,
-            'c_history_id': cHistoryId,
-            'd_date': dDate
+            'comp_id': cID,
+            'compliance_name': cNAME,
+            'c_h_id': cHistoryId,
+            'd_date': dDate,
+            'o_assignee': oAssignee,
+            'o_concurrence_person': oConcurrence,
+            'o_approval_person': oApprover
         };
     }
 
-    function saveReassignCompliance(rFrom, rTo, aName, cPerson, aPerson, cList, reason, newUnits, callback) {
+    function saveReassignCompliance(legalEntityId, rFrom, rTo, aName, cPerson, aPerson, cList, reason, callback) {
         request = [
             'ReassignCompliance', {
+                'le_id': legalEntityId,
                 'r_from': rFrom,
                 'assignee': rTo,
-                'a_name': aName,
-                'c_person': cPerson,
-                'a_person': aPerson,
-                'compliances': cList,
-                'r_reason': reason,
-                'n_units': newUnits
+                'assignee_name': aName,
+                'concurrence_person': cPerson,
+                'approval_person': aPerson,
+                'reassigned_compliance': cList,
+                'reason': reason
             }
         ];
         callerName = 'client_transaction';
@@ -2368,7 +2371,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function SaveUserWidgetData(widget_info, callback) {
+    function saveUserWidgetDataDict(w_id, width, height, pinstatus){
+        return {
+            "w_id": w_id,
+            "width": width,
+            "height": height,
+            "pin_status": pin_status
+        }
+    }
+
+    function saveUserWidgetData(widget_info, callback) {
         var request = [
             "SaveWidgetData", {
                 "widget_info": widget_info
@@ -2428,6 +2440,16 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
+    function getWidgetCalender(callback){
+         var request = [
+            "GetWidgetCalender", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
     // Widget api call end
 
     /* Risk report - updated*/
@@ -2468,6 +2490,23 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+
+    function changeStatutorySettingsLock(
+        le_id, d_id, u_id, lock, password, callback
+    ) {
+        var request = [
+            'ChangeStatutorySettingsLock', {
+                'le_id': le_id,
+                'd_id': d_id,
+                'u_id': u_id,
+                'lock': lock,
+                'password': password
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2644,14 +2683,17 @@ function initClientMirror() {
         getReAssignComplianceForUnits: getReAssignComplianceForUnits,
         getUserManagement_Prerequisite: getUserManagement_Prerequisite,
         getUserWidgetData: getUserWidgetData,
-        SaveUserWidgetData: SaveUserWidgetData,
+        saveUserWidgetDataDict: saveUserWidgetDataDict,
+        saveUserWidgetData: saveUserWidgetData,
         getWidgetComplianceChart: getWidgetComplianceChart,
         getWidgetEscalationChart: getWidgetEscalationChart,
         getWidgetNotCompliedChart: getWidgetNotCompliedChart,
         getWidgetRiskChart: getWidgetRiskChart,
         getWidgetTrendChart: getWidgetTrendChart,
+        getWidgetCalender: getWidgetCalender,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
+        changeStatutorySettingsLock: changeStatutorySettingsLock,
     };
 }
 

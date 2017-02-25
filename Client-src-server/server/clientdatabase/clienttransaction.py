@@ -63,7 +63,9 @@ __all__ = [
     "total_compliance_for_units",
     "get_clien_users_by_unit_and_domain",
     "get_approve_level",
-    "get_all_frequency"
+    "get_all_frequency",
+    "get_units_to_reassig",
+    "get_reassign_compliance_for_units",
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
@@ -2677,7 +2679,7 @@ def return_get_review_settings_units(units):
 def get_review_settings_compliance(db, request, session_user):
     le_id = request.legal_entity_id
     d_id = request.domain_id
-    unit_ids = 1  # tuple(request.unit_ids)
+    unit_ids = ",".join([str(x) for x in request.unit_ids])
     f_type = request.f_id
 
     where_qry = "WHERE t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and t01.unit_id in (%s) "
