@@ -2,24 +2,12 @@
 {% block content %}
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
-
 <script type="text/javascript">
-  $(function() {
-    $(".left-menu-button").show();
-    $(".content-page").removeClass('m-l-0');
-  });
+$(function() {
+  $(".left-menu-button").show();
+  $(".content-page").removeClass('m-l-0');
+});
 </script>
-<style type="text/css">
-  tspan {
-    text-decoration:none;
-    text-shadow:none !important;
-  }
-  text {
-    text-decoration:none;
-    text-shadow:none !important;
-  }
-</style>
-
 <div class="left side-menu">
   <div class="sidebar-inner slimscrollleft">
     <div id="sidebar-menu">
@@ -48,8 +36,8 @@
     		  <div class="pull-right">
     		    <span class="contract_timer">Contract Renewal: 20 Days Left</span>
             <a href="javascript:void(0);" class="btn btn-primary btn-trans" title="Export">
-          <i class="fa fa-upload"></i> <small>Export</small>
-               </a>
+              <i class="fa fa-upload"></i> <small>Export</small>
+            </a>
     			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
                 <i class="zmdi zmdi-sort"></i> <small>Filter</small>
             </a>
@@ -77,12 +65,12 @@
                   </select>
                 </p> -->
                 <div class="clearfix"></div>
-                <div style="width: 100%">
+                <div>
                     <div class="text-center chart-arrow pull-left">
                       <a href="#" id="previousyear"><i class="fa fa-angle-left fa-3x m-t-150"></i></a>
                     </div>
                     <div class="pull-left" style="width: 93%;">
-                      <div id="status-container" align="center" style="width: 100%; padding-right: 10px;"></div>
+                      <div id="status-container" align="center"></div>
                     </div>
                     <div class="text-center chart-arrow pull-left">
                       <a href="#" id="nextyear" class="pull-right"><i class="fa fa-angle-right fa-3x m-t-150"></i></a>
@@ -199,10 +187,7 @@
                                         <ul class="hidemenu"></ul>
                                     </div>
                                 </div>
-                            </div>
-                            
-                      
-                      
+                            </div>                      
                         </div>
                         <div class="col-sm-12">
                             <center>
@@ -225,9 +210,7 @@
                 </div>
                 </div>
                 <div class="card-box clearfix assignee-wise">
-
                 </div>
-
               </div>
             </div>
           </div>
@@ -435,8 +418,8 @@
     </div>
     <!-- Escalation-->
     <div class="escalation-status">
-      <div class="table-compliance-status">
-      <table id="datatable-responsive" class="table dt-responsive nowrap div-compliance-list" cellspacing="0" width="100%">
+      <div class="table-escalation-status">
+      <table id="datatable-responsive" class="table dt-responsive nowrap div-escalation-list" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th width="3%" >#</th>
@@ -503,6 +486,9 @@
               </tr>
           </thead>
       </table>
+      <tr class="norecords-list">
+        <td class="norecord" colspan="4"></td>
+      </tr>
       </div>
       <div class="table-row-accordian-unit">
         <table>
@@ -538,8 +524,8 @@
     </div>
     <!-- Not Complied -->
     <div class="notcomplied-status">
-      <div class="table-compliance-status">
-      <table id="datatable-responsive" class="table dt-responsive nowrap div-compliance-list" cellspacing="0" width="100%">
+      <div class="table-not-complied-status">
+      <table id="datatable-responsive" class="table dt-responsive nowrap div-notcomplied-list" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th width="02%">#</th>
@@ -630,7 +616,7 @@
     </div>
     <!-- Rish Chart -->
     <div class="compliance-applicable-status">
-     <table class="table dt-responsive nowrap div-compliance-list" cellspacing="0" width="100%">
+     <table class="table dt-responsive nowrap div-compliance-applicable-list" cellspacing="0" width="100%">
       <thead>
         <tr class="tr-heading">
           <th width="3%" align="center">#</th>
