@@ -253,6 +253,7 @@ def validate_unit_data(db, request, div_ids, category_ids, client_id, session_us
                 j = 1
                 break
             else:
+                j = j + 1
                 i = i + 1
 
     return [True, new_unit_list, old_unit_list]
