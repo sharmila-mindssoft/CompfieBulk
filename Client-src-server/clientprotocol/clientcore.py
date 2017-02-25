@@ -2447,7 +2447,7 @@ class ActiveCompliance(object):
         data = parse_dictionary(
             data, [
                 "compliance_history_id", "compliance_name",
-                "compliance_frequency", "domain_name", "start_date", "due_date",
+                "compliance_task_frequency", "domain_name", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
                 "format_file_name", "unit_name", "address", "compliance_description",
                 "remarks", "compliance_id", "file_names", "download_url"
@@ -2457,7 +2457,7 @@ class ActiveCompliance(object):
         # compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
         # compliance_name = parse_structure_CustomTextType_250(compliance_name)
-        compliance_frequency = data.get("compliance_frequency")
+        compliance_frequency = data.get("compliance_task_frequency")
         # compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         domain_name = data.get("domain_name")
         # domain_name = parse_structure_CustomTextType_50(domain_name)
@@ -2501,7 +2501,7 @@ class ActiveCompliance(object):
         return {
             "compliance_history_id": self.compliance_history_id,
             "compliance_name": self.compliance_name,
-            "compliance_frequency": self.compliance_frequency,
+            "compliance_task_frequency": self.compliance_frequency,
             "domain_name": self.domain_name,
             "start_date": self.start_date,
             "due_date": self.due_date,
