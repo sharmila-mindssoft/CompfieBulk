@@ -80,7 +80,6 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         logger.logClientApi("GetNotifications", "process end")
 
     elif type(request) is dashboard.UpdateNotificationStatus:
-        print "++++++++++++++++++++++++++++++++++++++++++++++"
         logger.logClientApi("UpdateNotificationStatus", "process begin")
         result = process_update_notification_status(
             db, request, session_user
@@ -229,12 +228,16 @@ def process_get_notifications(db, request, session_user, session_category):
     elif request.notification_type == 4: # Messages
         messages = get_messages(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
         return dashboard.GetMessagesSuccess(messages, total_count)
+    elif request.notification_type == 2: # statutory
+        statutory = get_statutory(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
+        return dashboard.GetStatutorySuccess(statutory, total_count)
+
+    
 
 def process_update_notification_status(db, request, session_user):
-    # if request.has_read == True:
-        # update_notification_status(db, request.notification_id, request.has_read, session_user)
-    print "[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[["
-    notification_details = notification_details(db, request.notification_id, request.has_read, session_user)
+    if request.has_read == True:
+        update_notification_status(db, request.notification_id, session_user)
+    notification_details = notification_detail(db, request.notification_id, session_user)
     return dashboard.UpdateNotificationStatusSuccess(notification_details)
 
 

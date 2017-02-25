@@ -170,6 +170,8 @@ class API(object):
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
 
+            print self._group_databases
+            print self._le_databases
             def client_added(clients):
                 for c, client in clients.iteritems():
                     _client_id = client.client_id
@@ -289,7 +291,7 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
-            # print actual_data
+            print actual_data
             # print company_id
             request_data = request_data_type.parse_structure(
                 actual_data
@@ -496,8 +498,9 @@ class API(object):
                 le_ids = request_data.request.legal_entity_ids
                 performed_les = []
                 performed_response = None
-
+                print le_ids
                 for le in le_ids :
+                    print le
                     db_cons = self._le_databases.get(le)
 
                     if db_cons is None:

@@ -74,10 +74,11 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
+        //alert(countryList.toSource());
         if (countryList.length == 0 && text_val != '')
             displayMessage(message.country_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+        var condition_fields = [];
+        var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -271,7 +272,7 @@ StatusReportConsolidated.prototype.loadSearch = function() {
 StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this = this;
     t_this._entities = client_mirror.getSelectedLegalEntity();
-
+    //alert(t_this._entities.toSource())
     t_this._userType = UserTypes; // common-functions.js
     t_this._complianceTaskStatus = ComplianceTaskStatuses; // common-functions.js
     t_this.renderUserTypeList(t_this._userType);

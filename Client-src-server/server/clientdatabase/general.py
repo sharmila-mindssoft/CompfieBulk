@@ -401,7 +401,7 @@ def get_units_for_user(db, user_id):
     if user_id != admin_id:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_user_units AS t1 " + \
                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
@@ -411,7 +411,7 @@ def get_units_for_user(db, user_id):
         print "else"
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_user_units AS t1 " + \
                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
