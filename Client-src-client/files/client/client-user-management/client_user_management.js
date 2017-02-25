@@ -391,7 +391,7 @@ function getLegalEntityIds() {
     legalEntity_ids = [];
     for (var i = 0; i < ddlLegalEntity.val().length; i++) {
         split = ddlLegalEntity.val();
-        legalEntity_ids.push(parseInt(split[0]))
+        legalEntity_ids.push(parseInt(split[1]))
     }
     return legalEntity_ids;
 }
@@ -411,9 +411,10 @@ function getDomainIds() {
 function getUnits() {
     unit_ids = [];
     for (var i = 0; i < ACTIVE_UNITS.length; i++) {
+        split = ACTIVE_UNITS[i].split('-');
         var dict = {};
-        dict.le_id = 1;
-        dict.d_id = parseInt(ACTIVE_UNITS[i]);
+        dict.le_id = parseInt(split[1]);
+        dict.u_id = parseInt(split[0]);
         unit_ids.push(dict);
     }
     return unit_ids;
@@ -543,7 +544,7 @@ userManagementPage.prototype.loadUnits = function() {
         UnitList.append(clone);
     } else {
         $.each(unitArray, function(key, value) {
-            unit_idval = value.u_unt_id;
+            unit_idval = value.u_unt_id + '-' + value.le_id;
             unit_text = value.u_unt_code + " - " + value.u_unt_name + " - " + value.u_unt_address;
             var clone = UnitRow.clone();
             clone.html(unit_text + '<i></i>');

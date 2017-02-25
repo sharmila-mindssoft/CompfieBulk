@@ -171,13 +171,15 @@ class API(object):
                                 continue
 
             def client_added(clients):
-                for c, client in clients.iteritems():
+                print clients
+                for client in clients:
                     _client_id = client.client_id
                     # print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
                     # _domain_id = client.domain_id
-
+                    print client.to_structure()
+                    print " \n "
                     if client.is_group is True:
                         # print "client added"
                         db_cons_info = self._group_databases.get(_client_id)
@@ -187,6 +189,7 @@ class API(object):
 
                         client_db = Database(db_cons)
                         if client_db is not None :
+                            print _client_id
                             if is_new_data is True and is_new_domain is False :
                                 # replication for group db only master data
                                 rep_man = ReplicationManagerWithBase(
