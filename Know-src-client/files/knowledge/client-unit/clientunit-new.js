@@ -156,6 +156,7 @@ function loadClientsList(data) {
         $('.edit').attr('title', 'Click Here to Edit');
         $('.edit', clone).addClass('fa-pencil text-primary');
         $('.edit', clone).on('click', function() {
+            $('.total_created_unit').text("0");
             clientunit_edit(clientId, bgroupId, lentitiesId, countryId);
         });
 
@@ -206,6 +207,7 @@ $('#btn-clientunit-add').click(function() {
     countryByCount = 1;
     countc = 0;
     usercountrycount = 0;
+    $('.total_created_unit').text("0");
     clearMessage();
     var x = document.getElementsByTagName('input');
     for (i = 0; i <= x.length - 1; i++) {
@@ -271,6 +273,7 @@ $("#group-select").on("change", function(){
         leSelect.append(clone_le);
         loadBusinessGroups();
     }
+    division_cnt = 0;
     unitcodeautogenerateids = null;
 });
 //Load Business Groups  ---------------------------------------------------------------------------------------------
@@ -305,6 +308,7 @@ $("#businessgroup-select").on("change", function(){
     clone_le.attr("value", 0);
     clone_le.text("Select");
     leSelect.append(clone_le);
+    division_cnt = 0;
     unitcodeautogenerateids = null;
 });
 //load country list in autocomplete text box
@@ -326,6 +330,7 @@ function onCountrySuccess(val) {
     clone_le.text("Select");
     leSelect.append(clone_le);
     loadLegalEntity();
+    division_cnt = 0;
     unitcodeautogenerateids = null;
 }
 // Arrow key functionality
@@ -1159,7 +1164,7 @@ function loadlocation(textval, classval, e) {
                 }
             }
         }
-        onArrowKey_Client(e, 'ac-textbox', 'unit,'+countval, function(val) {
+        onArrowKey_Client(e, 'auto-complete-unit-location', 'unit,'+countval, function(val) {
             activate_unitlocaion(this, countval, val);
         });
     }
@@ -1560,6 +1565,7 @@ $('#btn-clientunit-submit').click(function() {
         var bgNameValue;
         //bgIdValue = parseInt(businessgroupValue);
         if (businessgroupValue != 0 && businessgroupValue != "0") {
+            bgIdValue = businessgroupValue;
             bgNameValue = businessgroupName;
         } else {
             for(var le=0;le<legalEntitiesList.length;le++){
@@ -1570,6 +1576,7 @@ $('#btn-clientunit-submit').click(function() {
             }
             bgNameValue = null;
         }
+
         var legalEntity;
         var leIdValue;
         var leNameValue;
