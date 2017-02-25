@@ -565,4 +565,17 @@ api_params = {
     "widget_info": make_vector_type_field(module="clienttransactions", klass_name="WidgetInfo"),
     "widget_list": make_vector_type_field(module="clienttransactions", klass_name="WidgetList"),
     "has_read": make_bool_field(),
+
+    "current_start_count": make_int_field(),
+    "current_date": make_text_field(is_optional=True),
+    "overdue_count": make_int_field(),
+    "inprogress_count": make_int_field(),
+    "current_compliances":make_vector_type_field(module="clientcore", klass_name="ActiveCompliance"),        
+    "compliance_frequency": make_enum_type(module="clientcore", klass_name="COMPLIANCE_FREQUENCY"),    
+    "due_date": make_text_field(),    
+    "validity_date": make_text_field(is_optional=True),
+    "next_due_date": make_text_field(is_optional=True),
+    "ageing": make_text_field(is_optional=True),
+    "format_file_name": make_text_field(is_optional=True),    
+    "file_names":  make_text_field(),
 }
