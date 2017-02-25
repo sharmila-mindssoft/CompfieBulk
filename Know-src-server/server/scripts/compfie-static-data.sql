@@ -1,4 +1,4 @@
-USE `compfie_knowledge_new1`;
+USE `compfie_knowledge_new`;
 
 -- DELETE FROM tbl_form_category;
 INSERT INTO tbl_user_category VALUES(1, "Compfie Admin");
@@ -182,3 +182,12 @@ INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");
 
+
+-- tbl_client_forms
+INSERT INTO tbl_client_forms VALUES(5, 'Statutory Settings', "/statutory-settings", 2, null, 5);
+INSERT INTO tbl_client_forms VALUES(6, 'Review Settings', "/review-settings", 2, null, 6);
+INSERT INTO tbl_client_forms VALUES(7, 'Assign Compliance', "/assign-compliance", 2, null, 7);
+INSERT INTO tbl_client_forms VALUES(8, 'Reassign Compliance', "/reassign-compliance", 2, null, 8);
+INSERT INTO tbl_client_forms VALUES(9, 'Compliance Approval', "/compliance-approval", 2, null, 9);
+INSERT INTO tbl_client_forms VALUES(10, 'Completed Task - Current Year', "/completed-tasks-current-year", 2, null, 10);
+INSERT INTO tbl_client_forms VALUES(11, 'On Occurrence Compliances', "/on-occurrence-compliances", 2, null, 11);

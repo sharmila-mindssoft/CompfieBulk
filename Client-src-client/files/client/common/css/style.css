@@ -884,7 +884,9 @@ button.btn-success {
     width: 25px;
 }
 */
-
+.panel-title td{
+  background-color: #eeeeee
+}
 .escalation-status-text {
   background: #ccc;
   color: #343434;

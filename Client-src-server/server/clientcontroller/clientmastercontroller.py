@@ -4,10 +4,9 @@ from clientprotocol import (clientmasters, clientcore, clientreport)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
 from server.clientdatabase.general import (
-    get_domains_for_user, verify_password,
-    get_countries_for_user, get_countries, get_domains,
+    verify_password,
     get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_units_for_user, have_compliances,
+    get_divisions_for_user, have_compliances,
     is_seating_unit, get_user_company_details, is_primary_admin,
     is_service_proivder_user, is_old_primary_admin
     )
@@ -19,7 +18,7 @@ __all__ = [
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_master_requests(request, db, session_user, client_id):
+def process_client_master_requests(request, db, session_user, client_id, le_ids_dbase):
     request = request.request
 
     if type(request) is clientmasters.GetServiceProviders:
@@ -212,7 +211,7 @@ def process_change_service_provider_status(
         request.service_provider_id,
         is_active, session_user
     ):
-        return clientmasters.ChangeServiceProviderStatusSuccess() 
+        return clientmasters.ChangeServiceProviderStatusSuccess()
 
 ########################################################
 # User Management Add Prerequisite
@@ -252,10 +251,10 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
 ########################################################
 def process_get_forms(db, cat_id):
     result_rows = get_forms(db, cat_id)
+    # print result_rows;
     forms = []
     for row in result_rows:
-        parent_menu = None if (
-            row["parent_menu"] == None) else row["parent_menu"]
+        parent_menu = None if (row["parent_menu"] == None) else row["parent_menu"]
         form = clientcore.Form(
             form_id=row["form_id"],
             form_name=row["form_name"],
@@ -266,6 +265,19 @@ def process_get_forms(db, cat_id):
         forms.append(form)
     return process_user_menus(forms)
 
+########################################################
+# To get all client Menu to load in User privilege form
+########################################################
+def process_get_user_category(db):
+    result_rows = get_user_category(db)
+    user_category_list = []
+    for row in result_rows:
+        user_category_id = int(row["user_category_id"])
+        user_category_name = row["user_category_name"]
+        user_category_list.append(
+            clientcore.ClientUsercategory(user_category_id, user_category_name)
+        )
+    return user_category_list
 
 ########################################################
 # User Management - Load User Category
@@ -529,10 +541,10 @@ def process_change_user_privilege_status(db, request, session_user):
     # user_country_list = get_countries_for_user(db, session_user)
     # unit_list = get_units_for_user(db, None)
     # units=unit_list,
-    return clientmasters.GetClientUsersSuccess(
-        # session_user_units=session_user_unit_list,
-        # users=user_list
-    )
+    # return clientmasters.GetClientUsersSuccess(
+    #     # session_user_units=session_user_unit_list,
+    #     # users=user_list
+    # )
 
 ########################################################
 # To validate and save a user
@@ -694,6 +706,8 @@ def reorder_menu(menus):
     new_menu = collections.OrderedDict()
     if "Home" in menus:
         new_menu["Home"] = menus["Home"]
+    if "Dashboard" in menus:
+        new_menu["Dashboard"] = menus["Dashboard"]
     if "Master" in menus:
         new_menu["Master"] = menus["Master"]
     if "Transaction" in menus:

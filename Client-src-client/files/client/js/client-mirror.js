@@ -196,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
+        //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},
@@ -226,7 +226,7 @@ function initClientMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
-                    alert('Server connection not found');
+                    // alert('Server connection not found');
                     redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
@@ -748,7 +748,7 @@ function initClientMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
-                    alert('Server connection not found');
+                    // alert('Server connection not found');
                     redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
@@ -1257,8 +1257,7 @@ function initClientMirror() {
     function saveServiceProvider(s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address, callback) {
         callerName = 'client_masters';
         var request = [
-            'SaveServiceProvider',
-            {
+            'SaveServiceProvider', {
                 "s_p_name": s_p_name,
                 "s_p_short": s_p_short,
                 "cont_from": cont_from,
@@ -2363,7 +2362,6 @@ function initClientMirror() {
             'old_statu_dates': old_statu_dates,
         };
     }
-
     // Widget api call begin
     function getUserWidgetData(callback) {
         var request = [
@@ -2373,7 +2371,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function SaveUserWidgetData(widget_info, callback) {
+    function saveUserWidgetDataDict(w_id, width, height, pinstatus){
+        return {
+            "w_id": w_id,
+            "width": width,
+            "height": height,
+            "pin_status": pin_status
+        }
+    }
+
+    function saveUserWidgetData(widget_info, callback) {
         var request = [
             "SaveWidgetData", {
                 "widget_info": widget_info
@@ -2433,13 +2440,22 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
+    function getWidgetCalender(callback){
+         var request = [
+            "GetWidgetCalender", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
     // Widget api call end
 
     /* Risk report - updated*/
     function getRiskReportFilters(country_id, business_group_id, le_id, callback) {
         var request = [
-            'GetRiskReportFilters',
-            {
+            'GetRiskReportFilters', {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
                 'legal_entity_id': le_id
@@ -2455,8 +2471,7 @@ function initClientMirror() {
         task_status, csv, from_count, page_count, callback
     ) {
         var request = [
-            'GetRiskReportData',
-            {
+            'GetRiskReportData', {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
                 'legal_entity_id': legal_entity_id,
@@ -2473,6 +2488,22 @@ function initClientMirror() {
             }
         ];
         callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function changeStatutorySettingsLock(
+        le_id, d_id, u_id, lock, password, callback
+    ) {
+        var request = [
+            'ChangeStatutorySettingsLock', {
+                'le_id': le_id,
+                'd_id': d_id,
+                'u_id': u_id,
+                'lock': lock,
+                'password': password
+            }
+        ];
+        callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
 
@@ -2652,14 +2683,17 @@ function initClientMirror() {
         getReAssignComplianceForUnits: getReAssignComplianceForUnits,
         getUserManagement_Prerequisite: getUserManagement_Prerequisite,
         getUserWidgetData: getUserWidgetData,
-        SaveUserWidgetData: SaveUserWidgetData,
+        saveUserWidgetDataDict: saveUserWidgetDataDict,
+        saveUserWidgetData: saveUserWidgetData,
         getWidgetComplianceChart: getWidgetComplianceChart,
         getWidgetEscalationChart: getWidgetEscalationChart,
         getWidgetNotCompliedChart: getWidgetNotCompliedChart,
         getWidgetRiskChart: getWidgetRiskChart,
         getWidgetTrendChart: getWidgetTrendChart,
+        getWidgetCalender: getWidgetCalender,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
+        changeStatutorySettingsLock: changeStatutorySettingsLock,
     };
 }
 

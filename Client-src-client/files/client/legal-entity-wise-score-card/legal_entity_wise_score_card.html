@@ -1,5 +1,4 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
-<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
     <div class="content">
         <div class="container">
@@ -18,7 +17,8 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-6 has-feedback">
+                                            <p class="form-control-static filter-country-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="country-id" value="">
@@ -29,7 +29,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-6 has-feedback">
+                                            <p class="form-control-static filter-legal-entity-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="legal-entity-id" value="">
@@ -310,6 +311,5 @@
     </table>
 
 </div>
-<script src="/js/toastr/toastr.min.js"></script>
 <script src="/script/legal-entity-wise-score-card/legal_entity_wise_score_card.js"></script>
 {% endblock %}

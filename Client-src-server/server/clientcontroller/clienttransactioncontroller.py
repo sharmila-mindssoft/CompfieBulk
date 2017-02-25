@@ -135,9 +135,16 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_reassign_compliance_filters(
             db, request, session_user, session_category
         )
+    elif type(request) is clienttransactions.GetReAssignComplianceUnits :
+        result = process_get_reassign_compliance_unit(db, request, session_user, session_category)  # GetReAssignComplianceUnits
+
+    elif type(request) is clienttransactions.GetReAssignComplianceForUnits:
+        result = process_get_reassign_compliance_for_units(
+            db, request, session_user
+        )
 
     elif type(request) is clienttransactions.GetReAssignComplianceUnits :
-        result = process_get_reassign_compliance_unit(db, request, session_user, session_category) # GetReAssignComplianceUnits
+        result = process_get_reassign_compliance_unit(db, request, session_user, session_category)
 
     elif type(request) is clienttransactions.GetReAssignComplianceForUnits:
         result = process_get_reassign_compliance_for_units(
@@ -594,35 +601,6 @@ def process_reassign_compliance_filters(db, request, session_user, session_categ
         legal_entity_users=users_list
     )
 
-def process_get_reassign_compliance_unit(db, request, session_user, session_category):
-    d_id = request.d_id
-    user_id = request.usr_id
-    user_type = request.user_type_id
-    u_id = request.unit_id
-
-    units = get_units_to_reassig(db, d_id, user_id, user_type, u_id, session_user, session_category)
-
-    return clienttransactions.GetReAssignComplianceUnitsSuccess(units)
-
-def process_get_reassign_compliance_for_units(db, request, session_user):
-    domain_id = request.d_id
-    unit_ids = request.u_ids
-    user_id = request.usr_id
-    user_type = request.user_type_id
-    from_count = request.r_count
-    to_count = RECORD_DISPLAY_COUNT
-
-    # level_1_name, statutories = get_assign_compliance_statutories_for_units(
-    #     db, unit_ids, domain_id, f_ids, session_user, from_count, to_count
-    # )
-    reassign_compliances = get_reassign_compliance_for_units(
-        db, domain_id, unit_ids, user_id, user_type, session_user, from_count, to_count
-    ) 
-
-    return clienttransactions.GetReAssignComplianceForUnitsSuccess(
-        reassign_compliances
-    )
-
 def process_get_widget_data(db, session_user, session_category):
     data = get_user_widget_settings(db, session_user, session_category)
     forms = get_widget_list(db)
@@ -654,3 +632,32 @@ def process_save_widget_data(db, request, session_user):
     w_data = json.dumps(w_data)
     save_user_widget_settings(db, session_user, w_data)
     return clienttransactions.SaveWidgetDataSuccess()
+
+def process_get_reassign_compliance_unit(db, request, session_user, session_category):
+    d_id = request.d_id
+    user_id = request.usr_id
+    user_type = request.user_type_id
+    u_id = request.unit_id
+
+    units = get_units_to_reassig(db, d_id, user_id, user_type, u_id, session_user, session_category)
+
+    return clienttransactions.GetReAssignComplianceUnitsSuccess(units)
+
+def process_get_reassign_compliance_for_units(db, request, session_user):
+    domain_id = request.d_id
+    unit_ids = request.u_ids
+    user_id = request.usr_id
+    user_type = request.user_type_id
+    from_count = request.r_count
+    to_count = RECORD_DISPLAY_COUNT
+
+    # level_1_name, statutories = get_assign_compliance_statutories_for_units(
+    #     db, unit_ids, domain_id, f_ids, session_user, from_count, to_count
+    # )
+    reassign_compliances = get_reassign_compliance_for_units(
+        db, domain_id, unit_ids, user_id, user_type, session_user, from_count, to_count
+    ) 
+
+    return clienttransactions.GetReAssignComplianceForUnitsSuccess(
+        reassign_compliances
+    )

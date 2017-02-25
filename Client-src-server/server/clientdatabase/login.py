@@ -267,7 +267,7 @@ def save_login_details(db, token, username, password):
 #################################################################
 def check_username_duplicate(db, uname):
     q = " SELECT count(0) as uname from tbl_user_login_details where username = %s "
-    rows = db.select_one(q, [uname])    
+    rows = db.select_one(q, [uname])
     count = rows.get("uname")
     if count > 0:
         return False

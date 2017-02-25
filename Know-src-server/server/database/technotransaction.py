@@ -6,6 +6,7 @@ from server.common import (
     get_date_time, get_current_date,
     addHours, new_uuid
 )
+
 from server.database.general import get_short_name
 from server.database.saveclientdata import *
 from server.constants import REGISTRATION_EXPIRY, CLIENT_URL
@@ -525,20 +526,20 @@ def return_groupadmin_registration_unitlist(unitslist):
 # Return Type : Return list of group admin registered email list
 ######################################################################################
 def resave_registraion_token(db, client_id, email_id):
+
     # def _del_olddata():
     #     condition = "client_id = %s and verification_type_id = %s"
     #     condition_val = [client_id, 1]
     #     db.delete(tblClientEmailVerification, condition, condition_val)
-    #
     #     return True
 
-    short_name = get_short_name(db, client_id) # short name
+    short_name = get_short_name(db, client_id)
     current_time_stamp = get_current_date()
     registration_token = new_uuid()
     expiry_date = addHours(int(REGISTRATION_EXPIRY), current_time_stamp)
 
     link = "%suserregistration/%s/%s" % (
-        CLIENT_URL, short_name, registration_token 
+        CLIENT_URL, short_name, registration_token
     )
     print link
 
@@ -548,8 +549,6 @@ def resave_registraion_token(db, client_id, email_id):
         ]
     )
     notify_user_thread.start()
-
-    # SaveRegistrationData
     if short_name:
         SaveRegistrationData(db, registration_token, expiry_date, email_id, client_id)
         return True

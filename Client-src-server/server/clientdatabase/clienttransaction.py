@@ -75,7 +75,7 @@ def get_user_based_countries(db, user_id, user_category):
     param = []
     if user_category > 1 :
         query += " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id " + \
-            " INNER JOIN tbl_user_domains as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
+            " INNER JOIN tbl_user_legal_entities as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
             " where t3.user_id = %s Order by t1.country_name"
         param = [user_id]
 
@@ -99,10 +99,10 @@ def get_user_based_legal_entity(db, user_id, user_category):
         rows = db.select_all(q, None)
         domains = db.select_all(q1, None)
     else :
-        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+        q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
 
-        q1 += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+        q1 += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
 
         rows = db.select_all(q, [user_id])
@@ -134,7 +134,7 @@ def get_user_based_division(db, user_id, user_category):
     if user_category == 1 :
         rows = db.select_all(q, None)
     else :
-        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+        q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
         rows = db.select_all(q, [user_id])
 
@@ -155,7 +155,7 @@ def get_user_based_category(db, user_id, user_category):
     if user_category == 1 :
         rows = db.select_all(q, None)
     else :
-        q += " inner join tbl_user_domains as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
+        q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
         rows = db.select_all(q, [user_id])
 
@@ -177,6 +177,8 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
     user_ids = []
     for r in row :
         user_ids.append(r["user_id"])
+    print user_ids
+    print "\n"
 
     q1 = "select distinct t1.user_id, t1.user_category_id, employee_code, employee_name, t1.user_group_id, t2.form_id,  t1.user_level," + \
         "t1.seating_unit_id, t1.service_provider_id, t4.service_provider_name, t4.short_name," + \
@@ -190,7 +192,10 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         " on t1.service_provider_id = t4.service_provider_id " + \
         "where t1.user_category_id = 1 or t2.form_id in (9, 35); "
 
+    print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
+    print row1
+
     users = []
     for r in row1 :
         user_id = r["user_id"]
@@ -2381,8 +2386,6 @@ def return_compliance_to_reassign(data):
             assignee_wise_compliances, assignee_compliance_count
         )
 
-
-
 def reassign_compliance(db, request, session_user):
     legal_entity_id = request.legal_entity_id
     reassigned_from = request.r_from
@@ -2399,7 +2402,7 @@ def reassign_compliance(db, request, session_user):
     compliance_names = []
     compliance_ids = []
     reassing_columns = [
-        "legal_entity_id", "unit_id", "compliance_id", "old_assignee", 
+        "legal_entity_id", "unit_id", "compliance_id", "old_assignee",
         "old_concurrer", "old_approver", "assignee",
         "concurrer", "approver", "remarks", "assigned_by", "assigned_on"
     ]
@@ -2456,7 +2459,6 @@ def reassign_compliance(db, request, session_user):
 
         # if concurrence not in [None, "None", 0, "null", "NULL"]:
         #     update_assign_column.append("concurrence_person")
-        # 
         #     update_assign_val.append(concurrence)
 
         where_qry = " unit_id = %s AND compliance_id = %s "
@@ -2524,7 +2526,6 @@ def reassign_compliance(db, request, session_user):
     # )
     # notify_reassing_compliance.start()
     return clienttransactions.ReassignComplianceSuccess()
-
 
 # update_user_settings
 def update_user_settings(db, new_units):
@@ -2678,7 +2679,7 @@ def return_get_review_settings_units(units):
 def get_review_settings_compliance(db, request, session_user):
     le_id = request.legal_entity_id
     d_id = request.domain_id
-    unit_ids = 1  # tuple(request.unit_ids)
+    unit_ids = ",".join([str(x) for x in request.unit_ids])
     f_type = request.f_id
 
     where_qry = "WHERE t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and t01.unit_id in (%s) "
@@ -2794,7 +2795,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                     c["legal_entity_id"], c["complaince_id"], c["f_id"], u, c["domain_id"],
                     old_statutory_dates, c["old_repeat_type_id"], c["old_repeat_by"],
                     c["repeat_by"], c["repeat_type_id"], statutory_dates, c["trigger_before_days"],
-                    string_to_datetime(c["due_date"]).date()                    
+                    string_to_datetime(c["due_date"]).date()
                 ]
                 result = db.insert(
                     tblComplianceDates, columns, values
@@ -2900,7 +2901,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "Group by ac.unit_id,ac.assignee,ac.concurrence_person)) as t1 " + \
             "Where IF(%s > 0,user_type = %s, 1) " + \
             "ORDER BY user_type,unit_id;"
-        param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type] 
+        param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type]
 
     row = db.select_all(query, param)
     return return_units_for_reassign_compliance(row)
@@ -2986,10 +2987,9 @@ def return_compliance_for_reassign(result):
                 r["act_name"], r["cur_up"], r["compliance_name"],
                 int(r["compliance_id"]), r["frequency_id"],  r["freq_name"],
                 r["compliance_description"],  summary,  r["trigger_before_days"],
-                r["assignee"], r["assignee_name"], r["concurrence_person"],r["concur_name"],
-                r["approval_person"] ,r["approver_name"] , r["compliance_history_id"],
+                r["assignee"], r["assignee_name"], r["concurrence_person"], r["concur_name"],
+                r["approval_person"], r["approver_name"], r["compliance_history_id"],
                 due_date, validity_date
             )
         )
     return complaicne_list
-    

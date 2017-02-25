@@ -290,12 +290,10 @@ CREATE TABLE `tbl_users` (
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,
-  `address` varchar(500) DEFAULT NULL,
+  `is_service_provider` tinyint(4) DEFAULT '0',
   `is_active` tinyint(4) DEFAULT '1',
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
-  `disabled_on` timestamp NULL DEFAULT NULL,
-  `reason` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
   CONSTRAINT `category_fk2` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -390,7 +388,8 @@ CREATE TABLE `tbl_assign_compliances` (
   UNIQUE KEY(`unit_id`, `domain_id`, `compliance_id`, `assignee`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_reassigned_compliances_history` (
-  `reassign_history_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `reassign_history_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `compliance_id` int(11) DEFAULT NULL,

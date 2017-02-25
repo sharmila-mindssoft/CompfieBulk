@@ -220,7 +220,7 @@ def update_service_provider(db, service_provider, session_user):
         "service_provider_id", "service_provider_name", "short_name", "contract_from", "contract_to",
         "contact_person", "contact_no", "mobile_no", "email_id", "address",
         "updated_on", "updated_by"
-    ]    
+    ]
     values_list = [
         service_provider.service_provider_id, service_provider.service_provider_name, service_provider.short_name,
         contract_from, contract_to, service_provider.contact_person,
@@ -413,7 +413,7 @@ def get_forms(db, cat_id):
         " t1.form_order, t2.form_type, t1.parent_menu FROM tbl_forms as t1 " + \
         " INNER JOIN  tbl_form_type as t2 ON t2.form_type_id = t1.form_type_id" + \
         " INNER JOIN tbl_form_category as t3 ON t1.form_id = t3.form_id " + \
-        " WHERE t3.user_category_id = %s"
+        " WHERE t3.user_category_id = %s Order by t1.form_type_id DESC"
     row = db.select_all(q, [cat_id])
     return row
 
@@ -458,23 +458,11 @@ def get_user_privilege_details_list(db):
         " INNER JOIN tbl_user_category AS t2 ON t2.user_category_id = t1.user_category_id " + \
         " INNER JOIN tbl_user_group_forms AS t3 ON t3.user_group_id = t1.user_group_id" + \
         " group by t1.user_group_id"
-
-    # q = "SELECT t1.user_group_id, t1.user_category_id, t1.user_group_name, " + \
-    #    " t2.user_category_name, t1.is_active FROM tbl_user_groups as t1 " + \
-    #    " INNER JOIN tbl_user_category AS t2 ON t2.user_category_id = t1.user_category_id"
     groups = db.select_all(q, None)
-
-    # columns = ["user_group_id", "user_category_id", "user_group_name", "user_category_name", "is_active"]
-    # groups = db.get_data(
-    #     "tbl_user_groups", columns, "1 ORDER BY user_group_name"
-    # )
-
     columns = ["user_group_id", "form_id"]
     group_forms = db.get_data(
         "tbl_user_group_forms", columns, "1 ORDER BY user_group_id"
     )
-    #print groups, group_forms
-    # return groups, group_forms
     return return_user_privilage_list(groups, group_forms)
 
 

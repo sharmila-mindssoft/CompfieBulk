@@ -2,10 +2,12 @@
 var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
+var filterCountryName = $(".filter-country-name");
 
 var legalEntity = $("#legal-entity");
 var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
+var filterLegalEntityName = $(".filter-legal-entity-name");
 
 var domain = $("#domain");
 var domainId = $("#domain-id");
@@ -26,26 +28,24 @@ var template = $("#template");
 var reportTable = $("#report-table");
 var REPORT = null;
 
-LEWiseScoreCard = function() {
-    this._countries = [];
+WorkFlowScoreCard = function() {
     this._entities = [];
     this._domains = [];
     this._report_data = [];
 }
 
-LEWiseScoreCard.prototype.fetchSearchList = function() {
+WorkFlowScoreCard.prototype.fetchSearchList = function() {
     t_this = this;
-    t_this._countries = client_mirror.getUserCountry();
-    t_this._entities = client_mirror.getUserLegalEntity();
+    t_this._entities = client_mirror.getSelectedLegalEntity();
 };
 
 function PageControls() {
 
     country.keyup(function(e) {
         var text_val = country.val().trim();
-        var countryList = REPORT._countries;
+        var countryList = REPORT._entities;
         if (countryList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
+            displayMessage(message.country_required);
         var condition_fields = ["is_active"];
         var condition_values = [true];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
@@ -56,6 +56,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
+        if (legalEntityList.length == 0 && text_val != '')
+            displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
@@ -66,6 +68,8 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
+        if (domainList.length == 0 && text_val != '')
+            displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, 1];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
@@ -91,7 +95,7 @@ processSubmit = function(csv) {
 }
 
 clearElement = function(arr) {
-    if(arr.length > 0) {
+    if (arr.length > 0) {
         $.each(arr, function(i, element) {
             element.val('');
         });
@@ -119,13 +123,13 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.focus();
 }
 
-LEWiseScoreCard.prototype.loadSearch = function() {
+WorkFlowScoreCard.prototype.loadSearch = function() {
     reportView.hide();
     clearElement([country, countryId, legalEntity, legalEntityId, domain, domainId]);
     this.fetchSearchList();
 };
 
-LEWiseScoreCard.prototype.fetchDomainList = function(le_id) {
+WorkFlowScoreCard.prototype.fetchDomainList = function(le_id) {
     t_this = this;
     /*if(le_id != "") {
         var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":1,"is_active":true},{"d_id":3,"d_name":"Economic Law","le_id":1,"is_active":true}]}';
@@ -143,7 +147,7 @@ LEWiseScoreCard.prototype.fetchDomainList = function(le_id) {
     });
 };
 //country legalEntity domain
-LEWiseScoreCard.prototype.validate = function() {
+WorkFlowScoreCard.prototype.validate = function() {
     if (country) {
         if (isNotEmpty(country, message.country_required) == false)
             return false;
@@ -178,7 +182,7 @@ showAnimation = function(element) {
         });
 }
 
-LEWiseScoreCard.prototype.fetchReportValues = function(csv) {
+WorkFlowScoreCard.prototype.fetchReportValues = function(csv) {
     t_this = this;
 
     var c_id = parseInt(countryId.val());
@@ -201,7 +205,7 @@ LEWiseScoreCard.prototype.fetchReportValues = function(csv) {
     });
 };
 
-LEWiseScoreCard.prototype.showReportValues = function() {
+WorkFlowScoreCard.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
     clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
@@ -211,6 +215,7 @@ LEWiseScoreCard.prototype.showReportValues = function() {
     var completed_count = 0;
     var inprogress_count = 0;
     var over_due_count = 0;
+    taskDetails.hide();
     $.each(data, function(k, v) {
         $('.completed-assignee-count').text(v.c_assignee);
         $('.completed-concur-count').text(v.c_concur);
@@ -243,7 +248,7 @@ LEWiseScoreCard.prototype.showReportValues = function() {
     $('.total-approver-count').html(over_due_count);
 };
 
-LEWiseScoreCard.prototype.inprogressUnitView = function(data) {
+WorkFlowScoreCard.prototype.inprogressUnitView = function(data) {
     t_this = this;
     $('.task-name').html("Unit Wise - In progress Within Due Date Task Count");
     $('.title-submit').html('Yet to Submit');
@@ -255,7 +260,7 @@ LEWiseScoreCard.prototype.inprogressUnitView = function(data) {
     var concur_total = 0;
     var approve_total = 0;
     var grand_total = 0;
-    var j =0;
+    var j = 0;
     $.each(data, function(k, v) {
         var cloneone = $('#template #report-table .report-row').clone();
         $('.task-row-title', cloneone).text(v.unit);
@@ -268,7 +273,7 @@ LEWiseScoreCard.prototype.inprogressUnitView = function(data) {
         approve_total = approve_total + parseInt(v.inp_approver);
         j = j + 1;
     });
-    if(j > 1) {
+    if (j > 1) {
         var clonetwo = $('#template #report-table .report-total-row').clone();
         $('.submit-total', clonetwo).text(submit_total);
         $('.concur-total', clonetwo).text(concur_total);
@@ -277,7 +282,7 @@ LEWiseScoreCard.prototype.inprogressUnitView = function(data) {
     }
 };
 
-LEWiseScoreCard.prototype.completedUnitView = function(data) {
+WorkFlowScoreCard.prototype.completedUnitView = function(data) {
     t_this = this;
     $('.task-name').html("Unit Wise - Completed Task Count");
     $('.title-submit').html('You Submitted');
@@ -289,7 +294,7 @@ LEWiseScoreCard.prototype.completedUnitView = function(data) {
     var concur_total = 0;
     var approve_total = 0;
     var grand_total = 0;
-    var j =0;
+    var j = 0;
     $.each(data, function(k, v) {
         var cloneone = $('#template #report-table .report-row').clone();
         $('.task-row-title', cloneone).text(v.unit);
@@ -302,7 +307,7 @@ LEWiseScoreCard.prototype.completedUnitView = function(data) {
         approve_total = approve_total + parseInt(v.c_approver);
         j = j + 1;
     });
-    if(j > 1) {
+    if (j > 1) {
         var clonetwo = $('#template #report-table .report-total-row').clone();
         $('.submit-total', clonetwo).text(submit_total);
         $('.concur-total', clonetwo).text(concur_total);
@@ -311,7 +316,7 @@ LEWiseScoreCard.prototype.completedUnitView = function(data) {
     }
 };
 
-LEWiseScoreCard.prototype.overdueUnitView = function(data) {
+WorkFlowScoreCard.prototype.overdueUnitView = function(data) {
     t_this = this;
     $('.task-name').html("Unit Wise - In progress Over Due Task Count");
     $('.title-submit').html('Yet to Submit');
@@ -323,7 +328,7 @@ LEWiseScoreCard.prototype.overdueUnitView = function(data) {
     var concur_total = 0;
     var approve_total = 0;
     var grand_total = 0;
-    var j =0;
+    var j = 0;
     $.each(data, function(k, v) {
         var cloneone = $('#template #report-table .report-row').clone();
         $('.task-row-title', cloneone).text(v.unit);
@@ -336,7 +341,7 @@ LEWiseScoreCard.prototype.overdueUnitView = function(data) {
         approve_total = approve_total + parseInt(v.ov_concur);
         j = j + 1;
     });
-    if(j > 1) {
+    if (j > 1) {
         var clonetwo = $('#template #report-table .report-total-row').clone();
         $('.submit-total', clonetwo).text(submit_total);
         $('.concur-total', clonetwo).text(concur_total);
@@ -345,21 +350,47 @@ LEWiseScoreCard.prototype.overdueUnitView = function(data) {
     }
 };
 
-LEWiseScoreCard.prototype.exportReportValues = function() {
+WorkFlowScoreCard.prototype.exportReportValues = function() {
     alert('export');
 };
 
-LEWiseScoreCard.prototype.possibleFailures = function(error) {
+WorkFlowScoreCard.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage("Domain name exists");
+        displayMessage("Domain name exists");
     } else {
-        this.displayMessage(error);
+        displayMessage(error);
     }
 };
 
-REPORT = new LEWiseScoreCard();
+WorkFlowScoreCard.prototype.loadEntityDetails = function() {
+    t_this = this;
+    if (t_this._entities.length > 1) {
+        country.parent().show();
+        filterCountryName.hide();
+
+        legalEntity.parent().show();
+        filterLegalEntityName.hide();
+    } else {
+        filterCountryName.show();
+        filterCountryName.html(t_this._entities[0]["c_name"]);
+        countryId.val(t_this._entities[0]["c_id"]);
+        country.parent().hide();
+        country.val(t_this._entities[0]["c_name"]);
+
+        filterLegalEntityName.show();
+        filterLegalEntityName.html(t_this._entities[0]["le_name"]);
+        legalEntityId.val(t_this._entities[0]["le_id"]);
+        legalEntity.parent().hide();
+        legalEntity.val(t_this._entities[0]["le_name"]);
+
+        REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
+    }
+};
+
+REPORT = new WorkFlowScoreCard();
 
 $(document).ready(function() {
     PageControls();
     REPORT.loadSearch();
+    REPORT.loadEntityDetails();
 });

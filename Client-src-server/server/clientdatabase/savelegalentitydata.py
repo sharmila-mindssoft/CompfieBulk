@@ -3,11 +3,11 @@ from server.dbase import Database
 from server.exceptionmessage import client_process_error
 from server.database.general import get_group_server_info
 __all__ = [
-    "ClientdbConect",
-    "SaveRegistrationData"
+    "LEntitydbConect",
+    "SaveUserData"
 ]
 
-class ClientdbConect(object):
+class LEntitydbConect(object):
     def __init__(self):
         self._k_db = None
 
@@ -20,14 +20,11 @@ class ClientdbConect(object):
         print conn
         self._k_db = Database(conn)
 
-class SaveRegistrationData(ClientdbConect):
-    def __init__(self, know_db, token, expiry, email_id, client_id):
-        super(SaveRegistrationData, self).__init__()
-        self.know_db = know_db
-        self.token = token
-        self.expiry = expiry
-        self.email_id = email_id
-        self.client_id = client_id
+class SaveUserData(LEntitydbConect):
+    def __init__(self, request, le_ids):
+        super(SaveUserData, self).__init__()
+        self._request = request
+        self._le_id = le_ids
         self.is_group = True
 
         self._host = None

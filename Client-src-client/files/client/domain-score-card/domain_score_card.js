@@ -2,14 +2,17 @@
 var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
+var filterCountryName = $(".filter-country-name");
 
 var businessGroup = $("#business-group");
 var businessGroupId = $("#business-group-id");
 var acBusinessGroup = $("#ac-business-group");
+var filterBusinessGroupName = $(".filter-business-group-name");
 
 var legalEntity = $("#legal-entity");
 var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
+var filterLegalEntityName = $(".filter-legal-entity-name");
 
 var division = $("#division");
 var divisionId = $("#division-id");
@@ -39,8 +42,6 @@ var reportTable = $("#report-table");
 var REPORT = null;
 
 DomainScoreCard = function() {
-    this._countries = [];
-    this._business_group = [];
     this._entities = [];
     this._divisions = [];
     this._categorys = [];
@@ -52,18 +53,16 @@ DomainScoreCard.prototype.fetchSearchList = function() {
     t_this = this;
     /*var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"business_group":[{"b_g_id":1,"b_g_name":"RG Business Group","c_id":1,"is_active":true},{"b_g_id":2,"b_g_name":"ABC Business Group","c_id":1,"is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"b_g_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"b_g_id":null,"is_active":true}]}';
     var object = jQuery.parseJSON(jsondata);*/
-    t_this._countries = client_mirror.getUserCountry();
-    t_this._business_group = client_mirror.getUserBusinessGroup();
-    t_this._entities = client_mirror.getUserLegalEntity();
+    t_this._entities = client_mirror.getSelectedLegalEntity();
 };
 
 function PageControls() {
 
     country.keyup(function(e) {
         var text_val = country.val().trim();
-        var countryList = REPORT._countries;
+        var countryList = REPORT._entities;
         if (countryList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
+            displayMessage(message.country_required);
         var condition_fields = ["is_active"];
         var condition_values = [true];
         //alert(text_val +' - '+countryList.toSource() +' - '+)
@@ -74,7 +73,7 @@ function PageControls() {
 
     businessGroup.keyup(function(e) {
         var text_val = businessGroup.val().trim();
-        var businessGroupList = REPORT._business_group;
+        var businessGroupList = REPORT._entities;
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, acBusinessGroup, businessGroupId, text_val, businessGroupList, "bg_name", "bg_id", function(val) {
@@ -85,8 +84,11 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
-        var condition_fields = ["c_id", "bg_id"];
-        var condition_values = [countryId.val(), businessGroupId.val()];
+        if (legalEntityList.length == 0 && text_val != '')
+            displayMessage(message.legalentity_required);
+        var condition_fields = ["c_id"];
+        var condition_values = [countryId.val()];
+        if (businessGroupId.val() != '') { condition_fields.push("bg_id"); condition_values.push(businessGroupId.val()); }
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -95,8 +97,6 @@ function PageControls() {
     division.keyup(function(e) {
         var text_val = division.val().trim();
         var divisionList = REPORT._divisions;
-        if (divisionList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
         var condition_fields = [];
         var condition_values = [];
         commonAutoComplete(e, acDivision, divisionId, text_val, divisionList, "div_name", "div_id", function(val) {
@@ -107,8 +107,6 @@ function PageControls() {
     category.keyup(function(e) {
         var text_val = category.val().trim();
         var categoryList = REPORT._categorys;
-        if (categoryList.length == 0)
-            displayMessage(message.category_required);
         var condition_fields = ["div_id"];
         var condition_values = [divisionId.val()];
         commonAutoComplete(e, acCategory, categoryId, text_val, categoryList, "cat_name", "cat_id", function(val) {
@@ -402,9 +400,52 @@ DomainScoreCard.prototype.possibleFailures = function(error) {
     }
 };
 
+DomainScoreCard.prototype.loadEntityDetails = function(){
+    t_this = this;
+    if(t_this._entities.length > 1) {
+        country.parent().show();
+        filterCountryName.hide();
+
+        legalEntity.parent().show();
+        filterLegalEntityName.hide();
+
+        businessGroup.parent().show();
+        filterBusinessGroupName.hide();
+    } else {
+        filterCountryName.show();
+        filterCountryName.html(t_this._entities[0]["c_name"]);
+        countryId.val(t_this._entities[0]["c_id"]);
+        country.parent().hide();
+        country.val(t_this._entities[0]["c_name"]);
+
+        filterLegalEntityName.show();
+        filterLegalEntityName.html(t_this._entities[0]["le_name"]);
+        legalEntityId.val(t_this._entities[0]["le_id"]);
+        legalEntity.parent().hide();
+        legalEntity.val(t_this._entities[0]["le_name"]);
+        
+        var BG_NAME = '-';
+        if(t_this._entities[0]["bg_name"] != null) 
+            BG_NAME = t_this._entities[0]["bg_name"];
+        
+        var BG_ID = '';
+        if(t_this._entities[0]["bg_id"] != null)
+            BG_ID = t_this._entities[0]["bg_id"];
+
+        filterBusinessGroupName.show();
+        filterBusinessGroupName.html(BG_NAME);
+        businessGroupId.val(BG_ID);
+        businessGroup.parent().hide();
+        businessGroup.val(BG_NAME);
+
+        REPORT.fetchDivisionCategoryDomainList(t_this._entities[0]["le_id"]);
+    }
+};
+
 REPORT = new DomainScoreCard();
 
 $(document).ready(function() {
     PageControls();
     REPORT.loadSearch();
+    REPORT.loadEntityDetails();
 });

@@ -40,6 +40,7 @@ __all__ = [
     "get_escalations",
     "get_messages",
     "update_notification_status",
+    "notification_details",
     "get_user_company_details",
     "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances",
@@ -233,6 +234,7 @@ def get_compliance_status(
     param = [",".join([str(x) for x in country_ids]), ",".join([str(x) for x in domain_ids])]
     param.extend(where_qry_val)
     q = "%s %s %s" % (query, where_qry1, order)
+    print q % tuple(param)
     rows = db.select_all(q, param)
 
     return filter_ids, rows
@@ -1847,19 +1849,36 @@ def update_notification_status(
 def notification_details(
     db, notification_id, has_read, session_user
 ):
-    user_ids = [session_user]
-    if is_primary_admin(db, session_user) is True:
-        user_ids.append(0)
-    columns = ["read_status"]
-    values = [1 if has_read is True else 0]
-    condition = " notification_id = %s AND "
-    user_condition, user_condition_val = db.generate_tuple_condition(
-        "user_id", user_ids)
-    condition = condition + user_condition
-    values.extend([notification_id, user_condition_val])
-    db.update(
-        tblNotificationUserLog, columns, values, condition
-    )
+    query = "select nl.notification_id, substring_index(com.statutory_mapping,'>>',1) as act_name, " + \
+            "(select concat(unit_code,' - ',unit_name,' - ',substring_index(geography_name,'>>',-1)) from tbl_units where unit_id = nl.unit_id) as unit, " + \
+            "concat(com.document_name,' - ',com.compliance_task) as compliance_name,date(ch.due_date) as duedate, " + \
+            "IF(ch.due_date < now() and ch.approve_status <> 1,concat(abs(datediff(now(),ch.due_date)),' Days'),'-') as delayed_by, " + \
+            "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.assignee) as assignee_name, " + \
+            "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.concurrence_person) as concur_name, " + \
+            "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.approval_person) as approver_name " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_compliances as com on nl.compliance_id = com.compliance_id " + \
+            "inner join tbl_compliance_history as ch on nl.compliance_id = ch.compliance_id and nl.unit_id = ch.unit_id and ch.compliance_history_id = substring_index(nl.extra_details,'-',1) " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id " + \
+            "Where nlu.user_id = %s AND nl.notification_id = %s"
+    rows = db.select_all(query, [session_user, notification_id])
+    #print rows
+    notifications = []
+    for r in rows :
+        notification_id = int(r["notification_id"])
+        act_name = r["act_name"]
+        unit = r["unit"]
+        compliance_name = r["compliance_name"]
+        due_date = datetime_to_string(r["duedate"])
+        delayed_by = r["delayed_by"]
+        assignee_name = r["assignee_name"]
+        concurrer_name = r["concur_name"]
+        approver_name = r["approver_name"]
+        notification = dashboard.NotificationDetailsSuccess(notification_id, act_name, unit, compliance_name, due_date, delayed_by,
+            assignee_name, concurrer_name, approver_name)
+        notifications.append(notification)
+    return notifications
+
 
 def get_user_company_details(db, user_id=None):
     admin_id = get_admin_id(db)

@@ -191,6 +191,7 @@ var message = {
   'filespace_invalid': 'File Space Invalid',
   'filespace_max3': 'File Space : Max 3 Digits are allowed',
   'inchargeperson_required': 'Incharge Person Required',
+  'shortname_required': 'Short Name Required',
   'dateconfig_required': 'Select Date Configurations From & To',
   'logo_required': 'Logo Required',
   'logo_invalid': 'Logo Invalid',
@@ -216,9 +217,13 @@ var message = {
   'unitname_required': 'Unit Name Required',
   'unitaddress_required': 'Unit Address Required',
   'unitpostal_required': 'Unit Postal Code Required',
+  'spname_required': 'Service Provider Name Required',
+  'spname_max50': 'Service Provider Name is maximum 50 characters Allowed',
   'contactpersonname_required': 'Enter Contact Person Name',
+  'contactpersonname_max50': 'Contact Person Name is maximum 50 characters Allowed',
   'countrycode_max4': 'Contact No. Country Code is maximum 4 characters Allowed',
   'areacode_max4': 'Contact No. Area Code is maximum 4 characters',
+  'contactno_max10': 'Contact No. is maximum 10 characters Allowed',
   'address_max250': 'Address is maximum 250 characters Allowed',
   'contractto_maxi_today': 'To date must be greater than today',
   'spname_exists': 'Service Provider Name Already Exists',
@@ -373,6 +378,7 @@ var message = {
   "assigncompliance_submit_failure": "All compliance should be select while submit",
   "no_compliance_to_reject": "Atleast one compliance should be reject",
   "email_50": "Email are not allowed more than 50 characters",
+
   "maximum_compliance_selection_reached": "Maximum limit reached for processing. Please unselect few unit(s)",
   "maximum_compliance_selection_reached_select_all": "Maximum limit reached for processing.",
   "unit_selection_should_be_same_domain": "Please select same domain unit(s).",
@@ -384,7 +390,7 @@ var message = {
   'spname_max50': 'Service Provider Name 2-50 characters allowed',
   'shortname_required': 'Enter Short Name ',
   'shortname_max20': 'Short Name 2-20 characters allowed',
-  
+
   'contactperson_required': 'Enter Contact Person Name',
   'contactpersonname_max50': 'Contact Person Name 2-50 characters Allowed',
   'countrycode_required': 'Enter Country Code for Contact No.',
@@ -393,7 +399,7 @@ var message = {
   'contactno_max10': 'Contact No. maximum 10 characters Allowed',
   'mobile_max10': 'Mobile No. maximum 10 characters Allowed',
   'email_required': 'Enter Email ID ',
-  'address_max500': 'Address maximum 500 characters Allowed',  
+  'address_max500': 'Address maximum 500 characters Allowed',
 };
 
 function clearMessage() {

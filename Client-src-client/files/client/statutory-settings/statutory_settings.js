@@ -93,7 +93,8 @@ var API_Wizard2 = "wizard_2";
 var SAVE_API = "save";
 var SUBMIT_API = "submit";
 var API_LIST = "list";
-var EDIT_API = "edit"
+var EDIT_API = "edit";
+var LOCK_API = "lock";
 
 var LastAct = '';
 var LastSubAct = '';
@@ -109,6 +110,10 @@ var SELECTED_COMPLIANCE = {};
 var ACT_MAP = {};
 var isAuthenticate;
 var C_COUNT = 0;
+
+var L_DOMAIN = '';
+var L_UNIT = '';
+var L_STATUS = '';
 
 function callAPI(api_type) {
     if (api_type == API_FILTERS) {
@@ -135,6 +140,19 @@ function callAPI(api_type) {
                 } else {
                     loadMultipleUnitCompliances();
                 }
+            } else {
+                displayMessage(error);
+                hideLoader();
+            }
+        });
+    } else if (api_type == LOCK_API) {
+        displayLoader();
+        client_mirror.changeStatutorySettingsLock(parseInt(LegalEntityId.val()), L_DOMAIN, L_UNIT, L_STATUS,
+            CurrentPassword.val(), function(error, data) {
+            if (error == null) {
+                reset();
+                loadEntityDetails();
+                hideLoader();
             } else {
                 displayMessage(error);
                 hideLoader();
@@ -417,7 +435,7 @@ function pageControls() {
     });
 
     SubmitButton.click(function() {
-        displayPopUp(SUBMIT_API);
+        displayPopUp(SUBMIT_API, null);
         /*displayLoader();
         setTimeout(function() {
             callAPI(SUBMIT_API)
@@ -425,7 +443,7 @@ function pageControls() {
     });
 
     SaveButton.click(function() {
-        displayPopUp(SAVE_API);
+        displayPopUp(SAVE_API, null);
     });
 
     PasswordSubmitButton.click(function() {
@@ -520,7 +538,7 @@ function validateAndShow() {
     });
 }*/
 
-function displayPopUp(TYPE){
+function displayPopUp(TYPE, LOCK_ARRAY){
     Custombox.open({
         target: '#custom-modal',
         effect: 'contentscale',
@@ -533,7 +551,18 @@ function displayPopUp(TYPE){
             if (isAuthenticate) {
                 displayLoader();
                 setTimeout(function() {
-                    callAPI(TYPE)
+                    if(TYPE == LOCK_API){
+                        L_UNIT = parseInt(LOCK_ARRAY[0]);
+                        L_DOMAIN = parseInt(LOCK_ARRAY[1]);
+                        if(LOCK_ARRAY[2] == true){
+                            L_STATUS = false;
+                        }else{
+                            L_STATUS = true;
+                        }
+                        callAPI(TYPE);
+                    }else{
+                        callAPI(TYPE);
+                    }
                 }, 500);
             }
         },
@@ -578,7 +607,7 @@ function loadUnits() {
             upd_by = value.usr_by;
         }
         var upd_on = '-';
-        if(value.upd_on != null){
+        if(value.usr_on != null){
             upd_on = value.usr_on;
         }
 
@@ -597,14 +626,15 @@ function loadUnits() {
         $('.tbl_updated_by', clone).text(upd_by);
         $('.tbl_updated_on', clone).text(upd_on);
         if(value.is_locked){
-            $('.tbl_lock').find('i').addClass('fa-lock');
+            $('.tbl_lock', clone).find('i').addClass('fa-lock');
         }else{
-            $('.tbl_lock').find('i').addClass('fa-unlock');
+            $('.tbl_lock', clone).find('i').addClass('fa-unlock');
         }
 
         $('.tbl_lock', clone).click(function() {
             if(value.allow_unlock == false){
                 //displayLockPopUp(value.u_id);
+                displayPopUp(LOCK_API, [value.u_id, value.d_id, value.is_locked]);
             }
         });
 
@@ -612,8 +642,13 @@ function loadUnits() {
             activateUnit(this);
         });
 
-        UNIT_CS_ID[value.u_id] = value.u_name;
         StatutorySettingsList.append(clone);
+
+        UNIT_CS_ID[value.u_id] = {
+            'u_name': value.u_name,
+            'u_address': value.address
+        }
+
     });
 
     if(UNITS.length == 0){
@@ -709,7 +744,7 @@ function actstatus(element) {
             'comp_id': parseInt(combine_ids[0]),
             'c_o_status': c_bool(checkedVal),
             'c_remarks': null,
-            'u_name': UNIT_CS_ID[combine_ids[1]],
+            'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
             'u_id': parseInt(combine_ids[1])
         }
         console.log(SELECTED_COMPLIANCE)
@@ -747,7 +782,7 @@ function remarkstatus(element) {
                 'comp_id': parseInt(combine_ids[0]),
                 'c_o_status': c_bool(C_STATUS),
                 'c_remarks': null,
-                'u_name': UNIT_CS_ID[combine_ids[1]],
+                'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
                 'u_id': parseInt(combine_ids[1])
             }
         }
@@ -776,7 +811,7 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
         'comp_id': parseInt(combine_ids[0]),
         'c_o_status': c_bool(C_STATUS),
         'c_remarks': null,
-        'u_name': UNIT_CS_ID[combine_ids[1]],
+        'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
         'u_id': parseInt(combine_ids[1])
     }
     console.log(SELECTED_COMPLIANCE);
@@ -830,7 +865,7 @@ function mactstatus(element) {
             'comp_id': parseInt(combine_ids[0]),
             'c_o_status': c_bool(checkedVal),
             'c_remarks': null,
-            'u_name': UNIT_CS_ID[combine_ids[1]],
+            'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
             'u_id': parseInt(combine_ids[1])
         }
     });
@@ -873,7 +908,7 @@ function mcompliancestatus(element) {
         'comp_id': parseInt(combine_ids[0]),
         'c_o_status': c_bool(C_STATUS),
         'c_remarks': null,
-        'u_name': UNIT_CS_ID[combine_ids[1]],
+        'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
         'u_id': parseInt(combine_ids[1])
     }
     console.log(SELECTED_COMPLIANCE);
@@ -1100,7 +1135,7 @@ function loadSingleUnitCompliances() {
                     'comp_id': value.comp_id,
                     'c_o_status': c_bool(value1.comp_opt_status),
                     'c_remarks': null,
-                    'u_name': UNIT_CS_ID[value1.unit_id],
+                    'u_name': UNIT_CS_ID[value1.unit_id].u_name,
                     'u_id': value1.unit_id
                 }
                 console.log(SELECTED_COMPLIANCE);
@@ -1175,7 +1210,7 @@ function loadMultipleUnitCompliances() {
         $('.org-name', clone2).attr('title', value.comp_name);
         $('.compliancedescription', clone2).text(value.descp);
         $('.applicablelocation', clone2).attr('id', 'appl' + sno);
-        $('.applicablelocation', clone2).text(ACTIVE_UNITS.length + '/' + ACTIVE_UNITS.length);
+        $('.applicablelocation', clone2).text(value.unit_wise_status.length + '/' + ACTIVE_UNITS.length);
 
        /* $('.saved', clone2).attr('id', 'save' + sno);
         if (value.comp_status > 0 && value.s_s == 1) {
@@ -1205,8 +1240,8 @@ function loadMultipleUnitCompliances() {
             $('.combineid-class', clone4).attr('id', 'combineid' + statutoriesCount);
             $('.combineid-class', clone4).val(combineId);
 
-            $('.unit-locatiion', clone4).text("UNIT_CS_ID[value1.u_id].g_name");
-            $('.unit-name', clone4).text(/*UNIT_CS_ID[value1.u_id].unit_code + ' - ' + UNIT_CS_ID[value1.u_id].u_name + ', ' + UNIT_CS_ID[value1.u_id].address*/);
+            $('.unit-locatiion', clone4).text(UNIT_CS_ID[value1.unit_id].u_address);
+            $('.unit-name', clone4).text(UNIT_CS_ID[value1.unit_id].u_name);
 
            
             if(value1.comp_app_status){
@@ -1244,7 +1279,7 @@ function loadMultipleUnitCompliances() {
                     'comp_id': value.comp_id,
                     'c_o_status': c_bool(value1.comp_opt_status),
                     'c_remarks': null,
-                    'u_name': UNIT_CS_ID[value1.unit_id],
+                    'u_name': UNIT_CS_ID[value1.unit_id].u_name,
                     'u_id': value1.unit_id
                 }
                 console.log(SELECTED_COMPLIANCE);

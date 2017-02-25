@@ -92,20 +92,19 @@ api_params = {
     "le_id": make_int_field(),
     "le_ids": make_vector_type_int(),
     "le_name": make_string_field(),
-
     "bg_name": make_string_field(is_optional=True),  # User Management, Other forms
     "bg_id": make_int_field(is_optional=True),  # User Management, Other forms
     "cat_id": make_int_field(is_optional=True),  # User Management, Other forms
     "cat_name": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),  # User Management, Other forms
-    "usr_id": make_int_field(),
+    "usr_id": make_int_field(is_optional=True),
 
     "email_id": make_string_field(validfun=allow_specialchar),
     "user_email_id": make_string_field(validfun=allow_specialchar),
-    "emp_name": make_string_field(is_optional=True),
+    "emp_name": make_text_field(is_optional=True),
     "emp_code": make_string_field(is_optional=True),
     "con_no": make_text_field(is_optional=True),
     "mob_no": make_text_field(is_optional=True),
-    "address": make_text_field(is_optional=True),
+    "address": make_text_field(length=500, is_optional=True),
     "menu":  make_map_type_vector_type("clientcore", "Form"),
     "user_level": make_int_field(is_optional=True),
     "sp_id": make_int_field(is_optional=True),
@@ -139,7 +138,7 @@ api_params = {
     "not_app_remarks": make_text_field(length=500, is_optional=True),
     "c_comp_id": make_int_field(),
     "comp_id": make_int_field(),
-    "comp_name": make_string_field(),
+    "comp_name": make_text_field(length=500),
     "doc_name": make_string_field(validfun=allow_specialchar),
     "descp": make_text_field(length=500),
     "s_prov": make_text_field(length=500),
@@ -260,7 +259,6 @@ api_params = {
     "cont_person": make_string_field(is_optional=True),
     "cont_no": make_text_field(is_optional=True),
     "e_id": make_text_field(),
-    "address": make_string_field(length=500, is_optional=True),
     "remarks": make_string_field(is_optional=True),
     "is_blocked": make_bool_field(),
     "unblock_days": make_int_field(),
@@ -276,7 +274,7 @@ api_params = {
     "compliance_frequency": make_vector_type_field(module="clientcore", klass_name="ComplianceFrequency"),
     "domain_list": make_vector_type_field(module="clientcore", klass_name="Domain"),
     "unit_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
-    "sp_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviders"),
+    "sp_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProviders"),
     "sp_domains_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderDomains"),
     "sp_unit_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderUnits"),
     "sp_act_task_list": make_vector_type_field(module="clientreport", klass_name="ServiceProviderActList"),
@@ -287,6 +285,24 @@ api_params = {
     "users_units_list": make_vector_type_field(module="clientreport", klass_name="UserUnits"),
     "user_act_task_list": make_vector_type_field(module="clientreport", klass_name="UsersActList"),
     "user_compliances": make_vector_type_field(module="clientreport", klass_name="UnitWiseReport"),
+    "divisions": make_vector_type_field(module="clientreport", klass_name="Divisions"),
+    "categories": make_vector_type_field(module="clientreport", klass_name="Category"),
+    "units_list": make_vector_type_field(module="clientreport", klass_name="UnitList"),
+    "domains_organisations_list": make_vector_type_field(module="clientreport", klass_name="DomainsOrganisation"),
+    "unit_status_list": make_vector_type_field(module="clientreport", klass_name="UnitStatus"),
+    "unit_list_report": make_vector_type_field(module="clientreport", klass_name="UnitListReport"),
+    "stat_notf_list_report": make_vector_type_field(module="clientreport", klass_name="StatutoryNotificationReport"),
+    "sp_user_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProviderUsers"),
+    "sp_status_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProvidersStatus"),
+    "sp_details_list": make_vector_type_field(module="clientmasters", klass_name="ServiceProvidersDetailsList"),
+    "audit_activities": make_vector_type_field(module="clientreport", klass_name="AuditTrailActivities"),
+    "audit_users_list": make_vector_type_field(module="clientmasters", klass_name="AuditTrailUsers"),
+    "audit_forms_list": make_vector_type_field(module="clientmasters", klass_name="AuditTrailForms"),
+    "log_trace_activities": make_vector_type_field(module="clientmasters", klass_name="LoginTraceActivities"),
+    "user_profile": make_vector_type_field(module="clientmasters", klass_name="UserProfile"),
+    "risk_report": make_vector_type_field(module="clientreport", klass_name="RiskReport"),
+
+    "frequency_id": make_int_field(),
     "frequency": make_string_field(),
     "rs_unit_list": make_vector_type_field(module="clientcore", klass_name="ReviewSettingsUnits"),
     "u_code": make_string_field(),
@@ -296,7 +312,7 @@ api_params = {
     "rs_compliance_list":  make_vector_type_field(module="clientcore", klass_name="ReviewSettingsCompliance"),
     "r_every": make_int_field(is_optional=True),
     "s_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
-    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
+    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate", is_optional=True),
     "old_statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "trigger_before_days": make_int_field(is_optional=True),
     "due_date": make_text_field(length=20, is_optional=True),
@@ -312,7 +328,7 @@ api_params = {
     "sno": make_int_field(),
     "month_from": make_int_field(),
     "month_to": make_int_field(),
-    "level_1_s_name": make_string_field(),
+    "level_1_s_name": make_text_field(),
     "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True),
     "reassigned_history_list": make_vector_type_field(module="clientcore", klass_name="ReassignedHistoryReportSuccess", is_optional=True),
     "act_name": make_string_field(),
@@ -320,7 +336,6 @@ api_params = {
     "to_date": make_text_field(length=20, is_optional=True),
     "assigned_date": make_text_field(length=20, is_optional=True),
     "assigned": make_string_field(),
-    "reason": make_string_field(),
     "f_count": make_int_field(),
     "t_count": make_int_field(),
     'total': make_int_field(is_optional=False),
@@ -363,21 +378,23 @@ api_params = {
     "total_licences": make_int_field(),
     "used_licences": make_int_field(),
     "u_cat_id": make_int_field(),
-
     "resend_mail": make_bool_field(),
     "is_disable": make_bool_field(),
+    "reason": make_text_field(),
+    "unblock": make_text_field(),
     "u_level": make_int_field(is_optional=True),
     "s_unit": make_int_field(is_optional=True),
     "is_sp": make_bool_field(),
 
     "u_dm_id": make_int_field(),  # User Management
-    "u_dm_name": make_text_field(),   # User Management
-    "u_unt_id": make_int_field(),   # User Management
-    "u_unt_code": make_string_field(),   # User Management
-    "u_unt_name": make_string_field(),   # User Management
-    "u_unt_address": make_string_field(),   # User Management
-    "u_unt_postal": make_string_field(),   # User Management
-    "user_domain_ids": make_vector_type_field(module="clientcore", klass_name="UserDomains"),   # User Management
+    "u_dm_name": make_text_field(),  # User Management
+    "u_unt_id": make_int_field(),  # User Management
+    "u_unt_code": make_string_field(),  # User Management
+    "u_unt_name": make_string_field(),  # User Management
+    "u_unt_address": make_string_field(),  # User Management
+    "u_unt_postal": make_string_field(),  # User Management
+    "user_domain_ids": make_vector_type_field(module="clientcore", klass_name="UserDomains"),  # User Management
+
     "user_unit_ids": make_vector_type_field(module="clientcore", klass_name="UserUnits"),  # User Management
     "user_entity_ids": make_vector_type_int(length=1000),  # User Management
     "um_user_category": make_vector_type_field(module="clientcore", klass_name="ClientUsercategory_UserManagement"),  # User Management
@@ -404,7 +421,6 @@ api_params = {
     "assign_users": make_vector_type_field(module="clienttransactions", klass_name="Users"),
     "t_l_approve": make_bool_field(),
     "freq": make_text_field(),
-    "statu_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "applicable_units": make_vector_type_int(),
     "summary": make_text_field(is_optional=True),
     "due_date_list": make_vector_type_string(is_optional=True),
@@ -556,6 +572,8 @@ api_params = {
     "reminders": make_vector_type_field(module="dashboard", klass_name="RemindersSuccess", is_optional=True),
     "escalations": make_vector_type_field(module="dashboard", klass_name="EscalationsSuccess", is_optional=True),
     "messages": make_vector_type_field(module="dashboard", klass_name="MessagesSuccess", is_optional=True),
+    "notification_details": make_vector_type_field(module="dashboard", klass_name="NotificationDetailsSuccess", is_optional=True),
+    "delayed_by": make_text_field(is_optional=True),
     "w_id": make_int_field(),
     "w_name": make_text_field(),
     "active_status": make_bool_field(),

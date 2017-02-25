@@ -484,7 +484,7 @@ class SaveAssignedCompliance(Request):
         self, assignee, assignee_name,
         concurrence_person, concurrence_person_name,
         approval_person, approval_person_name,
-        compliances, legal_entity_id, domain_id,        
+        compliances, legal_entity_id, domain_id,
 
     ):
         self.assignee = assignee
@@ -567,7 +567,6 @@ class GetAssigneeCompliances(Request):
             "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
         }
 
-
 class ReassignCompliance(Request):
     def __init__(self, legal_entity_id, r_from, assignee, assignee_name, concurrence_person, approval_person, reassigned_compliance, reason):
         self.legal_entity_id = legal_entity_id
@@ -585,7 +584,7 @@ class ReassignCompliance(Request):
             "le_id", "r_from", "assignee", "assignee_name",
             "concurrence_person", "approval_person", "reassigned_compliance", "reason"
         ])
-        
+
         return ReassignCompliance(
             data.get("le_id"),
             data.get("r_from"),
@@ -917,8 +916,6 @@ class GetReassignComplianceFilters(Request):
             "le_id": self.legal_entity_id
         }
 
-
-
 class GetReAssignComplianceUnits(Request):
     def __init__(self, legal_entity_id, d_id, usr_id, user_type_id, unit_id):
         self.legal_entity_id = legal_entity_id
@@ -978,6 +975,39 @@ class GetReAssignComplianceForUnits(Request):
             "u_ids": self.u_ids,
             "r_count": self.r_count
         }
+
+
+class GetReAssignComplianceForUnits(Request):
+    def __init__(self, legal_entity_id, d_id, usr_id, user_type_id, u_ids, r_count):
+        self.legal_entity_id = legal_entity_id
+        self.d_id = d_id
+        self.usr_id = usr_id
+        self.user_type_id = user_type_id
+        self.u_ids = u_ids
+        self.r_count = r_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "d_id", "usr_id", "user_type_id", "u_ids", "r_count"])
+        return GetReAssignComplianceForUnits(
+            data.get("le_id"),
+            data.get("d_id"),
+            data.get("usr_id"),
+            data.get("user_type_id"),
+            data.get("u_ids"),
+            data.get("r_count")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "d_id": self.d_id,
+            "usr_id": self.usr_id,
+            "user_type_id": self.user_type_id,
+            "u_ids": self.u_ids,
+            "r_count": self.r_count
+        }
+
 
 class GetAssigneewiseComplianesFilters(Request):
     def __init__(self):
@@ -1077,10 +1107,11 @@ def _init_Request_class_map():
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
         SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
+
+        GetReAssignComplianceUnits, GetReAssignComplianceForUnits,
         GetAssigneewiseComplianesFilters,
         GetUserToAssignCompliance, GetChartFilters,
-        GetReassignComplianceFilters, GetReAssignComplianceUnits,
-        GetReAssignComplianceForUnits, GetUserWidgetData, SaveWidgetData
+        GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData
     ]
 
     class_map = {}
@@ -1846,7 +1877,6 @@ class GetReAssignComplianceUnitsSuccess(Response):
             "reassign_units": self.units,
         }
 
-
 class GetReAssignComplianceForUnitsSuccess(Response):
     def __init__(self, reassign_compliances):
         self.reassign_compliances = reassign_compliances
@@ -1855,12 +1885,12 @@ class GetReAssignComplianceForUnitsSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["reassign_compliances"])
         return GetReAssignComplianceForUnitsSuccess(
-            data.get("reassign_compliances")
+            data.get("reassign_compliances"),
         )
 
     def to_inner_structure(self):
         return {
-            "reassign_compliances": self.reassign_compliances
+            "reassign_compliances": self.reassign_compliances,
         }
 
 class GetUserWidgetDataSuccess(Response):
@@ -1905,8 +1935,9 @@ def _init_Response_class_map():
         GetStatutorySettingsFiltersSuccess, ChangeStatutorySettingsLockSuccess,
         GetAssignComplianceUnitsSuccess,
         GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
-        GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess, GetAssigneewiseComplianesFilters,
-        GetUserWidgetDataSuccess, SaveWidgetDataSuccess, GetReAssignComplianceUnitsSuccess, GetReAssignComplianceForUnitsSuccess
+        GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess, GetReAssignComplianceUnitsSuccess,
+        GetReAssignComplianceUnitsSuccess, GetAssigneewiseComplianesFilters,
+        GetUserWidgetDataSuccess, SaveWidgetDataSuccess
     ]
     class_map = {}
     for c in classes:
@@ -2948,7 +2979,7 @@ class REASSIGN_COMPLIANCE_UNITS(object):
 class REASSIGN_COMPLIANCES(object):
     def __init__(
         self, u_id, u_name, act_name, task_type, compliance_name, comp_id, f_id, frequency, compliance_description,
-        summary, trigger_before_days,assignee, assignee_name, concurrence_person, concurrer_name, approval_person, approver_name, 
+        summary, trigger_before_days,assignee, assignee_name, concurrence_person, concurrer_name, approval_person, approver_name,
         c_h_id, d_date, v_date
     ):
         self.u_id = u_id
@@ -2976,7 +3007,7 @@ class REASSIGN_COMPLIANCES(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "u_id", "u_name", "act_name", "task_type", "compliance_name", "comp_id", "f_id", "frequency", "compliance_description",
-            "summary", "trigger_before_days","assignee", "assignee_name", "concurrence_person", "concurrer_name", "approval_person", "approver_name", 
+            "summary", "trigger_before_days","assignee", "assignee_name", "concurrence_person", "concurrer_name", "approval_person", "approver_name",
             "c_h_id", "d_date", "v_date"
         ])
         u_id = data.get("u_id")
@@ -3003,7 +3034,7 @@ class REASSIGN_COMPLIANCES(object):
 
         return ASSIGN_COMPLIANCE_UNITS(
             unit_id, unit_name, address, task_type, compliance_name, comp_id, f_id, frequency, compliance_description,
-            summary, trigger_before_days,assignee, assignee_name, concurrence_person, concurrer_name, approval_person, approver_name, 
+            summary, trigger_before_days,assignee, assignee_name, concurrence_person, concurrer_name, approval_person, approver_name,
             c_h_id, d_date, v_date
         )
 
@@ -3029,6 +3060,4 @@ class REASSIGN_COMPLIANCES(object):
             "c_h_id": self.c_h_id,
             "d_date": self.d_date,
             "v_date": self.v_date
-
         }
-        
