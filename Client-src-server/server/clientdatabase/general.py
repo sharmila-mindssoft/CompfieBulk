@@ -1550,7 +1550,7 @@ def get_email_id_for_users(db, user_id):
     if row:
         return row["employee_name"], row["email_id"]
     else:
-        return None
+        return None, None
 
 
 def get_user_email_name(db, user_ids):

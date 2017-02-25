@@ -6,7 +6,8 @@ import jinja2
 import base64
 import random
 import string
-from mysql.connector import pooling
+# from mysql.connector import pooling
+import mysql.connector
 from flask import Flask, request, send_from_directory, Response, render_template
 from flask_wtf.csrf import CsrfProtect
 from functools import wraps
@@ -77,24 +78,33 @@ def api_request(request_data_type):
     return wrapper
 
 def make_pool(pool_name, db_conf):
+    pass
     # pooling.CNX_POOL_MAXSIZE = KNOWLEDGE_DB_POOL_SIZE
-    return pooling.MySQLConnectionPool(
-        pool_name=pool_name,
-        pool_reset_session=True,
-        pool_size=32,
-        **db_conf
-    )
+    # return pooling.MySQLConnectionPool(
+    #     pool_name=pool_name,
+    #     pool_reset_session=True,
+    #     pool_size=32,
+    #     **db_conf
+    # )
 
 def before_first_request():
-    db_conf = {
-        "user": KNOWLEDGE_DB_USERNAME,
-        "password": KNOWLEDGE_DB_PASSWORD,
-        "host": KNOWLEDGE_DB_HOST,
-        "database": KNOWLEDGE_DATABASE_NAME,
-        "port": KNOWLEDGE_DB_PORT,
-        "autocommit": False,
-    }
-    cnx_pool = make_pool("con_pool", db_conf)
+    # db_conf = {
+    #     "user": KNOWLEDGE_DB_USERNAME,
+    #     "password": KNOWLEDGE_DB_PASSWORD,
+    #     "host": KNOWLEDGE_DB_HOST,
+    #     "database": KNOWLEDGE_DATABASE_NAME,
+    #     "port": KNOWLEDGE_DB_PORT,
+    #     "autocommit": False,
+    # }
+    cnx_pool = mysql.connector.connect(
+        user=KNOWLEDGE_DB_USERNAME,
+        password=KNOWLEDGE_DB_PASSWORD,
+        host=KNOWLEDGE_DB_HOST,
+        database=KNOWLEDGE_DATABASE_NAME,
+        port=KNOWLEDGE_DB_PORT,
+        autocommit=False,
+    )
+    # cnx_pool = make_pool("con_pool", db_conf)
     # cnx_pool.set_config(**db_conf)
     return cnx_pool
 
@@ -114,7 +124,7 @@ class API(object):
     def _remove_old_session(self):
 
         def on_session_timeout():
-            _db_con_clr = self._con_pool.get_connection()
+            _db_con_clr = before_first_request()
             _db_clr = Database(_db_con_clr)
             _db_clr.begin()
             try:
@@ -203,7 +213,7 @@ class API(object):
             elif type(request_data) is str:
                 raise ValueError(request_data)
 
-            _db_con = self._con_pool.get_connection()
+            _db_con = before_first_request()
             _db = Database(_db_con)
             _db.begin()
             response_data = unbound_method(self, request_data, _db)
