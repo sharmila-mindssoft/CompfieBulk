@@ -451,71 +451,76 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     var unitId = ""; //unit
     var actname = "";
     var complianceId = "";
-    $.each(data, function(k, v) {
-        if (unitId != v.unit_id) {
-            var cloneone = $('#template #report-table .row-one').clone();
-            $('.unit-name', cloneone).text(v.unit);
-            reportTableTbody.append(cloneone);
-            unitId = v.unit_id;
-        }
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            if (unitId != v.unit_id) {
+                var cloneone = $('#template #report-table .row-one').clone();
+                $('.unit-name', cloneone).text(v.unit);
+                reportTableTbody.append(cloneone);
+                unitId = v.unit_id;
+            }
 
-        if (actname != v.act_name) {
-            var clonetwo = $('#template #report-table .row-two').clone();
-            $('.act-name', clonetwo).text(v.act_name);
-            reportTableTbody.append(clonetwo);
-            actname = v.act_name;
-        }
+            if (actname != v.act_name) {
+                var clonetwo = $('#template #report-table .row-two').clone();
+                $('.act-name', clonetwo).text(v.act_name);
+                reportTableTbody.append(clonetwo);
+                actname = v.act_name;
+            }
 
-        if (complianceId != v.compliance_id) {
-            j = j + 1;
-            var clonethree = $('#template #report-table .row-three').clone();
-            $('.sno', clonethree).text(j);
-            $('.compliance-task', clonethree).text(v.compliance_name);
-            $('.frequency', clonethree).text(v.frequency_name);
-            $('.due-date', clonethree).text(v.due_date);
-            $('.compliance-task-status', clonethree).text(v.task_status);
-            $('.user-name', clonethree).text(v.user_name);
-            $('.activity-status', clonethree).text(v.activity_status);
-            if (v.activity_on != "")
-                $('.activity-date', clonethree).text(v.activity_on);
-            else
-                $('.activity-date', clonethree).text('-');
+            if (complianceId != v.compliance_id) {
+                j = j + 1;
+                var clonethree = $('#template #report-table .row-three').clone();
+                $('.sno', clonethree).text(j);
+                $('.compliance-task', clonethree).text(v.compliance_name);
+                $('.frequency', clonethree).text(v.frequency_name);
+                $('.due-date', clonethree).text(v.due_date);
+                $('.compliance-task-status', clonethree).text(v.task_status);
+                $('.user-name', clonethree).text(v.user_name);
+                $('.activity-status', clonethree).text(v.activity_status);
+                if (v.activity_on != "")
+                    $('.activity-date', clonethree).text(v.activity_on);
+                else
+                    $('.activity-date', clonethree).text('-');
 
-            if(v.uploaded_document != "")
-                $('.uploaded-document', clonethree).text(v.uploaded_document);
-            else
-                $('.uploaded-document', clonethree).text('-');
+                if(v.uploaded_document != "")
+                    $('.uploaded-document', clonethree).text(v.uploaded_document);
+                else
+                    $('.uploaded-document', clonethree).text('-');
 
-            if (v.completion_date != "")
-                $('.completion-date', clonethree).text(v.completion_date);
-            else
-                $('.completion-date', clonethree).text('-');
-            reportTableTbody.append(clonethree);
-            complianceId = v.compliance_id;
-        } else {
-            var clonefour = $('#template #report-table .row-four').clone();
-            $('.user-name-new', clonefour).text(v.user_name);
-            $('.activity-status-new', clonefour).text(v.activity_status);
-            if (v.activity_on != "")
-                $('.activity-date-new', clonefour).text(v.activity_on);
-            else
-                $('.activity-date-new', clonefour).text('-');
+                if (v.completion_date != "")
+                    $('.completion-date', clonethree).text(v.completion_date);
+                else
+                    $('.completion-date', clonethree).text('-');
+                reportTableTbody.append(clonethree);
+                complianceId = v.compliance_id;
+            } else {
+                var clonefour = $('#template #report-table .row-four').clone();
+                $('.user-name-new', clonefour).text(v.user_name);
+                $('.activity-status-new', clonefour).text(v.activity_status);
+                if (v.activity_on != "")
+                    $('.activity-date-new', clonefour).text(v.activity_on);
+                else
+                    $('.activity-date-new', clonefour).text('-');
 
-            if(v.uploaded_document != "")
-                $('.uploaded-document', clonethree).text(v.uploaded_document);
-            else
-                $('.uploaded-document', clonethree).text('-');
+                if(v.uploaded_document != "")
+                    $('.uploaded-document', clonethree).text(v.uploaded_document);
+                else
+                    $('.uploaded-document', clonethree).text('-');
 
-            if (v.completion_date != "")
-                $('.completion-date-new', clonefour).text(v.completion_date);
-            else
-                $('.completion-date-new', clonefour).text('-');
-            reportTableTbody.append(clonefour);
+                if (v.completion_date != "")
+                    $('.completion-date-new', clonefour).text(v.completion_date);
+                else
+                    $('.completion-date-new', clonefour).text('-');
+                reportTableTbody.append(clonefour);
 
-            complianceId = v.compliance_id;
-        }
-    });
-    showPagePan(f_count, j, t_this._total_count);
+                complianceId = v.compliance_id;
+            }
+        });
+        showPagePan(f_count, j, t_this._total_count);
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        hidePagePan();
+    }
 };
 
 treeShowHide = function(e, tree) {

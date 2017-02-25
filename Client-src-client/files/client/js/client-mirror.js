@@ -196,7 +196,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        //alert(body.toSource());
+        alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             // headers: {'X-Xsrftoken': getCookie('_xsrf')},

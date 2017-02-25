@@ -331,7 +331,7 @@ api_params = {
     "level_1_s_name": make_text_field(),
     "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True),
     "reassigned_history_list": make_vector_type_field(module="clientcore", klass_name="ReassignedHistoryReportSuccess", is_optional=True),
-    "act_name": make_string_field(),
+    "act_name": make_text_field(length=500, is_optional=True),
     "from_date": make_text_field(length=20, is_optional=True),
     "to_date": make_text_field(length=20, is_optional=True),
     "assigned_date": make_text_field(length=20, is_optional=True),
