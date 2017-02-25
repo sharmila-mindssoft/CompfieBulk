@@ -36,6 +36,9 @@ email = EmailHandler()
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
+#################################################################
+# Compliance Task Details - Get inprogress count
+#################################################################
 def get_inprogress_count(db, session_user):
     param = [session_user]
     other_compliance_condition = " WHERE (frequency_id != 4 OR " + \
@@ -51,8 +54,8 @@ def get_inprogress_count(db, session_user):
         " IFNULL(ch.due_date, 0) >= now() " + \
         " AND IFNULL(ch.completed_on, 0) = 0"
 
-    query = "SELECT count(*) FROM tbl_compliance_history ch INNER JOIN " + \
-        " tbl_assigned_compliances ac " + \
+    query = "SELECT count(*) as inprogress_count FROM tbl_compliance_history ch INNER JOIN " + \
+        " tbl_assign_compliances ac " + \
         " ON (ch.compliance_id = ac.compliance_id " + \
         " and ac.unit_id = ch.unit_id) INNER JOIN " + \
         " tbl_compliances c ON (ch.compliance_id = c.compliance_id ) "
@@ -61,14 +64,16 @@ def get_inprogress_count(db, session_user):
         query + other_compliance_condition, param
     )
     on_occurrence_rows = db.select_all(query + on_occurrence_condition, param)
-    other_compliance_count = other_compliance_rows[0][0]
-    on_occurrence_count = on_occurrence_rows[0][0]
+    other_compliance_count = other_compliance_rows[0]["inprogress_count"]
+    on_occurrence_count = on_occurrence_rows[0]["inprogress_count"]
     return int(other_compliance_count) + int(on_occurrence_count)
 
-
+#################################################################
+# Compliance Task Details - Get overdue count
+#################################################################
 def get_overdue_count(db, session_user):
-    query = "SELECT count(*) FROM tbl_compliance_history ch INNER JOIN " + \
-        " tbl_assigned_compliances ac " + \
+    query = "SELECT count(*) as occ FROM tbl_compliance_history ch INNER JOIN " + \
+        " tbl_assign_compliances ac " + \
         " ON (ch.compliance_id = ac.compliance_id " + \
         " and ac.unit_id = ch.unit_id) INNER JOIN " + \
         " tbl_compliances c ON (ch.compliance_id = c.compliance_id) WHERE "
@@ -87,15 +92,17 @@ def get_overdue_count(db, session_user):
         " IFNULL(ch.completed_on, 0) = 0 "
     other_compliance_count = db.select_one(
         query + other_compliance_condition, param
-    )[0]
+    )["occ"]
     on_occurrence_count = db.select_one(
         query + on_occurrence_condition, param
-    )[0]
+    )["occ"]
     return int(other_compliance_count) + int(on_occurrence_count)
 
-
+#################################################################
+# Compliance Task Details - Get Current Compliances
+#################################################################
 def get_current_compliances_list(
-    db, current_start_count, to_count, session_user, client_id
+    db, current_start_count, to_count, session_user
 ):
     columns = [
         "compliance_history_id", "start_date", "due_date", "documents",
@@ -116,10 +123,10 @@ def get_current_compliances_list(
         " (SELECT  domain_name FROM tbl_domains td WHERE " + \
         " td.domain_id = c.domain_id) as domain_name, " + \
         " (SELECT frequency FROM tbl_compliance_frequency " + \
-        " WHERE frequency_id = c.frequency_id), ch.remarks, " + \
+        " WHERE frequency_id = c.frequency_id) as frequency, ch.remarks, " + \
         " ch.compliance_id, " + \
         " duration_type_id FROM tbl_compliance_history ch " + \
-        " INNER JOIN tbl_assigned_compliances ac " + \
+        " INNER JOIN tbl_assign_compliances ac " + \
         " ON (ac.unit_id = ch.unit_id " + \
         " AND ac.compliance_id = ch.compliance_id) " + \
         " INNER JOIN tbl_compliances c " + \
@@ -129,10 +136,9 @@ def get_current_compliances_list(
         " and IFNULL(ch.due_date, 0) != 0 LIMIT %s, %s ) a " + \
         " ORDER BY due_date ASC "
 
-    rows = db.select_all(query, [session_user, current_start_count, to_count])
-    current_compliances_row = convert_to_dict(rows, columns)
+    rows = db.select_all(query, [session_user, current_start_count, to_count])    
     current_compliances_list = []
-    for compliance in current_compliances_row:
+    for compliance in rows:
         document_name = compliance["document_name"]
         compliance_task = compliance["compliance_task"]
         compliance_name = compliance_task
@@ -217,7 +223,7 @@ def get_current_compliances_list(
 
 def get_upcoming_count(db, session_user):
     all_compliance_query = " SELECT ac.compliance_id, ac.unit_id " + \
-        " FROM tbl_assigned_compliances ac " + \
+        " FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_compliances c " + \
         " ON (ac.compliance_id = c.compliance_id) " + \
         " WHERE " + \
@@ -245,7 +251,7 @@ def get_upcoming_count(db, session_user):
 
 
 def get_upcoming_compliances_list(
-    db, upcoming_start_count, to_count, session_user, client_id
+    db, upcoming_start_count, to_count, session_user
 ):
     query = "SELECT * FROM (SELECT ac.due_date, document_name, " + \
             " compliance_task, compliance_description, format_file, " + \
@@ -255,7 +261,7 @@ def get_upcoming_compliances_list(
             " where d.domain_id = c.domain_id) as domain_name, " + \
             " DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) " + \
             " as start_date " + \
-            " FROM tbl_assigned_compliances  ac " + \
+            " FROM tbl_assign_compliances  ac " + \
             " INNER JOIN tbl_compliances c " + \
             " ON ac.compliance_id = c.compliance_id " + \
             " INNER JOIN tbl_units tu ON tu.unit_id = ac.unit_id " + \
@@ -546,7 +552,7 @@ def get_on_occurrence_compliance_count(
     db, session_user, user_domain_ids, user_unit_ids
 ):
     query = "SELECT count(*) " + \
-            " FROM tbl_assigned_compliances ac " + \
+            " FROM tbl_assign_compliances ac " + \
             " INNER JOIN tbl_compliances c " + \
             " ON (ac.compliance_id = c.compliance_id) " + \
             " INNER JOIN tbl_units u ON (ac.unit_id = u.unit_id) " + \
@@ -577,7 +583,7 @@ def get_on_occurrence_compliances_for_user(
             " compliance_task, compliance_description, " + \
             " duration_type, duration, document_name, u.unit_id, " + \
             " concat(u.unit_code, '-', u.unit_name) " + \
-            " FROM tbl_assigned_compliances ac " + \
+            " FROM tbl_assign_compliances ac " + \
             " INNER JOIN tbl_compliances c " + \
             " ON (ac.compliance_id = c.compliance_id) " + \
             " INNER JOIN tbl_compliance_duration_type cd " + \

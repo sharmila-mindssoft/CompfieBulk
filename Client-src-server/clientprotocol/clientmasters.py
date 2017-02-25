@@ -211,7 +211,8 @@ class ChangeServiceProviderStatus(Request):
         }
 
 ########################################################
-# Get User Management List
+# Get User Management List - Create users
+########################################################
 class UserManagementPrerequisite(Request):
     def __init__(self):
         pass
@@ -224,7 +225,23 @@ class UserManagementPrerequisite(Request):
     def to_inner_structure(self):
         return {
         }
+
 ########################################################
+# Get User Management - List User Details
+########################################################
+class get_user_management_details(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+
+        return GetWorkFlowScoreCard()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 class GetUserPrivileges(Request):
     def __init__(self):
@@ -316,6 +333,37 @@ class GetClientUsers(Request):
 
     def to_inner_structure(self):
         return {
+        }
+###########################################################################
+# User Management - Get User Details
+###########################################################################
+class get_user_management_details(Request):
+    def __init__(
+        self, c_id, legal_entity_id, d_id, csv
+    ):
+        self.c_id = c_id
+        self.legal_entity_id = legal_entity_id
+        self.d_id = d_id
+        self.csv = csv        
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "c_id", "le_id", "d_id", "csv"]
+        )
+        c_id = data.get("c_id")
+        legal_entity_id = data.get("le_id")
+        d_id = data.get("d_id")
+        csv = data.get("csv")
+        return GetWorkFlowScoreCard( 
+            c_id, legal_entity_id, d_id, csv)
+
+    def to_inner_structure(self):
+        return {
+            "c_id": self.c_id,
+            "le_id": self.legal_entity_id,
+            "d_id": self.d_id,
+            "csv": self.csv
         }
 # -----------------------------------------------------------------------------------------------------------------
 # Save Client Users

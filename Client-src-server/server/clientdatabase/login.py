@@ -253,14 +253,13 @@ def save_login_details(db, token, username, password):
     user_id = get_user_id_from_token(db, token)
     user_details = get_client_details_from_userid(db, user_id)
     user_category_id = user_details[0]["user_category_id"]
-    is_active = user_details[0]["is_active"]
-    print "user_category_id>>", user_category_id
+    is_active = user_details[0]["is_active"]    
 
     q = " INSERT INTO tbl_user_login_details(user_id, user_category_id, username, " + \
         " password, is_active) VALUES (%s, %s, %s, %s, %s) "
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
-    delete_emailverification_token()
+    delete_emailverification_token(db, token)
 
     return True
 #################################################################
@@ -268,7 +267,7 @@ def save_login_details(db, token, username, password):
 #################################################################
 def check_username_duplicate(db, uname):
     q = " SELECT count(0) as uname from tbl_user_login_details where username = %s "
-    rows = db.select_one(q, [uname])    
+    rows = db.select_one(q, [uname])
     count = rows.get("uname")
     if count > 0:
         return False

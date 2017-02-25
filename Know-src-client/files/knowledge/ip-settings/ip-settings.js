@@ -173,7 +173,7 @@ function loadForms(){
         
     });
     if(count == 0){
-        var clone = unit_row.clone();
+        var clone = g_row.clone();
         $(".form-name", clone).text("No Forms Found");
         $(".ip-address", clone).hide();
         $(".tbody-form-list").append(clone);    

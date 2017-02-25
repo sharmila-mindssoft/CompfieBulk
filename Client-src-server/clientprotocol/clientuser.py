@@ -1,5 +1,5 @@
 
-from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list)
+from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
 from clientprotocol.parse_structure import (
     parse_structure_VectorType_RecordType_core_UpcomingCompliance,
     parse_structure_CustomTextType_100,
@@ -47,6 +47,8 @@ class Request(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -67,22 +69,26 @@ class Request(object):
 
 class GetCurrentComplianceDetail(Request):
     def __init__(
-        self, current_start_count
+        self, legal_entity_id, current_start_count
     ):
+        self.legal_entity_id = legal_entity_id
         self.current_start_count = current_start_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-            data, ["current_start_count"]
+            data, ["le_id", "current_start_count"]
         )
         current_start_count = data.get("current_start_count")
-        current_start_count = parse_structure_UnsignedIntegerType_32(current_start_count)
-        return GetCurrentComplianceDetail(current_start_count)
+        legal_entity_id = data.get("le_id")
+
+        # current_start_count = parse_structure_UnsignedIntegerType_32(current_start_count)
+        return GetCurrentComplianceDetail(legal_entity_id, current_start_count)
 
     def to_inner_structure(self):
         return {
-            "current_start_count": to_structure_UnsignedIntegerType_32(self.current_start_count)
+            "le_id": self.legal_entity_id,
+            "current_start_count": self.current_start_count
         }
 
 class GetUpcomingComplianceDetail(Request):
@@ -245,6 +251,8 @@ class Response(object):
     def to_structure(self):
         name = type(self).__name__
         inner = self.to_inner_structure()
+        if type(inner) is dict:
+            inner = to_structure_dictionary_values(inner)
         return [name, inner]
 
     def to_inner_structure(self):
@@ -263,10 +271,11 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
+####################################################################
+# Get Compliance Task Details
+####################################################################
 class GetCurrentComplianceDetailSuccess(Response):
-    def __init__(
-        self, current_compliances, current_date, overdue_count, inprogress_count
-    ):
+    def __init__(self, current_compliances, current_date, overdue_count, inprogress_count):
         self.current_compliances = current_compliances
         self.current_date = current_date
         self.overdue_count = overdue_count
@@ -274,29 +283,22 @@ class GetCurrentComplianceDetailSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, [
-                "current_compliances", "current_date", "overdue_count",
-                "inprogress_count"
-            ]
-        )
+        data = parse_dictionary(data, ["current_compliances", "current_date",
+                                       "overdue_count", "inprogress_count"])
         current_compliances = data.get("current_compliances")
-        current_compliances = parse_structure_VectorType_RecordType_core_ActiveCompliance(current_compliances)
         current_date = data.get("current_date")
-        current_date = parse_structure_CustomTextType_20(current_date)
         overdue_count = data.get("overdue_count")
-        overdue_count = parse_structure_UnsignedIntegerType_32(overdue_count)
         inprogress_count = data.get("inprogress_count")
-        inprogress_count = parse_structure_UnsignedIntegerType_32(inprogress_count)
         return GetCurrentComplianceDetailSuccess(
-            current_compliances, current_date. overdue_count, inprogress_count
+            current_compliances, current_date, overdue_count, inprogress_count
         )
 
     def to_inner_structure(self):
         return {
-            "current_compliances": to_structure_VectorType_RecordType_core_ActiveCompliance(self.current_compliances),
-            "current_date" : to_structure_CustomTextType_20(self.current_date),
-            "overdue_count" : to_structure_UnsignedIntegerType_32(self.overdue_count),
-            "inprogress_count": to_structure_UnsignedIntegerType_32(self.inprogress_count)
+            "current_compliances": self.current_compliances,
+            "current_date" : self.current_date,
+            "overdue_count" : self.overdue_count,
+            "inprogress_count": self.inprogress_count
         }
 
 class GetUpcomingComplianceDetailSuccess(Response):

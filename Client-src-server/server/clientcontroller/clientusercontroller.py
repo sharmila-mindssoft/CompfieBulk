@@ -23,32 +23,16 @@ __all__ = [
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_user_request(request, db):
-    session_token = request.session_token
-    client_info = session_token.split("-")
+def process_client_user_request(request, db, session_user):    
     request = request.request
-    client_id = int(client_info[0])
-    session_user = db.validate_session_token(session_token)
-    if session_user is None:
-        return clientlogin.InvalidSessionToken()
 
     if type(request) is clientuser.GetCurrentComplianceDetail:
-        logger.logClientApi("GetCurrentComplianceDetail", "process begin")
-        logger.logClientApi("------", str(time.time()))
         result = process_get_current_compliance_detail(
-            db, request, session_user, client_id
-        )
-        logger.logClientApi("GetCurrentComplianceDetail", "process end")
-        logger.logClientApi("------", str(time.time()))
+            db, request, session_user )
 
-    if type(request) is clientuser.GetUpcomingComplianceDetail:
-        logger.logClientApi("GetUpcomingComplianceDetail", "process begin")
-        logger.logClientApi("------", str(time.time()))
+    if type(request) is clientuser.GetUpcomingComplianceDetail:        
         result = process_get_upcoming_compliance_detail(
-            db, request, session_user, client_id
-        )
-        logger.logClientApi("GetUpcomingComplianceDetail", "process end")
-        logger.logClientApi("------", str(time.time()))
+            db, request, session_user )
 
     if type(request) is clientuser.UpdateComplianceDetail:
         logger.logClientApi("UpdateComplianceDetail", "process begin")
@@ -85,12 +69,12 @@ def process_client_user_request(request, db):
 # given user
 ########################################################
 def process_get_current_compliance_detail(
-    db, request, session_user, client_id
+    db, request, session_user
 ):
     current_start_count = request.current_start_count
     to_count = RECORD_DISPLAY_COUNT
     current_compliances_list = get_current_compliances_list(
-        db, current_start_count, to_count, session_user, client_id
+        db, current_start_count, to_count, session_user
     )
     current_date_time = get_date_time_in_date()
     str_current_date_time = datetime_to_string_time(current_date_time)
@@ -105,12 +89,12 @@ def process_get_current_compliance_detail(
 
 
 def process_get_upcoming_compliance_detail(
-    db, request, session_user, client_id
+    db, request, session_user
 ):
     upcoming_start_count = request.upcoming_start_count
     to_count = RECORD_DISPLAY_COUNT
     upcoming_compliances_list = get_upcoming_compliances_list(
-        db, upcoming_start_count, to_count, session_user, client_id
+        db, upcoming_start_count, to_count, session_user
     )
     total_count = get_upcoming_count(db, session_user)
     return clientuser.GetUpcomingComplianceDetailSuccess(

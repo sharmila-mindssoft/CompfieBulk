@@ -2,10 +2,12 @@
 var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
+var filterCountryName = $(".filter-country-name");
 
 var legalEntity = $("#legal-entity");
 var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
+var filterLegalEntityName = $(".filter-legal-entity-name");
 
 var domain = $("#domain");
 var domainId = $("#domain-id");
@@ -27,7 +29,6 @@ var reportTable = $("#report-table");
 var REPORT = null;
 
 LEWiseScoreCard = function() {
-    this._countries = [];
     this._entities = [];
     this._domains = [];
     this._report_data = [];
@@ -35,23 +36,18 @@ LEWiseScoreCard = function() {
 
 LEWiseScoreCard.prototype.fetchSearchList = function() {
     t_this = this;
-    /*var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._countries = object.countries;
-    t_this._entities = object.entities;*/
-    t_this._countries = client_mirror.getUserCountry();
-    t_this._entities = client_mirror.getUserLegalEntity();
+    t_this._entities = client_mirror.getSelectedLegalEntity();
 };
 
 function PageControls() {
 
     country.keyup(function(e) {
         var text_val = country.val().trim();
-        var countryList = REPORT._countries;
+        var countryList = REPORT._entities;
         if (countryList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+            displayMessage(message.country_required);
+        var condition_fields = [];
+        var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -60,6 +56,8 @@ function PageControls() {
     legalEntity.keyup(function(e) {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
+        if (legalEntityList.length == 0 && text_val != '')
+            displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
@@ -70,6 +68,8 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
+        if (domainList.length == 0 && text_val != '')
+            displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, 1];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
@@ -490,9 +490,34 @@ LEWiseScoreCard.prototype.exportReportValues = function() {
 
 LEWiseScoreCard.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage("Domain name exists");
+        displayMessage("Domain name exists");
     } else {
-        this.displayMessage(error);
+        displayMessage(error);
+    }
+};
+
+LEWiseScoreCard.prototype.loadEntityDetails = function(){
+    t_this = this;
+    if(t_this._entities.length > 1) {
+        country.parent().show();
+        filterCountryName.hide();
+        
+        legalEntity.parent().show();
+        filterLegalEntityName.hide();
+    } else {
+        filterCountryName.show();
+        filterCountryName.html(t_this._entities[0]["c_name"]);
+        countryId.val(t_this._entities[0]["c_id"]);
+        country.parent().hide();
+        country.val(t_this._entities[0]["c_name"]);
+
+        filterLegalEntityName.show();
+        filterLegalEntityName.html(t_this._entities[0]["le_name"]);
+        legalEntityId.val(t_this._entities[0]["le_id"]);
+        legalEntity.parent().hide();
+        legalEntity.val(t_this._entities[0]["le_name"]);
+
+        REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
     }
 };
 
@@ -501,4 +526,5 @@ REPORT = new LEWiseScoreCard();
 $(document).ready(function() {
     PageControls();
     REPORT.loadSearch();
+    REPORT.loadEntityDetails();
 });
