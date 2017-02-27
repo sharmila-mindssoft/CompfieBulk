@@ -155,6 +155,7 @@ ReviewSettingsPage.prototype.renderTypeList = function(data) {
 }
 
 ReviewSettingsPage.prototype.getUnitList = function(){
+    $(".UnitList").empty();
     t_this = this;
     d_id = DomainId.val();
     if(FType.children(':selected').val() == ""){

@@ -401,7 +401,7 @@ def get_units_for_user(db, user_id):
     if user_id != admin_id:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_user_units AS t1 " + \
                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
@@ -409,9 +409,21 @@ def get_units_for_user(db, user_id):
         rows = db.select_all(query, [user_id])
     else:
         print "else"
+#         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+#                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+# <<<<<<< HEAD
+#                 "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+#                 "FROM tbl_user_units AS t1 " + \
+#                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
+# =======
+#                 "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+#                 "FROM tbl_units AS t2 " + \
+# >>>>>>> Usha/phase2
+#                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
+#                 "WHERE t2.is_closed = 0 ORDER BY unit_name"
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_units AS t2 " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
                 "WHERE t2.is_closed = 0 ORDER BY unit_name"
@@ -538,7 +550,7 @@ def return_units_assign(units):
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
         "t1.employee_code, t1.is_active from tbl_users as t1 " + \
-        "inner join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
+        "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
     rows = db.select_all(query)
     return return_client_users(rows)
 
@@ -668,6 +680,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "FROM tbl_legal_entities as t1 " + \
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
             "WHERE contract_to >= CURDATE() and is_closed = 0"
+        print q
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :

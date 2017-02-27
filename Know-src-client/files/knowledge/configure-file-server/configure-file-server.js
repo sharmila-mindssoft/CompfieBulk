@@ -67,6 +67,7 @@ function clearFields(){
     file_server_name.val("");
     file_server_ip.val("");
     file_server_port.val("");
+    file_server_name.focus();
 }
 
 btnAdd.click(function(){
@@ -207,7 +208,7 @@ $(function () {
   initialize("list");
 
   //key press for IP address
-    db_server_ip.on('keypress', function (e) {
+    file_server_ip.on('keypress', function (e) {
         var k = e.which || e.keyCode;
         var ok = k >= 48 && k <= 57 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
                 k == Key.RIGHT;
@@ -218,7 +219,7 @@ $(function () {
     });
 
     //key press for IP address
-    db_server_port.on('keypress', function (e) {
+    file_server_port.on('keypress', function (e) {
         var k = e.which || e.keyCode;
         var ok = k >= 48 && k <= 57 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
                 k == Key.RIGHT;

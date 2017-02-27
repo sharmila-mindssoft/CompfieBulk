@@ -187,7 +187,6 @@ class API(object):
 
             print self._le_databases
             print self._group_databases
-
             def client_added(clients):
                 print clients
                 for client in clients:
@@ -337,6 +336,7 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
+            print actual_data
             # print company_id
             request_data = request_data_type.parse_structure(
                 actual_data
@@ -556,8 +556,9 @@ class API(object):
                 le_ids = request_data.request.legal_entity_ids
                 performed_les = []
                 performed_response = None
-
+                print le_ids
                 for le in le_ids :
+                    print le
                     db_cons_info = self._le_databases.get(le)
 
                     if db_cons_info is None:

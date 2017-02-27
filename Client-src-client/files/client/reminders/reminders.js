@@ -9,7 +9,6 @@ function loadMessages(data) {
         isEmpty = false;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
-
         rowClone.on('click', function(e) {
             var row = $(this);
             client_mirror.updateNotificationStatus(le_ids, v.notification_id, true, function(error, response) {

@@ -716,8 +716,8 @@ def reorder_menu(menus):
         new_menu["Report"] = menus["Report"]
     if "Settings" in menus:
         new_menu["Settings"] = menus["Settings"]
-    if "My Accounts" in menus:
-        new_menu["My Accounts"] = menus["My Accounts"]
+    # if "My Accounts" in menus:
+    #     new_menu["My Accounts"] = menus["My Accounts"]
     return new_menu
 
 

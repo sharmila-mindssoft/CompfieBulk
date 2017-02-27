@@ -256,39 +256,45 @@ LEWiseScoreCard.prototype.inprogressUnitView = function(data) {
     var j =0;
     var clone = $('#template #inprogress-unit-table').clone();
     var name = "";
-    $.each(data, function(k, v) {
-        var total_task = parseInt(v.to_complete) + parseInt(v.to_approve) + parseInt(v.to_concur)
-        if(name != "") {
-            var cloneone = $('.report-row', clone).last().clone();
-            $('.task-row-title', cloneone).text(v.unit);
-            $('.to-complete', cloneone).text(v.to_complete);
-            $('.to-concur', cloneone).text(v.to_concur);
-            $('.to-approve', cloneone).text(v.to_approve);
-            $('.total-task', cloneone).text(total_task);
-            $('.table-body', clone).append(cloneone);
-            name = name + v.unit;
-        } else {
-            $('.task-row-title', clone).text(v.unit);
-            $('.to-complete', clone).text(v.to_complete);
-            $('.to-concur', clone).text(v.to_concur);
-            $('.to-approve', clone).text(v.to_approve);
-            $('.total-task', clone).text(total_task);
-            name = name + v.unit;
+    $(".domain-score-card").show();
+    $(".record-not-found").hide();
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var total_task = parseInt(v.to_complete) + parseInt(v.to_approve) + parseInt(v.to_concur);
+            if(name != "") {
+                var cloneone = $('.report-row', clone).last().clone();
+                $('.task-row-title', cloneone).text(v.unit);
+                $('.to-complete', cloneone).text(v.to_complete);
+                $('.to-concur', cloneone).text(v.to_concur);
+                $('.to-approve', cloneone).text(v.to_approve);
+                $('.total-task', cloneone).text(total_task);
+                $('.table-body', clone).append(cloneone);
+                name = name + v.unit;
+            } else {
+                $('.task-row-title', clone).text(v.unit);
+                $('.to-complete', clone).text(v.to_complete);
+                $('.to-concur', clone).text(v.to_concur);
+                $('.to-approve', clone).text(v.to_approve);
+                $('.total-task', clone).text(total_task);
+                name = name + v.unit;
+            }
+            to_complete_total = to_complete_total + parseInt(v.to_complete);
+            to_concur_total = to_concur_total + parseInt(v.to_concur);
+            to_approve_total = to_approve_total + parseInt(v.to_approve);
+            grand_total = grand_total + total_task;
+            j = j + 1;
+        });
+        if(j > 1) {
+            $('.to-complete-total', clone).text(to_complete_total);
+            $('.to-concur-total', clone).text(to_concur_total);
+            $('.to-approve-total', clone).text(to_approve_total);
+            $('.grand-total', clone).text(grand_total);
+            $('.report-total-row', clone).attr("style", "");
         }
-        to_complete_total = to_complete_total + parseInt(v.to_complete);
-        to_concur_total = to_concur_total + parseInt(v.to_concur);
-        to_approve_total = to_approve_total + parseInt(v.to_approve);
-        grand_total = grand_total + total_task;
-        j = j + 1;
-    });
-    if(j > 1) {
-        $('.to-complete-total', clone).text(to_complete_total);
-        $('.to-concur-total', clone).text(to_concur_total);
-        $('.to-approve-total', clone).text(to_approve_total);
-        $('.grand-total', clone).text(grand_total);
-        $('.report-total-row', clone).attr("style", "");
+        statusDetails.append(clone);
+    } else {
+        statusDetails.html('<div class="col-sm-12">Record Not Found!<br></div>');
     }
-    statusDetails.append(clone);
 };
 
 LEWiseScoreCard.prototype.inprogressUserView = function(data) {
@@ -303,39 +309,43 @@ LEWiseScoreCard.prototype.inprogressUserView = function(data) {
     var j =0;
     var clone = $('#template #inprogress-user-table').clone();
     var name = "";
-    $.each(data, function(k, v) {
-        var total_task = parseInt(v.to_complete) + parseInt(v.to_approve) + parseInt(v.to_concur)
-        if(name != "") {
-            var cloneone = $('.report-row', clone).last().clone();
-            $('.task-row-title', cloneone).text(v.user_name);
-            $('.to-complete', cloneone).text(v.to_complete);
-            $('.to-concur', cloneone).text(v.to_concur);
-            $('.to-approve', cloneone).text(v.to_approve);
-            $('.total-task', cloneone).text(total_task);
-            $('.table-body', clone).append(cloneone);
-            name = name + v.user_name;
-        } else {
-            $('.task-row-title', clone).text(v.user_name);
-            $('.to-complete', clone).text(v.to_complete);
-            $('.to-concur', clone).text(v.to_concur);
-            $('.to-approve', clone).text(v.to_approve);
-            $('.total-task', clone).text(total_task);
-            name = name + v.user_name;
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var total_task = parseInt(v.to_complete) + parseInt(v.to_approve) + parseInt(v.to_concur)
+            if(name != "") {
+                var cloneone = $('.report-row', clone).last().clone();
+                $('.task-row-title', cloneone).text(v.user_name);
+                $('.to-complete', cloneone).text(v.to_complete);
+                $('.to-concur', cloneone).text(v.to_concur);
+                $('.to-approve', cloneone).text(v.to_approve);
+                $('.total-task', cloneone).text(total_task);
+                $('.table-body', clone).append(cloneone);
+                name = name + v.user_name;
+            } else {
+                $('.task-row-title', clone).text(v.user_name);
+                $('.to-complete', clone).text(v.to_complete);
+                $('.to-concur', clone).text(v.to_concur);
+                $('.to-approve', clone).text(v.to_approve);
+                $('.total-task', clone).text(total_task);
+                name = name + v.user_name;
+            }
+            to_complete_total = to_complete_total + parseInt(v.to_complete);
+            to_concur_total = to_concur_total + parseInt(v.to_concur);
+            to_approve_total = to_approve_total + parseInt(v.to_approve);
+            grand_total = grand_total + total_task;
+            j = j + 1;
+        });
+        if(j > 1) {
+            $('.to-complete-total', clone).text(to_complete_total);
+            $('.to-concur-total', clone).text(to_concur_total);
+            $('.to-approve-total', clone).text(to_approve_total);
+            $('.grand-total', clone).text(grand_total);
+            $('.report-total-row', clone).attr("style", "");
         }
-        to_complete_total = to_complete_total + parseInt(v.to_complete);
-        to_concur_total = to_concur_total + parseInt(v.to_concur);
-        to_approve_total = to_approve_total + parseInt(v.to_approve);
-        grand_total = grand_total + total_task;
-        j = j + 1;
-    });
-    if(j > 1) {
-        $('.to-complete-total', clone).text(to_complete_total);
-        $('.to-concur-total', clone).text(to_concur_total);
-        $('.to-approve-total', clone).text(to_approve_total);
-        $('.grand-total', clone).text(grand_total);
-        $('.report-total-row', clone).attr("style", "");
+        statusDetails.append(clone);
+    } else {
+        statusDetails.html('<div class="col-sm-12">Record Not Found!<br></div>');
     }
-    statusDetails.append(clone);
 };
 
 LEWiseScoreCard.prototype.completedUnitView = function(data) {
@@ -349,35 +359,39 @@ LEWiseScoreCard.prototype.completedUnitView = function(data) {
     var j =0;
     var clone = $('#template #completed-unit-table').clone();
     var name = "";
-    $.each(data, function(k, v) {
-        var total_task = parseInt(v.delayed_count) + parseInt(v.complied_count)
-        if(name != "") {
-            var cloneone = $('.report-row', clone).last().clone();
-            $('.task-row-title', cloneone).text(v.unit);
-            $('.delayed-count', cloneone).text(v.delayed_count);
-            $('.complied-count', cloneone).text(v.complied_count);
-            $('.total-task', cloneone).text(total_task);
-            $('.table-body', clone).append(cloneone);
-            name = name + v.unit;
-        } else {
-            $('.task-row-title', clone).text(v.unit);
-            $('.delayed-count', clone).text(v.delayed_count);
-            $('.complied-count', clone).text(v.complied_count);
-            $('.total-task', clone).text(total_task);
-            name = name + v.unit;
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var total_task = parseInt(v.delayed_count) + parseInt(v.complied_count)
+            if(name != "") {
+                var cloneone = $('.report-row', clone).last().clone();
+                $('.task-row-title', cloneone).text(v.unit);
+                $('.delayed-count', cloneone).text(v.delayed_count);
+                $('.complied-count', cloneone).text(v.complied_count);
+                $('.total-task', cloneone).text(total_task);
+                $('.table-body', clone).append(cloneone);
+                name = name + v.unit;
+            } else {
+                $('.task-row-title', clone).text(v.unit);
+                $('.delayed-count', clone).text(v.delayed_count);
+                $('.complied-count', clone).text(v.complied_count);
+                $('.total-task', clone).text(total_task);
+                name = name + v.unit;
+            }
+            delayed_count_total = delayed_count_total + parseInt(v.delayed_count);
+            complied_count_total = complied_count_total + parseInt(v.complied_count);
+            grand_total = grand_total + total_task;
+            j = j + 1;
+        });
+        if(j > 1) {
+            $('.delayed-count-total', clone).text(delayed_count_total);
+            $('.complied-count-total', clone).text(complied_count_total);
+            $('.grand-total', clone).text(grand_total);
+            $('.report-total-row', clone).attr("style", "");
         }
-        delayed_count_total = delayed_count_total + parseInt(v.delayed_count);
-        complied_count_total = complied_count_total + parseInt(v.complied_count);
-        grand_total = grand_total + total_task;
-        j = j + 1;
-    });
-    if(j > 1) {
-        $('.delayed-count-total', clone).text(delayed_count_total);
-        $('.complied-count-total', clone).text(complied_count_total);
-        $('.grand-total', clone).text(grand_total);
-        $('.report-total-row', clone).attr("style", "");
+        statusDetails.append(clone);
+    } else {
+        statusDetails.html('<div class="col-sm-12">Record Not Found!<br></div>');
     }
-    statusDetails.append(clone);
 };
 
 LEWiseScoreCard.prototype.completedUserView = function(data) {
@@ -391,35 +405,39 @@ LEWiseScoreCard.prototype.completedUserView = function(data) {
     var j =0;
     var clone = $('#template #completed-user-table').clone();
     var name = "";
-    $.each(data, function(k, v) {
-        var total_task = parseInt(v.delayed_count) + parseInt(v.complied_count)
-        if(name != "") {
-            var cloneone = $('.report-row', clone).last().clone();
-            $('.task-row-title', cloneone).text(v.user_name);
-            $('.delayed-count', cloneone).text(v.delayed_count);
-            $('.complied-count', cloneone).text(v.complied_count);
-            $('.total-task', cloneone).text(total_task);
-            $('.table-body', clone).append(cloneone);
-            name = name + v.user_name;
-        } else {
-            $('.task-row-title', clone).text(v.user_name);
-            $('.delayed-count', clone).text(v.delayed_count);
-            $('.complied-count', clone).text(v.complied_count);
-            $('.total-task', clone).text(total_task);
-            name = name + v.user_name;
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var total_task = parseInt(v.delayed_count) + parseInt(v.complied_count)
+            if(name != "") {
+                var cloneone = $('.report-row', clone).last().clone();
+                $('.task-row-title', cloneone).text(v.user_name);
+                $('.delayed-count', cloneone).text(v.delayed_count);
+                $('.complied-count', cloneone).text(v.complied_count);
+                $('.total-task', cloneone).text(total_task);
+                $('.table-body', clone).append(cloneone);
+                name = name + v.user_name;
+            } else {
+                $('.task-row-title', clone).text(v.user_name);
+                $('.delayed-count', clone).text(v.delayed_count);
+                $('.complied-count', clone).text(v.complied_count);
+                $('.total-task', clone).text(total_task);
+                name = name + v.user_name;
+            }
+            delayed_count_total = delayed_count_total + parseInt(v.delayed_count);
+            complied_count_total = complied_count_total + parseInt(v.complied_count);
+            grand_total = grand_total + total_task;
+            j = j + 1;
+        });
+        if(j > 1) {
+            $('.delayed-count-total', clone).text(delayed_count_total);
+            $('.complied-count-total', clone).text(complied_count_total);
+            $('.grand-total', clone).text(grand_total);
+            $('.report-total-row', clone).attr("style", "");
         }
-        delayed_count_total = delayed_count_total + parseInt(v.delayed_count);
-        complied_count_total = complied_count_total + parseInt(v.complied_count);
-        grand_total = grand_total + total_task;
-        j = j + 1;
-    });
-    if(j > 1) {
-        $('.delayed-count-total', clone).text(delayed_count_total);
-        $('.complied-count-total', clone).text(complied_count_total);
-        $('.grand-total', clone).text(grand_total);
-        $('.report-total-row', clone).attr("style", "");
+        statusDetails.append(clone);
+    } else {
+        statusDetails.html('<div class="col-sm-12">Record Not Found!<br></div>');
     }
-    statusDetails.append(clone);
 };
 
 LEWiseScoreCard.prototype.overdueUnitView = function(data) {
@@ -431,26 +449,30 @@ LEWiseScoreCard.prototype.overdueUnitView = function(data) {
     var j =0;
     var clone = $('#template #overdue-unit-table').clone();
     var name = "";
-    $.each(data, function(k, v) {
-        if(name != "") {
-            var cloneone = $('.report-row', clone).last().clone();
-            $('.task-row-title', cloneone).text(v.unit);
-            $('.overdue-count', cloneone).text(v.overdue_count);
-            $('.table-body', clone).append(cloneone);
-            name = name + v.unit;
-        } else {
-            $('.task-row-title', clone).text(v.unit);
-            $('.overdue-count', clone).text(v.overdue_count);
-            name = name + v.unit;
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            if(name != "") {
+                var cloneone = $('.report-row', clone).last().clone();
+                $('.task-row-title', cloneone).text(v.unit);
+                $('.overdue-count', cloneone).text(v.overdue_count);
+                $('.table-body', clone).append(cloneone);
+                name = name + v.unit;
+            } else {
+                $('.task-row-title', clone).text(v.unit);
+                $('.overdue-count', clone).text(v.overdue_count);
+                name = name + v.unit;
+            }
+            overdue_total = overdue_total + parseInt(v.overdue_count);
+            j = j + 1;
+        });
+        if(j > 1) {
+            $('.overdue-count-total', clone).text(overdue_total);
+            $('.report-total-row', clone).attr("style", "");
         }
-        overdue_total = overdue_total + parseInt(v.overdue_count);
-        j = j + 1;
-    });
-    if(j > 1) {
-        $('.overdue-count-total', clone).text(overdue_total);
-        $('.report-total-row', clone).attr("style", "");
+        statusDetails.append(clone);
+    } else {
+        statusDetails.html('<div class="col-sm-12">Record Not Found!<br></div>');
     }
-    statusDetails.append(clone);
 };
 
 LEWiseScoreCard.prototype.overdueUserView = function(data) {
@@ -462,26 +484,30 @@ LEWiseScoreCard.prototype.overdueUserView = function(data) {
     var j =0;
     var clone = $('#template #overdue-user-table').clone();
     var name = "";
-    $.each(data, function(k, v) {
-        if(name != "") {
-            var cloneone = $('.report-row', clone).last().clone();
-            $('.task-row-title', cloneone).text(v.user_name);
-            $('.overdue-count', cloneone).text(v.overdue_count);
-            $('.table-body', clone).append(cloneone);
-            name = name + v.user_name;
-        } else {
-            $('.task-row-title', clone).text(v.user_name);
-            $('.overdue-count', clone).text(v.overdue_count);
-            name = name + v.user_name;
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            if(name != "") {
+                var cloneone = $('.report-row', clone).last().clone();
+                $('.task-row-title', cloneone).text(v.user_name);
+                $('.overdue-count', cloneone).text(v.overdue_count);
+                $('.table-body', clone).append(cloneone);
+                name = name + v.user_name;
+            } else {
+                $('.task-row-title', clone).text(v.user_name);
+                $('.overdue-count', clone).text(v.overdue_count);
+                name = name + v.user_name;
+            }
+            overdue_total = overdue_total + parseInt(v.overdue_count);
+            j = j + 1;
+        });
+        if(j > 1) {
+            $('.overdue-count-total', clone).text(overdue_total);
+            $('.report-total-row', clone).attr("style", "");
         }
-        overdue_total = overdue_total + parseInt(v.overdue_count);
-        j = j + 1;
-    });
-    if(j > 1) {
-        $('.overdue-count-total', clone).text(overdue_total);
-        $('.report-total-row', clone).attr("style", "");
+        statusDetails.append(clone);
+    } else {
+        statusDetails.html('<div class="col-sm-12">Record Not Found!<br></div>');
     }
-    statusDetails.append(clone);
 };
 
 LEWiseScoreCard.prototype.exportReportValues = function() {

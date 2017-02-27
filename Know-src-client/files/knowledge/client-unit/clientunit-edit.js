@@ -730,6 +730,7 @@ function unitrow_close(evt) {
 }
 //to remove rows in add mode
 function unitrow_remove(evt) {
+    unitcodeautogenerateids = unitcodeautogenerateids - 1;
     split_evt_spaces = evt.split(' ');
     split_evt_hyphen = split_evt_spaces[5].split('-');
     var countval = split_evt_hyphen[2] + "-" + split_evt_hyphen[3];

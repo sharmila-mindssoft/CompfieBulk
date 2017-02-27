@@ -400,6 +400,7 @@ var message = {
   'mobile_max10': 'Mobile No. maximum 10 characters Allowed',
   'email_required': 'Enter Email ID ',
   'address_max500': 'Address maximum 500 characters Allowed',
+  'unlock_permission': 'You don\'t have lock/unlock permission',
 };
 
 function clearMessage() {
