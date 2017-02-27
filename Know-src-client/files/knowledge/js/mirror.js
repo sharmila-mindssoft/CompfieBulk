@@ -494,7 +494,11 @@ function initMirror() {
         ];
         apiRequest(callerName, request, callback);
     }
-    function saveDBEnv(client_db_id, client_id, le_id, machine_id, db_server_id, le_db_server_id, file_server_id, cl_ids, le_ids, callback){
+    function saveDBEnv(
+      client_db_id, client_id, le_id, machine_id, db_server_id, le_db_server_id, file_server_id,
+      cl_ids, le_ids, old_grp_app_id, old_grp_db_s_id, old_le_db_s_id, old_le_f_s_id,
+      new_cl_ids, new_grp_le_ids, new_le_le_ids, new_le_f_s_ids, callback
+    ){
         callerName = "console_admin";
         var request = [
             "SaveAllocatedDBEnv",
@@ -507,7 +511,15 @@ function initMirror() {
               "le_db_server_id": le_db_server_id,
               "file_server_id": file_server_id,
               "console_cl_ids": cl_ids,
-              "console_le_ids": le_ids
+              "console_le_ids": le_ids,
+              "old_grp_app_id": old_grp_app_id,
+              "old_grp_db_s_id": old_grp_db_s_id,
+              "old_le_db_s_id": old_le_db_s_id,
+              "old_le_f_s_id": old_le_f_s_id,
+              "new_cl_ids": new_cl_ids,
+              "new_grp_le_ids": new_grp_le_ids,
+              "new_le_le_ids": new_le_le_ids,
+              "new_le_f_s_ids": new_le_f_s_ids
             }
         ];
         apiRequest(callerName, request, callback);
