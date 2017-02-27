@@ -2450,7 +2450,7 @@ class ActiveCompliance(object):
                 "compliance_task_frequency", "domain_name", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
                 "format_file_name", "unit_name", "address", "compliance_description",
-                "remarks", "compliance_id", "file_names", "download_url"
+                "remarks", "compliance_id", "file_names", "compliance_download_url"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -2487,7 +2487,7 @@ class ActiveCompliance(object):
         # compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         file_names = data.get("file_names")
         # file_names = parse_structure_OptionalType_VectorType_CustomTextType_500(file_names)
-        download_url = data.get("download_url")
+        download_url = data.get("compliance_download_url")
         # download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
         return ActiveCompliance(
             compliance_history_id, compliance_name,
@@ -2516,7 +2516,7 @@ class ActiveCompliance(object):
             "remarks" : self.remarks,
             "compliance_id": self.compliance_id,
             "file_names": self.file_names,
-            "download_url": self.download_url
+            "compliance_download_url": self.download_url
         }
 
 #

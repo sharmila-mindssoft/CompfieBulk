@@ -1,0 +1,162 @@
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<div class="content-page">
+<div class="content">
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+    <div class="btn-group pull-right m-t-5 m-b-20">
+        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light" aria-expanded="false" onclick="parent.location='/domain-user-management/create'"> <i class="fa fa-plus-circle"></i> Add </button>
+        </div>
+        <h3 class="page-title">User Management</h3>
+        <div class="card-box">
+            <div class="row bg-lightdark">
+              <form class="form-horizontal" role="form">
+                <div class="col-lg-4 m-b-5">
+                  <div class="form-group m-b-0 pull-left">
+                    <label class="col-md-12 control-label">Total Licence(s): 20 - Used: 3 | Remaining: 17</label>
+                  </div>
+                </div>
+                <!-- end col -->
+                <div class="col-lg-8">
+                  <div class="form-group m-b-0 pull-right">
+                    <label class="col-sm-12 control-label"><i class="fa fa-square text-danger"></i> Inhouse User &nbsp; &nbsp; <i class="fa fa-square"></i> Service Provider User</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <!-- end col -->
+            <div class="row">
+            <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+              <thead>
+                <tr>
+                  <th width="1%">#</th>
+                  <th width="05%" class="text-center">Category</th>
+                  <th width="10%">Users</th>
+                  <th width="10%">User ID</th>
+                  <th width="10%">Email ID</th>
+                  <th width="10%">Mobile Number</th>
+                  <th width="10%" class="text-center">Registration Email</th>
+                  <th width="06%" class="text-center">Edit</th>
+                  <th width="06%" class="text-center">Status</th>
+                  <th width="06%" class="text-center">Disable</th>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td align="center" >
+                      <div class="btn-group">
+                          <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> 
+                          All
+                          <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu">
+                              <li><a href="#">All</a></li>
+                              <li><a href="#"><i class="fa fa-square text-danger"></i> Inhouse User</a></li>
+                              <li><a href="#"><i class="fa fa-square"></i> Service Provider User</a></li>
+                          </ul>
+                      </div>
+                  </td>
+                  <td>
+                    <div class="col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm"  />
+                        <i class="fa fa-filter form-control-feedback"></i>
+                      </div>
+                  </td>
+                  <td>
+                    <div class="col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm"  />
+                        <i class="fa fa-filter form-control-feedback"></i>
+                      </div>
+                  </td>
+                  <td>
+                    <div class="col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm"  />
+                        <i class="fa fa-filter form-control-feedback"></i>
+                      </div>
+                  </td>
+                  <td>
+                    <div class="col-sm-12 no-padding">
+                        <input type="text" class="form-control input-sm"  />
+                        <i class="fa fa-filter form-control-feedback"></i>
+                      </div>
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td align="center" >
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default dropdown-toggle waves-effect" data-toggle="dropdown" aria-expanded="true"> 
+                                All
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">All</a></li>
+                                <li><a href="#"><i class="fa fa-check text-success"></i> Active</a></li>
+                                <li><a href="#"><i class="fa fa-times text-danger"></i> Inactive</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                  <td></td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td class="text-center"><i class="fa fa-square text-danger"></i></td>
+                  <td>EMP0010 - Hariharan</td>
+                  <td>&nbsp;</td>
+                  <td>hariharan@domain.com</td>
+                  <td>9876543211</td>
+                  <!-- <td>Group 3</td>
+                  <td>Finance Law</td>
+                  <td><i class="zmdi zmdi-info" data-toggle="tooltip" title="12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> RG1001 - Corporate Office</td> -->
+                  <td class="text-center"><a href="#">Resend</a></td>
+                  <td class="icon-3x text-center">
+                      <i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i>
+                    </td>
+                    <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Deactivate" data-original-title="Tooltip on top"></i></td>
+                    <td class="icon-3x text-center"><i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Block" data-original-title="Tooltip on top"></i></td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td class="text-center"><i class="fa fa-square text-danger"></i></td>
+                  <td>EMP0012 - Sivaraman</td>
+                  <td>siva</td>
+                  <td>sivaraman@domain.com</td>
+                  <td>9876543210</td>
+                  <td class="text-center">&nbsp;</td>
+                  <td class="icon-3x text-center">
+                      <i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i>
+                    </td>
+                    <td class="icon-3x text-center"><i class="fa fa-times text-danger c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Activate" data-original-title="Tooltip on top"></i></td>
+                    <td class="icon-3x text-center"><i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Block" data-original-title="Tooltip on top"></i></td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td class="text-center"><i class="fa fa-square"></i></td>
+                  <td>ARM Solutions</td>
+                  <td>arm5242</td>
+                  <td>armsolutions@domain.com</td>
+                  <td>9345678912</td>
+                  <td class="text-center">&nbsp;</td>
+                  <td class="icon-3x text-center">
+                      <i class="fa fa-pencil c-pointer text-primary"  data-toggle="tooltip" data-placement="top" title="Click here to Edit" data-original-title="Tooltip on top"></i>
+                    </td>
+                    <td class="icon-3x text-center"><i class="fa fa-check text-success c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Deactivate" data-original-title="Tooltip on top"></i></td>
+                    <td class="icon-3x text-center"><i class="fa fa-ban text-danger c-pointer" data-toggle="tooltip" data-placement="top" title="Can not able to enable" data-original-title="Tooltip on top"></i></td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+        </div>
+        <!-- end row -->
+      </div>
+    </div>
+    <!-- end col -->
+  </div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+var resizefunc = [];
+</script>
+{% endblock %}

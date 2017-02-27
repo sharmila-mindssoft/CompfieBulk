@@ -1,0 +1,194 @@
+2017-02-24 10:01:36,716 - client_logger - exception : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 161, in server_added
+    db_cons = self.client_connection_pool(company, company_id, "con_pool_le")
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 122, in client_connection_pool
+    port=data.db_ip.port
+  File "C:\Python27\lib\site-packages\mysql\connector\pooling.py", line 159, in __init__
+    self.add_connection()
+  File "C:\Python27\lib\site-packages\mysql\connector\pooling.py", line 270, in add_connection
+    cnx = MySQLConnection(**self._cnx_config)
+  File "C:\Python27\lib\site-packages\mysql\connector\connection.py", line 95, in __init__
+    self.connect(**kwargs)
+  File "C:\Python27\lib\site-packages\mysql\connector\abstracts.py", line 716, in connect
+    self._open_connection()
+  File "C:\Python27\lib\site-packages\mysql\connector\connection.py", line 210, in _open_connection
+    self._ssl)
+  File "C:\Python27\lib\site-packages\mysql\connector\connection.py", line 144, in _do_auth
+    self._auth_switch_request(username, password)
+  File "C:\Python27\lib\site-packages\mysql\connector\connection.py", line 177, in _auth_switch_request
+    raise errors.get_exception(packet)
+OperationalError: 1040 (08004): Too many connections
+ 
+
+2017-02-24 10:01:39,187 - client_logger - clientmain.py-le_database-added : 1040 (08004): Too many connections 
+
+2017-02-24 13:48:46,914 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2017-02-24 13:48:46,917 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 404, in handle_api_request
+    self, request_data, _db, session_user, session_category
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 564, in handle_client_master_filters
+    return controller.process_client_master_filters_request(request, db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 513, in process_client_master_filters_request
+    result = process_get_widget_data(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 627, in process_get_widget_data
+    data = get_user_widget_settings(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientdatabase\general.py", line 1984, in get_user_widget_settings
+    rows = db.select_one(q, [user_id])
+  File "D:\Development\Compfie\Client-src-server\server\dbase.py", line 336, in select_one
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2017-02-24 13:48:53,361 - client_logger - clientmain.py-handle-api : userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given) 
+
+2017-02-24 13:48:53,365 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 408, in handle_api_request
+    self, request_data, _db, session_user, client_id, company_id
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 560, in handle_client_masters
+    return controller.process_client_master_requests(request, db, session_user, client_id)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    result = process_UserManagementAddPrerequisite(db, request, session_user)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 237, in process_UserManagementAddPrerequisite
+    legalUnits = process_UserManagement_LegalUnits(db)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 379, in process_UserManagement_LegalUnits
+    resultRows = userManagement_GetLegalEntity_Units(db)
+TypeError: userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given)
+ 
+
+2017-02-24 13:49:25,346 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2017-02-24 13:49:25,351 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 404, in handle_api_request
+    self, request_data, _db, session_user, session_category
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 564, in handle_client_master_filters
+    return controller.process_client_master_filters_request(request, db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 513, in process_client_master_filters_request
+    result = process_get_widget_data(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 627, in process_get_widget_data
+    data = get_user_widget_settings(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientdatabase\general.py", line 1984, in get_user_widget_settings
+    rows = db.select_one(q, [user_id])
+  File "D:\Development\Compfie\Client-src-server\server\dbase.py", line 336, in select_one
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2017-02-24 13:49:30,371 - client_logger - clientmain.py-handle-api : userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given) 
+
+2017-02-24 13:49:30,375 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 408, in handle_api_request
+    self, request_data, _db, session_user, client_id, company_id
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 560, in handle_client_masters
+    return controller.process_client_master_requests(request, db, session_user, client_id)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    result = process_UserManagementAddPrerequisite(db, request, session_user)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 237, in process_UserManagementAddPrerequisite
+    legalUnits = process_UserManagement_LegalUnits(db)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 379, in process_UserManagement_LegalUnits
+    resultRows = userManagement_GetLegalEntity_Units(db)
+TypeError: userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given)
+ 
+
+2017-02-24 14:05:58,634 - client_logger - clientmain.py-handle-api : userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given) 
+
+2017-02-24 14:05:58,648 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 408, in handle_api_request
+    self, request_data, _db, session_user, client_id, company_id
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 560, in handle_client_masters
+    return controller.process_client_master_requests(request, db, session_user, client_id)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    result = process_UserManagementAddPrerequisite(db, request, session_user)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 237, in process_UserManagementAddPrerequisite
+    legalUnits = process_UserManagement_LegalUnits(db)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 379, in process_UserManagement_LegalUnits
+    resultRows = userManagement_GetLegalEntity_Units(db)
+TypeError: userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given)
+ 
+
+2017-02-24 14:06:47,732 - client_logger - clientmain.py-handle-api : userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given) 
+
+2017-02-24 14:06:47,737 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 408, in handle_api_request
+    self, request_data, _db, session_user, client_id, company_id
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 560, in handle_client_masters
+    return controller.process_client_master_requests(request, db, session_user, client_id)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    result = process_UserManagementAddPrerequisite(db, request, session_user)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 237, in process_UserManagementAddPrerequisite
+    legalUnits = process_UserManagement_LegalUnits(db)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 379, in process_UserManagement_LegalUnits
+    resultRows = userManagement_GetLegalEntity_Units(db)
+TypeError: userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given)
+ 
+
+2017-02-24 14:40:34,467 - client_logger - clientmain.py-handle-api : userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given) 
+
+2017-02-24 14:40:34,473 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 408, in handle_api_request
+    self, request_data, _db, session_user, client_id, company_id
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 560, in handle_client_masters
+    return controller.process_client_master_requests(request, db, session_user, client_id)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 105, in process_client_master_requests
+    result = process_UserManagementAddPrerequisite(db, request, session_user)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 237, in process_UserManagementAddPrerequisite
+    legalUnits = process_UserManagement_LegalUnits(db)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clientmastercontroller.py", line 379, in process_UserManagement_LegalUnits
+    resultRows = userManagement_GetLegalEntity_Units(db)
+TypeError: userManagement_GetLegalEntity_Units() takes exactly 2 arguments (1 given)
+ 
+
+2017-02-24 14:45:54,328 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2017-02-24 14:45:54,334 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 404, in handle_api_request
+    self, request_data, _db, session_user, session_category
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 564, in handle_client_master_filters
+    return controller.process_client_master_filters_request(request, db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 513, in process_client_master_filters_request
+    result = process_get_widget_data(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 627, in process_get_widget_data
+    data = get_user_widget_settings(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientdatabase\general.py", line 1984, in get_user_widget_settings
+    rows = db.select_one(q, [user_id])
+  File "D:\Development\Compfie\Client-src-server\server\dbase.py", line 336, in select_one
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2017-02-24 17:44:33,792 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2017-02-24 17:44:33,809 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 404, in handle_api_request
+    self, request_data, _db, session_user, session_category
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 564, in handle_client_master_filters
+    return controller.process_client_master_filters_request(request, db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 513, in process_client_master_filters_request
+    result = process_get_widget_data(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 627, in process_get_widget_data
+    data = get_user_widget_settings(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientdatabase\general.py", line 1984, in get_user_widget_settings
+    rows = db.select_one(q, [user_id])
+  File "D:\Development\Compfie\Client-src-server\server\dbase.py", line 336, in select_one
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+
+2017-02-24 18:56:42,760 - client_logger - clientmain.py-handle-api : Transaction failed while processing data. 
+
+2017-02-24 18:56:42,765 - client_logger - clientmain.py : Traceback (most recent call last):
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 404, in handle_api_request
+    self, request_data, _db, session_user, session_category
+  File "D:\Development\Compfie\Client-src-server\server\clientmain.py", line 564, in handle_client_master_filters
+    return controller.process_client_master_filters_request(request, db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 513, in process_client_master_filters_request
+    result = process_get_widget_data(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientcontroller\clienttransactioncontroller.py", line 627, in process_get_widget_data
+    data = get_user_widget_settings(db, session_user, session_category)
+  File "D:\Development\Compfie\Client-src-server\server\clientdatabase\general.py", line 1984, in get_user_widget_settings
+    rows = db.select_one(q, [user_id])
+  File "D:\Development\Compfie\Client-src-server\server\dbase.py", line 336, in select_one
+    raise fetch_error()
+RuntimeError: Transaction failed while processing data.
+ 
+

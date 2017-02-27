@@ -391,7 +391,7 @@ api_params = {
     "u_unt_id": make_int_field(),  # User Management
     "u_unt_code": make_string_field(),  # User Management
     "u_unt_name": make_string_field(),  # User Management
-    "u_unt_address": make_string_field(),  # User Management
+    "u_unt_address": make_text_field(),  # User Management
     "u_unt_postal": make_string_field(),  # User Management
     "user_domain_ids": make_vector_type_field(module="clientcore", klass_name="UserDomains"),  # User Management
 
@@ -588,6 +588,7 @@ api_params = {
     "current_date": make_text_field(is_optional=True),
     "overdue_count": make_int_field(),
     "inprogress_count": make_int_field(),
+
     "current_compliances":make_vector_type_field(module="clientcore", klass_name="ActiveCompliance"),
     "compliance_task_frequency": make_enum_type(module="clientcore", klass_name="COMPLIANCE_FREQUENCY"),
     # "due_date": make_text_field(),
@@ -595,5 +596,6 @@ api_params = {
     "next_due_date": make_text_field(is_optional=True),
     # "ageing": make_text_field(is_optional=True),
     "format_file_name": make_text_field(is_optional=True),
-    "file_names":  make_text_field(),
+    "file_names":  make_vector_type_string(),    
+    "compliance_download_url":make_vector_type_string()
 }

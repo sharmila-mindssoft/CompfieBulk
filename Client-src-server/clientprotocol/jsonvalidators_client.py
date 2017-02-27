@@ -277,6 +277,7 @@ def parse_values(field_name, param, val, type="To"):
 
     elif _type == 'TEXT':
 
+        print "field_name>>>>>>>>>>", field_name
         if _is_optional is False:
             val = parse_string(val)
         else:
@@ -324,7 +325,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         param = api_params.get(field_name)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
-        # print field_name, param, val
+        print field_name, param, val
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')
@@ -408,7 +409,7 @@ def to_structure_dictionary_values(x):
     for field_name in keys:
         val = x.get(field_name)
         param = api_params.get(field_name)
-        # print field_name, val
+        print field_name, val
         # print param, val, field_name
 
         if param is None:
