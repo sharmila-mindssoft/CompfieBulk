@@ -680,6 +680,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "FROM tbl_legal_entities as t1 " + \
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
             "WHERE contract_to >= CURDATE() and is_closed = 0"
+        print q
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :

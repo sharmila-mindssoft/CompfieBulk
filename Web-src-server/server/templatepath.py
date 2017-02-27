@@ -98,8 +98,8 @@ CLIENT_TEMPLATE_PATHS = [
         None, {}
     ),
     (
-        "/compliance-details",
-        "files/client/compliance-details/compliancedetails.html",
+        "/compliance-task-details",
+        "files/client/compliance-task-details/compliance_task_details.html",
         None, {}
     ),
     # reports ---------------------------------------------------------------------
