@@ -99,7 +99,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/on-occurrence-compliances",
-        "files/client/on-occurrence-compliances/onoccurrencecompliances.html",
+        "files/client/on-occurrence-compliances/on_occurrence_compliances.html",
         None, {}
     ),
     (

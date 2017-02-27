@@ -1,4 +1,5 @@
-{% extends "files/client/common/html/container.html" %} {% block content %}
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
 <div class="content-page">
     <div class="content">
         <div class="container">
@@ -17,24 +18,35 @@
                                     <div class="col-sm-offset-1 col-md-4">
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-8 has-feedback">
-                                                <input class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity" type="text">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                             <div class="col-sm-6 controls">
+                                                <p class="form-control-static legal-entity-name default-display-none"></p>
+                                                <div class="legal-entity-name-ac default-display-none">
+                                                    <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1">
+                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                    <input type="hidden" id="legal_entity_id" value="">
+                                                    <div id="ac-entity" class="ac-textbox default-display-none">
+                                                        <ul class="width85Percent"></ul>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Unit:</label>
-                                            <div class="col-sm-8 has-feedback">
-                                                <input class="form-control input-sm" placeholder="Enter Unit" type="text">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                            <div class="col-sm-6 controls">
+                                                <input class="form-control input-sm" type="text" id="unit_name" tabindex="5">
+                                                <i class="form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="unit_id">
+                                                <div id="ac-unit" class="ac-textbox default-display-none">
+                                                    <ul class="width85Percent"></ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group m-b-0 text-center">
-                                            <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button" > Show </button>
                                         </div>
                                     </div>
                                 </div>
@@ -77,8 +89,8 @@
                                                 <td align="center"></td>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
+                                        <tbody class="tbody-compliances-list">
+                                            <!-- <tr>
                                                 <td align="center">1</td>
                                                 <td>WORKMEN'S COMPENSATION ACT, 1923 >> Rule 11 >> Sec.10B </td>
                                                 <td><a class="c-pointer" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">Form EE - Report of accident </a></td>
@@ -134,9 +146,17 @@
                                                 <td class="text-center">
                                                     <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm" type="reset" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
                                                 </td>
-                                            </tr>
+                                            </tr> -->
                                         </tbody>
                                     </table>
+                                    <center>
+                                        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light default-display-none btn-showmore" >Show More</button>
+                                    </center>
+
+                                    <div class="total_count_view default-display-none">
+                                        <br> <span class="total_count"></span>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -263,5 +283,39 @@
         </form>
     </div>
 </div>
+
+<div id="templates">
+    <table>
+        <tr class="tbl_heading" style="margin-top:10px;"><td colspan="6"> <span class="heading"></span></td></tr>
+    </table>
+
+    <table class="table-compliances">
+      <tr class="table-row">
+        <td class="sno" align="center"></td>
+        <td class="statutory"></td>
+        <td class="compliance-task"></td>
+        <td class="description"></td>
+        <td class="duration"></td>
+        <td>
+          <input type="text" class="input-box startdate" width="200px" readonly="readonly"/>
+        </td>
+        <td>
+          <input type="text" class="input-box remarks" width="200px"/>
+        </td>
+        <td class="action" align="center">
+          <input type="button" class="btn-submit" value="Start">
+        </td>
+      </tr>
+    </table>
+
+    <table class="table-no-record">
+        <tr>
+        <td colspan="8" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
+</div>
+<script type="text/javascript" src="/script/on-occurrence-compliances/on_occurrence_compliances.js"></script>
+
 <script src="/files/client/common/js/custombox/custombox.min.js"></script>
 {% endblock %}
