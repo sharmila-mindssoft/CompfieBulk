@@ -5999,7 +5999,7 @@ in _user_id int(11))
 BEGIN
     select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
         no_of_legal_entities, t3.group_admin_username as ug_name,
-        (select email_id from tbl_client_users where client_id = t3.client_id) as email_id,
+        (select email_id from tbl_client_groups where client_id = t3.client_id) as email_id,
         (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
         (select concat(employee_name,'-',(case when employee_code is null then
             '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name
