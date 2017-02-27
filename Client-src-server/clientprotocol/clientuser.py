@@ -200,7 +200,7 @@ class GetOnOccurrenceCompliances(Request):
         data = parse_dictionary(data, ["le_id", "start_count"])
         legal_entity_id = data.get("le_id")
         start_count = data.get("start_count")
-        # start_count = parse_structure_UnsignedIntegerType_32(start_count)        
+        # start_count = parse_structure_UnsignedIntegerType_32(start_count)
         return GetOnOccurrenceCompliances(legal_entity_id, start_count)
 
     def to_inner_structure(self):
@@ -210,7 +210,8 @@ class GetOnOccurrenceCompliances(Request):
         }
 
 class StartOnOccurrenceCompliance(Request):
-    def __init__(self, compliance_id, start_date, unit_id, duration):
+    def __init__(self, legal_entity_id, compliance_id, start_date, unit_id, duration):
+        self.legal_entity_id = legal_entity_id
         self.compliance_id = compliance_id
         self.start_date = start_date
         self.unit_id = unit_id
@@ -218,25 +219,27 @@ class StartOnOccurrenceCompliance(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "start_date", "unit_id", "duration"])
+        data = parse_dictionary(data, ["le_id", "compliance_id", "start_date", "unit_id", "duration"])
+        legal_entity_id = data.get("le_id")
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
+        # compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         start_date = data.get("start_date")
-        start_date = parse_structure_CustomTextType_20(start_date)
+        # start_date = parse_structure_CustomTextType_20(start_date)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        # unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         duration = data.get("duration")
-        duration = parse_structure_CustomTextType_20(duration)
+        # duration = parse_structure_CustomTextType_20(duration)
         return StartOnOccurrenceCompliance(
-            compliance_id, start_date, unit_id, duration
+            legal_entity_id, compliance_id, start_date, unit_id, duration
         )
 
     def to_inner_structure(self):
         return {
-            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "start_date": to_structure_CustomTextType_20(self.start_date),
-            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
-            "duration": to_structure_CustomTextType_20(self.duration)
+            "le_id": self.legal_entity_id,
+            "compliance_id": self.compliance_id,
+            "start_date": self.start_date,
+            "unit_id": self.unit_id,
+            "duration": self.duration
         }
 
 
