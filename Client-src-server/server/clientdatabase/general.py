@@ -562,15 +562,16 @@ def get_user_domains(db, user_id):
     q = "select domain_id from tbl_domains"
     param = None
     condition = ""
-    if is_primary_admin(db, user_id) is not True:
-        q = "select domain_id from tbl_user_domains"
-        condition = " WHERE user_id = %s"
-        param = [user_id]
+    # if is_primary_admin(db, user_id) is not True:
+    q = "select domain_id from tbl_user_domains"
+    condition = " WHERE user_id = %s"
+    param = [user_id]
 
     rows = db.select_all(q + condition, param)
-    d_ids = []
-    for r in rows:
+    d_ids = []    
+    for r in rows:        
         d_ids.append(int(r["domain_id"]))
+    
     return d_ids
 
 
@@ -809,11 +810,11 @@ def get_user_unit_ids(db, user_id):
     q = "select distinct unit_id from tbl_units"
     param = None
     condition = ""
-    if is_primary_admin(db, user_id) is not True:
-        condition = " WHERE unit_id in (select unit_id " + \
-            " from tbl_user_units " + \
-            " where user_id = %s )"
-        param = [user_id]
+    # if is_primary_admin(db, user_id) is not True:
+    condition = " WHERE unit_id in (select unit_id " + \
+        " from tbl_user_units " + \
+        " where user_id = %s )"
+    param = [user_id]
 
     rows = db.select_all(q + condition, param)
     u_ids = []
