@@ -50,7 +50,8 @@ class ClientReplicationManager(object) :
         self._clients = {}
         ip, port = self._knowledge_server_address
         self._poll_url = "http://%s:%s/knowledge/client-list" % (ip, port)
-
+        print '*' * 100
+        print self._poll_url
         self._request_body = json.dumps(
             GetClientChanges().to_structure(), indent=2
         )

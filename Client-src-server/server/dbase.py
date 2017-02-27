@@ -1,4 +1,5 @@
 # from flaskext.mysql import MySQL
+import mysql.connector
 import logger
 from server.common import (convert_to_dict, get_date_time, encrypt)
 from server.exceptionmessage import fetch_error, process_procedure_error
@@ -105,12 +106,16 @@ class Database(object):
          12: 31,
     }
 
-    # def dbConfig(self, app):
-    #     app.config['MYSQL_DATABASE_USER'] = self._mysqlUser
-    #     app.config['MYSQL_DATABASE_PASSWORD'] = self._mysqlPassword
-    #     app.config['MYSQL_DATABASE_DB'] = self._mysqlDatabase
-    #     app.config['MYSQL_DATABASE_HOST'] = self._mysqlHost
-    #     mysql.init_app(app)
+    @classmethod
+    def make_connection(self, data):
+        return mysql.connector.connect(
+            autocommit=False,
+            user=data.db_username,
+            password=data.db_password,
+            host=data.db_ip.ip_address,
+            database=data.db_name,
+            port=data.db_ip.port
+        )
 
     ########################################################
     # To Redirect Requests to Functions
