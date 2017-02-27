@@ -5,7 +5,8 @@ __all__ = [
     "process_client_widget_requests",
     "merge_compliance_chart_widget",
     "merge_escalation_chart_widget",
-    "merge_user_scorecard"
+    "merge_user_scorecard",
+    "merge_domain_scorecard"
 ]
 
 def process_client_widget_requests(request, db, session_user, session_category):
@@ -28,6 +29,9 @@ def process_client_widget_requests(request, db, session_user, session_category):
 
     elif type(request) is widgetprotocol.GetUserScoreCard :
         result = get_userwise_score_card(db, session_user)
+
+    elif type(request) is widgetprotocol.GetDomainScoreCard :
+        result = get_domain_score_card(db, session_user, session_category)
 
     return result
 
@@ -80,10 +84,26 @@ def merge_user_scorecard(data, new_data):
         x["Approver"] += int(y[idx]["Approver"])
         return x
 
-    print len(data.chart_data), len(new_data.chart_data)
     completed = merge_data(0, data.chart_data, new_data.chart_data)
     inprogress = merge_data(1, data.chart_data, new_data.chart_data)
     overdue = merge_data(2, data.chart_data, new_data.chart_data)
 
     data.chart_data = [completed, inprogress, overdue]
+    return data
+
+def merge_domain_scorecard(data, new_data):
+    new_xaxis = new_data.xaxis
+    old_xaxis = data.xaxis
+
+    for idx, val in enumerate(new_xaxis) :
+        if val in old_xaxis :
+            old = old_xaxis.index(val)
+            old_data = data.chart_data[old]
+            new = new_data.chart_data[idx]
+            old_data["assigned"] += new["assinged"]
+            old_data["unassinged"] += new["unassinged"]
+            old_data["notopted"] += new["notopted"]
+            data.chart_data[old] = old_data
+        else :
+            data.chart_data.append(new_data.chart_data[idx])
     return data

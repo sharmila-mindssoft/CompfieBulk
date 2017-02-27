@@ -547,6 +547,9 @@ class API(object):
 
                 elif type(request_data.request) is widgetprotocol.GetUserScoreCard :
                     p_response = controller.merge_user_scorecard(p_response, data)
+
+                elif type(request_data.request) is widgetprotocol.GetDomainScoreCard :
+                    p_response = controller.merge_domain_scorecard(p_response, data)
                 else :
                     pass
             return p_response

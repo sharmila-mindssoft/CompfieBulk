@@ -381,3 +381,49 @@ def frame_user_score_card(data):
         })
 
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
+
+def get_domain_score_card(db, user_id, user_category_id):
+    q = "select t1.domain_id, " + \
+        " (select domain_name from tbl_domains where domain_id = t1.domain_id) as d_name, " + \
+        "sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
+        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1, 1, 0)) as opted, " + \
+        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null, 1, 0)) as unassigned " + \
+        " from tbl_client_compliances as t1   " + \
+        " left join tbl_assign_compliances as t2 " + \
+        " on t1.compliance_id = t2.compliance_id "
+
+    param = []
+    if user_category_id > 3 :
+        q += " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
+            " where t3.user_id = %s"
+        param = [user_id]
+
+    rows = db.select_all(q, param)
+    return frame_domain_scorecard(rows)
+
+def frame_domain_scorecard(data):
+    chart_title = "Domain Scorecard"
+    xaxis_name = "Total Compliances"
+    xaxis = []
+    yaxis_name = "Total Compliances"
+    yaxis = []
+    chartData = []
+    for d in data :
+        if d["d_name"] is None :
+            continue
+        xaxis.append(d["d_name"])
+        not_opted = d["not_opted"]
+        not_opted = 0 if not_opted is None else int(not_opted)
+        unassign = d["unassigned"]
+        unassign = 0 if unassign is None else int(unassign)
+        opted = d["opted"]
+        opted = 0 if opted is None else int(opted)
+        assigned = opted - unassign
+        chartData.append({
+            "d_name": d["d_name"],
+            "assigned": assigned,
+            "unassinged": unassign,
+            "notopted": not_opted
+        })
+
+    return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
