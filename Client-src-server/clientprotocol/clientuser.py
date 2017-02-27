@@ -66,7 +66,9 @@ class Request(object):
     @staticmethod
     def parse_inner_structure(data):
         raise NotImplementedError
-
+#######################################################
+# Get Current Compliances
+#######################################################
 class GetCurrentComplianceDetail(Request):
     def __init__(
         self, legal_entity_id, current_start_count
@@ -126,13 +128,15 @@ class CheckDiskSpace(Request):
     def to_inner_structure(self):
         return {
         }
-
-
+#########################################################
+# Save / Update Current Compliances
+#########################################################
 class UpdateComplianceDetail(Request):
     def __init__(
-        self, compliance_history_id, documents, uploaded_documents,
+        self, legal_entity_id, compliance_history_id, documents, uploaded_documents,
         completion_date, validity_date, next_due_date, remarks
-    ):
+    ):        
+        self.legal_entity_id = legal_entity_id
         self.compliance_history_id = compliance_history_id
         self.documents = documents
         self.uploaded_documents = uploaded_documents
@@ -145,58 +149,64 @@ class UpdateComplianceDetail(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "compliance_history_id", "documents", "uploaded_documents",
+                "le_id", "compliance_history_id", "documents", "uploaded_documents",
                 "completion_date", "validity_date", "next_due_date", "remarks"
             ]
-        )
+        )        
+        legal_entity_id = data.get("le_id")
         compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_UnsignedIntegerType_32(
-            compliance_history_id)
+        # compliance_history_id = parse_structure_UnsignedIntegerType_32(
+        #     compliance_history_id)
         documents = data.get("documents")
-        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(
-            documents)
+        # documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(
+        #     documents)
         uploaded_documents = data.get("uploaded_documents")
-        uploaded_documents = parse_structure_OptionalType_VectorType_CustomTextType_500(
-            uploaded_documents)
+        # uploaded_documents = parse_structure_OptionalType_VectorType_CustomTextType_500(
+        #     uploaded_documents)
         completion_date = data.get("completion_date")
-        completion_date = parse_structure_CustomTextType_20(completion_date)
+        # completion_date = parse_structure_CustomTextType_20(completion_date)
         validity_date = data.get("validity_date")
-        validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
+        # validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         next_due_date = data.get("next_due_date")
-        next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
+        # next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         remarks = data.get("remarks")
-        remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
+        # remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         return UpdateComplianceDetail(
-            compliance_history_id, documents, uploaded_documents,
+            legal_entity_id, compliance_history_id, documents, uploaded_documents,
             completion_date, validity_date, next_due_date, remarks
         )
 
     def to_inner_structure(self):
         return {
-            "compliance_history_id": to_structure_SignedIntegerType_8(self.compliance_history_id),
-            "documents": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.documents),
-            "uploaded_documents": to_structure_OptionalType_VectorType_CustomTextType_500(
-                self.uploaded_documents),
-            "completion_date": to_structure_CustomTextType_20(self.completion_date),
-            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
-            "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
-            "remarks": to_structure_OptionalType_CustomTextType_500(self.remarks),
+            "le_id": self.legal_entity_id,
+            "compliance_history_id": self.compliance_history_id,
+            "documents": self.documents,
+            "uploaded_documents": self.uploaded_documents,
+            "completion_date": self.completion_date,
+            "validity_date": self.validity_date,
+            "next_due_date": self.next_due_date,
+            "remarks": self.remarks,
         }
-
+######################################################################
+# Get Onoccurrence Compliances
+######################################################################
 class GetOnOccurrenceCompliances(Request):
-    def __init__(self, start_count):
+    def __init__(self, legal_entity_id, start_count):
+        self.legal_entity_id = legal_entity_id
         self.start_count = start_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["start_count"])
+        data = parse_dictionary(data, ["le_id", "start_count"])
+        legal_entity_id = data.get("le_id")
         start_count = data.get("start_count")
-        start_count = parse_structure_UnsignedIntegerType_32(start_count)
-        return GetOnOccurrenceCompliances(start_count)
+        # start_count = parse_structure_UnsignedIntegerType_32(start_count)        
+        return GetOnOccurrenceCompliances(legal_entity_id, start_count)
 
     def to_inner_structure(self):
         return {
-            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
+            "le_id": self.legal_entity_id,
+            "start_count": self.start_count
         }
 
 class StartOnOccurrenceCompliance(Request):
@@ -431,17 +441,17 @@ class GetOnOccurrenceCompliancesSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["compliances", "total_count"])
-        compliances = data.get("compliances")
-        compliances = parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances) #parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances)
+        data = parse_dictionary(data, ["onoccur_compliances", "total_count"])
+        compliances = data.get("onoccur_compliances")
+        # compliances = parse_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances) #parse_structure_VectorType_RecordType_clientuser_ComplianceOnOccurrence(compliances)
         total_count = data.get("total_count")
-        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        # total_count = parse_structure_UnsignedIntegerType_32(total_count)
         return GetOnOccurrenceCompliancesSuccess(compliances, total_count)
 
     def to_inner_structure(self):
         return {
-            "compliances": to_structure_MapType_CustomTextType_250_VectorType_RecordType_clientuser_ComplianceOnOccurrence(self.compliances),
-            "total_count": to_structure_UnsignedIntegerType_32(self.total_count)
+            "onoccur_compliances": self.compliances,
+            "total_count": self.total_count
         }
 
 class StartOnOccurrenceComplianceSuccess(Response):
@@ -550,17 +560,17 @@ class ComplianceOnOccurrence(object):
             ]
         )
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
+        # compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         statutory_provision = data.get("statutory_provision")
-        statutory_provision = parse_structure_Text(statutory_provision)
+        # statutory_provision = parse_structure_Text(statutory_provision)
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_250(compliance_name)
+        # compliance_name = parse_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
-        description = parse_structure_Text(description)
+        # description = parse_structure_Text(description)
         complete_within_days = data.get("complete_within_days")
-        complete_within_days = parse_structure_CustomTextType_50(complete_within_days)
+        # complete_within_days = parse_structure_CustomTextType_50(complete_within_days)
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
+        # unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         return ComplianceOnOccurrence(
             compliance_id, statutory_provision, compliance_name, description,
             complete_within_days, unit_id
@@ -568,10 +578,10 @@ class ComplianceOnOccurrence(object):
 
     def to_structure(self):
         return {
-            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "statutory_provision": to_structure_Text(self.statutory_provision),
-            "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "description": to_structure_Text(self.description),
-            "complete_within_days": to_structure_CustomTextType_50(self.complete_within_days),
-            "unit_id": to_structure_UnsignedIntegerType_32(self.unit_id),
+            "compliance_id": self.compliance_id,
+            "statutory_provision": self.statutory_provision,
+            "compliance_name": self.compliance_name,
+            "description": self.description,
+            "complete_within_days": self.complete_within_days,
+            "unit_id": self.unit_id,
         }

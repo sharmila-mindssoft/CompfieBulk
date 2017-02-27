@@ -654,11 +654,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     /* Get Compliance List*/
-    function getCurrentComplianceDetail(current_start_count, callback) {
+    function getCurrentComplianceDetail(le_id, current_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetCurrentComplianceDetail',
-            { 'current_start_count': current_start_count }
+            {
+                'le_id': le_id,
+                'current_start_count': current_start_count
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -678,11 +681,12 @@ function initClientMirror() {
     }
 
     function updateComplianceDetail(
-        compliance_history_id, documents, uploaded_documents,
+        le_id, compliance_history_id, documents, uploaded_documents,
         completion_date, validity_date, next_due_date, remarks, callback
     ) {
         var request = [
             'UpdateComplianceDetail', {
+                'le_id': le_id,
                 'compliance_history_id': compliance_history_id,
                 'documents': documents,
                 'uploaded_documents': uploaded_documents,
@@ -1135,10 +1139,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getOnOccurrenceCompliances(start_count, callback) {
+    function getOnOccurrenceCompliances(le_id, start_count, callback) {
         var request = [
             'GetOnOccurrenceCompliances',
-            { 'start_count': start_count }
+            {
+                'le_id': le_id,
+                'start_count': start_count
+            }
         ];
         callerName = 'client_user';
         clientApiRequest(callerName, request, callback);
@@ -2371,7 +2378,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function saveUserWidgetDataDict(w_id, width, height, pinstatus){
+    function saveUserWidgetDataDict(w_id, width, height, pinstatus) {
         return {
             "w_id": w_id,
             "width": width,
@@ -2440,8 +2447,9 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getWidgetCalender(callback){
-         var request = [
+
+    function getWidgetCalender(callback) {
+        var request = [
             "GetWidgetCalender", {
                 "le_ids": getLEids()
             }
