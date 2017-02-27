@@ -45,13 +45,9 @@ def process_client_user_request(request, db, session_user):
         )
 
     elif type(request) is clientuser.StartOnOccurrenceCompliance:
-        logger.logClientApi("StartOnOccurrenceCompliance", "process begin")
-        logger.logClientApi("------", str(time.time()))
         result = process_start_on_occurrence_compliance(
-            db, request, session_user, client_id
+            db, request, session_user
         )
-        logger.logClientApi("StartOnOccurrenceCompliance", "process end")
-        logger.logClientApi("------", str(time.time()))
 
     return result
 
@@ -173,8 +169,6 @@ def process_get_on_occurrence_compliances(
     total_count = get_on_occurrence_compliance_count(
         db, session_user, user_domain_ids, user_unit_ids
     )
-    print "total_count", total_count
-    print "Success>>>>>>>>>>>>>"
     return clientuser.GetOnOccurrenceCompliancesSuccess(
         compliances=compliances,
         total_count=total_count
@@ -185,14 +179,15 @@ def process_get_on_occurrence_compliances(
 # To start an on occurrence compliance
 ########################################################
 def process_start_on_occurrence_compliance(
-    db, request, session_user, client_id
+    db, request, session_user
 ):
     compliance_id = request.compliance_id
     start_date = request.start_date
     unit_id = request.unit_id
     duration = request.duration
+    legal_entity_id = request.legal_entity_id
     start_on_occurrence_task(
-        db, compliance_id, start_date, unit_id, duration,
-        session_user, client_id
+        db, legal_entity_id, compliance_id, start_date, unit_id, duration,
+        session_user
     )
     return clientuser.StartOnOccurrenceComplianceSuccess()
