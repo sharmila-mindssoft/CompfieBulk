@@ -39,8 +39,9 @@ __all__ = [
     "get_reminders",
     "get_escalations",
     "get_messages",
+    "get_statutory",
     "update_notification_status",
-    "notification_details",
+    "notification_detail",
     "get_user_company_details",
     "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances",
@@ -1828,26 +1829,42 @@ def get_messages(
         notifications.append(notification)
     return notifications
 
+def get_statutory(
+    db, notification_type, start_count, to_count, session_user, session_category
+):
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
+            "Where nlu.user_id = %s " + \
+            "AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+            "order by nl.notification_id desc) as t1, " + \
+            "(SELECT @rownum := 0) r) as t " + \
+            "where t.rank >= %s and t.rank <= %s"
+    rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        legal_entity_id = int(r["legal_entity_id"])
+        notification_id = int(r["notification_id"])
+        notification_text = r["notification_text"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.StatutorySuccess(legal_entity_id, notification_id, notification_text, created_on)
+        notifications.append(notification)
+    return notifications
+
 
 def update_notification_status(
-    db, notification_id, has_read, session_user
+    db, notification_id, session_user
 ):
-    user_ids = [session_user]
-    if is_primary_admin(db, session_user) is True:
-        user_ids.append(0)
     columns = ["read_status"]
-    values = [1 if has_read is True else 0]
-    condition = " notification_id = %s AND "
-    user_condition, user_condition_val = db.generate_tuple_condition(
-        "user_id", user_ids)
-    condition = condition + user_condition
-    values.extend([notification_id, user_condition_val])
+    values = [1]
+    condition = " notification_id = %s " % notification_id + " AND user_id = %s " % session_user
     db.update(
         tblNotificationUserLog, columns, values, condition
     )
 
-def notification_details(
-    db, notification_id, has_read, session_user
+def notification_detail(
+    db, notification_id, session_user
 ):
     query = "select nl.notification_id, substring_index(com.statutory_mapping,'>>',1) as act_name, " + \
             "(select concat(unit_code,' - ',unit_name,' - ',substring_index(geography_name,'>>',-1)) from tbl_units where unit_id = nl.unit_id) as unit, " + \
@@ -1862,7 +1879,7 @@ def notification_details(
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id " + \
             "Where nlu.user_id = %s AND nl.notification_id = %s"
     rows = db.select_all(query, [session_user, notification_id])
-    #print rows
+    print rows
     notifications = []
     for r in rows :
         notification_id = int(r["notification_id"])
