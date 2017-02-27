@@ -3504,7 +3504,7 @@ DELIMITER //
 -- --------------------------------------------------------------------------------
 DELIMITER $$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_units_list`(
+CREATE PROCEDURE `sp_units_list`(
     IN clientid INT(11), IN domainid INT(11), IN LegalEntityID int(11), IN userid INT(11)
 )
 BEGIN
@@ -5985,7 +5985,7 @@ DROP PROCEDURE IF EXISTS `sp_groupadmin_registration_email_groupslist`;
 DELIMITER //
 
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_groupadmin_registration_email_groupslist`(
+CREATE PROCEDURE `sp_groupadmin_registration_email_groupslist`(
 in _user_id int(11))
 BEGIN
     select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
@@ -6018,7 +6018,9 @@ DROP PROCEDURE IF EXISTS `sp_groupadmin_registration_email_unitslist`;
 
 DELIMITER //
 
-
+CREATE PROCEDURE `sp_groupadmin_registration_email_unitslist`(
+in _user_id int(11))
+BEGIN
 SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
 
     if @u_cat_id = 1 then
