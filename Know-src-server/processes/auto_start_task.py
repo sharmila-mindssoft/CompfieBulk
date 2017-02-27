@@ -121,7 +121,7 @@ class AutoStart(Database):
             " LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id " + \
             "     AND t4.compliance_id = t1.compliance_id AND t2.frequency_id = 1)" + \
             " WHERE (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= %s " + \
-            " AND t1.is_active = 1 AND t2.is_active = 1 AND t2.frequency_id != 4 " + \
+            " AND t1.is_active = 1 AND t2.is_active = 1 AND t2.frequency_id < 5 " + \
             " AND t4.compliance_id is null "
 
         logProcessInfo("compliance_to_start %s" % self.client_id, query % (self.current_date))

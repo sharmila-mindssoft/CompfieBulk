@@ -98,11 +98,26 @@ class GetTrendChart(Request):
             "le_ids": self.legal_entity_ids
         }
 
+class GetUserScoreCard(Request):
+    def __init__(self, legal_entity_ids):
+        self.legal_entity_ids = legal_entity_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_ids"])
+        return GetUserScoreCard(data.get("le_ids"))
+
+    def to_inner_structure(self):
+        return {
+            "le_ids": self.legal_entity_ids
+        }
+
 def _init_Request_class_map():
     classes = [
 
         GetComplianceChart, GetEscalationChart, GetNotCompliedChart,
-        GetRiskChart, GetTrendChart
+        GetRiskChart, GetTrendChart,
+        GetUserScoreCard
     ]
     class_map = {}
     for c in classes:

@@ -25,6 +25,9 @@ def process_client_widget_requests(request, db, session_user, session_category):
     elif type(request) is widgetprotocol.GetTrendChart :
         result = get_trend_chart(db, session_user, session_category)
 
+    elif type(request) is widgetprotocol.GetUserScoreCard :
+        result = get_userwise_score_card(db, session_user)
+
     return result
 
 def merge_compliance_chart_widget(data, new_data):
