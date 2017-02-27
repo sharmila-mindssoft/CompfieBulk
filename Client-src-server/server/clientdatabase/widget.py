@@ -25,8 +25,10 @@ def get_compliance_status_count(db, le_ids, user_id, user_category):
             " inner join tbl_countries as t2 on t1.country_id = t2.country_id " + \
             " where chart_year = %s and user_id = %s"
         param = [getCurrentYear(), user_id]
+    print q
 
     rows = db.select_all(q, param)
+    print rows
     return frame_compliance_status(rows)
 
 def frame_compliance_status(data) :
@@ -168,7 +170,7 @@ def get_risk_chart_count(db, user_id, user_category):
             " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
             " from tbl_compliance_history as t1 " + \
             " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
-            " inner join tbl_user_unit as t3 on t1.unit_id = t3.unit_id " + \
+            " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
             " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
             " ) as ch, " + \
             " (select sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
@@ -176,7 +178,7 @@ def get_risk_chart_count(db, user_id, user_category):
             " from tbl_client_compliances as t1  " + \
             " left join tbl_assign_compliances as t2 " + \
             " on t1.compliance_id = t2.compliance_id  " + \
-            " inner join tbl_user_unit as t3 on t1.unit_id = t3.unit_id " + \
+            " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
             " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
             " ) as cc)"
         param = [user_id, user_id]
@@ -323,4 +325,105 @@ def frame_not_complied_chart(data):
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
 
 def get_userwise_score_card(db, user_id):
-    pass
+    q = "select " + \
+        " sum(IF(ifnull(ch.current_status,0) = 1 and ch.completed_by = %s,1,0)) as c_assignee, " + \
+        " sum(IF(ifnull(ch.current_status,0) = 2 OR (ifnull(ch.current_status,0) = 0 and ifnull(ch.concurrence_status,0) = 2) and ch.concurred_by = %s,1,0)) as c_concur, " + \
+        " sum(IF(ifnull(ch.current_status,0) = 3 OR (ifnull(ch.current_status,0) = 0 and ifnull(ch.approve_status,0) = 2) and ch.approved_by = %s,1,0)) as c_approver, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 0 and ch.completed_by = %s,1,0), " + \
+        " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 0 and ch.completed_by = %s,1,0))) as in_assignee, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 1 and ch.concurred_by = %s,1,0), " + \
+        " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 1 and ch.concurred_by = %s,1,0))) as in_concur, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.current_status, 0) = 2 and ch.approved_by = %s,1,0), " + \
+        " IF(date(ch.due_date) >= curdate() and ifnull(ch.current_status,0) = 2 and ch.approved_by = %s,1,0))) as in_approver, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status, 0) = 0 and ch.completed_by = %s,1,0), " + \
+        " IF(date(ch.due_date) < curdate() and ifnull(ch.current_status,0) = 0 and ch.completed_by = %s,1,0))) as ov_assignee, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status, 0) = 1 and ch.concurred_by = %s,1,0), " + \
+        " IF(date(ch.due_date) < curdate() and ifnull(ch.current_status,0) = 1 and ch.concurred_by = %s,1,0))) as ov_concur, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.current_status, 0) = 2 and ch.approved_by = %s,1,0), " + \
+        " IF(date(ch.due_date) < curdate() and ifnull(ch.current_status,0) = 2 and ch.approved_by = %s,1,0))) as ov_approver " + \
+        " from tbl_compliance_history as ch " + \
+        " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id; "
+
+    rows = db.select_all(q, [
+        user_id, user_id, user_id, user_id, user_id, user_id, user_id,
+        user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id
+    ])
+
+    return frame_user_score_card(rows)
+
+def frame_user_score_card(data):
+    chart_title = "User Scorecard"
+    xaxis_name = "Total Compliances"
+    xaxis = []
+    yaxis_name = "Total Compliances"
+    yaxis = []
+    chartData = []
+    if data :
+        d = data[0]
+        print d
+        chartData.append({
+            "Role": "Completed",
+            "Assingee": 0 if d["c_assignee"] is None else int(d["c_assignee"]),
+            "Concur":  0 if d["c_concur"] is None else int(d["c_concur"]),
+            "Approver":  0 if d["c_approver"] is None else int(d["c_approver"])
+        })
+        chartData.append({
+            "Role": "In progress within due date",
+            "Assingee":  0 if d["in_assignee"] is None else int(d["in_assignee"]),
+            "Concur":  0 if d["in_concur"] is None else int(d["in_concur"]),
+            "Approver":  0 if d["in_approver"] is None else int(d["in_approver"])
+        })
+        chartData.append({
+            "Role": "In progress over due",
+            "Assingee":  0 if d["ov_assignee"] is None else int(d["ov_assignee"]),
+            "Concur":  0 if d["ov_concur"] is None else int(d["ov_concur"]),
+            "Approver":  0 if d["ov_approver"] is None else int(d["ov_approver"])
+        })
+
+    return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
+
+def get_domain_score_card(db, user_id, user_category_id):
+    q = "select t1.domain_id, " + \
+        " (select domain_name from tbl_domains where domain_id = t1.domain_id) as d_name, " + \
+        "sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
+        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1, 1, 0)) as opted, " + \
+        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null, 1, 0)) as unassigned " + \
+        " from tbl_client_compliances as t1   " + \
+        " left join tbl_assign_compliances as t2 " + \
+        " on t1.compliance_id = t2.compliance_id "
+
+    param = []
+    if user_category_id > 3 :
+        q += " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
+            " where t3.user_id = %s"
+        param = [user_id]
+
+    rows = db.select_all(q, param)
+    return frame_domain_scorecard(rows)
+
+def frame_domain_scorecard(data):
+    chart_title = "Domain Scorecard"
+    xaxis_name = "Total Compliances"
+    xaxis = []
+    yaxis_name = "Total Compliances"
+    yaxis = []
+    chartData = []
+    for d in data :
+        if d["d_name"] is None :
+            continue
+        xaxis.append(d["d_name"])
+        not_opted = d["not_opted"]
+        not_opted = 0 if not_opted is None else int(not_opted)
+        unassign = d["unassigned"]
+        unassign = 0 if unassign is None else int(unassign)
+        opted = d["opted"]
+        opted = 0 if opted is None else int(opted)
+        assigned = opted - unassign
+        chartData.append({
+            "d_name": d["d_name"],
+            "assigned": assigned,
+            "unassinged": unassign,
+            "notopted": not_opted
+        })
+
+    return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)

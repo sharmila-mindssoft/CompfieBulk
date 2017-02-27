@@ -426,6 +426,7 @@ CREATE TABLE `tbl_compliance_history` (
   `approve_status` varchar(20) DEFAULT NULL,
   `approved_by` int(11) NOT NULL,
   `approved_on` datetime DEFAULT NULL,
+  `current_status` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`compliance_history_id`),
   CONSTRAINT `ch_unit_fk11` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
   CONSTRAINT `ch_compliance_fk12` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
