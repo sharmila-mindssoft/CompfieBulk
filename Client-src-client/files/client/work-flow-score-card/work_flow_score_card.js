@@ -46,8 +46,8 @@ function PageControls() {
         var countryList = REPORT._entities;
         if (countryList.length == 0 && text_val != '')
             displayMessage(message.country_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+        var condition_fields = [];
+        var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -261,24 +261,28 @@ WorkFlowScoreCard.prototype.inprogressUnitView = function(data) {
     var approve_total = 0;
     var grand_total = 0;
     var j = 0;
-    $.each(data, function(k, v) {
-        var cloneone = $('#template #report-table .report-row').clone();
-        $('.task-row-title', cloneone).text(v.unit);
-        $('.submit', cloneone).text(v.inp_assignee);
-        $('.concur', cloneone).text(v.inp_concur);
-        $('.approve', cloneone).text(v.inp_approver);
-        reportTableTbody.append(cloneone);
-        submit_total = submit_total + parseInt(v.inp_assignee);
-        concur_total = concur_total + parseInt(v.inp_concur);
-        approve_total = approve_total + parseInt(v.inp_approver);
-        j = j + 1;
-    });
-    if (j > 1) {
-        var clonetwo = $('#template #report-table .report-total-row').clone();
-        $('.submit-total', clonetwo).text(submit_total);
-        $('.concur-total', clonetwo).text(concur_total);
-        $('.approve-total', clonetwo).text(approve_total);
-        reportTableTbody.append(clonetwo);
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var cloneone = $('#template #report-table .report-row').clone();
+            $('.task-row-title', cloneone).text(v.unit);
+            $('.submit', cloneone).text(v.inp_assignee);
+            $('.concur', cloneone).text(v.inp_concur);
+            $('.approve', cloneone).text(v.inp_approver);
+            reportTableTbody.append(cloneone);
+            submit_total = submit_total + parseInt(v.inp_assignee);
+            concur_total = concur_total + parseInt(v.inp_concur);
+            approve_total = approve_total + parseInt(v.inp_approver);
+            j = j + 1;
+        });
+        if (j > 1) {
+            var clonetwo = $('#template #report-table .report-total-row').clone();
+            $('.submit-total', clonetwo).text(submit_total);
+            $('.concur-total', clonetwo).text(concur_total);
+            $('.approve-total', clonetwo).text(approve_total);
+            reportTableTbody.append(clonetwo);
+        }
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
     }
 };
 
@@ -295,24 +299,28 @@ WorkFlowScoreCard.prototype.completedUnitView = function(data) {
     var approve_total = 0;
     var grand_total = 0;
     var j = 0;
-    $.each(data, function(k, v) {
-        var cloneone = $('#template #report-table .report-row').clone();
-        $('.task-row-title', cloneone).text(v.unit);
-        $('.submit', cloneone).text(v.c_assignee);
-        $('.concur', cloneone).text(v.c_concur);
-        $('.approve', cloneone).text(v.c_approver);
-        reportTableTbody.append(cloneone);
-        submit_total = submit_total + parseInt(v.c_assignee);
-        concur_total = concur_total + parseInt(v.c_concur);
-        approve_total = approve_total + parseInt(v.c_approver);
-        j = j + 1;
-    });
-    if (j > 1) {
-        var clonetwo = $('#template #report-table .report-total-row').clone();
-        $('.submit-total', clonetwo).text(submit_total);
-        $('.concur-total', clonetwo).text(concur_total);
-        $('.approve-total', clonetwo).text(approve_total);
-        reportTableTbody.append(clonetwo);
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var cloneone = $('#template #report-table .report-row').clone();
+            $('.task-row-title', cloneone).text(v.unit);
+            $('.submit', cloneone).text(v.c_assignee);
+            $('.concur', cloneone).text(v.c_concur);
+            $('.approve', cloneone).text(v.c_approver);
+            reportTableTbody.append(cloneone);
+            submit_total = submit_total + parseInt(v.c_assignee);
+            concur_total = concur_total + parseInt(v.c_concur);
+            approve_total = approve_total + parseInt(v.c_approver);
+            j = j + 1;
+        });
+        if (j > 1) {
+            var clonetwo = $('#template #report-table .report-total-row').clone();
+            $('.submit-total', clonetwo).text(submit_total);
+            $('.concur-total', clonetwo).text(concur_total);
+            $('.approve-total', clonetwo).text(approve_total);
+            reportTableTbody.append(clonetwo);
+        }
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
     }
 };
 
@@ -329,24 +337,28 @@ WorkFlowScoreCard.prototype.overdueUnitView = function(data) {
     var approve_total = 0;
     var grand_total = 0;
     var j = 0;
-    $.each(data, function(k, v) {
-        var cloneone = $('#template #report-table .report-row').clone();
-        $('.task-row-title', cloneone).text(v.unit);
-        $('.submit', cloneone).text(v.ov_assignee);
-        $('.concur', cloneone).text(v.ov_approver);
-        $('.approve', cloneone).text(v.ov_concur);
-        reportTableTbody.append(cloneone);
-        submit_total = submit_total + parseInt(v.ov_assignee);
-        concur_total = concur_total + parseInt(v.ov_approver);
-        approve_total = approve_total + parseInt(v.ov_concur);
-        j = j + 1;
-    });
-    if (j > 1) {
-        var clonetwo = $('#template #report-table .report-total-row').clone();
-        $('.submit-total', clonetwo).text(submit_total);
-        $('.concur-total', clonetwo).text(concur_total);
-        $('.approve-total', clonetwo).text(approve_total);
-        reportTableTbody.append(clonetwo);
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var cloneone = $('#template #report-table .report-row').clone();
+            $('.task-row-title', cloneone).text(v.unit);
+            $('.submit', cloneone).text(v.ov_assignee);
+            $('.concur', cloneone).text(v.ov_approver);
+            $('.approve', cloneone).text(v.ov_concur);
+            reportTableTbody.append(cloneone);
+            submit_total = submit_total + parseInt(v.ov_assignee);
+            concur_total = concur_total + parseInt(v.ov_approver);
+            approve_total = approve_total + parseInt(v.ov_concur);
+            j = j + 1;
+        });
+        if (j > 1) {
+            var clonetwo = $('#template #report-table .report-total-row').clone();
+            $('.submit-total', clonetwo).text(submit_total);
+            $('.concur-total', clonetwo).text(concur_total);
+            $('.approve-total', clonetwo).text(approve_total);
+            reportTableTbody.append(clonetwo);
+        }
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
     }
 };
 

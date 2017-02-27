@@ -3498,6 +3498,12 @@ DROP PROCEDURE IF EXISTS `sp_units_list`;
 
 DELIMITER //
 
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
 CREATE PROCEDURE `sp_units_list`(
     IN clientid INT(11), IN domainid INT(11), IN LegalEntityID int(11), IN userid INT(11)
 )
@@ -3559,7 +3565,7 @@ BEGIN
         ) as geography_name
         from tbl_user_units as tuu
         right join tbl_units as tu
-        on tu.unit_id = tuu.unit_id and
+        on tu.unit_id = tuu.unit_id and tu.legal_entity_id = LegalEntityID and
         tu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
         and user_category_id=8) and tu.is_approved=1
         where
@@ -5984,7 +5990,7 @@ in _user_id int(11))
 BEGIN
     select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
         no_of_legal_entities, t3.group_admin_username as ug_name,
-        t3.email_id as email_id,
+        (select email_id from tbl_client_users where client_id = t3.client_id) as email_id,
         (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
         (select concat(employee_name,'-',(case when employee_code is null then
             '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name
@@ -5992,12 +5998,14 @@ BEGIN
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
         where
 
-        t3.client_id = t2.client_id and t2.client_id = t1.client_id
+        t3.client_id = t2.client_id and t2.client_id = t1.client_id and
+        t2.is_created = 1
         group by t2.client_id order by t3.group_name;
 
         select t2.client_id, t3.country_id, t3.country_name
         from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
-        where t3.country_id = t2.country_id and t2.client_id = t1.client_id;
+        where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
+        t2.is_created = 1;
 END //
 
 DELIMITER ;
@@ -6010,11 +6018,10 @@ DROP PROCEDURE IF EXISTS `sp_groupadmin_registration_email_unitslist`;
 
 DELIMITER //
 
-
 CREATE PROCEDURE `sp_groupadmin_registration_email_unitslist`(
 in _user_id int(11))
 BEGIN
-    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
+SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
 
     if @u_cat_id = 1 then
 
@@ -6024,9 +6031,11 @@ BEGIN
         (select country_name from tbl_countries where country_id = t2.country_id) as
             country_name,
         (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id) as unit_creation_informed,
+            t2.client_id and legal_entity_id = t2.legal_entity_id and unit_sent_on is not null)
+        as unit_creation_informed,
         (select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id) as statutory_assigned_informed,
+            t2.client_id and legal_entity_id = t2.legal_entity_id and statu_sent_on is not null)
+        as statutory_assigned_informed,
         (select email_id from tbl_client_groups where client_id = t1.client_id) as email_id,
         (select user_id from tbl_client_users where client_id = t1.client_id) as user_id,
         'Group Admin' as emp_code_name,

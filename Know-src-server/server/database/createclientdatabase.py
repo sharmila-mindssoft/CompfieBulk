@@ -448,6 +448,22 @@ class ClientGroupDBCreate(ClientDBBase):
                 " END; "
             cursor.execute(t3)
 
+            t4 = "CREATE TRIGGER `after_tbl_service_providers_insert` AFTER INSERT ON `tbl_service_providers` " + \
+                " FOR EACH ROW BEGIN " + \
+                " insert into tbl_le_provider_replication_status(legal_entity_id, provider_id, s_action) " + \
+                " select legal_entity_id, new.service_provider_id, 1 from tbl_legal_entities on duplicate key update s_action = 1; " + \
+                " UPDATE tbl_le_replication_status set provider_data = 1 ; " + \
+                " END ;"
+            cursor.execute(t4)
+
+            t5 = "CREATE TRIGGER `after_tbl_service_providers_update` AFTER UPDATE ON `tbl_service_providers` " + \
+                " FOR EACH ROW BEGIN " + \
+                " insert into tbl_le_provider_replication_status(legal_entity_id, provider_id, s_action) " + \
+                " select legal_entity_id, new.service_provider_id, 1 from tbl_legal_entities on duplicate key update s_action = 1; " + \
+                " UPDATE tbl_le_replication_status set provider_data = 1 ; " + \
+                " END ;"
+            cursor.execute(t5)
+
         except Exception, e:
             logger.logGroup("_create_trigger", str(e))
             logger.logGroup("_create_trigger", "failed")

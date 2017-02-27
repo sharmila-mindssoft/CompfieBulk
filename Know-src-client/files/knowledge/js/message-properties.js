@@ -280,7 +280,7 @@ var message = {
   "password_required": "Password Required",
   "port_required": "Port Required",
   "ip_required": "IP Required",
-  "db_server_name_required": "DB Server name required",
+  "db_server_name_required": "Database Server name required",
   "le_db_server_name_required": "Legal Entity DB Server name required",
   "db_server_name_length_error": "DB Server name - Only 50 characters are allowed",
   "not_a_valid_ip": "Invalid IP address",

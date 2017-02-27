@@ -157,7 +157,7 @@ class EmailHandler(Email):
             Compfie Support Team''' % (
             group_name, legal_entity_name)
         self.send_email(
-            receiver, subject, message, cc=None, is_credential=True
+            receiver, subject, message, is_credential=True
         )
 
     def send_notification_groupadmin_statutory(
@@ -175,7 +175,7 @@ class EmailHandler(Email):
             Compfie Support Team''' % (
             group_name, legal_entity_name)
         self.send_email(
-            receiver, subject, message, cc=None, is_credential=True
+            receiver, subject, message, is_credential=True
         )
 
     def send_client_credentials(
