@@ -2376,7 +2376,7 @@ function initClientMirror() {
             "w_id": w_id,
             "width": width,
             "height": height,
-            "pin_status": pin_status
+            "pin_status": pinstatus
         }
     }
 

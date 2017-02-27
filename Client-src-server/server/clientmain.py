@@ -22,6 +22,9 @@ from server.clientreplicationbase import (
     ClientReplicationManager, ReplicationManagerWithBase,
     # DomainReplicationManager
 )
+from server.clientdatabase.savelegalentitydata import(
+    LegalEntityReplicationManager
+)
 from server.constants import SESSION_CUTOFF
 import logger
 
@@ -71,6 +74,7 @@ class API(object):
         self._le_databases = {}
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
+        self._replication_legal_entity = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
             5000,
@@ -136,6 +140,7 @@ class API(object):
         self._le_databases = {}
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
+        self._replication_legal_entity = {}
         try:
 
             for company in servers:
@@ -254,13 +259,17 @@ class API(object):
                             #         domain_rep_man.start()
                             #         d_rep_man[_client_id] = domain_rep_man
 
+            # Knowledge data replciation process for group admin legal entity db
             _client_manager = ClientReplicationManager(
                 self._knowledge_server_address,
-                500,
+                100,
                 client_added
             )
             # replication start
             _client_manager._start()
+
+            # group data replication process corresponding legal entity database
+
 
         except Exception, e :
             logger.logClientApi(e, "Server added")
@@ -268,6 +277,9 @@ class API(object):
             logger.logClient("error", "clientmain.py-server-added", e)
             logger.logClient("error", "clientmain.py-server-added", traceback.format_exc())
             return
+
+    def legal_entity_replication_added(self, le_infos):
+        pass
 
     def _send_response(
         self, response_data, status_code
@@ -308,7 +320,6 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
-            # print actual_data
             # print company_id
             request_data = request_data_type.parse_structure(
                 actual_data
