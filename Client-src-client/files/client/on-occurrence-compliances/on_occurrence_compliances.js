@@ -61,6 +61,9 @@ function load_compliances(compliancesList) {
       $('.description', clone1).text(value.description);
       $('.duration', clone1).text(completeDays);
       $('.startdate', clone1).attr('id', 'startdate' + sno);
+
+      $('.remarks', clone1).attr('id', 'remarks' + sno);
+
       $('.btn-submit', clone1).attr('id', sno);
       $('.btn-submit', clone1).on('click', function () {
         submitOnOccurence(value.compliance_id, this, value.unit_id, value.complete_within_days);
@@ -112,6 +115,7 @@ function convert_date(data) {
 //start on occurance compliance
 function submitOnOccurence(complianceId, thisval, unitId, complete_within_days) {
   var startdate = $('#startdate' + thisval.id).val();
+  var remarks = $('#remarks' + thisval.id).val();
   var d = new Date();
   var month = d.getMonth() + 1;
   var day = d.getDate();
@@ -128,13 +132,14 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days) 
       displayMessage(message.action_success);
       //getOnOccuranceCompliances ();
       $('#startdate' + thisval.id).val('');
+      $('#remarks' + thisval.id).val('');
       hideLoader();  //window.location.href='/compliance-task-details'
     }
     function onFailure(error) {
       displayMessage(error);
       hideLoader();
     }
-    client_mirror.startOnOccurrenceCompliance(complianceId, startdate, unitId, complete_within_days, function (error, response) {
+    client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, function (error, response) {
       if (error == null) {
         onSuccess(response);
       } else {
