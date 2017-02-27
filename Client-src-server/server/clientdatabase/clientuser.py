@@ -610,10 +610,7 @@ def get_on_occurrence_compliances_for_user(
         ",".join(str(x) for x in user_unit_ids),
         ",".join(str(x) for x in user_domain_ids),
         session_user, int(start_count), int(to_count)
-    ])    
-    # print "rows>>>>>>>>>>>>", rows
-    # result = convert_to_dict(rows, columns)
-    # compliances = []
+    ])
     unit_wise_compliances = {}
     for row in rows:
         duration = "%s %s" % (row["duration"], row["duration_type"])
@@ -624,12 +621,7 @@ def get_on_occurrence_compliances_for_user(
             )
         unit_name = row["unit_name"]
         if unit_name not in unit_wise_compliances:
-            unit_wise_compliances[unit_name] = []
-        # print ">>>>>>>>>>>>>>>>>>", (
-        #         row["compliance_id"], row["statutory_provision"],
-        #         compliance_name, row["compliance_description"],
-        #         duration, row["unit_id"]
-        #     )
+            unit_wise_compliances[unit_name] = []        
         unit_wise_compliances[unit_name].append(
             clientuser.ComplianceOnOccurrence(
                 row["compliance_id"], row["statutory_provision"],
@@ -639,12 +631,14 @@ def get_on_occurrence_compliances_for_user(
         )
     return unit_wise_compliances
 
-
+###################################################
+# Start Onoccurrence Compliances
+###################################################
 def start_on_occurrence_task(
-    db, compliance_id, start_date, unit_id, duration, session_user, client_id
+    db, legal_entity_id, compliance_id, start_date, unit_id, duration, session_user
 ):
     columns = [
-        "unit_id", "compliance_id",
+        "legal_entity_id", "unit_id", "compliance_id",
         "start_date", "due_date", "completed_by"
     ]
     start_date = string_to_datetime_with_time(start_date)
@@ -657,14 +651,14 @@ def start_on_occurrence_task(
     elif duration_type == "Hour(s)":
         due_date = start_date + datetime.timedelta(hours=int(duration_value))
     values = [
-        unit_id, compliance_id, start_date, due_date,
+        legal_entity_id, unit_id, compliance_id, start_date, due_date,
         session_user
     ]
 
     approval_columns = ["approval_person", "concurrence_person"]
     approval_condition = " compliance_id = %s and unit_id = %s "
     rows = db.get_data(
-        tblAssignedCompliances, approval_columns,
+        tblAssignCompliances, approval_columns,
         approval_condition, [compliance_id, unit_id]
     )
     approved_by = rows[0]["approval_person"]
@@ -732,6 +726,7 @@ def remove_uploaded_file(file_path):
 def get_compliance_history_details(
     db, compliance_history_id
 ):
+    print "compliance_history_id>>>", compliance_history_id
     compliance_column = "(select compliance_task from %s c " + \
         " where c.compliance_id = ch.compliance_id ) " + \
         " as compliance_name "
@@ -750,6 +745,7 @@ def get_compliance_history_details(
         tblComplianceHistory + " ch", columns, condition,
         condition_val
     )
+    print "rows>>>>>", rows
     if rows:
         return rows[0]
 

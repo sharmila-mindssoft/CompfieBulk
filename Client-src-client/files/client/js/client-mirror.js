@@ -1151,9 +1151,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function startOnOccurrenceCompliance(compliance_id, start_date, unit_id, duration, callback) {
+    function startOnOccurrenceCompliance(le_id, compliance_id, start_date, unit_id, duration, callback) {
         var request = [
             'StartOnOccurrenceCompliance', {
+                'le_id': le_id,
                 'compliance_id': compliance_id,
                 'start_date': start_date,
                 'unit_id': unit_id,

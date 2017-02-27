@@ -598,4 +598,5 @@ api_params = {
     "onoccur_compliances": make_map_type(module="clientuser", klass_name="ComplianceOnOccurrence", validfun=allow_specialchar),
     "statutory_provision":make_text_field(is_optional=True),
     "complete_within_days":make_text_field(is_optional=True),
+    "duration": make_text_field(is_optional=True),
 }

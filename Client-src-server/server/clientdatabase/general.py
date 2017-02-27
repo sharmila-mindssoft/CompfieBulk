@@ -837,7 +837,8 @@ def get_user_unit_ids(db, user_id):
 
 def is_two_levels_of_approval(db):
     columns = "two_levels_of_approval"
-    rows = db.get_data(tblClientGroups, columns, condition=None)
+    # rows = db.get_data(tblClientGroups, columns, condition=None)
+    rows = db.get_data(tblReminderSettings, columns, condition=None)
     return bool(rows[0]["two_levels_of_approval"])
 
 
