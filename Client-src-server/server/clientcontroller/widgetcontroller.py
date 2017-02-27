@@ -4,7 +4,8 @@ from server.clientdatabase.widget import *
 __all__ = [
     "process_client_widget_requests",
     "merge_compliance_chart_widget",
-    "merge_escalation_chart_widget"
+    "merge_escalation_chart_widget",
+    "merge_user_scorecard"
 ]
 
 def process_client_widget_requests(request, db, session_user, session_category):
@@ -69,4 +70,20 @@ def merge_escalation_chart_widget(data, new_data):
 
     data.chart_data[0]["data"] = old_delayed
     data.chart_data[1]["data"] = old_notcomplied
+    return data
+
+def merge_user_scorecard(data, new_data):
+    def merge_data(idx, x, y) :
+        x = x[idx]
+        x["Assingee"] += int(y[idx]["Assingee"])
+        x["Concur"] += int(y[idx]["Concur"])
+        x["Approver"] += int(y[idx]["Approver"])
+        return x
+
+    print len(data.chart_data), len(new_data.chart_data)
+    completed = merge_data(0, data.chart_data, new_data.chart_data)
+    inprogress = merge_data(1, data.chart_data, new_data.chart_data)
+    overdue = merge_data(2, data.chart_data, new_data.chart_data)
+
+    data.chart_data = [completed, inprogress, overdue]
     return data

@@ -25,8 +25,10 @@ def get_compliance_status_count(db, le_ids, user_id, user_category):
             " inner join tbl_countries as t2 on t1.country_id = t2.country_id " + \
             " where chart_year = %s and user_id = %s"
         param = [getCurrentYear(), user_id]
+    print q
 
     rows = db.select_all(q, param)
+    print rows
     return frame_compliance_status(rows)
 
 def frame_compliance_status(data) :
@@ -347,9 +349,9 @@ def get_userwise_score_card(db, user_id):
         user_id, user_id, user_id, user_id, user_id, user_id, user_id, user_id
     ])
 
-    return rows
+    return frame_user_score_card(rows)
 
-def frame_user_score_card(self, data):
+def frame_user_score_card(data):
     chart_title = "User Scorecard"
     xaxis_name = "Total Compliances"
     xaxis = []
@@ -357,23 +359,25 @@ def frame_user_score_card(self, data):
     yaxis = []
     chartData = []
     if data :
+        d = data[0]
+        print d
         chartData.append({
             "Role": "Completed",
-            "Assingee": int(data["c_assingee"]),
-            "Concur": int(data["c_concur"]),
-            "Approver": int(data["c_approver"])
+            "Assingee": 0 if d["c_assignee"] is None else int(d["c_assignee"]),
+            "Concur":  0 if d["c_concur"] is None else int(d["c_concur"]),
+            "Approver":  0 if d["c_approver"] is None else int(d["c_approver"])
         })
         chartData.append({
             "Role": "In progress within due date",
-            "Assingee": int(data["in_assingee"]),
-            "Concur": int(data["in_concur"]),
-            "Approver": int(data["in_approver"])
+            "Assingee":  0 if d["in_assignee"] is None else int(d["in_assignee"]),
+            "Concur":  0 if d["in_concur"] is None else int(d["in_concur"]),
+            "Approver":  0 if d["in_approver"] is None else int(d["in_approver"])
         })
         chartData.append({
             "Role": "In progress over due",
-            "Assingee": int(data["ov_assingee"]),
-            "Concur": int(data["ov_concur"]),
-            "Approver": int(data["ov_approver"])
+            "Assingee":  0 if d["ov_assignee"] is None else int(d["ov_assignee"]),
+            "Concur":  0 if d["ov_concur"] is None else int(d["ov_concur"]),
+            "Approver":  0 if d["ov_approver"] is None else int(d["ov_approver"])
         })
 
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)

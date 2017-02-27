@@ -187,6 +187,7 @@ class API(object):
 
             print self._le_databases
             print self._group_databases
+
             def client_added(clients):
                 print clients
                 for client in clients:
@@ -543,6 +544,9 @@ class API(object):
 
                 elif type(request_data.request) is widgetprotocol.GetEscalationChart :
                     p_response = controller.merge_escalation_chart_widget(p_response, data)
+
+                elif type(request_data.request) is widgetprotocol.GetUserScoreCard :
+                    p_response = controller.merge_user_scorecard(p_response, data)
                 else :
                     pass
             return p_response
