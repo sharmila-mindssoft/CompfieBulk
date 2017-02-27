@@ -172,7 +172,9 @@ class GetAllocatedDBEnv(Request):
 class SaveAllocatedDBEnv(Request):
     def __init__(
         self, client_database_id, client_id, legal_entity_id, machine_id, db_server_id,
-        le_db_server_id, file_server_id, console_cl_ids, console_le_ids
+        le_db_server_id, file_server_id, console_cl_ids, console_le_ids, old_grp_app_id,
+        old_grp_db_s_id, old_le_db_s_id, old_le_f_s_id, new_cl_ids, new_grp_le_ids,
+        new_le_le_ids, new_le_f_s_ids
     ):
         self.client_database_id = client_database_id
         self.client_id = client_id
@@ -183,6 +185,14 @@ class SaveAllocatedDBEnv(Request):
         self.file_server_id = file_server_id
         self.console_cl_ids = console_cl_ids
         self.console_le_ids = console_le_ids
+        self.old_grp_app_id = old_grp_app_id
+        self.old_grp_db_s_id = old_grp_db_s_id
+        self.old_le_db_s_id = old_le_db_s_id
+        self.old_le_f_s_id = old_le_f_s_id
+        self.new_cl_ids = new_cl_ids
+        self.new_grp_le_ids = new_grp_le_ids
+        self.new_le_le_ids = new_le_le_ids
+        self.new_le_f_s_ids = new_le_f_s_ids
 
     @staticmethod
     def parse_structure(data):
@@ -190,13 +200,18 @@ class SaveAllocatedDBEnv(Request):
             data, [
                 "client_database_id", "client_id", "legal_entity_id", "machine_id",
                 "db_server_id", "le_db_server_id", "file_server_id", "console_cl_ids",
-                "console_le_ids"
+                "console_le_ids", "old_grp_app_id", "old_grp_db_s_id", "old_le_db_s_id",
+                "old_le_f_s_id", "new_cl_ids", "new_grp_le_ids", "new_le_le_ids",
+                "new_le_f_s_ids"
             ]
         )
         return SaveAllocatedDBEnv(
             data.get("client_database_id"), data.get("client_id"), data.get("legal_entity_id"),
             data.get("machine_id"), data.get("db_server_id"), data.get("le_db_server_id"),
-            data.get("file_server_id"), data.get("console_cl_ids"), data.get("console_le_ids")
+            data.get("file_server_id"), data.get("console_cl_ids"), data.get("console_le_ids"),
+            data.get("old_grp_app_id"), data.get("old_grp_db_s_id"), data.get("old_le_db_s_id"),
+            data.get("old_le_f_s_id"), data.get("new_cl_ids"), data.get("new_grp_le_ids"),
+            data.get("new_le_le_ids"), data.get("new_le_f_s_ids")
         )
 
     def to_structure(self):
@@ -209,7 +224,15 @@ class SaveAllocatedDBEnv(Request):
             "le_db_server_id": self.le_db_server_id,
             "file_server_id": self.file_server_id,
             "console_cl_ids": self.console_cl_ids,
-            "console_le_ids": self.console_le_ids
+            "console_le_ids": self.console_le_ids,
+            "old_grp_app_id": self.old_grp_app_id,
+            "old_grp_db_s_id": self.old_grp_db_s_id,
+            "old_le_db_s_id": self.old_le_db_s_id,
+            "old_le_f_s_id": self.old_le_f_s_id,
+            "new_cl_ids": self.new_cl_ids,
+            "new_grp_le_ids": self.new_grp_le_ids,
+            "new_le_le_ids": self.new_le_le_ids,
+            "new_le_f_s_ids": self.new_le_f_s_ids
         }
 
 
