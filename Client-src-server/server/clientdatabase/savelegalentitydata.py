@@ -1,7 +1,10 @@
+import threading
 from server.dbase import Database
 
 __all__ = [
     "LegalEntityReplicationManager",
+    "LEntityReplicationUSer",
+    "LEntityReplicationServiceProvider"
 ]
 
 class LegalEntityReplicationManager(object):
@@ -27,7 +30,7 @@ class LegalEntityReplicationManager(object):
             _db = self._initiate_connction()
             q = "select legal_entity_id, user_data, settings_data, provider_data " + \
                 " from tbl_le_replication_status where user_data = 1 or settings_data = 1 " + \
-                " provider_data = 1 "
+                " or provider_data = 1 "
             try :
                 _db.begin()
                 rows = _db.select_all(q)
@@ -39,9 +42,298 @@ class LegalEntityReplicationManager(object):
                 _db.close()
                 self._poll_response(rows)
 
+            t = threading.Timer(self._time_out_seconds, on_timeout)
+            t.daemon = True
+            t.start()
+
         if self._first_time :
             self._first_time = False
             on_timeout()
 
     def _poll_response(self, response):
-        self._callback(response)
+        self._callback(self._group_db_info, response)
+
+class LEntityReplicationUSer(object):
+    def __init__(self, group_info, le_info, le_id):
+        self._group_info = group_info
+        self._le_info = le_info
+        self._le_id = le_id
+
+    def _initiate_connection(self, connection_param):
+        con = Database.make_connection(connection_param)
+        _db = Database(con)
+        return _db
+
+    def reset_repliation_status(self, _db):
+        q = "update tbl_le_replication_status set user_data=0 where legal_entity_id = %s"
+        _db.execute(q, [self._le_id])
+
+    def fetch_data_to_save(self):
+        save_rows = []
+        del_rows = []
+        _db = self._initiate_connection(self._group_info)
+        q = "select user_id, s_action " + \
+            " from tbl_le_user_replication_status where legal_entity_id = %s"
+        try :
+            _db.begin()
+            rows = _db.select_all(q, [self._le_id])
+            for r in rows :
+                if r["s_action"] == 1 :
+                    save_rows.append(r["user_id"])
+                else :
+                    pass
+                    del_rows.append(r["user_id"])
+            if len(rows) == 0 :
+                self.reset_repliation_status(_db)
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+            return save_rows, del_rows
+
+    def delete_fetched_data(self, user_ids):
+        suser_id = ",".join([str(x) for x in user_ids])
+        _db = self._initiate_connection(self._group_info)
+        q = " delete from tbl_le_user_replication_status where legal_entity_id = %s and " + \
+            " find_in_set(user_id, %s)"
+        try :
+            _db.begin()
+            _db.execute(q, [self._le_id, suser_id])
+
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+
+    def delete_user_data(self, _db, user_ids):
+        suser_ids = ",".join([str(x) for x in user_ids])
+        q = "delete from tbl_users where find_in_set(user_id, %s)"
+        _db.execute(q, [suser_ids])
+        q = "delete from tbl_user_legal_entities where find_in_set(user_id, %s)"
+        _db.execute(q, [suser_ids])
+        q1 = "delete from tbl_user_units where find_in_set(user_id, %s)"
+        _db.execute(q1, [suser_ids])
+        q2 = "delete from tbl_user_domains where find_in_set(user_id, %s)"
+        _db.execute(q2, [suser_ids])
+
+    def fetch_user_data(self, user_ids):
+        suser_ids = ",".join([str(x) for x in user_ids])
+        user_rows = []
+        domain_rows = []
+        unit_rows = []
+
+        _db = self._initiate_connection(self._group_info)
+        q_user = "select * " + \
+            " from tbl_users where find_in_set(user_id, %s)"
+        q_user_domains = "select * from tbl_user_domains where legal_entity_id = %s and find_in_set(user_id, %s)"
+        q_user_units = "select * from tbl_user_units where legal_entity_id = %s and find_in_set(user_id, %s)"
+        try :
+            _db.begin()
+            user_rows = _db.select_all(q_user, [suser_ids])
+            domain_rows = _db.select_all(q_user_domains, [self._le_id, suser_ids])
+            unit_rows = _db.select_all(q_user_units, [self._le_id, suser_ids])
+
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+            return user_rows, domain_rows, unit_rows
+
+    def save_tbl_users(self, _db, user_info):
+        d = user_info
+        q = "insert into tbl_users(user_id, user_category_id, client_id, seating_unit_id, " + \
+            " service_provider_id, user_level, user_group_id, email_id, employee_name, " + \
+            " employee_code, contact_no, mobile_no, is_service_provider, is_active, is_disable) " + \
+            " values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+        try :
+            _db.execute(q, [
+                d["user_id"], d["user_category_id"], d["client_id"], d["seating_unit_id"],
+                d["service_provider_id"], d["user_level"], d["user_group_id"],
+                d["email_id"], d["employee_name"], d["employee_code"],
+                d["contact_no"], d["mobile_no"], d["is_service_provider"],
+                d["is_active"], d["is_disable"]
+            ])
+        except Exception, e :
+            print e
+
+    def save_tbl_user_legal_entities(self, _db, user_id):
+        q = "insert into tbl_user_legal_entities(user_id, legal_entity_id) values (%s, %s)"
+        try :
+            _db.execute(q, [user_id, self._le_id])
+        except Exception, e :
+            print e
+
+    def save_tbl_user_domains(self, _db, user_info):
+        d = user_info
+
+        q = "insert into tbl_user_domains(user_id, legal_entity_id, domain_id) " + \
+            " values(%s, %s, %s)"
+        try :
+            _db.execute(q, [d["user_id"], d["legal_entity_id"], d["domain_id"]])
+        except Exception, e :
+            print e
+
+    def save_tbl_user_units(self, _db, user_info):
+        d = user_info
+        q = "insert into tbl_user_units(user_id, legal_entity_id, unit_id) values " + \
+            "(%s, %s, %s)"
+        try :
+            _db.execute(q, [d["user_id"], d["legal_entity_id"], d["unit_id"]])
+        except Exception, e :
+            print e
+
+    def perform_save(self):
+        save_rows, del_rows = self.fetch_data_to_save()
+        user_rows, domain_rows, unit_rows = self.fetch_user_data(save_rows)
+        u_ids = [x["user_id"] for x in user_rows]
+        _db = self._initiate_connection(self._le_info)
+        try:
+            _db.begin()
+            self.delete_user_data(_db, u_ids)
+            for user in user_rows :
+                self.save_tbl_users(_db, user)
+                self.save_tbl_user_legal_entities(_db, user["user_id"])
+
+            for domain in domain_rows :
+                self.save_tbl_user_domains(_db, domain)
+
+            for unit in unit_rows :
+                self.save_tbl_user_units(_db, unit)
+
+            _db.commit()
+            self.delete_fetched_data(u_ids)
+        except Exception, e:
+            print e
+            _db.rollback()
+        finally:
+            _db.close()
+
+    def _start(self):
+        self.perform_save()
+
+class LEntityReplicationServiceProvider(object):
+    def __init__(self, group_info, le_info, le_id):
+        self._group_info = group_info
+        self._le_info = le_info
+        self._le_id = le_id
+
+    def _initiate_connection(self, connection_param):
+        con = Database.make_connection(connection_param)
+        _db = Database(con)
+        return _db
+
+    def reset_repliation_status(self, _db):
+        q = "update tbl_le_replication_status set provider_data=0 where legal_entity_id = %s"
+        _db.execute(q, [self._le_id])
+
+    def fetch_data_to_save(self):
+        save_rows = []
+        _db = self._initiate_connection(self._group_info)
+        q = "select provider_id, s_action " + \
+            " from tbl_le_provider_replication_status where legal_entity_id = %s"
+        try :
+            _db.begin()
+            rows = _db.select_all(q, [self._le_id])
+            for r in rows :
+                save_rows.append(r["provider_id"])
+            if len(rows) == 0 :
+                self.reset_repliation_status(_db)
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+            return save_rows
+
+    def delete_fetched_data(self, provider_ids):
+        sprovider_id = ",".join([str(x) for x in provider_ids])
+        _db = self._initiate_connection(self._group_info)
+        q = " delete from tbl_le_provider_replication_status where legal_entity_id = %s and " + \
+            " find_in_set(provider_id, %s)"
+        try :
+            _db.begin()
+            _db.execute(q, [self._le_id, sprovider_id])
+
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+
+    def delete_sprovider_data(self, _db, provider_id):
+        sprovider_id = ",".join([str(x) for x in provider_id])
+        q = "delete from tbl_service_providers where find_in_set(service_provider_id, %s)"
+        _db.execute(q, [sprovider_id])
+
+    def fetch_sprovider_data(self, provider_id):
+        sprovider_id = ",".join([str(x) for x in provider_id])
+        provider_rows = []
+
+        _db = self._initiate_connection(self._group_info)
+        q_user = "select * " + \
+            " from tbl_service_providers where find_in_set(service_provider_id, %s)"
+
+        try :
+            _db.begin()
+            provider_rows = _db.select_all(q_user, [sprovider_id])
+
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+            return provider_rows
+
+    def save_tbl_service_provider(self, _db, data):
+        d = data
+        q = "insert into tbl_service_providers(service_provider_id, service_provider_name, " + \
+            " short_name, contract_from, contract_to, contact_person, contact_no, email_id, mobile_no, " + \
+            " address, is_active, status_changed_by, status_changed_on, is_blocked, blocked_by, " + \
+            " blocked_on, remarks, created_by, created_on, updated_by, updated_on) " + \
+            " values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        try :
+            _db.execute(q, [
+                d["service_provider_id"], d["service_provider_name"], d["short_name"],
+                d["contract_from"], d["contract_to"], d["contact_person"], d["contact_no"],
+                d["email_id"], d["mobile_no"], d["address"], d["is_active"],
+                d["status_changed_by"], d["status_changed_on"], d["is_blocked"],
+                d["blocked_by"], d["blocked_on"], d["remarks"], d["created_by"],
+                d["created_on"], d["updated_by"], d["updated_on"]
+            ])
+        except Exception, e :
+            print e
+
+    def perform_save(self):
+        save_rows = self.fetch_data_to_save()
+        provider_rows = self.fetch_sprovider_data(save_rows)
+        s_ids = [x["service_provider_id"] for x in provider_rows]
+        _db = self._initiate_connection(self._le_info)
+        try:
+            _db.begin()
+            self.delete_sprovider_data(_db, s_ids)
+            for user in provider_rows :
+                self.save_tbl_service_provider(_db, user)
+
+            _db.commit()
+            self.delete_fetched_data(s_ids)
+        except Exception, e:
+            print e
+            _db.rollback()
+        finally:
+            _db.close()
+
+    def _start(self):
+        self.perform_save()

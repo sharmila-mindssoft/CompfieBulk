@@ -23,7 +23,8 @@ from server.clientreplicationbase import (
     # DomainReplicationManager
 )
 from server.clientdatabase.savelegalentitydata import(
-    LegalEntityReplicationManager
+    LegalEntityReplicationManager, LEntityReplicationUSer,
+    LEntityReplicationServiceProvider
 )
 from server.constants import SESSION_CUTOFF
 import logger
@@ -269,8 +270,12 @@ class API(object):
             _client_manager._start()
 
             # group data replication process corresponding legal entity database
-
-
+            for k, gp in self._group_databases.items():
+                gp_info = self._group_databases.get(k)
+                gp_id = gp_info.company_id
+                _le_entity = LegalEntityReplicationManager(gp_info, 10, self.legal_entity_replication_added)
+                _le_entity._start()
+                self._replication_legal_entity[gp_id] = _le_entity
         except Exception, e :
             logger.logClientApi(e, "Server added")
             logger.logClientApi(traceback.format_exc(), "")
@@ -278,8 +283,20 @@ class API(object):
             logger.logClient("error", "clientmain.py-server-added", traceback.format_exc())
             return
 
-    def legal_entity_replication_added(self, le_infos):
-        pass
+    def legal_entity_replication_added(self, group_info, le_infos):
+        # print "le_info"
+        # print "Z" * 10
+        for r in le_infos :
+            le_id = r["legal_entity_id"]
+            # print "legal_entity_replication_added ", le_id
+            le_info = self._le_databases.get(le_id)
+            if r["user_data"] == 1 :
+                info = LEntityReplicationUSer(group_info, le_info, le_id)
+                info._start()
+
+            if r["provider_data"] == 1 :
+                info = LEntityReplicationServiceProvider(group_info, le_info, le_id)
+                info._start()
 
     def _send_response(
         self, response_data, status_code

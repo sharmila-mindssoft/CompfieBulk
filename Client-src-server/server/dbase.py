@@ -149,7 +149,7 @@ class Database(object):
     ########################################################
     def close(self):
         assert self._connection is not None
-        self._cursor.close()
+        # self._cursor.close()
         self._connection.close()
         self._connection = None
 
