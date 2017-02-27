@@ -906,3 +906,6 @@ button.btn-success {
 h2.chart-title: hover{
   text-decoration: underline;
 }
+.l-h-30{
+  line-height:30px;
+}

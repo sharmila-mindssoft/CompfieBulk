@@ -7,7 +7,7 @@ var WIDGET_INFO_ID = [];
 // Compliance status
 //
 function updateComplianceStatusStackBarChart(data, id) {  
-  var xAxisName = data['xaxis_name'];
+  var xAxisName = ''; // data['xaxis_name'];
   var xAxis = data['xaxis'];
   var chartDataSeries = data['widget_data'];
   var chartTitle = data['chart_title'];
@@ -18,8 +18,8 @@ function updateComplianceStatusStackBarChart(data, id) {
     'Inprogress',
     'Not Complied'
   ];
-  var highchart;
-  highchart = new Highcharts.Chart({
+  var highchart_cs;
+  highchart_cs = new Highcharts.Chart({
     chart: {
       renderTo: 'cardbox'+id,
       type: 'bar'
@@ -78,6 +78,9 @@ function updateComplianceStatusStackBarChart(data, id) {
       '#F0F468',
       '#F32D2B'
     ],
+    exporting: {
+      enabled: false
+    },
     series: chartDataSeries
   });
   // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
@@ -111,6 +114,16 @@ function updateComplianceStatusStackBarChart(data, id) {
   //     title: frame_title
   //   });
   // });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
+  $(".dragdrophandles .resizable1").resizable({
+    autoHide: true, 
+    resize: function() {
+      highchart_cs.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }        
+  });    
 }
 //
 // Escalation chart
@@ -119,7 +132,7 @@ function updateEscalationChart(data, id) {
   xAxis = data['xaxis'];
   chartDataSeries = data['widget_data'];
   chartTitle = data['chart_title'];
-  highchart = new Highcharts.Chart({
+  highchart_es = new Highcharts.Chart({
     colors: [
       '#F58835',
       '#F32D2B'
@@ -154,12 +167,25 @@ function updateEscalationChart(data, id) {
         }
       }
     },
+    exporting: {
+      enabled: false
+    },
     series: chartDataSeries
   });
   // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
   //   var year = this.textContent || this.innerText;
   //   loadEscalationDrillDown(year);  // setChart(value);
   // });
+  $(".dragdrophandles .resizable2").resizable({
+    autoHide: true, 
+    resize: function() {
+      highchart_es.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }        
+  });    
 }
 //
 // Not complied
@@ -171,7 +197,7 @@ function updateNotCompliedChart(data, id) {
   chartTitle = data['chart_title'];
   $.each(chartDataSeries, function(k, v) { tot=tot+v["y"]; return tot;});
   total = tot;
-  highchart = new Highcharts.Chart({
+  highchart_nc = new Highcharts.Chart({
     colors: [
       '#FF9C80',
       '#F2746B',
@@ -214,8 +240,21 @@ function updateNotCompliedChart(data, id) {
         name: 'compliance',
         colorByPoint: true,
         data: chartDataSeries
-      }]
+      }],
+    exporting: {
+      enabled: false
+    },
   });
+  $(".dragdrophandles .resizable3").resizable({
+    autoHide: true, 
+    resize: function() {
+      highchart_nc.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }        
+  });  
 }
 //
 // Trend  chart
@@ -226,8 +265,8 @@ function updateTrendChart(data, id) {
   xAxis = data['xaxis'];
   chartTitle = data['chart_title'];
   chartDataSeries = data['widget_data'];
-  var highchart;
-  highchart = new Highcharts.Chart({
+  
+  highchart_tc = new Highcharts.Chart({
     chart: { renderTo: 'cardbox'+id },
     title: { text: chartTitle },
     credits: { enabled: false },
@@ -279,6 +318,9 @@ function updateTrendChart(data, id) {
         }
       }
     },
+    exporting: {
+      enabled: false
+    },
     series: chartDataSeries
   });
   // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
@@ -292,6 +334,16 @@ function updateTrendChart(data, id) {
   //     $('.btn-back').hide();
   //   });  // setChart(value);
   // });
+  $(".dragdrophandles .resizable4").resizable({
+    autoHide: true, 
+    resize: function() {
+      highchart_tc.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }        
+  });  
 }
 //
 // Compliance applicability status
@@ -301,7 +353,7 @@ function updateComplianceApplicabilityChart(data, id) {
   chartTitle = data['chart_title'];
   chartDataSeries = data['widget_data'];
   total = data[2];
-  highchart = new Highcharts.Chart({
+  highchart_ca = new Highcharts.Chart({
     colors: [
       '#66FF66',
       '#FFDC52',
@@ -343,8 +395,21 @@ function updateComplianceApplicabilityChart(data, id) {
         name: 'compliance',
         colorByPoint: true,
         data: chartDataSeries
-      }]
+      }],
+    exporting: {
+      enabled: false
+    },
   });
+  $(".dragdrophandles .resizable5").resizable({
+    autoHide: true, 
+    resize: function() {
+      highchart_ca.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }        
+  });  
 }
 
 function loadComplianceStatusChart(data, id){
@@ -465,8 +530,6 @@ function charticon(){
     }
 }
 
-
-
 function loadChart(){
   $.each(widget_list, function(k,v){
     var sidebarli = $("#templates .ul-sidebarmenu ul");
@@ -485,7 +548,6 @@ function loadChart(){
           var id = v.w_id;
           var pin_status = true;
           widget_info.push(client_mirror.saveUserWidgetDataDict(id, width, height, pin_status));
-
           client_mirror.saveUserWidgetData(widget_info, function(error, response){
             if(error == null){
               var settings = widgetSettings();
@@ -495,11 +557,29 @@ function loadChart(){
               $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
               $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
               cardboxclone.addClass("resizable"+v.w_id); 
-
+              $(".closewidget", cardboxclone).click(function(e){
+                var divitem = $(this).parent().parent();
+                console.log(divitem);
+                var getitem = divitem.attr('id');
+                var getsplit = getitem.split("item");
+                var itemid = getsplit[1];
+                
+                widget_info = $.grep(widget_info, function(e){ 
+                  return e.w_id != itemid; 
+                });
+                $(this).parent().parent().parent().remove();
+                
+                client_mirror.saveUserWidgetData(widget_info, function(error, response){
+                  if(error == null){
+                    displaySuccessMessage(message.save_success);
+                  }else{
+                    displayMessage(error);
+                  }
+                });                
+              });
               console.log("widget_list--"+WIDGET_INFO_ID);
 
               $(".dragdrophandles").append(cardboxclone);
-
               settings[v.w_id](function(error1, data1){
                 if(error1 == null){
                   widgetLoadChart()[v.w_id](data1, v.w_id);  
@@ -511,7 +591,7 @@ function loadChart(){
               // displaySuccessMessage(message.save_success);
               // $(".dragbox .pins i", cardboxclone).removeClass();
               // $(".dragbox .pins i", cardboxclone).addClass("ti-pin-alt")
-              // $(".dragbox .pins i", cardboxclone).attr("title", "unpin")
+              // $(".dragbox .pins i", cardboxclone).attr("title", "unpin");
             }else{
               displayMessage(error);
             }
@@ -519,12 +599,22 @@ function loadChart(){
           console.log("menu_widgets--"+WIDGET_INFO_ID);
         }        
     });
+    
     $('a.maxmin', liclone).click(function() {
       $(this).parent().siblings('.dragbox-content').toggle();
     });
     SIDEBAR_MAP[v.w_id] = v.w_name;
     $("#sidebar-menu").append(liclone);
-
+    // $(".dragdrophandles .resizable").resizable({
+    //     autoHide: true,
+    //     resize: function() {
+    //       chart.setSize(
+    //           this.offsetWidth - 40,
+    //           this.offsetHeight - 50,
+    //           false
+    //       );
+    //     }     
+    // });   
   });
   if(widget_info.length == 0){
     var user = client_mirror.getUserInfo();
@@ -538,40 +628,67 @@ function loadChart(){
       settings = widgetSettings();
       var cardbox = $(".chart-card-box li");
       var cardboxclone = cardbox.clone();
+      cardboxclone.css("width", v.width);
+      cardboxclone.css("height", v.height);
       $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
       $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
       $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
 
       $(".dragbox .pins .ti-pin2", cardboxclone).click(function(e){
-        var widget_info_save = [];
-        $.each(".dragdrophandles li", function(i, v){
-          var width = $(this).css('width');
-          var height = $(this).css('height');
-          var id = v.w_id;
-          var pin_status = true;
-          widget_info.push(client_mirror.saveUserWidgetDataDict(id, width, height, pin_status));
-          status_check++;          
+        var widget_info = [];        
+        $(".dragdrophandles li").each(function(i, v){
+            var itemiddiv = $(this).find('div');
+            var getitem = itemiddiv.attr("id");            
+            var getsplit = getitem.split("item");
+            var itemid = getsplit[1];
+
+            var width = $(this).css('width');
+            var height = $(this).css('height');
+            var id = itemid;
+            var pin_status = true;            
+            widget_info.push(client_mirror.saveUserWidgetDataDict(parseInt(id), width, height, pin_status));
+            status_check++;          
         });
         if(status_check != 0){
           console.log("menu_widgets--"+WIDGET_INFO_ID);
           client_mirror.saveUserWidgetData(widget_info, function(error, response){
             if(error == null){
               displaySuccessMessage(message.save_success);
-              $(".dragbox .pins i", cardboxclone).removeClass();
-              $(".dragbox .pins i", cardboxclone).addClass("ti-pin-alt");
-              $(".dragbox .pins i", cardboxclone).attr("title", "unpin");
+              $(".dragbox .pins i").removeClass();
+              $(".dragbox .pins i").addClass("ti-pin-alt");
+              $(".dragbox .pins i").attr("title", "unpin");
+
             }else{
               displayMessage(error);
             }
           });
         }        
       });
-          
+      //Close Widget
+      $(".closewidget", cardboxclone).click(function(e){
+        var divitem = $(this).parent().parent();
+        console.log(divitem);
+        var getitem = divitem.attr('id');
+        var getsplit = getitem.split("item");
+        var itemid = getsplit[1];
+        
+        widget_info = $.grep(widget_info, function(e){ 
+          return e.w_id != itemid; 
+        });
+        $(this).parent().parent().parent().remove();
+        
+        client_mirror.saveUserWidgetData(widget_info, function(error, response){
+          if(error == null){
+            displaySuccessMessage(message.save_success);
+          }else{
+            displayMessage(error);
+          }
+        });
+
+      });
       console.log("+widget_info closewidget"+WIDGET_INFO_ID);
       cardboxclone.addClass("resizable"+v.w_id); 
-      $(".resizable"+v.w_id, cardboxclone).resizable({
-        autoHide: true
-      });    
+      
       $('.toggleWidget', cardboxclone).click(function(e) {
         e.preventDefault();
         console.log($(this).data('target'));
@@ -582,7 +699,21 @@ function loadChart(){
           $(this).parent().addClass('active_widgets');
       }); 
 
-    
+      // $('.closewidget', cardboxclone).click(function(e) {
+      //   e.preventDefault();
+      //   var item = $(this).parent().parent();
+      //   var list = "#" + item.attr('id');
+      //   item.css({
+      //       "display": "none"
+      //   });
+
+      //   $(".has_sub", cardboxclone).each(function(index) {
+      //     if ($(this).find('a').attr('data-target') === list) {
+      //         if ($(this).hasClass("active_widgets") == true)
+      //             $(this).removeClass('active_widgets');
+      //     }
+      //   });
+      // });
       $('a.maxmin', cardboxclone).click(function() {
           $(this).parent().siblings('.dragbox-content').toggle();
       });
@@ -607,44 +738,11 @@ function loadChart(){
         }      
       });
     });
+    // $(".dragdrophandles .resizable").resizable({
+    //     autoHide: true           
+    // });    
   }
 }
-
- $(".closewidget").click(function(e){
-  var divitem = $(this).parent().parent();
-  console.log(divitem);
-  var getitem = divitem.attr('id');
-  var getsplit = getitem.split("item");
-  var itemid = getsplit[1];
-  
-  widget_info = $.grep(widget_info, function(e){ 
-    return e.w_id != itemid; 
-  });
-  $(this).parent().parent().parent().remove();
-  
-  client_mirror.saveUserWidgetData(widget_info, function(error, response){
-    if(error == null){
-      displaySuccessMessage(message.save_success);
-    }else{
-      displayMessage(error);
-    }
-  });                
-});
-// $('.closewidget', cardboxclone).click(function(e) {
-//   e.preventDefault();
-//   var item = $(this).parent().parent();
-//   var list = "#" + item.attr('id');
-//   item.css({
-//       "display": "none"
-//   });
-
-//   $(".has_sub", cardboxclone).each(function(index) {
-//     if ($(this).find('a').attr('data-target') === list) {
-//         if ($(this).hasClass("active_widgets") == true)
-//             $(this).removeClass('active_widgets');
-//     }
-//   });
-// });
 
 function loadSidebarMenu(){
   client_mirror.getUserWidgetData(function (error, data) {
