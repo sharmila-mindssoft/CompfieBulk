@@ -226,7 +226,7 @@ def get_approve_level(db, le_id):
     q = "select two_levels_of_approval from tbl_reminder_settings where legal_entity_id=%s"
     row = db.select_one(q, [le_id])
     if row :
-        return row.get("two_levels_of_approval")
+        return bool(row.get("two_levels_of_approval"))
     else :
         return False
 

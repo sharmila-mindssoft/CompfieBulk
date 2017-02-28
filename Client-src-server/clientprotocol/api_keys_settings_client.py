@@ -345,7 +345,7 @@ api_params = {
     'unit': make_text_field(is_optional=True),
     'status_report_consolidated_list': make_vector_type_field(module="clientcore", klass_name="GetStatusReportConsolidatedSuccess", is_optional=True),
     'status_name': make_string_field(),
-    'compliance_activity_id': make_int_field(),
+    'compliance_activity_id': make_int_field(is_optional=True),
     'compliance_history_id': make_int_field(),
     'compliance_name': make_text_field(is_optional=True),
     'activity_on': make_text_field(length=20, is_optional=True),

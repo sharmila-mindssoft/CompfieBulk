@@ -1073,60 +1073,61 @@ def report_status_report_consolidated(
 ):
     from_date = string_to_datetime(from_date)
     to_date = string_to_datetime(to_date)
-    query = "select t01.num,acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
+    query = "select acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
             "(select concat(unit_code,' - ',unit_name,' - ',address) from tbl_units where unit_id = ch.unit_id) as unit,ch.compliance_id, " + \
             "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
             "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
-            "SUBSTRING_INDEX(com.statutory_mapping,'>>',1) as act_name, acl.activity_on, ch.due_date,ch.completion_date, " + \
+            "SUBSTRING_INDEX(com.statutory_mapping,'>>',1) as act_name,  acl.activity_on, ch.due_date,ch.completion_date, " + \
             "(CASE WHEN (ch.due_date < ch.approved_on and ch.approve_status = 3) THEN 'Delayed Compliance' " + \
             "WHEN (ch.due_date >= ch.approved_on and ch.approve_status = 3) THEN 'Complied' " + \
             "WHEN (ch.due_date >= ch.approved_on and ch.approve_status < 3) THEN 'In Progress' " + \
             "WHEN (ch.due_date < ch.approved_on and ch.approve_status < 3) THEN 'Not Complied' " + \
             "WHEN (ch.approved_on IS NULL and ch.approve_status IS NULL) THEN 'In Progress' " + \
-            "ELSE 'In Progress' END) as task_status, " + \
-            "(CASE WHEN acl.activity_by = ch.completed_by THEN ch.documents ELSE '-' END) as uploaded_document, " + \
-            "(CASE WHEN acl.activity_by = ch.approved_by THEN (CASE ch.approve_status WHEN 1 THEN 'Rectify' WHEN 2 THEN 'Rejected' ElSE 'Approved' END) " + \
-            "WHEN acl.activity_by = ch.concurred_by THEN (CASE ch.concurrence_status WHEN 1 THEN 'Concurred' ELSE 'Rejected' END) " + \
-            "WHEN acl.activity_by = ch.completed_by THEN 'Submitted' ELSE 1 END) as activity_status, " + \
-            "(CASE WHEN acl.activity_by = ch.approved_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.approval_person) " + \
-            "WHEN acl.activity_by = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
-            "WHEN acl.activity_by = ch.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE 1 END) as user_name " + \
+            "ELSE 'In Progress' END) as compliance_task_status, " + \
+            "(CASE WHEN %s = ch.completed_by THEN ch.documents ELSE '-' END) as uploaded_document, " + \
+            "(CASE WHEN %s = ch.approved_by THEN (CASE ch.approve_status WHEN 1 THEN 'Rectify' WHEN 2 THEN 'Rejected' WHEN 3 THEN 'Approved' ELSE 'Pending' END) " + \
+            "WHEN %s = ch.concurred_by THEN (CASE ch.concurrence_status WHEN 1 THEN 'Rectify' WHEN 2 THEN 'Rejected' WHEN 3 THEN 'Concurred' ELSE 'Pending' END) " + \
+            "WHEN %s = ch.completed_by THEN 'Submitted' ELSE 'Pending' END) as activity_status, " + \
+            "(CASE WHEN %s = ch.approved_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.approval_person) " + \
+            "WHEN %s = ch.concurred_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.concurrence_person)  " + \
+            "WHEN %s = ch.completed_by THEN (select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assignee) ELSE 1 END) as user_name " + \
             "from tbl_compliance_history as ch " + \
             "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-            "inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
-            "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
+            "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+            "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
             "inner join (select compliance_id,unit_id,num from  " + \
-               "(select compliance_id,unit_id,@rownum := @rownum + 1 AS num  " + \
-               "from (select distinct t1.compliance_id,t1.unit_id from tbl_compliance_activity_log as t1 " + \
-                 "inner join tbl_compliance_history as t2 on t1.compliance_history_id = t2.compliance_history_id " + \
-                                "order by t1.unit_id,t1.compliance_id,t1.compliance_history_id asc,t1.compliance_activity_id desc) t, " + \
-               "(SELECT @rownum := 0) r) as cnt " + \
-               "where cnt.num between %s and %s order by cnt.unit_id, cnt.compliance_id) as t01  " + \
-                        "on acl.compliance_id = t01.compliance_id and acl.unit_id = t01.unit_id " + \
+                  "(select compliance_id,unit_id,@rownum := @rownum + 1 AS num  " + \
+                  "from (select distinct t1.compliance_id,t1.unit_id from tbl_compliance_history as t1 " + \
+                      "left join tbl_compliance_activity_log as t2 on t1.compliance_history_id = t2.compliance_history_id " + \
+                                "order by t1.unit_id,t1.compliance_id,t1.compliance_history_id asc,t2.compliance_activity_id desc) t, " + \
+                  "(SELECT @rownum := 0) r) as cnt " + \
+                  "where cnt.num between %s and %s order by cnt.unit_id, cnt.compliance_id) as t01  " + \
+                        "on ch.compliance_id = t01.compliance_id and ch.unit_id = t01.unit_id " + \
             "where com.country_id = %s and ch.legal_entity_id = %s " + \
             "and com.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+            "and IF(%s IS NOT NULL, ch.unit_id = %s,1) " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(com.statutory_mapping,'>>',1) = %s,1) " + \
             "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
             "and IF(%s > 0, com.frequency_id = %s,1) " + \
-            "and (CASE %s WHEN 1 THEN ac.assignee = acl.activity_by " + \
-            "WHEN 2 THEN ac.concurrence_person = acl.activity_by WHEN 3 THEN ac.approval_person = acl.activity_by " + \
+            "and (CASE %s WHEN 1 THEN ac.assignee = %s " + \
+            "WHEN 2 THEN ac.concurrence_person = %s WHEN 3 THEN ac.approval_person = %s " + \
             "ELSE 1 END) " + \
-            "and IF(%s IS NOT NULL, acl.activity_by = %s,1) " + \
-            "and acl.activity_on >= %s and acl.activity_on <= %s " + \
+            "-- and IF(%s IS NOT NULL, acl.activity_by = %s,1) " + \
+            "and ch.due_date >= %s and ch.due_date <= %s " + \
             "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.approved_on and ch.approve_status = 3) THEN 'Delayed Compliance' " + \
             "WHEN (ch.due_date >= ch.approved_on and ch.approve_status = 3) THEN 'Complied' " + \
             "WHEN (ch.due_date >= ch.approved_on and ch.approve_status < 3) THEN 'In Progress' " + \
             "WHEN (ch.due_date < ch.approved_on and ch.approve_status < 3) THEN 'Not Complied' " + \
             "WHEN (ch.approved_on IS NULL and ch.approve_status IS NULL) THEN 'In Progress' " + \
             "ELSE 'In Progress' END) = %s,1) " + \
-            "order by t01.num,acl.compliance_activity_id desc "
+            "order by t01.num,ch.compliance_history_id desc"
 
     # print query;
 
     rows = db.select_all(query, [
-            f_count, t_count, country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
-            compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, from_date, to_date, status_name, status_name
+            usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, f_count, t_count,
+            country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id, 
+            frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, usr_id, usr_id, from_date, to_date, status_name, status_name
             ])
     # print rows
 
@@ -1152,7 +1153,7 @@ def return_status_report_consolidated(db, result, country_id, legal_entity_id):
         activity_on = datetime_to_string(r["activity_on"])
         due_date = datetime_to_string(r["due_date"])
         completion_date = datetime_to_string(r["completion_date"])
-        task_status = r["task_status"]
+        task_status = r["compliance_task_status"]
         uploaded_document = r["uploaded_document"]
         activity_status = r["activity_status"]
         user_name = r["user_name"]
