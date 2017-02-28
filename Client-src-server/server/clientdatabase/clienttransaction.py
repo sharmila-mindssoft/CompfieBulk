@@ -2837,7 +2837,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
             "Where ac.assignee = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "Group by ac.unit_id) " + \
             "UNION ALL " + \
             "(select ac.unit_id,concat(unt.unit_code,' - ', unt.unit_name,' - ', SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
             "count(ac.compliance_id) as no_of_compliances," + \
@@ -2847,7 +2847,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
             "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "Group by ac.unit_id) " + \
             "UNION ALL " + \
             "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
             "count(ac.compliance_id) as no_of_compliances, " + \
@@ -2857,7 +2857,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
             "Where ac.approval_person = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person)) as t1 " + \
+            "Group by ac.unit_id)) as t1 " + \
             "Where IF(%s > 0,user_type = %s, 1) " + \
             "ORDER BY user_type,unit_id;"
         param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type]
@@ -2886,7 +2886,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
             "Where ac.assignee = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "Group by ac.unit_id) " + \
             "UNION ALL " + \
             "(select ac.unit_id,concat(unt.unit_code,' - ', unt.unit_name,' - ', SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
             "count(ac.compliance_id) as no_of_compliances," + \
@@ -2896,7 +2896,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
             "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "Group by ac.unit_id) " + \
             "UNION ALL " + \
             "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
             "count(ac.compliance_id) as no_of_compliances, " + \
@@ -2906,7 +2906,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
             "Where ac.approval_person = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person)) as t1 " + \
+            "Group by ac.unit_id)) as t1 " + \
             "Where IF(%s > 0,user_type = %s, 1) " + \
             "ORDER BY user_type,unit_id;"
         param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type]
