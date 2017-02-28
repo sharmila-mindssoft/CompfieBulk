@@ -10,18 +10,23 @@ def getCurrentYear():
 def getCurrentMonth():
     now = datetime.datetime.now()
     return now.month
+
 def getDayName(date):
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     dayNumber = date.weekday()
     return days[dayNumber]
+
 def getFirstDate():
     now = datetime.date.today().replace(day=1)
     return now
+
 def totalDays():
     thismonth = getFirstDate()
     nextmonth = thismonth.replace(month=getCurrentMonth()+1)
     return (nextmonth - thismonth).days
 
+def currentDay():
+    return datetime.datetime.now().day
 
 # Compliance Status chart groupwise count
 
@@ -374,7 +379,6 @@ def frame_user_score_card(data):
     chartData = []
     if data :
         d = data[0]
-        print d
         chartData.append({
             "Role": "Completed",
             "Assingee": 0 if d["c_assignee"] is None else int(d["c_assignee"]),
@@ -447,11 +451,30 @@ def get_calendar_view(db, user_id):
     month = getCurrentMonth()
     q = "select year, month, date, due_date_count, upcoming_count, inprogress_count, overdue_count " + \
         " from tbl_calendar_view where user_id = %s and year = %s and month = %s"
-    print q % (user_id, year, month)
-    rows = db.select_all(q, [user_id, year, month])
-    return frame_calendar_view(rows)
 
-def frame_calendar_view(data):
+    rows = db.select_all(q, [user_id, year, month])
+    return frame_calendar_view(db, rows, user_id)
+
+def get_current_inprogess_overdue(db, user_id):
+    q = "select " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+        " from tbl_compliance_history as ch " + \
+        " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id  " + \
+        " inner join tbl_client_compliances as cc on ch.unit_id = cc.unit_id and cc.domain_id = com.domain_id " + \
+        " and cc.compliance_id = com.compliance_id " + \
+        " inner join tbl_user_units as un on un.unit_id = ch.unit_id " + \
+        " where un.user_id = %s "
+    rows = db.select_one(q, [user_id])
+    overdue = inprogress = 0
+    if rows :
+        overdue = int(rows["overdue_count"])
+        inprogress = int(rows["inprogress_count"])
+    return overdue, inprogress
+
+def frame_calendar_view(db, data, user_id):
     chart_title = "Calendar View"
     xaxis_name = "Total Compliances"
     xaxis = []
@@ -461,17 +484,21 @@ def frame_calendar_view(data):
     cdata = []
 
     for i in range(totalDays()) :
+        overdue = 0
+        inprogress = 0
+        print i+1 == currentDay()
+        if i+1 == currentDay() :
+            overdue, inprogress = get_current_inprogess_overdue(db, user_id)
+            print overdue, inprogress
 
         xaxis.append(str(i+1))
         cdata.append({
             "date": i+1,
-            "overdue": 0,
+            "overdue": overdue,
             "upcoming": 0,
-            "inprogress": 0,
+            "inprogress": inprogress,
             "duedate": 0
         })
-    print xaxis
-    print cdata
     for d in data :
         idx = xaxis.index(str(d["date"]))
         c = cdata[idx]
@@ -485,10 +512,10 @@ def frame_calendar_view(data):
         overdue = d["overdue_count"]
         overdue = 0 if overdue is None else int(overdue)
 
-        c["overdue"] = overdue
-        c["upcoming"] = upcoming
-        c["inprogress"] = inprogress
-        c["duedate"] = duedate
+        c["overdue"] += overdue
+        c["upcoming"] += upcoming
+        c["inprogress"] += inprogress
+        c["duedate"] += duedate
 
         cdata[idx] = c
 
