@@ -3366,9 +3366,10 @@ def process_legal_entity_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -3572,9 +3573,10 @@ def process_domain_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -3779,9 +3781,10 @@ def process_unit_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -4067,9 +4070,10 @@ def process_service_provider_wise_report(db , request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -4363,9 +4367,10 @@ def process_user_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -4670,9 +4675,10 @@ def process_unit_list_report(db, request):
             closed_date = None
 
         if geography_name.find(">>") >= 0:
-            state = geography_name.split(">>")[2]
-            city = geography_name.split(">>")[3]
-            geography_name = state+","+city
+            val = geography_name.split(">>")
+            split_len = len(geography_name.split(">>"))
+            city = val[split_len-1]
+            geography_name = city
         else:
             geography_name = None
 
@@ -4934,7 +4940,7 @@ def process_risk_report(db, request):
         print "qry1"
         print query
         result_1 = db.select_all(query, condition_val)
-
+        print result_1
         risk_report = []
 
         for row in result_1:
@@ -4946,9 +4952,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
@@ -5046,6 +5053,7 @@ def process_risk_report(db, request):
         print query
 
         result = db.select_all(query, condition_val)
+        print result
         for row in result:
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
@@ -5055,9 +5063,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
@@ -5171,9 +5180,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
@@ -5275,6 +5285,7 @@ def process_risk_report(db, request):
         print query
 
         result = db.select_all(query, condition_val)
+        print result
         risk_report = []
 
         for row in result:
@@ -5286,9 +5297,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
