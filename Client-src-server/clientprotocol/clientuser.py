@@ -209,6 +209,9 @@ class GetOnOccurrenceCompliances(Request):
             "start_count": self.start_count
         }
 
+######################################################################
+# Start Onoccurrence Compliances
+######################################################################
 class StartOnOccurrenceCompliance(Request):
     def __init__(self, legal_entity_id, compliance_id, start_date, unit_id, duration):
         self.legal_entity_id = legal_entity_id

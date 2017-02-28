@@ -375,10 +375,13 @@ function initClientMirror() {
     }
 
     /* Compliance Approal */
-    function getComplianceApprovalList(start_count, callback) {
+    function getComplianceApprovalList(le_id, start_count, callback) {
         var request = [
             'GetComplianceApprovalList',
-            { 'start_count': start_count }
+            {
+                'le_id': le_id,
+                'start_count': start_count
+            }
         ];
         clientApiRequest('client_transaction', request, callback);
     }
