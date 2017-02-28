@@ -608,7 +608,7 @@ def process_reassign_compliance_filters(db, request, session_user, session_categ
 
 def process_get_widget_data(db, session_user, session_category):
     data = get_user_widget_settings(db, session_user, session_category)
-    forms = get_widget_list(db)
+    forms = get_widget_list(db, session_user, session_category)
     result = []
     frm_result = []
     w_ids = []
@@ -661,7 +661,7 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
     # )
     reassign_compliances = get_reassign_compliance_for_units(
         db, domain_id, unit_ids, user_id, user_type, session_user, from_count, to_count
-    ) 
+    )
 
     return clienttransactions.GetReAssignComplianceForUnitsSuccess(
         reassign_compliances
