@@ -146,7 +146,6 @@ function callAPI(api_type) {
             if ($('#duedate' + c_no).val() != '' && $('#duedate' + c_no).val() != undefined) {
                 d_date = $('#duedate' + c_no).val();
             }
-
             /*var C_U_ID = comb_[0] + '-' + comb_[1];
             SELECTED_COMPLIANCE[C_U_ID] = {
                 'u_id': parseInt(comb_[1]),

@@ -2947,8 +2947,8 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "inner join tbl_compliances as com on ac.compliance_id = com.compliance_id " + \
         "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
         "inner join tbl_client_compliances as cc on ac.compliance_id = cc.compliance_id and ac.unit_id = cc.unit_id and IFNULL(cc.compliance_opted_status,0) = 1 " + \
-        "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id  " + \
-        "and ac.assignee = ch.completed_by and iFNULL(ch.approve_status,0) <> 1 " + \
+        "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
+        "and ac.assignee = ch.completed_by and (iFNULL(ch.approve_status,0) <> 1 and iFNULL(ch.approve_status,0) <> 3) " + \
         "where ac.domain_id = %s and find_in_set(ac.unit_id, %s) " + \
         "and (CASE %s WHEN 1 THEN ac.assignee = %s  " + \
         "WHEN 2 THEN ac.concurrence_person = %s  " + \
