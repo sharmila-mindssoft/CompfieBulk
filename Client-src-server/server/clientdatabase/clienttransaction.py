@@ -1518,7 +1518,7 @@ def get_compliance_approval_list(
         " (select statutory_dates from " + \
         " tbl_assign_compliances tac " + \
         " where tac.compliance_id = tch.compliance_id " + \
-        " limit 1) as statutory_dat, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+        " limit 1) as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
         " (SELECT concat(unit_code, '-', tu.unit_name) " + \
         " FROM tbl_units tu " + \
         " where tch.unit_id = tu.unit_id) as unit_name, " + \
@@ -1563,8 +1563,7 @@ def get_compliance_approval_list(
     # result = convert_to_dict(rows, columns)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
-    count = 0
-    print "rows>>>>>>>>>>", rows
+    count = 0    
     for row in rows:
         no_of_days, ageing = calculate_ageing(
             due_date=row["due_date"],
@@ -1573,12 +1572,14 @@ def get_compliance_approval_list(
         )
         download_urls = []
         file_name = []
+        client_id ="1"
         if row["documents"] is not None and len(row["documents"]) > 0:
             for document in row["documents"].split(","):
                 if document is not None and document.strip(',') != '':
                     dl_url = "%s/%s/%s" % (
                         CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     )
+                    # CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     download_urls.append(dl_url)
                     file_name_part = document.split("-")[0]
                     file_extn_parts = document.split(".")
@@ -1629,9 +1630,9 @@ def get_compliance_approval_list(
         description = row["compliance_description"]
         concurrence_status = None if (
                 row["concurrence_status"] in [None, "None", ""]
-            ) else bool(int(row["concurrence_status"]))
+            ) else bool(int(row["concurrence_status"]))        
         statutory_dates = [] if (
-            row["statutory_dates"] is [None, "None", ""]
+            row["statutory_dates"] is [None, "None", ""]            
         ) else json.loads(row["statutory_dates"])
         validity_date = None if (
             row["validity_date"] is [None, "None", ""]
