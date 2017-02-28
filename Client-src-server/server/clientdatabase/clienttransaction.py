@@ -2626,11 +2626,12 @@ def get_domains_for_legalentity(db, request, session_user):
     condition_val = [le_id]
 
     if cat_id > 2:
-        where_qry += "AND t02.user_id = %s "
+        where_qry += "AND t03.user_id = %s "
         condition_val.extend([session_user])
     query = "SELECT t01.domain_id, t01.domain_name, t02.legal_entity_id, t01.is_active " + \
             "FROM tbl_domains t01  " + \
-            "INNER JOIN tbl_user_domains t02 on t01.domain_id = t02.domain_id %s"
+            "INNER JOIN tbl_legal_entity_domains t02 on t01.domain_id = t02.domain_id " + \
+            "LEFT JOIN tbl_user_domains t03 on t01.domain_id = t03.domain_id %s "
     query = query % (where_qry)
     if condition_val is None:
         rows = db.select_all(query)
