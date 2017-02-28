@@ -61,10 +61,11 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
+        //alert(countryList.toSource());
         if (countryList.length == 0 && text_val != '')
             displayMessage(message.country_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+        var condition_fields = [];
+        var condition_values = [];
         //alert(text_val +' - '+countryList.toSource() +' - '+)
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
@@ -305,80 +306,84 @@ DomainScoreCard.prototype.showReportValues = function() {
     var un_assigned_count = 0;
     var not_opted_count = 0;
     var row_total_count = 0;
-    $.each(data, function(k, v) {
-        var row_total = 0;
-        //sno domain-name assigned un-assigned not-opted row-total
-        var cloneone = $('#template #report-table .report-row').clone();
-        $('.sno', cloneone).text(j);
-        $('.domain-name', cloneone).text(v.domain_name);
-        $('.domain-name', cloneone).on('click', function() {
-            t_this.showDomainDetails(v.domain_id);
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var row_total = 0;
+            //sno domain-name assigned un-assigned not-opted row-total
+            var cloneone = $('#template #report-table .report-row').clone();
+            $('.sno', cloneone).text(j);
+            $('.domain-name', cloneone).text(v.domain_name);
+            $('.domain-name', cloneone).on('click', function() {
+                t_this.showDomainDetails(v.domain_id);
+            });
+            $('.assigned', cloneone).text(v.assigned_count);
+            $('.un-assigned', cloneone).text(v.unassigned_count);
+            $('.not-opted', cloneone).text(v.not_opted_count);
+
+
+            assigned_count = assigned_count + v.assigned_count;
+            un_assigned_count = un_assigned_count + v.unassigned_count;
+            not_opted_count = not_opted_count + v.not_opted_count;
+            row_total = row_total_count + v.unassigned_count + v.not_opted_count;
+            row_total_count = row_total_count = row_total;
+            $('.row-total', cloneone).text(row_total);
+            reportTableTbody.append(cloneone);
+            j = j + 1;
+
+            var inprogress_new_count = 0;
+            var complied_new_count = 0;
+            var delayed_new_count = 0;
+            var not_complied_new_count = 0;
+            var un_assigned_new_count = 0;
+            var not_opted_new_count = 0;
+            var row_total_new_count = 0;
+            var i = 0
+            $.each(v.units_wise_count, function(k1, v1) {
+                var row_total_new = 0;
+                var clonetwo = $('#template #report-table .report-new-row').clone();
+                clonetwo.addClass("domain-" + v.domain_id);
+                $('.unit-name', clonetwo).text(v1.unit);
+                $('.inprogress', clonetwo).text(v1.inprogress_count);
+                $('.complied', clonetwo).text(v1.complied_count);
+                $('.delayed-complied', clonetwo).text(v1.delayed_count);
+                $('.not-complied', clonetwo).text(v1.overdue_count);
+                $('.un-assigned', clonetwo).text(v1.unassigned_count);
+                $('.not-opted', clonetwo).text(v1.not_opted_count);
+                inprogress_new_count = inprogress_new_count + v1.inprogress_count;
+                complied_new_count = complied_new_count + v1.complied_count;
+                delayed_new_count = delayed_new_count + v1.delayed_count;
+                not_complied_new_count = not_complied_new_count + v1.overdue_count;
+                un_assigned_new_count = un_assigned_new_count + v1.unassigned_count;
+                not_opted_new_count = not_opted_new_count + v1.not_opted_count;
+                row_total_new = v1.inprogress_count + v1.complied_count + v1.delayed_count + v1.overdue_count + v1.unassigned_count + v1.not_opted_count;
+                row_total_new_count = row_total_new_count = row_total_new;
+                $('.row-total', clonetwo).text(row_total_new);
+                reportTableTbodyNew.append(clonetwo);
+                i = i + 1;
+            });
+            if (i > 1) {
+                var clonethree = $('#template #report-table .report-new-total-row').clone();
+                clonethree.addClass("domain-" + v.dom_id);
+                $('.total-inprogress', clonethree).text(inprogress_new_count);
+                $('.total-complied', clonethree).text(complied_new_count);
+                $('.total-delayed-complied', clonethree).text(delayed_new_count);
+                $('.total-not-complied', clonethree).text(not_complied_new_count);
+                $('.total-un-assigned', clonethree).text(un_assigned_new_count);
+                $('.total-not-opted', clonethree).text(not_opted_new_count);
+                $('.total-count-new', clonethree).text(row_total_new_count);
+                reportTableTbodyNew.append(clonethree);
+            }
         });
-        $('.assigned', cloneone).text(v.assigned_count);
-        $('.un-assigned', cloneone).text(v.unassigned_count);
-        $('.not-opted', cloneone).text(v.not_opted_count);
-
-
-        assigned_count = assigned_count + v.assigned_count;
-        un_assigned_count = un_assigned_count + v.unassigned_count;
-        not_opted_count = not_opted_count + v.not_opted_count;
-        row_total = row_total_count + v.unassigned_count + v.not_opted_count;
-        row_total_count = row_total_count = row_total;
-        $('.row-total', cloneone).text(row_total);
-        reportTableTbody.append(cloneone);
-        j = j + 1;
-
-        var inprogress_new_count = 0;
-        var complied_new_count = 0;
-        var delayed_new_count = 0;
-        var not_complied_new_count = 0;
-        var un_assigned_new_count = 0;
-        var not_opted_new_count = 0;
-        var row_total_new_count = 0;
-        var i = 0
-        $.each(v.units_wise_count, function(k1, v1) {
-            var row_total_new = 0;
-            var clonetwo = $('#template #report-table .report-new-row').clone();
-            clonetwo.addClass("domain-" + v.domain_id);
-            $('.unit-name', clonetwo).text(v1.unit);
-            $('.inprogress', clonetwo).text(v1.inprogress_count);
-            $('.complied', clonetwo).text(v1.complied_count);
-            $('.delayed-complied', clonetwo).text(v1.delayed_count);
-            $('.not-complied', clonetwo).text(v1.overdue_count);
-            $('.un-assigned', clonetwo).text(v1.unassigned_count);
-            $('.not-opted', clonetwo).text(v1.not_opted_count);
-            inprogress_new_count = inprogress_new_count + v1.inprogress_count;
-            complied_new_count = complied_new_count + v1.complied_count;
-            delayed_new_count = delayed_new_count + v1.delayed_count;
-            not_complied_new_count = not_complied_new_count + v1.overdue_count;
-            un_assigned_new_count = un_assigned_new_count + v1.unassigned_count;
-            not_opted_new_count = not_opted_new_count + v1.not_opted_count;
-            row_total_new = v1.inprogress_count + v1.complied_count + v1.delayed_count + v1.overdue_count + v1.unassigned_count + v1.not_opted_count;
-            row_total_new_count = row_total_new_count = row_total_new;
-            $('.row-total', clonetwo).text(row_total_new);
-            reportTableTbodyNew.append(clonetwo);
-            i = i + 1;
-        });
-        if (i > 1) {
-            var clonethree = $('#template #report-table .report-new-total-row').clone();
-            clonethree.addClass("domain-" + v.dom_id);
-            $('.total-inprogress', clonethree).text(inprogress_new_count);
-            $('.total-complied', clonethree).text(complied_new_count);
-            $('.total-delayed-complied', clonethree).text(delayed_new_count);
-            $('.total-not-complied', clonethree).text(not_complied_new_count);
-            $('.total-un-assigned', clonethree).text(un_assigned_new_count);
-            $('.total-not-opted', clonethree).text(not_opted_new_count);
-            $('.total-count-new', clonethree).text(row_total_new_count);
-            reportTableTbodyNew.append(clonethree);
+        if (j > 2) {
+            var clonefour = $('#template #report-table .report-total-row').clone();
+            $('.assigned-total', clonefour).text(assigned_count);
+            $('.un-assigned-total', clonefour).text(un_assigned_count);
+            $('.not-opted-total', clonefour).text(not_opted_count);
+            $('.total-count', clonefour).text(row_total_count);
+            reportTableTbody.append(clonefour);
         }
-    });
-    if (j > 2) {
-        var clonefour = $('#template #report-table .report-total-row').clone();
-        $('.assigned-total', clonefour).text(assigned_count);
-        $('.un-assigned-total', clonefour).text(un_assigned_count);
-        $('.not-opted-total', clonefour).text(not_opted_count);
-        $('.total-count', clonefour).text(row_total_count);
-        reportTableTbody.append(clonefour);
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
     }
 };
 

@@ -1,107 +1,52 @@
-{% extends "files/client/common/html/container.html" %}
-{% block content %}
+{% extends "files/client/common/html/container.html" %} {% block content %}
 <div class="content-page">
-<div class="content">
-<div class="container">
-  <div class="row">
-    <div class="col-sm-2"></div>
-    <div class="col-sm-8">
-      <div class="portlet">
-          <div class="portlet-heading bg-info">
-              <h3 class="portlet-title">Themes</h3>
-              <div class="clearfix"></div>
-          </div>
-          <div id="bg-primary1" class="panel-collapse collapse in">
-              <div class="portlet-body">
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3">
-                    <div class="themes-settings" id="one">
-                      <h5>Theme One</h5>
-                      <img src="/files/client/common/images/theme_one.png">
+    <div class="content">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-2"></div>
+                <div class="col-sm-8">
+                    <div class="portlet">
+                        <div class="portlet-heading bg-info">
+                            <h3 class="portlet-title">Themes</h3>
+                            <div class="clearfix"></div>
+                        </div>
+                        <div id="bg-primary1" class="panel-collapse collapse in">
+                            <div class="portlet-body">
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-3">
+                                    <div class="themes-settings" id="theme_one">
+                                        <h5>Theme One</h5>
+                                        <img src="/images/theme_one.png">
+                                    </div>
+                                </div>
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-3">
+                                    <div class="themes-settings" id="theme_two">
+                                        <h5>Theme Two</h5>
+                                        <img src="/images/theme_two.png">
+                                    </div>
+                                </div>
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-3">
+                                    <div class="themes-settings" id="theme_three">
+                                        <h5>Theme Three</h5>
+                                        <img src="/images/theme_three.png">
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <br>
+                                <input type="hidden" value="" id="theme_name" name="">
+                                <center>
+                                    <button class="btn btn-primary waves-effect waves-light" onclick="change_theme()" type="button"> Submit </button>
+                                </center>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3">
-                    <div class="themes-settings" id="two">
-                      <h5>Theme Two</h5>
-                      <img src="/files/client/common/images/theme_two.png">
-                    </div>
-                  </div>
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3">
-                    <div class="themes-settings" id="three">
-                      <h5>Theme Three</h5>
-                      <img src="/files/client/common/images/theme_three.png">
-                    </div>
-                  </div>
-                  <div class="clearfix"></div><br>
-                  <!--div class="col-sm-1"></div>
-                  <div class="col-sm-3">
-                    <div class="themes-settings" id="four">
-                      <h5>Theme Four</h5>
-                      <img src="/files/client/common/images/theme_four.png">
-                    </div>
-                  </div>
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3">
-                    <div class="themes-settings" id="five">
-                      <h5>Theme Five</h5>
-                      <img src="/files/client/common/images/theme_five.png">
-                    </div>
-                  </div>
-                  <div class="col-sm-1"></div>
-                  <div class="col-sm-3">
-                    <div class="themes-settings" id="six">
-                      <h5>Theme Six</h5>
-                      <img src="/files/client/common/images/theme_six.png">
-                    </div>
-                  </div>
-                  <div class="clearfix"></div><br-->
-                  <input type="hidden" value="two" id="theme_name" name="">
-                  <center>
-                    <button class="btn btn-primary waves-effect waves-light" onclick="change_theme()" type="button"> Submit </button>
-                  </center>
-              </div>
-          </div>
-      </div>
+                </div>
+                <div class="col-sm-2"></div>
+            </div>
+        </div>
     </div>
-    <div class="col-sm-2"></div>
-  </div>
 </div>
-</div>
-</div>
-<script type="text/javascript">
-  $(function() {
-      $('.themes-settings').click(function() {
-          $('.themes-settings').removeClass('theme-active');
-          $(this).addClass('theme-active');
-          $('#theme_name').val($(this).attr('id'));
-      });
-
-      var theme_name = "";
-      if(window.localStorage['theme_name'])
-        theme_name = window.localStorage['theme_name'];
-      else
-        theme_name = "one";
-
-      $( ".themes-settings" ).each(function( index ) {
-        if($(this).attr('id') === theme_name) {
-            $(this).addClass('theme-active');
-        }
-      });
-
-  });
-  
-  function change_theme() {
-      var theme_name = $('#theme_name').val();
-      window.localStorage['theme_name'] = theme_name;
-      location.reload();
-  }
-
-  function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2) return parts.pop().split(";").shift();
-  }
-</script>
+<script src="/script/settings/themes.js"></script>
 {% endblock %}

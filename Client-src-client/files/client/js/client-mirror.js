@@ -645,11 +645,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function updateNotificationStatus(le_id, notification_id, has_read, callback) {
+    function updateNotificationStatus(le_ids, notification_id, has_read, callback) {
         callerName = 'client_dashboard';
         var request = [
             'UpdateNotificationStatus', {
-                'le_id': le_id,
+                'le_ids': le_ids,
                 'notification_id': notification_id,
                 'has_read': has_read
             }
@@ -2387,7 +2387,7 @@ function initClientMirror() {
             "w_id": w_id,
             "width": width,
             "height": height,
-            "pin_status": pin_status
+            "pin_status": pinstatus
         }
     }
 
@@ -2518,6 +2518,18 @@ function initClientMirror() {
         callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
+    function changeThemes(theme, callback) {
+        var request = [
+            "ChangeThemes", {
+                "theme": theme
+            }
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    
 
     return {
         log: log,
@@ -2706,6 +2718,7 @@ function initClientMirror() {
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
+        changeThemes: changeThemes,
     };
 }
 

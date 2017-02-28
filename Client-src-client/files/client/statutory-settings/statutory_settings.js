@@ -632,9 +632,11 @@ function loadUnits() {
         }
 
         $('.tbl_lock', clone).click(function() {
-            if(value.allow_unlock == false){
+            if(value.allow_unlock == true){
                 //displayLockPopUp(value.u_id);
                 displayPopUp(LOCK_API, [value.u_id, value.d_id, value.is_locked]);
+            }else{
+                displayMessage(message.unlock_permission);
             }
         });
 

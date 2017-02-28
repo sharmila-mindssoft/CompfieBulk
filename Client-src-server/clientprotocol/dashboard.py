@@ -188,6 +188,7 @@ class CheckContractExpiration(Request):
         return {
         }
 
+
 class GetComplianceStatusChart(Request):
     def __init__(
         self,
@@ -750,8 +751,8 @@ class UpdateNotificationStatus(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["le_ids", "notification_id", "has_read"])
-        legal_entity_ids = data.get("le_ids"),
-        notification_id = data.get("notification_id"),
+        legal_entity_ids = data.get("le_ids")
+        notification_id = data.get("notification_id")
         has_read = data.get("has_read")
         return UpdateNotificationStatus(legal_entity_ids, notification_id, has_read)
 
@@ -1223,6 +1224,24 @@ class GetMessagesSuccess(Response):
             "total_count": self.total_count
         }
 
+class GetStatutorySuccess(Response):
+    def __init__(self, statutory, total_count):
+        self.statutory = statutory
+        self.total_count = total_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutory", "total_count"])
+        statutory = data.get("statutory")
+        total_count = data.get("total_count")
+        return GetStatutorySuccess(statutory, total_count)
+
+    def to_inner_structure(self):
+        return {
+            "statutory": self.statutory,
+            "total_count": self.total_count
+        }
+
 class UpdateNotificationStatusSuccess(Response):
     def __init__(self, notification_details):
         self.notification_details = notification_details
@@ -1256,6 +1275,7 @@ def _init_Response_class_map():
         GetRemindersSuccess,
         GetEscalationsSuccess,
         GetMessagesSuccess,
+        GetStatutorySuccess,
         UpdateNotificationStatusSuccess,
         CheckContractExpirationSuccesss,
         GetAssigneewiseYearwiseCompliancesSuccess
@@ -1979,6 +1999,30 @@ class MessagesSuccess(object):
         notification_text = data.get("notification_text")
         created_on = data.get("created_on")
         return MessagesSuccess(legal_entity_id, notification_id, notification_text, created_on)
+
+    def to_structure(self):
+        return {
+            "le_id" : self.legal_entity_id,
+            "notification_id" : self.notification_id,
+            "notification_text" : self.notification_text,
+            "created_on" : self.created_on,
+        }
+
+class StatutorySuccess(object):
+    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
+        self.legal_entity_id = legal_entity_id
+        self.notification_id = notification_id
+        self.notification_text = notification_text
+        self.created_on = created_on
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "created_on"])
+        legal_entity_id = data.get("le_id")
+        notification_id = data.get("notification_id")
+        notification_text = data.get("notification_text")
+        created_on = data.get("created_on")
+        return StatutorySuccess(legal_entity_id, notification_id, notification_text, created_on)
 
     def to_structure(self):
         return {

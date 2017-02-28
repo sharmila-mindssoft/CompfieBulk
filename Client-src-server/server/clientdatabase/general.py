@@ -74,7 +74,11 @@ __all__ = [
     "get_user_based_units",
     "get_user_widget_settings",
     "get_widget_list",
-    "save_user_widget_settings"
+    "save_user_widget_settings",
+    "get_themes",
+    "get_themes_for_user",
+    "save_themes_for_user",
+    "update_themes_for_user"
     ]
 
 
@@ -401,7 +405,7 @@ def get_units_for_user(db, user_id):
     if user_id != admin_id:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_user_units AS t1 " + \
                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
@@ -409,9 +413,21 @@ def get_units_for_user(db, user_id):
         rows = db.select_all(query, [user_id])
     else:
         print "else"
+#         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+#                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+# <<<<<<< HEAD
+#                 "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+#                 "FROM tbl_user_units AS t1 " + \
+#                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
+# =======
+#                 "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+#                 "FROM tbl_units AS t2 " + \
+# >>>>>>> Usha/phase2
+#                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
+#                 "WHERE t2.is_closed = 0 ORDER BY unit_name"
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_units AS t2 " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
                 "WHERE t2.is_closed = 0 ORDER BY unit_name"
@@ -538,7 +554,7 @@ def return_units_assign(units):
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
         "t1.employee_code, t1.is_active from tbl_users as t1 " + \
-        "inner join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
+        "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
     rows = db.select_all(query)
     return return_client_users(rows)
 
@@ -2017,3 +2033,36 @@ def get_user_widget_settings(db, user_id, user_category):
 def save_user_widget_settings(db, user_id, widget_data):
     q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
     db.execute(q, [user_id, widget_data])
+
+def get_themes(db, user_id):
+    q = "select theme_name from tbl_themes where user_id = %s"
+    rows = db.select_one(q, [user_id])
+    if not rows:
+        return None
+    else:
+        return rows['theme_name']
+
+def get_themes_for_user(db, user_id):
+    q = "select theme_id from tbl_themes where user_id = %s"
+    rows = db.select_one(q, [user_id])
+    if not rows:
+        return None
+    else:
+        return rows['theme_id']
+
+def save_themes_for_user(db, session_user, theme_name):
+    current_time_stamp = get_date_time_in_date()
+    columns = ["theme_name", "user_id", "created_on"]
+    values = [theme_name, session_user, current_time_stamp]
+    db.insert(tblThemes, columns, values)
+    return theme_name
+    # q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
+    # db.execute(q, [user_id, widget_data])
+
+def update_themes_for_user(db, session_user, theme_id, theme_name):
+    current_time_stamp = get_date_time_in_date()
+    columns = ["theme_name", "updated_on"]
+    values = [theme_name, current_time_stamp]
+    condition = " user_id = %s " % session_user
+    db.update(tblThemes, columns, values, condition)
+    return theme_name

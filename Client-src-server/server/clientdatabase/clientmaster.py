@@ -1689,7 +1689,7 @@ def get_login_users_list(db):
     login_users_list = []
     for row in result:
         u_g_id = row["user_group_id"]
-        if row["employee_code"] is None:
+        if row["employee_code"] is None or row["employee_code"] == "":
             user_name = row["employee_name"]
         else:
             user_name = row["employee_code"]+' - '+row["employee_name"]

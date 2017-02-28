@@ -903,3 +903,6 @@ button.btn-success {
 .compliance_count_assignee {
   clear: both;
 }
+h2.chart-title: hover{
+  text-decoration: underline;
+}

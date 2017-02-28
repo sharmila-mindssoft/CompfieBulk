@@ -482,7 +482,9 @@ def save_allocated_db_env(db, request, session_user):
         db.call_insert_proc(
             "sp_clientdatabase_update",
             (client_db_id, client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
-                client_ids, legal_entity_ids, session_user, get_date_time())
+                client_ids, legal_entity_ids, request.old_grp_app_id, request.old_grp_db_s_id, request.old_le_db_s_id,
+                request.old_le_f_s_id, request.new_cl_ids, request.new_grp_le_ids, request.new_le_le_ids,
+                request.new_le_f_s_ids, session_user, get_date_time())
         )
     #
     #  To get legal entity name by it's id to save activity
