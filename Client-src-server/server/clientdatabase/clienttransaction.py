@@ -2671,7 +2671,7 @@ def return_get_review_settings_units(units):
     results = []
     for u in units:
         results.append(clientcore.ReviewSettingsUnits(
-            u["unit_id"], u["unit_name"], u["unit_code"], u["address"],
+            u["unit_id"], u["unit_code"], u["unit_name"], u["address"],
             u["geography_name"], u["division_name"]
         ))
     return results

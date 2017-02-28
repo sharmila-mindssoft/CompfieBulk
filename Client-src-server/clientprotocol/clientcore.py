@@ -4139,7 +4139,7 @@ class ReviewSettingsUnits(object):
         address = data.get("address")
         geography_name = data.get("g_name")
         division_name = data.get("div_name")
-        return UnitClosure_Units(
+        return ReviewSettingsUnits(
             unit_id, unit_code, unit_name, address, geography_name, division_name
         )
 
