@@ -347,7 +347,8 @@ def process_change_password(db, company_id, request):
     )
     print session_token
     # client_id = int(client_info[0])
-    session_user = db.validate_session_token(session_token)
+    user_details = db.validate_session_token(session_token)
+    session_user = int(user_details[0])
     if verify_password(db, request.current_password, session_user):
         update_password(db, request.new_password, session_user)
         return clientlogin.ChangePasswordSuccess()
