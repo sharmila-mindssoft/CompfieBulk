@@ -1,6 +1,6 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
-<!-- <link href="/files/client/common/css/calender-min.css" rel="stylesheet" type="text/css" /> -->
+<link href="/files/client/common/css/calender-min.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/resize/jquery-ui.css" rel="stylesheet" type="text/css"> 
 <link rel="stylesheet" href="/files/client/common/css/calender/monthly.css">
 <script type="text/javascript">
@@ -97,7 +97,8 @@ $(function() {
         </table>        
     </div>
     <div class="domain-score-card-templates">
-        <select class="form-control input-sm m-b-5" style="">
+      <div class="domain-sc">
+        <select class="form-control input-sm m-b-5 domain-legalentity" style="">
         </select>
          <table class="table min-table highlight" cellspacing="0">
             <thead>
@@ -112,27 +113,70 @@ $(function() {
             <tbody class="tbody-dsc">
             </tbody>
         </table>
+      </div>
         <table>
-        <tr class="dsc-tr">
+          <tr class="dsc-tr">
             <td class="dsc-domain"></td>
             <td class="text-center dsc-assigned"></td>
             <td class="text-center dsc-unassigned"></td>
             <td class="text-center dsc-notopted"></td>
             <td class="text-center font-bold dsc-subtotal"></td>
-        </tr>
-            </table>
+          </tr>
+        </table>
         <table>
-         <tr class="dsc-total">
+          <tr class="dsc-total">
             <td class="text-center dsc-total-text"></td>
             <td class="text-center dsc-total-assigned"></td>
             <td class="text-center dsc-total-unassigned"></td>
             <td class="text-center dsc-total-notopted"></td>
             <td class="text-center font-bold dsc-grandtotal"></td>
-        </tr>
+          </tr>
         </table>
     </div>
     <div class="calender-templates">
-        <div class="monthly" id="mycalendar"></div>
+      <div class="cal table-responsive">
+        <select class="form-control input-sm m-b-5 cal-legalentity" style="">
+        </select>
+        <table class="cal-table">
+            <caption class="cal-caption">
+            </caption>
+            <tbody class="cal-body">
+              <tr>
+                <th><span>SUN</span></th>
+                <th><span>MON</span></th>
+                <th><span>TUE</span></th>
+                <th><span>WED</span></th>
+                <th><span>THU</span></th>
+                <th><span>FRI</span></th>
+                <th><span>SAT</span></th>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <div class="f-s-10">
+            <div class="cal-label-div">
+                <div class="cal-label-duedate"></div>
+                <div class="pull-left">Due Date</div>
+            </div>
+            <div class="cal-label-div">
+                <div class="cal-label-inprogress"></div>
+                <div class="pull-left">Inprogress</div>
+            </div>
+            <div class="cal-label-div">
+                <div class="cal-label-overdue"></div>
+                <div class="pull-left">Over Due</div>
+            </div>
+            <div class="cal-label-div">
+                <div class="cal-label-upcoming"></div>
+                <div class="pull-left">Upcoming</div>
+            </div> &nbsp;
+          </div>
+        </div>
+      <table>
+      <tr>
+        <td class="cal-off">&nbsp;</td>
+      </tr>
+      </table>
     </div>
 </div>
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 

@@ -433,7 +433,6 @@ function loadComplianceApplicabilityChart(data, id){
 }
 
 function userScoreCard(data, id){
-  console.log("welcome to userScoreCard--"+id);
   var total_assignee = 0;
   var total_concur = 0;
   var total_approve = 0;
@@ -466,17 +465,22 @@ function userScoreCard(data, id){
 }
 
 function domainScoreCard(data, id){
-  console.log("domainScoreCard--"+id);
   var total_assigned = 0;
   var total_unassigned = 0;
   var total_notopted = 0;
   var total_subtotal = 0;
   var grandtotal = 0;
-  var dsc = $("#templates .domain-score-card-templates .table");
+  var dsc = $("#templates .domain-score-card-templates .domain-sc");
   var dscclone = dsc.clone();  
+  var options = '';
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
+  $.each(selectedLegalentity, function(k, v){
+    options += '<option value="'+v.le_id+'">'+v.le_name+'</option>';
+  });
+  $(".domain-legalentity", dscclone).append(options);
   $("#cardbox"+id).append(dscclone);
+
   $.each(data.widget_data, function(k,v){
-    console.log("vvv--"+v.d_name);
     var dsc_tr = $("#templates .domain-score-card-templates .dsc-tr");
     var dscclone_tr = dsc_tr.clone();  
     $(".dsc-domain", dscclone_tr).html(v.d_name);
@@ -500,20 +504,81 @@ function domainScoreCard(data, id){
   $(".dragdrophandles .resizable7").resizable({
     autoHide: true
   });  
-
 }
 
+
+
+
 function calenderView(data, id){
-  var ct = $("#templates .calender-templates div");
-  var ctclone = ct.clone();  
-  $('#mycalendar', ctclone).monthly({
-      mode: 'event',
-      //jsonUrl: 'events.json',
-      //dataType: 'json'
-      //xmlUrl: 'events.xml'
-    });
+  var options = '';
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
+  $.each(selectedLegalentity, function(k, v){
+    options += '<option value="'+v.le_id+'">'+v.le_name+'</option>';
+  });
+  $(".cal-legalentity").append(options);
+
+  var wid_data = data.widget_data;
+  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var current_date = new Date(wid_data[0]['CurrentMonth']);
+  var month_value = current_date.getMonth();
+  var year_value = current_date.getFullYear();
+  var week_day = current_date.getDay();
+  var html = '';
+  var ct = $("#templates .calender-templates .cal");
+  var ctclone = ct.clone();    
+  $(".cal-caption", ctclone).html(months[month_value]+" - "+year_value);
   $("#cardbox"+id).append(ctclone);
 
+  date = current_date;
+
+  day = date.getDate();
+  month = date.getMonth();
+  year = date.getFullYear();
+
+  months = new Array('January','February','March','April','May','June','July','August','September','October','November','December');
+  this_month = new Date(year, month, 1);
+  next_month = new Date(year, month + 1, 1);
+  // Find out when this month starts and ends.
+  first_week_day = this_month.getDay();
+  days_in_this_month = Math.round((next_month.getTime() - this_month.getTime()) / (1000 * 60 * 60 * 24));
+ 
+  calendar_html = '';
+  calendar_html += '<tr>';
+  for(week_day = 0; week_day < first_week_day; week_day++) {
+    calendar_html += '<td class="cal-off"> </td>';
+  }
+  week_day = first_week_day;
+  for(day_counter = 1; day_counter <= days_in_this_month; day_counter++) {
+    week_day %= 7;
+    if(week_day == 0)
+      calendar_html += '</tr><tr>';
+    if(day == day_counter)
+      calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
+    else
+      calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
+
+    week_day++;
+  }
+
+  calendar_html += '</tr>';
+ 
+  $("#cardbox"+id+" .cal-body").append(calendar_html);
+
+  var getdata = wid_data[0]['data'];
+  $.each(getdata, function(k, v){
+      if(v.inprogress > 0){ 
+       $(".dateid"+v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="'+v.inprogress+' Inprogress Compliances"></div>');
+      }
+      if(v.duedate > 0){
+       $(".dateid"+v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="'+v.duedate+' Unassinged Compliances"></div>'); 
+      }
+      if(v.upcoming > 0){
+       $(".dateid"+v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="'+v.upcoming+' Upcoming Compliances"></div>');  
+      }
+      if(v.overdue > 0){
+        $(".dateid"+v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="'+v.overdue+' Not Complied"></div>'); 
+      }
+  });
 }
 
 function widgetLoadChart() {
@@ -538,7 +603,7 @@ function widgetSettings(){
       5: client_mirror.getWidgetRiskChart,
       6: client_mirror.getUserScoreCard,
       7: client_mirror.getDomainScoreCard,
-      8: client_mirror.getCalenderView
+      8: client_mirror.getWidgetCalender
     }
 }
 
@@ -567,7 +632,6 @@ function loadChart(){
     }
     $(".menu_widgets", liclone).click(function(e){
         if(jQuery.inArray(v.w_id, WIDGET_INFO_ID) == -1){
-          console.log("welcome to widget_info");
           var width = $(this).css('width');
           var height = $(this).css('height');
           var id = v.w_id;
@@ -584,7 +648,6 @@ function loadChart(){
               cardboxclone.addClass("resizable"+v.w_id); 
               $(".closewidget", cardboxclone).click(function(e){
                 var divitem = $(this).parent().parent();
-                console.log(divitem);
                 var getitem = divitem.attr('id');
                 var getsplit = getitem.split("item");
                 var itemid = getsplit[1];
@@ -602,7 +665,6 @@ function loadChart(){
                   }
                 });                
               });
-              console.log("widget_list--"+WIDGET_INFO_ID);
 
               $(".dragdrophandles").append(cardboxclone);
               settings[v.w_id](function(error1, data1){
@@ -621,7 +683,6 @@ function loadChart(){
               displayMessage(error);
             }
           });
-          console.log("menu_widgets--"+WIDGET_INFO_ID);
         }        
     });
     
@@ -675,7 +736,6 @@ function loadChart(){
             status_check++;          
         });
         if(status_check != 0){
-          console.log("menu_widgets--"+WIDGET_INFO_ID);
           client_mirror.saveUserWidgetData(widget_info, function(error, response){
             if(error == null){
               displaySuccessMessage(message.save_success);
@@ -692,7 +752,6 @@ function loadChart(){
       //Close Widget
       $(".closewidget", cardboxclone).click(function(e){
         var divitem = $(this).parent().parent();
-        console.log(divitem);
         var getitem = divitem.attr('id');
         var getsplit = getitem.split("item");
         var itemid = getsplit[1];
@@ -711,12 +770,10 @@ function loadChart(){
         });
 
       });
-      console.log("+widget_info closewidget"+WIDGET_INFO_ID);
       cardboxclone.addClass("resizable"+v.w_id); 
       
       $('.toggleWidget', cardboxclone).click(function(e) {
         e.preventDefault();
-        console.log($(this).data('target'));
         $($(this).data('target')).css({
             "display": "block"
         });

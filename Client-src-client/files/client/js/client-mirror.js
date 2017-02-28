@@ -2442,7 +2442,7 @@ function initClientMirror() {
     }
     function getWidgetCalender(callback){
          var request = [
-            "GetWidgetCalender", {
+            "GetCalendarView", {
                 "le_ids": getLEids()
             }
         ];

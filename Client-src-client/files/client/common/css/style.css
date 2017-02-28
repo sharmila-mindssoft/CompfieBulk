@@ -909,9 +909,49 @@ h2.chart-title: hover{
 .l-h-30{
   line-height:30px;
 }
-
 .total-usc-assignee, .total-usc-concur, .total-usc-approve, .total-role,
 .dsc-total-assigned, .dsc-total-unassigned, .dsc-total-notopted,
 .dsc-grandtotal, .dsc-total-text{
   font-weight: bold !important;
 }
+.cal-label-div{
+  display: inline-block;
+  margin-right: 10px;  
+}
+.cal-label-duedate{
+  background: #c69ee2;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.cal-label-inprogress{
+  background: #f0f468;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.cal-label-overdue{
+  background: #f32d2b;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.cal-label-upcoming{
+  background: #87ceeb;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.f-s-10 {
+  font-size: 10px;
+}
+
+
