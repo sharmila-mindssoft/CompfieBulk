@@ -1429,19 +1429,19 @@ def update_used_space(db, file_size):
 
 
 def save_compliance_activity(
-    db, unit_id, compliance_id, activity_status, compliance_status,
+    db, unit_id, compliance_id, compliance_history_id, activity_by, activity_on, action,
     remarks
 ):
     date = get_date_time()
     columns = [
-        "unit_id", "compliance_id",
-        "activity_date", "activity_status", "compliance_status",
-        "updated_on"
+        "unit_id", "compliance_id", "compliance_history_id", "activity_by",
+        "activity_on", "action"
     ]
     values = [
-        unit_id, compliance_id, date, activity_status,
-        compliance_status,  date
+        unit_id, compliance_id, compliance_history_id, activity_by,
+        activity_on,  action
     ]
+    
     if remarks:
         columns.append("remarks")
         values.append(remarks)

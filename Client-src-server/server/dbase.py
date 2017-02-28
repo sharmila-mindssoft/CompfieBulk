@@ -572,7 +572,7 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
-        # print query
+        # print query, values
         try:
             status = self.execute(query, values)
             return status
