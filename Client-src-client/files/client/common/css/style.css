@@ -909,3 +909,9 @@ h2.chart-title: hover{
 .l-h-30{
   line-height:30px;
 }
+
+.total-usc-assignee, .total-usc-concur, .total-usc-approve, .total-role,
+.dsc-total-assigned, .dsc-total-unassigned, .dsc-total-notopted,
+.dsc-grandtotal, .dsc-total-text{
+  font-weight: bold !important;
+}

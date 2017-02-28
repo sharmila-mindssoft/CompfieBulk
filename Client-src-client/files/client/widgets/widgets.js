@@ -433,20 +433,40 @@ function loadComplianceApplicabilityChart(data, id){
 }
 
 function userScoreCard(data, id){
+  console.log("welcome to userScoreCard--"+id);
+  var total_assignee = 0;
+  var total_concur = 0;
+  var total_approve = 0;
   var usc = $("#templates .user-score-card-templates .table");
   var uscclone = usc.clone();  
   $("#cardbox"+id).append(uscclone);
+  $.each(data.widget_data, function(k,v){
+    var usc_tr = $("#templates .user-score-card-templates .usc-tr");
+    var uscclone_tr = usc_tr.clone();
+    $(".usc-role", uscclone_tr).html(v.Role);
+    $(".usc-assignee", uscclone_tr).html(v.Assingee);
+    $(".usc-concur", uscclone_tr).html(v.Concur);
+    $(".usc-approve", uscclone_tr).html(v.Approver);
+    total_assignee += v.Assingee;
+    total_concur += v.Concur;
+    total_approve += v.Approver;
+    $("#cardbox"+id+" .tbody-usc").append(uscclone_tr);  
+  }); 
 
-  var usc_tr = $("#templates .user-score-card-templates .usc-tr");
-  var uscclone_tr = usc_tr.clone();  
-  $(".usc-role").html();
-  $(".usc-assignee").html();
-  $(".usc-concur").html();
-  $(".usc-approve").html();
-  $("#cardbox"+id+" .tbody-usc").append(uscclone_tr);
+  var usc_total = $("#templates .user-score-card-templates .usc-total-tr");
+  var uscclone_total = usc_total.clone(); 
+  $(".total-role", uscclone_total).html("Total");
+  $(".total-usc-assignee", uscclone_total).html(total_assignee);
+  $(".total-usc-concur", uscclone_total).html(total_concur);
+  $(".total-usc-approve", uscclone_total).html(total_approve);  
+  $("#cardbox"+id+" .tbody-usc").append(uscclone_total);
+  $(".dragdrophandles .resizable6").resizable({
+    autoHide: true
+  });  
 }
 
 function domainScoreCard(data, id){
+  console.log("domainScoreCard--"+id);
   var total_assigned = 0;
   var total_unassigned = 0;
   var total_notopted = 0;
@@ -455,26 +475,31 @@ function domainScoreCard(data, id){
   var dsc = $("#templates .domain-score-card-templates .table");
   var dscclone = dsc.clone();  
   $("#cardbox"+id).append(dscclone);
+  $.each(data.widget_data, function(k,v){
+    console.log("vvv--"+v.d_name);
+    var dsc_tr = $("#templates .domain-score-card-templates .dsc-tr");
+    var dscclone_tr = dsc_tr.clone();  
+    $(".dsc-domain", dscclone_tr).html(v.d_name);
+    $(".dsc-assigned", dscclone_tr).html(v.assigned);
+    $(".dsc-unassigned", dscclone_tr).html(v.unassinged);
+    $(".dsc-notopted", dscclone_tr).html(v.notopted);
+    total_subtotal = parseInt(v.notopted) + parseInt(v.assigned) + parseInt(v.unassinged);
+    $(".dsc-subtotal", dscclone_tr).html(total_subtotal);
+    grandtotal = grandtotal+total_subtotal;
+    $("#cardbox"+id+" .tbody-dsc").append(dscclone_tr);
+  });
 
-  var dsc_tr = $("#templates .domain-score-card-templates .dsc-tr");
-  var dscclone_tr = dsc_tr.clone();  
-  $(".dsc-domain").html();
-  $(".dsc-assigned").html();
-  $(".dsc-unassigned").html();
-  $(".dsc-notopted").html();
-  total_subtotal = total_subtotal;
-  $(".dsc-subtotal").html(total_subtotal);
-  grandtotal = grandtotal+total_subtotal;
-  $("#cardbox"+id+" .tbody-dsc").append(dscclone_tr);
-
-  var dsc_total = $("#templates .domain-score-card-templates .dsc-tr");
+  var dsc_total = $("#templates .domain-score-card-templates .dsc-total");
   var dscclone_total = dsc_total.clone(); 
-  $(".dsc-total-assigned").html(total_assigned);
-  $(".dsc-total-unassigned").html(total_unassigned);
-  $(".dsc-total-notopted").html(total_notopted);
-  $(".dsc-grandtotal").html(grandtotal);
+  $(".dsc-total-text").html("Total")
+  $(".dsc-total-assigned", dscclone_total).html(total_assigned);
+  $(".dsc-total-unassigned", dscclone_total).html(total_unassigned);
+  $(".dsc-total-notopted", dscclone_total).html(total_notopted);
+  $(".dsc-grandtotal", dscclone_total).html(grandtotal);
   $("#cardbox"+id+" .tbody-dsc").append(dscclone_total);
-
+  $(".dragdrophandles .resizable7").resizable({
+    autoHide: true
+  });  
 
 }
 

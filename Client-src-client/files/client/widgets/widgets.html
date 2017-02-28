@@ -79,12 +79,22 @@ $(function() {
             <tbody class="tbody-usc">
             </tbody>
         </table>
+        <table>
         <tr class="usc-tr"> 
             <td class="usc-role"></td>
             <td class="text-center usc-assignee"></td>
             <td class="text-center usc-concur"></td>
             <td class="text-center usc-approve"></td>
-        </tr>            
+        </tr>
+        </table>
+        <table>
+        <tr class="usc-total-tr"> 
+            <td class="total-role"></td>
+            <td class="text-center total-usc-assignee"></td>
+            <td class="text-center total-usc-concur"></td>
+            <td class="text-center total-usc-approve"></td>
+        </tr> 
+        </table>        
     </div>
     <div class="domain-score-card-templates">
         <select class="form-control input-sm m-b-5" style="">
@@ -102,6 +112,7 @@ $(function() {
             <tbody class="tbody-dsc">
             </tbody>
         </table>
+        <table>
         <tr class="dsc-tr">
             <td class="dsc-domain"></td>
             <td class="text-center dsc-assigned"></td>
@@ -109,13 +120,16 @@ $(function() {
             <td class="text-center dsc-notopted"></td>
             <td class="text-center font-bold dsc-subtotal"></td>
         </tr>
+            </table>
+        <table>
          <tr class="dsc-total">
-            <td ></td>
+            <td class="text-center dsc-total-text"></td>
             <td class="text-center dsc-total-assigned"></td>
             <td class="text-center dsc-total-unassigned"></td>
             <td class="text-center dsc-total-notopted"></td>
             <td class="text-center font-bold dsc-grandtotal"></td>
         </tr>
+        </table>
     </div>
     <div class="calender-templates">
         <div class="monthly" id="mycalendar"></div>
