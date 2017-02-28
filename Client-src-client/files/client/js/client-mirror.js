@@ -375,10 +375,13 @@ function initClientMirror() {
     }
 
     /* Compliance Approal */
-    function getComplianceApprovalList(start_count, callback) {
+    function getComplianceApprovalList(le_id, start_count, callback) {
         var request = [
             'GetComplianceApprovalList',
-            { 'start_count': start_count }
+            {
+                'le_id': le_id,
+                'start_count': start_count
+            }
         ];
         clientApiRequest('client_transaction', request, callback);
     }
@@ -428,9 +431,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
+    function approveCompliance(le_id, compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
         var request = [
             'ApproveCompliance', {
+                'le_id': le_id,
                 'compliance_history_id': compliance_history_id,
                 'approval_status': compliance_approval_status,
                 'remarks': remarks,
@@ -654,11 +658,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
     /* Get Compliance List*/
-    function getCurrentComplianceDetail(current_start_count, callback) {
+    function getCurrentComplianceDetail(le_id, current_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetCurrentComplianceDetail',
-            { 'current_start_count': current_start_count }
+            {
+                'le_id': le_id,
+                'current_start_count': current_start_count
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -678,11 +685,12 @@ function initClientMirror() {
     }
 
     function updateComplianceDetail(
-        compliance_history_id, documents, uploaded_documents,
+        le_id, compliance_history_id, documents, uploaded_documents,
         completion_date, validity_date, next_due_date, remarks, callback
     ) {
         var request = [
             'UpdateComplianceDetail', {
+                'le_id': le_id,
                 'compliance_history_id': compliance_history_id,
                 'documents': documents,
                 'uploaded_documents': uploaded_documents,
@@ -1135,18 +1143,22 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getOnOccurrenceCompliances(start_count, callback) {
+    function getOnOccurrenceCompliances(le_id, start_count, callback) {
         var request = [
             'GetOnOccurrenceCompliances',
-            { 'start_count': start_count }
+            {
+                'le_id': le_id,
+                'start_count': start_count
+            }
         ];
         callerName = 'client_user';
         clientApiRequest(callerName, request, callback);
     }
 
-    function startOnOccurrenceCompliance(compliance_id, start_date, unit_id, duration, callback) {
+    function startOnOccurrenceCompliance(le_id, compliance_id, start_date, unit_id, duration, callback) {
         var request = [
             'StartOnOccurrenceCompliance', {
+                'le_id': le_id,
                 'compliance_id': compliance_id,
                 'start_date': start_date,
                 'unit_id': unit_id,
@@ -2371,7 +2383,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function saveUserWidgetDataDict(w_id, width, height, pinstatus){
+    function saveUserWidgetDataDict(w_id, width, height, pinstatus) {
         return {
             "w_id": w_id,
             "width": width,
@@ -2440,16 +2452,34 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
+
     function getWidgetCalender(callback){
          var request = [
-            "GetWidgetCalender", {
+            "GetCalendarView", {
                 "le_ids": getLEids()
             }
         ];
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-
+    function getUserScoreCard(callback){
+         var request = [
+            "GetUserScoreCard", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getDomainScoreCard(callback){
+         var request = [
+            "GetDomainScoreCard", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
     // Widget api call end
 
     /* Risk report - updated*/
@@ -2506,6 +2536,18 @@ function initClientMirror() {
         callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
+    function changeThemes(theme, callback) {
+        var request = [
+            "ChangeThemes", {
+                "theme": theme
+            }
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    
 
     return {
         log: log,
@@ -2691,9 +2733,12 @@ function initClientMirror() {
         getWidgetRiskChart: getWidgetRiskChart,
         getWidgetTrendChart: getWidgetTrendChart,
         getWidgetCalender: getWidgetCalender,
+        getUserScoreCard: getUserScoreCard,
+        getDomainScoreCard: getDomainScoreCard,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
+        changeThemes: changeThemes,
     };
 }
 

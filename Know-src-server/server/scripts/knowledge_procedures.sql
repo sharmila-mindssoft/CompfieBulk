@@ -92,9 +92,6 @@ END //
 
 DELIMITER ;
 
-
-
-
 -- --------------------------------------------------------------------------------
 -- Returns Coutries that has been mapped with domain
 -- --------------------------------------------------------------------------------
@@ -2880,7 +2877,7 @@ BEGIN
     where database_server_id = le_db_server_id;
 
     update tbl_file_server set legal_entity_ids = _le_ids
-    where file_server_id = file_server_id;
+    where file_server_id = _f_s_id;
 
     update tbl_legal_entities set is_created = 1
     where legal_entity_id = le_id;
@@ -2918,7 +2915,9 @@ DELIMITER //
 CREATE PROCEDURE `sp_clientdatabase_update`(
 IN client_db_id int(11), clientid INT(11), le_id INT(11), machineid INT(11), db_server_id int(11),
     le_db_server_id int(11), _f_s_id int(11), _cl_ids longtext, _le_ids longtext,
-    _created_by int(11), _created_on timestamp
+    old_machineid INT(11), old_grp_d_s_id int(11), old_le_d_s_id int(11),
+    old_le_f_s_id int(11), old_cl_ids longtext, old_grp_le_ids longtext,
+    old_le_ids longtext, old_f_le_ids longtext, _created_by int(11), _created_on timestamp
 )
 BEGIN
     update tbl_client_database set client_id = clientid, legal_entity_id = le_id,
@@ -2932,11 +2931,23 @@ BEGIN
     update tbl_application_server set client_ids = _cl_ids
     where machine_id = machineid;
 
+    update tbl_application_server set client_ids = old_cl_ids
+    where machine_id = old_machineid;
+
     update tbl_database_server set legal_entity_ids = _le_ids
     where database_server_id = le_db_server_id;
 
+    update tbl_database_server set legal_entity_ids = old_grp_le_ids
+    where database_server_id = old_grp_d_s_id;
+
+    update tbl_database_server set legal_entity_ids = old_le_ids
+    where database_server_id = old_le_d_s_id;
+
     update tbl_file_server set legal_entity_ids = _le_ids
-    where file_server_id = file_server_id;
+    where file_server_id = _f_s_id;
+
+    update tbl_file_server set legal_entity_ids = old_f_le_ids
+    where file_server_id = old_le_f_s_id;
 
 END //
 
@@ -3492,19 +3503,14 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
--- To get list of units under a client
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_units_list`;
 
 DELIMITER //
 
--- --------------------------------------------------------------------------------
--- Routine DDL
--- Note: comments before and after the routine body will not be stored by the server
--- --------------------------------------------------------------------------------
-DELIMITER $$
-
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_units_list`(
+CREATE PROCEDURE `sp_units_list`(
     IN clientid INT(11), IN domainid INT(11), IN LegalEntityID int(11), IN userid INT(11)
 )
 BEGIN
@@ -6018,7 +6024,9 @@ DROP PROCEDURE IF EXISTS `sp_groupadmin_registration_email_unitslist`;
 
 DELIMITER //
 
-
+CREATE PROCEDURE `sp_groupadmin_registration_email_unitslist`(
+in _user_id int(11))
+BEGIN
 SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
 
     if @u_cat_id = 1 then

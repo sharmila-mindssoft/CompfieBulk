@@ -188,6 +188,7 @@ class CheckContractExpiration(Request):
         return {
         }
 
+
 class GetComplianceStatusChart(Request):
     def __init__(
         self,
