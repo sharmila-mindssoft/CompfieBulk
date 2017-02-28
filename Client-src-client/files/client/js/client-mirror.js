@@ -2453,16 +2453,33 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetCalender(callback) {
-        var request = [
-            "GetWidgetCalender", {
+    function getWidgetCalender(callback){
+         var request = [
+            "GetCalendarView", {
                 "le_ids": getLEids()
             }
         ];
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-
+    function getUserScoreCard(callback){
+         var request = [
+            "GetUserScoreCard", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getDomainScoreCard(callback){
+         var request = [
+            "GetDomainScoreCard", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
     // Widget api call end
 
     /* Risk report - updated*/
@@ -2716,6 +2733,8 @@ function initClientMirror() {
         getWidgetRiskChart: getWidgetRiskChart,
         getWidgetTrendChart: getWidgetTrendChart,
         getWidgetCalender: getWidgetCalender,
+        getUserScoreCard: getUserScoreCard,
+        getDomainScoreCard: getDomainScoreCard,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
