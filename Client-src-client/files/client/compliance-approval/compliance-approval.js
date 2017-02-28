@@ -20,7 +20,7 @@ function initialize() {
     $('.tbody-compliance-approval-list tr').remove();
     sno = 0;
     approvalList = data.approval_list;
-    currentDate = data.current_date;
+    //currentDate = data.current_date;
     totalRecord = data.total_count;
     loadComplianceApprovalDetails(approvalList);
     hideLoader();
@@ -69,7 +69,7 @@ function loadComplianceApprovalDetails(data) {
       $('.tbody-compliance-approval-list').append(clone);
       lastAssignee = value.assignee_name;
     }
-    complianceList = value.compliances;
+    complianceList = value.approval_compliances;
     //Full Width list append ---------------------------------------------------------------
     $.each(complianceList, function (k, val) {
       var tableRowvalues = $('#templates .table-compliance-approval-list .table-row-list');
@@ -77,7 +77,7 @@ function loadComplianceApprovalDetails(data) {
       sno = sno + 1;
       $('.sno-ca', clonelist).html(sno);
       $('.compliance-task span', clonelist).html(val.compliance_name);
-      $('.compliance-task abbr', clonelist).attr('title', val.description);
+      $('.compliance-task i', clonelist).attr('title', val.description);
       //$('.compliance-task', clonelist).attr("title", val['description']);
       $('.domain', clonelist).html(val.domain_name);
       $('.startdate', clonelist).html(val.start_date);
@@ -132,7 +132,7 @@ function showSideBar(idval, data) {
   $('.sidebar-unit span', cloneValSide).html(data.unit_name);
   // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
   $('.sidebar-compliance-task span', cloneValSide).html(data.compliance_name);
-  $('.sidebar-compliance-task abbr', cloneValSide).attr('title', data.description);
+  $('.sidebar-compliance-task i', cloneValSide).attr('title', data.description);
   $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);
   fileslist = data.file_names;
   documentslist = data.documents;

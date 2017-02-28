@@ -90,6 +90,7 @@ CLIENT_TEMPLATE_PATHS = [
     (
         "/compliance-approval",
         "files/client/compliance-approval/compliance-approval.html",
+
         None, {}
     ),
     (

@@ -154,28 +154,27 @@
 
 <div id="templates">
 <table class="table-compliance-approval-list">
-  <tr class="headingRow">
-    <th colspan="7" style="width:auto; background:#fff; "><span class="heading" ></span></th>
+  <tr class="bg-lightdark headingRow">
+    <th colspan="7"><span class="heading" ></span></th>
   </tr>
   <tr style="background:#fff;" class="table-row-list" >
     <td class="sno-ca"></td>
     <td class="compliance-task">
-      <abbr class="page-load" title="">
-        <img src="/images/icon-info.png" >
-        <span></span>
-      </abbr> 
+      <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title=""></i>
+      <span></span>
+      
     </td>
     <td class="domain">
     <td class="startdate"></td>
     <td class="duedate"></td>
     <td class="delayedby"></td>
     <td style="padding-right:5px;">
-      <img src="/images/right_arrow.png" class="expand-compliance">
+      <!-- <img src="/images/right_arrow.png" class="expand-compliance"> -->
     </td>
   </tr >
 </table>
 <div class="sideview-div" style=" width:100%; height:100%;">
-  <table class="managetask">
+  <table id="datatable-responsive" class="table dt-responsive borderless inprogress_bg" cellspacing="0" width="100%">
     <tr>
       <td colspan="2">
         <a>
@@ -199,9 +198,10 @@
         <span style="font-weight:bold;">Compliance Task:</span>
       </td>
       <td width="65%" class="sidebar-compliance-task">
-        <abbr class="page-load" title="">
-          <img src="/images/icon-info.png">
-          <span></span></abbr> 
+        <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title=""></i>
+        <span></span>
+
+        
       </td>
 
     </tr>
@@ -239,7 +239,9 @@
       <td>
         <span class="validitydate1_label"></span>
         <span class="validitydate1_textbox" style="display:none;">
-          <input type="text" value="" class="input-box  validity1-textbox-input" readonly="readonly" />
+          <input class="form-control input-sm validity1-textbox-input" readonly="readonly" value="" type="text">
+
+          <!-- <input type="text" value="" class="input-box  validity1-textbox-input" readonly="readonly" /> -->
         </span>
       </td>
     </tr>
@@ -253,7 +255,9 @@
             <img src="/images/icon-edit.png" class="duedate1_icon"></a>
         </span>
         <span class="duedate1_textbox" style="display:none;">
-          <input type="text" value="" class="input-box  duedate1-textbox-input" readonly="readonly" />
+          <input class="form-control input-sm duedate1-textbox-input" readonly="readonly" value="" type="text">
+
+          <!-- <input type="text" value="" class="input-box  duedate1-textbox-input" readonly="readonly" /> -->
         </span>
       </td>
     </tr>
@@ -280,12 +284,12 @@
         <span style="font-weight:bold;">Action :</span>
       </td>
       <td>
-        <select class="input-box sidebar-action approval-action" style="width:150px;">
+        <select class="form-control input-sm width-40 sidebar-action approval-action" >
           <option value="">Select</option>
           <option value="Approve">Approve</option>
           <option value="Reject Approval">Reject</option>
         </select>
-         <select class="input-box sidebar-action concurr-action" style="width:150px;">
+         <select class="form-control input-sm width-40 sidebar-action concurr-action">
           <option value="">Select</option>
           <option value="Concur">Concurrence</option>
           <option value="Reject Concurrence">Reject</option>
@@ -304,7 +308,9 @@
     </tr>
     <tr>
       <td colspan="2" align="center">
-        <input type="submit" value="Submit" class="btn-submit"></td>
+        <button class="btn btn-primary waves-effect waves-light btn-submit" type="button"> Submit </button>
+
+      </td>
     </tr>
   </table>
 </div>
