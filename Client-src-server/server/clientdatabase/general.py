@@ -74,7 +74,11 @@ __all__ = [
     "get_user_based_units",
     "get_user_widget_settings",
     "get_widget_list",
-    "save_user_widget_settings"
+    "save_user_widget_settings",
+    "get_themes",
+    "get_themes_for_user",
+    "save_themes_for_user",
+    "update_themes_for_user"
     ]
 
 
@@ -137,7 +141,7 @@ def return_countries(data):
 #     return return_domains(result)
 
 def get_domains_for_user(db, user_id, user_category):
-
+    print user_category
     if user_category > 1 :
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
@@ -150,6 +154,8 @@ def get_domains_for_user(db, user_id, user_category):
             "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
         rows = db.select_all(query)
+        print query
+        print rows
     return return_domains(rows)
 
 
@@ -574,15 +580,16 @@ def get_user_domains(db, user_id):
     q = "select domain_id from tbl_domains"
     param = None
     condition = ""
-    if is_primary_admin(db, user_id) is not True:
-        q = "select domain_id from tbl_user_domains"
-        condition = " WHERE user_id = %s"
-        param = [user_id]
+    # if is_primary_admin(db, user_id) is not True:
+    q = "select domain_id from tbl_user_domains"
+    condition = " WHERE user_id = %s"
+    param = [user_id]
 
     rows = db.select_all(q + condition, param)
-    d_ids = []
-    for r in rows:
+    d_ids = []    
+    for r in rows:        
         d_ids.append(int(r["domain_id"]))
+    
     return d_ids
 
 
@@ -821,11 +828,11 @@ def get_user_unit_ids(db, user_id):
     q = "select distinct unit_id from tbl_units"
     param = None
     condition = ""
-    if is_primary_admin(db, user_id) is not True:
-        condition = " WHERE unit_id in (select unit_id " + \
-            " from tbl_user_units " + \
-            " where user_id = %s )"
-        param = [user_id]
+    # if is_primary_admin(db, user_id) is not True:
+    condition = " WHERE unit_id in (select unit_id " + \
+        " from tbl_user_units " + \
+        " where user_id = %s )"
+    param = [user_id]
 
     rows = db.select_all(q + condition, param)
     u_ids = []
@@ -836,7 +843,8 @@ def get_user_unit_ids(db, user_id):
 
 def is_two_levels_of_approval(db):
     columns = "two_levels_of_approval"
-    rows = db.get_data(tblClientGroups, columns, condition=None)
+    # rows = db.get_data(tblClientGroups, columns, condition=None)
+    rows = db.get_data(tblReminderSettings, columns, condition=None)
     return bool(rows[0]["two_levels_of_approval"])
 
 
@@ -1421,19 +1429,19 @@ def update_used_space(db, file_size):
 
 
 def save_compliance_activity(
-    db, unit_id, compliance_id, activity_status, compliance_status,
+    db, unit_id, compliance_id, compliance_history_id, activity_by, activity_on, action,
     remarks
 ):
     date = get_date_time()
     columns = [
-        "unit_id", "compliance_id",
-        "activity_date", "activity_status", "compliance_status",
-        "updated_on"
+        "unit_id", "compliance_id", "compliance_history_id", "activity_by",
+        "activity_on", "action"
     ]
     values = [
-        unit_id, compliance_id, date, activity_status,
-        compliance_status,  date
+        unit_id, compliance_id, compliance_history_id, activity_by,
+        activity_on,  action
     ]
+    
     if remarks:
         columns.append("remarks")
         values.append(remarks)
@@ -2027,3 +2035,36 @@ def get_user_widget_settings(db, user_id, user_category):
 def save_user_widget_settings(db, user_id, widget_data):
     q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
     db.execute(q, [user_id, widget_data])
+
+def get_themes(db, user_id):
+    q = "select theme_name from tbl_themes where user_id = %s"
+    rows = db.select_one(q, [user_id])
+    if not rows:
+        return None
+    else:
+        return rows['theme_name']
+
+def get_themes_for_user(db, user_id):
+    q = "select theme_id from tbl_themes where user_id = %s"
+    rows = db.select_one(q, [user_id])
+    if not rows:
+        return None
+    else:
+        return rows['theme_id']
+
+def save_themes_for_user(db, session_user, theme_name):
+    current_time_stamp = get_date_time_in_date()
+    columns = ["theme_name", "user_id", "created_on"]
+    values = [theme_name, session_user, current_time_stamp]
+    db.insert(tblThemes, columns, values)
+    return theme_name
+    # q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
+    # db.execute(q, [user_id, widget_data])
+
+def update_themes_for_user(db, session_user, theme_id, theme_name):
+    current_time_stamp = get_date_time_in_date()
+    columns = ["theme_name", "updated_on"]
+    values = [theme_name, current_time_stamp]
+    condition = " user_id = %s " % session_user
+    db.update(tblThemes, columns, values, condition)
+    return theme_name

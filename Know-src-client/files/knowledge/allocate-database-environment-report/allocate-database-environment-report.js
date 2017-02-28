@@ -9,8 +9,6 @@ var GroupVal = $('#groupsval');
 var Group = $('#group-id');
 var LegalEntityVal = $('#legalentityval');
 var LegalEntity = $('#legalentityid');
-var SubmitButton = $('#show-button');
-var ExportButton = $('#export');
 
 var clientId = null;
 var legalentityId = null;
@@ -24,6 +22,7 @@ var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
 var sno = 0;
 var totalRecord;
+var csv = false;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -86,6 +85,7 @@ function bindGroups(){
 }
 
 $('.btn-show').click(function () {
+	csv = false;
 	clientId = Group.val();
 	legalentityId = LegalEntity.val();
 	SearchedList = [];
@@ -96,7 +96,6 @@ $('.btn-show').click(function () {
 			if(AllocatedServerList[i].client_id == clientId &&
 				AllocatedServerList[i].legal_entity_id == legalentityId){
 				totalRecord = 1;
-				console.log("a")
 				SearchedList.push(AllocatedServerList[i]);
 			}
 		}
@@ -120,6 +119,34 @@ $('.btn-show').click(function () {
 		}
 	}
 	processPaging();
+});
+
+$('.btn-export').click(function () {
+	csv = true;
+	clientId = Group.val();
+	if(clientId == "")
+		clientId = 0;
+	legalentityId = LegalEntity.val();
+	if(legalentityId == "")
+		legalentityId = 0;
+	function onSuccess(data) {
+		var download_url = data.link;
+        window.open(download_url, '_blank');
+	}
+	function onFailure(error) {
+		displayMessage(error);
+	}
+	displayLoader();
+	mirror.exportAllocateServerReportData(parseInt(clientId), parseInt(legalentityId), csv, function (error, response) {
+		console.log(error, response)
+		if (error == null) {
+			hideLoader();
+			onSuccess(response);
+		} else {
+			hideLoader();
+			onFailure(error);
+		}
+	});
 });
 
 function loadAllocateDBEnvReport(data){
@@ -404,6 +431,10 @@ function resetForm(){
 	LegalEntityVal.val('');
 	LegalEntity.val('');
 	$('.grid-table-rpt').hide();
+	csv = false;
+	totalRecord = 0;
+	on_current_page = 1;
+	sno = 0;
 }
 
 function renderControls(){

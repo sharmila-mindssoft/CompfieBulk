@@ -4,6 +4,7 @@
 # In this module "db" is an object of "KnowledgeDatabase"
 ###############################################################################
 from protocol import login, consoleadmin
+from server.jsontocsvconverter import ConvertJsonToCSV
 from server.database.consoleadmin import *
 from generalcontroller import validate_user_session, validate_user_forms
 
@@ -34,6 +35,8 @@ def process_console_admin_request(request, db):
             db, session_user, forms, request_frame, admin_user_type)
         if is_valid is not True:
             return login.InvalidSessionToken()
+    print "type"
+    print request_frame
 
     if session_user is None:
         return login.InvalidSessionToken()
@@ -108,6 +111,10 @@ def process_console_admin_request(request, db):
 
     elif(type(request_frame) is consoleadmin.GetAllocateServerReportData):
         result = process_allocate_server_report_data(
+            db, request_frame, session_user)
+
+    elif(type(request_frame) is consoleadmin.ExportAllocateServerReportData):
+        result = export_allocate_server_report_data(
             db, request_frame, session_user)
 
     return result
@@ -345,3 +352,18 @@ def process_ip_setting_report(db, request, session_user):
 def process_allocate_server_report_data(db, request, session_user):
     allocate_server_list = get_allocated_server_form_data(db)
     return consoleadmin.GetAllocatedDBListSuccess(allocate_server_list)
+
+###############################################################################
+# To xport allocated server group, legal entity
+# parameter : Object of database, session user
+# return type : Returns success response
+###############################################################################
+def export_allocate_server_report_data(db, request, session_user):
+    print request.csv
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "AllocateServerReport"
+        )
+        return consoleadmin.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )

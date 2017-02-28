@@ -1,4 +1,5 @@
-{% extends "files/client/common/html/container.html" %} {% block content %}
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
 <div class="content-page">
     <div class="content">
         <div class="container">
@@ -17,29 +18,40 @@
                                     <div class="col-sm-offset-1 col-md-4">
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-8 has-feedback">
-                                                <input class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity" type="text">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                             <div class="col-sm-6 controls">
+                                                <p class="form-control-static legal-entity-name default-display-none"></p>
+                                                <div class="legal-entity-name-ac default-display-none">
+                                                    <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1">
+                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                    <input type="hidden" id="legal_entity_id" value="">
+                                                    <div id="ac-entity" class="ac-textbox default-display-none">
+                                                        <ul class="width85Percent"></ul>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Unit:</label>
-                                            <div class="col-sm-8 has-feedback">
-                                                <input class="form-control input-sm" placeholder="Enter Unit" type="text">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                            <div class="col-sm-6 controls">
+                                                <input class="form-control input-sm" type="text" id="unit_name" tabindex="5">
+                                                <i class="form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="unit_id">
+                                                <div id="ac-unit" class="ac-textbox default-display-none">
+                                                    <ul class="width85Percent"></ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group m-b-0 text-center">
-                                            <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button" > Show </button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="dataTable_wrapper">
-                                    <table class="table table-striped dt-responsive nowrap highlight m-b-0" cellspacing="0" width="100%">
+                                    <table class="table table-striped dt-responsive nowrap m-b-0 js-filtertable" cellspacing="0" width="100%">
                                         <thead>
                                             <tr>
                                                 <th align="center" width="1%">#</th>
@@ -55,19 +67,19 @@
                                                 <td align="center"></td>
                                                 <td>
                                                     <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                        <input type="text" class="form-control input-sm" placeholder="Enter Statutory">
+                                                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Statutory">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                        <input type="text" class="form-control input-sm" placeholder="Enter Compliance Task">
+                                                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Compliance Task">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
                                                 </td>
                                                 <td>
                                                     <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                        <input type="text" class="form-control input-sm" placeholder="Enter Description">
+                                                        <input type="text" class="form-control input-sm js-filter" placeholder="Enter Description">
                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                     </div>
                                                 </td>
@@ -77,66 +89,18 @@
                                                 <td align="center"></td>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td align="center">1</td>
-                                                <td>WORKMEN'S COMPENSATION ACT, 1923 >> Rule 11 >> Sec.10B </td>
-                                                <td><a class="c-pointer" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">Form EE - Report of accident </a></td>
-                                                <td>Report of fatal Accident and Serious Injury within 7 days to the Commissioner (not application when ESI Act applies).</td>
-                                                <td>2 Day(s)</td>
-                                                <td>
-                                                    <div class="has-feedback">
-                                                        <input type="text" name="startDate" placeholder="DD-MMM-YYYY" class="form-control input-sm">
-                                                        <i class="form-control-feedback fa fa-calendar-check-o"></i>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="startDate" class="form-control input-sm" placeholder="Remarks">
-                                                </td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm" type="button" href="#custom-modal-new" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a"> Start</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td align="center">2</td>
-                                                <td>WORKMEN'S COMPENSATION ACT, 1923 >> Sec.10 </td>
-                                                <td><a class="c-pointer" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">Notice Accident  </a></td>
-                                                <td>As soon as Practicable</td>
-                                                <td>3 Hour(s)</td>
-                                                <td>
-                                                    <div class="has-feedback">
-                                                        <input type="text" name="startDate" placeholder="DD-MMM-YYYY" class="form-control input-sm">
-                                                        <i class="form-control-feedback fa fa-calendar-check-o"></i>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="startDate" class="form-control input-sm" placeholder="Remarks">
-                                                </td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm" type="button" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td align="center">3</td>
-                                                <td>WORKMEN'S COMPENSATION ACT, 1923 >> Sec.10 </td>
-                                                <td><a class="c-pointer">Notice Opening </a></td>
-                                                <td>As soon as Practicable</td>
-                                                <td>1 Month(s)</td>
-                                                <td>
-                                                    <div class="has-feedback">
-                                                        <input type="text" name="startDate" placeholder="DD-MMM-YYYY" class="form-control input-sm">
-                                                        <i class="form-control-feedback fa fa-calendar-check-o"></i>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="startDate" class="form-control input-sm" placeholder="Remarks">
-                                                </td>
-                                                <td class="text-center">
-                                                    <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm" type="reset" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
-                                                </td>
-                                            </tr>
+                                        <tbody class="tbody-compliances-list">
+                                           
                                         </tbody>
                                     </table>
+                                    <center>
+                                        <button type="button" class="btn btn-success dropdown-toggle waves-effect waves-light default-display-none btn-showmore" >Show More</button>
+                                    </center>
+
+                                    <div class="total_count_view default-display-none">
+                                        <br> <span class="total_count"></span>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -157,98 +121,49 @@
             <div class="form-group">
                 <label class="col-sm-offset-1 col-sm-2 control-label">Statutory: </label>
                 <div class="col-sm-9">
-                    <label class="pull-left control-label">WORKMEN'S COMPENSATION ACT, 1923 >> Rule 11 >> Sec.10B </label>
+                    <label class="pull-left control-label popup-statutory"></label>
                 </div>
             </div>
             <div class="form-group">
                 <label class=" col-sm-offset-1 col-sm-2 control-label">Unit:</label>
                 <div class="col-sm-9">
-                    <label class="pull-left control-label">UN00002 - Madurai Unit 2 </label>
+                    <label class="pull-left control-label popup-unit"></label>
                 </div>
             </div>
             <div class="form-group">
                 <label class=" col-sm-offset-1 col-sm-2 control-label">Compliance Task:</label>
                 <div class="col-sm-9">
-                    <label class="pull-left control-label">Form EE - Report of accident </label>
+                    <label class="pull-left control-label popup-task"></label>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">Compliance Description:</label>
                 <div class="col-sm-9">
-                    <label class="pull-left control-label">Report of fatal Accident and Serious Injury within 7 days to the Commissioner. </label>
+                    <label class="pull-left control-label popup-description"></label>
                 </div>
             </div>
         </form>
         <div class="clear"></div>
         <div class="table-responsive">
             <table id="datatable-responsive" class="table dt-responsive nowrap  text-left" width="100%">
-                <tbody>
-                    <tr class="table_bg_01">
-                        <td class="header-bg1">Start Date</td>
-                        <td class="header-bg1">Assignee</td>
-                        <td class="header-bg1">Completed On</td>
-                        <td class="header-bg1">Concurr</td>
-                        <td class="header-bg1">Concurred On</td>
-                        <td class="header-bg1">Approver</td>
-                        <td class="header-bg1">Approved On</td>
-                        <td class="header-bg1">Status</td>
-                    </tr>
-                    <tr>
-                        <td>10-Sep-2016</td>
-                        <td>Ravi Kumar</td>
-                        <td>11-Sep-2016</td>
-                        <td>Nagendren</td>
-                        <td>11-Sep-2016</td>
-                        <td>Sivaramakrishnan</td>
-                        <td>16/01/2016</td>
-                        <td>Complied</td>
-                    </tr>
-                    <tr>
-                        <td>25-Jul-2016</td>
-                        <td>Ravi Kumar</td>
-                        <td>29-Jul-2016</td>
-                        <td>Nagendren</td>
-                        <td>29-Jul-2016</td>
-                        <td>Sivaramakrishnan</td>
-                        <td>29-Jul-2016</td>
-                        <td>Delayed Complied</td>
-                    </tr>
-                    <tr>
-                        <td>15-Jun-2016</td>
-                        <td>Ravi Kumar</td>
-                        <td>16-Jun-2016</td>
-                        <td>Nagendren</td>
-                        <td>16-Jun-2016</td>
-                        <td>Sivaramakrishnan</td>
-                        <td>16-Jun-2016</td>
-                        <td>Complied</td>
-                    </tr>
-                    <tr>
-                        <td>10-Mar-2016</td>
-                        <td>Ravi Kumar</td>
-                        <td>12-Mar-2016</td>
-                        <td>Nagendren</td>
-                        <td>12-Mar-2016</td>
-                        <td>Sivaramakrishnan</td>
-                        <td>12-Mar-2016</td>
-                        <td>Complied</td>
-                    </tr>
-                    <tr>
-                        <td>15-Jan-2016</td>
-                        <td>Ravi Kumar</td>
-                        <td>16-Jan-2016</td>
-                        <td>Nagendren</td>
-                        <td>16-Jan-2016</td>
-                        <td>Sivaramakrishnan</td>
-                        <td>16-Jan-2016</td>
-                        <td>Complied</td>
-                    </tr>
+                <tr class="table_bg_01">
+                    <td class="header-bg1">Start Date</td>
+                    <td class="header-bg1">Assignee</td>
+                    <td class="header-bg1">Completed On</td>
+                    <td class="header-bg1">Concurr</td>
+                    <td class="header-bg1">Concurred On</td>
+                    <td class="header-bg1">Approver</td>
+                    <td class="header-bg1">Approved On</td>
+                    <td class="header-bg1">Status</td>
+                </tr>
+                <tbody class="tbody-popup-list">
+                    
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-<div id="custom-modal-new" class="modal-demo box-width-400">
+<!-- <div id="custom-modal-new" class="modal-demo box-width-400">
     <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
       <i class="zmdi zmdi-close zmdi-hc-2x"></i>
     </span>
@@ -263,5 +178,47 @@
         </form>
     </div>
 </div>
-<script src="/files/client/common/js/custombox/custombox.min.js"></script>
+ -->
+<div id="templates">
+
+    <table class="tbl_heading">
+        <tr class="table-row">
+            <td colspan="100%">
+                <div class="col-sm-2 no-padding">
+                    <mark class="p-l-10 p-r-10 heading-unit"></mark>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="table-compliances">
+      <tr class="table-row">
+        <td class="sno" align="center"></td>
+        <td class="statutory"></td>
+        <td class="compliance-task">
+            <a class="c-pointer"></a>
+        </td>
+        <td class="description"></td>
+        <td class="duration"></td>
+        <td>
+            <input type="text" placeholder="DD-MMM-YYYY" class="form-control input-sm startdate" readonly="readonly">
+            <!-- <i class="form-control-feedback fa fa-calendar-check-o"></i> -->
+        </td>
+        <td>
+            <input type="text" class="form-control input-sm remarks" placeholder="Remarks">
+        </td>
+        <td class="action" align="center">
+            <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm btn-submit" type="button" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
+        </td>
+      </tr>
+    </table>
+
+    <table class="table-no-record">
+        <tr>
+        <td colspan="8" align="center"> No Records Found</td>
+        </tr>
+    </table>
+
+</div>
+<script type="text/javascript" src="/script/on-occurrence-compliances/on_occurrence_compliances.js"></script>
 {% endblock %}

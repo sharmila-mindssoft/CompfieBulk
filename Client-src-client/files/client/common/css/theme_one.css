@@ -1386,7 +1386,7 @@ div.DTS tbody tr.even {
 .panel-title td[data-toggle="collapse"] {
   display: table-cell;
 }
-.panel-title td[data-toggle=collapse]{
+.panel-title td[data-toggle=collapse] {
   display: table-cell;
 }
 .panel-title td[data-toggle=collapse]:before {

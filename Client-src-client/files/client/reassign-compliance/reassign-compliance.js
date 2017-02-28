@@ -143,10 +143,9 @@ function callAPI(api_type) {
             if(comb_[3] != null) h_id = parseInt(comb_[3]);
 
             var d_date = null;
-            if ($('#duedate' + c_no).val() != '' || $('#duedate' + c_no).val() != undefined) {
+            if ($('#duedate' + c_no).val() != '' && $('#duedate' + c_no).val() != undefined) {
                 d_date = $('#duedate' + c_no).val();
             }
-
             /*var C_U_ID = comb_[0] + '-' + comb_[1];
             SELECTED_COMPLIANCE[C_U_ID] = {
                 'u_id': parseInt(comb_[1]),

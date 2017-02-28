@@ -52,7 +52,7 @@ def make_widget_type():
     # customized widget data from backend
     return {'type': 'WIDGET_TYPE'}
 
-def make_reccord_type(module, klass_name):
+def make_record_type(module, klass_name):
     return {'type': 'RECORD_TYPE', 'module_name': module, 'class_name': klass_name}
 
 api_params = {
@@ -258,8 +258,7 @@ api_params = {
     "cont_to": make_text_field(is_optional=True),
     "cont_person": make_string_field(is_optional=True),
     "cont_no": make_text_field(is_optional=True),
-    "e_id": make_text_field(),
-    "remarks": make_string_field(is_optional=True),
+    "e_id": make_text_field(),    
     "is_blocked": make_bool_field(),
     "unblock_days": make_int_field(),
 
@@ -346,7 +345,7 @@ api_params = {
     'unit': make_text_field(is_optional=True),
     'status_report_consolidated_list': make_vector_type_field(module="clientcore", klass_name="GetStatusReportConsolidatedSuccess", is_optional=True),
     'status_name': make_string_field(),
-    'compliance_activity_id': make_int_field(),
+    'compliance_activity_id': make_int_field(is_optional=True),
     'compliance_history_id': make_int_field(),
     'compliance_name': make_text_field(is_optional=True),
     'activity_on': make_text_field(length=20, is_optional=True),
@@ -551,7 +550,7 @@ api_params = {
     "domain_wise_details": make_vector_type_field(module="dashboard", klass_name="DomainWise"),
     "reassigned_count": make_int_field(length=10000),
     "year_wise_data": make_vector_type_field(module="dashboard", klass_name="YearWise"),
-    "sdelayed_compliance": make_reccord_type(module="dashboard", klass_name="DelayedCompliance"),
+    "sdelayed_compliance": make_record_type(module="dashboard", klass_name="DelayedCompliance"),
     "reassigned_compliances": make_vector_type_field(module="dashboard", klass_name="RessignedCompliance", is_optional=True),
     "reassigned_from": make_text_field(),
     "start_date": make_text_field(),
@@ -562,7 +561,7 @@ api_params = {
     "delayed_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
     "inprogress_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
     "not_complied_map": make_map_type(module="dashboard", klass_name="AssigneeWiseLevel1Compliance", validfun=allow_specialchar),
-    "assignee_wise_drill_down": make_reccord_type(module="dashboard", klass_name="AssigneeWiseCompliance"),
+    "assignee_wise_drill_down": make_record_type(module="dashboard", klass_name="AssigneeWiseCompliance"),
     "assignee_id": make_int_field(),
     "start_count": make_int_field(),
     "end_count": make_int_field(),
@@ -586,12 +585,24 @@ api_params = {
     "current_start_count": make_int_field(),
     "current_date": make_text_field(is_optional=True),
     "current_compliances":make_vector_type_field(module="clientcore", klass_name="ActiveCompliance"),
-    "compliance_task_frequency": make_enum_type(module="clientcore", klass_name="COMPLIANCE_FREQUENCY"),
-    # "due_date": make_text_field(),
+    "compliance_task_frequency": make_enum_type(module="clientcore", klass_name="COMPLIANCE_FREQUENCY"),    
     "validity_date": make_text_field(is_optional=True),
     "next_due_date": make_text_field(is_optional=True),
-    # "ageing": make_text_field(is_optional=True),
+    "ageing": make_text_field(is_optional=True),
     "format_file_name": make_text_field(is_optional=True),
-    "file_names":  make_vector_type_string(),    
-    "compliance_download_url":make_vector_type_string()
+    "file_names":  make_vector_type_string(is_optional=True),
+    "compliance_download_url":make_vector_type_string(),
+    "uploaded_documents": make_vector_type_string(is_optional=True),
+    "documents":make_vector_type_field(module="clientcore", klass_name="FileList", is_optional=True),
+    "onoccur_compliances": make_map_type(module="clientuser", klass_name="ComplianceOnOccurrence", validfun=allow_specialchar),
+    "statutory_provision":make_text_field(is_optional=True),
+    "complete_within_days":make_text_field(is_optional=True),
+    "duration": make_text_field(is_optional=True),
+    "approval_list": make_vector_type_field(module="clienttransactions", klass_name="APPORVALCOMPLIANCELIST"),
+    "approval_status":make_vector_type_field(module="clientcore", klass_name="COMPLIANCE_APPROVAL_STATUS"),
+    "approval_compliances":make_vector_type_field(module="clienttransactions", klass_name="APPROVALCOMPLIANCE"),
+    "upload_date":make_text_field(is_optional=True),
+    "concurrenced_by":make_text_field(is_optional=True),
+    "statutory_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
+    "theme": make_text_field(is_optional=True),
 }

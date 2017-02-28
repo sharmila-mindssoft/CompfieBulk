@@ -539,6 +539,7 @@ class ClientLEDBCreate(ClientDBBase):
             self._create_tables(db_cursor)
             logger.logGroup("_create_database", "table create success")
             self._create_admin_user(db_cursor)
+            self._create_le_trigger(db_cursor)
             self.save_reminder_settings(db_cursor, self._legal_entity_id, self._client_id)
             db_con.commit()
             return (True, self._db_name, self._db_username, self._db_password)
@@ -553,6 +554,19 @@ class ClientLEDBCreate(ClientDBBase):
             if not self._is_db_failed :
                 self.delete_database()
             raise Exception(e)
+
+    def _create_le_trigger(self, cursor):
+        t6 = "CREATE TRIGGER `tbl_statutory_notifications_insert` AFTER INSERT ON `tbl_statutory_notifications` " + \
+                " FOR EACH ROW BEGIN " + \
+                "   SET @notificationid = NEW.notification_id; " + \
+                " INSERT INTO tbl_statutory_notifications_users ( " + \
+                " notification_id, user_id, read_status) " + \
+                " select @notificationid, t1.user_id, 0 from tbl_users as t1 " + \
+                " left join tbl_user_domains as t3 on t1.user_id = t3.user_id " + \
+                " left join tbl_compliances as t2 " + \
+                " on t3.domain_id = t2.domain_id and t2.compliance_id = new.compliance_id;" + \
+                " END ;"
+        cursor.execute(t6)
 
     def _save_master_info(self):
         args = [self._client_id, self._legal_entity_id]
