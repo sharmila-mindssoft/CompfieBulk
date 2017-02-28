@@ -1,3 +1,14 @@
+var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
+
+var LegalEntityNameLabel = $(".legal-entity-name");
+var LegalEntityNameAC = $(".legal-entity-name-ac");
+
+var LegalEntityName = $("#legal_entity_name");
+var LegalEntityId = $("#legal_entity_id");
+var ACLegalEntity = $("#ac-entity");
+
+var ShowButton = $(".btn-show");
+
 var currentCompliances;
 var file_list = [];
 var currentDate;
@@ -46,7 +57,7 @@ function initialize() {
         displayMessage(c);
         hideLoader()
     }
-    client_mirror.getCurrentComplianceDetail(2, c_endCount, function(d, c) {
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), c_endCount, function(d, c) {
         if (d == null) {
             b(c)
         } else {
@@ -424,8 +435,51 @@ function remove_temp_file(b, a) {
     }
     $("#upload_file").val("")
 }
+
+ShowButton.click(function() {
+    if (LegalEntityId.val().trim().length <= 0) {
+        displayMessage(message.legalentity_required);
+        return false;
+    } else {
+        initialize();
+    }
+});
+
+LegalEntityName.keyup(function(e) {
+    var text_val = $(this).val();
+    commonAutoComplete(
+        e, ACLegalEntity, LegalEntityId, text_val,
+        LEGAL_ENTITIES, "le_name", "le_id",
+        function(val) {
+            onAutoCompleteSuccess(LegalEntityName, LegalEntityId, val);
+        });
+});
+
+function loadEntityDetails() {
+    if (LEGAL_ENTITIES.length > 1) {
+        LegalEntityNameLabel.hide();
+        LegalEntityNameAC.show();
+
+        var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
+        var noclone = norecordtableRow.clone();
+        $('.no_records', noclone).text('No Compliance Available');
+        $('.tbody-compliance-approval-list').append(noclone);
+        $('#pagination').hide();
+        $('.compliance_count').text('');
+
+    } else {
+        var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
+        var LE_ID = LEGAL_ENTITIES[0]["le_id"];
+        LegalEntityNameLabel.show();
+        LegalEntityNameAC.hide();
+        LegalEntityNameLabel.text(LE_NAME);
+        LegalEntityId.val(LE_ID);
+        ShowButton.trigger("click");
+    }
+}
+
 $(function() {
-    initialize()
+    loadEntityDetails();
 });
 $(document).find(".js-filtertable").each(function() {
     $(this).filtertable().addFilter(".js-filter")
