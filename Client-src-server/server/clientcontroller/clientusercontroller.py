@@ -30,7 +30,7 @@ def process_client_user_request(request, db, session_user):
         result = process_get_current_compliance_detail(
             db, request, session_user )
 
-    if type(request) is clientuser.GetUpcomingComplianceDetail:        
+    if type(request) is clientuser.GetUpcomingComplianceDetail:
         result = process_get_upcoming_compliance_detail(
             db, request, session_user )
 
@@ -129,8 +129,9 @@ def validate_documents(documents):
             return False
     else:
         return False
-
-
+########################################################
+# Update Compliances - Submit Compliances
+########################################################
 def process_update_compliance_detail(db, request, session_user):
     # if validate_documents(request.documents):
     #     return clientuser.UnSupportedFile()
@@ -158,9 +159,9 @@ def process_update_compliance_detail(db, request, session_user):
 ########################################################
 def process_get_on_occurrence_compliances(
     db, request, session_user):
-    to_count = RECORD_DISPLAY_COUNT    
-    user_domain_ids = get_user_domains(db, session_user)    
-    user_unit_ids = get_user_unit_ids(db, session_user)    
+    to_count = RECORD_DISPLAY_COUNT
+    user_domain_ids = get_user_domains(db, session_user)
+    user_unit_ids = get_user_unit_ids(db, session_user)
     compliances = get_on_occurrence_compliances_for_user(
         db, session_user, user_domain_ids, user_unit_ids,
         request.start_count, to_count

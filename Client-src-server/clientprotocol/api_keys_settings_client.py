@@ -599,4 +599,10 @@ api_params = {
     "statutory_provision":make_text_field(is_optional=True),
     "complete_within_days":make_text_field(is_optional=True),
     "duration": make_text_field(is_optional=True),
+    "approval_list": make_vector_type_field(module="clienttransactions", klass_name="APPORVALCOMPLIANCELIST"),
+    "approval_status":make_vector_type_field(module="clientcore", klass_name="COMPLIANCE_APPROVAL_STATUS"),
+    "approval_compliances":make_vector_type_field(module="clienttransactions", klass_name="APPROVALCOMPLIANCE"),
+    "upload_date":make_text_field(is_optional=True),
+    "concurrenced_by":make_text_field(is_optional=True),    
+    "statutory_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
 }
