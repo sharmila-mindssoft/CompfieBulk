@@ -462,7 +462,6 @@ class AutoStart(Database):
     def update_calendar_view(self):
         year = getCurrentYear()
 
-
     def start_process(self):
         if self._connection is None :
             details = "%s, %s" % (self._c_db_ip, self._c_db_name)

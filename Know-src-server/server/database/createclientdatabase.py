@@ -485,7 +485,6 @@ class ClientGroupDBCreate(ClientDBBase):
                 " END ;"
             cursor.execute(t6)
 
-
         except Exception, e:
             logger.logGroup("_create_trigger", str(e))
             logger.logGroup("_create_trigger", "failed")
