@@ -254,7 +254,7 @@ class API(object):
             # Knowledge data replciation process for group admin legal entity db
             _client_manager = ClientReplicationManager(
                 self._knowledge_server_address,
-                100,
+                60,
                 client_added
             )
             # replication start

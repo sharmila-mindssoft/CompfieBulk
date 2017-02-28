@@ -383,24 +383,33 @@ def process_approve_compliance(db, request, session_user):
     next_due_date = request.next_due_date
     validity_date = request.validity_date
     legal_entity_id = request.legal_entity_id
+    
+    status = status[0]
+
     if status == "Approve":
         approve_compliance(
             db, compliance_history_id, remarks,
-            next_due_date, validity_date
+            next_due_date, validity_date, session_user
         )
     elif status == "Reject Approval":
         reject_compliance_approval(
             db, compliance_history_id, remarks,  next_due_date
         )
-    elif status == "Concur":
+    elif status == "Concur":        
         concur_compliance(
             db, compliance_history_id, remarks,
-            next_due_date, validity_date
+            next_due_date, validity_date, session_user
         )
     elif status == "Reject Concurrence":
         reject_compliance_concurrence(
             db, compliance_history_id, remarks, next_due_date
         )
+    # else:
+    #     concur_compliance(
+    #         db, compliance_history_id, remarks,
+    #         next_due_date, validity_date, session_user
+    #     )
+        
     return clienttransactions.ApproveComplianceSuccess()
 
 
@@ -608,7 +617,7 @@ def process_reassign_compliance_filters(db, request, session_user, session_categ
 
 def process_get_widget_data(db, session_user, session_category):
     data = get_user_widget_settings(db, session_user, session_category)
-    forms = get_widget_list(db)
+    forms = get_widget_list(db, session_user, session_category)
     result = []
     frm_result = []
     w_ids = []
@@ -661,7 +670,7 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
     # )
     reassign_compliances = get_reassign_compliance_for_units(
         db, domain_id, unit_ids, user_id, user_type, session_user, from_count, to_count
-    ) 
+    )
 
     return clienttransactions.GetReAssignComplianceForUnitsSuccess(
         reassign_compliances

@@ -442,7 +442,7 @@ class ClientGroupDBCreate(ClientDBBase):
             t2 = " CREATE TRIGGER `after_tbl_user_legal_entities_insert` AFTER INSERT ON `tbl_user_legal_entities` " + \
                 " FOR EACH ROW BEGIN " + \
                 " INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action) " + \
-                " values(new.legal_entity_id, new.user_id, 1) on duplicate key update s_action = 0; " + \
+                " values(new.legal_entity_id, new.user_id, 1) on duplicate key update s_action = 1; " + \
                 " UPDATE tbl_le_replication_status set user_data = 1 where legal_entity_id = new.legal_entity_id; " + \
                 " END; "
             cursor.execute(t2)
@@ -451,7 +451,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 " FOR EACH ROW BEGIN " + \
                 " if old.user_id is not null then " + \
                 " INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action) " + \
-                " values(old.legal_entity_id, old.user_id, 3); " + \
+                " values(old.legal_entity_id, old.user_id, 3) on duplicate key update s_action = 3 " + \
                 " UPDATE tbl_le_replication_status set user_data = 1 where legal_entity_id = old.legal_entity_id; " + \
                 " end if; " + \
                 " END; "
@@ -560,7 +560,7 @@ class ClientLEDBCreate(ClientDBBase):
                 " FOR EACH ROW BEGIN " + \
                 "   SET @notificationid = NEW.notification_id; " + \
                 " INSERT INTO tbl_statutory_notifications_users ( " + \
-                " notification_id, user_id, read_status) " + \
+                " notification_id, user_id, is_read) " + \
                 " select @notificationid, t1.user_id, 0 from tbl_users as t1 " + \
                 " left join tbl_user_domains as t3 on t1.user_id = t3.user_id " + \
                 " left join tbl_compliances as t2 " + \

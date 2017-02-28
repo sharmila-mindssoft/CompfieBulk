@@ -24,9 +24,16 @@
                                     <div class="col-sm-offset-1 col-md-4">
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-8 has-feedback">
-                                                <input class="form-control input-sm" placeholder="Enter Legal Entity" type="text">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                            <div class="col-sm-3 controls">
+                                                <p class="form-control-static legal-entity-name default-display-none"></p>
+                                                <div class="legal-entity-name-ac default-display-none">
+                                                    <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1" placeholder="Enter Legal Entity">
+                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                    <input type="hidden" id="legal_entity_id" value="">
+                                                    <div id="ac-entity" class="ac-textbox default-display-none">
+                                                        <ul class="width85Percent"></ul>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -41,7 +48,8 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group m-b-0 text-center">
-                                            <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                                            <!--<button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>-->
+                                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
                                         </div>
                                     </div>
                                 </div>
