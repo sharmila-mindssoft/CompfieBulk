@@ -23,6 +23,7 @@ __all__ = [
 def process_client_dashboard_requests(request, db, session_user, session_category):
 
     request = request.request
+    print "process_client_dashboard_requests --------------------------------------"
 
     if type(request) is dashboard.GetComplianceStatusChart:
 
@@ -420,3 +421,5 @@ def process_get_messages(
         show_popup=show_popup,
         notification_text=notification_text
     )
+
+

@@ -25,7 +25,18 @@
 <link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 <link href="/css/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui/jquery-ui.css">
-<link rel="stylesheet" type="text/css" href="/css/theme_one.css">
+<!--link rel="stylesheet" type="text/css" id="theme_setting" href="/css/theme_three.css"-->
+<script type="text/javascript">
+    var theme_name = "one";
+        if(window.localStorage.theme_name)
+            theme_name = window.localStorage.theme_name;
+    var fileref=document.createElement("link");
+        fileref.setAttribute("rel", "stylesheet");
+        fileref.setAttribute("type", "text/css");
+        fileref.setAttribute("href", "/css/"+theme_name+".css");
+    var ele = document.getElementsByTagName("head")[0].appendChild(fileref);
+</script>
+
 
 <!-- js -->
 <script src="/js/modernizr.min.js"></script>

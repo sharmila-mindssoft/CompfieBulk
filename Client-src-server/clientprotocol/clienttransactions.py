@@ -1103,6 +1103,21 @@ class SaveWidgetData(Request):
             "widget_info": self.widget_data
         }
 
+class ChangeThemes(Request):
+    def __init__(self, theme):
+        self.theme = theme
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["theme"])
+        theme = data.get("theme")
+        return ChangeThemes(theme)
+
+    def to_inner_structure(self):
+        return {
+            "theme": self.theme
+        }
+
 
 def _init_Request_class_map():
 
@@ -1120,7 +1135,8 @@ def _init_Request_class_map():
         GetReAssignComplianceUnits, GetReAssignComplianceForUnits,
         GetAssigneewiseComplianesFilters,
         GetUserToAssignCompliance, GetChartFilters,
-        GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData
+        GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData,
+        ChangeThemes
     ]
 
     class_map = {}
@@ -3064,4 +3080,19 @@ class REASSIGN_COMPLIANCES(object):
             "c_h_id": self.c_h_id,
             "d_date": self.d_date,
             "v_date": self.v_date
+        }
+
+class ChangeThemeSuccess(Response):
+    def __init__(self, theme_value):
+        self.theme_value = theme_value
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["theme"])
+        theme_value = data.get("theme")
+        return ChangeThemeSuccess(theme_value)
+
+    def to_inner_structure(self):
+        return {
+            "theme": self.theme_value
         }

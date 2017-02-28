@@ -605,4 +605,5 @@ api_params = {
     "upload_date":make_text_field(is_optional=True),
     "concurrenced_by":make_text_field(is_optional=True),    
     "statutory_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
+    "theme": make_text_field(is_optional=True),
 }

@@ -2519,6 +2519,18 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function changeThemes(theme, callback) {
+        var request = [
+            "ChangeThemes", {
+                "theme": theme
+            }
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2706,6 +2718,7 @@ function initClientMirror() {
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
+        changeThemes: changeThemes,
     };
 }
 

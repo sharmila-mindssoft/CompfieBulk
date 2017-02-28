@@ -49,7 +49,7 @@ function loadMessages(data) {
 }
 
 function initialize() {
-    client_mirror.getNotifications(LEIDS, 4, 0, 50, function(error, response) {
+    client_mirror.getNotifications(LEIDS, 2, 0, 50, function(error, response) {
         if (error == null) {
             data = response.messages;
             loadMessages(data);
