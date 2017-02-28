@@ -796,7 +796,7 @@ CREATE TRIGGER `after_tbl_units_organizations_insert` AFTER INSERT ON `tbl_units
                 @le_id,
                 NEW.unit_org_id,
                 'unit_id',
-                NEW.domain_id,
+                NEW.unit_id,
                 'tbl_units_organizations');
 
     INSERT INTO tbl_audit_log(action,
