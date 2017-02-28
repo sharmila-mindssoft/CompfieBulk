@@ -383,24 +383,33 @@ def process_approve_compliance(db, request, session_user):
     next_due_date = request.next_due_date
     validity_date = request.validity_date
     legal_entity_id = request.legal_entity_id
+    
+    status = status[0]
+
     if status == "Approve":
         approve_compliance(
             db, compliance_history_id, remarks,
-            next_due_date, validity_date
+            next_due_date, validity_date, session_user
         )
     elif status == "Reject Approval":
         reject_compliance_approval(
             db, compliance_history_id, remarks,  next_due_date
         )
-    elif status == "Concur":
+    elif status == "Concur":        
         concur_compliance(
             db, compliance_history_id, remarks,
-            next_due_date, validity_date
+            next_due_date, validity_date, session_user
         )
     elif status == "Reject Concurrence":
         reject_compliance_concurrence(
             db, compliance_history_id, remarks, next_due_date
         )
+    # else:
+    #     concur_compliance(
+    #         db, compliance_history_id, remarks,
+    #         next_due_date, validity_date, session_user
+    #     )
+        
     return clienttransactions.ApproveComplianceSuccess()
 
 
