@@ -1702,44 +1702,66 @@ def get_compliance_approval_list(
             continue
     return approval_compliances, count
 
-
 def save_compliance_activity(
-    db, unit_id, compliance_id, activity_status, compliance_status,
+    db, unit_id, compliance_id, compliance_history_id, activity_by, activity_on, action,
     remarks
 ):
-    # compliance_activity_id = db.get_new_id(
-    #     "compliance_activity_id", self.tblComplianceActivityLog,
-    # )
     date = get_date_time()
     columns = [
-        "unit_id", "compliance_id",
-        "activity_date", "activity_status", "compliance_status",
-        "updated_on"
+        "unit_id", "compliance_id", "compliance_history_id", "activity_by",
+        "activity_on", "action"
     ]
     values = [
-        unit_id, compliance_id, date, activity_status,
-        compliance_status,  date
+        unit_id, compliance_id, compliance_history_id, activity_by,
+        activity_on,  action
     ]
+    
     if remarks:
         columns.append("remarks")
         values.append(remarks)
-    compliance_activity_id = db.insert(
-        tblComplianceActivityLog, columns, values
+    result = db.insert(
+       tblComplianceActivityLog, columns, values
     )
-    if compliance_activity_id is False:
-        raise client_process_error("E020")
+    if result is False:
+        raise client_process_error("E018")
+
+# def save_compliance_activity(
+#     db, unit_id, compliance_id, activity_status, compliance_status,
+#     remarks
+# ):
+#     # compliance_activity_id = db.get_new_id(
+#     #     "compliance_activity_id", self.tblComplianceActivityLog,
+#     # )
+#     date = get_date_time()
+#     columns = [
+#         "unit_id", "compliance_id",
+#         "activity_date", "activity_status", "compliance_status",
+#         "updated_on"
+#     ]
+#     values = [
+#         unit_id, compliance_id, date, activity_status,
+#         compliance_status,  date
+#     ]
+#     if remarks:
+#         columns.append("remarks")
+#         values.append(remarks)
+#     compliance_activity_id = db.insert(
+#         tblComplianceActivityLog, columns, values
+#     )
+#     if compliance_activity_id is False:
+#         raise client_process_error("E020")
 
 #############################################################
 # Approve Compliances
 ############################################################
 def approve_compliance(
     db, compliance_history_id, remarks, next_due_date,
-    validity_date
+    validity_date, session_user
 ):
     # Updating approval in compliance history
-    columns = ["approve_status", "approved_on"]
+    columns = ["approve_status", "approved_on", "current_status"]
 
-    values = [1, get_date_time()]
+    values = [1, get_date_time(),"3"]
     if remarks is not None:
         columns.append("remarks")
         values.append(remarks)
@@ -1806,10 +1828,13 @@ def approve_compliance(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    save_compliance_activity(
-        db, unit_id, compliance_id, "Approved", status,
-        remarks
-    )
+    # save_compliance_activity(
+    #     db, unit_id, compliance_id, "Approved", status,
+    #     remarks
+    # )
+    current_time_stamp = get_date_time_in_date()
+    save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
+                             session_user, current_time_stamp, "Approved", remarks)
     notify_compliance_approved(db, compliance_history_id, "Approved")
     return True
 
@@ -2029,14 +2054,16 @@ def notify_compliance_rejected(
         logger.logClient("error", "clientdatabase.py-notify-compliance", e)
         print "Error while sending email: %s" % e
 
-
+#####################################################
+# Concurr Compliances
+#####################################################
 def concur_compliance(
     db, compliance_history_id, remarks,
-    next_due_date, validity_date
+    next_due_date, validity_date, session_user
 ):
-    columns = ["concurrence_status", "concurred_on"]
-
-    values = [1, get_date_time()]
+    columns = ["concurrence_status", "concurred_on","current_status"]
+    
+    values = [1, get_date_time(),"2"]
     if validity_date is not None:
         columns.append("validity_date")
         values.append(string_to_datetime(validity_date))
@@ -2089,10 +2116,13 @@ def concur_compliance(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    save_compliance_activity(
-        db, unit_id, compliance_id, "Concurred", status,
-        remarks
-    )
+    # save_compliance_activity(
+    #     db, unit_id, compliance_id, "Concurred", status,
+    #     remarks
+    # )
+    current_time_stamp = get_date_time_in_date()
+    save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
+                             session_user, current_time_stamp, "Concurred", remarks)
     notify_compliance_approved(db, compliance_history_id, "Concurred")
     return True
 
