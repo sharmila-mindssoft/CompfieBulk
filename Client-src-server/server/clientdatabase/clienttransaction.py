@@ -1002,7 +1002,7 @@ def save_assigned_compliance(db, request, session_user):
                 value.extend([concurrence, int(session_user), created_on])
             value_list.append(tuple(value))
 
-    # db.bulk_insert("tbl_assigned_compliances", columns, value_list)
+    # db.bulk_insert("tbl_assign_compliances", columns, value_list)
     db.on_duplicate_key_update(
         "tbl_assign_compliances", ",".join(columns),
         value_list, update_column
@@ -1130,7 +1130,7 @@ def get_level_1_statutories_for_user_with_domain(
 
     query = " SELECT domain_id, statutory_mapping " + \
         " FROM tbl_compliances tc WHERE compliance_id in ( " + \
-        " SELECT distinct compliance_id FROM tbl_assigned_compliances tac " + \
+        " SELECT distinct compliance_id FROM tbl_assign_compliances tac " + \
         " WHERE %s)"
     query = query % condition
     rows = db.select_all(query, condition_val)
@@ -1171,7 +1171,7 @@ def get_statutory_wise_compliances(
         " assignee, employee_code, employee_name, statutory_mapping, " + \
         " document_name, compliance_task, compliance_description, " + \
         " c.repeats_type_id, repeat_type, repeats_every, frequency, " + \
-        " c.frequency_id FROM tbl_assigned_compliances ac " + \
+        " c.frequency_id FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_users u ON (ac.assignee = u.user_id) " + \
         " INNER JOIN tbl_compliances c ON " + \
         " (ac.compliance_id = c.compliance_id) " + \
@@ -1496,9 +1496,12 @@ def get_compliance_approval_count(db, session_user):
     )[0]["count"]
     return concur_count + approval_count
 
-
+########################################################
+# To get the list of compliances to be approved by the
+# given user
+########################################################
 def get_compliance_approval_list(
-    db, start_count, to_count, session_user, client_id
+    db, start_count, to_count, session_user
 ):
     is_two_levels = is_two_levels_of_approval(db)
 
@@ -1506,25 +1509,25 @@ def get_compliance_approval_list(
         " compliance_history_id, tch.compliance_id, start_date, " + \
         " tch.due_date as due_date, documents, completion_date, " + \
         " completed_on, next_due_date, " + \
-        " ifnull(concurred_by, -1), remarks, " + \
-        " datediff(tch.due_date, completion_date ), " + \
+        " ifnull(concurred_by, -1) as concurred_by, remarks, " + \
+        " datediff(tch.due_date, completion_date ) as diff, " + \
         " compliance_task, compliance_description, tc.frequency_id, " + \
         " (SELECT frequency FROM tbl_compliance_frequency tcf " + \
-        " WHERE tcf.frequency_id = tc.frequency_id ), " + \
-        " document_name, ifnull(concurrence_status,false), " + \
+        " WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
+        " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
         " (select statutory_dates from " + \
-        " tbl_assigned_compliances tac " + \
+        " tbl_assign_compliances tac " + \
         " where tac.compliance_id = tch.compliance_id " + \
-        " limit 1), tch.validity_date, ifnull(approved_by, -1), " + \
+        " limit 1) as statutory_dat, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
         " (SELECT concat(unit_code, '-', tu.unit_name) " + \
         " FROM tbl_units tu " + \
-        " where tch.unit_id = tu.unit_id), " + \
+        " where tch.unit_id = tu.unit_id) as unit_name, " + \
         " completed_by, " + \
         " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) " + \
         " FROM tbl_users tu " + \
-        " WHERE tu.user_id = tch.completed_by), " + \
+        " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
         " (SELECT domain_name from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ), duration_type_id " + \
+        " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1557,11 +1560,12 @@ def get_compliance_approval_list(
         "approved_by", "unit_name", "completed_by", "employee_name",
         "domain_name", "duration_type_id"
     ]
-    result = convert_to_dict(rows, columns)
+    # result = convert_to_dict(rows, columns)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
     count = 0
-    for row in result:
+    print "rows>>>>>>>>>>", rows
+    for row in rows:
         no_of_days, ageing = calculate_ageing(
             due_date=row["due_date"],
             frequency_type=row["frequency_id"],
@@ -1724,7 +1728,9 @@ def save_compliance_activity(
     if compliance_activity_id is False:
         raise client_process_error("E020")
 
-
+#############################################################
+# Approve Compliances
+############################################################
 def approve_compliance(
     db, compliance_history_id, remarks, next_due_date,
     validity_date
@@ -1746,10 +1752,10 @@ def approve_compliance(
     # Getting compliance details from compliance history
     query = " SELECT tch.unit_id, tch.compliance_id, " + \
         " (SELECT frequency_id FROM tbl_compliances tc " + \
-        " WHERE tch.compliance_id = tc.compliance_id ), " + \
+        " WHERE tch.compliance_id = tc.compliance_id ) as frequency_id, " + \
         " due_date, completion_date, " + \
         " (select duration_type_id FROM tbl_compliances tc " + \
-        " where tch.compliance_id=tc.compliance_id) " + \
+        " where tch.compliance_id=tc.compliance_id) as duration_type_id " + \
         " FROM tbl_compliance_history tch " + \
         " WHERE compliance_history_id = %s "
     rows = db.select_all(query, [compliance_history_id])
@@ -1757,7 +1763,7 @@ def approve_compliance(
         "unit_id", "compliance_id", "frequency_id",
         "due_date", "completion_date", "duration_type_id"
     ]
-    rows = convert_to_dict(rows, columns)
+    # rows = convert_to_dict(rows, columns)
 
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
@@ -1787,7 +1793,7 @@ def approve_compliance(
         as_condition = " unit_id = %s and compliance_id = %s "
         as_values.extend([unit_id, compliance_id])
         db.update(
-            tblAssignedCompliances, as_columns, as_values, as_condition
+            tblAssignCompliances, as_columns, as_values, as_condition
         )
     status = "Complied"
     if due_date < completion_date:
@@ -2151,7 +2157,7 @@ def get_assigneewise_compliance_count(db, session_user):
     admin_id = get_admin_id(db)
 
     q = "SELECT t01.assignee, count( t01.compliance_id ) AS cnt " + \
-        " FROM tbl_assigned_compliances t01 " + \
+        " FROM tbl_assign_compliances t01 " + \
         " INNER JOIN tbl_compliances t02 " + \
         " ON t01.compliance_id = t02.compliance_id " + \
         " LEFT JOIN tbl_compliance_history t03 " + \
@@ -2228,7 +2234,7 @@ def get_compliance_for_assignee(
         " t4.compliance_history_id, " + \
         " t4.due_date, t2.domain_id, t1.trigger_before_days, " + \
         " IFNULL(t4.approve_status, 0) " + \
-        " FROM  tbl_assigned_compliances t1 " + \
+        " FROM  tbl_assign_compliances t1 " + \
         " INNER JOIN  tbl_compliances t2 " + \
         " ON t1.compliance_id = t2.compliance_id " + \
         " AND t1.is_active = 1 " + \

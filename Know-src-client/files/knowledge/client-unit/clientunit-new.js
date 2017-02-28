@@ -1819,9 +1819,10 @@ $('#btn-clientunit-submit').click(function() {
             }
             unit_cnt = $('.unitcnt-' + i + '-1').val();
 
-
+            alert("unit-cnt:"+unit_cnt)
             if (unit_cnt > 0) {
                 for (var j = 1; j <= unit_cnt; j++) {
+                    var added = false, edited = false;
                     var delStatus = checkDeletedRow(i+"-"+j);
                     var addStatus = checkNewAddRow(i+"-"+j);
                     if(delStatus == false){
@@ -1832,6 +1833,8 @@ $('#btn-clientunit-submit').click(function() {
                         var unitLocation, unitIndustryId, unitdomain;
 
                         if (($('.unit-id-' + i + '-' + j).val() != "" && (edit_icon.indexOf("display: none") >= 0) && addStatus == false)) {
+                            alert("inside edit")
+                            edited = true;
                             unitId = $('.unit-id-' + i + '-' + j).val();
 
                             if ($('.unit-code-' + i + '-' + j).attr('style') == "display: none;") {
@@ -1885,6 +1888,7 @@ $('#btn-clientunit-submit').click(function() {
                         }
                         if (addStatus == true) {
                             unitId = null;
+                            added = true;
                             unitCode = $('.unit-code-' + i + '-' + j).val();
 
                             unitName = $('.unit-name-' + i + '-' + j).val().trim();
@@ -1899,8 +1903,10 @@ $('#btn-clientunit-submit').click(function() {
                             unitdomain = $('.domainselected-' + i + '-' + j).val();
 
                         }
-                        if (($('.unit-id-' + i + '-' + j).val() != "" && (edit_icon.indexOf("display: none") >= 0)) ||
-                            ($('.unit-id-' + i + '-' + j).val() == "")) {
+                        /*if (($('.unit-id-' + i + '-' + j).val() != "" && (edit_icon.indexOf("display: none") >= 0)) ||
+                            ($('.unit-id-' + i + '-' + j).val() == ""))*/
+                        if (added == true || edited == true) {
+                            alert($('.unit-id-' + i + '-' + j).val())
                             total_units = total_units + 1;
                             if (unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomain == '' && unitIndustryId == '') {
                                 if (unitcount == 1) {
@@ -1909,6 +1915,7 @@ $('#btn-clientunit-submit').click(function() {
                                 }
                                 continue;
                             }
+                            unitId = $('.unit-id-' + i + '-' + j).val();
                             if (unitLocation == '') {
                                 displayMessage(message.unitlocation_required);
                                 return;
@@ -1934,21 +1941,20 @@ $('#btn-clientunit-submit').click(function() {
                                 displayMessage(message.industryname_required);
                                 return;
                             }  else {
-                                unitarr.push(unitCode);
-                                var hash = [];
-                                for (var n = unitarr.length; n--;) {
-                                    if (typeof hash[unitarr[n]] === 'undefined')
-                                        hash[unitarr[n]] = [];
-                                    hash[unitarr[n]].push(n);
-                                }
-                                var duplicates = [];
-                                for (var key in hash) {
-                                    if (hash.hasOwnProperty(key) && hash[key].length > 1) {
-                                        duplicates.push(key);
+                                var occur = -1;
+                                console.log(unitarr)
+                                for (var n = 0; n<unitarr.length; n++) {
+                                    if(unitarr[n] == unitCode)
+                                    {
+                                        occur = 1;
                                     }
                                 }
 
-                                if (duplicates == '') {
+                                if(occur < 0){
+                                    unitarr.push(unitCode);
+                                }
+                                console.log(unitarr)
+                                if (occur < 0) {
                                     for (var ij = 0; ij < unitdomain.length; ij++) {
                                         unitdomains.push(parseInt(unitdomain[ij]));
                                     }
@@ -1988,6 +1994,7 @@ $('#btn-clientunit-submit').click(function() {
             }
         }
         if(units.length > 0){
+            console.log(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units)
            mirror.saveClient(parseInt(client_id), parseInt(bgIdValue), parseInt(leIdValue), parseInt(countryVal), division_units, units, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.unit_updated);

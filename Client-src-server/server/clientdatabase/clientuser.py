@@ -103,8 +103,7 @@ def get_overdue_count(db, session_user):
 #################################################################
 def get_current_compliances_list(
     db, current_start_count, to_count, session_user
-):
-    print "session_user>>>>>>>>>>>>>>>>>> ", session_user
+):    
     columns = [
         "compliance_history_id", "start_date", "due_date", "documents",
         "validity_date", "next_due_date",
@@ -320,7 +319,7 @@ def get_upcoming_compliances_list(
 
 
 def handle_file_upload(
-    db, documents, uploaded_documents, client_id, old_documents
+    db, documents, uploaded_documents, old_documents
 ):
     document_names = []
     file_size = 0
@@ -392,11 +391,13 @@ def is_diff_greater_than_90_days(validity_date, next_due_date):
     else:
         return True
 
-
+##################################################
+# Update Compliances
+##################################################
 def update_compliances(
     db, compliance_history_id, documents, uploaded_compliances,
     completion_date, validity_date, next_due_date, assignee_remarks,
-    client_id, session_user
+    session_user
 ):
     current_time_stamp = get_date_time_in_date()
     query = " SELECT unit_id, tch.compliance_id,  completed_by, " + \
@@ -408,19 +409,19 @@ def update_compliances(
         " ON (tc.compliance_id=tch.compliance_id) " + \
         " WHERE compliance_history_id=%s "
     param = [compliance_history_id]
-    rows = db.select_all(query, param)
+    row = db.select_one(query, param)
     columns = [
         "unit_id", "compliance_id", "completed_by", "concurred_by",
         "approved_by", "compliance_name", "document_name", "due_date",
         "frequency_id", "duration_type_id", "documents"
     ]
-    result = convert_to_dict(rows, columns)
-    row = result[0]
+    # result = convert_to_dict(rows, columns)
+    # row = result[0]
 
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
         return False
     document_names = handle_file_upload(
-        db, documents, uploaded_compliances, client_id, row["documents"])
+        db, documents, uploaded_compliances, row["documents"])
     if type(document_names) is not list:
         return document_names
     if row["frequency_id"] == 4 and row["duration_type_id"] == 2:
@@ -548,11 +549,13 @@ def notify_users(
     )
     notify_task_completed_thread.start()
 
-
+#####################################################
+# Get Onoccurrence Compliance Count
+#####################################################
 def get_on_occurrence_compliance_count(
     db, session_user, user_domain_ids, user_unit_ids
 ):
-    query = "SELECT count(*) " + \
+    query = "SELECT count(*) as total_count" + \
             " FROM tbl_assign_compliances ac " + \
             " INNER JOIN tbl_compliances c " + \
             " ON (ac.compliance_id = c.compliance_id) " + \
@@ -560,15 +563,20 @@ def get_on_occurrence_compliance_count(
             " WHERE u.is_closed = 0 " + \
             " AND find_in_set(ac.unit_id, %s) " + \
             " AND find_in_set(c.domain_id, %s) " + \
-            " AND c.frequency_id = 4 " + \
+            " AND c.frequency_id = 5 " + \
             " AND ac.assignee = %s "
     rows = db.select_one(query, [
         ",".join(str(x) for x in user_unit_ids),
         ",".join(str(x) for x in user_domain_ids), session_user
     ])
-    return rows[0]
+    print "query>>>>>>>>>>>>", query
+    print "user_domain_ids>>>>>>>>>>>>", user_domain_ids
+    print "user_unit_ids>>>>>>>>>>>>", user_unit_ids    
+    return rows["total_count"]
 
-
+##########################################################
+# Get Onoccurrence Compliances
+##########################################################
 def get_on_occurrence_compliances_for_user(
     db, session_user, user_domain_ids, user_unit_ids, start_count,
     to_count
@@ -583,7 +591,7 @@ def get_on_occurrence_compliances_for_user(
     query = "SELECT ac.compliance_id, c.statutory_provision, " + \
             " compliance_task, compliance_description, " + \
             " duration_type, duration, document_name, u.unit_id, " + \
-            " concat(u.unit_code, '-', u.unit_name) " + \
+            " concat(u.unit_code, '-', u.unit_name) AS unit_name " + \
             " FROM tbl_assign_compliances ac " + \
             " INNER JOIN tbl_compliances c " + \
             " ON (ac.compliance_id = c.compliance_id) " + \
@@ -593,7 +601,7 @@ def get_on_occurrence_compliances_for_user(
             " WHERE u.is_closed = 0 " + \
             " AND find_in_set(ac.unit_id, %s) " + \
             " AND find_in_set(c.domain_id,%s) " + \
-            " AND c.frequency_id = 4 " + \
+            " AND c.frequency_id = 5 " + \
             " AND ac.assignee = %s " + \
             " ORDER BY u.unit_id, document_name, compliance_task " + \
             " LIMIT %s, %s "
@@ -603,10 +611,8 @@ def get_on_occurrence_compliances_for_user(
         ",".join(str(x) for x in user_domain_ids),
         session_user, int(start_count), int(to_count)
     ])
-    result = convert_to_dict(rows, columns)
-    # compliances = []
     unit_wise_compliances = {}
-    for row in result:
+    for row in rows:
         duration = "%s %s" % (row["duration"], row["duration_type"])
         compliance_name = row["compliance_task"]
         if row["document_name"] not in ["None", "", None]:
@@ -615,7 +621,7 @@ def get_on_occurrence_compliances_for_user(
             )
         unit_name = row["unit_name"]
         if unit_name not in unit_wise_compliances:
-            unit_wise_compliances[unit_name] = []
+            unit_wise_compliances[unit_name] = []        
         unit_wise_compliances[unit_name].append(
             clientuser.ComplianceOnOccurrence(
                 row["compliance_id"], row["statutory_provision"],
@@ -625,12 +631,14 @@ def get_on_occurrence_compliances_for_user(
         )
     return unit_wise_compliances
 
-
+###################################################
+# Start Onoccurrence Compliances
+###################################################
 def start_on_occurrence_task(
-    db, compliance_id, start_date, unit_id, duration, session_user, client_id
+    db, legal_entity_id, compliance_id, start_date, unit_id, duration, session_user
 ):
     columns = [
-        "unit_id", "compliance_id",
+        "legal_entity_id", "unit_id", "compliance_id",
         "start_date", "due_date", "completed_by"
     ]
     start_date = string_to_datetime_with_time(start_date)
@@ -643,14 +651,14 @@ def start_on_occurrence_task(
     elif duration_type == "Hour(s)":
         due_date = start_date + datetime.timedelta(hours=int(duration_value))
     values = [
-        unit_id, compliance_id, start_date, due_date,
+        legal_entity_id, unit_id, compliance_id, start_date, due_date,
         session_user
     ]
 
     approval_columns = ["approval_person", "concurrence_person"]
     approval_condition = " compliance_id = %s and unit_id = %s "
     rows = db.get_data(
-        tblAssignedCompliances, approval_columns,
+        tblAssignCompliances, approval_columns,
         approval_condition, [compliance_id, unit_id]
     )
     approved_by = rows[0]["approval_person"]
@@ -718,6 +726,7 @@ def remove_uploaded_file(file_path):
 def get_compliance_history_details(
     db, compliance_history_id
 ):
+    print "compliance_history_id>>>", compliance_history_id
     compliance_column = "(select compliance_task from %s c " + \
         " where c.compliance_id = ch.compliance_id ) " + \
         " as compliance_name "
@@ -736,6 +745,7 @@ def get_compliance_history_details(
         tblComplianceHistory + " ch", columns, condition,
         condition_val
     )
+    print "rows>>>>>", rows
     if rows:
         return rows[0]
 

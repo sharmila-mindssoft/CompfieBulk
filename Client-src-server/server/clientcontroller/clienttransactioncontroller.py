@@ -104,7 +104,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
 
     elif type(request) is clienttransactions.GetComplianceApprovalList:
         result = process_get_compliance_approval_list(
-            db, request, session_user, client_id
+            db, request, session_user
         )
 
     elif type(request) is clienttransactions.ApproveCompliance:
@@ -353,10 +353,10 @@ def process_save_past_records(
 # To get the list of compliances to be approved by the
 # given user
 ########################################################
-def process_get_compliance_approval_list(db, request, session_user, client_id):
+def process_get_compliance_approval_list(db, request, session_user):
     to_count = RECORD_DISPLAY_COUNT
     compliance_approval_list, count = get_compliance_approval_list(
-        db, request.start_count, to_count, session_user, client_id
+        db, request.start_count, to_count, session_user
     )
     total_count = get_compliance_approval_count(db, session_user)
     approval_status = [
@@ -382,6 +382,7 @@ def process_approve_compliance(db, request, session_user):
     remarks = request.remarks
     next_due_date = request.next_due_date
     validity_date = request.validity_date
+    legal_entity_id = request.legal_entity_id
     if status == "Approve":
         approve_compliance(
             db, compliance_history_id, remarks,
