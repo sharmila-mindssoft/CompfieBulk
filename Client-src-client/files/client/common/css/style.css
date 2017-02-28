@@ -897,8 +897,8 @@ button.btn-success {
 .table > thead > tr > th {
     background-color: #47a1ef;
     border-bottom: 2px solid #e0e0e0;
-    color: #f7f9fa !important;
-    vertical-align: middle;
+/*    color: #f7f9fa !important;
+*/    vertical-align: middle;
 }
 .compliance_count_assignee {
   clear: both;

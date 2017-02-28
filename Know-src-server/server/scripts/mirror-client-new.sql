@@ -526,8 +526,6 @@ CREATE TABLE `tbl_calendar_view` (
   `date` int(11) NOT NULL,
   `due_date_count` int(11) DEFAULT NULL,
   `upcoming_count` int(11) DEFAULT NULL,
-  `inprogress_count` int(11) DEFAULT NULL,
-  `overdue_count` int(11) DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `user_id`, `year`, `month`, `date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_validity_date_settings` (
