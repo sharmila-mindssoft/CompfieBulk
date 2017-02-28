@@ -2547,7 +2547,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    
+
 
     return {
         log: log,
