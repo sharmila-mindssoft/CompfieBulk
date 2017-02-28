@@ -426,6 +426,7 @@ CREATE TABLE `tbl_compliance_history` (
   `approve_status` varchar(20) DEFAULT NULL,
   `approved_by` int(11) NOT NULL,
   `approved_on` datetime DEFAULT NULL,
+  `current_status` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`compliance_history_id`),
   CONSTRAINT `ch_unit_fk11` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
   CONSTRAINT `ch_compliance_fk12` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
@@ -517,7 +518,7 @@ CREATE TABLE `tbl_compliance_applicability_chart` (
   `opted_count` int(11) DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_calender_view` (
+CREATE TABLE `tbl_calendar_view` (
   `legal_entity_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `year` int(11) NOT NULL,
@@ -533,6 +534,20 @@ CREATE TABLE `tbl_validity_date_settings` (
   `domain_id` int(11) NOT NULL,
   `days` int(11) NOT NULL,
   PRIMARY KEY (`validity_date_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_reminder_settings` (
+  `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `two_levels_of_approval` tinyint(1) DEFAULT '1',
+  `assignee_reminder` int(11) DEFAULT '7',
+  `escalation_reminder_in_advance` int(11) DEFAULT '7',
+  `escalation_reminder` int(11) DEFAULT '7',
+  `reassign_service_provider` int(11) DEFAULT '7',
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY(`client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");

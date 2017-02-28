@@ -318,6 +318,13 @@ class ClientDBBase(object):
         if values :
             self.bulk_insert(db_cur, 'tbl_business_groups', columns, values)
 
+    def save_reminder_settings(self, db_cur, le_id, client_id):
+        columns = ["client_id", "legal_entity_id"]
+        values = [(client_id, le_id)]
+        if values :
+            self.bulk_insert(db_cur, 'tbl_reminder_settings', columns, values)
+
+
 class ClientGroupDBCreate(ClientDBBase):
     def __init__(
         self, db, client_id, short_name, email_id, database_ip, database_port,
@@ -427,6 +434,8 @@ class ClientGroupDBCreate(ClientDBBase):
             t1 = "CREATE TRIGGER `after_tbl_legal_entity_insert` AFTER INSERT ON `tbl_legal_entities` " + \
                 " FOR EACH ROW BEGIN " + \
                 "  INSERT INTO tbl_le_replication_status(legal_entity_id) values(new.legal_entity_id); " + \
+                " INSERT INTO tbl_reminder_settings(client_id, legal_entity_id) select client_id, new.legal_entity_id from " + \
+                " tbl_client_groups ;" + \
                 " END; "
             cursor.execute(t1)
 
@@ -463,6 +472,18 @@ class ClientGroupDBCreate(ClientDBBase):
                 " UPDATE tbl_le_replication_status set provider_data = 1 ; " + \
                 " END ;"
             cursor.execute(t5)
+
+            t6 = "CREATE TRIGGER `tbl_statutory_notifications_insert` AFTER INSERT ON `tbl_statutory_notifications` " + \
+                " FOR EACH ROW BEGIN " + \
+                "   SET @notificationid = NEW.notification_id; " + \
+                " INSERT INTO tbl_statutory_notifications_users ( " + \
+                " notification_id, user_id, read_status) " + \
+                " select @notificationid, t1.user_id, 0 from tbl_users as t1 " + \
+                " left join tbl_user_domains as t3 on t1.user_id = t3.user_id " + \
+                " left join tbl_compliances as t2 " + \
+                " on t3.domain_id = t2.domain_id and t2.compliance_id = new.compliance_id;" + \
+                " END ;"
+            cursor.execute(t6)
 
         except Exception, e:
             logger.logGroup("_create_trigger", str(e))
@@ -530,7 +551,7 @@ class ClientLEDBCreate(ClientDBBase):
             self._create_tables(db_cursor)
             logger.logGroup("_create_database", "table create success")
             self._create_admin_user(db_cursor)
-
+            self.save_reminder_settings(db_cursor, self._legal_entity_id, self._client_id)
             db_con.commit()
             return (True, self._db_name, self._db_username, self._db_password)
         except Exception, e:

@@ -2,22 +2,17 @@
 -- Triggers `tbl_statutory_notifications_units`
 --
 
-DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
+DROP TRIGGER IF EXISTS `tbl_statutory_notifications_insert`;
 DELIMITER //
-CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units`
+CREATE TRIGGER `tbl_statutory_notifications_insert` AFTER INSERT ON `tbl_statutory_notifications`
  FOR EACH ROW BEGIN
-    SET @notificationid = NEW.statutory_notification_id;
-    SET @unitid = NEW.unit_id;
-
-    INSERT INTO tbl_statutory_notification_status (
-    	statutory_notification_id, user_id, read_status)
-    	SELECT NEW.statutory_notification_id, t1.user_id, 0
-     	FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id;
-    INSERT INTO tbl_statutory_notification_status (
-    	statutory_notification_id,
-    	user_id, read_status)
-        SELECT NEW.statutory_notification_id, t1.user_id, 0 FROM
-        tbl_users t1 where t1.is_active = 1 and t1.is_primary_admin = 1;
+    SET @notificationid = NEW.notification_id;
+    INSERT INTO tbl_statutory_notifications_users (
+    	notification_id, user_id, read_status)
+    	select @notificationid, t1.user_id, 0 from tbl_users as t1
+        left join tbl_user_domains as t3 on t1.user_id = t3.user_id
+        left join tbl_compliances as t2
+        on t3.domain_id = t2.domain_id and t2.compliance_id = new.compliance_id;
 END
 //
 DELIMITER ;

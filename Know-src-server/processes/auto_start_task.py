@@ -121,7 +121,7 @@ class AutoStart(Database):
             " LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id " + \
             "     AND t4.compliance_id = t1.compliance_id AND t2.frequency_id = 1)" + \
             " WHERE (t1.due_date - INTERVAL t1.trigger_before_days DAY) <= %s " + \
-            " AND t1.is_active = 1 AND t2.is_active = 1 AND t2.frequency_id != 4 " + \
+            " AND t1.is_active = 1 AND t2.is_active = 1 AND t2.frequency_id < 5 " + \
             " AND t4.compliance_id is null "
 
         logProcessInfo("compliance_to_start %s" % self.client_id, query % (self.current_date))
@@ -139,7 +139,7 @@ class AutoStart(Database):
         trigger_before_days = None
         if statutory_dates == []:
             statutory_dates = None
-        if frequency == 2 or frequency == 3 :
+        if frequency == 2 or frequency == 3 or frequency == 4:
             repeat_every = int(repeat_every)
             repeat_type = int(repeat_type)
             if statutory_dates is None or len(statutory_dates) == 1 :
@@ -236,13 +236,12 @@ class AutoStart(Database):
         notification_text, extra_details, notification_type_id, notify_to_all=True
     ):
         def save_notification_users(notification_id, user_id):
-            pass
-            # if user_id is not "NULL" and user_id is not None  :
-            #     q = "INSERT INTO tbl_notification_user_log(notification_id, user_id) " + \
-            #         " VALUES (%s, %s) "
-            #     v = (notification_id, user_id)
-            #     logProcessInfo("save_notification_user %s" % self.client_id, q % v)
-            #     self.execute(q, v)
+            if user_id is not "NULL" and user_id is not None  :
+                q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                    " VALUES (%s, %s) "
+                v = (notification_id, user_id)
+                logProcessInfo("save_notification_user %s" % self.client_id, q % v)
+                self.execute(q, v)
 
         # notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
         created_on = datetime.datetime.now()
@@ -312,7 +311,7 @@ class AutoStart(Database):
             unit_name = d["unit_code"] + " - " + d["unit_name"]
             notification_text = "Compliance task %s started" % (compliance_name)
             extra_details = " %s - Compliance Started" % (compliance_history_id)
-            notification_type_id = 1   # 1 = notification
+            notification_type_id = 4   # 4 = messages
             self.save_in_notification(
                 d["country_id"], d["domain_id"], d["business_group_id"], d["legal_entity_id"],
                 d["division_id"], d["unit_id"], d["compliance_id"], d["assignee"],
@@ -459,6 +458,9 @@ class AutoStart(Database):
         if len(self.started_unit_id) > 0 :
             self.execute(q_delete, [year])
             self.execute(q, [year, year, year])
+
+    def update_calendar_view(self):
+        year = getCurrentYear()
 
     def start_process(self):
         if self._connection is None :

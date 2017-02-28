@@ -185,22 +185,16 @@ class API(object):
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
 
-            print self._le_databases
-            print self._group_databases
             def client_added(clients):
-                print clients
                 for client in clients:
                     _client_id = client.client_id
                     # print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
                     # _domain_id = client.domain_id
-                    print client.to_structure()
-                    print " \n "
                     if client.is_group is True:
                         # print "client added"
                         db_cons_info = self._group_databases.get(_client_id)
-                        print db_cons_info
                         if db_cons_info is None :
                             continue
                         # db_cons = db_cons_info.get_connection()
@@ -208,7 +202,6 @@ class API(object):
 
                         client_db = Database(db_cons)
                         if client_db is not None :
-                            print _client_id
                             if is_new_data is True and is_new_domain is False :
                                 # replication for group db only master data
                                 rep_man = ReplicationManagerWithBase(
@@ -223,7 +216,6 @@ class API(object):
                                     self._replication_managers_for_group[_client_id] = rep_man
                     else :
                         db_cons_info = self._le_databases.get(_client_id)
-                        print db_cons_info
                         if db_cons_info is None :
                             continue
                         # db_cons = db_cons_info.get_connection()
@@ -336,7 +328,6 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
-            print actual_data
             # print company_id
             request_data = request_data_type.parse_structure(
                 actual_data
@@ -443,9 +434,7 @@ class API(object):
 
         # _db_con = db_cons.get_connection()
         _db_con = self.client_connection_pool(db_cons_info)
-        print db_cons_info
         _db = Database(_db_con)
-        print _db
         if _db_con is None:
             self._send_response("Company not found", 404)
 
@@ -543,6 +532,16 @@ class API(object):
 
                 elif type(request_data.request) is widgetprotocol.GetEscalationChart :
                     p_response = controller.merge_escalation_chart_widget(p_response, data)
+
+                elif type(request_data.request) is widgetprotocol.GetUserScoreCard :
+                    p_response = controller.merge_user_scorecard(p_response, data)
+
+                elif type(request_data.request) is widgetprotocol.GetDomainScoreCard :
+                    p_response = controller.merge_domain_scorecard(p_response, data)
+
+                elif type(request_data.request) is widgetprotocol.GetCalendarView :
+                    p_response = controller.merge_calendar_view(p_response, data)
+
                 else :
                     pass
             return p_response
@@ -556,9 +555,7 @@ class API(object):
                 le_ids = request_data.request.legal_entity_ids
                 performed_les = []
                 performed_response = None
-                print le_ids
                 for le in le_ids :
-                    print le
                     db_cons_info = self._le_databases.get(le)
 
                     if db_cons_info is None:
