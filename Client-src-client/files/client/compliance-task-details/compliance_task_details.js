@@ -182,7 +182,7 @@ function showSideBar(c, a) {
             $(".sideview-compliance-task .ct", e).html(a[g].compliance_name);
             // $(".sideview-compliance-task abbr", e).attr("title", a[g].compliance_description);
             $(".sideview-compliance-frequency", e).html(a[g].compliance_task_frequency);
-            // $(".sideview-startdate", e).val(a[g].start_date);
+            $(".sideview-startdate", e).val(a[g].start_date);
             $(".sideview-completion-date-td", e).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date' readonly='readonly'>");
             $(".sideview-compliance-status", e).html(h);
             if (d != null) {
@@ -236,9 +236,9 @@ function showSideBar(c, a) {
                 var r;
                 n = a[g].compliance_history_id;
 
-                function u(x) {
-                    return new Date(x.replace(/^(\d+)\W+(\w+)\W+/, "$2 $1 "))
-                }
+                // function u(x) {
+                //     return new Date(x.replace(/^(\d+)\W+(\w+)\W+/, "$2 $1 "))
+                // }
                 v = file_list;
                 if (v.length == 0) {
                     v = null
@@ -285,10 +285,10 @@ function showSideBar(c, a) {
                         return
                     }
                 }
-                if (u(r) > u(o)) {
-                    displayMessage(message.complietion_gt_start);
-                    return
-                }
+                // if (u(r) > u(o)) {
+                //     displayMessage(message.complietion_gt_start);
+                //     return
+                // }
                 if (q != null) {
                     if (u(r) > u(q)) {
                         displayMessage(message.validity_gt_start);
@@ -296,26 +296,26 @@ function showSideBar(c, a) {
                     }
                 }
                 if (w != null) {
-                    if (u(r) > u(w)) {
-                        displayMessage(message.duedate_gt_start);
-                        return
-                    }
+                    // if (u(r) > u(w)) {
+                    //     displayMessage(message.duedate_gt_start);
+                    //     return
+                    // }
                 }
-                if (u(o) > u(currentDate)) {
-                    displayMessage(message.completion_lt_current);
-                    return
-                }
+                // if (u(o) > u(currentDate)) {
+                //     displayMessage(message.completion_lt_current);
+                //     return
+                // }
                 if (currentDate != null && w != null) {
-                    if (u(currentDate) > u(w)) {
-                        displayMessage(message.nextduedate_gt_current);
-                        return
-                    }
+                    // if (u(currentDate) > u(w)) {
+                    //     displayMessage(message.nextduedate_gt_current);
+                    //     return
+                    // }
                 }
                 if (q != null && w != null) {
-                    if (u(q) < u(w)) {
-                        displayMessage(message.validity_gt_nextduedate);
-                        return
-                    }
+                    // if (u(q) < u(w)) {
+                    //     displayMessage(message.validity_gt_nextduedate);
+                    //     return
+                    // }
                 }
 
                 function t(x) {
@@ -345,17 +345,30 @@ function showSideBar(c, a) {
                     $(".upload-progress-count").html("");
                     $(".upload-progress-count").show()
                 }
-                client_mirror.updateComplianceDetail(n, v, p, o, q, w, remarks, function(y, x) {
-                    if (y == null) {
-                        $(".upload-progress-count").hide();
-                        $(".upload-progress-count").html("");
-                        t(x)
-                    } else {
-                        $(".upload-progress-count").hide();
-                        $(".upload-progress-count").html("");
-                        k(y)
+                var le_id = 2;
+                client_mirror.updateComplianceDetail(le_id, n, v, p, o, q, w, remarks,
+                    function(error, response) {
+                        if (error == null) {
+                            // onSuccess(response);
+                        } else {
+                            // onFailure(error);
+                        }
                     }
-                })
+                );
+
+                // client_mirror.updateComplianceDetail(compliance_history_id, documents,
+                //     completion_date, validity_date, next_due_date, remarks,
+
+                //     function (error, response){
+                //         if(error == null){
+                //             onSuccess(response);
+                //         }
+                //         else{
+                //             onFailure(error);
+                //         }
+                //     }
+                // );
+
             });
             $(".half-width-task-details").append(e);
             $(".datepick").datepicker({
