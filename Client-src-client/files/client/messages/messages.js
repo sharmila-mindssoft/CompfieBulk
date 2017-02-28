@@ -53,6 +53,8 @@ function initialize() {
         if (error == null) {
             data = response.messages;
             loadMessages(data);
+        } else {
+            displayMessage(error);
         }
     });
 }

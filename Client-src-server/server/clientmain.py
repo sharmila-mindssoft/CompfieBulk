@@ -22,6 +22,10 @@ from server.clientreplicationbase import (
     ClientReplicationManager, ReplicationManagerWithBase,
     # DomainReplicationManager
 )
+from server.clientdatabase.savelegalentitydata import(
+    LegalEntityReplicationManager, LEntityReplicationUSer,
+    LEntityReplicationServiceProvider
+)
 from server.constants import SESSION_CUTOFF
 import logger
 
@@ -71,6 +75,7 @@ class API(object):
         self._le_databases = {}
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
+        self._replication_legal_entity = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
             5000,
@@ -136,6 +141,7 @@ class API(object):
         self._le_databases = {}
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
+        self._replication_legal_entity = {}
         try:
 
             for company in servers:
@@ -253,20 +259,43 @@ class API(object):
                             #         domain_rep_man.start()
                             #         d_rep_man[_client_id] = domain_rep_man
 
+            # Knowledge data replciation process for group admin legal entity db
             _client_manager = ClientReplicationManager(
                 self._knowledge_server_address,
-                500,
+                100,
                 client_added
             )
             # replication start
             _client_manager._start()
 
+            # group data replication process corresponding legal entity database
+            for k, gp in self._group_databases.items():
+                gp_info = self._group_databases.get(k)
+                gp_id = gp_info.company_id
+                _le_entity = LegalEntityReplicationManager(gp_info, 10, self.legal_entity_replication_added)
+                _le_entity._start()
+                self._replication_legal_entity[gp_id] = _le_entity
         except Exception, e :
             logger.logClientApi(e, "Server added")
             logger.logClientApi(traceback.format_exc(), "")
             logger.logClient("error", "clientmain.py-server-added", e)
             logger.logClient("error", "clientmain.py-server-added", traceback.format_exc())
             return
+
+    def legal_entity_replication_added(self, group_info, le_infos):
+        # print "le_info"
+        # print "Z" * 10
+        for r in le_infos :
+            le_id = r["legal_entity_id"]
+            # print "legal_entity_replication_added ", le_id
+            le_info = self._le_databases.get(le_id)
+            if r["user_data"] == 1 :
+                info = LEntityReplicationUSer(group_info, le_info, le_id)
+                info._start()
+
+            if r["provider_data"] == 1 :
+                info = LEntityReplicationServiceProvider(group_info, le_info, le_id)
+                info._start()
 
     def _send_response(
         self, response_data, status_code

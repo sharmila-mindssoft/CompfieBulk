@@ -14,7 +14,8 @@ from server.clientdatabase.general import (
     get_country_wise_domain_month_range, get_group_name, get_domains_info,
     get_assignees,
     get_client_users, get_units_for_user, get_user_based_units,
-    save_user_widget_settings, get_user_widget_settings, get_widget_list
+    save_user_widget_settings, get_user_widget_settings, get_widget_list,
+    get_themes_for_user, save_themes_for_user, update_themes_for_user
 )
 
 from server.clientdatabase.dashboard import (
@@ -522,6 +523,9 @@ def process_client_master_filters_request(request, db, session_user, session_cat
     elif type(request) is clienttransactions.SaveWidgetData :
         result = process_save_widget_data(db, request, session_user)
 
+    elif type(request) is clienttransactions.ChangeThemes:
+        result = process_change_theme(db, request, session_user)
+
     return result
 
 
@@ -661,3 +665,17 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
     return clienttransactions.GetReAssignComplianceForUnitsSuccess(
         reassign_compliances
     )
+
+########################################################
+# To change new theme and update theme
+########################################################
+def process_change_theme(db, request, session_user):
+    theme_name = request.theme
+    theme_id = get_themes_for_user(db, session_user);
+
+    if not theme_id:
+        theme_value = save_themes_for_user(db, session_user, theme_name);
+    else:
+        theme_value = update_themes_for_user(db, session_user, theme_id, theme_name);
+
+    return clienttransactions.ChangeThemeSuccess(theme_value)

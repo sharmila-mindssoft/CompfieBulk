@@ -276,6 +276,7 @@ function resetFields(){
 	le_db_server_name.val('');
 	le_file_server_name.val('');
 	edit_id = null;
+	group_application_server_name.focus();
 }
 
 function loadApplicationIpAndPort(application_id){

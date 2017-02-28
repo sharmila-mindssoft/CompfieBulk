@@ -2376,7 +2376,7 @@ function initClientMirror() {
             "w_id": w_id,
             "width": width,
             "height": height,
-            "pin_status": pin_status
+            "pin_status": pinstatus
         }
     }
 
@@ -2506,6 +2506,18 @@ function initClientMirror() {
         callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
+    function changeThemes(theme, callback) {
+        var request = [
+            "ChangeThemes", {
+                "theme": theme
+            }
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    
 
     return {
         log: log,
@@ -2694,6 +2706,7 @@ function initClientMirror() {
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
+        changeThemes: changeThemes,
     };
 }
 

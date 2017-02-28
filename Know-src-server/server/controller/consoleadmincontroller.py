@@ -107,12 +107,8 @@ def process_console_admin_request(request, db):
             db, request_frame, session_user)
 
     elif(type(request_frame) is consoleadmin.GetAllocateServerReportData):
-        logger.logKnowledgeApi("GetAllocateServerReportData", "process begin")
-        logger.logKnowledgeApi("------", str(time.time()))
         result = process_allocate_server_report_data(
             db, request_frame, session_user)
-        logger.logKnowledgeApi("GetAllocateServerReportData", "process end")
-        logger.logKnowledgeApi("------", str(time.time()))
 
     return result
 

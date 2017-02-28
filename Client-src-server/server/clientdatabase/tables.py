@@ -74,4 +74,5 @@ tbluserlegalentities = "tbl_user_legal_entities"
 tblComplianceDates = "tbl_compliance_dates"
 tblComplianceDatesHistory = "tbl_compliance_dates_history"
 tblAssignCompliances = "tbl_assign_compliances"
+tblThemes = "tbl_themes"
 

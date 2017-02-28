@@ -104,10 +104,11 @@ def get_overdue_count(db, session_user):
 def get_current_compliances_list(
     db, current_start_count, to_count, session_user
 ):
+    print "session_user>>>>>>>>>>>>>>>>>> ", session_user
     columns = [
         "compliance_history_id", "start_date", "due_date", "documents",
         "validity_date", "next_due_date",
-        "document_name", "compliance_task", "description",
+        "document_name", "compliance_task", "compliance_description",
         "format_file", "unit", "domain_name", "frequency", "remarks",
         "compliance_id", "duration_type_id"
     ]
@@ -136,7 +137,7 @@ def get_current_compliances_list(
         " and IFNULL(ch.due_date, 0) != 0 LIMIT %s, %s ) a " + \
         " ORDER BY due_date ASC "
 
-    rows = db.select_all(query, [session_user, current_start_count, to_count])    
+    rows = db.select_all(query, [session_user, current_start_count, to_count])
     current_compliances_list = []
     for compliance in rows:
         document_name = compliance["document_name"]
@@ -212,7 +213,7 @@ def get_current_compliances_list(
                 ageing=ageing,
                 format_file_name=format_files,
                 unit_name=unit_name, address=address,
-                compliance_description=compliance["description"],
+                compliance_description=compliance["compliance_description"],
                 remarks=remarks,
                 compliance_id=compliance["compliance_id"],
                 download_url=download_urls, file_names=file_name

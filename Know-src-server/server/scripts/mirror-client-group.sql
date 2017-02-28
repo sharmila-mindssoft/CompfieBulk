@@ -307,6 +307,29 @@ CREATE TABLE `tbl_widget_forms`(
   `form_id` int(11) PRIMARY KEY NOT NULL,
   `form_name` TEXT NOT NULL
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_replication_status`(
+  `legal_entity_id` int(11) PRIMARY KEY NOT NULL,
+  `user_data` tinyint(2) DEFAULT '0',
+  `settings_data` tinyint(2) DEFAULT '0',
+  `provider_data` tinyint(2) DEFAULT '0'
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_user_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`, `user_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_provider_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `provider_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`, `provider_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_settings_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");

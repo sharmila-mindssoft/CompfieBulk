@@ -4163,13 +4163,17 @@ def process_service_provider_wise_report(db , request):
 # Result: list of users
 ###############################################################################################
 def get_le_users_list(db):
-    query = "select user_id, concat(employee_code,' - ',employee_name) as username, " + \
+    query = "select user_id, employee_code, employee_name, " + \
         "user_category_id from tbl_users where user_category_id <> 2;"
     result = db.select_all(query, None)
     units_users_list = []
     for row in result:
+        if row["employee_code"] is None or row["employee_code"] == "":
+            user_name = row["employee_name"]
+        else:
+            user_name = row["employee_code"]+' - '+row["employee_name"]
         units_users_list.append(clientreport.LegalEntityUsers(
-            row["user_id"], row["username"], row["user_category_id"]
+            row["user_id"], user_name, row["user_category_id"]
         ))
     return units_users_list
 

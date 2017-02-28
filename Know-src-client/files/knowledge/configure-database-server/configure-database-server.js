@@ -75,6 +75,7 @@ function clearFields(){
     db_server_port.val("");
     db_server_uname.val("");
     db_server_pwd.val("");
+    db_svr_name.focus();
 }
 
 btnDbServerAdd.click(function(){
