@@ -330,6 +330,14 @@ CREATE TABLE `tbl_le_settings_replication_status`(
   `s_action` tinyint(4) DEFAULT '0',
   UNIQUE KEY(`legal_entity_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_themes` (
+  `theme_id` int(11) NOT NULL AUTO_INCREMENT,
+  `theme_name` varchar(45) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`theme_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
