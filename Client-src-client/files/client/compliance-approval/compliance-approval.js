@@ -7,6 +7,8 @@ var LegalEntityName = $("#legal_entity_name");
 var LegalEntityId = $("#legal_entity_id");
 var ACLegalEntity = $("#ac-entity");
 
+var ShowButton = $(".btn-show");
+
 var approvalList;
 var file_list = [];
 var action;
@@ -396,7 +398,7 @@ function showSideBar(idval, data) {
       displayMessage(error);
       hideLoader();
     }
-    client_mirror.approveCompliance(2, compliance_history_id, [approval_status], remarks, next_due_date, validity_date, function (error, response) {
+    client_mirror.approveCompliance(parseInt(LegalEntityId.val()), compliance_history_id, [approval_status], remarks, next_due_date, validity_date, function (error, response) {
       if (error == null) {
         onSuccess(response);
       } else {
@@ -435,8 +437,16 @@ function remove_temp_file(classnameval) {
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
-    initialize();
 }
+
+ShowButton.click(function() {
+    if (LegalEntityId.val().trim().length <= 0) {
+      displayMessage(message.legalentity_required);
+      return false;
+    } else {
+      initialize();
+    }
+});
 
 LegalEntityName.keyup(function(e) {
     var text_val = $(this).val();
@@ -467,17 +477,18 @@ function loadEntityDetails(){
         LegalEntityNameAC.hide();
         LegalEntityNameLabel.text(LE_NAME);
         LegalEntityId.val(LE_ID);
-        initialize();
+        ShowButton.trigger( "click" );
     }
-
 }
 
 $(function () {
   loadEntityDetails();
 });
+
 $(document).find('.js-filtertable').each(function () {
   $(this).filtertable().addFilter('.js-filter');
 });
+
 $(document).tooltip({
   position: {
     my: 'center bottom-20',
