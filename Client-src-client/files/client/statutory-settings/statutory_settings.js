@@ -1008,6 +1008,15 @@ function subComplianceStatus(element) {
     
 }
 */
+
+function part_compliance(remark) {
+  if (remark.length > 15) {
+    return remark.substring(0, 10) + '...';
+  } else {
+    return remark;
+  }
+}
+
 function loadSingleUnitCompliances() {
 
     $.each(COMPLIANCES_LIST, function(key, value) {
@@ -1093,6 +1102,14 @@ function loadSingleUnitCompliances() {
             $('.opted', clone2).val(statutoriesCount);
             $('.opted', clone2).addClass('comp' + count);
 
+            $('.c-remark-view', clone).attr('id', 'c-remark-view-' + statutoriesCount);
+            $('.c-remark-add', clone).attr('id', 'c-remark-add-' + statutoriesCount);
+            if(value1.comp_remarks != null){
+                $('.c-remark-view i', clone2).attr('title', value1.comp_remarks);
+                $('.c-remark-view span', clone2).text(part_compliance(value1.comp_remarks));
+            }else{
+                $('.c-remark-view', clone2).hide();
+            }
             $('.saved', clone2).attr('id', 'save' + statutoriesCount);
             if (value1.is_saved) {
                 $('.saved', clone2).addClass('fa-square');
