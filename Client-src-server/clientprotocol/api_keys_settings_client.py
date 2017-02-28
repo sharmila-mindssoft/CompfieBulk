@@ -603,7 +603,7 @@ api_params = {
     "approval_status":make_vector_type_field(module="clientcore", klass_name="COMPLIANCE_APPROVAL_STATUS"),
     "approval_compliances":make_vector_type_field(module="clienttransactions", klass_name="APPROVALCOMPLIANCE"),
     "upload_date":make_text_field(is_optional=True),
-    "concurrenced_by":make_text_field(is_optional=True),    
+    "concurrenced_by":make_text_field(is_optional=True),
     "statutory_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "theme": make_text_field(is_optional=True),
 }
