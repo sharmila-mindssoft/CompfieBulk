@@ -2578,7 +2578,7 @@ class APPROVALCOMPLIANCE(object):
             data, [
                 "compliance_history_id", "compliance_name",
                 "description", "domain_name", "file_names", "start_date", "due_date", "delayed_by",
-                "compliance_task_frequency", "documents", "upload_date", "completion_date",
+                "compliance_task_frequency", "uploaded_documents", "upload_date", "completion_date",
                 "next_due_date", "concurrenced_by", "remarks", "action",
                 "statutory_dates", "validity_date", "unit_name"
             ]
@@ -2601,7 +2601,8 @@ class APPROVALCOMPLIANCE(object):
         # delayed_by = parse_structure_OptionalType_UnsignedIntegerType_32(delayed_by)
         compliance_frequency = data.get("compliance_task_frequency")
         # compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
-        documents = data.get("documents")
+        documents = data.get("uploaded_documents")        
+        # documents = data.get("documents")
         # documents = parse_structure_OptionalType_VectorType_CustomTextType_500(documents)
         upload_date = data.get("upload_date")
         # upload_date = parse_structure_OptionalType_CustomTextType_20(upload_date)
@@ -2638,7 +2639,7 @@ class APPROVALCOMPLIANCE(object):
             "due_date": self.due_date,
             "delayed_by": self.delayed_by,
             "compliance_task_frequency": self.compliance_frequency,
-            "documents": self.documents,
+            "uploaded_documents": self.documents,
             "file_names": self.file_names,
             "upload_date": self.upload_date,
             "completion_date": self.completion_date,
