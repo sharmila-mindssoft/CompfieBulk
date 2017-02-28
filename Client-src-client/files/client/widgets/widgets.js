@@ -355,9 +355,10 @@ function updateComplianceApplicabilityChart(data, id) {
   total = data[2];
   highchart_ca = new Highcharts.Chart({
     colors: [
-      '#66FF66',
-      '#FFDC52',
-      '#CE253C'
+      '#FB4739',
+      '#F2746B',
+      '#FF9C80',
+      '#F62025',
     ],
     chart: {
       type: 'pie',
@@ -632,8 +633,10 @@ function loadChart(){
     }
     $(".menu_widgets", liclone).click(function(e){
         if(jQuery.inArray(v.w_id, WIDGET_INFO_ID) == -1){
-          var width = $(this).css('width');
-          var height = $(this).css('height');
+          // var width = $(this).css('width');
+          // var height = $(this).css('height');
+          var width = "0px";
+          var height = "0px";
           var id = v.w_id;
           var pin_status = true;
           widget_info.push(client_mirror.saveUserWidgetDataDict(id, width, height, pin_status));
@@ -714,8 +717,10 @@ function loadChart(){
       settings = widgetSettings();
       var cardbox = $(".chart-card-box li");
       var cardboxclone = cardbox.clone();
-      cardboxclone.css("width", v.width);
-      cardboxclone.css("height", v.height);
+      if(v.width != "0px"){
+        cardboxclone.css("width", v.width);
+        cardboxclone.css("height", v.height);  
+      }      
       $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
       $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
       $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
