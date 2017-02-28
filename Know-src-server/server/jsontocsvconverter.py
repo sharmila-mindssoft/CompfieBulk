@@ -77,6 +77,9 @@ class ConvertJsonToCSV(object):
                 elif report_type == "AuditTraiReport":
                     self.generate_audit_trail_report(
                         db, request, session_user)
+                elif report_type == "AllocateServerReport":
+                    self.generate_allocate_server_report(
+                        db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
         self, db, request, session_user
@@ -110,7 +113,7 @@ class ConvertJsonToCSV(object):
         #     for filename in files:
         #         if filename in documents:
         #             shutil.copy(abs_src+"/"+filename, temp_path)
-        
+
         timestamp = datetime.datetime.utcnow()
         # report_generated_date = self.datetime_to_string(timestamp)
         zip_file_name = "AssigneewiseComplianceDetails%s.zip" % (
@@ -194,6 +197,42 @@ class ConvertJsonToCSV(object):
                 user_name, user_category_name, form_name, action, date
             ]
             self.write_csv(None, csv_values)
+
+    def generate_allocate_server_report(
+        self, db, request, session_user
+    ):
+        client_id = request.client_id
+        legal_entity_id = request.legal_entity_id
+
+        if (client_id == 0):
+            client_id = '%'
+        if (legal_entity_id == 0):
+            legal_entity_id = '%'
+        args = [client_id, legal_entity_id]
+        result = db.call_proc('sp_allocate_db_environment_report_export', args)
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "SNO", "Client ID", "Group Name", "Legal Entity ID", "Legal Entity Name",
+                "Group Application Server Name", "Group Application Server IP/Port",
+                "Group Database Server Name", "Group Database Server IP/Port",
+                "LE Database Server Name", "LE Database Server IP/Port",
+                "LE File Server Name", "LE File Server IP/Port"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        j = 1
+        for row in result:
+            csv_values = [
+                j, row["client_id"], row["group_name"], row["legal_entity_id"],
+                row["legal_entity_name"], row["machine_name"], row["machine_ip_port"],
+                row["client_db_server_name"], row["client_db_s_ip_port"],
+                row["db_server_name"], row["db_s_ip_port"], row["file_server_name"],
+                row["file_s_ip_port"]
+            ]
+            j = j + 1
+            self.write_csv(None, csv_values)
+
 
     def generate_reassign_user_report(
         self, db, request, session_user
@@ -476,7 +515,7 @@ class ConvertJsonToCSV(object):
             legal_entity_admin_contactno = le_admin_contactno
             legal_entity_admin_email = le_admin_email
             business_group_name=client_agreement["business_group_name"]
-            
+
             if not is_header:
                 csv_headers = [
                     "Group Name", "Business Group Name",
