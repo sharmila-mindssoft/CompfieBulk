@@ -351,6 +351,24 @@ class GetAllocateServerReportData(Request):
         return {
         }
 
+class ExportAllocateServerReportData(Request):
+    def __init__(self, client_id, legal_entity_id, csv):
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["client_id", "legal_entity_id", "csv"])
+        return ExportAllocateServerReportData(data.get("client_id"), data.get("legal_entity_id"), data.get("csv"))
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "csv": self.csv
+        }
+
 class GetIPSettingsList(Request):
     def __init__(self):
         pass
@@ -471,7 +489,7 @@ def _init_Request_class_map():
         GetAutoDeletionList, SaveAutoDeletion, GetFileServerList,
         SaveFileServer, GetIPSettingsList, GetGroupIPDetails, SaveIPSettings, DeleteIPSettings,
         GetIPSettingsReport, GetIPSettingsReportFilter,
-        SaveFileServer, GetAllocateServerReportData
+        SaveFileServer, GetAllocateServerReportData, ExportAllocateServerReportData
     ]
     class_map = {}
     for c in classes:
@@ -1486,6 +1504,21 @@ class GetIPSettingsReportFilterSuccess(Response):
             "ip_setting_forms": self.ip_setting_forms
         }
 
+class ExportToCSVSuccess(Response):
+    def __init__(self, link):
+        self.link = link
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["link"])
+        link = data.get("link")
+        return ExportToCSVSuccess(link)
+
+    def to_inner_structure(self):
+        return {
+            "link" : self.link
+        }
+
 def _init_Response_class_map():
     classes = [
         GetDbServerListSuccess, SaveDBServerSuccess, DBServerNameAlreadyExists,
@@ -1497,7 +1530,7 @@ def _init_Response_class_map():
         GetFileServerListSuccess, SaveFileServerSuccess, FileServerNameAlreadyExists,
         GetIPSettingsListSuccess, GetGroupIPDetailsSuccess, DeleteIPSettingsSuccess,
         GetIPSettingsReportSuccess, GetIPSettingsReportSuccess,
-        GetAllocatedDBListSuccess
+        GetAllocatedDBListSuccess, ExportToCSVSuccess
     ]
     class_map = {}
     for c in classes:

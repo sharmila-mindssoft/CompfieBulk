@@ -2769,6 +2769,20 @@ function initMirror() {
             "GetAllocateServerReportData",
             {}
         ];
+        console.log(request)
+        apiRequest(callerName, request, callback);
+    }
+
+    function exportAllocateServerReportData(cl_id, le_id, csv, callback){
+        callerName = 'console_admin';
+        var request = [
+            "ExportAllocateServerReportData", {
+              "client_id": cl_id,
+              "legal_entity_id": le_id,
+              "csv": csv
+            }
+        ];
+        console.log(request)
         apiRequest(callerName, request, callback);
     }
 
@@ -2994,7 +3008,8 @@ function initMirror() {
         getAllocateServerReportData: getAllocateServerReportData,
         exportClientDetailsReportData: exportClientDetailsReportData,
         exportAuditTrail: exportAuditTrail,
-        exportReassignUserReportData: exportReassignUserReportData
+        exportReassignUserReportData: exportReassignUserReportData,
+        exportAllocateServerReportData: exportAllocateServerReportData
     };
 }
 var mirror = initMirror();
