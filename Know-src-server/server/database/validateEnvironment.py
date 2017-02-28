@@ -64,9 +64,13 @@ class ServerValidation(object):
         return (machine_result, db_result, file_result)
 
 class UpdateServerValidation(object):
-    def __init__(self, db, client_db_id, machine_id, database_server_id, le_database_server_id, file_server_id):
+    def __init__(
+        self, db, client_db_id, legal_entity_id, machine_id, database_server_id,
+        le_database_server_id, file_server_id
+    ):
         self._db = db
         self._client_db_id = client_db_id
+        self._le_id = legal_entity_id
         self._db_server_id = database_server_id
         self._machine_id = machine_id
         self._f_server_id = file_server_id
@@ -81,7 +85,7 @@ class UpdateServerValidation(object):
         print self._machine_id, self._db_server_id, self._le_db_server_id, self._f_server_id
         result = self._db.call_proc_with_multiresult_set(
             "sp_get_created_server_details_byid", [
-                self._machine_id, self._db_server_id, self._le_db_server_id, self._f_server_id], 4
+                self._machine_id, self._db_server_id, self._le_db_server_id, self._f_server_id, self._le_id], 4
         )
         self.dbase_info = result[0][0]
         self.le_dbase_info = result[1][0]
