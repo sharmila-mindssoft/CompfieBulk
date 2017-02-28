@@ -4,7 +4,9 @@ from server.clientdatabase.widget import *
 __all__ = [
     "process_client_widget_requests",
     "merge_compliance_chart_widget",
-    "merge_escalation_chart_widget"
+    "merge_escalation_chart_widget",
+    "merge_user_scorecard",
+    "merge_domain_scorecard"
 ]
 
 def process_client_widget_requests(request, db, session_user, session_category):
@@ -24,6 +26,15 @@ def process_client_widget_requests(request, db, session_user, session_category):
 
     elif type(request) is widgetprotocol.GetTrendChart :
         result = get_trend_chart(db, session_user, session_category)
+
+    elif type(request) is widgetprotocol.GetUserScoreCard :
+        result = get_userwise_score_card(db, session_user)
+
+    elif type(request) is widgetprotocol.GetDomainScoreCard :
+        result = get_domain_score_card(db, session_user, session_category)
+
+    elif type(request) is widgetprotocol.GetCalendarView :
+        result = get_calendar_view(db, session_user)
 
     return result
 
@@ -66,4 +77,57 @@ def merge_escalation_chart_widget(data, new_data):
 
     data.chart_data[0]["data"] = old_delayed
     data.chart_data[1]["data"] = old_notcomplied
+    return data
+
+def merge_user_scorecard(data, new_data):
+    def merge_data(idx, x, y) :
+        x = x[idx]
+        x["Assingee"] += int(y[idx]["Assingee"])
+        x["Concur"] += int(y[idx]["Concur"])
+        x["Approver"] += int(y[idx]["Approver"])
+        return x
+
+    completed = merge_data(0, data.chart_data, new_data.chart_data)
+    inprogress = merge_data(1, data.chart_data, new_data.chart_data)
+    overdue = merge_data(2, data.chart_data, new_data.chart_data)
+
+    data.chart_data = [completed, inprogress, overdue]
+    return data
+
+def merge_domain_scorecard(data, new_data):
+    new_xaxis = new_data.xaxis
+    old_xaxis = data.xaxis
+
+    for idx, val in enumerate(new_xaxis) :
+        if val in old_xaxis :
+            old = old_xaxis.index(val)
+            old_data = data.chart_data[old]
+            new = new_data.chart_data[idx]
+            old_data["assigned"] += new["assinged"]
+            old_data["unassinged"] += new["unassinged"]
+            old_data["notopted"] += new["notopted"]
+            data.chart_data[old] = old_data
+        else :
+            data.chart_data.append(new_data.chart_data[idx])
+    return data
+
+def merge_calendar_view(data, new_data):
+    new_xaxis = new_data.xaxis
+    old_xaxis = data.xaxis
+    for idx in val in enumerate(new_xaxis) :
+        if val in old_xaxis :
+            old = old_xaxis.index(val)
+            old_data = data.chart_data[0]["data"][old]
+            new = new_data.chart_data[0]["data"][idx]
+            old_data["overdue"] += new["overdue"]
+            old_data["upcoming"] += new["upcoming"]
+            old_data["inprogress"] += new["inprogress"]
+            old_data["duedate"] += new["duedate"]
+            data.chart_data[0]["data"][old] = old_data
+        else :
+            data.chart_data[0]["data"].append(new_data.chart_data[0]["data"][idx])
+
+    final_data = sorted(data.chart_data[0]["data"], key=lambda k: k['date'])
+
+    data.chart_data[0]["data"] = final_data
     return data
