@@ -1441,7 +1441,7 @@ def save_compliance_activity(
         unit_id, compliance_id, compliance_history_id, activity_by,
         activity_on,  action
     ]
-    
+
     if remarks:
         columns.append("remarks")
         values.append(remarks)
@@ -2022,7 +2022,10 @@ def get_user_widget_settings(db, user_id, user_category):
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
     q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
     rows = db.select_one(q, [user_id])
-    rows = json.loads(rows["widget_data"])
+    if rows :
+        rows = json.loads(rows["widget_data"])
+    else :
+        rows = []
 
     data = []
     if len(rows) > 0 :

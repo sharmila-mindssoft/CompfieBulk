@@ -335,7 +335,8 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
         UPDATE tbl_client_replication_status set is_new_data = 1
         WHERE client_id = NEW.client_id and is_group = 1;
 
-        INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group) values(new.legal_entity_id, 0, 0);
+        INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group) values(new.legal_entity_id, 0, 0)
+        on duplicate key update is_new_data = 0;
    END IF ;
 
 END
