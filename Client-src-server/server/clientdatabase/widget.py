@@ -470,8 +470,8 @@ def get_current_inprogess_overdue(db, user_id):
     rows = db.select_one(q, [user_id])
     overdue = inprogress = 0
     if rows :
-        overdue = rows["overdue_count"]
-        inprogress = rows["inprogress_count"]
+        overdue = int(rows["overdue_count"])
+        inprogress = int(rows["inprogress_count"])
     return overdue, inprogress
 
 def frame_calendar_view(db, data, user_id):
@@ -486,7 +486,8 @@ def frame_calendar_view(db, data, user_id):
     for i in range(totalDays()) :
         overdue = 0
         inprogress = 0
-        if i == currentDay() :
+        print i+1 == currentDay()
+        if i+1 == currentDay() :
             overdue, inprogress = get_current_inprogess_overdue(db, user_id)
             print overdue, inprogress
 
