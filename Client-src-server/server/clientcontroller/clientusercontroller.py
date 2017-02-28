@@ -23,14 +23,14 @@ __all__ = [
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_user_request(request, db, session_user):    
+def process_client_user_request(request, db, session_user):
     request = request.request
 
     if type(request) is clientuser.GetCurrentComplianceDetail:
         result = process_get_current_compliance_detail(
             db, request, session_user )
 
-    if type(request) is clientuser.GetUpcomingComplianceDetail:        
+    if type(request) is clientuser.GetUpcomingComplianceDetail:
         result = process_get_upcoming_compliance_detail(
             db, request, session_user )
 
