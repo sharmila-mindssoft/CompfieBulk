@@ -7,6 +7,22 @@ def getCurrentYear():
     now = datetime.datetime.now()
     return now.year
 
+def getCurrentMonth():
+    now = datetime.datetime.now()
+    return now.month
+def getDayName(date):
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    dayNumber = date.weekday()
+    return days[dayNumber]
+def getFirstDate():
+    now = datetime.date.today().replace(day=1)
+    return now
+def totalDays():
+    thismonth = getFirstDate()
+    nextmonth = thismonth.replace(month=getCurrentMonth()+1)
+    return (nextmonth - thismonth).days
+
+
 # Compliance Status chart groupwise count
 
 def get_compliance_status_count(db, le_ids, user_id, user_category):
@@ -25,10 +41,8 @@ def get_compliance_status_count(db, le_ids, user_id, user_category):
             " inner join tbl_countries as t2 on t1.country_id = t2.country_id " + \
             " where chart_year = %s and user_id = %s"
         param = [getCurrentYear(), user_id]
-    print q
 
     rows = db.select_all(q, param)
-    print rows
     return frame_compliance_status(rows)
 
 def frame_compliance_status(data) :
@@ -426,4 +440,61 @@ def frame_domain_scorecard(data):
             "notopted": not_opted
         })
 
+    return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
+
+def get_calendar_view(db, user_id):
+    year = getCurrentYear()
+    month = getCurrentMonth()
+    q = "select year, month, date, due_date_count, upcoming_count, inprogress_count, overdue_count " + \
+        " from tbl_calendar_view where user_id = %s and year = %s and month = %s"
+    print q % (user_id, year, month)
+    rows = db.select_all(q, [user_id, year, month])
+    return frame_calendar_view(rows)
+
+def frame_calendar_view(data):
+    chart_title = "Calendar View"
+    xaxis_name = "Total Compliances"
+    xaxis = []
+    yaxis_name = "Total Compliances"
+    yaxis = []
+    chartData = []
+    cdata = []
+
+    for i in range(totalDays()) :
+
+        xaxis.append(str(i+1))
+        cdata.append({
+            "date": i+1,
+            "overdue": 0,
+            "upcoming": 0,
+            "inprogress": 0,
+            "duedate": 0
+        })
+    print xaxis
+    print cdata
+    for d in data :
+        idx = xaxis.index(str(d["date"]))
+        c = cdata[idx]
+
+        duedate = d["due_date_count"]
+        duedate = 0 if duedate is None else int(duedate)
+        upcoming = d["upcoming_count"]
+        upcoming = 0 if upcoming is None else int(upcoming)
+        inprogress = d["inprogress_count"]
+        inprogress = 0 if inprogress is None else int(inprogress)
+        overdue = d["overdue_count"]
+        overdue = 0 if overdue is None else int(overdue)
+
+        c["overdue"] = overdue
+        c["upcoming"] = upcoming
+        c["inprogress"] = inprogress
+        c["duedate"] = duedate
+
+        cdata[idx] = c
+
+    chartData.append({
+        "CurrentMonth": str(getFirstDate()),
+        "StartDay": getDayName(getFirstDate()),
+        "data": cdata
+    })
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
