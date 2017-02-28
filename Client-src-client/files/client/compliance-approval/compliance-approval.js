@@ -1,3 +1,12 @@
+var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
+
+var LegalEntityNameLabel = $(".legal-entity-name");
+var LegalEntityNameAC = $(".legal-entity-name-ac");
+
+var LegalEntityName = $("#legal_entity_name");
+var LegalEntityId = $("#legal_entity_id");
+var ACLegalEntity = $("#ac-entity");
+
 var approvalList;
 var file_list = [];
 var action;
@@ -29,7 +38,7 @@ function initialize() {
     displayMessage(error);
     hideLoader();
   }
-  client_mirror.getComplianceApprovalList(2, sno, function (error, response) {
+  client_mirror.getComplianceApprovalList(parseInt(LegalEntityId.val()), sno, function (error, response) {
     if (error == null) {
       onSuccess(response);
     } else {
@@ -52,7 +61,7 @@ $('#pagination').click(function () {
     displayMessage(error);
     hideLoader();
   }
-  client_mirror.getComplianceApprovalList(sno, function (error, response) {
+  client_mirror.getComplianceApprovalList(parseInt(LegalEntityId.val()), sno, function (error, response) {
     if (error == null) {
       onSuccess(response);
     } else {
@@ -127,7 +136,7 @@ function showSideBar(idval, data) {
   //SideView append ---------------------------------------------------------------------
   var tableRowSide = $('#templates .sideview-div');
   var cloneValSide = tableRowSide.clone();
-  var complianceFrequency = data.compliance_frequency;
+  var complianceFrequency = data.compliance_task_frequency;
   $('.validityAndDueDate', cloneValSide).hide();
   $('.sidebar-unit span', cloneValSide).html(data.unit_name);
   // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
@@ -387,7 +396,7 @@ function showSideBar(idval, data) {
       displayMessage(error);
       hideLoader();
     }
-    client_mirror.approveCompliance(compliance_history_id, approval_status, remarks, next_due_date, validity_date, function (error, response) {
+    client_mirror.approveCompliance(2, compliance_history_id, [approval_status], remarks, next_due_date, validity_date, function (error, response) {
       if (error == null) {
         onSuccess(response);
       } else {
@@ -422,8 +431,49 @@ function uploadedfile(e) {
 function remove_temp_file(classnameval) {
   $('.' + classnameval).remove();
 }
+
+function onAutoCompleteSuccess(value_element, id_element, val) {
+    value_element.val(val[1]);
+    id_element.val(val[0]);
+    initialize();
+}
+
+LegalEntityName.keyup(function(e) {
+    var text_val = $(this).val();
+    commonAutoComplete(
+        e, ACLegalEntity, LegalEntityId, text_val,
+        LEGAL_ENTITIES, "le_name", "le_id",
+        function(val) {
+            onAutoCompleteSuccess(LegalEntityName, LegalEntityId, val);
+        });
+});
+
+function loadEntityDetails(){
+    if(LEGAL_ENTITIES.length > 1){
+        LegalEntityNameLabel.hide();
+        LegalEntityNameAC.show();
+
+        var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
+        var noclone = norecordtableRow.clone();
+        $('.no_records', noclone).text('No Compliance Available');
+        $('.tbody-compliance-approval-list').append(noclone);
+        $('#pagination').hide();
+        $('.compliance_count').text('');
+
+    }else{
+        var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
+        var LE_ID = LEGAL_ENTITIES[0]["le_id"];
+        LegalEntityNameLabel.show();
+        LegalEntityNameAC.hide();
+        LegalEntityNameLabel.text(LE_NAME);
+        LegalEntityId.val(LE_ID);
+        initialize();
+    }
+
+}
+
 $(function () {
-  initialize();
+  loadEntityDetails();
 });
 $(document).find('.js-filtertable').each(function () {
   $(this).filtertable().addFilter('.js-filter');

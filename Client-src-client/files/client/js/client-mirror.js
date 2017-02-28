@@ -431,9 +431,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
+    function approveCompliance(le_id, compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
         var request = [
             'ApproveCompliance', {
+                'le_id': le_id,
                 'compliance_history_id': compliance_history_id,
                 'approval_status': compliance_approval_status,
                 'remarks': remarks,
