@@ -16,7 +16,7 @@ from server.clientdatabase.general import (
     verify_username,
     validate_reset_token, update_password, delete_used_token,
     remove_session, update_profile, verify_password, get_user_name_by_id,
-    get_user_forms, get_forms_by_category, get_legal_entity_info, get_country_info
+    get_user_forms, get_forms_by_category, get_legal_entity_info, get_country_info, get_themes
     )
 from server.exceptionmessage import client_process_error
 from server.clientcontroller.corecontroller import process_user_forms
@@ -34,6 +34,8 @@ __all__ = [
 def process_login_request(
     request, db, company_id, session_user_ip
 ):
+    print "process_login_request============================="
+
     if type(request) is clientlogin.Login:
         logger.logClientApi("Login", "begin")
         result = process_login(db, request, company_id, session_user_ip)
@@ -77,6 +79,8 @@ def process_login_request(
 
     elif type(request) is clientlogin.CheckUsername:
         result = process_check_username(db, request)
+
+    
 
     return result
 
@@ -249,6 +253,7 @@ def user_login_response(db, data, client_id, ip):
     user_group_name = data["user_group_name"]
     le_info = get_legal_entity_info(db, user_id, cat_id)
     c_info = get_country_info(db, user_id, cat_id)
+    theme = get_themes(db, user_id)
 
     if len(le_info) == 0:
         return clientlogin.LegalEntityNotAvailable()
@@ -264,7 +269,7 @@ def user_login_response(db, data, client_id, ip):
     return clientlogin.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
-        client_id, username, mobile_no, le_info, c_info
+        client_id, username, mobile_no, le_info, c_info, theme
     )
 
 
@@ -408,3 +413,4 @@ def process_check_username(db, request):
         return clientlogin.CheckUsernameSuccess()
     else :
         return clientlogin.UsernameAlreadyExists()
+

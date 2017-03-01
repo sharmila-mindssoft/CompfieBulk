@@ -99,6 +99,7 @@ CREATE TABLE `tbl_legal_entities` (
   UNIQUE KEY(`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entity_domains` (
+  `le_domain_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `activation_date` timestamp NULL DEFAULT NULL,
@@ -152,6 +153,7 @@ CREATE TABLE `tbl_units` (
   UNIQUE KEY(`unit_id`, `client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_units_organizations` (
+  `unit_org_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `organisation_id` int(11) DEFAULT NULL,
@@ -307,6 +309,37 @@ CREATE TABLE `tbl_widget_forms`(
   `form_id` int(11) PRIMARY KEY NOT NULL,
   `form_name` TEXT NOT NULL
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_replication_status`(
+  `legal_entity_id` int(11) PRIMARY KEY NOT NULL,
+  `user_data` tinyint(2) DEFAULT '0',
+  `settings_data` tinyint(2) DEFAULT '0',
+  `provider_data` tinyint(2) DEFAULT '0'
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_user_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`, `user_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_provider_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `provider_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`, `provider_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_settings_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_themes` (
+  `theme_id` int(11) NOT NULL AUTO_INCREMENT,
+  `theme_name` varchar(45) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`theme_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
@@ -338,7 +371,7 @@ INSERT INTO tbl_forms VALUES(14, 3, 'Unit Wise Compliance', "/unit-wise-complian
 INSERT INTO tbl_forms VALUES(15, 3, 'Service Provider Wise Compliance', "/service-provider-wise-compliance", 15, null);
 INSERT INTO tbl_forms VALUES(16, 3, 'User Wise Compliance', "/user-wise-compliance", 16, null);
 INSERT INTO tbl_forms VALUES(17, 3, 'Status Report Consolidated', "/status-report-consolidated", 17, null);
-INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-wise-report", 18, null);
+INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-score-card", 18, null);
 INSERT INTO tbl_forms VALUES(19, 3, 'Legal Entity Wise Score Card', "/legal-entity-wise-score-card", 19, null);
 INSERT INTO tbl_forms VALUES(20, 3, 'Work Flow Score Card', "/work-flow-score-card", 20, null);
 INSERT INTO tbl_forms VALUES(21, 3, 'Statutory Settings Unit Wise Report', "/statutory-settings-unit-wise-report", 21, null);

@@ -4,16 +4,21 @@ from processes.process_logger import logNotifyError, logNotifyInfo
 from processes.process_dbase import Database
 from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
-from server.common import (return_hour_minute, convert_to_dict, get_current_date)
-NOTIFY_TIME = "11:52"
+from server.common import (return_hour_minute, get_current_date)
+
+NOTIFY_TIME = "10:00"
 email = EmailHandler()
 class AutoNotify(Database):
-    def __init__(self, c_db_ip, c_db_username, c_db_password, c_db_name, c_db_port, client_id, current_date):
+    def __init__(
+        self, c_db_ip, c_db_username, c_db_password, c_db_name,
+        c_db_port, client_id, legal_entity_id, current_date
+    ):
         super(AutoNotify, self).__init__(
             c_db_ip, c_db_port, c_db_username, c_db_password, c_db_name
         )
         self.connect()
         self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
         self.current_date = current_date
 
     def get_email_id_for_users(self, user_id):
@@ -21,40 +26,34 @@ class AutoNotify(Database):
         logNotifyInfo("user_email_id", q % (user_id))
         row = self.select_one(q, [user_id])
         if row :
-            return row[0], row[1]
+            return row["employee_name"], row["email_id"]
         else :
-            return None
+            return None, None
 
     def get_client_settings(self):
-        query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder \
-            FROM tbl_client_groups"
-        logNotifyInfo("client_settings", query)
-        rows = self.select_all(query)
-        columns = ["assignee_reminder", "escalation_reminder_in_advance", "escalation_reminder"]
-        result = convert_to_dict(rows, columns)
-        return result
+        query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder " + \
+            " FROM tbl_reminder_settings where legal_entity_id = %s "
+        logNotifyInfo("client_settings", query % (self.legal_entity_id))
+        rows = self.select_one(query, [self.legal_entity_id])
+        if rows :
+            return rows
+        else :
+            return
 
     def get_inprogress_compliances(self):
-        query = "SELECT distinct t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, \
-            t1.due_date, t3.document_name, t3.compliance_task, \
-            t2.assignee, t2.concurrence_person, t2.approval_person, t4.unit_code, t4.unit_name, \
-            t4.business_group_id, t4.legal_entity_id, t4.division_id, t2.country_id, \
-            t3.domain_id, t3.frequency_id FROM \
-            tbl_compliance_history t1 INNER JOIN tbl_assigned_compliances t2 on \
-            t1.compliance_id = t2.compliance_id \
-            INNER JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id \
-            INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id WHERE \
-            IFNULL(t1.approve_status, 0) != 1 "
+        query = "SELECT distinct t1.compliance_history_id, t1.unit_id, t1.compliance_id, t1.start_date, " + \
+            " t1.due_date, t3.document_name, t3.compliance_task, " + \
+            " t2.assignee, t2.concurrence_person, t2.approval_person, t4.unit_code, t4.unit_name, " + \
+            " t4.business_group_id, t4.legal_entity_id, t4.division_id, t2.country_id, " + \
+            " t3.domain_id, t3.frequency_id FROM  " + \
+            " tbl_compliance_history t1 INNER JOIN tbl_assign_compliances t2 on " + \
+            " t1.compliance_id = t2.compliance_id " + \
+            " INNER JOIN tbl_compliances t3 on t1.compliance_id = t3.compliance_id " + \
+            " INNER JOIN tbl_units t4 on t1.unit_id = t4.unit_id WHERE " + \
+            " IFNULL(t1.approve_status, 0) != 1 "
         logNotifyInfo("get_inprogress_compliances", query)
         rows = self.select_all(query)
-        columns = [
-            "compliance_history_id", "unit_id", "compliance_id", "start_date", "due_date",
-            "document_name", "compliance_task", "assignee", "concurrence_person", "approval_person",
-            "unit_code", "unit_name", "business_group_id", "legal_entity_id", "division_id", "country_id",
-            "domain_id", "frequency_id"
-        ]
-        result = convert_to_dict(rows, columns)
-        return result
+        return rows
 
     def save_in_notification(
         self, country_id, domain_id, business_group_id, legal_entity_id, division_id,
@@ -63,8 +62,8 @@ class AutoNotify(Database):
     ):
         def save_notification_users(notification_id, user_id):
             if user_id is not "NULL" and user_id is not None :
-                q = "INSERT INTO tbl_notification_user_log(notification_id, user_id)\
-                    VALUES (%s, %s)"
+                q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                    " VALUES (%s, %s) "
                 v = (notification_id, user_id)
                 logNotifyInfo("save_notification_users", q % v)
                 self.execute(q, v)
@@ -107,7 +106,7 @@ class AutoNotify(Database):
             # print "begin process to remind inprogress compliance task %s " % (current_date)
             # client_info = get_client_settings(db)
             if client_info :
-                reminder_interval = int(client_info[0]["assignee_reminder"])
+                reminder_interval = int(client_info["assignee_reminder"])
                 logNotifyInfo("reminder_to_assignee", reminder_interval)
                 count = 0
                 for c in compliance_info:
@@ -159,7 +158,7 @@ class AutoNotify(Database):
         current_date = get_current_date()
         logNotifyInfo("before_due_date", "begin process to remind inprogress compliance task to all %s " % (current_date))
 
-        reminder_interval = int(client_info[0]["escalation_reminder_in_advance"])
+        reminder_interval = int(client_info["escalation_reminder_in_advance"])
         cnt = 0
         for c in compliance_info:
             if c["due_date"] is None :
@@ -212,7 +211,7 @@ class AutoNotify(Database):
     def notify_escalation_to_all(self, client_info, compliance_info):
         current_date = get_current_date()
         logNotifyInfo("escalation_to_all", "begin process to notify escalations to all %s" % (current_date))
-        escalation_interval = int(client_info[0]["escalation_reminder"])
+        escalation_interval = int(client_info["escalation_reminder"])
         cnt = 0
         for c in compliance_info :
             if c["due_date"] is None :
@@ -293,12 +292,15 @@ class NotifyProcess(KnowledgeConnect):
             return
 
         client_info = self.get_client_db_list()
+        print client_info
         for c in client_info:
             try :
+                print c
                 task = AutoNotify(
                     c["database_ip"], c["database_username"],
                     c["database_password"], c["database_name"],
-                    c["database_port"], c["client_id"], current_date
+                    c["database_port"], c["client_id"], c["legal_entity_id"],
+                    current_date
                 )
                 task.start_process()
             except Exception, e :

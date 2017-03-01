@@ -1,6 +1,6 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
-<!-- <link href="/files/client/common/css/calender-min.css" rel="stylesheet" type="text/css" /> -->
+<link href="/files/client/common/css/calender-min.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/resize/jquery-ui.css" rel="stylesheet" type="text/css"> 
 <link rel="stylesheet" href="/files/client/common/css/calender/monthly.css">
 <script type="text/javascript">
@@ -26,7 +26,7 @@ $(function() {
             <!-- Page-Title -->
             <div class="row">
                 <div class="col-sm-12">
-                    <h4 class="page-title">Widgets</h4>
+                    <h4 class="page-title hide-row">Widgets</h4>
                 </div>
             </div>
             <div class="row">
@@ -34,6 +34,9 @@ $(function() {
                     <ul class="dragdrophandles">
                       
                     </ul>
+                    <div class="text-center col-sm-12 welcome-title m-t-30 dashboard-home">
+                        <h4 class="text-center"></h4>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,17 +48,17 @@ $(function() {
 <div id="templates">
     <div class="ul-sidebarmenu">
         <ul>
-        <li class="has_sub menu_widgets active_widgets"> <a href="#" class="waves-effect toggleWidget" data-target=""><i class="zmdi"></i> <span>  </span> </a> </li>
+            <li class="has_sub menu_widgets active_widgets"><a class="waves-effect toggleWidget" data-target=""><i class="zmdi"></i><span></span></a></li>
         </ul>
     </div>
     <div class="chart-card-box">
-      <li class="column col-xs-12 col-sm-6 col-lg-4 resizable" >
+      <li class="column col-xs-12 col-sm-6 col-lg-4 resizable m-t-20">
         <div class="dragbox" id="">
           <h2>
               <a class="chart-title"></a> 
-              <a href="#" class="closewidget"><i class="zmdi zmdi-close"></i></a> 
-              <a href="#" class="pins"><i class="ti-pin2" title="pin"></i></a> 
-              <a href="#" class="maxmin"><i class="zmdi zmdi-window-minimize"></i></a> 
+              <a class="closewidget c-pointer"><i class="zmdi zmdi-close"></i></a> 
+              <a class="pins c-pointer"><i class="ti-pin2" title="pin"></i></a> 
+              <a class="maxmin c-pointer"><i class="zmdi zmdi-window-minimize"></i></a> 
           </h2>
           <div class="dragbox-content">
               <div id="" style="width:100%; height:100%; margin: 0 auto"></div>
@@ -76,15 +79,26 @@ $(function() {
             <tbody class="tbody-usc">
             </tbody>
         </table>
+        <table>
         <tr class="usc-tr"> 
             <td class="usc-role"></td>
             <td class="text-center usc-assignee"></td>
             <td class="text-center usc-concur"></td>
             <td class="text-center usc-approve"></td>
-        </tr>            
+        </tr>
+        </table>
+        <table>
+        <tr class="usc-total-tr"> 
+            <td class="total-role"></td>
+            <td class="text-center total-usc-assignee"></td>
+            <td class="text-center total-usc-concur"></td>
+            <td class="text-center total-usc-approve"></td>
+        </tr> 
+        </table>        
     </div>
     <div class="domain-score-card-templates">
-        <select class="form-control input-sm m-b-5" style="">
+      <div class="domain-sc">
+        <select class="form-control input-sm m-b-5 domain-legalentity" style="">
         </select>
          <table class="table min-table highlight" cellspacing="0">
             <thead>
@@ -99,23 +113,70 @@ $(function() {
             <tbody class="tbody-dsc">
             </tbody>
         </table>
-        <tr class="dsc-tr">
+      </div>
+        <table>
+          <tr class="dsc-tr">
             <td class="dsc-domain"></td>
             <td class="text-center dsc-assigned"></td>
             <td class="text-center dsc-unassigned"></td>
             <td class="text-center dsc-notopted"></td>
             <td class="text-center font-bold dsc-subtotal"></td>
-        </tr>
-         <tr class="dsc-total">
-            <td ></td>
+          </tr>
+        </table>
+        <table>
+          <tr class="dsc-total">
+            <td class="text-center dsc-total-text"></td>
             <td class="text-center dsc-total-assigned"></td>
             <td class="text-center dsc-total-unassigned"></td>
             <td class="text-center dsc-total-notopted"></td>
             <td class="text-center font-bold dsc-grandtotal"></td>
-        </tr>
+          </tr>
+        </table>
     </div>
     <div class="calender-templates">
-        <div class="monthly" id="mycalendar"></div>
+      <div class="cal table-responsive">
+        <select class="form-control input-sm m-b-5 cal-legalentity" style="">
+        </select>
+        <table class="cal-table">
+            <caption class="cal-caption">
+            </caption>
+            <tbody class="cal-body">
+              <tr>
+                <th><span>SUN</span></th>
+                <th><span>MON</span></th>
+                <th><span>TUE</span></th>
+                <th><span>WED</span></th>
+                <th><span>THU</span></th>
+                <th><span>FRI</span></th>
+                <th><span>SAT</span></th>
+              </tr>
+            </tbody>
+          </table>
+          <br>
+          <div class="f-s-10">
+            <div class="cal-label-div">
+                <div class="cal-label-duedate"></div>
+                <div class="pull-left">Due Date</div>
+            </div>
+            <div class="cal-label-div">
+                <div class="cal-label-inprogress"></div>
+                <div class="pull-left">Inprogress</div>
+            </div>
+            <div class="cal-label-div">
+                <div class="cal-label-overdue"></div>
+                <div class="pull-left">Over Due</div>
+            </div>
+            <div class="cal-label-div">
+                <div class="cal-label-upcoming"></div>
+                <div class="pull-left">Upcoming</div>
+            </div> &nbsp;
+          </div>
+        </div>
+      <table>
+      <tr>
+        <td class="cal-off">&nbsp;</td>
+      </tr>
+      </table>
     </div>
 </div>
 <script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 

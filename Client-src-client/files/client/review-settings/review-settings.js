@@ -45,6 +45,7 @@ var LastSubAct = "";
 var count = 1;
 var repeats_type = {1:"Days", 2:"Months", 3:"Years"};
 var r_s_page = null;
+var userLegalentity = client_mirror.getSelectedLegalEntity();
 
 
 PageControls = function() {
@@ -94,7 +95,7 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
     NextButton.hide();
     PreviousButton.hide();
     SubmitButton.hide();
-    var userLegalentity = client_mirror.getSelectedLegalEntity();
+    
     if(userLegalentity.length > 1){
         BusinessGroupName.hide();
         BusinessGroupSelect.show();
@@ -106,7 +107,11 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         });        
         LegalEntitySelect.html(select);
         LegalEntitySelect.on("change", function(){
-            t_this.showTypeDomainList();
+            var getle_id = $(".legal-entity-select option:selected").val()
+            if(getle_id > 0 ){
+                le_id = parseInt(getle_id);
+                t_this.showTypeDomainList();
+            }
         });
     }else{
         BusinessGroupSelect.hide();
@@ -155,6 +160,7 @@ ReviewSettingsPage.prototype.renderTypeList = function(data) {
 }
 
 ReviewSettingsPage.prototype.getUnitList = function(){
+    $(".UnitList").empty();
     t_this = this;
     d_id = DomainId.val();
     if(FType.children(':selected').val() == ""){
@@ -362,9 +368,13 @@ showBreadCrumbText = function() {
         BreadCrumbs.append(img_clone);
         BreadCrumbs.append(" " + BusinessGroupName.val() + " ");
     }
-
-    BreadCrumbs.append(img_clone);
-    BreadCrumbs.append(" " + LegalEntityName.html() + " ");
+    if(userLegalentity.length > 1){
+        BreadCrumbs.append(img_clone);
+        BreadCrumbs.append(" " + LegalEntityName.html() + " ");
+    }else{
+        BreadCrumbs.append(img_clone);
+        BreadCrumbs.append(" " + LegalEntitySelect.children(':selected').text() + " ");
+    }
 
     if (FType.children(':selected').val()) {
         BreadCrumbs.append(img_clone);
@@ -486,9 +496,13 @@ loadCompliances = function(){
 displayPopup = function(unit_ids){
     $('.model-unit-list').find('p').remove();
     $.each(unit_ids, function(k, v) {
+        console.log(v);
         var UnitsRow = $('#templates p');
         var cloneUnit = UnitsRow.clone();
-        $(".unit-static").text(UNIT_CS_ID[v]);
+        console.log("UNIT_CS_ID[v]==="+UNIT_CS_ID[v].toSource());
+        var units = UNIT_CS_ID[v];
+        console.log(units.u_code+" - "+units.u_name+" - "+units.address);
+        cloneUnit.text(units.u_code+" - "+units.u_name+" - "+units.address);
         $('.model-unit-list').append(cloneUnit);        
     });
     Custombox.open({
@@ -559,6 +573,7 @@ SubmitButton.on("click", function(){
                     statu['statutory_month'] = null;
                     statu['trigger_before_days'] = null;
                     statu['repeats_by'] = null;
+                    console.log(duedate+"---"+split_date[1]);
                     if(duedate != ''){
                         var split_date = duedate.split("-");
                         statu['statutory_date'] = split_date[0];
@@ -569,10 +584,7 @@ SubmitButton.on("click", function(){
                     }
                     statu_dates.push(statu);
                 });
-
                 
-
-
                 // var old_statu = {};       
                 // var old_statu_dates =[];
                 // old_statu['statutory_date'] = null;

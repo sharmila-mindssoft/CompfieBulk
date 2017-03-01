@@ -4,9 +4,14 @@ CLIENT_TEMPLATE_PATHS = [
         "files/client/login/login.html",
         None, {}
     ),
+    # (
+    #     r"/forgot_password/([a-zA-Z-0-9]+)",
+    #     "files/client/forgotpassword.html",
+    #     None, {}
+    # ),
     (
-        r"/forgot_password/([a-zA-Z-0-9]+)",
-        "files/client/forgotpassword.html",
+        "/forgot-password",
+        "files/client/forgot-password/forgot-password.html",
         None, {}
     ),
     (
@@ -84,7 +89,8 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/compliance-approval",
-        "files/client/compliance-approval/complianceapproval.html",
+        "files/client/compliance-approval/compliance-approval.html",
+
         None, {}
     ),
     (
@@ -94,12 +100,12 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/on-occurrence-compliances",
-        "files/client/on-occurrence-compliances/onoccurrencecompliances.html",
+        "files/client/on-occurrence-compliances/on_occurrence_compliances.html",
         None, {}
     ),
     (
-        "/compliance-details",
-        "files/client/compliance-details/compliancedetails.html",
+        "/compliance-task-details",
+        "files/client/compliance-task-details/compliance_task_details.html",
         None, {}
     ),
     # reports ---------------------------------------------------------------------
@@ -217,7 +223,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Notification ---------------------------------------------------------------------
     (
         "/notifications",
-        "files/client/notifications/notifications.html",
+        "files/client/statutory-notification/statutory_notification.html",
         None, {}
     ),
     # Reminders ---------------------------------------------------------------------

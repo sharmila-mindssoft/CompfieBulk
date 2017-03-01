@@ -884,7 +884,9 @@ button.btn-success {
     width: 25px;
 }
 */
-
+.panel-title td{
+  background-color: #eeeeee
+}
 .escalation-status-text {
   background: #ccc;
   color: #343434;
@@ -895,9 +897,61 @@ button.btn-success {
 .table > thead > tr > th {
     background-color: #47a1ef;
     border-bottom: 2px solid #e0e0e0;
-    color: #f7f9fa !important;
-    vertical-align: middle;
+/*    color: #f7f9fa !important;
+*/    vertical-align: middle;
 }
 .compliance_count_assignee {
   clear: both;
 }
+h2.chart-title: hover{
+  text-decoration: underline;
+}
+.l-h-30{
+  line-height:30px;
+}
+.total-usc-assignee, .total-usc-concur, .total-usc-approve, .total-role,
+.dsc-total-assigned, .dsc-total-unassigned, .dsc-total-notopted,
+.dsc-grandtotal, .dsc-total-text{
+  font-weight: bold !important;
+}
+.cal-label-div{
+  display: inline-block;
+  margin-right: 10px;  
+}
+.cal-label-duedate{
+  background: #c69ee2;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.cal-label-inprogress{
+  background: #f0f468;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.cal-label-overdue{
+  background: #f32d2b;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.cal-label-upcoming{
+  background: #87ceeb;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.f-s-10 {
+  font-size: 10px;
+}
+
+

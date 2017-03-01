@@ -226,7 +226,7 @@ def get_approve_level(db, le_id):
     q = "select two_levels_of_approval from tbl_reminder_settings where legal_entity_id=%s"
     row = db.select_one(q, [le_id])
     if row :
-        return row.get("two_levels_of_approval")
+        return bool(row.get("two_levels_of_approval"))
     else :
         return False
 
@@ -1002,7 +1002,7 @@ def save_assigned_compliance(db, request, session_user):
                 value.extend([concurrence, int(session_user), created_on])
             value_list.append(tuple(value))
 
-    # db.bulk_insert("tbl_assigned_compliances", columns, value_list)
+    # db.bulk_insert("tbl_assign_compliances", columns, value_list)
     db.on_duplicate_key_update(
         "tbl_assign_compliances", ",".join(columns),
         value_list, update_column
@@ -1130,7 +1130,7 @@ def get_level_1_statutories_for_user_with_domain(
 
     query = " SELECT domain_id, statutory_mapping " + \
         " FROM tbl_compliances tc WHERE compliance_id in ( " + \
-        " SELECT distinct compliance_id FROM tbl_assigned_compliances tac " + \
+        " SELECT distinct compliance_id FROM tbl_assign_compliances tac " + \
         " WHERE %s)"
     query = query % condition
     rows = db.select_all(query, condition_val)
@@ -1171,7 +1171,7 @@ def get_statutory_wise_compliances(
         " assignee, employee_code, employee_name, statutory_mapping, " + \
         " document_name, compliance_task, compliance_description, " + \
         " c.repeats_type_id, repeat_type, repeats_every, frequency, " + \
-        " c.frequency_id FROM tbl_assigned_compliances ac " + \
+        " c.frequency_id FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_users u ON (ac.assignee = u.user_id) " + \
         " INNER JOIN tbl_compliances c ON " + \
         " (ac.compliance_id = c.compliance_id) " + \
@@ -1496,9 +1496,12 @@ def get_compliance_approval_count(db, session_user):
     )[0]["count"]
     return concur_count + approval_count
 
-
+########################################################
+# To get the list of compliances to be approved by the
+# given user
+########################################################
 def get_compliance_approval_list(
-    db, start_count, to_count, session_user, client_id
+    db, start_count, to_count, session_user
 ):
     is_two_levels = is_two_levels_of_approval(db)
 
@@ -1506,25 +1509,25 @@ def get_compliance_approval_list(
         " compliance_history_id, tch.compliance_id, start_date, " + \
         " tch.due_date as due_date, documents, completion_date, " + \
         " completed_on, next_due_date, " + \
-        " ifnull(concurred_by, -1), remarks, " + \
-        " datediff(tch.due_date, completion_date ), " + \
+        " ifnull(concurred_by, -1) as concurred_by, remarks, " + \
+        " datediff(tch.due_date, completion_date ) as diff, " + \
         " compliance_task, compliance_description, tc.frequency_id, " + \
         " (SELECT frequency FROM tbl_compliance_frequency tcf " + \
-        " WHERE tcf.frequency_id = tc.frequency_id ), " + \
-        " document_name, ifnull(concurrence_status,false), " + \
+        " WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
+        " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
         " (select statutory_dates from " + \
-        " tbl_assigned_compliances tac " + \
+        " tbl_assign_compliances tac " + \
         " where tac.compliance_id = tch.compliance_id " + \
-        " limit 1), tch.validity_date, ifnull(approved_by, -1), " + \
+        " limit 1) as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
         " (SELECT concat(unit_code, '-', tu.unit_name) " + \
         " FROM tbl_units tu " + \
-        " where tch.unit_id = tu.unit_id), " + \
+        " where tch.unit_id = tu.unit_id) as unit_name, " + \
         " completed_by, " + \
         " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) " + \
         " FROM tbl_users tu " + \
-        " WHERE tu.user_id = tch.completed_by), " + \
+        " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
         " (SELECT domain_name from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ), duration_type_id " + \
+        " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1557,11 +1560,11 @@ def get_compliance_approval_list(
         "approved_by", "unit_name", "completed_by", "employee_name",
         "domain_name", "duration_type_id"
     ]
-    result = convert_to_dict(rows, columns)
+    # result = convert_to_dict(rows, columns)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
-    count = 0
-    for row in result:
+    count = 0    
+    for row in rows:
         no_of_days, ageing = calculate_ageing(
             due_date=row["due_date"],
             frequency_type=row["frequency_id"],
@@ -1569,12 +1572,14 @@ def get_compliance_approval_list(
         )
         download_urls = []
         file_name = []
+        client_id ="1"
         if row["documents"] is not None and len(row["documents"]) > 0:
             for document in row["documents"].split(","):
                 if document is not None and document.strip(',') != '':
                     dl_url = "%s/%s/%s" % (
                         CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     )
+                    # CLIENT_DOCS_DOWNLOAD_URL, str(client_id), document
                     download_urls.append(dl_url)
                     file_name_part = document.split("-")[0]
                     file_extn_parts = document.split(".")
@@ -1625,9 +1630,9 @@ def get_compliance_approval_list(
         description = row["compliance_description"]
         concurrence_status = None if (
                 row["concurrence_status"] in [None, "None", ""]
-            ) else bool(int(row["concurrence_status"]))
+            ) else bool(int(row["concurrence_status"]))        
         statutory_dates = [] if (
-            row["statutory_dates"] is [None, "None", ""]
+            row["statutory_dates"] is [None, "None", ""]            
         ) else json.loads(row["statutory_dates"])
         validity_date = None if (
             row["validity_date"] is [None, "None", ""]
@@ -1697,42 +1702,66 @@ def get_compliance_approval_list(
             continue
     return approval_compliances, count
 
-
 def save_compliance_activity(
-    db, unit_id, compliance_id, activity_status, compliance_status,
+    db, unit_id, compliance_id, compliance_history_id, activity_by, activity_on, action,
     remarks
 ):
-    # compliance_activity_id = db.get_new_id(
-    #     "compliance_activity_id", self.tblComplianceActivityLog,
-    # )
     date = get_date_time()
     columns = [
-        "unit_id", "compliance_id",
-        "activity_date", "activity_status", "compliance_status",
-        "updated_on"
+        "unit_id", "compliance_id", "compliance_history_id", "activity_by",
+        "activity_on", "action"
     ]
     values = [
-        unit_id, compliance_id, date, activity_status,
-        compliance_status,  date
+        unit_id, compliance_id, compliance_history_id, activity_by,
+        activity_on,  action
     ]
+    
     if remarks:
         columns.append("remarks")
         values.append(remarks)
-    compliance_activity_id = db.insert(
-        tblComplianceActivityLog, columns, values
+    result = db.insert(
+       tblComplianceActivityLog, columns, values
     )
-    if compliance_activity_id is False:
-        raise client_process_error("E020")
+    if result is False:
+        raise client_process_error("E018")
 
+# def save_compliance_activity(
+#     db, unit_id, compliance_id, activity_status, compliance_status,
+#     remarks
+# ):
+#     # compliance_activity_id = db.get_new_id(
+#     #     "compliance_activity_id", self.tblComplianceActivityLog,
+#     # )
+#     date = get_date_time()
+#     columns = [
+#         "unit_id", "compliance_id",
+#         "activity_date", "activity_status", "compliance_status",
+#         "updated_on"
+#     ]
+#     values = [
+#         unit_id, compliance_id, date, activity_status,
+#         compliance_status,  date
+#     ]
+#     if remarks:
+#         columns.append("remarks")
+#         values.append(remarks)
+#     compliance_activity_id = db.insert(
+#         tblComplianceActivityLog, columns, values
+#     )
+#     if compliance_activity_id is False:
+#         raise client_process_error("E020")
 
+#############################################################
+# Approve Compliances
+############################################################
 def approve_compliance(
     db, compliance_history_id, remarks, next_due_date,
-    validity_date
+    validity_date, session_user
 ):
     # Updating approval in compliance history
-    columns = ["approve_status", "approved_on"]
+    columns = ["approve_status", "approved_on", "current_status"]
 
-    values = [1, get_date_time()]
+    values = [1, get_date_time(),"3"]
     if remarks is not None:
         columns.append("remarks")
         values.append(remarks)
@@ -1746,10 +1775,10 @@ def approve_compliance(
     # Getting compliance details from compliance history
     query = " SELECT tch.unit_id, tch.compliance_id, " + \
         " (SELECT frequency_id FROM tbl_compliances tc " + \
-        " WHERE tch.compliance_id = tc.compliance_id ), " + \
+        " WHERE tch.compliance_id = tc.compliance_id ) as frequency_id, " + \
         " due_date, completion_date, " + \
         " (select duration_type_id FROM tbl_compliances tc " + \
-        " where tch.compliance_id=tc.compliance_id) " + \
+        " where tch.compliance_id=tc.compliance_id) as duration_type_id " + \
         " FROM tbl_compliance_history tch " + \
         " WHERE compliance_history_id = %s "
     rows = db.select_all(query, [compliance_history_id])
@@ -1757,7 +1786,7 @@ def approve_compliance(
         "unit_id", "compliance_id", "frequency_id",
         "due_date", "completion_date", "duration_type_id"
     ]
-    rows = convert_to_dict(rows, columns)
+    # rows = convert_to_dict(rows, columns)
 
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
@@ -1787,7 +1816,7 @@ def approve_compliance(
         as_condition = " unit_id = %s and compliance_id = %s "
         as_values.extend([unit_id, compliance_id])
         db.update(
-            tblAssignedCompliances, as_columns, as_values, as_condition
+            tblAssignCompliances, as_columns, as_values, as_condition
         )
     status = "Complied"
     if due_date < completion_date:
@@ -1799,10 +1828,13 @@ def approve_compliance(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    save_compliance_activity(
-        db, unit_id, compliance_id, "Approved", status,
-        remarks
-    )
+    # save_compliance_activity(
+    #     db, unit_id, compliance_id, "Approved", status,
+    #     remarks
+    # )
+    current_time_stamp = get_date_time_in_date()
+    save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
+                             session_user, current_time_stamp, "Approved", remarks)
     notify_compliance_approved(db, compliance_history_id, "Approved")
     return True
 
@@ -2022,14 +2054,16 @@ def notify_compliance_rejected(
         logger.logClient("error", "clientdatabase.py-notify-compliance", e)
         print "Error while sending email: %s" % e
 
-
+#####################################################
+# Concurr Compliances
+#####################################################
 def concur_compliance(
     db, compliance_history_id, remarks,
-    next_due_date, validity_date
+    next_due_date, validity_date, session_user
 ):
-    columns = ["concurrence_status", "concurred_on"]
-
-    values = [1, get_date_time()]
+    columns = ["concurrence_status", "concurred_on","current_status"]
+    
+    values = [1, get_date_time(),"2"]
     if validity_date is not None:
         columns.append("validity_date")
         values.append(string_to_datetime(validity_date))
@@ -2082,10 +2116,13 @@ def concur_compliance(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    save_compliance_activity(
-        db, unit_id, compliance_id, "Concurred", status,
-        remarks
-    )
+    # save_compliance_activity(
+    #     db, unit_id, compliance_id, "Concurred", status,
+    #     remarks
+    # )
+    current_time_stamp = get_date_time_in_date()
+    save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
+                             session_user, current_time_stamp, "Concurred", remarks)
     notify_compliance_approved(db, compliance_history_id, "Concurred")
     return True
 
@@ -2151,7 +2188,7 @@ def get_assigneewise_compliance_count(db, session_user):
     admin_id = get_admin_id(db)
 
     q = "SELECT t01.assignee, count( t01.compliance_id ) AS cnt " + \
-        " FROM tbl_assigned_compliances t01 " + \
+        " FROM tbl_assign_compliances t01 " + \
         " INNER JOIN tbl_compliances t02 " + \
         " ON t01.compliance_id = t02.compliance_id " + \
         " LEFT JOIN tbl_compliance_history t03 " + \
@@ -2228,7 +2265,7 @@ def get_compliance_for_assignee(
         " t4.compliance_history_id, " + \
         " t4.due_date, t2.domain_id, t1.trigger_before_days, " + \
         " IFNULL(t4.approve_status, 0) " + \
-        " FROM  tbl_assigned_compliances t1 " + \
+        " FROM  tbl_assign_compliances t1 " + \
         " INNER JOIN  tbl_compliances t2 " + \
         " ON t1.compliance_id = t2.compliance_id " + \
         " AND t1.is_active = 1 " + \
@@ -2619,11 +2656,12 @@ def get_domains_for_legalentity(db, request, session_user):
     condition_val = [le_id]
 
     if cat_id > 2:
-        where_qry += "AND t02.user_id = %s "
+        where_qry += "AND t03.user_id = %s "
         condition_val.extend([session_user])
     query = "SELECT t01.domain_id, t01.domain_name, t02.legal_entity_id, t01.is_active " + \
             "FROM tbl_domains t01  " + \
-            "INNER JOIN tbl_user_domains t02 on t01.domain_id = t02.domain_id %s"
+            "INNER JOIN tbl_legal_entity_domains t02 on t01.domain_id = t02.domain_id " + \
+            "LEFT JOIN tbl_user_domains t03 on t01.domain_id = t03.domain_id %s "
     query = query % (where_qry)
     if condition_val is None:
         rows = db.select_all(query)
@@ -2646,17 +2684,17 @@ def get_review_settings_units(db, request, session_user):
     d_id = request.domain_id
     cat_id = get_user_category(db, session_user)
 
-    where_qry = "WHERE t1.legal_entity_id = %s and t2.domain_id = %s"
-    condition_val = [le_id, d_id]
+    where_qry = "WHERE t1.legal_entity_id = %s "
+    condition_val = [le_id]
     if cat_id > 2:
-        where_qry += "AND t2.user_id = %s "
-        condition_val.extend([session_user])
+        where_qry += "and t2.domain_id = %s AND t2.user_id = %s "
+        condition_val.extend([d_id, session_user])
     query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.geography_name, " + \
             "(SELECT division_name from tbl_divisions where division_id = t1.division_id) " + \
             "as division_name " + \
             "FROM tbl_units as t1 " + \
-            "INNER JOIN tbl_user_domains t2 on t2.legal_entity_id = t1.legal_entity_id " + \
-            "INNER JOIN tbl_user_units t3 on t3.unit_id = t1.unit_id %s " + \
+            "LEFT JOIN tbl_user_domains t2 on t2.legal_entity_id = t1.legal_entity_id " + \
+            "LEFT JOIN tbl_user_units t3 on t3.unit_id = t1.unit_id %s " + \
             "GROUP BY t1.unit_id"
     query = query % (where_qry)
     if condition_val is None:
@@ -2670,7 +2708,7 @@ def return_get_review_settings_units(units):
     results = []
     for u in units:
         results.append(clientcore.ReviewSettingsUnits(
-            u["unit_id"], u["unit_name"], u["unit_code"], u["address"],
+            u["unit_id"], u["unit_code"], u["unit_name"], u["address"],
             u["geography_name"], u["division_name"]
         ))
     return results
@@ -2691,8 +2729,7 @@ def get_review_settings_compliance(db, request, session_user):
             " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates, " + \
             " group_concat(DISTINCT t01.unit_id) as unit_ids, t02.statutory_mapping from tbl_client_compliances as t01 " + \
             " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id " + \
-            " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s " + \
-            " group by t01.unit_id"
+            " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s "  # group by t01.unit_id
 
     query = query % (where_qry)
     if condition_val is None:
@@ -2827,9 +2864,10 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "from tbl_assign_compliances as ac " + \
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
+            "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "Where ac.assignee = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "Group by ac.unit_id) " + \
             "UNION ALL " + \
             "(select ac.unit_id,concat(unt.unit_code,' - ', unt.unit_name,' - ', SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
             "count(ac.compliance_id) as no_of_compliances," + \
@@ -2837,9 +2875,10 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "from tbl_assign_compliances as ac " + \
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
+            "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "Group by ac.unit_id) " + \
             "UNION ALL " + \
             "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
             "count(ac.compliance_id) as no_of_compliances, " + \
@@ -2847,9 +2886,10 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "from tbl_assign_compliances as ac " + \
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
+            "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "Where ac.approval_person = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person)) as t1 " + \
+            "Group by ac.unit_id)) as t1 " + \
             "Where IF(%s > 0,user_type = %s, 1) " + \
             "ORDER BY user_type,unit_id;"
         param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type]
@@ -2876,9 +2916,10 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "from tbl_assign_compliances as ac " + \
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
+            "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "Where ac.assignee = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "Group by ac.unit_id) " + \
             "UNION ALL " + \
             "(select ac.unit_id,concat(unt.unit_code,' - ', unt.unit_name,' - ', SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
             "count(ac.compliance_id) as no_of_compliances," + \
@@ -2886,9 +2927,10 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "from tbl_assign_compliances as ac " + \
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
+            "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person) " + \
+            "Group by ac.unit_id) " + \
             "UNION ALL " + \
             "(select ac.unit_id,concat(unt.unit_code,' - ',unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1)) as unit_name, unt.address, unt.postal_code, " + \
             "count(ac.compliance_id) as no_of_compliances, " + \
@@ -2896,9 +2938,10 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "from tbl_assign_compliances as ac " + \
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
+            "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
             "Where ac.approval_person = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
-            "Group by ac.unit_id,ac.assignee,ac.concurrence_person)) as t1 " + \
+            "Group by ac.unit_id)) as t1 " + \
             "Where IF(%s > 0,user_type = %s, 1) " + \
             "ORDER BY user_type,unit_id;"
         param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type]
@@ -2939,8 +2982,8 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "inner join tbl_compliances as com on ac.compliance_id = com.compliance_id " + \
         "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
         "inner join tbl_client_compliances as cc on ac.compliance_id = cc.compliance_id and ac.unit_id = cc.unit_id and IFNULL(cc.compliance_opted_status,0) = 1 " + \
-        "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id  " + \
-        "and ac.assignee = ch.completed_by and iFNULL(ch.approve_status,0) <> 1 " + \
+        "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
+        "and ac.assignee = ch.completed_by and (iFNULL(ch.approve_status,0) <> 1 and iFNULL(ch.approve_status,0) <> 3) " + \
         "where ac.domain_id = %s and find_in_set(ac.unit_id, %s) " + \
         "and (CASE %s WHEN 1 THEN ac.assignee = %s  " + \
         "WHEN 2 THEN ac.concurrence_person = %s  " + \

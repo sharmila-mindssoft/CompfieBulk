@@ -2,11 +2,12 @@ var PageTitle = $('.page-title');
 var widget_info;
 var widget_list;
 var SIDEBAR_MAP = {};
+var WIDGET_INFO_ID = [];
 //
 // Compliance status
 //
-function updateComplianceStatusStackBarChart(data, id) {  
-  var xAxisName = data['xaxis_name'];
+function updateComplianceStatusStackBarChart(data, id) {
+  var xAxisName = ''; // data['xaxis_name'];
   var xAxis = data['xaxis'];
   var chartDataSeries = data['widget_data'];
   var chartTitle = data['chart_title'];
@@ -17,8 +18,8 @@ function updateComplianceStatusStackBarChart(data, id) {
     'Inprogress',
     'Not Complied'
   ];
-  var highchart;
-  highchart = new Highcharts.Chart({
+  var highchart_cs;
+  highchart_cs = new Highcharts.Chart({
     chart: {
       renderTo: 'cardbox'+id,
       type: 'bar'
@@ -77,6 +78,9 @@ function updateComplianceStatusStackBarChart(data, id) {
       '#F0F468',
       '#F32D2B'
     ],
+    exporting: {
+      enabled: false
+    },
     series: chartDataSeries
   });
   // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
@@ -110,15 +114,25 @@ function updateComplianceStatusStackBarChart(data, id) {
   //     title: frame_title
   //   });
   // });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
+  $(".dragdrophandles .resizable1").resizable({
+    autoHide: true,
+    resize: function() {
+      highchart_cs.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }
+  });
 }
 //
 // Escalation chart
 //
-function updateEscalationChart(data, id) {  
+function updateEscalationChart(data, id) {
   xAxis = data['xaxis'];
   chartDataSeries = data['widget_data'];
   chartTitle = data['chart_title'];
-  highchart = new Highcharts.Chart({
+  highchart_es = new Highcharts.Chart({
     colors: [
       '#F58835',
       '#F32D2B'
@@ -153,24 +167,37 @@ function updateEscalationChart(data, id) {
         }
       }
     },
+    exporting: {
+      enabled: false
+    },
     series: chartDataSeries
   });
   // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
   //   var year = this.textContent || this.innerText;
   //   loadEscalationDrillDown(year);  // setChart(value);
   // });
+  $(".dragdrophandles .resizable2").resizable({
+    autoHide: true,
+    resize: function() {
+      highchart_es.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }
+  });
 }
 //
 // Not complied
 //
 function updateNotCompliedChart(data, id) {
-  // data = prepareNotCompliedChart(data);  
+  // data = prepareNotCompliedChart(data);
   var tot = 0;
   chartDataSeries = data['widget_data'];
   chartTitle = data['chart_title'];
   $.each(chartDataSeries, function(k, v) { tot=tot+v["y"]; return tot;});
   total = tot;
-  highchart = new Highcharts.Chart({
+  highchart_nc = new Highcharts.Chart({
     colors: [
       '#FF9C80',
       '#F2746B',
@@ -204,7 +231,7 @@ function updateNotCompliedChart(data, id) {
         },
         showInLegend: true,
         point: {
-          events: {            
+          events: {
           }
         }
       }
@@ -213,7 +240,20 @@ function updateNotCompliedChart(data, id) {
         name: 'compliance',
         colorByPoint: true,
         data: chartDataSeries
-      }]
+      }],
+    exporting: {
+      enabled: false
+    },
+  });
+  $(".dragdrophandles .resizable3").resizable({
+    autoHide: true,
+    resize: function() {
+      highchart_nc.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }
   });
 }
 //
@@ -225,8 +265,8 @@ function updateTrendChart(data, id) {
   xAxis = data['xaxis'];
   chartTitle = data['chart_title'];
   chartDataSeries = data['widget_data'];
-  var highchart;
-  highchart = new Highcharts.Chart({
+
+  highchart_tc = new Highcharts.Chart({
     chart: { renderTo: 'cardbox'+id },
     title: { text: chartTitle },
     credits: { enabled: false },
@@ -278,6 +318,9 @@ function updateTrendChart(data, id) {
         }
       }
     },
+    exporting: {
+      enabled: false
+    },
     series: chartDataSeries
   });
   // $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
@@ -291,6 +334,16 @@ function updateTrendChart(data, id) {
   //     $('.btn-back').hide();
   //   });  // setChart(value);
   // });
+  $(".dragdrophandles .resizable4").resizable({
+    autoHide: true,
+    resize: function() {
+      highchart_tc.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }
+  });
 }
 //
 // Compliance applicability status
@@ -300,11 +353,12 @@ function updateComplianceApplicabilityChart(data, id) {
   chartTitle = data['chart_title'];
   chartDataSeries = data['widget_data'];
   total = data[2];
-  highchart = new Highcharts.Chart({
+  highchart_ca = new Highcharts.Chart({
     colors: [
-      '#66FF66',
-      '#FFDC52',
-      '#CE253C'
+      '#FB4739',
+      '#F2746B',
+      '#FF9C80',
+      '#F62025',
     ],
     chart: {
       type: 'pie',
@@ -342,7 +396,20 @@ function updateComplianceApplicabilityChart(data, id) {
         name: 'compliance',
         colorByPoint: true,
         data: chartDataSeries
-      }]
+      }],
+    exporting: {
+      enabled: false
+    },
+  });
+  $(".dragdrophandles .resizable5").resizable({
+    autoHide: true,
+    resize: function() {
+      highchart_ca.setSize(
+          this.offsetWidth - 40,
+          this.offsetHeight - 50,
+          false
+      );
+    }
   });
 }
 
@@ -363,21 +430,39 @@ function loadTrendChart(data, id){
 }
 
 function loadComplianceApplicabilityChart(data, id){
-  updateComplianceApplicabilityChart(data, id); 
+  updateComplianceApplicabilityChart(data, id);
 }
 
 function userScoreCard(data, id){
+  var total_assignee = 0;
+  var total_concur = 0;
+  var total_approve = 0;
   var usc = $("#templates .user-score-card-templates .table");
-  var uscclone = usc.clone();  
+  var uscclone = usc.clone();
   $("#cardbox"+id).append(uscclone);
+  $.each(data.widget_data, function(k,v){
+    var usc_tr = $("#templates .user-score-card-templates .usc-tr");
+    var uscclone_tr = usc_tr.clone();
+    $(".usc-role", uscclone_tr).html(v.Role);
+    $(".usc-assignee", uscclone_tr).html(v.Assingee);
+    $(".usc-concur", uscclone_tr).html(v.Concur);
+    $(".usc-approve", uscclone_tr).html(v.Approver);
+    total_assignee += v.Assingee;
+    total_concur += v.Concur;
+    total_approve += v.Approver;
+    $("#cardbox"+id+" .tbody-usc").append(uscclone_tr);
+  });
 
-  var usc_tr = $("#templates .user-score-card-templates .usc-tr");
-  var uscclone_tr = usc_tr.clone();  
-  $(".usc-role").html();
-  $(".usc-assignee").html();
-  $(".usc-concur").html();
-  $(".usc-approve").html();
-  $("#cardbox"+id+" .tbody-usc").append(uscclone_tr);
+  var usc_total = $("#templates .user-score-card-templates .usc-total-tr");
+  var uscclone_total = usc_total.clone();
+  $(".total-role", uscclone_total).html("Total");
+  $(".total-usc-assignee", uscclone_total).html(total_assignee);
+  $(".total-usc-concur", uscclone_total).html(total_concur);
+  $(".total-usc-approve", uscclone_total).html(total_approve);
+  $("#cardbox"+id+" .tbody-usc").append(uscclone_total);
+  $(".dragdrophandles .resizable6").resizable({
+    autoHide: true
+  });
 }
 
 function domainScoreCard(data, id){
@@ -386,43 +471,115 @@ function domainScoreCard(data, id){
   var total_notopted = 0;
   var total_subtotal = 0;
   var grandtotal = 0;
-  var dsc = $("#templates .domain-score-card-templates .table");
-  var dscclone = dsc.clone();  
+  var dsc = $("#templates .domain-score-card-templates .domain-sc");
+  var dscclone = dsc.clone();
+  var options = '';
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
+  $.each(selectedLegalentity, function(k, v){
+    options += '<option value="'+v.le_id+'">'+v.le_name+'</option>';
+  });
+  $(".domain-legalentity", dscclone).append(options);
   $("#cardbox"+id).append(dscclone);
 
-  var dsc_tr = $("#templates .domain-score-card-templates .dsc-tr");
-  var dscclone_tr = dsc_tr.clone();  
-  $(".dsc-domain").html();
-  $(".dsc-assigned").html();
-  $(".dsc-unassigned").html();
-  $(".dsc-notopted").html();
-  total_subtotal = total_subtotal;
-  $(".dsc-subtotal").html(total_subtotal);
-  grandtotal = grandtotal+total_subtotal;
-  $("#cardbox"+id+" .tbody-dsc").append(dscclone_tr);
+  $.each(data.widget_data, function(k,v){
+    var dsc_tr = $("#templates .domain-score-card-templates .dsc-tr");
+    var dscclone_tr = dsc_tr.clone();
+    $(".dsc-domain", dscclone_tr).html(v.d_name);
+    $(".dsc-assigned", dscclone_tr).html(v.assigned);
+    $(".dsc-unassigned", dscclone_tr).html(v.unassinged);
+    $(".dsc-notopted", dscclone_tr).html(v.notopted);
+    total_subtotal = parseInt(v.notopted) + parseInt(v.assigned) + parseInt(v.unassinged);
+    $(".dsc-subtotal", dscclone_tr).html(total_subtotal);
+    grandtotal = grandtotal+total_subtotal;
+    $("#cardbox"+id+" .tbody-dsc").append(dscclone_tr);
+  });
 
-  var dsc_total = $("#templates .domain-score-card-templates .dsc-tr");
-  var dscclone_total = dsc_total.clone(); 
-  $(".dsc-total-assigned").html(total_assigned);
-  $(".dsc-total-unassigned").html(total_unassigned);
-  $(".dsc-total-notopted").html(total_notopted);
-  $(".dsc-grandtotal").html(grandtotal);
+  var dsc_total = $("#templates .domain-score-card-templates .dsc-total");
+  var dscclone_total = dsc_total.clone();
+  $(".dsc-total-text").html("Total")
+  $(".dsc-total-assigned", dscclone_total).html(total_assigned);
+  $(".dsc-total-unassigned", dscclone_total).html(total_unassigned);
+  $(".dsc-total-notopted", dscclone_total).html(total_notopted);
+  $(".dsc-grandtotal", dscclone_total).html(grandtotal);
   $("#cardbox"+id+" .tbody-dsc").append(dscclone_total);
-
-
+  $(".dragdrophandles .resizable7").resizable({
+    autoHide: true
+  });
 }
 
+
+
+
 function calenderView(data, id){
-  var ct = $("#templates .calender-templates div");
-  var ctclone = ct.clone();  
-  $('#mycalendar', ctclone).monthly({
-      mode: 'event',
-      //jsonUrl: 'events.json',
-      //dataType: 'json'
-      //xmlUrl: 'events.xml'
-    });
+  var options = '';
+  var selectedLegalentity = client_mirror.getSelectedLegalEntity();
+  $.each(selectedLegalentity, function(k, v){
+    options += '<option value="'+v.le_id+'">'+v.le_name+'</option>';
+  });
+  $(".cal-legalentity").append(options);
+
+  var wid_data = data.widget_data;
+  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var current_date = new Date(wid_data[0]['CurrentMonth']);
+  var month_value = current_date.getMonth();
+  var year_value = current_date.getFullYear();
+  var week_day = current_date.getDay();
+  var html = '';
+  var ct = $("#templates .calender-templates .cal");
+  var ctclone = ct.clone();
+  $(".cal-caption", ctclone).html(months[month_value]+" - "+year_value);
   $("#cardbox"+id).append(ctclone);
 
+  date = current_date;
+
+  day = date.getDate();
+  month = date.getMonth();
+  year = date.getFullYear();
+
+  months = new Array('January','February','March','April','May','June','July','August','September','October','November','December');
+  this_month = new Date(year, month, 1);
+  next_month = new Date(year, month + 1, 1);
+  // Find out when this month starts and ends.
+  first_week_day = this_month.getDay();
+  days_in_this_month = Math.round((next_month.getTime() - this_month.getTime()) / (1000 * 60 * 60 * 24));
+
+  calendar_html = '';
+  calendar_html += '<tr>';
+  for(week_day = 0; week_day < first_week_day; week_day++) {
+    calendar_html += '<td class="cal-off"> </td>';
+  }
+  week_day = first_week_day;
+  for(day_counter = 1; day_counter <= days_in_this_month; day_counter++) {
+    week_day %= 7;
+    if(week_day == 0)
+      calendar_html += '</tr><tr>';
+    if(day == day_counter)
+      calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
+    else
+      calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
+
+    week_day++;
+  }
+
+  calendar_html += '</tr>';
+
+  $("#cardbox"+id+" .cal-body").append(calendar_html);
+
+  var getdata = wid_data[0]['data'];
+  $.each(getdata, function(k, v){
+      if(v.inprogress > 0){
+       $(".dateid"+v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="'+v.inprogress+' Inprogress Compliances"></div>');
+      }
+      if(v.duedate > 0){
+       $(".dateid"+v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="'+v.duedate+' Unassinged Compliances"></div>');
+      }
+      if(v.upcoming > 0){
+       $(".dateid"+v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="'+v.upcoming+' Upcoming Compliances"></div>');
+      }
+      if(v.overdue > 0){
+        $(".dateid"+v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="'+v.overdue+' Not Complied"></div>');
+      }
+  });
 }
 
 function widgetLoadChart() {
@@ -435,7 +592,7 @@ function widgetLoadChart() {
       6: userScoreCard,
       7: domainScoreCard,
       8: calenderView
-  } 
+  }
 }
 
 function widgetSettings(){
@@ -445,9 +602,9 @@ function widgetSettings(){
       3: client_mirror.getWidgetNotCompliedChart,
       4: client_mirror.getWidgetTrendChart,
       5: client_mirror.getWidgetRiskChart,
-      6: client_mirror.getUserScoreCard,
-      7: client_mirror.getDomainScoreCard,
-      8: client_mirror.getCalenderView
+      6: client_mirror.getWidgetUserScoreCard,
+      7: client_mirror.getWidgetDomainScoreCard,
+      8: client_mirror.getWidgetCalender
     }
 }
 
@@ -474,99 +631,206 @@ function loadChart(){
     if(v.active_status = true){
       $(".menu_widgets", liclone).removeClass("active_widgets");
     }
+    $(".menu_widgets", liclone).click(function(e){
+        if(jQuery.inArray(v.w_id, WIDGET_INFO_ID) == -1){
+          // var width = $(this).css('width');
+          // var height = $(this).css('height');
+          var width = "0px";
+          var height = "0px";
+          var id = v.w_id;
+          var pin_status = true;
+          widget_info.push(client_mirror.saveUserWidgetDataDict(id, width, height, pin_status));
+          client_mirror.saveUserWidgetData(widget_info, function(error, response){
+            if(error == null){
+              var settings = widgetSettings();
+              var cardbox = $(".chart-card-box li");
+              var cardboxclone = cardbox.clone();
+              $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+              $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
+              $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
+              cardboxclone.addClass("resizable"+v.w_id);
+              $(".closewidget", cardboxclone).click(function(e){
+                var divitem = $(this).parent().parent();
+                var getitem = divitem.attr('id');
+                var getsplit = getitem.split("item");
+                var itemid = getsplit[1];
+
+                widget_info = $.grep(widget_info, function(e){
+                  return e.w_id != itemid;
+                });
+                $(this).parent().parent().parent().remove();
+
+                client_mirror.saveUserWidgetData(widget_info, function(error, response){
+                  if(error == null){
+
+                    // displaySuccessMessage(message.save_success);
+                  }else{
+                    displayMessage(error);
+                  }
+                });
+              });
+
+              $(".dragdrophandles").append(cardboxclone);
+              settings[v.w_id](function(error1, data1){
+                if(error1 == null){
+                  widgetLoadChart()[v.w_id](data1, v.w_id);
+                }
+                else{
+                  console.log(error1);
+                }
+              });
+              // displaySuccessMessage(message.save_success);
+              // $(".dragbox .pins i", cardboxclone).removeClass();
+              // $(".dragbox .pins i", cardboxclone).addClass("ti-pin-alt")
+              // $(".dragbox .pins i", cardboxclone).attr("title", "unpin");
+            }else{
+              displayMessage(error);
+            }
+          });
+        }
+    });
+
+    $('a.maxmin', liclone).click(function() {
+      $(this).parent().siblings('.dragbox-content').toggle();
+    });
     SIDEBAR_MAP[v.w_id] = v.w_name;
     $("#sidebar-menu").append(liclone);
-
+    // $(".dragdrophandles .resizable").resizable({
+    //     autoHide: true,
+    //     resize: function() {
+    //       chart.setSize(
+    //           this.offsetWidth - 40,
+    //           this.offsetHeight - 50,
+    //           false
+    //       );
+    //     }
+    // });
   });
-  $.each(widget_info, function(k,v){
-    settings = widgetSettings();
-    var cardbox = $(".chart-card-box li");
-    var cardboxclone = cardbox.clone();
-    $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
-    $(".dragbox").attr("id", "item"+v.w_id);
-    $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
-    $(".dragbox .pins .ti-pin2", cardboxclone).click(function(e){
-      var widget_info = [];
-      $.each(".dragdrophandles li", function(i, v){
-        var width = $(this).css('width');
-        var height = $(this).css('height');
-        var id = v.w_id;
-        var pin_status = true;
-        widget_info.push(client_mirror.saveUserWidgetDataDict(id, width, height, pin_status));
-      });
-      client_mirror.saveUserWidgetData(widget_info, function(error, response){
-        if(error == null){
-          displaySuccessMessage(message.save_success);
-          $(".dragbox .pins i", cardboxclone).removeClass();
-          $(".dragbox .pins i", cardboxclone).addClass("ti-pin-alt")
-          $(".dragbox .pins i", cardboxclone).attr("title", "unpin")
-
-        }else{
-          displayMessage(error);
-        }
-      });
-
-    });
-    cardboxclone.addClass("resizable"+v.w_id); 
-    $(".resizable"+v.w_id, cardboxclone).resizable({
-      autoHide: true
-    });    
-    $('.toggleWidget', cardboxclone).click(function(e) {
-      e.preventDefault();
-      console.log($(this).data('target'));
-      $($(this).data('target')).css({
-          "display": "block"
-      });
-      if ($(this).parent().hasClass("active_widgets") == false)
-        $(this).parent().addClass('active_widgets');
-    }); 
-
-    $('.closewidget', cardboxclone).click(function(e) {
-      e.preventDefault();
-      var item = $(this).parent().parent();
-      var list = "#" + item.attr('id');
-      item.css({
-          "display": "none"
-      });
-
-      $(".has_sub", cardboxclone).each(function(index) {
-        if ($(this).find('a').attr('data-target') === list) {
-            if ($(this).hasClass("active_widgets") == true)
-                $(this).removeClass('active_widgets');
-        }
-      });
-    });
-    $('a.maxmin', cardboxclone).click(function() {
-        $(this).parent().siblings('.dragbox-content').toggle();
-    });
-
-    $('a.delete', cardboxclone).click(
-        function() {
-            var sel = confirm('do you want to delete the widget?');
-            if (sel) {
-                //del code here
-            }
-        }
-    );
-
-    $(".dragdrophandles").append(cardboxclone);          
-
-    settings[v.w_id](function(error, data){
-      if(error == null){
-        widgetLoadChart()[v.w_id](data, v.w_id);  
+  if(widget_info.length == 0){
+    var user = client_mirror.getUserInfo();
+    $(".welcome-title h4").html("Welcome "+ user.emp_name +"!")
+    $(".page-title").hide();
+  }else{
+    $(".page-title").show();
+    $(".welcome-title").hide();
+    $.each(widget_info, function(k,v){
+      var status_check = 0;
+      settings = widgetSettings();
+      var cardbox = $(".chart-card-box li");
+      var cardboxclone = cardbox.clone();
+      if(v.width != "0px"){
+        cardboxclone.css("width", v.width);
+        cardboxclone.css("height", v.height);
       }
-      else{
-        console.log(error);
-      }      
+      $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+      $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
+      $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
+
+      $(".dragbox .pins .ti-pin2", cardboxclone).click(function(e){
+        var widget_info = [];
+        $(".dragdrophandles li").each(function(i, v){
+            var itemiddiv = $(this).find('div');
+            var getitem = itemiddiv.attr("id");
+            var getsplit = getitem.split("item");
+            var itemid = getsplit[1];
+
+            var width = $(this).css('width');
+            var height = $(this).css('height');
+            var id = itemid;
+            var pin_status = true;
+            widget_info.push(client_mirror.saveUserWidgetDataDict(parseInt(id), width, height, pin_status));
+            status_check++;
+        });
+        if(status_check != 0){
+          client_mirror.saveUserWidgetData(widget_info, function(error, response){
+            if(error == null){
+              // displaySuccessMessage(message.save_success);
+              $(".dragbox .pins i").removeClass();
+              $(".dragbox .pins i").addClass("ti-pin-alt");
+              $(".dragbox .pins i").attr("title", "unpin");
+
+            }else{
+              displayMessage(error);
+            }
+          });
+        }
+      });
+      //Close Widget
+      $(".closewidget", cardboxclone).click(function(e){
+        var divitem = $(this).parent().parent();
+        var getitem = divitem.attr('id');
+        var getsplit = getitem.split("item");
+        var itemid = getsplit[1];
+
+        widget_info = $.grep(widget_info, function(e){
+          return e.w_id != itemid;
+        });
+        $(this).parent().parent().parent().remove();
+
+        client_mirror.saveUserWidgetData(widget_info, function(error, response){
+          if(error == null){
+            // displaySuccessMessage(message.save_success);
+          }else{
+            displayMessage(error);
+          }
+        });
+
+      });
+      cardboxclone.addClass("resizable"+v.w_id);
+
+      $('.toggleWidget', cardboxclone).click(function(e) {
+        e.preventDefault();
+        $($(this).data('target')).css({
+            "display": "block"
+        });
+        if ($(this).parent().hasClass("active_widgets") == false)
+          $(this).parent().addClass('active_widgets');
+      });
+
+      // $('.closewidget', cardboxclone).click(function(e) {
+      //   e.preventDefault();
+      //   var item = $(this).parent().parent();
+      //   var list = "#" + item.attr('id');
+      //   item.css({
+      //       "display": "none"
+      //   });
+
+      //   $(".has_sub", cardboxclone).each(function(index) {
+      //     if ($(this).find('a').attr('data-target') === list) {
+      //         if ($(this).hasClass("active_widgets") == true)
+      //             $(this).removeClass('active_widgets');
+      //     }
+      //   });
+      // });
+      $('a.maxmin', cardboxclone).click(function() {
+          $(this).parent().siblings('.dragbox-content').toggle();
+      });
+
+      $('a.delete', cardboxclone).click(
+          function() {
+              var sel = confirm('do you want to delete the widget?');
+              if (sel) {
+                  //del code here
+              }
+          }
+      );
+
+      $(".dragdrophandles").append(cardboxclone);
+
+      settings[v.w_id](function(error, data){
+        if(error == null){
+          widgetLoadChart()[v.w_id](data, v.w_id);
+        }
+        else{
+          console.log(error);
+        }
+      });
     });
-  });
-
+    // $(".dragdrophandles .resizable").resizable({
+    //     autoHide: true
+    // });
+  }
 }
-
-function savePinWidgetInfo(){
-
-}
-
 
 function loadSidebarMenu(){
   client_mirror.getUserWidgetData(function (error, data) {
@@ -574,7 +838,7 @@ function loadSidebarMenu(){
         widget_info = data.widget_info;
         widget_list = data.widget_list;
         loadChart();
-    } 
+    }
     else{
       console.log(error);
     }

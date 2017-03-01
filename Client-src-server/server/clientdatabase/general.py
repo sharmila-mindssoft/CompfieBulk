@@ -74,7 +74,11 @@ __all__ = [
     "get_user_based_units",
     "get_user_widget_settings",
     "get_widget_list",
-    "save_user_widget_settings"
+    "save_user_widget_settings",
+    "get_themes",
+    "get_themes_for_user",
+    "save_themes_for_user",
+    "update_themes_for_user"
     ]
 
 
@@ -137,7 +141,7 @@ def return_countries(data):
 #     return return_domains(result)
 
 def get_domains_for_user(db, user_id, user_category):
-
+    print user_category
     if user_category > 1 :
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
@@ -150,6 +154,8 @@ def get_domains_for_user(db, user_id, user_category):
             "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
         rows = db.select_all(query)
+        print query
+        print rows
     return return_domains(rows)
 
 
@@ -401,7 +407,7 @@ def get_units_for_user(db, user_id):
     if user_id != admin_id:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_user_units AS t1 " + \
                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
@@ -409,9 +415,21 @@ def get_units_for_user(db, user_id):
         rows = db.select_all(query, [user_id])
     else:
         print "else"
+#         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
+#                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
+# <<<<<<< HEAD
+#                 "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+#                 "FROM tbl_user_units AS t1 " + \
+#                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
+# =======
+#                 "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+#                 "FROM tbl_units AS t2 " + \
+# >>>>>>> Usha/phase2
+#                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
+#                 "WHERE t2.is_closed = 0 ORDER BY unit_name"
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_units AS t2 " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
                 "WHERE t2.is_closed = 0 ORDER BY unit_name"
@@ -538,7 +556,7 @@ def return_units_assign(units):
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
         "t1.employee_code, t1.is_active from tbl_users as t1 " + \
-        "inner join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
+        "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
     rows = db.select_all(query)
     return return_client_users(rows)
 
@@ -562,15 +580,16 @@ def get_user_domains(db, user_id):
     q = "select domain_id from tbl_domains"
     param = None
     condition = ""
-    if is_primary_admin(db, user_id) is not True:
-        q = "select domain_id from tbl_user_domains"
-        condition = " WHERE user_id = %s"
-        param = [user_id]
+    # if is_primary_admin(db, user_id) is not True:
+    q = "select domain_id from tbl_user_domains"
+    condition = " WHERE user_id = %s"
+    param = [user_id]
 
     rows = db.select_all(q + condition, param)
     d_ids = []
     for r in rows:
         d_ids.append(int(r["domain_id"]))
+
     return d_ids
 
 
@@ -668,11 +687,11 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "FROM tbl_legal_entities as t1 " + \
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
             "WHERE contract_to >= CURDATE() and is_closed = 0"
+        print q
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :
         q = "SELECT distinct t1.legal_entity_id, t1.legal_entity_name, " + \
-            "t1.business_group_id, t1.country_id, t3.country_name, " + \
             "t1.business_group_id, t1.country_id, t3.country_name, " + \
             " (select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "from tbl_legal_entities as t1 " + \
@@ -811,11 +830,11 @@ def get_user_unit_ids(db, user_id):
     q = "select distinct unit_id from tbl_units"
     param = None
     condition = ""
-    if is_primary_admin(db, user_id) is not True:
-        condition = " WHERE unit_id in (select unit_id " + \
-            " from tbl_user_units " + \
-            " where user_id = %s )"
-        param = [user_id]
+    # if is_primary_admin(db, user_id) is not True:
+    condition = " WHERE unit_id in (select unit_id " + \
+        " from tbl_user_units " + \
+        " where user_id = %s )"
+    param = [user_id]
 
     rows = db.select_all(q + condition, param)
     u_ids = []
@@ -826,7 +845,8 @@ def get_user_unit_ids(db, user_id):
 
 def is_two_levels_of_approval(db):
     columns = "two_levels_of_approval"
-    rows = db.get_data(tblClientGroups, columns, condition=None)
+    # rows = db.get_data(tblClientGroups, columns, condition=None)
+    rows = db.get_data(tblReminderSettings, columns, condition=None)
     return bool(rows[0]["two_levels_of_approval"])
 
 
@@ -1411,19 +1431,19 @@ def update_used_space(db, file_size):
 
 
 def save_compliance_activity(
-    db, unit_id, compliance_id, activity_status, compliance_status,
+    db, unit_id, compliance_id, compliance_history_id, activity_by, activity_on, action,
     remarks
 ):
     date = get_date_time()
     columns = [
-        "unit_id", "compliance_id",
-        "activity_date", "activity_status", "compliance_status",
-        "updated_on"
+        "unit_id", "compliance_id", "compliance_history_id", "activity_by",
+        "activity_on", "action"
     ]
     values = [
-        unit_id, compliance_id, date, activity_status,
-        compliance_status,  date
+        unit_id, compliance_id, compliance_history_id, activity_by,
+        activity_on,  action
     ]
+
     if remarks:
         columns.append("remarks")
         values.append(remarks)
@@ -1552,7 +1572,7 @@ def get_email_id_for_users(db, user_id):
     if row:
         return row["employee_name"], row["email_id"]
     else:
-        return None
+        return None, None
 
 
 def get_user_email_name(db, user_ids):
@@ -1968,8 +1988,6 @@ def get_widget_rights(db, user_id, user_category):
     showCalendar = False
     showUserScore = False
     showDomainScore = False
-    print forms
-    print " \n"
     if 34 in forms :
         showDashboard = True
 
@@ -1984,32 +2002,54 @@ def get_widget_rights(db, user_id, user_category):
 
     return showDashboard, showCalendar, showUserScore, showDomainScore
 
-def get_widget_list(db):
-    q = "select form_id, form_name from tbl_widget_forms"
+def get_widget_list(db, user_id, user_category):
+    q = "select form_id, form_name from tbl_widget_forms order by form_id"
     rows = db.select_all(q, [])
-    return rows
+    showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
+    print showDashboard, showCalendar, showUserScore, showDomainScore
+    data = []
+    for r in rows :
+        print r["form_id"]
+        if showDashboard is True and int(r["form_id"]) in [1, 2, 3, 4, 5] :
+            data.append(r)
+        elif showUserScore is True and int(r["form_id"]) == 6 :
+            data.append(r)
+        elif showDomainScore is True and int(r["form_id"]) == 7 :
+            data.append(r)
+        elif showCalendar is True and int(r["form_id"]) == 8 :
+            data.append(r)
+    return data
 
 def get_user_widget_settings(db, user_id, user_category):
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
-    print "--- \n"
-    print showDashboard, showCalendar, showUserScore, showDomainScore
     q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
     rows = db.select_one(q, [user_id])
-    data = []
     if rows :
-        data = json.loads(rows["widget_data"])
+        rows = json.loads(rows["widget_data"])
+    else :
+        rows = []
+
+    data = []
+    if len(rows) > 0 :
+        data = rows
+
         for i, d in enumerate(data) :
-            w_id = d["w_id"]
+            w_id = int(d["w_id"])
+            print w_id
             if showDashboard is False and w_id in [1, 2, 3, 4, 5]:
+                print "dashboard"
                 data.pop(i)
 
             elif showUserScore is False and w_id == 6 :
+                print "userscore"
                 data.pop(i)
 
             elif showCalendar is False and w_id == 8 :
+                print "calendar"
                 data.pop(i)
 
             elif showDomainScore is False and w_id == 7 :
+                print "domainscore"
                 data.pop(i)
 
     return data
@@ -2017,3 +2057,36 @@ def get_user_widget_settings(db, user_id, user_category):
 def save_user_widget_settings(db, user_id, widget_data):
     q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
     db.execute(q, [user_id, widget_data])
+
+def get_themes(db, user_id):
+    q = "select theme_name from tbl_themes where user_id = %s"
+    rows = db.select_one(q, [user_id])
+    if not rows:
+        return None
+    else:
+        return rows['theme_name']
+
+def get_themes_for_user(db, user_id):
+    q = "select theme_id from tbl_themes where user_id = %s"
+    rows = db.select_one(q, [user_id])
+    if not rows:
+        return None
+    else:
+        return rows['theme_id']
+
+def save_themes_for_user(db, session_user, theme_name):
+    current_time_stamp = get_date_time_in_date()
+    columns = ["theme_name", "user_id", "created_on"]
+    values = [theme_name, session_user, current_time_stamp]
+    db.insert(tblThemes, columns, values)
+    return theme_name
+    # q = "insert into tbl_widget_settings(user_id, widget_data) values (%s, %s) on duplicate key update widget_data = values(widget_data)"
+    # db.execute(q, [user_id, widget_data])
+
+def update_themes_for_user(db, session_user, theme_id, theme_name):
+    current_time_stamp = get_date_time_in_date()
+    columns = ["theme_name", "updated_on"]
+    values = [theme_name, current_time_stamp]
+    condition = " user_id = %s " % session_user
+    db.update(tblThemes, columns, values, condition)
+    return theme_name

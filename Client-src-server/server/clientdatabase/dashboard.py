@@ -39,8 +39,9 @@ __all__ = [
     "get_reminders",
     "get_escalations",
     "get_messages",
+    "get_statutory",
     "update_notification_status",
-    "notification_details",
+    "notification_detail",
     "get_user_company_details",
     "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances",
@@ -49,7 +50,7 @@ __all__ = [
     "get_assigneewise_compliances_drilldown_data_count",
     "get_no_of_days_left_for_contract_expiration",
     "need_to_display_deletion_popup",
-    "get_dashboard_notification_counts"
+    # "get_dashboard_notification_counts"
 ]
 
 
@@ -884,7 +885,7 @@ def return_compliance_details_drill_down(
         completion_date = r["completion_date"]
 
         if compliance_status == "Inprogress":
-            if r["frequency_id"] != 4:
+            if r["frequency_id"] != 5:
                 ageing = abs((due_date.date() - current_date.date()).days) + 1
             else:
 
@@ -897,7 +898,7 @@ def return_compliance_details_drill_down(
         elif compliance_status == "Complied":
             ageing = 0
         elif compliance_status == "Not Complied":
-            if r["frequency_id"] != 4:
+            if r["frequency_id"] != 5:
                 ageing = abs((current_date.date() - due_date.date()).days) + 1
             else:
                 diff = (current_date - due_date)
@@ -907,7 +908,7 @@ def return_compliance_details_drill_down(
                     ageing = diff.days
         elif compliance_status == "Delayed Compliance":
             ageing = abs((completion_date - due_date).days) + 1
-            if r["frequency_id"] != 4:
+            if r["frequency_id"] != 5:
                 ageing = abs((completion_date - due_date).days) + 1
             else:
                 diff = (completion_date - due_date)
@@ -1361,7 +1362,7 @@ def get_not_complied_drill_down(
         due_date = r["due_date"]
         completion_date = r["completion_date"]
 
-        if r["frequency_id"] != 4:
+        if r["frequency_id"] != 5:
                 ageing = abs((current_date - due_date).days) + 1
         else:
             diff = (current_date - due_date)
@@ -1719,7 +1720,7 @@ def get_compliance_applicability_drill_down(
 
         if int(r["frequency_id"]) == 1:
             summary = None
-        elif int(r["frequency_id"]) in (2, 3):
+        elif int(r["frequency_id"]) in (2, 3, 4):
             summary = "Repeats every %s %s " % (
                 r["repeats_every"], r["repeats_type"]
             )
@@ -1760,18 +1761,34 @@ def get_compliance_applicability_drill_down(
 def get_reminders(
     db, notification_type, start_count, to_count, session_user, session_category
 ):
-    query = "(Select legal_entity_id, '0' as row_number,'0' as notification_id, " + \
-            "IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),concat('Your contract with Compfie for the legal entity ',legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
-            "Before contract expiration you can download documents <a href=#>here</a>'),'') as notification_text, " + \
-            "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg Where %s = 1 OR %s = 2 AND %s = 1 ) " + \
-            "UNION ALL " + \
-            "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
-            "from tbl_notifications_log as nl " + \
-            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 1 " + \
-            "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
-            "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s) "
-    rows = db.select_all(query, [session_category, session_category, notification_type, session_user, notification_type, start_count, to_count])
-    #print rows
+
+    qry = "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as expire_count " + \
+        "from tbl_legal_entities as le " + \
+        "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
+        "where %s = 1 OR %s = 2 AND %s = 1 AND ule.user_id = %s "
+    row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
+
+    if row["expire_count"] > 0:
+        query = "(Select legal_entity_id, '0' as row_number,'0' as notification_id, " + \
+                "IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),concat('Your contract with Compfie for the legal entity ',legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
+                "Before contract expiration you can download documents <a href=#>here</a>'),'') as notification_text, " + \
+                "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg Where %s = 1 OR %s = 2 AND %s = 1 ) " + \
+                "UNION ALL " + \
+                "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+                "from tbl_notifications_log as nl " + \
+                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 1 " + \
+                "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+                "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s) "
+        rows = db.select_all(query, [session_category, session_category, notification_type, session_user, notification_type, start_count, to_count])
+    else:
+        query = "select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+                "from tbl_notifications_log as nl " + \
+                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 1 " + \
+                "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+                "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s"
+        rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
+
+    print rows
     notifications = []
     for r in rows :
         legal_entity_id = int(r["legal_entity_id"])
@@ -1828,26 +1845,43 @@ def get_messages(
         notifications.append(notification)
     return notifications
 
+def get_statutory(
+    db, start_count, to_count, session_user, session_category
+):
+    notification_type = 4
+    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+            "from tbl_notifications_log as nl " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
+            "Where nlu.user_id = %s " + \
+            "AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
+            "order by nl.notification_id desc) as t1, " + \
+            "(SELECT @rownum := 0) r) as t " + \
+            "where t.rank >= %s and t.rank <= %s"
+    rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        legal_entity_id = int(r["legal_entity_id"])
+        notification_id = int(r["notification_id"])
+        notification_text = r["notification_text"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.StatutorySuccess(legal_entity_id, notification_id, notification_text, created_on)
+        notifications.append(notification)
+    return notifications
+
 
 def update_notification_status(
-    db, notification_id, has_read, session_user
+    db, notification_id, session_user
 ):
-    user_ids = [session_user]
-    if is_primary_admin(db, session_user) is True:
-        user_ids.append(0)
     columns = ["read_status"]
-    values = [1 if has_read is True else 0]
-    condition = " notification_id = %s AND "
-    user_condition, user_condition_val = db.generate_tuple_condition(
-        "user_id", user_ids)
-    condition = condition + user_condition
-    values.extend([notification_id, user_condition_val])
+    values = [1]
+    condition = " notification_id = %s " % notification_id + " AND user_id = %s " % session_user
     db.update(
         tblNotificationUserLog, columns, values, condition
     )
 
-def notification_details(
-    db, notification_id, has_read, session_user
+def notification_detail(
+    db, notification_id, session_user
 ):
     query = "select nl.notification_id, substring_index(com.statutory_mapping,'>>',1) as act_name, " + \
             "(select concat(unit_code,' - ',unit_name,' - ',substring_index(geography_name,'>>',-1)) from tbl_units where unit_id = nl.unit_id) as unit, " + \
@@ -1862,7 +1896,7 @@ def notification_details(
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id " + \
             "Where nlu.user_id = %s AND nl.notification_id = %s"
     rows = db.select_all(query, [session_user, notification_id])
-    #print rows
+    print rows
     notifications = []
     for r in rows :
         notification_id = int(r["notification_id"])
@@ -1988,19 +2022,19 @@ def get_assigneewise_compliances_list(
             " as complied, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
-            " tch.due_date >= now() and frequency_id=4) " + \
+            " tch.due_date >= now() and frequency_id=5) " + \
             "  then 1 else 0 end) as on_occurrence_inprogress, " + \
             " sum(case when ((approve_status = 0 " + \
-            " or approve_status is null) and frequency_id!=4 and " + \
+            " or approve_status is null) and frequency_id!=5 and " + \
             " tch.due_date >= current_date) then 1 else 0 end) " + \
             " as inprogress, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
-            " tch.due_date < now() and frequency_id=4) " + \
+            " tch.due_date < now() and frequency_id=5) " + \
             " then 1 else 0 end) as on_occurrence_not_complied, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
-            " tch.due_date < current_date and frequency_id != 4) " + \
+            " tch.due_date < current_date and frequency_id != 5) " + \
             " then 1 else 0 end) as not_complied, " + \
             " sum(case when (approve_status = 1 " + \
             " and completion_date > tch.due_date and " + \
@@ -2360,7 +2394,7 @@ def fetch_assigneewise_compliances_drilldown_data(
         "            IF ( " + \
         "                 ((approve_status = 0 " + \
         "                 or approve_status is null) and " + \
-        "                due_date >= now() and frequency_id=4 and " + \
+        "                due_date >= now() and frequency_id=5 and " + \
         "                 duration_type_id=2), " + \
         "                'On_occurrence_Inprogress', " + \
         "                ( " + \
@@ -2368,14 +2402,14 @@ def fetch_assigneewise_compliances_drilldown_data(
         "                       ((approve_status = 0 " + \
         "                       or approve_status is null) and " + \
         "                       due_date >= current_date and " + \
-        "                        (frequency_id!=4 or (frequency_id=4 " + \
+        "                        (frequency_id!=5 or (frequency_id=5 " + \
         "                          and duration_type_id!=2)))," + \
         "                       'Inprogress'," + \
         "                       ( " + \
         "                           IF( " + \
         "                               ((approve_status = 0 " + \
         "                               or approve_status is null) and " + \
-        "                               due_date < now() and frequency_id=4 and " + \
+        "                               due_date < now() and frequency_id=5 and " + \
         "                               duration_type_id=2)," + \
         "                               'On_occurrence_NotComplied'," + \
         "                               'NotComplied' " + \
@@ -2598,14 +2632,29 @@ def need_to_display_deletion_popup(db):
 #     return notification_count, reminder_count, escalation_count
 
 
-def get_dashboard_notification_counts(
-    db, session_user, notification_type
-):
-    query = "SELECT count(*) as total_count FROM tbl_notification_types tnt " + \
-            "INNER JOIN tbl_notifications_log tnl ON tnl.notification_type_id = tnt.notification_type_id " + \
-            "INNER JOIN tbl_notifications_user_log tnul ON tnul.notification_id = tnl.notification_id " + \
-            "WHERE tnl.notification_type_id = %s AND tnul.read_status = 0 AND tnul.user_id = %s "
-    notification_rows = db.select_one(query, [notification_type,session_user])
-    total_count = int(notification_rows["total_count"])
+# def get_dashboard_notification_counts(
+#     db, session_user, notification_type, session_category
+# ):
+#     if notification_type == 1:
+#         qry = "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as total_count " + \
+#             "from tbl_legal_entities as le " + \
+#             "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
+#             "where %s = 1 OR %s = 2 AND %s = 1 AND ule.user_id = %s "
+#         row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
 
-    return total_count
+#         query = "SELECT count(*) as total_count FROM tbl_notification_types tnt " + \
+#                 "INNER JOIN tbl_notifications_log tnl ON tnl.notification_type_id = tnt.notification_type_id " + \
+#                 "INNER JOIN tbl_notifications_user_log tnul ON tnul.notification_id = tnl.notification_id " + \
+#                 "WHERE tnl.notification_type_id = %s AND tnul.read_status = 0 AND tnul.user_id = %s "
+#         rows = db.select_one(query, [notification_type, session_user])
+#         total_count = int(notification_rows["total_count"]) + int(row["total_count"])
+
+#     else:
+#         query = "SELECT count(*) as total_count FROM tbl_notification_types tnt " + \
+#                 "INNER JOIN tbl_notifications_log tnl ON tnl.notification_type_id = tnt.notification_type_id " + \
+#                 "INNER JOIN tbl_notifications_user_log tnul ON tnul.notification_id = tnl.notification_id " + \
+#                 "WHERE tnl.notification_type_id = %s AND tnul.read_status = 0 AND tnul.user_id = %s "
+#         rows = db.select_one(query, [notification_type, session_user])
+#         total_count = int(rows["total_count"])
+
+#     return total_count

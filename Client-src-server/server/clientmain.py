@@ -2,7 +2,8 @@ import os
 import json
 import time
 import traceback
-import mysql.connector.pooling
+# import mysql.connector.pooling
+import mysql.connector
 from flask import Flask, request, Response
 
 from functools import wraps
@@ -20,6 +21,10 @@ from server.client import CompanyManager
 from server.clientreplicationbase import (
     ClientReplicationManager, ReplicationManagerWithBase,
     # DomainReplicationManager
+)
+from server.clientdatabase.savelegalentitydata import(
+    LegalEntityReplicationManager, LEntityReplicationUSer,
+    LEntityReplicationServiceProvider
 )
 from server.constants import SESSION_CUTOFF
 import logger
@@ -70,6 +75,7 @@ class API(object):
         self._le_databases = {}
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
+        self._replication_legal_entity = {}
         self._company_manager = CompanyManager(
             knowledge_server_address,
             5000,
@@ -109,24 +115,25 @@ class API(object):
         except Exception:
             pass
 
-    def client_connection_pool(self, data, le_id, poolname):
-        return mysql.connector.pooling.MySQLConnectionPool(
-            pool_name=str(le_id) + poolname,
-            pool_size=32,
-            pool_reset_session=True,
-            autocommit=False,
-            user=data.db_username,
-            password=data.db_password,
-            host=data.db_ip.ip_address,
-            database=data.db_name,
-            port=data.db_ip.port
-        )
+    def client_connection_pool(self, data):
+        try:
+            return mysql.connector.connect(
+                autocommit=False,
+                user=data.db_username,
+                password=data.db_password,
+                host=data.db_ip.ip_address,
+                database=data.db_name,
+                port=data.db_ip.port
+            )
+        except Exception:
+            raise Exception("Client Connection Failed")
 
     def server_added(self, servers):
         self._group_databases = {}
         self._le_databases = {}
         self._replication_managers_for_group = {}
         self._replication_managers_for_le = {}
+        self._replication_legal_entity = {}
         try:
 
             for company in servers:
@@ -142,8 +149,8 @@ class API(object):
                         else :
                             # group db connections
                             try:
-                                db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
-                                self._group_databases[company_id] = db_cons
+                                # db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
+                                self._group_databases[company_id] = company
                                 print " %s added in connection pool" % company_id
                             except Exception, e:
                                 # when db connection failed continue to the next server
@@ -158,8 +165,8 @@ class API(object):
                             continue
                         else :
                             try:
-                                db_cons = self.client_connection_pool(company, company_id, "con_pool_le")
-                                self._le_databases[company_id] = db_cons
+                                # db_cons = self.client_connection_pool(company, company_id, "con_pool_le")
+                                self._le_databases[company_id] = company
                                 print " %s added in le connection pool" % company_id
                             except Exception, e:
                                 # when db connection failed continue to the next server
@@ -171,25 +178,22 @@ class API(object):
                                 continue
 
             def client_added(clients):
-                print clients
                 for client in clients:
                     _client_id = client.client_id
                     # print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
                     # _domain_id = client.domain_id
-                    print client.to_structure()
-                    print " \n "
                     if client.is_group is True:
                         # print "client added"
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
                             continue
-                        db_cons = db_cons_info.get_connection()
+                        # db_cons = db_cons_info.get_connection()
+                        db_cons = self.client_connection_pool(db_cons_info)
 
                         client_db = Database(db_cons)
                         if client_db is not None :
-                            print _client_id
                             if is_new_data is True and is_new_domain is False :
                                 # replication for group db only master data
                                 rep_man = ReplicationManagerWithBase(
@@ -206,7 +210,8 @@ class API(object):
                         db_cons_info = self._le_databases.get(_client_id)
                         if db_cons_info is None :
                             continue
-                        db_cons = db_cons_info.get_connection()
+                        # db_cons = db_cons_info.get_connection()
+                        db_cons = self.client_connection_pool(db_cons_info)
                         le_db = Database(db_cons)
                         if le_db is not None :
                             if is_new_data is True and is_new_domain is False :
@@ -238,20 +243,43 @@ class API(object):
                             #         domain_rep_man.start()
                             #         d_rep_man[_client_id] = domain_rep_man
 
+            # Knowledge data replciation process for group admin legal entity db
             _client_manager = ClientReplicationManager(
                 self._knowledge_server_address,
-                500,
+                60,
                 client_added
             )
             # replication start
             _client_manager._start()
 
+            # group data replication process corresponding legal entity database
+            for k, gp in self._group_databases.items():
+                gp_info = self._group_databases.get(k)
+                gp_id = gp_info.company_id
+                _le_entity = LegalEntityReplicationManager(gp_info, 10, self.legal_entity_replication_added)
+                _le_entity._start()
+                self._replication_legal_entity[gp_id] = _le_entity
         except Exception, e :
             logger.logClientApi(e, "Server added")
             logger.logClientApi(traceback.format_exc(), "")
             logger.logClient("error", "clientmain.py-server-added", e)
             logger.logClient("error", "clientmain.py-server-added", traceback.format_exc())
             return
+
+    def legal_entity_replication_added(self, group_info, le_infos):
+        # print "le_info"
+        # print "Z" * 10
+        for r in le_infos :
+            le_id = r["legal_entity_id"]
+            # print "legal_entity_replication_added ", le_id
+            le_info = self._le_databases.get(le_id)
+            if r["user_data"] == 1 :
+                info = LEntityReplicationUSer(group_info, le_info, le_id)
+                info._start()
+
+            if r["provider_data"] == 1 :
+                info = LEntityReplicationServiceProvider(group_info, le_info, le_id)
+                info._start()
 
     def _send_response(
         self, response_data, status_code
@@ -292,7 +320,6 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
-            # print actual_data
             # print company_id
             request_data = request_data_type.parse_structure(
                 actual_data
@@ -314,7 +341,10 @@ class API(object):
     def _validate_user_session(self, session):
         session_token = session.split('-')
         client_id = int(session_token[0])
-        _group_db_cons = self._group_databases.get(client_id).get_connection()
+        _group_db_info = self._group_databases.get(client_id)
+        if _group_db_info is None :
+            raise Exception("Client Not Found")
+        _group_db_cons = self.client_connection_pool(_group_db_info)
         _group_db = Database(_group_db_cons)
         try :
             _group_db.begin()
@@ -334,7 +364,10 @@ class API(object):
     def _validate_user_password(self, session, user_id, usr_pwd):
         session_token = session.split('-')
         client_id = int(session_token[0])
-        _group_db_cons = self._group_databases.get(client_id).get_connection()
+        _group_db_info = self._group_databases.get(client_id)
+        if _group_db_info is None :
+            raise Exception("Client Not Found")
+        _group_db_cons = self.client_connection_pool(_group_db_info)
         _group_db = Database(_group_db_cons)
         is_valid = False
         try :
@@ -382,16 +415,17 @@ class API(object):
         # request process in controller
         if is_group :
             print "Group DB"
-            db_cons = self._group_databases.get(company_id)
+            db_cons_info = self._group_databases.get(company_id)
         else :
             print "LE Db"
-            db_cons = self._le_databases.get(company_id)
+            db_cons_info = self._le_databases.get(company_id)
 
-        if db_cons is None:
+        if db_cons_info is None:
             print 'connection pool is none'
             self._send_response("Company not found", 404)
 
-        _db_con = db_cons.get_connection()
+        # _db_con = db_cons.get_connection()
+        _db_con = self.client_connection_pool(db_cons_info)
         _db = Database(_db_con)
         if _db_con is None:
             self._send_response("Company not found", 404)
@@ -490,6 +524,16 @@ class API(object):
 
                 elif type(request_data.request) is widgetprotocol.GetEscalationChart :
                     p_response = controller.merge_escalation_chart_widget(p_response, data)
+
+                elif type(request_data.request) is widgetprotocol.GetUserScoreCard :
+                    p_response = controller.merge_user_scorecard(p_response, data)
+
+                elif type(request_data.request) is widgetprotocol.GetDomainScoreCard :
+                    p_response = controller.merge_domain_scorecard(p_response, data)
+
+                elif type(request_data.request) is widgetprotocol.GetCalendarView :
+                    p_response = controller.merge_calendar_view(p_response, data)
+
                 else :
                     pass
             return p_response
@@ -503,17 +547,17 @@ class API(object):
                 le_ids = request_data.request.legal_entity_ids
                 performed_les = []
                 performed_response = None
-
                 for le in le_ids :
-                    db_cons = self._le_databases.get(le)
+                    db_cons_info = self._le_databases.get(le)
 
-                    if db_cons is None:
+                    if db_cons_info is None:
                         performed_les.append(le)
                         print 'connection pool is none'
                         continue
                         # return self._send_response("Company not found", 404)
 
-                    _db_con = db_cons.get_connection()
+                    # _db_con = db_cons.get_connection()
+                    _db_con = self.client_connection_pool(db_cons_info)
                     _db = Database(_db_con)
                     if _db_con is None:
                         performed_les.append(le)
@@ -592,7 +636,7 @@ class API(object):
 
     @api_request(clientuser.RequestFormat)
     def handle_client_user(self, request, db, session_user, client_id, le_id):
-        return controller.process_client_user_request(request, db)
+        return controller.process_client_user_request(request, db, session_user)
 
     @api_request(clientmobile.RequestFormat)
     def handle_mobile_request(self, request, db, session_user, client_id, le_id):

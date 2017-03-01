@@ -136,6 +136,8 @@ def process_client_master_requests(request, db, session_user, client_id, le_ids_
         result = update_user_profile(
             db, request, session_user, client_id
         )
+    elif type(request) is clientmasters.get_user_management_details:
+        result = process_get_user_management_details(db, request, session_user)
 
     return result
 
@@ -223,6 +225,7 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
     groupDivision = {}
     legalDomains = {}
     legalUnits = {}
+    serviceProviders = {}
 
     userCategory = process_UserManagement_category(db)
     userGroup = process_UserManagement_UserGroup(db)
@@ -232,6 +235,7 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
     groupCategory = process_UserManagement_GroupCategory(db)
     legalDomains = process_UserManagement_LegalDomains(db)
     legalUnits = process_UserManagement_LegalUnits(db)
+    serviceProviders = process_UserManagement_ServiceProviders(db)
 
     return clientmasters.GetUserManagementPrerequisiteSuccess(
         user_category=userCategory,
@@ -241,7 +245,8 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
         group_division=groupDivision,
         group_category=groupCategory,
         legal_Domains=legalDomains,
-        legal_units=legalUnits
+        legal_units=legalUnits,
+        service_providers=serviceProviders
     )
 
 ########################################################
@@ -404,6 +409,21 @@ def process_UserManagement_LegalUnits(db):
                                                        unit_name, address, postal_code)
         )
     return unitList
+########################################################
+# User Management - Service Providers
+########################################################
+def process_UserManagement_ServiceProviders(db):
+    resultRows = userManagement_GetServiceProviders(db)
+    spList = []
+    for row in resultRows:
+        service_provider_id = row["service_provider_id"]
+        service_provider_name = row["service_provider_name"]
+        short_name = row["short_name"]
+        spList.append(
+            clientcore.ClientServiceProviders_UserManagement(service_provider_id,
+                                                       service_provider_name, short_name)
+        )
+    return spList
 
 ########################################################
 # To get all user groups with details
@@ -485,8 +505,17 @@ def process_change_user_privilege_status(db, request, session_user):
 ########################################################
 # To get the list of all users with details
 ########################################################
-def process_get_client_users(db, request, session_user):
-    users_list = getUserManagementList(db)
+# def process_get_client_users(db, request, session_user, country_id,
+#                              business_group_id, legal_entity_id):
+#     country_id = request.c_id
+#     business_group_id = request.bg_id
+#     legal_entity_id = request.lg_id
+
+#     client_user_details_list = get_user_management_details_(db, country_id, legal_entity_id,
+#                                                             domain_id, session_user)
+#     return clientreport.GetWorkFlowScoreCardSuccess(work_flow_score_card_list)
+
+    # users_list = getUserManagementList(db)
     # service_provider_list = get_service_provider_details_list(db)
     # user_company_info = get_user_company_details(
     #     db, session_user
@@ -530,10 +559,10 @@ def process_get_client_users(db, request, session_user):
     # user_country_list = get_countries_for_user(db, session_user)
     # unit_list = get_units_for_user(db, None)
     # units=unit_list,
-    return clientmasters.GetClientUsersSuccess(
-        # session_user_units=session_user_unit_list,
-        # users=user_list
-    )
+    # return clientmasters.GetClientUsersSuccess(
+    #     # session_user_units=session_user_unit_list,
+    #     # users=user_list
+    # )
 
 ########################################################
 # To validate and save a user
@@ -705,8 +734,8 @@ def reorder_menu(menus):
         new_menu["Report"] = menus["Report"]
     if "Settings" in menus:
         new_menu["Settings"] = menus["Settings"]
-    if "My Accounts" in menus:
-        new_menu["My Accounts"] = menus["My Accounts"]
+    # if "My Accounts" in menus:
+    #     new_menu["My Accounts"] = menus["My Accounts"]
     return new_menu
 
 
@@ -836,3 +865,58 @@ def update_user_profile(db, request, session_user, client_id):
     result = update_profile(db, session_user, request)
     if result is True:
         return clientmasters.UpdateUserProfileSuccess()
+###############################################################################################
+# Objective: To Get User Management Details
+# Parameter: request object and the client id
+# Result: User Management Details
+###############################################################################################
+# def process_get_user_management_details(db, request, session_user):    
+    # return clientmasters.getuser
+
+# def process_UserManagementAddPrerequisite(db, request, session_user):
+#     userCategory = {}
+#     userGroup = {}
+#     businessGroup = {}
+#     legalEntity = {}
+#     groupCategory = {}
+#     groupDivision = {}
+#     legalDomains = {}
+#     legalUnits = {}
+
+#     userCategory = process_UserManagement_category(db)
+#     userGroup = process_UserManagement_UserGroup(db)
+#     businessGroup = process_UserManagement_BusinessGroup(db)
+#     legalEntity = process_UserManagement_LegalEntity(db)
+#     groupDivision = process_UserManagement_GroupDivision(db)
+#     groupCategory = process_UserManagement_GroupCategory(db)
+#     legalDomains = process_UserManagement_LegalDomains(db)
+#     legalUnits = process_UserManagement_LegalUnits(db)
+
+#     return clientmasters.GetUserManagementPrerequisiteSuccess(
+#         user_category=userCategory,
+#         user_group=userGroup,
+#         business_group=businessGroup,
+#         legal_entity=legalEntity,
+#         group_division=groupDivision,
+#         group_category=groupCategory,
+#         legal_Domains=legalDomains,
+#         legal_units=legalUnits
+#     )
+
+# def get_work_flow_score_card(db, request, session_user, session_category):
+#     if not request.csv:
+#         country_id = request.c_id
+#         legal_entity_id = request.legal_entity_id
+#         domain_id = request.d_id
+
+#         work_flow_score_card_list = report_work_flow_score_card(
+#             db, country_id, legal_entity_id, domain_id, session_user
+#         )
+#         return clientreport.GetWorkFlowScoreCardSuccess(work_flow_score_card_list)
+#     else:
+#         converter = ConvertJsonToCSV(
+#             db, request, session_user, "Reassign"
+#         )
+#         return clientreport.ExportToCSVSuccess(
+#             link=converter.FILE_DOWNLOAD_PATH
+#         )

@@ -589,6 +589,7 @@ CREATE TABLE `tbl_legal_entities` (
 
 DROP TABLE IF EXISTS `tbl_legal_entity_domains`;
 CREATE TABLE `tbl_legal_entity_domains` (
+  `le_domain_id` int(11) NOT NULL AUTO_INCREMENT,
   `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `activation_date` timestamp NULL DEFAULT NULL,
@@ -733,9 +734,11 @@ CREATE TABLE `tbl_units` (
 
 DROP TABLE IF EXISTS `tbl_units_organizations`;
 CREATE TABLE `tbl_units_organizations` (
+  `unit_org_id` int(11) NOT NULL AUTO_INCREMENT,
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
-  `organisation_id` int(11) DEFAULT NULL
+  `organisation_id` int(11) DEFAULT NULL,
+  UNIQUE KEY(`unit_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 DROP TABLE IF EXISTS `tbl_client_statutories`;

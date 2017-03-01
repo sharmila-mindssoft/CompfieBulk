@@ -5,36 +5,34 @@ function loadMessages(data) {
     var isEmpty = true;
     $('.tbody-message-list').find('tr').remove();
     $.each(data, function(k, v) {
-        le_id = v.le_id
+        var le_ids = [v.le_id];
         isEmpty = false;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
-
         rowClone.on('click', function(e) {
-            /*mirror.updateNotificationStatus(le_id, v.compliance_id, 1 function(error, response) {
+            var row = $(this);
+            client_mirror.updateNotificationStatus(le_ids, v.notification_id, true, function(error, response) {
                 if (error == null) {
-                    $('.popup-statutory').text(response.s_pro);
-                    $('.popup-compliancetask').text(response.c_task);
-                    $('.popup-description').text(response.descrip);
-                    $('.popup-penalconse').text(response.p_cons);
-                    $('.popup-frequency').text(response.freq);
-                    $('.popup-occurance').text(response.summary);
-                    $('.popup-applicablelocation').text(response.locat);
-                    $('.popup-referencelink a span').text(response.refer);
-                    $('.popup-referencelink a').attr('href', response.refer);
+                    var data = response.notification_details;
+                    $.each(data, function(k1, v1) {
+                        $('.act_name').text(v1.act_name);
+                        $('.unit').text(v1.unit);
+                        $('.compliance_name').text(v1.compliance_name);
+                        $('.due_date').text(v1.due_date);
+                        $('.delayed_by').text(v1.delayed_by);
+                        $('.assignee_name').text(v1.assignee_name);
+                        $('.concurrer_name').text(v1.concurrer_name);
+                        $('.approver_name').text(v1.approver_name);
+                    });
                     Custombox.open({
                         target: '#custom-modal',
                         effect: 'contentscale',
                     });
-                    updateNotificationStatus(v.notification_id, v.user_id, true);
+                    row.find('td').css('background-color', '#fcfcfc');
                     e.preventDefault();
                 } else {
                     displayMessage(error);
                 }
-            });*/
-            Custombox.open({
-                target: '#custom-modal',
-                effect: 'contentscale',
             });
         });
         $('.message-content', rowClone).text(v.notification_text);
@@ -55,6 +53,8 @@ function initialize() {
         if (error == null) {
             data = response.messages;
             loadMessages(data);
+        } else {
+            displayMessage(error);
         }
     });
 }
@@ -62,3 +62,4 @@ function initialize() {
 $(document).ready(function() {
     initialize();
 });
+''

@@ -2412,9 +2412,9 @@ class AssignedStatutory(object):
             "not_applicable_remarks": to_structure_OptionalType_CustomTextType_500(self.not_applicable_remarks),
         }
 
-#
-# ActiveCompliance
-#
+##########################################
+# ActiveCompliance for Current Task Details
+##########################################
 
 class ActiveCompliance(object):
     def __init__(
@@ -2447,48 +2447,48 @@ class ActiveCompliance(object):
         data = parse_dictionary(
             data, [
                 "compliance_history_id", "compliance_name",
-                "compliance_frequency", "domain_name", "start_date", "due_date",
+                "compliance_task_frequency", "domain_name", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
                 "format_file_name", "unit_name", "address", "compliance_description",
-                "remarks", "compliance_id", "file_names", "download_url"
+                "remarks", "compliance_id", "file_names", "compliance_download_url"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
-        compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
+        # compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_250(compliance_name)
-        compliance_frequency = data.get("compliance_frequency")
-        compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
+        # compliance_name = parse_structure_CustomTextType_250(compliance_name)
+        compliance_frequency = data.get("compliance_task_frequency")
+        # compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         domain_name = data.get("domain_name")
-        domain_name = parse_structure_CustomTextType_50(domain_name)
+        # domain_name = parse_structure_CustomTextType_50(domain_name)
         start_date = data.get("start_date")
-        start_date = parse_structure_CustomTextType_20(start_date)
+        # start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
+        # due_date = parse_structure_CustomTextType_20(due_date)
         compliance_status = data.get("compliance_status")
-        compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
+        # compliance_status = parse_structure_EnumType_core_COMPLIANCE_STATUS(compliance_status)
         validity_date = data.get("validity_date")
-        validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
+        # validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         next_due_date = data.get("next_due_date")
-        next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
+        # next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         ageing = data.get("ageing")
-        ageing = parse_structure_CustomTextType_20(ageing)
+        # ageing = parse_structure_CustomTextType_20(ageing)
         format_file_name = data.get("format_file_name")
-        format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_250(format_file_name)
+        # format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_250(format_file_name)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_200(unit_name)
+        # unit_name = parse_structure_CustomTextType_200(unit_name)
         address = data.get("address")
-        address = parse_structure_CustomTextType_500(address)
+        # address = parse_structure_CustomTextType_500(address)
         compliance_description = data.get("compliance_description")
-        compliance_description = parse_structure_CustomTextType_500(compliance_description)
+        # compliance_description = parse_structure_CustomTextType_500(compliance_description)
         remarks = data.get("remarks")
-        remarks = parse_structure_OptionalType_CustomTextType_500(compliance_description)
+        # remarks = parse_structure_OptionalType_CustomTextType_500(compliance_description)
         compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
+        # compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
         file_names = data.get("file_names")
-        file_names = parse_structure_OptionalType_VectorType_CustomTextType_500(file_names)
-        download_url = data.get("download_url")
-        download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
+        # file_names = parse_structure_OptionalType_VectorType_CustomTextType_500(file_names)
+        download_url = data.get("compliance_download_url")
+        # download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
         return ActiveCompliance(
             compliance_history_id, compliance_name,
             compliance_frequency, domain_name, start_date, due_date,
@@ -2499,24 +2499,24 @@ class ActiveCompliance(object):
 
     def to_structure(self):
         return {
-            "compliance_history_id": to_structure_UnsignedIntegerType_32(self.compliance_history_id),
-            "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "compliance_frequency": to_structure_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
-            "domain_name": to_structure_CustomTextType_50(self.domain_name),
-            "start_date": to_structure_CustomTextType_20(self.start_date),
-            "due_date": to_structure_OptionalType_CustomTextType_20(self.due_date),
-            "compliance_status": to_structure_EnumType_core_COMPLIANCE_STATUS(self.compliance_status),
-            "validity_date": to_structure_OptionalType_CustomTextType_20(self.validity_date),
-            "next_due_date": to_structure_OptionalType_CustomTextType_20(self.next_due_date),
-            "ageing": to_structure_CustomTextType_100(self.ageing),
-            "format_file_name": to_structure_OptionalType_VectorType_CustomTextType_250(self.format_file_name),
-            "unit_name" : to_structure_CustomTextType_200(self.unit_name),
-            "address" : to_structure_CustomTextType_500(self.address),
-            "compliance_description" : to_structure_CustomTextType_500(self.compliance_description),
-            "remarks" : to_structure_OptionalType_CustomTextType_500(self.remarks),
-            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "file_names": to_structure_OptionalType_VectorType_CustomTextType_500(self.file_names),
-            "download_url": to_structure_OptionalType_VectorType_CustomTextType_500(self.download_url)
+            "compliance_history_id": self.compliance_history_id,
+            "compliance_name": self.compliance_name,
+            "compliance_task_frequency": self.compliance_frequency,
+            "domain_name": self.domain_name,
+            "start_date": self.start_date,
+            "due_date": self.due_date,
+            "compliance_status": self.compliance_status,
+            "validity_date": self.validity_date,
+            "next_due_date": self.next_due_date,
+            "ageing": self.ageing,
+            "format_file_name": self.format_file_name,
+            "unit_name" : self.unit_name,
+            "address" : self.address,
+            "compliance_description" : self.compliance_description,
+            "remarks" : self.remarks,
+            "compliance_id": self.compliance_id,
+            "file_names": self.file_names,
+            "compliance_download_url": self.download_url
         }
 
 #
@@ -4139,7 +4139,7 @@ class ReviewSettingsUnits(object):
         address = data.get("address")
         geography_name = data.get("g_name")
         division_name = data.get("div_name")
-        return UnitClosure_Units(
+        return ReviewSettingsUnits(
             unit_id, unit_code, unit_name, address, geography_name, division_name
         )
 
@@ -4592,6 +4592,29 @@ class ClientLegalEntity_UserManagement(object):
     def to_structure(self):
         return {            
             "le_id": self.legal_entity_id
+        }
+##############################################################################
+# User Management Add - Service Providers
+##############################################################################
+class ClientServiceProviders_UserManagement(object):
+    def __init__(self, service_provider_id, service_provider_name, short_name):        
+        self.service_provider_id = service_provider_id
+        self.service_provider_name = service_provider_name
+        self.short_name = short_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["service_provider_id", "service_provider_name","short_name"])
+        service_provider_id = data.get("service_provider_id")
+        service_provider_name = data.get("service_provider_name")
+        short_name = data.get("short_name")        
+        return ClientServiceProviders_UserManagement(service_provider_id, service_provider_name, short_name)
+
+    def to_structure(self):
+        return {            
+            "u_sp_id": self.service_provider_id,
+            "u_sp_name": self.service_provider_name,
+            "u_sp_short": self.short_name
         }
 
 class ReassignedHistoryReportSuccess(object):
@@ -5125,3 +5148,46 @@ class GetOverDueTaskCountSuccess(object):
         }
 
 # Work Flow Score Card Start 
+
+###########################################################################
+# User Management List Success
+###########################################################################
+class GetUserManagement_List_Success(object):
+    def __init__(self, c_name, b_g_name, le_name, cont_from, cont_to, total_licences, 
+        used_licences, le_id, completed_task_count):
+        self.c_name = c_name
+        self.b_g_name = b_g_name
+        self.le_name = le_name
+        self.cont_from = cont_from
+        self.cont_to = cont_to
+        self.total_licences = total_licences
+        self.used_licences = used_licences        
+        self.le_id = le_id
+        self.completed_task_count = completed_task_count        
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["c_name", "b_g_name", "le_name", "cont_from", "cont_to", "total_licences", 
+            "used_licences", "le_id", "completed_task_count"])
+        c_name = data.get("c_name"),
+        b_g_name = data.get("b_g_name"),
+        le_name = data.get("le_name"),
+        cont_from = data.get("cont_from"),
+        cont_to = data.get("cont_to"),
+        total_licences = data.get("total_licences"),
+        used_licences = data.get("used_licences"),        
+        le_id = data.get("le_id"),
+        completed_task_count = data.get("completed_task_count")        
+        return GetWorkFlowScoreCardSuccess(c_name, b_g_name, le_name, cont_from, cont_to, total_licences, 
+            used_licences, le_id, completed_task_count, inprogress_within_duedate_task_count, over_due_task_count)
+    def to_structure(self):
+        return {
+            "c_name": self.c_name,
+            "b_g_name": self.b_g_name,
+            "le_name": self.le_name,
+            "cont_from": self.cont_from,
+            "cont_to": self.cont_to,
+            "total_licences": self.total_licences,
+            "used_licences": self.used_licences,
+            "le_id": self.le_id,            
+            "users_list": self.users_list,            
+        }

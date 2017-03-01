@@ -179,12 +179,12 @@ processSubmit = function(csv) {
 }
 
 clearElement = function(arr) {
-    if (arr.length > 0) {
-        $.each(arr, function(i, element) {
-            element.val('');
-        });
+        if (arr.length > 0) {
+            $.each(arr, function(i, element) {
+                element.val('');
+            });
+        }
     }
-}
     // on success auto complete to set the value corresponding
 onCountryAutoCompleteSuccess = function(REPORT, val) {
     country.val(val[1]);
@@ -397,58 +397,63 @@ ReassignHistory.prototype.showReportValues = function() {
     var actname = "";
     var complianceid = "";
     var tree = "";
-    $.each(data, function(k, v) {
-        if (unitid != v.unit_id) {
-            var cloneone = $('#template #report-table .row-one').clone();
-            $('.unit-name', cloneone).text(v.unit);
-            reportTableTbody.append(cloneone);
-            unitid = v.unit_id;
-        }
-
-        if (actname != v.act_name) {
-            var clonetwo = $('#template #report-table .row-two').clone();
-            $('.act-name', clonetwo).text(v.act_name);
-            reportTableTbody.append(clonetwo);
-            actname = v.act_name;
-        }
-        
-        if (complianceid != v.compliance_id) {
-            j = j + 1;
-            var clonethree = $('#template #report-table .row-three').clone();
-            $('.sno', clonethree).text(j);
-            $('.compliance-task', clonethree).text(v.compliance_task);
-            $('.due-date', clonethree).text(v.due_date);
-            $('.assigned-date', clonethree).text(v.assigned_on);
-            $('.assigned', clonethree).text(v.new_user);
-            if (v.reason != "") { $('.reason', clonethree).text(v.remarks); } else { $('.reason', clonethree).text('-'); }
-            $(clonethree).on('click', function(e) {
-                treeShowHide(e, "tree" + v.compliance_id);
-            });
-            $(clonethree).attr("id", "tree" + v.compliance_id);
-            reportTableTbody.append(clonethree);
-            complianceid = v.compliance_id;
-        } else {
-            if (tree == v.compliance_id) { 
-                var clonefive = $('#template #report-table .row-five').clone();
-                $('.assigned-date-new', clonefive).text(v.assigned_on);
-                $('.assigned-new', clonefive).text(v.new_user);
-                $('.reason-new', clonefive).text(v.remarks);
-                if (v.reason != "") { $('.reason-new', clonefive).text(v.remarks); } else { $('.reason-new', clonefive).text('-'); }
-                $('.tree' + v.compliance_id+' .tree-body').append(clonefive);
-            } else {
-                var clonefour = $('#template #report-table .row-four').clone();
-                $(clonefour).addClass("tree" + v.compliance_id);
-                $('.assigned-date-new', clonefour).text(v.assigned_on);
-                $('.assigned-new', clonefour).text(v.new_user);
-                $('.reason-new', clonefour).text(v.remarks);
-                if (v.reason != "") { $('.reason-new', clonefour).text(v.remarks); } else { $('.reason-new', clonefour).text('-'); }
-                reportTableTbody.append(clonefour);
-                tree = v.compliance_id
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            if (unitid != v.unit_id) {
+                var cloneone = $('#template #report-table .row-one').clone();
+                $('.unit-name', cloneone).text(v.unit);
+                reportTableTbody.append(cloneone);
+                unitid = v.unit_id;
             }
-            complianceid = v.compliance_id;
-        }
-    });
-    showPagePan(f_count, j, t_this._total_count);
+
+            if (actname != v.act_name) {
+                var clonetwo = $('#template #report-table .row-two').clone();
+                $('.act-name', clonetwo).text(v.act_name);
+                reportTableTbody.append(clonetwo);
+                actname = v.act_name;
+            }
+
+            if (complianceid != v.compliance_id) {
+                j = j + 1;
+                var clonethree = $('#template #report-table .row-three').clone();
+                $('.sno', clonethree).text(j);
+                $('.compliance-task', clonethree).text(v.compliance_task);
+                $('.due-date', clonethree).text(v.due_date);
+                $('.assigned-date', clonethree).text(v.assigned_on);
+                $('.assigned', clonethree).text(v.new_user);
+                if (v.reason != "") { $('.reason', clonethree).text(v.remarks); } else { $('.reason', clonethree).text('-'); }
+                $(clonethree).on('click', function(e) {
+                    treeShowHide(e, "tree" + v.compliance_id);
+                });
+                $(clonethree).attr("id", "tree" + v.compliance_id);
+                reportTableTbody.append(clonethree);
+                complianceid = v.compliance_id;
+            } else {
+                if (tree == v.compliance_id) {
+                    var clonefive = $('#template #report-table .row-five').clone();
+                    $('.assigned-date-new', clonefive).text(v.assigned_on);
+                    $('.assigned-new', clonefive).text(v.new_user);
+                    $('.reason-new', clonefive).text(v.remarks);
+                    if (v.reason != "") { $('.reason-new', clonefive).text(v.remarks); } else { $('.reason-new', clonefive).text('-'); }
+                    $('.tree' + v.compliance_id + ' .tree-body').append(clonefive);
+                } else {
+                    var clonefour = $('#template #report-table .row-four').clone();
+                    $(clonefour).addClass("tree" + v.compliance_id);
+                    $('.assigned-date-new', clonefour).text(v.assigned_on);
+                    $('.assigned-new', clonefour).text(v.new_user);
+                    $('.reason-new', clonefour).text(v.remarks);
+                    if (v.reason != "") { $('.reason-new', clonefour).text(v.remarks); } else { $('.reason-new', clonefour).text('-'); }
+                    reportTableTbody.append(clonefour);
+                    tree = v.compliance_id
+                }
+                complianceid = v.compliance_id;
+            }
+        });
+        showPagePan(f_count, j, t_this._total_count);
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        hidePagePan();
+    }
 };
 
 treeShowHide = function(e, tree) {
@@ -503,12 +508,12 @@ ReassignHistory.prototype.possibleFailures = function(error) {
     }
 };
 
-ReassignHistory.prototype.loadEntityDetails = function(){
+ReassignHistory.prototype.loadEntityDetails = function() {
     t_this = this;
-    if(t_this._entities.length > 1) {
+    if (t_this._entities.length > 1) {
         country.parent().show();
         filterCountryName.hide();
-        
+
         legalEntity.parent().show();
         filterLegalEntityName.hide();
     } else {

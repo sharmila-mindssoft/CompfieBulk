@@ -6,6 +6,7 @@ var divisionList;
 var categoryList;
 var domainList;
 var unitArray;
+var spArray;
 
 var addScreen = $("#add-screen");
 var viewScreen = $("#list-screen");
@@ -85,6 +86,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
             categoryList = response.um_group_category;
             domainList = response.um_legal_domain;
             unitArray = response.um_legal_units;
+            spArray = response.um_service_providers;
 
             loadUserCategories(t_this._userCategory)
             loadBusinessGroup(businessGroupList);
@@ -132,6 +134,21 @@ txtSeatingUnit.keyup(function(e) {
             unitArray, "u_unt_name", "u_unt_id",
             function(val) {
                 onAutoCompleteSuccess(txtSeatingUnit, hdnSeatingUnit, val);
+            }, condition_fields, condition_values);
+    }
+});
+
+//Service Provider Auto Complete
+txtServiceProvider.keyup(function(e) {
+    var condition_fields = [];
+    var condition_values = [];
+    if (ddlUserCategory.val() != '') {
+        var text_val = $(this).val();
+        commonAutoComplete(
+            e, divServiceProvider, hdnServiceProvider, text_val,
+            spArray, "u_sp_name", "u_sp_id",
+            function(val) {
+                onAutoCompleteSuccess(txtServiceProvider, hdnServiceProvider, val);
             }, condition_fields, condition_values);
     }
 });
@@ -285,35 +302,48 @@ function loadCategory() {
 
 //Load Domain
 function loadDomain() {
-    ddlDomain.empty();
+    // ddlDomain.empty();
 
     if (ddlLegalEntity.val() != null) {
-        var sLegalEntity = ddlLegalEntity.val().map(Number);
+        //var sLegalEntity = ddlLegalEntity.val().map(Number);
+        // split = ddlLegalEntity.val().split('-');
+        // var sLegalEntity = parseint(split[1]);
+        var sLegalEntity = [];
+
+        for (var i = 0; i < ddlLegalEntity.val().length; i++) {
+            var split = ddlLegalEntity.val()[i].split('-');
+            sLegalEntity.push(parseInt(split[1]))
+        }
+
         var str = '';
 
         $.each(legalEntityList, function(key, value) {
             var leID = value.le_id;
-            // if ($.inArray(leID, sLegalEntity) >= 0) {
-            var flag = true;
-            $.each(domainList, function(key1, v) {
-                // if ($.inArray(bgID, v.businessGroup_ids) >= 0) {
-                var sText = '';
-                // $.each(legalEntity_ids, function(key2, value2) {
-                //     if (v.le_id == value2.le_id && bgID == value2.bg_id) {
-                //         sText = 'selected="selected"'
-                //     }
-                // });
-                if (flag) {
-                    str += '<optgroup label="' + value.le_name + '">';
-                }
-                var dVal = leID + '-' + v.le_id;
-                str += '<option value="' + dVal + '" ' + sText + '>' + v.u_dm_name + '</option>';
-                flag = false;
-                // }
-            });
-            if (flag == false) str += '</optgroup>'
-                // }
+            if ($.inArray(leID, sLegalEntity) != -1) {
+                var flag = true;
+                $.each(domainList, function(key1, v) {
+                    // if ($.inArray(leID, v.businessGroup_ids) >= 0) {
+                    if (leID == v.le_id) {
+                        var sText = '';
+                        // $.each(legalEntity_ids, function(key2, value2) {
+                        //     if (v.le_id == value2.le_id && bgID == value2.bg_id) {
+                        //         sText = 'selected="selected"'
+                        //     }
+                        // });
+                        if (flag) {
+                            str += '<optgroup label="' + value.le_name + '">';
+                        }
+                        var dVal = leID + '-' + v.u_dm_id;
+                        // alert(v.u_dm_id + '-' + v.u_dm_name);
+                        str += '<option value="' + dVal + '" ' + sText + '>' + v.u_dm_name + '</option>';
+                        flag = false;
+                        // }
+                    }
+                });
+                if (flag == false) str += '</optgroup>'
+            }
         });
+        // ddlDomain.multiselect('destroy');
         ddlDomain.append(str);
         ddlDomain.multiselect('rebuild');
 
@@ -369,7 +399,7 @@ userManagementPage.prototype.submitProcess = function() {
         "emp_name": txtEmployeeName.val().trim(),
         "emp_code": txtEmployeeId.val().trim(),
         "cont_no": txtContactNo1.val().trim() + '-' + txtContactNo2.val().trim() + '-' + txtContactNo3.val().trim(),
-        "mob_no": txtMobileNo1.val().trim() + '-' + txtMobileNo1.val().trim(),
+        "mob_no": txtMobileNo1.val().trim() + '-' + txtMobileNo2.val().trim(),
         "u_level": u_level,
         "s_unit": s_unit,
         "is_sp": is_sp,
@@ -390,7 +420,7 @@ userManagementPage.prototype.submitProcess = function() {
 function getLegalEntityIds() {
     legalEntity_ids = [];
     for (var i = 0; i < ddlLegalEntity.val().length; i++) {
-        split = ddlLegalEntity.val();
+        split = ddlLegalEntity.val()[i].split('-');
         legalEntity_ids.push(parseInt(split[1]))
     }
     return legalEntity_ids;
@@ -525,7 +555,8 @@ userManagementPage.prototype.selectAllUnits = function() {
                 $(el).addClass('active');
                 $(el).find('i').addClass('fa fa-check pull-right');
                 var chkid = $(el).attr('id');
-                ACTIVE_UNITS.push(parseInt(chkid));
+                // ACTIVE_UNITS.push(parseInt(chkid));
+                ACTIVE_UNITS.push(chkid);
             } else {
                 $(el).removeClass('active');
                 $(el).find('i').removeClass('fa fa-check pull-right');
@@ -565,12 +596,14 @@ function activateUnit(element) {
     if (chkstatus == 'active') {
         $(element).removeClass('active');
         $(element).find('i').removeClass('fa fa-check pull-right');
-        index = ACTIVE_UNITS.indexOf(parseInt(chkid));
+        // index = ACTIVE_UNITS.indexOf(parseInt(chkid));
+        index = ACTIVE_UNITS.indexOf(chkid);
         ACTIVE_UNITS.splice(index, 1);
     } else {
         $(element).addClass('active');
         $(element).find('i').addClass('fa fa-check pull-right');
-        ACTIVE_UNITS.push(parseInt(chkid));
+        // ACTIVE_UNITS.push(parseInt(chkid));
+        ACTIVE_UNITS.push(chkid);
     }
 }
 
