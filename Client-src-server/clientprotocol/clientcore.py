@@ -4139,7 +4139,7 @@ class ReviewSettingsUnits(object):
         address = data.get("address")
         geography_name = data.get("g_name")
         division_name = data.get("div_name")
-        return UnitClosure_Units(
+        return ReviewSettingsUnits(
             unit_id, unit_code, unit_name, address, geography_name, division_name
         )
 
@@ -4592,6 +4592,29 @@ class ClientLegalEntity_UserManagement(object):
     def to_structure(self):
         return {            
             "le_id": self.legal_entity_id
+        }
+##############################################################################
+# User Management Add - Service Providers
+##############################################################################
+class ClientServiceProviders_UserManagement(object):
+    def __init__(self, service_provider_id, service_provider_name, short_name):        
+        self.service_provider_id = service_provider_id
+        self.service_provider_name = service_provider_name
+        self.short_name = short_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["service_provider_id", "service_provider_name","short_name"])
+        service_provider_id = data.get("service_provider_id")
+        service_provider_name = data.get("service_provider_name")
+        short_name = data.get("short_name")        
+        return ClientServiceProviders_UserManagement(service_provider_id, service_provider_name, short_name)
+
+    def to_structure(self):
+        return {            
+            "u_sp_id": self.service_provider_id,
+            "u_sp_name": self.service_provider_name,
+            "u_sp_short": self.short_name
         }
 
 class ReassignedHistoryReportSuccess(object):

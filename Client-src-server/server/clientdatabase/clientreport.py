@@ -1112,7 +1112,6 @@ def report_status_report_consolidated(
             "and (CASE %s WHEN 1 THEN ac.assignee = %s " + \
             "WHEN 2 THEN ac.concurrence_person = %s WHEN 3 THEN ac.approval_person = %s " + \
             "ELSE 1 END) " + \
-            "-- and IF(%s IS NOT NULL, acl.activity_by = %s,1) " + \
             "and ch.due_date >= %s and ch.due_date <= %s " + \
             "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.approved_on and ch.approve_status = 3) THEN 'Delayed Compliance' " + \
             "WHEN (ch.due_date >= ch.approved_on and ch.approve_status = 3) THEN 'Complied' " + \
@@ -1127,7 +1126,7 @@ def report_status_report_consolidated(
     rows = db.select_all(query, [
             usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, f_count, t_count,
             country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id, 
-            frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, usr_id, usr_id, from_date, to_date, status_name, status_name
+            frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, from_date, to_date, status_name, status_name
             ])
     # print rows
 
@@ -1171,31 +1170,31 @@ def report_status_report_consolidated_total(
 ):
     from_date = string_to_datetime(from_date)
     to_date = string_to_datetime(to_date)
-    query = "select count(Distinct com.compliance_id) as total_count from tbl_compliance_history as ch " + \
+    query = "select count(Distinct com.compliance_id) as total_count " + \
+            "from tbl_compliance_history as ch " + \
             "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-            "inner join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
-            "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
+            "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
+            "inner join tbl_assign_compliances as ac on ch.compliance_id = ac.compliance_id and ch.unit_id = ac.unit_id " + \
             "where com.country_id = %s and ch.legal_entity_id = %s " + \
             "and com.domain_id = %s " + \
-            "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
+            "and IF(%s IS NOT NULL, ch.unit_id = %s,1) " + \
             "and IF(%s IS NOT NULL,SUBSTRING_INDEX(com.statutory_mapping,'>>',1) = %s,1) " + \
             "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
             "and IF(%s > 0, com.frequency_id = %s,1) " + \
-            "and (CASE %s WHEN 1 THEN ac.assignee = acl.activity_by " + \
-            "WHEN 2 THEN ac.concurrence_person = acl.activity_by WHEN 3 THEN ac.approval_person = acl.activity_by " + \
+            "and (CASE %s WHEN 1 THEN ac.assignee = %s " + \
+            "WHEN 2 THEN ac.concurrence_person = %s WHEN 3 THEN ac.approval_person = %s " + \
             "ELSE 1 END) " + \
-            "and IF(%s IS NOT NULL, acl.activity_by = %s,1) " + \
-            "and acl.activity_on >= %s and acl.activity_on <= %s " + \
+            "and ch.due_date >= %s and ch.due_date <= %s " + \
             "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.approved_on and ch.approve_status = 3) THEN 'Delayed Compliance' " + \
             "WHEN (ch.due_date >= ch.approved_on and ch.approve_status = 3) THEN 'Complied' " + \
             "WHEN (ch.due_date >= ch.approved_on and ch.approve_status < 3) THEN 'In Progress' " + \
             "WHEN (ch.due_date < ch.approved_on and ch.approve_status < 3) THEN 'Not Complied' " + \
             "WHEN (ch.approved_on IS NULL and ch.approve_status IS NULL) THEN 'In Progress' " + \
-            "ELSE 'In Progress' END) = %s,1)"
+            "ELSE 'In Progress' END) = %s,1) " 
 
     rows = db.select_one(query, [
-            country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id,
-            compliance_id, frequency_id, frequency_id, user_type_id, usr_id, usr_id, from_date, to_date, status_name, status_name
+            country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id, 
+            frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, from_date, to_date, status_name, status_name
             ])
     return int(rows["total_count"])
 # Status Report Consolidated Report End
@@ -3384,9 +3383,10 @@ def process_legal_entity_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -3590,9 +3590,10 @@ def process_domain_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -3797,9 +3798,10 @@ def process_unit_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -4085,9 +4087,10 @@ def process_service_provider_wise_report(db , request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -4381,9 +4384,10 @@ def process_user_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -4688,9 +4692,10 @@ def process_unit_list_report(db, request):
             closed_date = None
 
         if geography_name.find(">>") >= 0:
-            state = geography_name.split(">>")[2]
-            city = geography_name.split(">>")[3]
-            geography_name = state+","+city
+            val = geography_name.split(">>")
+            split_len = len(geography_name.split(">>"))
+            city = val[split_len-1]
+            geography_name = city
         else:
             geography_name = None
 
@@ -4952,7 +4957,7 @@ def process_risk_report(db, request):
         print "qry1"
         print query
         result_1 = db.select_all(query, condition_val)
-
+        print result_1
         risk_report = []
 
         for row in result_1:
@@ -4964,9 +4969,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
@@ -5064,6 +5070,7 @@ def process_risk_report(db, request):
         print query
 
         result = db.select_all(query, condition_val)
+        print result
         for row in result:
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
@@ -5073,9 +5080,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
@@ -5189,9 +5197,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
@@ -5293,6 +5302,7 @@ def process_risk_report(db, request):
         print query
 
         result = db.select_all(query, condition_val)
+        print result
         risk_report = []
 
         for row in result:
@@ -5304,9 +5314,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 

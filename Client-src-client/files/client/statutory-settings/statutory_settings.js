@@ -318,7 +318,7 @@ function pageControls() {
                 if (SelectAll.prop('checked')) {
                     var chkid = $(el).val().split(',');
                     ACTIVE_UNITS.push(parseInt(chkid[0]));
-                    C_COUNT = C_COUNT + chkid[2];
+                    C_COUNT = C_COUNT + parseInt(chkid[2]);
 
                     if(C_COUNT > 5000){
                         displayMessage(message.maximum_compliance_selection_reached_select_all);
@@ -584,7 +584,7 @@ function activateUnit(element) {
                 $(this).prop("checked", true);
                 DOMAIN_ID = parseInt(chkid[1]);
                 ACTIVE_UNITS.push(parseInt(chkid[0]));
-                C_COUNT = C_COUNT + chkid[2];
+                C_COUNT = C_COUNT + parseInt(chkid[2]);
             }else{
                 displayMessage(message.unit_selection_should_be_same_domain);
             }
@@ -592,7 +592,7 @@ function activateUnit(element) {
     } else {
         index = ACTIVE_UNITS.indexOf(parseInt(chkid[0]));
         ACTIVE_UNITS.splice(index, 1);
-        C_COUNT = C_COUNT - chkid[2];
+        C_COUNT = C_COUNT - parseInt(chkid[2]);
     }
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
@@ -803,6 +803,8 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     var A_REMARK = null;
     
     var C_STATUS = parseInt($(element).attr("for"));
+    var C_A_STATUS = $(element).attr("data-applicable");
+
     if (C_STATUS > 1 && $('#remark' + combine_ids[3]).val() != '') {
         A_REMARK = $('#remark' + combine_ids[3]).val();
     }
@@ -1008,6 +1010,15 @@ function subComplianceStatus(element) {
     
 }
 */
+
+function part_compliance(remark) {
+  if (remark.length > 15) {
+    return remark.substring(0, 10) + '...';
+  } else {
+    return remark;
+  }
+}
+
 function loadSingleUnitCompliances() {
 
     $.each(COMPLIANCES_LIST, function(key, value) {
@@ -1083,16 +1094,26 @@ function loadSingleUnitCompliances() {
             $('.compliancefrequency', clone2).text('Frequency');
             $('.compliancedescription', clone2).text(value.descp);
 
+
             if(value1.comp_app_status){
                 $('.applicable', clone2).html('<img src="images/tick1bold.png">');
             }else{
                 $('.applicable', clone2).html('<img src="images/deletebold.png">');
             }
 
+            $('.opted', clone).attr("data-applicable", value1.comp_app_status);
             $('.opted', clone2).attr('id', 'comp' + statutoriesCount);
             $('.opted', clone2).val(statutoriesCount);
             $('.opted', clone2).addClass('comp' + count);
 
+            $('.c-remark-view', clone).attr('id', 'c-remark-view-' + statutoriesCount);
+            $('.c-remark-add', clone).attr('id', 'c-remark-add-' + statutoriesCount);
+            if(value1.comp_remarks != null){
+                $('.c-remark-view i', clone2).attr('title', value1.comp_remarks);
+                $('.c-remark-view span', clone2).text(part_compliance(value1.comp_remarks));
+            }else{
+                $('.c-remark-view', clone2).hide();
+            }
             $('.saved', clone2).attr('id', 'save' + statutoriesCount);
             if (value1.is_saved) {
                 $('.saved', clone2).addClass('fa-square');

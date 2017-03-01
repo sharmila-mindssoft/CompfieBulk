@@ -602,8 +602,8 @@ function widgetSettings(){
       3: client_mirror.getWidgetNotCompliedChart,
       4: client_mirror.getWidgetTrendChart,
       5: client_mirror.getWidgetRiskChart,
-      6: client_mirror.getUserScoreCard,
-      7: client_mirror.getDomainScoreCard,
+      6: client_mirror.getWidgetUserScoreCard,
+      7: client_mirror.getWidgetDomainScoreCard,
       8: client_mirror.getWidgetCalender
     }
 }

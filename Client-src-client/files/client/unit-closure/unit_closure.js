@@ -165,11 +165,16 @@ $('#update_status').click(function() {
 
         function onSuccess(data) {
             displaySuccessMessage(message.action_success);
-            loadUnitClosureList();
+            $('.btn-show').trigger( "click" );
+            //loadUnitClosureList();
         }
 
         function onFailure(error) {
             if(error == "InvalidPassword"){
+                displayMessage(message.invalid_password);
+                return false;
+            }
+            else if(error == "InvalidCurrentPassword"){
                 displayMessage(message.invalid_password);
                 return false;
             }
@@ -178,6 +183,7 @@ $('#update_status').click(function() {
             }
         }
         client_mirror.saveUnitClosureData(txtpwd, txtRemarks, parseInt(unit_id), action_mode, function(error, response) {
+            console.log(error, response)
             if (error == null) {
                 Custombox.close();
                 $(".popup_unit_id").val('');
@@ -189,7 +195,7 @@ $('#update_status').click(function() {
         });
     } else {
         if (txtpwd == '') {
-            displayMessage(message.enter_password);
+            displayMessage(message.password_required);
         } else {
             displayMessage(message.remarks_required);
         }

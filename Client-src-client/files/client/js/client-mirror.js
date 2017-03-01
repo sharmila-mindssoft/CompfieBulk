@@ -657,6 +657,20 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
+
+    /* Statutory Notifications */
+    function getStatutoryNotifications(le_ids, notification_type, start_count, end_count, callback) {
+        callerName = 'client_dashboard';
+        var request = [
+            'GetStatutoryNotifications', {
+                'le_ids': le_ids,
+                'start_count': start_count,
+                'end_count': end_count
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     /* Get Compliance List*/
     function getCurrentComplianceDetail(le_id, current_start_count, callback) {
         callerName = 'client_user';
@@ -2462,7 +2476,7 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getUserScoreCard(callback){
+    function getWidgetUserScoreCard(callback){
          var request = [
             "GetUserScoreCard", {
                 "le_ids": getLEids()
@@ -2471,7 +2485,7 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getDomainScoreCard(callback){
+    function getWidgetDomainScoreCard(callback){
          var request = [
             "GetDomainScoreCard", {
                 "le_ids": getLEids()
@@ -2733,8 +2747,8 @@ function initClientMirror() {
         getWidgetRiskChart: getWidgetRiskChart,
         getWidgetTrendChart: getWidgetTrendChart,
         getWidgetCalender: getWidgetCalender,
-        getUserScoreCard: getUserScoreCard,
-        getDomainScoreCard: getDomainScoreCard,
+        getWidgetUserScoreCard: getWidgetUserScoreCard,
+        getWidgetDomainScoreCard: getWidgetDomainScoreCard,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
