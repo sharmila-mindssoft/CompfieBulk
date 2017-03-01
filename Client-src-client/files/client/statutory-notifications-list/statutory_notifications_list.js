@@ -295,8 +295,7 @@ StatutoryNotificationsList.prototype.fetchReportValues = function() {
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
         this._sno = 0
-    }
-    else {
+    } else {
         this._sno = (this._on_current_page - 1) *  _page_limit;
     }
 

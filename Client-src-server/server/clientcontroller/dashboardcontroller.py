@@ -87,6 +87,13 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
         logger.logClientApi("UpdateNotificationStatus", "process end")
 
+    elif type(request) is dashboard.GetStatutoryNotifications:
+        logger.logClientApi("GetStatutoryNotifications", "process begin")
+        result = process_get_statutory_notifications(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetStatutoryNotifications", "process end")
+
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart:
         result = process_assigneewise_compliances(
             db, request, session_user, session_user
@@ -219,21 +226,19 @@ def process_compliance_applicability_drill_down(
 
 def process_get_notifications(db, request, session_user, session_category):
     notification_type = request.notification_type
-    total_count = get_dashboard_notification_counts(db, session_user, notification_type)
-    if request.notification_type == 1: # Reminders
+    # total_count = get_dashboard_notification_counts(db, session_user, notification_type, session_category)
+    if request.notification_type == 2: # Reminders
         reminders = get_reminders(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-        return dashboard.GetRemindersSuccess(reminders, total_count)
+        return dashboard.GetRemindersSuccess(reminders)
     elif request.notification_type == 3: # Escalations
         escalations = get_escalations(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-        return dashboard.GetEscalationsSuccess(escalations, total_count)
+        return dashboard.GetEscalationsSuccess(escalations)
     elif request.notification_type == 4: # Messages
         messages = get_messages(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-        return dashboard.GetMessagesSuccess(messages, total_count)
-    elif request.notification_type == 2: # statutory
-        statutory = get_statutory(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-        return dashboard.GetStatutorySuccess(statutory, total_count)
-
-    
+        return dashboard.GetMessagesSuccess(messages)
+    # elif request.notification_type == 1: # statutory
+    #     statutory = get_statutory(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
+    #     return dashboard.GetStatutorySuccess(statutory)
 
 def process_update_notification_status(db, request, session_user):
     if request.has_read == True:
@@ -241,6 +246,11 @@ def process_update_notification_status(db, request, session_user):
     notification_details = notification_detail(db, request.notification_id, session_user)
     return dashboard.UpdateNotificationStatusSuccess(notification_details)
 
+
+def process_get_statutory_notifications(db, request, session_user, session_category):
+    statutory_notifications = None
+    statutory_notifications = get_statutory(db, request.from_count, request.page_count, session_user, session_category)
+    return general.GetStatutorySuccess(statutory_notifications=statutory_notifications)
 
 ########################################################
 # To get data to populate in assignee wise compliance

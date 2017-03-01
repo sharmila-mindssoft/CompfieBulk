@@ -763,6 +763,27 @@ class UpdateNotificationStatus(Request):
             "has_read": self.has_read
         }
 
+class GetStatutoryNotifications(Request):
+    def __init__(self, legal_entity_ids, start_count, end_count):
+        self.legal_entity_ids = legal_entity_ids
+        self.start_count = start_count
+        self.end_count = end_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_ids", "start_count", "end_count"])
+        legal_entity_ids = data.get("le_ids")
+        start_count = data.get("start_count")
+        end_count = data.get("end_count")
+        return GetStatutoryNotifications(legal_entity_ids, start_count, end_count)
+
+    def to_inner_structure(self):
+        return {
+            "le_ids": self.legal_entity_ids,
+            "start_count": self.start_count,
+            "end_count": self.end_count
+        }
+
 def _init_Request_class_map():
     classes = [
         GetChartFilters, GetComplianceStatusChart, GetEscalationsChart,
@@ -772,7 +793,8 @@ def _init_Request_class_map():
         GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
         GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
         CheckContractExpiration,
-        GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes
+        GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes,
+        GetStatutoryNotifications
     ]
     class_map = {}
     for c in classes:
@@ -1171,75 +1193,63 @@ class GetTrendChartDrillDownDataSuccess(Response):
         }
 
 class GetRemindersSuccess(Response):
-    def __init__(self, reminders, total_count):
+    def __init__(self, reminders):
         self.reminders = reminders
-        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["reminders", "total_count"])
+        data = parse_dictionary(data, ["reminders"])
         reminders = data.get("reminders")
-        total_count = data.get("total_count")
-        return GetRemindersSuccess(reminders, total_count)
+        return GetRemindersSuccess(reminders)
 
     def to_inner_structure(self):
         return {
-            "reminders": self.reminders,
-            "total_count": self.total_count
+            "reminders": self.reminders
         }
 
 class GetEscalationsSuccess(Response):
-    def __init__(self, escalations, total_count):
+    def __init__(self, escalations):
         self.escalations = escalations
-        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["escalations", "total_count"])
+        data = parse_dictionary(data, ["escalations"])
         escalations = data.get("escalations")
-        total_count = data.get("total_count")
-        return GetEscalationsSuccess(escalations, total_count)
+        return GetEscalationsSuccess(escalations)
 
     def to_inner_structure(self):
         return {
-            "escalations": self.escalations,
-            "total_count": self.total_count
+            "escalations": self.escalations
         }
 
 class GetMessagesSuccess(Response):
-    def __init__(self, messages, total_count):
+    def __init__(self, messages):
         self.messages = messages
-        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["messages", "total_count"])
+        data = parse_dictionary(data, ["messages"])
         messages = data.get("messages")
-        total_count = data.get("total_count")
-        return GetMessagesSuccess(messages, total_count)
+        return GetMessagesSuccess(messages)
 
     def to_inner_structure(self):
         return {
-            "messages": self.messages,
-            "total_count": self.total_count
+            "messages": self.messages
         }
 
 class GetStatutorySuccess(Response):
-    def __init__(self, statutory, total_count):
+    def __init__(self, statutory):
         self.statutory = statutory
-        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory", "total_count"])
+        data = parse_dictionary(data, ["statutory"])
         statutory = data.get("statutory")
-        total_count = data.get("total_count")
-        return GetStatutorySuccess(statutory, total_count)
+        return GetStatutorySuccess(statutory)
 
     def to_inner_structure(self):
         return {
-            "statutory": self.statutory,
-            "total_count": self.total_count
+            "statutory": self.statutory
         }
 
 class UpdateNotificationStatusSuccess(Response):
