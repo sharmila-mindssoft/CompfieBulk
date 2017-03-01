@@ -175,7 +175,7 @@ def process_get_approve_statutory_mappings(db, request_frame, user_id):
     return knowledgetransaction.GetApproveStatutoryMappingSuccess(
         statutory_mappings
     )
-
+ 
 
 def process_get_compliance_info(db, request, user_id):
     comp_id = request.compliance_id
