@@ -885,7 +885,7 @@ def return_compliance_details_drill_down(
         completion_date = r["completion_date"]
 
         if compliance_status == "Inprogress":
-            if r["frequency_id"] != 4:
+            if r["frequency_id"] != 5:
                 ageing = abs((due_date.date() - current_date.date()).days) + 1
             else:
 
@@ -898,7 +898,7 @@ def return_compliance_details_drill_down(
         elif compliance_status == "Complied":
             ageing = 0
         elif compliance_status == "Not Complied":
-            if r["frequency_id"] != 4:
+            if r["frequency_id"] != 5:
                 ageing = abs((current_date.date() - due_date.date()).days) + 1
             else:
                 diff = (current_date - due_date)
@@ -908,7 +908,7 @@ def return_compliance_details_drill_down(
                     ageing = diff.days
         elif compliance_status == "Delayed Compliance":
             ageing = abs((completion_date - due_date).days) + 1
-            if r["frequency_id"] != 4:
+            if r["frequency_id"] != 5:
                 ageing = abs((completion_date - due_date).days) + 1
             else:
                 diff = (completion_date - due_date)
@@ -1362,7 +1362,7 @@ def get_not_complied_drill_down(
         due_date = r["due_date"]
         completion_date = r["completion_date"]
 
-        if r["frequency_id"] != 4:
+        if r["frequency_id"] != 5:
                 ageing = abs((current_date - due_date).days) + 1
         else:
             diff = (current_date - due_date)
@@ -1720,7 +1720,7 @@ def get_compliance_applicability_drill_down(
 
         if int(r["frequency_id"]) == 1:
             summary = None
-        elif int(r["frequency_id"]) in (2, 3):
+        elif int(r["frequency_id"]) in (2, 3, 4):
             summary = "Repeats every %s %s " % (
                 r["repeats_every"], r["repeats_type"]
             )
@@ -1787,7 +1787,7 @@ def get_reminders(
                 "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
                 "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s"
         rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
-    
+
     print rows
     notifications = []
     for r in rows :
@@ -2022,19 +2022,19 @@ def get_assigneewise_compliances_list(
             " as complied, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
-            " tch.due_date >= now() and frequency_id=4) " + \
+            " tch.due_date >= now() and frequency_id=5) " + \
             "  then 1 else 0 end) as on_occurrence_inprogress, " + \
             " sum(case when ((approve_status = 0 " + \
-            " or approve_status is null) and frequency_id!=4 and " + \
+            " or approve_status is null) and frequency_id!=5 and " + \
             " tch.due_date >= current_date) then 1 else 0 end) " + \
             " as inprogress, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
-            " tch.due_date < now() and frequency_id=4) " + \
+            " tch.due_date < now() and frequency_id=5) " + \
             " then 1 else 0 end) as on_occurrence_not_complied, " + \
             " sum(case when ((approve_status = 0 " + \
             " or approve_status is null) and " + \
-            " tch.due_date < current_date and frequency_id != 4) " + \
+            " tch.due_date < current_date and frequency_id != 5) " + \
             " then 1 else 0 end) as not_complied, " + \
             " sum(case when (approve_status = 1 " + \
             " and completion_date > tch.due_date and " + \
@@ -2394,7 +2394,7 @@ def fetch_assigneewise_compliances_drilldown_data(
         "            IF ( " + \
         "                 ((approve_status = 0 " + \
         "                 or approve_status is null) and " + \
-        "                due_date >= now() and frequency_id=4 and " + \
+        "                due_date >= now() and frequency_id=5 and " + \
         "                 duration_type_id=2), " + \
         "                'On_occurrence_Inprogress', " + \
         "                ( " + \
@@ -2402,14 +2402,14 @@ def fetch_assigneewise_compliances_drilldown_data(
         "                       ((approve_status = 0 " + \
         "                       or approve_status is null) and " + \
         "                       due_date >= current_date and " + \
-        "                        (frequency_id!=4 or (frequency_id=4 " + \
+        "                        (frequency_id!=5 or (frequency_id=5 " + \
         "                          and duration_type_id!=2)))," + \
         "                       'Inprogress'," + \
         "                       ( " + \
         "                           IF( " + \
         "                               ((approve_status = 0 " + \
         "                               or approve_status is null) and " + \
-        "                               due_date < now() and frequency_id=4 and " + \
+        "                               due_date < now() and frequency_id=5 and " + \
         "                               duration_type_id=2)," + \
         "                               'On_occurrence_NotComplied'," + \
         "                               'NotComplied' " + \
