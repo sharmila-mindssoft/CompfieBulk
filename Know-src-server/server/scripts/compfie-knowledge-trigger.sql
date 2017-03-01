@@ -79,77 +79,77 @@ END
 DELIMITER ;
 
 DROP TRIGGER IF EXISTS `after_tbl_client_configuration_insert`;
-DELIMITER //
-CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_client_configuration`
- FOR EACH ROW BEGIN
-   SET @action = 0;
+-- DELIMITER //
+-- CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_client_configuration`
+--  FOR EACH ROW BEGIN
+--    SET @action = 0;
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             legal_entity_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                NEW.client_id,
-                0,
-                NEW.client_id,
-                'country_id',
-                NEW.country_id,
-                'tbl_client_configuration');
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             legal_entity_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                NEW.client_id,
-                0,
-                NEW.client_id,
-                'domain_id',
-                NEW.domain_id,
-                'tbl_client_configuration');
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             legal_entity_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                NEW.client_id,
-                0,
-                NEW.client_id,
-                'month_from',
-                NEW.month_from,
-                'tbl_client_configuration');
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             legal_entity_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                NEW.client_id,
-                0,
-                NEW.client_id,
-                'month_to',
-                NEW.month_to,
-                'tbl_client_configuration');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              legal_entity_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 NEW.client_id,
+--                 0,
+--                 NEW.client_id,
+--                 'country_id',
+--                 NEW.country_id,
+--                 'tbl_client_configuration');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              legal_entity_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 NEW.client_id,
+--                 0,
+--                 NEW.client_id,
+--                 'domain_id',
+--                 NEW.domain_id,
+--                 'tbl_client_configuration');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              legal_entity_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 NEW.client_id,
+--                 0,
+--                 NEW.client_id,
+--                 'month_from',
+--                 NEW.month_from,
+--                 'tbl_client_configuration');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              legal_entity_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 NEW.client_id,
+--                 0,
+--                 NEW.client_id,
+--                 'month_to',
+--                 NEW.month_to,
+--                 'tbl_client_configuration');
 
 
-    UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE client_id = NEW.client_id and is_group = 1;
+--     UPDATE tbl_client_replication_status set is_new_data = 1
+--     WHERE client_id = NEW.client_id and is_group = 1;
 
-    UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE is_group = 0 and client_id in (select legal_entity_id from tbl_legal_entities where client_id = new.client_id);
-END
-//
-DELIMITER ;
+--     UPDATE tbl_client_replication_status set is_new_data = 1
+--     WHERE is_group = 0 and client_id in (select legal_entity_id from tbl_legal_entities where client_id = new.client_id);
+-- END
+-- //
+-- DELIMITER ;
 
 -- ------
 -- business_groups
@@ -356,6 +356,24 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
         select @action, NEW.client_id, legal_entity_id, le_domain_id,'count' col_name, count value, 'tbl_legal_entity_domains' from tbl_legal_entity_domains
         where legal_entity_id = NEW.legal_entity_id
         order by le_domain_id, col_name;
+
+        INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
+        select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'client_id', col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+        union all
+        select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'country_id', col_name, country_id value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+        union all
+        select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'domain_id', col_name, domain_id value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+        union all
+        select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'month_from', col_name, month_from value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+        union all
+        select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'month_to', col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
+        where client_id = NEW.client_id
+
+        order by cn_config_id, col_name;
 
    END IF ;
 

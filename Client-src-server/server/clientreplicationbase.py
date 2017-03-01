@@ -156,7 +156,7 @@ class ReplicationBase(object):
             "tbl_categories": "category_id",
             "tbl_units": "unit_id",
             "tbl_units_organizations": "unit_org_id",
-            "tbl_client_configuration": "client_id",
+            "tbl_client_configuration": "cn_config_id",
             "tbl_compliances": "compliance_id",
             "tbl_client_statutories": "client_statutory_id",
             "tbl_client_compliances": "client_compliance_id",
@@ -171,7 +171,7 @@ class ReplicationBase(object):
     def _load_columns_count(self):
         self._columns_count = {
             "tbl_client_groups": 5,
-            "tbl_client_configuration": 5,
+            "tbl_client_configuration": 6,
             "tbl_business_groups": 2,
             "tbl_legal_entities": 10,
             "tbl_legal_entity_domains": 6,
@@ -287,11 +287,10 @@ class ReplicationBase(object):
 
             if tbl_name == "tbl_legal_entities" :
                 self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [auto_id])
+                self._db.execute("delete from tbl_client_configuration")
             elif tbl_name == "tbl_units" :
                 self._db.execute("delete from tbl_units_organizations where unit_id = %s", [auto_id])
 
-            # elif tbl_name == "tbl_client_groups" :
-            #     self._db.execute("delete from tbl_client_configuration")
 
         except Exception, e:
             pass
