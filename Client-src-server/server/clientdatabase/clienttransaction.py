@@ -1563,7 +1563,7 @@ def get_compliance_approval_list(
     # result = convert_to_dict(rows, columns)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
-    count = 0    
+    count = 0
     for row in rows:
         no_of_days, ageing = calculate_ageing(
             due_date=row["due_date"],
@@ -1630,9 +1630,9 @@ def get_compliance_approval_list(
         description = row["compliance_description"]
         concurrence_status = None if (
                 row["concurrence_status"] in [None, "None", ""]
-            ) else bool(int(row["concurrence_status"]))        
+            ) else bool(int(row["concurrence_status"]))
         statutory_dates = [] if (
-            row["statutory_dates"] is [None, "None", ""]            
+            row["statutory_dates"] is [None, "None", ""]
         ) else json.loads(row["statutory_dates"])
         validity_date = None if (
             row["validity_date"] is [None, "None", ""]
@@ -1715,7 +1715,7 @@ def save_compliance_activity(
         unit_id, compliance_id, compliance_history_id, activity_by,
         activity_on,  action
     ]
-    
+
     if remarks:
         columns.append("remarks")
         values.append(remarks)
@@ -2062,7 +2062,7 @@ def concur_compliance(
     next_due_date, validity_date, session_user
 ):
     columns = ["concurrence_status", "concurred_on","current_status"]
-    
+
     values = [1, get_date_time(),"2"]
     if validity_date is not None:
         columns.append("validity_date")

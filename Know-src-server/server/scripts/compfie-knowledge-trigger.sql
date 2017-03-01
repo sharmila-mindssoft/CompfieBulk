@@ -788,6 +788,18 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
 
         UPDATE tbl_client_replication_status set is_new_data = 1
         WHERE client_id = NEW.legal_entity_id and is_group = 0 ;
+
+        INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
+        select @action, @client_id, @le_id, unit_org_id, 'unit_id', col_name, unit_id value, 'tbl_units_organizations' from tbl_units_organizations
+        where unit_id = NEW.unit_id
+        union all
+        select @action, @client_id, @le_id, unit_org_id, 'domain_id', col_name, domain_id value, 'tbl_units_organizations' from tbl_units_organizations
+        where unit_id = NEW.unit_id
+        union all
+        select @action, @client_id, @le_id, unit_org_id, 'organisation_id', col_name, organisation_id value, 'tbl_units_organizations' from tbl_units_organizations
+        where unit_id = NEW.unit_id
+        order by unit_org_id, col_name;
+
    END IF;
 
 END
@@ -796,68 +808,69 @@ DELIMITER ;
 
 
 DROP TRIGGER IF EXISTS `after_tbl_units_organizations_insert`;
-DELIMITER //
-CREATE TRIGGER `after_tbl_units_organizations_insert` AFTER INSERT ON `tbl_units_organizations`
- FOR EACH ROW BEGIN
-   SET @action = 0;
+-- DELIMITER //
+-- CREATE TRIGGER `after_tbl_units_organizations_insert` AFTER INSERT ON `tbl_units_organizations`
+--  FOR EACH ROW BEGIN
+--    SET @action = 0;
 
-   SET @client_id = (select client_id from tbl_units where unit_id = new.unit_id);
-   SET @le_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id);
+--    SET @client_id = (select client_id from tbl_units where unit_id = new.unit_id);
+--    SET @le_id = (select legal_entity_id from tbl_units where unit_id = new.unit_id);
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             legal_entity_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                @client_id,
-                @le_id,
-                NEW.unit_org_id,
-                'unit_id',
-                NEW.unit_id,
-                'tbl_units_organizations');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              legal_entity_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 @client_id,
+--                 @le_id,
+--                 NEW.unit_org_id,
+--                 'unit_id',
+--                 NEW.unit_id,
+--                 'tbl_units_organizations');
 
-    INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             legal_entity_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                @client_id,
-                @le_id,
-                NEW.unit_org_id,
-                'domain_id',
-                NEW.domain_id,
-                'tbl_units_organizations');
+--     INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              legal_entity_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 @client_id,
+--                 @le_id,
+--                 NEW.unit_org_id,
+--                 'domain_id',
+--                 NEW.domain_id,
+--                 'tbl_units_organizations');
 
-   INSERT INTO tbl_audit_log(action,
-                             client_id,
-                             legal_entity_id,
-                             tbl_auto_id,
-                             column_name,
-                             value,
-                             tbl_name)
-        VALUES (@action,
-                @client_id,
-                @le_id,
-                NEW.unit_org_id,
-                'organisation_id',
-                NEW.organisation_id,
-                'tbl_units_organizations');
+--    INSERT INTO tbl_audit_log(action,
+--                              client_id,
+--                              legal_entity_id,
+--                              tbl_auto_id,
+--                              column_name,
+--                              value,
+--                              tbl_name)
+--         VALUES (@action,
+--                 @client_id,
+--                 @le_id,
+--                 NEW.unit_org_id,
+--                 'organisation_id',
+--                 NEW.organisation_id,
+--                 'tbl_units_organizations');
 
 
-    UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE client_id = @client_id and is_group = 1;
+--     UPDATE tbl_client_replication_status set is_new_data = 1
+--     WHERE client_id = @client_id and is_group = 1;
 
-    UPDATE tbl_client_replication_status set is_new_data = 1
-    WHERE is_group = 0 and client_id = @le_id;
-END
-//
-DELIMITER ;
+--     UPDATE tbl_client_replication_status set is_new_data = 1
+--     WHERE is_group = 0 and client_id = @le_id;
+
+-- END
+-- //
+-- DELIMITER ;
 
 -- -------------------
 -- Triggers `tbl_compliances`

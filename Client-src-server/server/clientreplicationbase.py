@@ -287,10 +287,11 @@ class ReplicationBase(object):
 
             if tbl_name == "tbl_legal_entities" :
                 self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [auto_id])
+            elif tbl_name == "tbl_units" :
+                self._db.execute("delete from tbl_units_organizations where unit_id = %s", [auto_id])
+
             # elif tbl_name == "tbl_client_groups" :
             #     self._db.execute("delete from tbl_client_configuration")
-            # elif tbl_name == "tbl_units" :
-            #     self._db.execute("delete from tbl_units_organizations where unit_id = %s", [auto_id])
 
         except Exception, e:
             pass
