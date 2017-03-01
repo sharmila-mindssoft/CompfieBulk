@@ -2462,7 +2462,7 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getUserScoreCard(callback){
+    function getWidgetUserScoreCard(callback){
          var request = [
             "GetUserScoreCard", {
                 "le_ids": getLEids()
@@ -2471,7 +2471,7 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getDomainScoreCard(callback){
+    function getWidgetDomainScoreCard(callback){
          var request = [
             "GetDomainScoreCard", {
                 "le_ids": getLEids()
@@ -2733,8 +2733,8 @@ function initClientMirror() {
         getWidgetRiskChart: getWidgetRiskChart,
         getWidgetTrendChart: getWidgetTrendChart,
         getWidgetCalender: getWidgetCalender,
-        getUserScoreCard: getUserScoreCard,
-        getDomainScoreCard: getDomainScoreCard,
+        getWidgetUserScoreCard: getWidgetUserScoreCard,
+        getWidgetDomainScoreCard: getWidgetDomainScoreCard,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
