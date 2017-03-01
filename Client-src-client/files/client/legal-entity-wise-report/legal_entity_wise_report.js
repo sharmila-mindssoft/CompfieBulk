@@ -641,7 +641,7 @@ LegalEntityWiseReport.prototype.showReportValues = function() {
         }
 
         if (complianceTask != v.compliance_task) {
-            var clonethree = $('#template #report-table .row-three').clone();
+            var clonethree = $('#template #report-table .tree-open-close').clone();
             t_this._sno += 1;
             $('.sno', clonethree).text(t_this._sno);
             $('.compliance-task', clonethree).text(v.compliance_task);
@@ -656,9 +656,9 @@ LegalEntityWiseReport.prototype.showReportValues = function() {
                 $('.activity-date', clonethree).text(v.activity_date);
             else
                 $('.activity-date', clonethree).text('-');
-            if (v.documents.length > 0) {
+            if (v.document_name.length > 0) {
                 //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                $('.uploaded-document', clonethree).html(v.documents);
+                $('.uploaded-document', clonethree).html(v.document_name);
                 $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
                 $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
 
@@ -674,16 +674,16 @@ LegalEntityWiseReport.prototype.showReportValues = function() {
             j = j + 1;
             complianceTask = v.compliance_task;
         } else {
-            var clonefour = $('#template #report-table .row-four').clone();
+            var clonefour = $('#template #report-table .tree-data').clone();
             $('.user-name-new', clonefour).text(v.assignee_name);
             $('.activity-status-new', clonefour).text(v.activity_status);
             if (v.activity_date != "")
                 $('.activity-date-new', clonefour).text(v.activity_date);
             else
                 $('.activity-date-new', clonefour).text('-');
-            if (v.documents.length > 0) {
+            if (v.document_name.length > 0) {
                 //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                $('.uploaded-document', clonethree).html(v.documents);
+                $('.uploaded-document', clonethree).html(v.document_name);
                 $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
                 $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
             } else {
