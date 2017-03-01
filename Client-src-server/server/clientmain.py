@@ -116,25 +116,17 @@ class API(object):
             pass
 
     def client_connection_pool(self, data):
-        # return mysql.connector.pooling.MySQLConnectionPool(
-        #     pool_name=str(le_id) + poolname,
-        #     pool_size=10,
-        #     pool_reset_session=True,
-        #     autocommit=False,
-        #     user=data.db_username,
-        #     password=data.db_password,
-        #     host=data.db_ip.ip_address,
-        #     database=data.db_name,
-        #     port=data.db_ip.port
-        # )
-        return mysql.connector.connect(
-            autocommit=False,
-            user=data.db_username,
-            password=data.db_password,
-            host=data.db_ip.ip_address,
-            database=data.db_name,
-            port=data.db_ip.port
-        )
+        try:
+            return mysql.connector.connect(
+                autocommit=False,
+                user=data.db_username,
+                password=data.db_password,
+                host=data.db_ip.ip_address,
+                database=data.db_name,
+                port=data.db_ip.port
+            )
+        except Exception:
+            raise Exception("Client Connection Failed")
 
     def server_added(self, servers):
         self._group_databases = {}
