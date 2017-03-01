@@ -295,7 +295,7 @@ class ReplicationBase(object):
 
         except Exception, e:
             pass
-            # print e
+            print e
             logger.logClient("client.py", "insert", e)
         self._temp_count = changes[-1].audit_trail_id
 
@@ -315,7 +315,7 @@ class ReplicationBase(object):
             try :
                 self._db.execute(query)
             except Exception, e :
-                # print e,
+                print e,
                 logger.logClient("client.py", "update", e)
                 # print query
                 # logger.logClient("client.py", "update", query)
@@ -323,7 +323,7 @@ class ReplicationBase(object):
         # print self._temp_count
 
     def _parse_data(self, changes):
-        # self._get_received_count()
+        self._get_received_count()
         # print self._temp_count
         if self._temp_count > self._received_count :
             return
@@ -369,7 +369,7 @@ class ReplicationBase(object):
             # self._temp_count = 0
         except Exception, e:
             # print(traceback.format_exc())
-            # print e
+            print e
             logger.logClient("error", "client.py-parse-data", e)
             logger.logClient("error", "client.py", traceback.format_exc())
 
@@ -405,7 +405,7 @@ class ReplicationManagerWithBase(ReplicationBase):
             self._received_count = get_trail_id(self._db)
             self._db.commit()
         except Exception, e:
-            # print e
+            print e
             self._received_count = None
             self._db.rollback()
         assert self._received_count is not None
@@ -413,7 +413,7 @@ class ReplicationManagerWithBase(ReplicationBase):
     def _poll(self) :
         assert self._stop is False
         assert self._received_count is not None
-        # print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
+        print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
 
         def on_timeout():
             # print "-1-1-1"
