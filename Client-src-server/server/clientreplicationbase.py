@@ -3,6 +3,7 @@ import threading
 import base64
 import random
 import string
+import datetime
 # from tornado.httpclient import HTTPRequest
 import requests
 import json
@@ -62,6 +63,8 @@ class ClientReplicationManager(object) :
     def _poll(self) :
 
         def on_timeout():
+            print "Poll rotated-----------------------------"
+            print datetime.datetime.now()
             req_data = self._request_body
             # print req_data
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
@@ -171,11 +174,11 @@ class ReplicationBase(object):
             "tbl_client_configuration": 5,
             "tbl_business_groups": 2,
             "tbl_legal_entities": 10,
-            "tbl_legal_entity_domains": 5,
+            "tbl_legal_entity_domains": 6,
             "tbl_divisions": 4,
             "tbl_categories": 5,
             "tbl_units": 12,
-            "tbl_units_organizations": 3,
+            "tbl_units_organizations": 4,
             "tbl_compliances": 22,
             "tbl_client_statutories": 3,
             "tbl_client_compliances": 10,

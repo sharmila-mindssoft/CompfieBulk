@@ -335,7 +335,8 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
         UPDATE tbl_client_replication_status set is_new_data = 1
         WHERE client_id = NEW.client_id and is_group = 1;
 
-        INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group) values(new.legal_entity_id, 0, 0);
+        INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group) values(new.legal_entity_id, 0, 0)
+        on duplicate key update is_new_data = 0;
    END IF ;
 
 END
@@ -361,7 +362,22 @@ CREATE TRIGGER `after_tbl_legal_entity_domains_insert` AFTER INSERT ON `tbl_lega
         VALUES (@action,
                 @client_id,
                 new.legal_entity_id,
+                NEW.le_domain_id,
+                'legal_entity_id',
                 NEW.legal_entity_id,
+                'tbl_legal_entity_domains');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             legal_entity_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                @client_id,
+                new.legal_entity_id,
+                NEW.le_domain_id,
                 'domain_id',
                 NEW.domain_id,
                 'tbl_legal_entity_domains');
@@ -376,7 +392,7 @@ CREATE TRIGGER `after_tbl_legal_entity_domains_insert` AFTER INSERT ON `tbl_lega
         VALUES (@action,
                 @client_id,
                 new.legal_entity_id,
-                NEW.legal_entity_id,
+                NEW.le_domain_id,
                 'activation_date',
                 NEW.activation_date,
                 'tbl_legal_entity_domains');
@@ -391,7 +407,7 @@ CREATE TRIGGER `after_tbl_legal_entity_domains_insert` AFTER INSERT ON `tbl_lega
         VALUES (@action,
                 @client_id,
                 new.legal_entity_id,
-                NEW.legal_entity_id,
+                NEW.le_domain_id,
                 'organisation_id',
                 NEW.organisation_id,
                 'tbl_legal_entity_domains');
@@ -406,7 +422,7 @@ CREATE TRIGGER `after_tbl_legal_entity_domains_insert` AFTER INSERT ON `tbl_lega
         VALUES (@action,
                 @client_id,
                 new.legal_entity_id,
-                NEW.legal_entity_id,
+                NEW.le_domain_id,
                 'count',
                 NEW.count,
                 'tbl_legal_entity_domains');
@@ -778,7 +794,22 @@ CREATE TRIGGER `after_tbl_units_organizations_insert` AFTER INSERT ON `tbl_units
         VALUES (@action,
                 @client_id,
                 @le_id,
-                NEW.unit_id,
+                NEW.unit_org_id,
+                'unit_id',
+                NEW.domain_id,
+                'tbl_units_organizations');
+
+    INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             legal_entity_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                @client_id,
+                @le_id,
+                NEW.unit_org_id,
                 'domain_id',
                 NEW.domain_id,
                 'tbl_units_organizations');
@@ -793,7 +824,7 @@ CREATE TRIGGER `after_tbl_units_organizations_insert` AFTER INSERT ON `tbl_units
         VALUES (@action,
                 @client_id,
                 @le_id,
-                NEW.unit_id,
+                NEW.unit_org_id,
                 'organisation_id',
                 NEW.organisation_id,
                 'tbl_units_organizations');

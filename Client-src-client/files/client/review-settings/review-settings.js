@@ -496,9 +496,13 @@ loadCompliances = function(){
 displayPopup = function(unit_ids){
     $('.model-unit-list').find('p').remove();
     $.each(unit_ids, function(k, v) {
+        console.log(v);
         var UnitsRow = $('#templates p');
         var cloneUnit = UnitsRow.clone();
-        $(".unit-static").text(UNIT_CS_ID[v]);
+        console.log("UNIT_CS_ID[v]==="+UNIT_CS_ID[v].toSource());
+        var units = UNIT_CS_ID[v];
+        console.log(units.u_code+" - "+units.u_name+" - "+units.address);
+        cloneUnit.text(units.u_code+" - "+units.u_name+" - "+units.address);
         $('.model-unit-list').append(cloneUnit);        
     });
     Custombox.open({
@@ -569,6 +573,7 @@ SubmitButton.on("click", function(){
                     statu['statutory_month'] = null;
                     statu['trigger_before_days'] = null;
                     statu['repeats_by'] = null;
+                    console.log(duedate+"---"+split_date[1]);
                     if(duedate != ''){
                         var split_date = duedate.split("-");
                         statu['statutory_date'] = split_date[0];
@@ -579,10 +584,7 @@ SubmitButton.on("click", function(){
                     }
                     statu_dates.push(statu);
                 });
-
                 
-
-
                 // var old_statu = {};       
                 // var old_statu_dates =[];
                 // old_statu['statutory_date'] = null;
