@@ -223,7 +223,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Notification ---------------------------------------------------------------------
     (
         "/notifications",
-        "files/client/notifications/notifications.html",
+        "files/client/statutory-notification/statutory_notification.html",
         None, {}
     ),
     # Reminders ---------------------------------------------------------------------

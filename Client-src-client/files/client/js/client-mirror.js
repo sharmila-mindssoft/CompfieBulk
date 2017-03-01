@@ -657,6 +657,20 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
+
+    /* Statutory Notifications */
+    function getStatutoryNotifications(le_ids, notification_type, start_count, end_count, callback) {
+        callerName = 'client_dashboard';
+        var request = [
+            'GetStatutoryNotifications', {
+                'le_ids': le_ids,
+                'start_count': start_count,
+                'end_count': end_count
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     /* Get Compliance List*/
     function getCurrentComplianceDetail(le_id, current_start_count, callback) {
         callerName = 'client_user';
