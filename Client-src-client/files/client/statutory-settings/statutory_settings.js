@@ -318,8 +318,8 @@ function pageControls() {
                 if (SelectAll.prop('checked')) {
                     var chkid = $(el).val().split(',');
                     ACTIVE_UNITS.push(parseInt(chkid[0]));
-                    C_COUNT = C_COUNT + chkid[2];
-
+                    C_COUNT = C_COUNT + parseInt(chkid[2]);
+                    
                     if(C_COUNT > 5000){
                         displayMessage(message.maximum_compliance_selection_reached_select_all);
                         return false;
@@ -584,7 +584,7 @@ function activateUnit(element) {
                 $(this).prop("checked", true);
                 DOMAIN_ID = parseInt(chkid[1]);
                 ACTIVE_UNITS.push(parseInt(chkid[0]));
-                C_COUNT = C_COUNT + chkid[2];
+                C_COUNT = C_COUNT + parseInt(chkid[2]);
             }else{
                 displayMessage(message.unit_selection_should_be_same_domain);
             }
@@ -797,14 +797,14 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     var sid = $(element).val();
     $('#save' + sid).addClass('fa-square');
 
-    var applicable = $(element).attr("data-applicable");
-
     var combine_ids = $('#combineid' + sid).val().split('#');
 
     var A_STATUS = $('#act' + combine_ids[3]).attr("for");
     var A_REMARK = null;
     
     var C_STATUS = parseInt($(element).attr("for"));
+    var C_A_STATUS = $(element).attr("data-applicable");
+
     if (C_STATUS > 1 && $('#remark' + combine_ids[3]).val() != '') {
         A_REMARK = $('#remark' + combine_ids[3]).val();
     }
