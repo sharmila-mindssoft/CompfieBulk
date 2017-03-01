@@ -6,6 +6,7 @@ var divisionList;
 var categoryList;
 var domainList;
 var unitArray;
+var spArray;
 
 var addScreen = $("#add-screen");
 var viewScreen = $("#list-screen");
@@ -85,6 +86,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
             categoryList = response.um_group_category;
             domainList = response.um_legal_domain;
             unitArray = response.um_legal_units;
+            spArray = response.um_service_providers;
 
             loadUserCategories(t_this._userCategory)
             loadBusinessGroup(businessGroupList);
@@ -132,6 +134,21 @@ txtSeatingUnit.keyup(function(e) {
             unitArray, "u_unt_name", "u_unt_id",
             function(val) {
                 onAutoCompleteSuccess(txtSeatingUnit, hdnSeatingUnit, val);
+            }, condition_fields, condition_values);
+    }
+});
+
+//Service Provider Auto Complete
+txtServiceProvider.keyup(function(e) {
+    var condition_fields = [];
+    var condition_values = [];
+    if (ddlUserCategory.val() != '') {
+        var text_val = $(this).val();
+        commonAutoComplete(
+            e, divServiceProvider, hdnServiceProvider, text_val,
+            spArray, "u_sp_name", "u_sp_id",
+            function(val) {
+                onAutoCompleteSuccess(txtServiceProvider, hdnServiceProvider, val);
             }, condition_fields, condition_values);
     }
 });

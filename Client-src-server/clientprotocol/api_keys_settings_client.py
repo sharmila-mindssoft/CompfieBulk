@@ -605,4 +605,8 @@ api_params = {
     "concurrenced_by":make_text_field(is_optional=True),
     "statutory_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "theme": make_text_field(is_optional=True),
+    "u_sp_id": make_int_field(),  # User Management
+    "u_sp_name": make_text_field(),  # User Management
+    "u_sp_short": make_text_field(),  # User Management
+    "um_service_providers": make_vector_type_field(module="clientcore", klass_name="ClientServiceProviders_UserManagement"),  # User Management
 }
