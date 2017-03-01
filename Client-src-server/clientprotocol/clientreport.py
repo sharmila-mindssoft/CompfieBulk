@@ -4595,7 +4595,7 @@ class LegalEntityWiseReport(object):
         self, country_id, legal_entity_id, domain_id, unit_id, compliance_id,
         unit_name, statutory_mapping, compliance_task, frequency_name,
         due_date, task_status, assignee_name, activity_status, activity_date,
-        documents, completion_date, url, logo_url
+        document_name, completion_date, url, logo_url
     ):
         self.country_id = country_id
         self.legal_entity_id = legal_entity_id
@@ -4611,7 +4611,7 @@ class LegalEntityWiseReport(object):
         self.assignee_name = assignee_name
         self.activity_status = activity_status
         self.activity_date = activity_date
-        self.documents = documents
+        self.document_name = document_name
         self.completion_date = completion_date
         self.url = url
         self.logo_url = logo_url
@@ -4622,7 +4622,7 @@ class LegalEntityWiseReport(object):
             "country_id", "legal_entity_id", "domain_id", "unit_id", "compliance_id",
             "unit_name", "statutory_mapping", "compliance_task", "frequency_name",
             "due_date", "task_status", "assignee_name", "activity_status", "activity_date",
-            "documents", "completion_date", "url", "logo_url"
+            "document_name", "completion_date", "url", "logo_url"
         ])
         country_id = data.get("country_id")
         legal_entity_id = data.get("legal_entity_id")
@@ -4638,7 +4638,7 @@ class LegalEntityWiseReport(object):
         assignee_name = data.get("assignee_name")
         activity_status = data.get("activity_status")
         activity_date = data.get("activity_date")
-        documents = data.get("documents")
+        document_name = data.get("document_name")
         completion_date = data.get("completion_date")
         url = data.get("url")
         logo_url = data.get("logo_url")
@@ -4646,7 +4646,7 @@ class LegalEntityWiseReport(object):
             country_id, legal_entity_id, domain_id, unit_id, compliance_id,
             unit_name, statutory_mapping, compliance_task, frequency_name,
             due_date, task_status, assignee_name, activity_status, activity_date,
-            documents, completion_date, url, logo_url
+            document_name, completion_date, url, logo_url
         )
 
     def to_structure(self):
@@ -4665,7 +4665,7 @@ class LegalEntityWiseReport(object):
             "assignee_name": self.assignee_name,
             "activity_status": self.activity_status,
             "activity_date": self.activity_date,
-            "documents": self.documents,
+            "document_name": self.document_name,
             "completion_date": self.completion_date,
             "url": self.url,
             "logo_url": self.logo_url
@@ -4681,7 +4681,7 @@ class UnitWiseReport(object):
         self, country_id, legal_entity_id, domain_id, unit_id, compliance_id,
         unit_name, statutory_mapping, compliance_task, frequency_name,
         due_date, task_status, assignee_name, activity_status, activity_date,
-        documents, completion_date, url, domain_name, logo_url
+        document_name, completion_date, url, domain_name, logo_url
     ):
         self.country_id = country_id
         self.legal_entity_id = legal_entity_id
@@ -4697,7 +4697,7 @@ class UnitWiseReport(object):
         self.assignee_name = assignee_name
         self.activity_status = activity_status
         self.activity_date = activity_date
-        self.documents = documents
+        self.document_name = document_name
         self.completion_date = completion_date
         self.url = url
         self.domain_name = domain_name
@@ -4709,7 +4709,7 @@ class UnitWiseReport(object):
             "country_id", "legal_entity_id", "domain_id", "unit_id", "compliance_id",
             "unit_name", "statutory_mapping", "compliance_task", "frequency_name",
             "due_date", "task_status", "assignee_name", "activity_status", "activity_date",
-            "documents", "completion_date", "url", "domain_name", "logo_url"
+            "document_name", "completion_date", "url", "domain_name", "logo_url"
         ])
         country_id = data.get("country_id")
         legal_entity_id = data.get("legal_entity_id")
@@ -4725,7 +4725,7 @@ class UnitWiseReport(object):
         assignee_name = data.get("assignee_name")
         activity_status = data.get("activity_status")
         activity_date = data.get("activity_date")
-        documents = data.get("documents")
+        document_name = data.get("document_name")
         completion_date = data.get("completion_date")
         url = data.get("url")
         domain_name = data.get("domain_name")
@@ -4734,7 +4734,7 @@ class UnitWiseReport(object):
             country_id, legal_entity_id, domain_id, unit_id, compliance_id,
             unit_name, statutory_mapping, compliance_task, frequency_name,
             due_date, task_status, assignee_name, activity_status, activity_date,
-            documents, completion_date, url, domain_name, logo_url
+            document_name, completion_date, url, domain_name, logo_url
         )
 
     def to_structure(self):
@@ -4753,7 +4753,7 @@ class UnitWiseReport(object):
             "assignee_name": self.assignee_name,
             "activity_status": self.activity_status,
             "activity_date": self.activity_date,
-            "documents": self.documents,
+            "document_name": self.document_name,
             "completion_date": self.completion_date,
             "url": self.url,
             "domain_name": self.domain_name,
@@ -5379,7 +5379,7 @@ class UserName(object):
 class RiskReport(object):
     def __init__(
         self, statutory_mapping, unit_name, compliance_task, frequency_name, penal_consequences,
-        admin_incharge, assignee_name, task_status, documents, url, logo_url, start_date, due_date,
+        admin_incharge, assignee_name, task_status, document_name, url, logo_url, start_date, due_date,
         concurrer_name, approver_name, assigned_on, concurred_on, approved_on, comp_remarks
     ):
         self.statutory_mapping = statutory_mapping
@@ -5390,7 +5390,7 @@ class RiskReport(object):
         self.admin_incharge = admin_incharge
         self.assignee_name = assignee_name
         self.task_status = task_status
-        self.documents = documents
+        self.document_name = document_name
         self.url = url
         self.logo_url = logo_url
         self.start_date = start_date
@@ -5406,7 +5406,7 @@ class RiskReport(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "statutory_mapping", "unit_name", "compliance_task", "frequency_name", "penal_consequences",
-            "admin_incharge", "assignee_name", "task_status", "documents", "url", "logo_url", "start_date",
+            "admin_incharge", "assignee_name", "task_status", "document_name", "url", "logo_url", "start_date",
             "due_date", "concurrer_name", "approver_name", "assigned_on", "concurred_on", "approved_on",
             "comp_remarks"
         ])
@@ -5418,7 +5418,7 @@ class RiskReport(object):
         admin_incharge = data.get("admin_incharge")
         assignee_name = data.get("assignee_name")
         task_status = data.get("task_status")
-        documents = data.get("documents")
+        document_name = data.get("document_name")
         url = data.get("url")
         logo_url = data.get("logo_url")
         start_date = data.get("start_date")
@@ -5431,7 +5431,7 @@ class RiskReport(object):
         comp_remarks = data.get("comp_remarks")
         return RiskReport(
             statutory_mapping, unit_name, compliance_task, frequency_name, penal_consequences,
-            admin_incharge, assignee_name, task_status, documents, url, logo_url, start_date,
+            admin_incharge, assignee_name, task_status, document_name, url, logo_url, start_date,
             due_date, concurrer_name, approver_name, assigned_on, concurred_on, approved_on,
             comp_remarks
         )
@@ -5446,7 +5446,7 @@ class RiskReport(object):
             "admin_incharge": self.admin_incharge,
             "assignee_name": self.assignee_name,
             "task_status": self.task_status,
-            "documents": self.documents,
+            "document_name": self.document_name,
             "url": self.url,
             "logo_url": self.logo_url,
             "start_date": self.start_date,
