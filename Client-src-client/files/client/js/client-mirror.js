@@ -658,13 +658,25 @@ function initClientMirror() {
     }
 
     /* Statutory Notifications */
-    function getStatutoryNotifications(le_ids, notification_type, start_count, end_count, callback) {
+    function getStatutoryNotifications(le_ids, start_count, end_count, callback) {
         callerName = 'client_dashboard';
         var request = [
             'GetStatutoryNotifications', {
                 'le_ids': le_ids,
                 'start_count': start_count,
                 'end_count': end_count
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function updateStatutoryNotificationsStatus(le_ids, notification_id, has_read, callback) {
+        callerName = 'client_dashboard';
+        var request = [
+            'UpdateStatutoryNotificationsStatus', {
+                'le_ids': le_ids,
+                'notification_id': notification_id,
+                'has_read': has_read
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -2640,6 +2652,8 @@ function initClientMirror() {
         updateSettings: updateSettings,
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
+        getStatutoryNotifications: getStatutoryNotifications,
+        updateStatutoryNotificationsStatus: updateStatutoryNotificationsStatus,
         getCurrentComplianceDetail: getCurrentComplianceDetail,
         getUpcomingComplianceDetail: getUpcomingComplianceDetail,
         getReassignedHistoryReportFilters: getReassignedHistoryReportFilters,

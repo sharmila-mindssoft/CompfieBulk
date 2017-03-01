@@ -181,9 +181,9 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.notification-menu').on('click', function(event) {
                 $('.notification-items-ul').empty();
-                client_mirror.getNotifications(LEIDS, 2, 0, 2, function(error, response) {
+                client_mirror.getStatutoryNotifications(LEIDS, 0, 2, function(error, response) {
                     if (error == null) {
-                        data = response.notifications;
+                        data = response.statutory;
                         $.each(data, function(k, v) {
                             var msgObject = $('#nav-bar-templates .notifications-list li').clone();
                             $('.statu-heading', msgObject).text(limits(v.notification_text, 22));

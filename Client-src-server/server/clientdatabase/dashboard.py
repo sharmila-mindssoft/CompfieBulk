@@ -41,6 +41,8 @@ __all__ = [
     "get_messages",
     "get_statutory",
     "update_notification_status",
+    "update_statutory_notification_status",
+    "statutory_notification_detail",
     "notification_detail",
     "get_user_company_details",
     "get_assigneewise_compliances_list",
@@ -1845,31 +1847,6 @@ def get_messages(
         notifications.append(notification)
     return notifications
 
-def get_statutory(
-    db, start_count, to_count, session_user, session_category
-):
-    notification_type = 4
-    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
-            "from tbl_notifications_log as nl " + \
-            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
-            "Where nlu.user_id = %s " + \
-            "AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
-            "order by nl.notification_id desc) as t1, " + \
-            "(SELECT @rownum := 0) r) as t " + \
-            "where t.rank >= %s and t.rank <= %s"
-    rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
-    #print rows
-    notifications = []
-    for r in rows :
-        legal_entity_id = int(r["legal_entity_id"])
-        notification_id = int(r["notification_id"])
-        notification_text = r["notification_text"]
-        created_on = datetime_to_string(r["created_on"])
-        notification = dashboard.StatutorySuccess(legal_entity_id, notification_id, notification_text, created_on)
-        notifications.append(notification)
-    return notifications
-
-
 def update_notification_status(
     db, notification_id, session_user
 ):
@@ -1912,6 +1889,84 @@ def notification_detail(
             assignee_name, concurrer_name, approver_name)
         notifications.append(notification)
     return notifications
+
+
+def get_statutory(
+    db, start_count, to_count, session_user, session_category
+):
+    query = "SELECT s.notification_id, s.compliance_id, s.notification_text, s.created_on, " + \
+            "su.user_id, CONCAT(ifnull(u.employee_code,''), ' - ', u.employee_name) as user_name " + \
+            "from tbl_statutory_notifications s " + \
+            "INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id AND su.user_id = %s AND su.is_read = 0 " + \
+            "INNER JOIN tbl_users u ON u.user_id = su.user_id " + \
+            "order by s.created_on DESC Limit %s, %s"
+    rows = db.select_all(query, [session_user, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        notification_id = int(r["notification_id"])
+        compliance_id = int(r["compliance_id"])
+        notification_text = r["notification_text"]
+        user_name = r["user_name"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.StatutorySuccess(notification_id, compliance_id, notification_text, user_name, created_on)
+        notifications.append(notification)
+    return notifications
+
+def update_statutory_notification_status(db, notification_id, session_user):
+    columns = ["is_read"]
+    values = [1]
+    condition = " notification_id = %s " % notification_id + " AND user_id = %s " % session_user
+    # db.update(
+    #     tblStatutoryNotificationsUsers, columns, values, condition
+    # )
+
+def statutory_notification_detail(
+    db, notification_id, session_user
+):
+    query = "SELECT t1.compliance_id, t1.statutory_mapping_id, t1.country_id, " + \
+            "t1.domain_id, t1.statutory_provision, t1.compliance_task, t1.document_name, " + \
+            "t1.compliance_description, t1.penal_consequences, t1.reference_link, t1.frequency_id, " + \
+            "t1.statutory_dates, t1.repeats_type_id, t1.repeats_every, t1.duration_type_id, " + \
+            "t1.duration, t1.is_active, " + \
+            "(select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name, " + \
+            "(select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) as repeat_type, " + \
+            "(select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration_type " + \
+            "FROM tbl_compliances as t1  " + \
+            "inner join tbl_statutory_notifications as t2 on t2.compliance_id = t1.compliance_id " + \
+            "where t2.notification_id = %s "
+    rows = db.select_all(query, [notification_id])
+
+    if rows["document_name"] is None or rows["document_name"] == '':
+        c_name = rows["compliance_task"]
+    else :
+        c_name = rows["document_name"] + " - " + rows["compliance_task"]
+
+    date_list = []
+
+    statutory_dates = rows["statutory_dates"]
+
+    if statutory_dates is not None and statutory_dates != "":
+        statutory_dates = json.loads(statutory_dates)
+
+        for date in statutory_dates:
+            s_date = core.StatutoryDate(
+                date["statutory_date"],
+                date["statutory_month"],
+                date["trigger_before_days"],
+                date.get("repeat_by")
+            )
+            date_list.append(s_date)
+    summary, dates = make_summary(date_list, rows["frequency_id"], rows)
+    if summary != "" and dates is not None and dates != "" :
+        summary += ' on (%s)' % (dates)
+
+    notification = dashboard.StatutoryNotificationDetailsSuccess(
+        rows["compliance_id"], rows["statutory_provision"], c_name, rows["compliance_description"], 
+        rows["penal_consequences"], rows["freq_name"], summary, rows["reference_link"])
+    notifications.append(notification)
+    return notifications
+
 
 
 def get_user_company_details(db, user_id=None):
