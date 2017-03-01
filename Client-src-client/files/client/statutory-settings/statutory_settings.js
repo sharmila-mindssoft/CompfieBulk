@@ -803,8 +803,20 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     var A_REMARK = null;
     
     var C_STATUS = parseInt($(element).attr("for"));
-    var C_A_STATUS = $(element).attr("data-applicable");
 
+    var C_A_STATUS = 1;
+    if($(element).attr("data-applicable") == 'false') C_A_STATUS = 2;
+
+    
+    if(C_STATUS != C_A_STATUS){
+        $('#c-remark-add-' + sid).show();
+        $('#c-remark-view-' + sid).hide();
+    }else{
+        $('#c-remark-add-' + sid).hide();
+        $('#c-remark-view-' + sid).hide();
+    }
+
+    /*alert( C_A_STATUS + '==' + c_bool(C_STATUS))*/
     if (C_STATUS > 1 && $('#remark' + combine_ids[3]).val() != '') {
         A_REMARK = $('#remark' + combine_ids[3]).val();
     }
@@ -1101,13 +1113,13 @@ function loadSingleUnitCompliances() {
                 $('.applicable', clone2).html('<img src="images/deletebold.png">');
             }
 
-            $('.opted', clone).attr("data-applicable", value1.comp_app_status);
+            $('.opted', clone2).attr("data-applicable", value1.comp_app_status);
             $('.opted', clone2).attr('id', 'comp' + statutoriesCount);
             $('.opted', clone2).val(statutoriesCount);
             $('.opted', clone2).addClass('comp' + count);
 
-            $('.c-remark-view', clone).attr('id', 'c-remark-view-' + statutoriesCount);
-            $('.c-remark-add', clone).attr('id', 'c-remark-add-' + statutoriesCount);
+            $('.c-remark-view', clone2).attr('id', 'c-remark-view-' + statutoriesCount);
+            $('.c-remark-add', clone2).attr('id', 'c-remark-add-' + statutoriesCount);
             if(value1.comp_remarks != null){
                 $('.c-remark-view i', clone2).attr('title', value1.comp_remarks);
                 $('.c-remark-view span', clone2).text(part_compliance(value1.comp_remarks));
