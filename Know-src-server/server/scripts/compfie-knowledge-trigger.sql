@@ -194,7 +194,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
  FOR EACH ROW BEGIN
    SET @action = 0;
 
-    IF OLD.is_approved <> NEW.is_approved and NEW.is_approved = 1 THEN
+    IF OLD.is_approved <> NEW.is_approved and NEW.is_approved = 1 and NEW.is_created = 1 THEN
         INSERT INTO tbl_audit_log(action,
                                  client_id,
                                  legal_entity_id,
