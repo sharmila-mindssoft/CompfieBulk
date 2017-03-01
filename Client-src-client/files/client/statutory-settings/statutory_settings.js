@@ -797,6 +797,8 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     var sid = $(element).val();
     $('#save' + sid).addClass('fa-square');
 
+    var applicable = $(element).attr("data-applicable");
+
     var combine_ids = $('#combineid' + sid).val().split('#');
 
     var A_STATUS = $('#act' + combine_ids[3]).attr("for");
@@ -1092,12 +1094,14 @@ function loadSingleUnitCompliances() {
             $('.compliancefrequency', clone2).text('Frequency');
             $('.compliancedescription', clone2).text(value.descp);
 
+
             if(value1.comp_app_status){
                 $('.applicable', clone2).html('<img src="images/tick1bold.png">');
             }else{
                 $('.applicable', clone2).html('<img src="images/deletebold.png">');
             }
 
+            $('.opted', clone).attr("data-applicable", value1.comp_app_status);
             $('.opted', clone2).attr('id', 'comp' + statutoriesCount);
             $('.opted', clone2).val(statutoriesCount);
             $('.opted', clone2).addClass('comp' + count);
