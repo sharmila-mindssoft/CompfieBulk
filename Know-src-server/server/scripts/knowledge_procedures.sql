@@ -8967,22 +8967,22 @@ DROP PROCEDURE IF EXISTS `sp_get_created_server_details_byid`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_created_server_details_byid`(
-in _m_id int(11), _d_s_id int(11), _le_d_s_id int(11), _f_s_id int(11))
+in _m_id int(11), _d_s_id int(11), _le_d_s_id int(11), _f_s_id int(11), _le_id int(11))
 BEGIN
     SELECT database_server_id, database_server_name,
         database_ip, database_port,
     (select database_username from tbl_client_database_info where
-    db_owner_id = _d_s_id) as database_username,
+    db_owner_id = _le_id) as database_username,
     (select database_password from tbl_client_database_info where
-    db_owner_id = _d_s_id) as database_password
+    db_owner_id = _le_id) as database_password
     FROM tbl_database_server WHERE database_server_id = _d_s_id;
 
     SELECT database_server_id, database_server_name,
         database_ip, database_port,
     (select database_username from tbl_client_database_info where
-    db_owner_id = _le_d_s_id) as database_username,
+    db_owner_id = _le_id) as database_username,
     (select database_password from tbl_client_database_info where
-    db_owner_id = _le_d_s_id) as database_password
+    db_owner_id = _le_id) as database_password
     FROM tbl_database_server WHERE database_server_id = _le_d_s_id;
 
     SELECT machine_id, machine_name, ip, port
