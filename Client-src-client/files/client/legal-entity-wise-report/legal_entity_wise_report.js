@@ -626,7 +626,7 @@ LegalEntityWiseReport.prototype.showReportValues = function() {
         is_null = false;
         $('.client-logo').attr("src", v.logo_url);
 
-        if (unitname != v.u_name) {
+        if (unitname != v.unit_name) {
             var cloneone = $('#template #report-table .row-one').clone();
             $('.unit-name', cloneone).text(v.unit_name);
             reportTableTbody.append(cloneone);
