@@ -613,9 +613,9 @@ RiskReport.prototype.showReportValues = function() {
 	        });
         }
 
-        if (v.documents != null) {
+        if (v.document_name != null) {
             //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-            $('.uploaded-document', clonethree).html(v.documents);
+            $('.uploaded-document', clonethree).html(v.document_name);
             $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
             $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
 
