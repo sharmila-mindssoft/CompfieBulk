@@ -3,7 +3,7 @@ from protocol import consoleadmin
 from forms import *
 from tables import *
 from server.common import get_date_time
-from server.database.validateEnvironment import ServerValidation
+from server.database.validateEnvironment import ServerValidation, UpdateServerValidation
 from server.database.createclientdatabase import ClientGroupDBCreate, ClientLEDBCreate
 
 __all__ = [
@@ -360,20 +360,37 @@ def return_File_servers_List(data):
 # return type : Raises process error if save fails otherwise returns None
 ###############################################################################
 def validated_env_before_save(db, request):
+    client_db_id = request.client_database_id
     db_server_id = request.db_server_id
+    le_db_server_id = request.le_db_server_id
     machine_id = request.machine_id
     file_server_id = request.file_server_id
-    vobj = ServerValidation(db, machine_id, db_server_id, file_server_id)
-    is_valid = vobj.perform_validation()
-    print is_valid
-    if is_valid[0] is not True :
-        return is_valid[0]
-    elif is_valid[1] is not True :
-        return is_valid[1]
-    elif is_valid[2] is not True :
-        return is_valid[2]
-    else :
-        return True
+    legal_entity_id = request.legal_entity_id
+    if client_db_id is None:
+        vobj = ServerValidation(db, machine_id, db_server_id, file_server_id)
+        is_valid = vobj.perform_validation()
+        print is_valid
+        if is_valid[0] is not True :
+            return is_valid[0]
+        elif is_valid[1] is not True :
+            return is_valid[1]
+        elif is_valid[2] is not True :
+            return is_valid[2]
+        else :
+            return True
+    else:
+        vobj = UpdateServerValidation(db, client_db_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id)
+        is_valid = vobj.perform_update_validation()
+        if is_valid[0] is not True :
+            return is_valid[0]
+        elif is_valid[1] is not True :
+            return is_valid[1]
+        elif is_valid[2] is not True :
+            return is_valid[2]
+        elif is_valid[3] is not True :
+            return is_valid[3]
+        else :
+            return True
 
 def create_db_process(db, client_database_id, client_id, legal_entity_id, db_server_id, le_db_server_id):
 
@@ -720,8 +737,9 @@ def return_file_servers(data):
     file_server_list = []
     for datum in data:
         no_of_clients = 0
-        if(datum["legal_entity_ids"] is not None and datum["legal_entity_ids"].find(",") > 0):
+        if(datum["legal_entity_ids"] is not None):
             no_of_clients = len(datum["legal_entity_ids"].split(","))
+
         file_server_list.append(consoleadmin.FileServerList(
             datum["file_server_id"], datum["file_server_name"],
             datum["ip"], datum["port"], no_of_clients

@@ -63,6 +63,7 @@ __all__ = [
     "userManagement_GetGroupCategory",
     "userManagement_GetLegalEntity_Domain",
     "userManagement_GetLegalEntity_Units",
+    "userManagement_GetServiceProviders",
     "save_user_legal_entities",
     "get_service_providers_list",
     "get_service_providers_user_list",
@@ -401,6 +402,14 @@ def userManagement_GetLegalEntity_Units(db):
     q = "SELECT unit_id, business_group_id, legal_entity_id, division_id, " + \
         " category_id, unit_code, unit_name, address, postal_code " + \
         " From tbl_units where is_closed = '0' "
+    row = db.select_all(q, None)
+    return row
+##############################################################################
+# User Management Add - Service Providers
+##############################################################################
+def userManagement_GetServiceProviders(db):
+    q = "SELECT service_provider_id, service_provider_name, short_name " + \
+        " From tbl_service_providers where is_active = '1' and is_blocked = '0' "
     row = db.select_all(q, None)
     return row
 ##############################################################################

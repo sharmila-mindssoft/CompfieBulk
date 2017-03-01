@@ -459,8 +459,39 @@ class AutoStart(Database):
             self.execute(q_delete, [year])
             self.execute(q, [year, year, year])
 
-    def update_calendar_view(self):
-        year = getCurrentYear()
+    def update_duedate_in_calendar_view(self):
+        q = "insert into tbl_calendar_view(legal_entity_id, user_id, year, month, date, due_date_count) " + \
+            "select t.legal_entity_id, t.completed_by, t.du_year, t.du_month, t.du_date, t.du_count " + \
+            " from ( " + \
+            " select ch.legal_entity_id, ch.unit_id, ch.completed_by, day(ch.due_date) as du_date,  " + \
+            " month(ch.due_date) as du_month, year(ch.due_date) as du_year,  " + \
+            " count(compliance_history_id) du_count " + \
+            " from tbl_compliance_history as ch " + \
+            " where current_status != 3 " + \
+            " and ch.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
+            " group by ch.completed_by, day(due_date), month(ch.due_date), year(ch.due_date) " + \
+            " order by year(ch.due_date), month(ch.due_date), day(due_date) " + \
+            " ) as t " + \
+            " on duplicate key update due_date_count = t.du_count"
+        self.execute(q)
+
+    def update_upcoming_in_calendar_view(self):
+        q = "insert into tbl_calendar_view (legal_entity_id, user_id, year, month, date, upcoming_count) " + \
+            " select t.legal_entity_id, t.assignee, t.up_year, t.up_month, t.up_date, t.up_count " + \
+            " from ( " + \
+            " select ac.legal_entity_id, ac.assignee, " + \
+            " day(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as up_date, " + \
+            " month(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as up_month, " + \
+            " year(DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY)) as up_year, " + \
+            " count(ac.compliance_id) as up_count " + \
+            " from tbl_assign_compliances as ac " + \
+            " inner join tbl_compliances as com on ac.compliance_id = com.compliance_id and com.frequency_id != 5 " + \
+            " where DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) > curdate() " + \
+            " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
+            " group by ac.assignee, DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) " + \
+            " ) as t " + \
+            " on duplicate key update upcoming_count = t.up_count; "
+        self.execute(q)
 
     def start_process(self):
         if self._connection is None :
@@ -473,6 +504,8 @@ class AutoStart(Database):
             # self.check_service_provider_contract_period()
             self.update_unit_wise_task_status()
             self.update_user_wise_task_status()
+            self.update_duedate_in_calendar_view()
+            self.update_upcoming_in_calendar_view()
             self.commit()
 
         except Exception, e :

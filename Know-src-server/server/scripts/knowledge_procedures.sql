@@ -3573,7 +3573,10 @@ BEGIN
         right join tbl_units as tu
         on tu.unit_id = tuu.unit_id and tu.legal_entity_id = LegalEntityID and
         tu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
-        and user_category_id=8) and tu.is_approved=1
+        and user_category_id=8 and client_id=clientid and domain_id=domainid and
+        legal_entity_id = LegalEntityID) and tu.is_approved=1
+        INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id and
+        tui.domain_id=tuu.domain_id
         where
         tuu.user_id = userid and
         tuu.client_id=clientid and tuu.domain_id=domainid
@@ -3591,7 +3594,9 @@ BEGIN
         from tbl_user_units as tuu
         right join tbl_units_organizations as t1
         on tuu.unit_id = t1.unit_id and
-        tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid and user_category_id=8)
+        tuu.unit_id not in (select unit_id from tbl_user_units where
+        user_id!=userid and user_category_id=8 and client_id=clientid and
+        domain_id=domainid and legal_entity_id = LegalEntityID)
 
         where
         tuu.user_id = userid and
@@ -8915,3 +8920,76 @@ END //
 
 DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_export`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_db_environment_report_export`(
+in cl_id varchar(10), le_id varchar(10))
+BEGIN
+    select t1.client_id, (select group_name from tbl_client_groups where
+    client_id = t1.client_id)as group_name, t1.legal_entity_id,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id =
+    t1.legal_entity_id) as legal_entity_name, t1.machine_id,
+    (select machine_name from tbl_application_server where machine_id =
+    t1.machine_id) as machine_name, (select concat(ip,":",port) from
+    tbl_application_server where machine_id = t1.machine_id) as machine_ip_port,
+    t1.database_server_id, t1.client_database_server_id,
+    (select database_server_name from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_server_name,
+    (select concat(database_ip,":",database_port) from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_s_ip_port,
+    (select database_server_name from tbl_database_server where database_server_id =
+    client_database_server_id) as client_db_server_name,
+    (select concat(database_ip,":",database_port) from tbl_database_server where
+    database_server_id = t1.client_database_server_id) as client_db_s_ip_port,
+    t1.file_server_id, (select file_server_name from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_server_name,
+    (select concat(ip,":",port) from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_s_ip_port
+    from
+    tbl_client_database as t1 where coalesce(t1.client_id,'') like cl_id and
+    coalesce(t1.legal_entity_id,'') like le_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_created_server_details_byid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_created_server_details_byid`(
+in _m_id int(11), _d_s_id int(11), _le_d_s_id int(11), _f_s_id int(11), _le_id int(11))
+BEGIN
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port,
+    (select database_username from tbl_client_database_info where
+    db_owner_id = _le_id) as database_username,
+    (select database_password from tbl_client_database_info where
+    db_owner_id = _le_id) as database_password
+    FROM tbl_database_server WHERE database_server_id = _d_s_id;
+
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port,
+    (select database_username from tbl_client_database_info where
+    db_owner_id = _le_id) as database_username,
+    (select database_password from tbl_client_database_info where
+    db_owner_id = _le_id) as database_password
+    FROM tbl_database_server WHERE database_server_id = _le_d_s_id;
+
+    SELECT machine_id, machine_name, ip, port
+    FROM tbl_application_server where machine_id = _m_id;
+
+    SELECT file_server_id, file_server_name, ip, port
+    FROM tbl_file_server WHERE file_server_id = _f_s_id;
+END //
+
+DELIMITER ;

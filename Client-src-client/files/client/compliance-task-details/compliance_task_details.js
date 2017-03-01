@@ -1,3 +1,14 @@
+var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
+
+var LegalEntityNameLabel = $(".legal-entity-name");
+var LegalEntityNameAC = $(".legal-entity-name-ac");
+
+var LegalEntityName = $("#legal_entity_name");
+var LegalEntityId = $("#legal_entity_id");
+var ACLegalEntity = $("#ac-entity");
+
+var ShowButton = $(".btn-show");
+
 var currentCompliances;
 var file_list = [];
 var currentDate;
@@ -46,7 +57,7 @@ function initialize() {
         displayMessage(c);
         hideLoader()
     }
-    client_mirror.getCurrentComplianceDetail(2, c_endCount, function(d, c) {
+    client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), c_endCount, function(d, c) {
         if (d == null) {
             b(c)
         } else {
@@ -182,7 +193,7 @@ function showSideBar(c, a) {
             $(".sideview-compliance-task .ct", e).html(a[g].compliance_name);
             // $(".sideview-compliance-task abbr", e).attr("title", a[g].compliance_description);
             $(".sideview-compliance-frequency", e).html(a[g].compliance_task_frequency);
-            // $(".sideview-startdate", e).val(a[g].start_date);
+            $(".sideview-startdate", e).val(a[g].start_date);
             $(".sideview-completion-date-td", e).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date' readonly='readonly'>");
             $(".sideview-compliance-status", e).html(h);
             if (d != null) {
@@ -236,9 +247,9 @@ function showSideBar(c, a) {
                 var r;
                 n = a[g].compliance_history_id;
 
-                function u(x) {
-                    return new Date(x.replace(/^(\d+)\W+(\w+)\W+/, "$2 $1 "))
-                }
+                // function u(x) {
+                //     return new Date(x.replace(/^(\d+)\W+(\w+)\W+/, "$2 $1 "))
+                // }
                 v = file_list;
                 if (v.length == 0) {
                     v = null
@@ -285,10 +296,10 @@ function showSideBar(c, a) {
                         return
                     }
                 }
-                if (u(r) > u(o)) {
-                    displayMessage(message.complietion_gt_start);
-                    return
-                }
+                // if (u(r) > u(o)) {
+                //     displayMessage(message.complietion_gt_start);
+                //     return
+                // }
                 if (q != null) {
                     if (u(r) > u(q)) {
                         displayMessage(message.validity_gt_start);
@@ -296,26 +307,26 @@ function showSideBar(c, a) {
                     }
                 }
                 if (w != null) {
-                    if (u(r) > u(w)) {
-                        displayMessage(message.duedate_gt_start);
-                        return
-                    }
+                    // if (u(r) > u(w)) {
+                    //     displayMessage(message.duedate_gt_start);
+                    //     return
+                    // }
                 }
-                if (u(o) > u(currentDate)) {
-                    displayMessage(message.completion_lt_current);
-                    return
-                }
+                // if (u(o) > u(currentDate)) {
+                //     displayMessage(message.completion_lt_current);
+                //     return
+                // }
                 if (currentDate != null && w != null) {
-                    if (u(currentDate) > u(w)) {
-                        displayMessage(message.nextduedate_gt_current);
-                        return
-                    }
+                    // if (u(currentDate) > u(w)) {
+                    //     displayMessage(message.nextduedate_gt_current);
+                    //     return
+                    // }
                 }
                 if (q != null && w != null) {
-                    if (u(q) < u(w)) {
-                        displayMessage(message.validity_gt_nextduedate);
-                        return
-                    }
+                    // if (u(q) < u(w)) {
+                    //     displayMessage(message.validity_gt_nextduedate);
+                    //     return
+                    // }
                 }
 
                 function t(x) {
@@ -345,17 +356,30 @@ function showSideBar(c, a) {
                     $(".upload-progress-count").html("");
                     $(".upload-progress-count").show()
                 }
-                client_mirror.updateComplianceDetail(n, v, p, o, q, w, remarks, function(y, x) {
-                    if (y == null) {
-                        $(".upload-progress-count").hide();
-                        $(".upload-progress-count").html("");
-                        t(x)
-                    } else {
-                        $(".upload-progress-count").hide();
-                        $(".upload-progress-count").html("");
-                        k(y)
+                var le_id = 2;
+                client_mirror.updateComplianceDetail(le_id, n, v, p, o, q, w, remarks,
+                    function(error, response) {
+                        if (error == null) {
+                            // onSuccess(response);
+                        } else {
+                            // onFailure(error);
+                        }
                     }
-                })
+                );
+
+                // client_mirror.updateComplianceDetail(compliance_history_id, documents,
+                //     completion_date, validity_date, next_due_date, remarks,
+
+                //     function (error, response){
+                //         if(error == null){
+                //             onSuccess(response);
+                //         }
+                //         else{
+                //             onFailure(error);
+                //         }
+                //     }
+                // );
+
             });
             $(".half-width-task-details").append(e);
             $(".datepick").datepicker({
@@ -411,9 +435,58 @@ function remove_temp_file(b, a) {
     }
     $("#upload_file").val("")
 }
-$(function() {
-    initialize()
+
+ShowButton.click(function() {
+    if (LegalEntityId.val().trim().length <= 0) {
+        displayMessage(message.legalentity_required);
+        return false;
+    } else {
+        initialize();
+    }
 });
+
+function onAutoCompleteSuccess(value_element, id_element, val) {
+    value_element.val(val[1]);
+    id_element.val(val[0]);
+}
+
+LegalEntityName.keyup(function(e) {
+    var text_val = $(this).val();
+    commonAutoComplete(
+        e, ACLegalEntity, LegalEntityId, text_val,
+        LEGAL_ENTITIES, "le_name", "le_id",
+        function(val) {
+            onAutoCompleteSuccess(LegalEntityName, LegalEntityId, val);
+        });
+});
+
+function loadEntityDetails() {
+    if (LEGAL_ENTITIES.length > 1) {
+        LegalEntityNameLabel.hide();
+        LegalEntityNameAC.show();
+
+        // var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
+        // var noclone = norecordtableRow.clone();
+        // $('.no_records', noclone).text('No Compliance Available');
+        // $('.tbody-compliance-approval-list').append(noclone);
+        // $('#pagination').hide();
+        // $('.compliance_count').text('');
+
+    } else {
+        var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
+        var LE_ID = LEGAL_ENTITIES[0]["le_id"];
+        LegalEntityNameLabel.show();
+        LegalEntityNameAC.hide();
+        LegalEntityNameLabel.text(LE_NAME);
+        LegalEntityId.val(LE_ID);
+        ShowButton.trigger("click");
+    }
+}
+
+$(function() {
+    loadEntityDetails();
+});
+
 $(document).find(".js-filtertable").each(function() {
     $(this).filtertable().addFilter(".js-filter")
 });

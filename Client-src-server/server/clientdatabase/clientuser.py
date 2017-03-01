@@ -408,6 +408,8 @@ def update_compliances(
         " INNER JOIN tbl_compliances tc " + \
         " ON (tc.compliance_id=tch.compliance_id) " + \
         " WHERE compliance_history_id=%s "
+    print "query>>>", query
+    print "compliance_history_id>>>", compliance_history_id
     param = [compliance_history_id]
     row = db.select_one(query, param)
     columns = [
@@ -420,8 +422,10 @@ def update_compliances(
 
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
         return False
-    document_names = handle_file_upload(
-        db, documents, uploaded_compliances, row["documents"])
+    # document_names = handle_file_upload(
+    #     db, documents, uploaded_compliances, row["documents"])
+    # document_names = []
+    document_names = []
     if type(document_names) is not list:
         return document_names
     if row["frequency_id"] == 4 and row["duration_type_id"] == 2:
@@ -433,63 +437,67 @@ def update_compliances(
         duration_type=row["duration_type_id"]
     )
     history_columns = [
-        "completion_date", "documents", "remarks", "completed_on"
+        "completion_date", "documents", "remarks", "completed_on", "current_status"
     ]
     history_values = [
         completion_date, ",".join(document_names),
-        assignee_remarks, current_time_stamp
+        assignee_remarks, current_time_stamp, "1"
     ]
     if validity_date not in ["", None, "None"]:
         history_columns.append("validity_date")
         history_values.append(validity_date)
     if next_due_date not in ["", None, "None"]:
         history_columns.append("next_due_date")
+        next_due_date = string_to_datetime(next_due_date).date()
         history_values.append(next_due_date)
 
     history_condition = "compliance_history_id = %s " + \
         " and completed_by = %s "
     history_condition_val = [compliance_history_id, session_user]
-    if(
-        row["completed_by"] == row["approved_by"] or
-        is_primary_admin(db, row["completed_by"])
-    ):
-        history_columns.extend(["approve_status", "approved_on"])
-        history_values.extend([1, current_time_stamp])
-        if row["concurred_by"] not in [None, 0, ""]:
-            history_columns.extend(["concurrence_status", "concurred_on"])
-            history_values.extend([1, current_time_stamp])
-        as_columns = []
-        as_values = []
-        if next_due_date is not None:
-            as_columns.append("due_date")
-            as_values.append(next_due_date)
-        if validity_date is not None:
-            as_columns.append("validity_date")
-            as_values.append(validity_date)
-        if frequency_id in (1, "1"):
-            as_columns.append("is_active")
-            as_values.append(0)
+    # if(
+    #     # row["completed_by"] == row["approved_by"] or
+    #     # is_primary_admin(db, row["completed_by"])
+    #     # row["completed_by"] == row["approved_by"]
+    # ):
+        # history_columns.extend(["approve_status", "approved_on"])
+        # history_values.extend([1, current_time_stamp])
+        # if row["concurred_by"] not in [None, 0, ""]:
+        #     history_columns.extend(["concurrence_status", "concurred_on"])
+        #     history_values.extend([1, current_time_stamp])
+    as_columns = []
+    as_values = []
+    if next_due_date is not None:
+        as_columns.append("due_date")
+        as_values.append(next_due_date)
+    if validity_date is not None:
+        as_columns.append("validity_date")
+        as_values.append(validity_date)
+    # if frequency_id in (1, "1"):
+    #     as_columns.append("is_active")
+    #     as_values.append(0)
 
-        as_condition = " unit_id = %s and compliance_id = %s "
-        as_values.extend([unit_id, compliance_id])
-        db.update(
-            tblAssignedCompliances, as_columns, as_values, as_condition
-        )
-        save_compliance_activity(
-            db, row["unit_id"], row["compliance_id"],
-            "Approved", "Complied", assignee_remarks
-        )
-    else:
-        save_compliance_activity(
-            db, row["unit_id"], row["compliance_id"],
-            "Submitted", "Inprogress", assignee_remarks
-        )
-
+    # as_condition = " unit_id = %s and compliance_id = %s "
+    # as_values.extend([unit_id, compliance_id])
+    # db.update(
+    #     tblAssignedCompliances, as_columns, as_values, as_condition
+    # )
+    save_compliance_activity(
+        db, row["unit_id"], row["compliance_id"], compliance_history_id,
+        session_user, current_time_stamp, "Submitted", assignee_remarks
+    )
+    # else:
+    #     save_compliance_activity(
+    #         db, row["unit_id"], row["compliance_id"], compliance_history_id,
+    #         session_user, current_time_stamp, "Submitted", assignee_remarks
+    #     )
+    
     history_values.extend(history_condition_val)
+        
     update_status = db.update(
         tblComplianceHistory, history_columns, history_values,
         history_condition
     )
+    print "update_status>>>>>", update_status
     if(update_status is False):
         return clienttransactions.ComplianceUpdateFailed()
     if row["completed_by"] == row["approved_by"]:

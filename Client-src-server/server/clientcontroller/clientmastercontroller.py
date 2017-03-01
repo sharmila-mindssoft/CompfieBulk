@@ -225,6 +225,7 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
     groupDivision = {}
     legalDomains = {}
     legalUnits = {}
+    serviceProviders = {}
 
     userCategory = process_UserManagement_category(db)
     userGroup = process_UserManagement_UserGroup(db)
@@ -234,6 +235,7 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
     groupCategory = process_UserManagement_GroupCategory(db)
     legalDomains = process_UserManagement_LegalDomains(db)
     legalUnits = process_UserManagement_LegalUnits(db)
+    serviceProviders = process_UserManagement_ServiceProviders(db)
 
     return clientmasters.GetUserManagementPrerequisiteSuccess(
         user_category=userCategory,
@@ -243,7 +245,8 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
         group_division=groupDivision,
         group_category=groupCategory,
         legal_Domains=legalDomains,
-        legal_units=legalUnits
+        legal_units=legalUnits,
+        service_providers=serviceProviders
     )
 
 ########################################################
@@ -406,6 +409,21 @@ def process_UserManagement_LegalUnits(db):
                                                        unit_name, address, postal_code)
         )
     return unitList
+########################################################
+# User Management - Service Providers
+########################################################
+def process_UserManagement_ServiceProviders(db):
+    resultRows = userManagement_GetServiceProviders(db)
+    spList = []
+    for row in resultRows:
+        service_provider_id = row["service_provider_id"]
+        service_provider_name = row["service_provider_name"]
+        short_name = row["short_name"]
+        spList.append(
+            clientcore.ClientServiceProviders_UserManagement(service_provider_id,
+                                                       service_provider_name, short_name)
+        )
+    return spList
 
 ########################################################
 # To get all user groups with details

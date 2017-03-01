@@ -431,9 +431,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
+    function approveCompliance(le_id, compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
         var request = [
             'ApproveCompliance', {
+                'le_id': le_id,
                 'compliance_history_id': compliance_history_id,
                 'approval_status': compliance_approval_status,
                 'remarks': remarks,
@@ -2478,16 +2479,33 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetCalender(callback) {
-        var request = [
-            "GetWidgetCalender", {
+    function getWidgetCalender(callback){
+         var request = [
+            "GetCalendarView", {
                 "le_ids": getLEids()
             }
         ];
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-
+    function getWidgetUserScoreCard(callback){
+         var request = [
+            "GetUserScoreCard", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    function getWidgetDomainScoreCard(callback){
+         var request = [
+            "GetDomainScoreCard", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
     // Widget api call end
 
     /* Risk report - updated*/
@@ -2555,7 +2573,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    
+
 
     return {
         log: log,
@@ -2743,6 +2761,8 @@ function initClientMirror() {
         getWidgetRiskChart: getWidgetRiskChart,
         getWidgetTrendChart: getWidgetTrendChart,
         getWidgetCalender: getWidgetCalender,
+        getWidgetUserScoreCard: getWidgetUserScoreCard,
+        getWidgetDomainScoreCard: getWidgetDomainScoreCard,
         getRiskReportFilters: getRiskReportFilters,
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,

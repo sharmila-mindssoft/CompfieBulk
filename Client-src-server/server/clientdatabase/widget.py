@@ -449,7 +449,7 @@ def frame_domain_scorecard(data):
 def get_calendar_view(db, user_id):
     year = getCurrentYear()
     month = getCurrentMonth()
-    q = "select year, month, date, due_date_count, upcoming_count, inprogress_count, overdue_count " + \
+    q = "select year, month, date, due_date_count, upcoming_count " + \
         " from tbl_calendar_view where user_id = %s and year = %s and month = %s"
 
     rows = db.select_all(q, [user_id, year, month])
@@ -507,10 +507,10 @@ def frame_calendar_view(db, data, user_id):
         duedate = 0 if duedate is None else int(duedate)
         upcoming = d["upcoming_count"]
         upcoming = 0 if upcoming is None else int(upcoming)
-        inprogress = d["inprogress_count"]
-        inprogress = 0 if inprogress is None else int(inprogress)
-        overdue = d["overdue_count"]
-        overdue = 0 if overdue is None else int(overdue)
+        # inprogress = d["inprogress_count"]
+        # inprogress = 0 if inprogress is None else int(inprogress)
+        # overdue = d["overdue_count"]
+        # overdue = 0 if overdue is None else int(overdue)
 
         c["overdue"] += overdue
         c["upcoming"] += upcoming

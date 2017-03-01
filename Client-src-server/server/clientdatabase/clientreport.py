@@ -1125,7 +1125,7 @@ def report_status_report_consolidated(
 
     rows = db.select_all(query, [
             usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, usr_id, f_count, t_count,
-            country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id, 
+            country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id,
             frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, from_date, to_date, status_name, status_name
             ])
     # print rows
@@ -1190,10 +1190,10 @@ def report_status_report_consolidated_total(
             "WHEN (ch.due_date >= ch.approved_on and ch.approve_status < 3) THEN 'In Progress' " + \
             "WHEN (ch.due_date < ch.approved_on and ch.approve_status < 3) THEN 'Not Complied' " + \
             "WHEN (ch.approved_on IS NULL and ch.approve_status IS NULL) THEN 'In Progress' " + \
-            "ELSE 'In Progress' END) = %s,1) " 
+            "ELSE 'In Progress' END) = %s,1) "
 
     rows = db.select_one(query, [
-            country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id, 
+            country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id,
             frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, from_date, to_date, status_name, status_name
             ])
     return int(rows["total_count"])
@@ -3366,11 +3366,12 @@ def process_legal_entity_wise_report(db, request):
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc limit %s, %s;"
+    where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id order by t1.due_date desc limit %s, %s;"
     condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
-    # print "qry"
-    # print query
+    print "qry"
+    print condition_val
+    print query
     result = db.select_all(query, condition_val)
     le_report = []
     for row in result:
@@ -3383,9 +3384,10 @@ def process_legal_entity_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -3572,7 +3574,7 @@ def process_domain_wise_report(db, request):
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc limit %s, %s;"
+    where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id order by t1.due_date desc limit %s, %s;"
     condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
     # print "qry"
@@ -3589,9 +3591,10 @@ def process_domain_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -3779,7 +3782,7 @@ def process_unit_wise_report(db, request):
         where_clause = where_clause + "and t1.compliance_id = %s "
         condition_val.append(compliance_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s order by t1.due_date desc limit %s, %s;"
+    where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s  group by t1.compliance_history_id order by t1.due_date desc limit %s, %s;"
     condition_val.extend([legal_entity_id, request.unit_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
     print "qry"
@@ -3796,9 +3799,10 @@ def process_unit_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -4067,7 +4071,7 @@ def process_service_provider_wise_report(db , request):
         condition_val.append(user_id)
 
     where_clause = where_clause + "and t4.service_provider_id = %s and t1.legal_entity_id = %s " + \
-        "order by t1.due_date desc limit %s, %s;"
+        " group by t1.compliance_history_id order by t1.due_date desc limit %s, %s;"
     condition_val.extend([sp_id, legal_entity_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
     print "qry"
@@ -4084,9 +4088,10 @@ def process_service_provider_wise_report(db , request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -4363,7 +4368,7 @@ def process_user_wise_report(db, request):
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc limit %s, %s;"
+    where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id order by t1.due_date desc limit %s, %s;"
     condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
     print "qry"
@@ -4380,9 +4385,10 @@ def process_user_wise_report(db, request):
             statutory_mapping = str(statutory_mapping)[3:-2]
 
         if row["geo_name"].find(">>") >= 0:
-            state = row["geo_name"].split(">>")[2]
-            city = row["geo_name"].split(">>")[3]
-            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+            val = row["geo_name"].split(">>")
+            split_len = len(row["geo_name"].split(">>"))
+            city = val[split_len-1]
+            unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
         else:
             unit_name = row["unit_name"]
 
@@ -4687,9 +4693,10 @@ def process_unit_list_report(db, request):
             closed_date = None
 
         if geography_name.find(">>") >= 0:
-            state = geography_name.split(">>")[2]
-            city = geography_name.split(">>")[3]
-            geography_name = state+","+city
+            val = geography_name.split(">>")
+            split_len = len(geography_name.split(">>"))
+            city = val[split_len-1]
+            geography_name = city
         else:
             geography_name = None
 
@@ -4951,7 +4958,7 @@ def process_risk_report(db, request):
         print "qry1"
         print query
         result_1 = db.select_all(query, condition_val)
-
+        print result_1
         risk_report = []
 
         for row in result_1:
@@ -4963,9 +4970,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
@@ -5055,7 +5063,7 @@ def process_risk_report(db, request):
             where_clause = where_clause + "and t1.unit_id = %s "
             condition_val.append(unit_id)
 
-        where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.approve_status order by t3.compliance_task asc limit %s, %s;"
+        where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.approve_status and t1.compliance_history_id order by t3.compliance_task asc limit %s, %s;"
         condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
 
         query = select_qry + from_clause + where_clause
@@ -5063,6 +5071,7 @@ def process_risk_report(db, request):
         print query
 
         result = db.select_all(query, condition_val)
+        print result
         for row in result:
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
@@ -5072,20 +5081,21 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
             # Find task status
             if row["compliance_opted_status"] == 0:
                 task_status = "Not Opted"
-            elif (str(row["due_date"]) < str(datetime.datetime.now())) and t1.approve_status != 0:
+            elif (str(row["due_date"]) < str(datetime.datetime.now())) and row["approve_status"] != 0:
                 task_status = "Not Complied"
-            elif (str(row["due_date"]) < str(row["completion_date"])) and t1.approve_status != 1 and t1.approve_status != 0:
+            elif (str(row["due_date"]) < str(row["completion_date"])) and row["approve_status"] != 1 and row["approve_status"] != 0:
                 task_status = "Delayed Compliance"
-            elif row["compliance_opted_status"] == 0 and t1.approve_status == 3:
+            elif row["compliance_opted_status"] == 0 and row["approve_status"] == 3:
                 task_status = "Not Opted - Rejected"
 
             document_name = row["documents"]
@@ -5188,9 +5198,10 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
@@ -5284,7 +5295,7 @@ def process_risk_report(db, request):
             where_clause = where_clause + "and t1.unit_id = %s "
             condition_val.append(unit_id)
 
-        where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.approve_status order by t3.compliance_task asc limit %s, %s;"
+        where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.approve_status and t1.compliance_history_id order by t3.compliance_task asc limit %s, %s;"
         condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
 
         query = select_qry + from_clause + where_clause
@@ -5292,6 +5303,7 @@ def process_risk_report(db, request):
         print query
 
         result = db.select_all(query, condition_val)
+        print result
         risk_report = []
 
         for row in result:
@@ -5303,20 +5315,21 @@ def process_risk_report(db, request):
                 statutory_mapping = str(statutory_mapping)[3:-2]
 
             if row["geo_name"].find(">>") >= 0:
-                state = row["geo_name"].split(">>")[2]
-                city = row["geo_name"].split(">>")[3]
-                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]+","+state
+                val = row["geo_name"].split(">>")
+                split_len = len(row["geo_name"].split(">>"))
+                city = val[split_len-1]
+                unit_name = row["unit_name"].split(",")[0] + " , "+row["unit_name"].split(",")[1]+" , "+city+"-"+row["unit_name"].split(",")[2]
             else:
                 unit_name = row["unit_name"]
 
             # Find task status
             if row["compliance_opted_status"] == 0:
                 task_status = "Not Opted"
-            elif (str(row["due_date"]) < str(datetime.datetime.now())) and t1.approve_status != 0:
+            elif (str(row["due_date"]) < str(datetime.datetime.now())) and row["approve_status"] != 0:
                 task_status = "Not Complied"
-            elif (str(row["due_date"]) < str(row["completion_date"])) and t1.approve_status != 1 and t1.approve_status != 0:
+            elif (str(row["due_date"]) < str(row["completion_date"])) and row["approve_status"] != 1 and row["approve_status"] != 0:
                 task_status = "Delayed Compliance"
-            elif row["compliance_opted_status"] == 0 and t1.approve_status == 3:
+            elif row["compliance_opted_status"] == 0 and row["approve_status"] == 3:
                 task_status = "Not Opted - Rejected"
 
             document_name = row["documents"]
