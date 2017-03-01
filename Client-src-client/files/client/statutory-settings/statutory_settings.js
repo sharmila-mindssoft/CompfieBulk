@@ -319,7 +319,7 @@ function pageControls() {
                     var chkid = $(el).val().split(',');
                     ACTIVE_UNITS.push(parseInt(chkid[0]));
                     C_COUNT = C_COUNT + parseInt(chkid[2]);
-                    
+
                     if(C_COUNT > 5000){
                         displayMessage(message.maximum_compliance_selection_reached_select_all);
                         return false;
@@ -592,7 +592,7 @@ function activateUnit(element) {
     } else {
         index = ACTIVE_UNITS.indexOf(parseInt(chkid[0]));
         ACTIVE_UNITS.splice(index, 1);
-        C_COUNT = C_COUNT - chkid[2];
+        C_COUNT = C_COUNT - parseInt(chkid[2]);
     }
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
