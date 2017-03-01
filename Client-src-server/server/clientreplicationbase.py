@@ -285,8 +285,8 @@ class ReplicationBase(object):
             elif tbl_name == "tbl_compliances" and domain_id in self._domains :
                 self._db.execute(query)
 
-            # if tbl_name == "tbl_legal_entities" :
-            #     self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [auto_id])
+            if tbl_name == "tbl_legal_entities" :
+                self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [auto_id])
             # elif tbl_name == "tbl_client_groups" :
             #     self._db.execute("delete from tbl_client_configuration")
             # elif tbl_name == "tbl_units" :
