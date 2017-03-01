@@ -33,11 +33,11 @@
         <tr class="table-row" href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a">
             <td width="2%"><i class="fa fa-hand-o-right"></i></td>
             <td width="80">
-                <div class="col-sm-11 message-content"></div>
+                <div class="col-sm-12 message-content"></div>
                 <div class="col-sm-1">
                     <span class="pull-left message-time"></span>
                 </div>
-                <div class="col-sm-6">
+                <div class="col-sm-6 pull-right">
                     <span class="pull-right message-user"></span>
                 </div>
             </td>
@@ -63,33 +63,39 @@
         <div class="table-responsive">
             <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
                 <tbody>
-                    <tr class="table_bg_01">
-                        <td class="header-bg1">Act</td>
-                        <td class="header-bg1">Unit</td>
-                        <td class="header-bg1">Compliance</td>
-                        <td class="header-bg1">Due Date</td>
-                        <td class="header-bg1">Delayed By</td>
+                    <tr class="text-left">
+                        <td width="40%">Statutory Provision</td>
+                        <td width="60%" class="popup-statutory"></td>
                     </tr>
-                    <tr>
-                        <td class="act_name"></td>
-                        <td class="unit"></td>
-                        <td class="compliance_name"></td>
-                        <td class="due_date"></td>
-                        <td class="delayed_by"></td>
+                    <tr class="text-left">
+                        <td>Compliance Task</td>
+                        <td class="popup-compliancetask"></td>
                     </tr>
-                </tbody>
-            </table>
-            <table id="datatable-responsive" class="table dt-responsive nowrap" width="100%">
-                <tbody>
-                    <tr class="table_bg_01">
-                        <td class="header-bg1">Assignee</td>
-                        <td class="header-bg1">Concurrence</td>
-                        <td class="header-bg1">Approval</td>
+                    <tr class="text-left">
+                        <td>Compliance Description</td>
+                        <td class="popup-description"></td>
                     </tr>
-                    <tr>
-                        <td class="assignee_name"></td>
-                        <td class="concurrer_name"></td>
-                        <td class="approver_name"></td>
+                    <tr class="text-left">
+                        <td>Penal Consequences</td>
+                        <td class="popup-penalconse"></td>
+                    </tr>
+                    <tr class="text-left">
+                        <td>Compliance Frequency</td>
+                        <td class="popup-frequency"></td>
+                    </tr>
+                    <tr class="text-left">
+                        <td>Compliance Occurrence</td>
+                        <td class="popup-occurance"></td>
+                    </tr>
+                    <tr class="text-left">
+                        <td>Applicable Location</td>
+                        <td class="popup-applicablelocation"></td>
+                    </tr>
+                    <tr class="text-left">
+                        <td>Reference Link</td>
+                        <td class="popup-referencelink">
+                            <a target="new"> <span> </span> </a>
+                        </td>
                     </tr>
                 </tbody>
             </table>

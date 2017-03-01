@@ -94,6 +94,13 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
         logger.logClientApi("GetStatutoryNotifications", "process end")
 
+    elif type(request) is dashboard.UpdateStatutoryNotificationsStatus:
+        logger.logClientApi("UpdateStatutoryNotificationsStatus", "process begin")
+        result = process_update_statutory_notification_status(
+            db, request, session_user
+        )
+        logger.logClientApi("UpdateStatutoryNotificationsStatus", "process end")
+
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart:
         result = process_assigneewise_compliances(
             db, request, session_user, session_user
@@ -248,9 +255,14 @@ def process_update_notification_status(db, request, session_user):
 
 
 def process_get_statutory_notifications(db, request, session_user, session_category):
-    statutory_notifications = None
-    statutory_notifications = get_statutory(db, request.from_count, request.page_count, session_user, session_category)
-    return general.GetStatutorySuccess(statutory_notifications=statutory_notifications)
+    statutory = get_statutory(db, request.start_count, request.end_count, session_user, session_category)
+    return dashboard.GetStatutorySuccess(statutory)
+
+def process_update_statutory_notification_status(db, request, session_user):
+    if request.has_read == True:
+        update_statutory_notification_status(db, request.notification_id, session_user)
+    statutory_notification_details = statutory_notification_detail(db, request.notification_id, session_user)
+    return dashboard.StatutoryUpdateNotificationStatusSuccess(statutory_notification_details)
 
 ########################################################
 # To get data to populate in assignee wise compliance

@@ -51,7 +51,7 @@ function loadMessages(data) {
 function initialize() {
     client_mirror.getNotifications(LEIDS, 3, 0, 50, function(error, response) {
         if (error == null) {
-            data = response.messages;
+            data = response.escalations;
             loadMessages(data);
         }
     });
