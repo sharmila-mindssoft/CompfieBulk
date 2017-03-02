@@ -193,6 +193,34 @@ END
 DELIMITER ;
 
 
+DROP TRIGGER IF EXISTS `after_tbl_business_groups_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_business_groups_update` AFTER UPDATE ON `tbl_business_groups`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+
+   IF OLD.business_group_name <> NEW.business_group_name THEN
+       INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    0,
+                    NEW.business_group_id,
+                    'business_group_name',
+                    NEW.business_group_name,
+                    'tbl_business_groups');
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE client_id = NEW.client_id and is_group = 1;
+    END IF ;
+END
+//
+DELIMITER ;
+
 -- ------------
 -- legal entities
 -- ------------
@@ -384,6 +412,23 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
         where client_id = NEW.client_id
 
         order by cn_config_id, col_name;
+
+        IF OLD.business_group_id <> NEW.business_group_id THEN
+           INSERT INTO tbl_audit_log(action,
+                                     client_id,
+                                     legal_entity_id,
+                                     tbl_auto_id,
+                                     column_name,
+                                     value,
+                                     tbl_name)
+                select 1, NEW.client_id, NEW.legal_entity_id,
+                    business_group_id, 'business_group_name',
+                    business_group_name from tbl_business_groups
+                    where ifnull(business_group_id,0) = new.business_group_id;
+
+            UPDATE tbl_client_replication_status set is_new_data = 1
+            WHERE client_id = NEW.client_id and is_group = 1;
+        END IF ;
 
    END IF ;
 

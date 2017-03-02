@@ -273,7 +273,10 @@ class ReplicationBase(object):
                 " used_licence = values(used_licence), is_closed = values(is_closed), closed_on = values(closed_on), " + \
                 " closed_by = values(closed_by), closed_remarks = values(closed_remarks)"
         elif tbl_name == "tbl_units":
-            query += " ON DUPLICATE KEY UPDATE unit_id = values(unit_id) ;"
+            query += " ON DUPLICATE KEY UPDATE unit_name = values(unit_name), " + \
+                " unit_code = values(unit_code), geography_name = values(geography_name), " + \
+                " address = values(address), postal_code = values(postal_code), is_closed = values(is_closed), " + \
+                " closed_on = values(closed_on), closed_by = values(closed_by), closed_remarks = values(closed_remarks) "
         else :
             query += ""
 
