@@ -609,4 +609,6 @@ api_params = {
     "u_sp_name": make_text_field(),  # User Management
     "u_sp_short": make_text_field(),  # User Management
     "um_service_providers": make_vector_type_field(module="clientcore", klass_name="ClientServiceProviders_UserManagement"),  # User Management
+    "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
+    "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
 }
