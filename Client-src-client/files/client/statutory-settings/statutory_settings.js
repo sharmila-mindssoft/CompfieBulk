@@ -192,7 +192,7 @@ function callAPI(api_type) {
         var selected_compliances_list = [];
         var remarks_flag = true;
         $.each(SELECTED_COMPLIANCE, function(key, value) {
-            if( (value.c_o_status != value.c_a_status) && value.c_remarks == null){
+            if( (value.c_o_status != value.c_a_status) && value.c_remarks == null && value.n_a_remarks == null){
                 displayMessage(message.remarks_required);
                 remarks_flag = false;
                 return false;
@@ -795,12 +795,6 @@ function remarkstatus(element) {
 
         var sid = $(this).val();
         var combine_ids = $('#combineid' + sid).val().split('#');
-        /*if (CLIENT_STATUTORY_ID == null) {
-            C_S_ID = UNIT_CS_ID[combine_ids[1]].client_statutory_id;
-            UNIT_TEXT = UNIT_CS_ID[combine_ids[1]].unit_code + ' - ' + UNIT_CS_ID[combine_ids[1]].u_name;
-        }else{
-            C_S_ID = CLIENT_STATUTORY_ID;
-        }*/
 
         var C_STATUS = parseInt($(this).attr("for"));
        
@@ -897,7 +891,6 @@ function mactstatus(element) {
     var currentAction = '.comp' + ID;
 
     $(currentAction).each(function() {
-        var C_S_ID = null;
 
         if (checkedVal > 1) {
             $(this).html('<img src="images/deletebold.png">').attr('for', '2');
@@ -908,6 +901,17 @@ function mactstatus(element) {
         var sname = $(this).attr('id');
         var sid = sname.substr(sname.lastIndexOf('p') + 1);
         //$('#save' + sid).addClass('fa-square');
+        var C_REMARK = $(this).attr("data-remark");
+        var C_A_STATUS = 1;
+        if($(this).attr("data-applicable") == 'false') C_A_STATUS = 2;
+
+        if(checkedVal == 1 && checkedVal != C_A_STATUS){
+            $('#c-remark-add-' + sid).show();
+            $('#c-remark-view-' + sid).hide();
+        }else{
+            $('#c-remark-add-' + sid).hide();
+            $('#c-remark-view-' + sid).hide();
+        }
 
         var combine_ids = $('#combineid' + sid).val().split('#');
         /*if (CLIENT_STATUTORY_ID == null) {
@@ -923,7 +927,7 @@ function mactstatus(element) {
             'n_a_remarks': A_REMARK,
             'comp_id': parseInt(combine_ids[0]),
             'c_o_status': c_bool(checkedVal),
-            'c_remarks': null,
+            'c_remarks': C_REMARK,
             'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
             'u_id': parseInt(combine_ids[1])
         }
@@ -952,6 +956,20 @@ function mcompliancestatus(element) {
     if (C_STATUS > 1 && $('#remark' + ID).val() != '') {
         A_REMARK = $('#remark' + ID).val();
     }
+
+    var C_A_STATUS = true;
+    if($(element).attr("data-applicable") == 'false') C_A_STATUS = false;
+
+    var C_REMARK = $(element).attr("data-remark");
+    
+    if(c_bool(C_STATUS) != C_A_STATUS){
+        $('#c-remark-add-' + sid1).show();
+        $('#c-remark-view-' + sid1).hide();
+    }else{
+        $('#c-remark-add-' + sid1).hide();
+        $('#c-remark-view-' + sid1).hide();
+    }
+
     /*if (CLIENT_STATUTORY_ID == null) {
         C_S_ID = UNIT_CS_ID[U_ID].client_statutory_id;
         UNIT_TEXT = UNIT_CS_ID[U_ID].unit_code + ' - ' + UNIT_CS_ID[U_ID].u_name;
@@ -966,14 +984,27 @@ function mcompliancestatus(element) {
         'n_a_remarks': A_REMARK,
         'comp_id': parseInt(combine_ids[0]),
         'c_o_status': c_bool(C_STATUS),
-        'c_remarks': null,
+        'c_remarks': C_REMARK,
         'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
         'u_id': parseInt(combine_ids[1])
     }
     console.log(SELECTED_COMPLIANCE);
 }
 
-/*
+function mcremarkstatus(element) {
+    var ID = $(element).attr("id").split('-').pop();
+
+    if($(element).val() != ''){
+        var C_REMARK = $(element).val();
+        var combine_ids = $('#combineid' + ID).val().split('#');
+        var C_U_ID = combine_ids[0] + '-' + combine_ids[1];
+        SELECTED_COMPLIANCE[C_U_ID].c_remarks = C_REMARK;
+    }
+    
+    console.log(SELECTED_COMPLIANCE);
+}
+
+
 function mremarkstatus(element) {
     var ID = $(element).attr("data-act");
     var A_STATUS = parseInt($('#act' + ID).attr("for"));
@@ -982,41 +1013,35 @@ function mremarkstatus(element) {
         A_REMARK = $(element).val();
     }
 
-    var currentAction = '.tick' + ID;
+    var currentAction = '.comp' + ID;
     $(currentAction).each(function() {
-        var C_S_ID = null;
-        var sname = $(this).attr('name');
-        var sid = sname.substr(sname.lastIndexOf('y') + 1);
-        var combine_ids = $('#combineid' + sid).val().split('#');
-        if (CLIENT_STATUTORY_ID == null) {
-            C_S_ID = UNIT_CS_ID[combine_ids[1]].client_statutory_id;
-            UNIT_TEXT = UNIT_CS_ID[combine_ids[1]].unit_code + ' - ' + UNIT_CS_ID[combine_ids[1]].u_name;
-        }else{
-            C_S_ID = CLIENT_STATUTORY_ID;
-        }
+        var C_A_STATUS = true;
+        if($(this).attr("data-applicable") == 'false') C_A_STATUS = false;
 
-        var C_STATUS = null;
-        if($('input[name=statutory'+sid+']:checked').val() != undefined){
-            C_STATUS = parseInt($('input[name=statutory'+sid+']:checked').val());
-        }
+        var sid = $(this).val();
+        var combine_ids = $('#combineid' + sid).val().split('#');
+
+        var C_STATUS = parseInt($(this).attr("for"));
 
         if (C_STATUS > 1) {
             var C_U_ID = combine_ids[0] + '-' + combine_ids[1];
             SELECTED_COMPLIANCE[C_U_ID] = {
-                'u_id': parseInt(combine_ids[1]),
+                'c_c_id': parseInt(combine_ids[2]),
+                'a_status': c_bool(A_STATUS),
+                'n_a_remarks': A_REMARK,
                 'comp_id': parseInt(combine_ids[0]),
-                'comp_status': C_STATUS,
-                'level_1_s_id': parseInt(combine_ids[2]),
-                'a_status': A_STATUS,
-                'remarks': A_REMARK,
-                'client_statutory_id': C_S_ID,
-                'u_name': UNIT_TEXT
+                'c_o_status': c_bool(C_STATUS),
+                'c_remarks': null,
+                'u_name': UNIT_CS_ID[combine_ids[1]].u_name,
+                'u_id': parseInt(combine_ids[1]),
+                'c_a_status': C_A_STATUS
             }
         }
     });
-    //console.log(SELECTED_COMPLIANCE);
+    console.log(SELECTED_COMPLIANCE);
 }
 
+/*
 function subComplianceStatus(element) {
     var id = $(element).attr('id');
     var sid = id.substr(id.lastIndexOf('-') + 1);
@@ -1155,7 +1180,10 @@ function loadSingleUnitCompliances() {
                 $('.applicable', clone2).html('<img src="images/deletebold.png">');
             }
 
-            $('.opted', clone2).attr("data-remark", value1.comp_remarks);
+            var c_r = '';
+            if(value1.comp_remarks != null) c_r = value1.comp_remarks;
+
+            $('.opted', clone2).attr("data-remark", c_r);
             $('.opted', clone2).attr("data-applicable", value1.comp_app_status);
             $('.opted', clone2).attr('id', 'comp' + statutoriesCount);
             $('.opted', clone2).val(statutoriesCount);
@@ -1339,10 +1367,24 @@ function loadMultipleUnitCompliances() {
                 $('.applicable', clone4).html('<img src="images/deletebold.png">');
             }
 
+            var c_r = '';
+            if(value1.comp_remarks != null) c_r = value1.comp_remarks;
+            $('.opted', clone4).attr("data-remark", c_r);
+            $('.opted', clone4).attr("data-applicable", value1.comp_app_status);
             $('.opted', clone4).attr('id', 'comp' + statutoriesCount);
             $('.opted', clone4).val(statutoriesCount);
             $('.opted', clone4).addClass('comp' + count);
 
+            $('.c-remark-view', clone4).attr('id', 'c-remark-view-' + statutoriesCount);
+            $('.c-remark-add', clone4).attr('id', 'c-remark-add-' + statutoriesCount);
+            $('.c-remark-input', clone4).attr('id', 'c-remark-input-' + statutoriesCount);
+
+            if(value1.comp_remarks != null){
+                $('.c-remark-view i', clone4).attr('title', value1.comp_remarks);
+                $('.c-remark-view span', clone4).text(part_compliance(value1.comp_remarks));
+            }else{
+                $('.c-remark-view', clone4).hide();
+            }
             
             if (value1.comp_opt_status) {
                 $('.opted', clone4).html('<img src="images/tick-orange.png">').attr('for', '1');
@@ -1403,6 +1445,10 @@ function loadMultipleUnitCompliances() {
     $( ".remarks" ).unbind( "click" );
     $('.remarks').focusout(function() {
         mremarkstatus(this);
+    });
+
+    $('.c-remark-input').focusout(function() {
+        mcremarkstatus(this);
     });
 
     if (sno <= 0) {
