@@ -291,7 +291,6 @@ class ReplicationBase(object):
             elif tbl_name == "tbl_units" :
                 self._db.execute("delete from tbl_units_organizations where unit_id = %s", [auto_id])
 
-
         except Exception, e:
             pass
             print e
