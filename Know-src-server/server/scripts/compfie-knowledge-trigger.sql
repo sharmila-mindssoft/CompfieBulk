@@ -85,19 +85,19 @@ CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_clie
    SET @action = 0;
 
     INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
-        select @action, NEW.client_id, 0, cn_config_id, 'client_id', col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
+        select @action, NEW.client_id, 0, cn_config_id, 'client_id' col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
         union all
-        select @action, NEW.client_id, 0, cn_config_id, 'country_id', col_name, country_id value, 'tbl_client_configuration' from tbl_client_configuration
+        select @action, NEW.client_id, 0, cn_config_id, 'country_id' col_name, country_id value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
         union all
-        select @action, NEW.client_id, 0, cn_config_id, 'domain_id', col_name, domain_id value, 'tbl_client_configuration' from tbl_client_configuration
+        select @action, NEW.client_id, 0, cn_config_id, 'domain_id' col_name, domain_id value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
         union all
-        select @action, NEW.client_id, 0, cn_config_id, 'month_from', col_name, month_from value, 'tbl_client_configuration' from tbl_client_configuration
+        select @action, NEW.client_id, 0, cn_config_id, 'month_from' col_name, month_from value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
         union all
-        select @action, NEW.client_id, 0, cn_config_id, 'month_to', col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
+        select @action, NEW.client_id, 0, cn_config_id, 'month_to' col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
 
         order by cn_config_id, col_name;
@@ -769,13 +769,13 @@ CREATE TRIGGER `after_tbl_units_update` AFTER UPDATE ON `tbl_units`
         WHERE client_id = NEW.legal_entity_id and is_group = 0 ;
 
         INSERT INTO tbl_audit_log(action, client_id, legal_entity_id, tbl_auto_id, column_name, value, tbl_name)
-        select @action, @client_id, @le_id, unit_org_id, 'unit_id', col_name, unit_id value, 'tbl_units_organizations' from tbl_units_organizations
+        select @action, @client_id, @le_id, unit_org_id, 'unit_id' col_name, unit_id value, 'tbl_units_organizations' from tbl_units_organizations
         where unit_id = NEW.unit_id
         union all
-        select @action, @client_id, @le_id, unit_org_id, 'domain_id', col_name, domain_id value, 'tbl_units_organizations' from tbl_units_organizations
+        select @action, @client_id, @le_id, unit_org_id, 'domain_id' col_name, domain_id value, 'tbl_units_organizations' from tbl_units_organizations
         where unit_id = NEW.unit_id
         union all
-        select @action, @client_id, @le_id, unit_org_id, 'organisation_id', col_name, organisation_id value, 'tbl_units_organizations' from tbl_units_organizations
+        select @action, @client_id, @le_id, unit_org_id, 'organisation_id' col_name, organisation_id value, 'tbl_units_organizations' from tbl_units_organizations
         where unit_id = NEW.unit_id
         order by unit_org_id, col_name;
 

@@ -173,7 +173,7 @@ api_params = {
     "closed_remarks": make_text_field(length=500, is_optional=True),
     "compliance_id": make_int_field(length=10000, is_optional=True),
     "compliance_task": make_text_field(is_optional=True),
-    "frequency_id": make_int_field(is_optional=True),
+    "frequency_id": make_int_field(length=500, is_optional=True),
     "frequency_name": make_string_field(),
     "statutory_mapping": make_text_field(length=500, is_optional=True),
     "user_type_id": make_int_field(is_optional=True),
@@ -197,7 +197,7 @@ api_params = {
     "start_date": make_text_field(is_optional=True),
     "activity_date": make_text_field(is_optional=True),
     "activity_status": make_string_field(is_optional=True),
-    "documents": make_text_field(is_optional=True),
+    "document_name": make_text_field(length=500, is_optional=True),
     "completion_date": make_text_field(is_optional=True),
     "user_id": make_int_field(),
     "url": make_text_field(is_optional=True),
@@ -211,7 +211,7 @@ api_params = {
     "user_id_optional": make_int_field(is_optional=True),
     'user_category_id': make_int_field(),
     "i_ids": make_vector_type_int(),
-    "compliance_description": make_text_field(length=500),
+    "compliance_description": make_text_field(length=500, is_optional=True),
     "notification_text": make_text_field(length=500),
     "created_on": make_text_field(is_optional=True),
     "s_p_status_id": make_int_field(is_optional=True),
@@ -571,6 +571,7 @@ api_params = {
     "messages": make_vector_type_field(module="dashboard", klass_name="MessagesSuccess", is_optional=True),
     "statutory": make_vector_type_field(module="dashboard", klass_name="StatutorySuccess", is_optional=True),
     "notification_details": make_vector_type_field(module="dashboard", klass_name="NotificationDetailsSuccess", is_optional=True),
+    "statutory_notification_details": make_vector_type_field(module="dashboard", klass_name="StatutoryNotificationDetailsSuccess", is_optional=True),
     "delayed_by": make_text_field(is_optional=True),
     "w_id": make_int_field(),
     "w_name": make_text_field(),
@@ -608,4 +609,6 @@ api_params = {
     "u_sp_name": make_text_field(),  # User Management
     "u_sp_short": make_text_field(),  # User Management
     "um_service_providers": make_vector_type_field(module="clientcore", klass_name="ClientServiceProviders_UserManagement"),  # User Management
+    "freq_name": make_text_field(is_optional=True),
+    "reference_link": make_text_field(is_optional=True),
 }
