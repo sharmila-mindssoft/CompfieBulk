@@ -65,11 +65,12 @@ class ServerValidation(object):
 
 class UpdateServerValidation(object):
     def __init__(
-        self, db, client_db_id, legal_entity_id, machine_id, database_server_id,
+        self, db, client_db_id, legal_entity_id, client_id, machine_id, database_server_id,
         le_database_server_id, file_server_id
     ):
         self._db = db
         self._client_db_id = client_db_id
+        self._cl_id = client_id
         self._le_id = legal_entity_id
         self._db_server_id = database_server_id
         self._machine_id = machine_id
@@ -82,11 +83,13 @@ class UpdateServerValidation(object):
         self.get_update_server_info()
 
     def get_update_server_info(self):
-        print self._machine_id, self._db_server_id, self._le_db_server_id, self._f_server_id
+        print self._machine_id, self._db_server_id, self._le_db_server_id, self._f_server_id, self._cl_id, self._le_id
         result = self._db.call_proc_with_multiresult_set(
             "sp_get_created_server_details_byid", [
-                self._machine_id, self._db_server_id, self._le_db_server_id, self._f_server_id, self._le_id], 4
+                self._machine_id, self._db_server_id, self._le_db_server_id, self._f_server_id, self._cl_id, self._le_id], 4
         )
+        print result[0][0]
+        print result[1][0]
         self.dbase_info = result[0][0]
         self.le_dbase_info = result[1][0]
         self.machine_info = result[2][0]
@@ -98,8 +101,9 @@ class UpdateServerValidation(object):
         pwd = self.dbase_info.get("database_password")
         port = self.dbase_info.get("database_port")
         try :
+            print uname, pwd
             if (uname is None or pwd is None):
-                return "Group Database server connection failed"
+                return "Group Database server Not Exists"
             else:
                 connection = mysql.connect(host=dhost, user=uname, passwd=pwd, port=port)
                 c = connection.cursor()

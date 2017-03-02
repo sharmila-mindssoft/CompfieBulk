@@ -86,9 +86,6 @@ function loadAllocateDbEnvData(){
         	$('.btn-create', clone).hide();
         	$('.edit').attr('title', 'Click Here to Edit');
             $('.edit', clone).addClass('fa-pencil text-primary');
-            edit_id = value.client_database_id;
-            client_id = value.client_id
-            legal_entity_id = value.legal_entity_id
         	$('.edit', clone).on('click', function () {
                 loadEditForm(allocate_server_list[key]);
             });
@@ -109,21 +106,28 @@ btn_submit.click(function(){
 		var new_grp_le_ids = null, new_le_le_ids = null, new_f_le_ids = null, new_grp_cl_ids = null;
 		client_ids = checkClientIds(client_ids,client_id);
 		legal_entity_ids = checkLEIds(legal_entity_ids, legal_entity_id);
-
 		if (old_grp_app_id != $('#application_id').val()){
 			new_grp_cl_ids = removeCLIds(old_cl_ids, client_id);
+		}else{
+			new_grp_cl_ids = old_cl_ids;
 		}
 
 		if (old_grp_db_s_id != $('#database_server_id').val()){
 			new_grp_le_ids = removeLEIds(old_grp_le_ids, legal_entity_id);
+		}else{
+			new_grp_le_ids = old_grp_le_ids;
 		}
 
 		if (old_le_db_s_id != $('#le_database_server_id').val()){
 			new_le_le_ids = removeLEIds(old_le_le_ids, legal_entity_id);
+		}else{
+			new_le_le_ids = old_le_le_ids;
 		}
 
 		if (old_le_f_s_id != $('#le_file_server_id').val()){
 			new_f_le_ids = removeLEIds(old_f_le_ids, legal_entity_id);
+		}else{
+			new_f_le_ids = old_f_le_ids;
 		}
 
 		function onSuccess(data) {
@@ -224,17 +228,25 @@ function removeLEIds(legal_entity_ids, le_id){
 	var le_count = 0;
 
 	if(legal_entity_ids != null){
-		splitLEIds = legal_entity_ids.split(",");
-		for(var i=0;i<splitLEIds.length;i++){
-			if(splitLEIds[i] == le_id){
+		if(legal_entity_ids.indexOf(",") >= 0){
+			splitLEIds = legal_entity_ids.split(",");
+			for(var i=0;i<splitLEIds.length;i++){
+				if(splitLEIds[i] == le_id){
+				}
+				else{
+					if (new_le_ids == null)
+						new_le_ids = splitLEIds[i];
+					else
+						new_le_ids = new_le_ids + "," + splitLEIds[i];
+				}
 			}
-			else{
-				if (new_le_ids == null)
-					new_le_ids = splitLEIds[i];
-				else
-					new_le_ids = new_le_ids + "," + splitLEIds[i];
-			}
+		}else{
+			if (new_le_ids == null)
+				new_le_ids = le_id;
+			else
+				new_le_ids = new_le_ids + "," + le_id;
 		}
+
 	}
 	return new_le_ids;
 }
@@ -289,8 +301,12 @@ function loadCreateForm(cl_id, legal_e_id) {
 
 function loadEditForm(indexValues){
 	//edit_id = 1;
+
 	$('#allocate-server-add').show();
     $('#allocate-server-view').hide();
+    edit_id = indexValues.client_database_id;
+    client_id = indexValues.client_id;
+    legal_entity_id = indexValues.legal_entity_id;
 	$('.group-name').text(indexValues.group_name);
 	$('.le-name').text(indexValues.legal_entity_name);
 	group_application_server_name.val(indexValues.machine_name);
