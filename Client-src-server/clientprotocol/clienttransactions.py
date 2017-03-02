@@ -815,55 +815,58 @@ class GetReviewSettingsComplianceFilters(Request):
 
 
 class SaveReviewSettingsCompliance(Request):
-    def __init__(self, rs_compliances):
+    def __init__(self, legal_entity_id, rs_compliances):
+        self.legal_entity_id = legal_entity_id
         self.rs_compliances = rs_compliances
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["compliances"])
-        rs_compliances = data.get("compliances")
-        return SaveReviewSettingsCompliance(rs_compliances)
+        data = parse_dictionary(data, ["le_id", "rs_compliances"])
+        legal_entity_id = data.get("le_id")
+        rs_compliances = data.get("rs_compliances")
+        return SaveReviewSettingsCompliance(legal_entity_id, rs_compliances)
 
     def to_inner_structure(self):
         return {
-            "compliances": self.rs_compliances
+            "le_id": self.legal_entity_id,
+            "rs_compliances": self.rs_compliances
         }
 
 
-class SaveReviewSettingsComplianceDict(Request):
+class SaveReviewSettingsComplianceDict(object):
     def __init__(
-        self, legal_entity_id, domain_id, f_id, unit_ids, compliance_id, repeat_by,
+        self, compliance_id, legal_entity_id, domain_id, f_id, unit_ids, repeat_by,
         repeat_type_id, due_date, trigger_before_days, statu_dates, old_repeat_by,
         old_repeat_type_id, old_due_date, old_statu_dates
     ):
+        self.compliance_id = compliance_id
         self.legal_entity_id = legal_entity_id
         self.domain_id = domain_id
         self.f_id = f_id
         self.unit_ids = unit_ids
-        self.compliance_id = compliance_id
         self.repeat_by = repeat_by
         self.repeat_type_id = repeat_type_id
         self.due_date = due_date
-        self.statu_dates = statu_dates
         self.trigger_before_days = trigger_before_days
+        self.statu_dates = statu_dates
         self.old_repeat_by = old_repeat_by
         self.old_repeat_type_id = old_repeat_type_id
         self.old_due_date = old_due_date
         self.old_statu_dates = old_statu_dates
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         data = parse_dictionary(data, [
-            "le_id", "d_id",  "f_id", "unit_ids", "comp_id", "r_every",
+            "comp_id", "le_id", "d_id",  "f_id", "unit_ids", "repeat_by",
             "repeat_type_id", "due_date", "trigger_before_days", "statu_dates",
             "old_repeat_by", "old_repeat_type_id", "old_due_date", "old_statu_dates"
             ])
+        comp_id = data.get("comp_id")
         legal_entity_id = data.get("le_id")
         domain_id = data.get("d_id")
         f_id = data.get("f_id")
         unit_ids = data.get("unit_ids")
-        comp_id = data.get("comp_id")
-        r_every = data.get("r_every")
+        repeat_by = data.get("repeat_by")
         repeat_type_id = data.get("repeat_type_id")
         due_date = data.get("due_date")
         trigger_before_days = data.get("trigger_before_days")
@@ -874,19 +877,19 @@ class SaveReviewSettingsComplianceDict(Request):
         old_statu_dates = data.get("old_statu_dates")
 
         return SaveReviewSettingsComplianceDict(
-            legal_entity_id, domain_id, unit_ids, f_id, comp_id,
-            r_every, repeat_type_id, due_date, trigger_before_days, statu_dates,
+            comp_id, legal_entity_id, domain_id, f_id, unit_ids,
+            repeat_by, repeat_type_id, due_date, trigger_before_days, statu_dates,
             old_repeat_by, old_repeat_type_id, old_due_date, old_statu_dates
-            )
+        )
 
-    def to_inner_structure(self):
+    def to_structure(self):
         return {
+            "comp_id": self.comp_id,
             "le_id": self.legal_entity_id,
             "d_id": self.domain_id,
             "f_id": self.f_id,
             "unit_ids": self.unit_ids,
-            "comp_id": self.comp_id,
-            "r_every": self.r_every,
+            "repeat_by": self.repeat_by,
             "repeat_type_id": self.repeat_type_id,
             "due_date": self.due_date,
             "trigger_before_days": self.trigger_before_days,
@@ -896,6 +899,7 @@ class SaveReviewSettingsComplianceDict(Request):
             "old_due_date": self.old_due_date,
             "old_statu_dates": self.old_statu_dates,
         }
+
 
 class GetChartFilters(Request):
     def __init__(self):
@@ -1129,9 +1133,8 @@ def _init_Request_class_map():
         GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData,
         GetStatutoriesByUnit, SavePastRecords, GetReviewSettingsFilters,
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
-        SaveReviewSettingsCompliance, SaveReviewSettingsComplianceDict,
+        SaveReviewSettingsCompliance,
         GetAssignComplianceUnits, GetComplianceTotalToAssign,
-
         GetReAssignComplianceUnits, GetReAssignComplianceForUnits,
         GetAssigneewiseComplianesFilters,
         GetUserToAssignCompliance, GetChartFilters,

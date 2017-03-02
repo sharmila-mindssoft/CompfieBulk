@@ -222,6 +222,7 @@ def process_get_compliance_total(db, request, session_user):
     total = total_compliance_for_units(db, u_ids, d_id)
     return clienttransactions.GetComplianceTotalToAssignSuccess(total)
 
+
 def process_get_compliance_for_units(db, request, session_user):
     unit_ids = request.unit_ids
     domain_id = request.domain_id
@@ -500,7 +501,7 @@ def process_review_settings_compliance_filters(db, request, session_user):
 # To save the  review settings compliance list
 #####################################################################
 def process_save_review_settings_compliance(db, request, session_user):
-    compliances = request.compliances
+    compliances = request.rs_compliances
     save_review_settings_compliance(db, compliances, session_user)
     return clienttransactions.SaveReviewSettingsComplianceSuccess()
 
