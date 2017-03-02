@@ -2324,6 +2324,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    // User Management List
+    function getUserManagement_List(callback) {
+        callerName = 'client_masters';
+        var request = [
+            'UserManagementList',
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     function getReAssignComplianceUnits(legalEntityId, domainId, userId, userType, unitId, callback) {
         var request = [
             'GetReAssignComplianceUnits', {
@@ -2453,8 +2463,8 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetCalender(callback){
-         var request = [
+    function getWidgetCalender(callback) {
+        var request = [
             "GetCalendarView", {
                 "le_ids": getLEids()
             }
@@ -2462,8 +2472,9 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getUserScoreCard(callback){
-         var request = [
+
+    function getUserScoreCard(callback) {
+        var request = [
             "GetUserScoreCard", {
                 "le_ids": getLEids()
             }
@@ -2471,8 +2482,9 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
-    function getDomainScoreCard(callback){
-         var request = [
+
+    function getDomainScoreCard(callback) {
+        var request = [
             "GetDomainScoreCard", {
                 "le_ids": getLEids()
             }
@@ -2739,6 +2751,7 @@ function initClientMirror() {
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
+        getUserManagement_List: getUserManagement_List,
     };
 }
 
