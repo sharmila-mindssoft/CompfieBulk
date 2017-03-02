@@ -514,6 +514,19 @@ class InvalidCurrentPassword(Response):
         return {
         }
 
+class InvalidPassword(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidPassword()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class LogoutSuccess(Response):
     def __init__(self):
         pass
@@ -702,7 +715,8 @@ def _init_Response_class_map():
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
         NotConfigured, LegalEntityNotAvailable, ContractNotYetStarted, UpdateUserProfileSuccess,
         CheckRegistrationTokenSuccess, InvalidCaptcha,
-        SaveRegistrationSuccess, CheckUsernameSuccess, UsernameAlreadyExists
+        SaveRegistrationSuccess, CheckUsernameSuccess, UsernameAlreadyExists,
+        InvalidPassword
     ]
     class_map = {}
     for c in classes:

@@ -2334,8 +2334,10 @@ class ConvertJsonToCSV(object):
                 closed_date = None
 
             if geography_name.find(">>") >= 0:
-                state = geography_name.split(">>")[2]
-                city = geography_name.split(">>")[3]
+                val = geography_name.split(">>")
+                split_len = len(geography_name.split(">>"))
+                state = val[split_len-1]
+                city = val[split_len-1]
             else:
                 state = None
                 city = None

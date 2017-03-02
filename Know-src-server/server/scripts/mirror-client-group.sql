@@ -125,6 +125,7 @@ CREATE TABLE `tbl_categories` (
   UNIQUE KEY(`category_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_configuration` (
+  `cn_config_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -371,7 +372,7 @@ INSERT INTO tbl_forms VALUES(14, 3, 'Unit Wise Compliance', "/unit-wise-complian
 INSERT INTO tbl_forms VALUES(15, 3, 'Service Provider Wise Compliance', "/service-provider-wise-compliance", 15, null);
 INSERT INTO tbl_forms VALUES(16, 3, 'User Wise Compliance', "/user-wise-compliance", 16, null);
 INSERT INTO tbl_forms VALUES(17, 3, 'Status Report Consolidated', "/status-report-consolidated", 17, null);
-INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-wise-report", 18, null);
+INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-score-card", 18, null);
 INSERT INTO tbl_forms VALUES(19, 3, 'Legal Entity Wise Score Card', "/legal-entity-wise-score-card", 19, null);
 INSERT INTO tbl_forms VALUES(20, 3, 'Work Flow Score Card', "/work-flow-score-card", 20, null);
 INSERT INTO tbl_forms VALUES(21, 3, 'Statutory Settings Unit Wise Report', "/statutory-settings-unit-wise-report", 21, null);

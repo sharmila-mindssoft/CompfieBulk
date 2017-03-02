@@ -445,6 +445,11 @@ ShowButton.click(function() {
     }
 });
 
+function onAutoCompleteSuccess(value_element, id_element, val) {
+    value_element.val(val[1]);
+    id_element.val(val[0]);
+}
+
 LegalEntityName.keyup(function(e) {
     var text_val = $(this).val();
     commonAutoComplete(
@@ -460,12 +465,12 @@ function loadEntityDetails() {
         LegalEntityNameLabel.hide();
         LegalEntityNameAC.show();
 
-        var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
-        var noclone = norecordtableRow.clone();
-        $('.no_records', noclone).text('No Compliance Available');
-        $('.tbody-compliance-approval-list').append(noclone);
-        $('#pagination').hide();
-        $('.compliance_count').text('');
+        // var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
+        // var noclone = norecordtableRow.clone();
+        // $('.no_records', noclone).text('No Compliance Available');
+        // $('.tbody-compliance-approval-list').append(noclone);
+        // $('#pagination').hide();
+        // $('.compliance_count').text('');
 
     } else {
         var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
@@ -481,6 +486,7 @@ function loadEntityDetails() {
 $(function() {
     loadEntityDetails();
 });
+
 $(document).find(".js-filtertable").each(function() {
     $(this).filtertable().addFilter(".js-filter")
 });

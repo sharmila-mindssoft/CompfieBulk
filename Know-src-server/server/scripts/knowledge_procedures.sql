@@ -2863,6 +2863,11 @@ CREATE PROCEDURE `sp_clientdatabase_save`(
     _created_by int(11), _created_on timestamp
 )
 BEGIN
+    if(select count(*) from tbl_client_database where client_id = clientid) > 0 then
+        update tbl_client_database set machine_id = machineid,
+        client_database_server_id = db_server_id where client_id = clientid;
+    end if;
+
     insert into tbl_client_database
     (client_id, legal_entity_id, machine_id, file_server_id, database_server_id,
     client_database_server_id, created_by, created_on)
@@ -2925,8 +2930,8 @@ BEGIN
     client_database_server_id = db_server_id, updated_by = _created_by
     where client_database_id = client_db_id;
 
-    update tbl_client_database set client_database_server_id = db_server_id
-    where client_id = clientid;
+    update tbl_client_database set machine_id = machineid,
+    client_database_server_id = db_server_id where client_id = clientid;
 
     update tbl_application_server set client_ids = _cl_ids
     where machine_id = machineid;
@@ -8967,22 +8972,23 @@ DROP PROCEDURE IF EXISTS `sp_get_created_server_details_byid`;
 DELIMITER //
 
 CREATE PROCEDURE `sp_get_created_server_details_byid`(
-in _m_id int(11), _d_s_id int(11), _le_d_s_id int(11), _f_s_id int(11))
+in _m_id int(11), _d_s_id int(11), _le_d_s_id int(11), _f_s_id int(11), _cl_id int(11),
+_le_id int(11))
 BEGIN
     SELECT database_server_id, database_server_name,
         database_ip, database_port,
     (select database_username from tbl_client_database_info where
-    db_owner_id = _d_s_id) as database_username,
+    db_owner_id = _cl_id and is_group=1) as database_username,
     (select database_password from tbl_client_database_info where
-    db_owner_id = _d_s_id) as database_password
+    db_owner_id = _cl_id and is_group=1) as database_password
     FROM tbl_database_server WHERE database_server_id = _d_s_id;
 
     SELECT database_server_id, database_server_name,
         database_ip, database_port,
     (select database_username from tbl_client_database_info where
-    db_owner_id = _le_d_s_id) as database_username,
+    db_owner_id = _le_id and is_group=0) as database_username,
     (select database_password from tbl_client_database_info where
-    db_owner_id = _le_d_s_id) as database_password
+    db_owner_id = _le_id and is_group=0) as database_password
     FROM tbl_database_server WHERE database_server_id = _le_d_s_id;
 
     SELECT machine_id, machine_name, ip, port

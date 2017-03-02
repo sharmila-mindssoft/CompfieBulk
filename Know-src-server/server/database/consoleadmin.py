@@ -58,16 +58,23 @@ def get_db_server_list(db):
 ###############################################################################
 def return_database_servers(data):
     fn = consoleadmin.DBServer
-    result = [
-        fn(
-            db_server_id=datum["database_server_id"], db_server_name=datum["database_server_name"],
-            ip=datum["database_ip"], port=datum["database_port"],
-            username=datum["database_username"], password=datum["database_password"],
-            no_of_clients=0 if(
-                datum["legal_entity_ids"] is None
-            ) else len(datum["legal_entity_ids"].split(","))
-        ) for datum in data
-    ]
+    result = []
+    for datum in data:
+        no_of_clients = 0
+        if datum["legal_entity_ids"] is not None:
+            if datum["legal_entity_ids"].find(",") >= 0:
+                no_of_clients = len(datum["legal_entity_ids"].split(","))
+            else:
+                no_of_clients = 1
+
+        result.append(
+            fn(
+                db_server_id=datum["database_server_id"], db_server_name=datum["database_server_name"],
+                ip=datum["database_ip"], port=datum["database_port"],
+                username=datum["database_username"], password=datum["database_password"],
+                no_of_clients=no_of_clients
+            )
+        )
     return result
 
 
@@ -365,6 +372,8 @@ def validated_env_before_save(db, request):
     le_db_server_id = request.le_db_server_id
     machine_id = request.machine_id
     file_server_id = request.file_server_id
+    legal_entity_id = request.legal_entity_id
+    client_id = request.client_id
     if client_db_id is None:
         vobj = ServerValidation(db, machine_id, db_server_id, file_server_id)
         is_valid = vobj.perform_validation()
@@ -378,7 +387,7 @@ def validated_env_before_save(db, request):
         else :
             return True
     else:
-        vobj = UpdateServerValidation(db, client_db_id, machine_id, db_server_id, le_db_server_id, file_server_id)
+        vobj = UpdateServerValidation(db, client_db_id, legal_entity_id, client_id, machine_id, db_server_id, le_db_server_id, file_server_id)
         is_valid = vobj.perform_update_validation()
         if is_valid[0] is not True :
             return is_valid[0]
@@ -736,8 +745,9 @@ def return_file_servers(data):
     file_server_list = []
     for datum in data:
         no_of_clients = 0
-        if(datum["legal_entity_ids"] is not None and datum["legal_entity_ids"].find(",") > 0):
+        if(datum["legal_entity_ids"] is not None):
             no_of_clients = len(datum["legal_entity_ids"].split(","))
+
         file_server_list.append(consoleadmin.FileServerList(
             datum["file_server_id"], datum["file_server_name"],
             datum["ip"], datum["port"], no_of_clients

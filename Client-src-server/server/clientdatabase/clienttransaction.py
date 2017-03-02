@@ -238,7 +238,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " t1.geography_name, t1.address , t2.domain_id, t3.domain_name, " + \
             " (select count(compliance_id) from tbl_client_compliances where " +\
             " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
-            " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id limit 1) is_new, " + \
+            " (select is_new from tbl_client_compliances where is_new = 1 AND unit_id = t2.unit_id AND domain_id = t2.domain_id limit 1) is_new, " + \
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " Date(t2.updated_on)updated_on, t2.is_locked, " + \
             " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category, " + \
@@ -258,7 +258,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " t1.geography_name, t1.address , t2.domain_id, t3.domain_name, " + \
             " (select count(compliance_id) from tbl_client_compliances where " +\
             " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
-            " (select is_new from tbl_client_compliances where is_new = 1 and client_statutory_id = t2.client_statutory_id limit 1) is_new, " + \
+            " (select is_new from tbl_client_compliances where is_new = 1 AND unit_id = t2.unit_id AND domain_id = t2.domain_id limit 1) is_new, " + \
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " t2.updated_on, t2.is_locked, " + \
             " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
@@ -278,7 +278,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
         param = [legal_entity_id, session_user, div_id, div_id, cat_id, cat_id]
 
     query += " ORDER BY t1.unit_code, t1.unit_name, t3.domain_name"
-    print query
+    print query % tuple(param)
     # print param
     rows = db.select_all(query, param)
     # print rows
@@ -324,10 +324,18 @@ def return_compliance_for_statutory_settings(
 
     compliance_id_wise = {}
     for r in rows:
+        
+        compliance_applicable = False
+        if r["compliance_applicable_status"] == 1:
+            compliance_applicable = True
+
+        statutory_applicable = False
+        if r["statutory_applicable_status"] == 1:
+            statutory_applicable = True
 
         statutory_opted = r["statutory_opted_status"]
         if statutory_opted is None:
-            statutory_opted = bool(r["statutory_applicable_status"])
+            statutory_opted = statutory_applicable
         else:
             statutory_opted = bool(statutory_opted)
 
@@ -335,7 +343,7 @@ def return_compliance_for_statutory_settings(
         if type(compliance_opted) is int:
             compliance_opted = bool(compliance_opted)
         else:
-            compliance_opted = bool(r["compliance_applicable_status"])
+            compliance_opted = compliance_applicable
 
         compliance_remarks = r["not_opted_remarks"]
         if compliance_remarks == "":
@@ -364,8 +372,9 @@ def return_compliance_for_statutory_settings(
             name = r["compliance_task"]
 
         comp_id = int(r["compliance_id"])
+
         unit_data = clienttransactions.ComplianceUnitApplicability(
-            r["unit_id"], r["client_compliance_id"], bool(r["compliance_applicable_status"]),
+            r["unit_id"], r["client_compliance_id"], compliance_applicable,
             compliance_opted, compliance_remarks, bool(r["is_new"]),
             bool(r["save_status"])
         )
@@ -373,7 +382,7 @@ def return_compliance_for_statutory_settings(
         if compliance_id_wise.get(comp_id) is None :
             compliance = clienttransactions.ComplianceApplicability(
                 statutory_name,
-                bool(r["statutory_applicable_status"]),
+                statutory_applicable,
                 statutory_opted,
                 r["remarks"],
                 r["compliance_id"],
@@ -1563,7 +1572,7 @@ def get_compliance_approval_list(
     # result = convert_to_dict(rows, columns)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
-    count = 0    
+    count = 0
     for row in rows:
         no_of_days, ageing = calculate_ageing(
             due_date=row["due_date"],
@@ -1630,9 +1639,9 @@ def get_compliance_approval_list(
         description = row["compliance_description"]
         concurrence_status = None if (
                 row["concurrence_status"] in [None, "None", ""]
-            ) else bool(int(row["concurrence_status"]))        
+            ) else bool(int(row["concurrence_status"]))
         statutory_dates = [] if (
-            row["statutory_dates"] is [None, "None", ""]            
+            row["statutory_dates"] is [None, "None", ""]
         ) else json.loads(row["statutory_dates"])
         validity_date = None if (
             row["validity_date"] is [None, "None", ""]
@@ -1715,7 +1724,7 @@ def save_compliance_activity(
         unit_id, compliance_id, compliance_history_id, activity_by,
         activity_on,  action
     ]
-    
+
     if remarks:
         columns.append("remarks")
         values.append(remarks)
@@ -2062,7 +2071,7 @@ def concur_compliance(
     next_due_date, validity_date, session_user
 ):
     columns = ["concurrence_status", "concurred_on","current_status"]
-    
+
     values = [1, get_date_time(),"2"]
     if validity_date is not None:
         columns.append("validity_date")

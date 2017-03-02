@@ -670,9 +670,9 @@ UserWiseReport.prototype.showReportValues = function() {
                 $('.activity-date', clonethree).text(v.activity_date);
             else
                 $('.activity-date', clonethree).text('-');
-            if (v.documents.length > 0) {
+            if (v.document_name.length > 0) {
                 //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                $('.uploaded-document', clonethree).html(v.documents);
+                $('.uploaded-document', clonethree).html(v.document_name);
                 $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
                 $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
 
@@ -695,9 +695,9 @@ UserWiseReport.prototype.showReportValues = function() {
                 $('.activity-date-new', clonefour).text(v.activity_date);
             else
                 $('.activity-date-new', clonefour).text('-');
-            if (v.documents.length > 0) {
+            if (v.document_name.length > 0) {
                 //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                $('.uploaded-document', clonethree).html(v.documents);
+                $('.uploaded-document', clonethree).html(v.document_name);
                 $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
                 $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
             } else {

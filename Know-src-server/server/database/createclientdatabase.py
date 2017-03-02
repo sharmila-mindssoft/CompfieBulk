@@ -451,7 +451,7 @@ class ClientGroupDBCreate(ClientDBBase):
                 " FOR EACH ROW BEGIN " + \
                 " if old.user_id is not null then " + \
                 " INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action) " + \
-                " values(old.legal_entity_id, old.user_id, 3) on duplicate key update s_action = 3 " + \
+                " values(old.legal_entity_id, old.user_id, 3) on duplicate key update s_action = 3; " + \
                 " UPDATE tbl_le_replication_status set user_data = 1 where legal_entity_id = old.legal_entity_id; " + \
                 " end if; " + \
                 " END; "

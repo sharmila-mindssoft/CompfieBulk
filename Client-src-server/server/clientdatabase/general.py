@@ -712,6 +712,8 @@ def get_legal_entity_info(db, user_id, user_category_id):
 
 
 def verify_password(db, password, user_id):
+    print "inside verify"
+    print user_id
     columns = "count(0) as result"
     encrypted_password = encrypt(password)
     condition = "1"
@@ -1876,7 +1878,7 @@ def update_password(db, password, user_id):
     condition = " user_id=%s"
     values.append(user_id)
     result = db.update(
-        tblUsers, columns, values, condition
+        tblUserLoginDetails, columns, values, condition
     )
     columns = "employee_code, employee_name"
     condition = "user_id = %s"

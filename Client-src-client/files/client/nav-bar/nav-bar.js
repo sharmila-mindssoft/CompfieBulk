@@ -162,7 +162,7 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.reminder-menu').on('click', function(event) {
                 $('.reminder-items-ul').empty();
-                client_mirror.getNotifications(LEIDS, 1, 0, 2, function(error, response) {
+                client_mirror.getNotifications(LEIDS, 2, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.reminders;
                         $.each(data, function(k, v) {
@@ -179,6 +179,22 @@ function initializeNavBar() {
         } else if (form.form_name == "Statutory Notifications") {
             var liObject = $('#nav-bar-templates .notifications li').clone();
             $('.cssmenu .menu-ul').append(liObject);
+            $('.notification-menu').on('click', function(event) {
+                $('.notification-items-ul').empty();
+                client_mirror.getStatutoryNotifications(LEIDS, 0, 2, function(error, response) {
+                    if (error == null) {
+                        data = response.statutory;
+                        $.each(data, function(k, v) {
+                            var msgObject = $('#nav-bar-templates .notifications-list li').clone();
+                            $('.statu-heading', msgObject).text(limits(v.notification_text, 22));
+                            $('.statu-content', msgObject).text(v.created_on);
+                            $('.slink', msgObject).attr('href', '/notifications');
+                            $('.notification-items-ul').append(msgObject);
+                        });
+                        $('.notification-items-ul').find(".divider:last").remove();
+                    }
+                });
+            });
         } else if (form.form_name == "Escalations") {
             var liObject = $('#nav-bar-templates .escalations li').clone();
             $('.cssmenu .menu-ul').append(liObject);

@@ -657,6 +657,32 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
+
+    /* Statutory Notifications */
+    function getStatutoryNotifications(le_ids, start_count, end_count, callback) {
+        callerName = 'client_dashboard';
+        var request = [
+            'GetStatutoryNotifications', {
+                'le_ids': le_ids,
+                'start_count': start_count,
+                'end_count': end_count
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function updateStatutoryNotificationsStatus(le_ids, notification_id, has_read, callback) {
+        callerName = 'client_dashboard';
+        var request = [
+            'UpdateStatutoryNotificationsStatus', {
+                'le_ids': le_ids,
+                'notification_id': notification_id,
+                'has_read': has_read
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     /* Get Compliance List*/
     function getCurrentComplianceDetail(le_id, current_start_count, callback) {
         callerName = 'client_user';
@@ -2645,6 +2671,8 @@ function initClientMirror() {
         updateSettings: updateSettings,
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
+        getStatutoryNotifications: getStatutoryNotifications,
+        updateStatutoryNotificationsStatus: updateStatutoryNotificationsStatus,
         getCurrentComplianceDetail: getCurrentComplianceDetail,
         getUpcomingComplianceDetail: getUpcomingComplianceDetail,
         getReassignedHistoryReportFilters: getReassignedHistoryReportFilters,

@@ -408,6 +408,8 @@ def update_compliances(
         " INNER JOIN tbl_compliances tc " + \
         " ON (tc.compliance_id=tch.compliance_id) " + \
         " WHERE compliance_history_id=%s "
+    print "query>>>", query
+    print "compliance_history_id>>>", compliance_history_id
     param = [compliance_history_id]
     row = db.select_one(query, param)
     columns = [
@@ -420,8 +422,10 @@ def update_compliances(
 
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
         return False
-    document_names = handle_file_upload(
-        db, documents, uploaded_compliances, row["documents"])
+    # document_names = handle_file_upload(
+    #     db, documents, uploaded_compliances, row["documents"])
+    # document_names = []
+    document_names = []
     if type(document_names) is not list:
         return document_names
     if row["frequency_id"] == 4 and row["duration_type_id"] == 2:
