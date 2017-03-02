@@ -12,25 +12,16 @@ function loadMessages(data) {
             var row = $(this);
             client_mirror.updateStatutoryNotificationsStatus(LEIDS, v.notification_id, true, function(error, response) {
                 if (error == null) {
-                    var data = response.statutory_notification_details;
-                    $.each(data, function(k1, v1) {
-                        // $('.act_name').text(v1.act_name);
-                        // $('.unit').text(v1.unit);
-                        // $('.compliance_name').text(v1.compliance_name);
-                        // $('.due_date').text(v1.due_date);
-                        // $('.delayed_by').text(v1.delayed_by);
-                        // $('.assignee_name').text(v1.assignee_name);
-                        // $('.concurrer_name').text(v1.concurrer_name);
-                        // $('.approver_name').text(v1.approver_name);
-                        $('.popup-statutory').text(response.s_pro);
-                        $('.popup-compliancetask').text(response.c_task);
-                        $('.popup-description').text(response.descrip);
-                        $('.popup-penalconse').text(response.p_cons);
-                        $('.popup-frequency').text(response.freq);
-                        $('.popup-occurance').text(response.summary);
-                        $('.popup-applicablelocation').text(response.locat);
-                        $('.popup-referencelink a span').text(response.refer);
-                        $('.popup-referencelink a').attr('href', response.refer);
+                    var data_new = response.statutory_notification_details;
+                    $.each(data_new, function(k1, v1) {
+                        $('.popup-statutory').text(v1.statutory_provision);
+                        $('.popup-compliancetask').text(v1.compliance_task);
+                        $('.popup-description').text(v1.compliance_description);
+                        $('.popup-penalconse').text(v1.penal_consequences);
+                        $('.popup-frequency').text(v1.freq_name);
+                        $('.popup-occurance').text(v1.summary);
+                        $('.popup-referencelink a span').text(v1.refer);
+                        $('.popup-referencelink a').attr('href', v1.reference_link);
                     });
                     Custombox.open({
                         target: '#custom-modal',
