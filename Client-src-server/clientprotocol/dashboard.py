@@ -2120,25 +2120,27 @@ class NotificationDetailsSuccess(object):
         }
 
 class StatutoryNotificationDetailsSuccess(object):
-    def __init__(self, compliance_id, statutory_provision, compliance_task, compliance_description, penal_consequences, freq_name, reference_link):
+    def __init__(self, compliance_id, statutory_provision, compliance_task, compliance_description, penal_consequences, freq_name, summary, reference_link):
         self.compliance_id = compliance_id
         self.statutory_provision = statutory_provision
         self.compliance_task = compliance_task
         self.compliance_description = compliance_description
         self.penal_consequences = penal_consequences
         self.freq_name = freq_name
+        self.summary = summary
         self.reference_link = reference_link
-        
+
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_task", "compliance_description", "penal_consequences", "freq_name", "reference_link"])
+        data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_task", "compliance_description", "penal_consequences", "freq_name", "summary", "reference_link"])
         compliance_id = data.get("compliance_id")
         statutory_provision = data.get("statutory_provision")
         compliance_task = data.get("compliance_task")
         compliance_description = data.get("compliance_description")
         penal_consequences = data.get("penal_consequences")
         freq_name = data.get("freq_name")
-        reference_link = data.get("reference_link")
+        freq_name = data.get("freq_name")
+        summary = data.get("summary")
         return StatutoryNotificationDetailsSuccess(compliance_id, statutory_provision, compliance_task, compliance_description, penal_consequences, freq_name, reference_link)
 
     def to_structure(self):
@@ -2149,6 +2151,7 @@ class StatutoryNotificationDetailsSuccess(object):
             "compliance_description" : self.compliance_description,
             "penal_consequences" : self.penal_consequences,
             "freq_name" : self.freq_name,
+            "summary" : self.summary,
             "reference_link" : self.reference_link
         }
 

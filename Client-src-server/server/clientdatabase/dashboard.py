@@ -11,7 +11,7 @@ from server.clientdatabase.common import (
 )
 from server.common import (
     get_date_time_in_date, convert_to_dict,
-    datetime_to_string_time, datetime_to_string
+    datetime_to_string_time, datetime_to_string, make_summary
 )
 from server.clientdatabase.general import (
     get_user_unit_ids, calculate_ageing, get_admin_id,
@@ -1917,9 +1917,9 @@ def update_statutory_notification_status(db, notification_id, session_user):
     columns = ["is_read"]
     values = [1]
     condition = " notification_id = %s " % notification_id + " AND user_id = %s " % session_user
-    # db.update(
-    #     tblStatutoryNotificationsUsers, columns, values, condition
-    # )
+    db.update(
+        tblStatutoryNotificationsUsers, columns, values, condition
+    )
 
 def statutory_notification_detail(
     db, notification_id, session_user
@@ -1937,34 +1937,37 @@ def statutory_notification_detail(
             "where t2.notification_id = %s "
     rows = db.select_all(query, [notification_id])
 
-    if rows["document_name"] is None or rows["document_name"] == '':
-        c_name = rows["compliance_task"]
-    else :
-        c_name = rows["document_name"] + " - " + rows["compliance_task"]
+    notifications = []
+    for r in rows :
+        if r["document_name"] is None or r["document_name"] == '':
+            c_name = r["compliance_task"]
+        else :
+            c_name = r["document_name"] + " - " + r["compliance_task"]
 
-    date_list = []
+        date_list = []
 
-    statutory_dates = rows["statutory_dates"]
+        statutory_dates = r["statutory_dates"]
 
-    if statutory_dates is not None and statutory_dates != "":
-        statutory_dates = json.loads(statutory_dates)
+        if statutory_dates is not None and statutory_dates != "":
+            statutory_dates = json.loads(statutory_dates)
 
-        for date in statutory_dates:
-            s_date = core.StatutoryDate(
-                date["statutory_date"],
-                date["statutory_month"],
-                date["trigger_before_days"],
-                date.get("repeat_by")
-            )
-            date_list.append(s_date)
-    summary, dates = make_summary(date_list, rows["frequency_id"], rows)
-    if summary != "" and dates is not None and dates != "" :
-        summary += ' on (%s)' % (dates)
+            for date in statutory_dates:
+                s_date = clientcore.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
+                )
+                date_list.append(s_date)
+                print date_list, r["frequency_id"], r
+        summary, dates, trigger = make_summary(date_list, r["frequency_id"], r)
+        if summary != "" and dates is not None and dates != "" :
+            summary += ' on (%s)' % (dates)
 
-    notification = dashboard.StatutoryNotificationDetailsSuccess(
-        rows["compliance_id"], rows["statutory_provision"], c_name, rows["compliance_description"], 
-        rows["penal_consequences"], rows["freq_name"], summary, rows["reference_link"])
-    notifications.append(notification)
+        notification = dashboard.StatutoryNotificationDetailsSuccess(
+            r["compliance_id"], r["statutory_provision"], c_name, r["compliance_description"], 
+            r["penal_consequences"], r["freq_name"], summary, r["reference_link"])
+        notifications.append(notification)
     return notifications
 
 
