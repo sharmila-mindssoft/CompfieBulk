@@ -476,6 +476,8 @@ class AutoStart(Database):
         self.execute(q)
 
     def update_upcoming_in_calendar_view(self):
+        self.execute("delete from tbl_calendar_view where date < day(now())")
+
         q = "insert into tbl_calendar_view (legal_entity_id, user_id, year, month, date, upcoming_count) " + \
             " select t.legal_entity_id, t.assignee, t.up_year, t.up_month, t.up_date, t.up_count " + \
             " from ( " + \
