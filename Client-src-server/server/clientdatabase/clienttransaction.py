@@ -2822,7 +2822,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                 values = [
                     c.f_id, old_statutory_dates, c.old_repeat_type_id, c.old_repeat_by,
                     c.repeat_by, c.repeat_type_id, statutory_dates, c.trigger_before_days,
-                    string_to_datetime(c.due_date).date(), c.complaince_id, c.domain_id,  u
+                    string_to_datetime(c.due_date).date(), c.compliance_id, c.domain_id,  u
                 ]
                 condition = "compliance_id = %s and  domain_id = %s and unit_id = %s "
                 result = db.update(
@@ -2838,7 +2838,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                     "repeats_type_id", "repeats_every", "statutory_date", "trigger_before_days", "due_date"
                 ]
                 values = [
-                    c.legal_entity_id, c.complaince_id, c.f_id, u, c.domain_id,
+                    c.legal_entity_id, c.compliance_id, c.f_id, u, c.domain_id,
                     old_statutory_dates, c.old_repeat_type_id, c.old_repeat_by,
                     c.repeat_by, c.repeat_type_id, statutory_dates, c.trigger_before_days,
                     string_to_datetime(c.due_date).date()
@@ -2849,17 +2849,19 @@ def save_review_settings_compliance(db, compliances, session_user):
                 if result is False:
                     raise client_process_error("E031")
                 status = "inserted"
-
-            unit_name = db.get_data(tblUnits, ['unit_name'], "unit_id = %s", [unit_id])
+            print "c.compliance_id----", c.compliance_id
+            unit_name = db.get_data(tblUnits, ['unit_name'], "unit_id = %s", [u])
             domain_name = db.get_data(tblDomains, ['domain_name'], "domain_id = %s", [c.domain_id])
-            frequency_name = db.get_data(tbl_compliance_frequency, ['frequency'], "frequency_id = %s", [c.f_id])
-            compliance_name = db.get_data(tblCompliances, ['compliance_name'], "compliance_id = %s", [c.complaince_id])
+            frequency_name = db.get_data(tblComplianceFrequency, ['frequency'], "frequency_id = %s", [c.f_id])
+            compliance_name = db.get_data(tblCompliances, ['compliance_task'], "compliance_id = %s", [c.compliance_id])
+            print status, unit_name[0]['unit_name'], domain_name[0]['domain_name'], frequency_name[0]['frequency'], compliance_name[0]['compliance_task']
 
-            action = "Repeats every has been %s for following " + \
-                     "compliance in  %s - %s - %s and %s " % (
-                        status, unit_name, domain_name, frequency_name, compliance_name
+            action = "Repeats every has been %s for following compliance in  %s - %s - %s and %s " % (
+                        status, unit_name[0]['unit_name'], domain_name[0]['domain_name'],
+                        frequency_name[0]['frequency'], compliance_name[0]['compliance_task']
                         )
-            db.save_activity(session_user, frmReviewSettings, action, c["legal_entity_id"], unit_id)
+
+            db.save_activity(session_user, frmReviewSettings, action, c.legal_entity_id, u)
             return result
 
 # get_units_to_reassign

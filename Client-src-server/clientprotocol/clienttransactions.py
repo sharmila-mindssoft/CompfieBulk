@@ -1924,6 +1924,7 @@ class GetReAssignComplianceForUnitsSuccess(Response):
             "reassign_compliances": self.reassign_compliances,
         }
 
+
 class GetUserWidgetDataSuccess(Response):
     def __init__(self, widget_order_info, widget_list):
         self.widget_order_info = widget_order_info
@@ -1942,6 +1943,7 @@ class GetUserWidgetDataSuccess(Response):
             "widget_list": self.widget_list
         }
 
+
 class SaveWidgetDataSuccess(Response):
     def __init__(self):
         pass
@@ -1953,6 +1955,20 @@ class SaveWidgetDataSuccess(Response):
 
     def to_inner_structure(self):
         return {}
+
+
+class SaveReviewSettingsComplianceSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveReviewSettingsComplianceSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 def _init_Response_class_map():
     classes = [
@@ -1968,7 +1984,7 @@ def _init_Response_class_map():
         GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
         GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess, GetReAssignComplianceUnitsSuccess,
         GetReAssignComplianceUnitsSuccess, GetAssigneewiseComplianesFilters,
-        GetUserWidgetDataSuccess, SaveWidgetDataSuccess
+        GetUserWidgetDataSuccess, SaveWidgetDataSuccess, SaveReviewSettingsComplianceSuccess,
     ]
     class_map = {}
     for c in classes:
@@ -3086,6 +3102,7 @@ class REASSIGN_COMPLIANCES(object):
             "v_date": self.v_date
         }
 
+
 class ChangeThemeSuccess(Response):
     def __init__(self, theme_value):
         self.theme_value = theme_value
@@ -3100,3 +3117,4 @@ class ChangeThemeSuccess(Response):
         return {
             "theme": self.theme_value
         }
+

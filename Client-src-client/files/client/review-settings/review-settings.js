@@ -294,8 +294,6 @@ activateUnit = function (element) {
     }
 }
 
-
-
 validateFirstTab = function()  {
     if (ACTIVE_UNITS.length <= 0) {
         displayMessage(message.atleast_one_unit_required)
@@ -308,6 +306,14 @@ validateFirstTab = function()  {
     }
 };
 
+clearElement = function(arr) {
+    if (arr.length > 0) {
+        $.each(arr, function(i, element) {
+            element.val('');
+        });
+    }
+}
+
 
 showTab = function(){    
     hideall = function() {
@@ -316,6 +322,8 @@ showTab = function(){
         $('.tab-pane').removeClass('active in');
         $('#tab1').hide();
         $('#tab2').hide();
+        $(".UnitList").empty();
+        clearElement(Domain, DomainId);
         SubmitButton.hide();
         NextButton.hide();
         PreviousButton.hide();
