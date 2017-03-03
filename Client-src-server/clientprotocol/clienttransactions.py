@@ -231,30 +231,6 @@ class GetSettingsCompliances(Request):
             "f_id": self.frequency_id
         }
 
-class ApplicableCompliance(object):
-    def __init__(self, compliance_id, compliance_opted_status, compliance_remarks):
-        self.compliance_id = compliance_id
-        self.compliance_opted_status = compliance_opted_status
-        self.compliance_remarks = compliance_remarks
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id", "compliance_opted_status", "compliance_remarks"])
-        compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
-        compliance_opted_status = data.get("compliance_opted_status")
-        compliance_opted_status = parse_structure_Bool(compliance_opted_status)
-        compliance_remarks = data.get('compliance_remarks')
-        compliance_remarks = parse_structure_OptionalType_CustomTextType_500(compliance_remarks)
-        return ApplicableCompliance(compliance_id, compliance_opted_status, compliance_remarks)
-
-    def to_structure(self):
-        return {
-            "compliance_id": to_structure_UnsignedIntegerType_32(self.compliance_id),
-            "compliance_opted_status": to_structure_Bool(self.compliance_opted_status),
-            "compliance_remarks": to_structure_OptionalType_CustomTextType_500(self.compliance_remarks)
-        }
-
 class UpdateStatutoryCompliance(object):
     def __init__(
         self, client_compliance_id,
@@ -452,35 +428,6 @@ class GetComplianceForUnits(Request):
             "f_ids": self.frequency_ids
         }
 
-class NewUnitSettings(object):
-    def __init__(self, user_id, unit_ids, domain_id, country_id):
-        self.user_id = user_id
-        self.unit_ids = unit_ids
-        self.domain_id = domain_id
-        self.country_id = country_id
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, [
-            "user_id", "u_ids", "d_ids", "c_ids"
-        ])
-        user_id = data.get("user_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        unit_ids = data.get("u_ids")
-        unit_ids = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(unit_ids)
-        domain_id = data.get("d_ids")
-        domain_id = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(domain_id)
-        country_id = data.get("c_ids")
-        country_id = parse_structure_OptionalType_VectorType_UnsignedIntegerType_32(country_id)
-        return NewUnitSettings(user_id, unit_ids, domain_id, country_id)
-
-    def to_structure(self):
-        return {
-            "user_id": to_structure_UnsignedIntegerType_32(self.user_id),
-            "u_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.unit_ids),
-            "d_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.domain_id),
-            "c_ids": to_structure_OptionalType_VectorType_UnsignedIntegerType_32(self.country_id)
-        }
 
 class SaveAssignedCompliance(Request):
     def __init__(
@@ -550,25 +497,6 @@ class GetUserwiseCompliances(Request):
         return {
         }
 
-class GetAssigneeCompliances(Request):
-    def __init__(self, assignee, record_count):
-        self.assignee = assignee
-        self.record_count = record_count
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["assignee", "record_count"])
-        assignee = data.get("assignee")
-        assignee = parse_structure_UnsignedIntegerType_32(assignee)
-        record_count = data.get("record_count")
-        record_count = parse_structure_UnsignedIntegerType_32(record_count)
-        return GetAssigneeCompliances(assignee, record_count)
-
-    def to_inner_structure(self):
-        return {
-            "assignee": to_structure_UnsignedIntegerType_32(self.assignee),
-            "record_count": to_structure_UnsignedIntegerType_32(self.record_count)
-        }
 
 class ReassignCompliance(Request):
     def __init__(self, legal_entity_id, r_from, assignee, assignee_name, concurrence_person, approval_person, reassigned_compliance, reason):
@@ -649,21 +577,16 @@ class ApproveCompliance(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "le_id","compliance_history_id", "approval_status",
+                "le_id", "compliance_history_id", "approval_status",
                 "remarks",  "next_due_date", "validity_date"
             ]
         )
         legal_entity_id = data.get("le_id")
         compliance_history_id = data.get("compliance_history_id")
-        # compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         approval_status = data.get("approval_status")
-        # approval_status = parse_structure_EnumType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
         remarks = data.get("remarks")
-        # remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         next_due_date = data.get("next_due_date")
-        # next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         validity_date = data.get("validity_date")
-        # validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         return ApproveCompliance(
             legal_entity_id, compliance_history_id, approval_status, remarks,
             next_due_date, validity_date
@@ -706,21 +629,17 @@ class GetStatutoriesByUnit(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_id", "domain_id",
+        data = parse_dictionary(data, [
+            "unit_id", "domain_id",
             "level_1_statutory_name", "compliance_frequency",
-            "country_id", "start_count"])
+            "country_id", "start_count"
+        ])
         unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         domain_id = data.get("domain_id")
-        domain_id = parse_structure_UnsignedIntegerType_32(domain_id)
         level_1_statutory_name = data.get("level_1_statutory_name")
-        level_1_statutory_name = parse_structure_OptionalType_CustomTextType_100(level_1_statutory_name)
         compliance_frequency = data.get("compliance_frequency")
-        compliance_frequency = parse_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         country_id = data.get("country_id")
-        country_id = parse_structure_UnsignedIntegerType_32(country_id)
         start_count = data.get("start_count")
-        start_count = parse_structure_UnsignedIntegerType_32(start_count)
         return GetStatutoriesByUnit(
             unit_id, domain_id, level_1_statutory_name,
             compliance_frequency, country_id, start_count
@@ -728,12 +647,12 @@ class GetStatutoriesByUnit(Request):
 
     def to_inner_structure(self):
         return {
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "domain_id": to_structure_SignedIntegerType_8(self.domain_id),
-            "level_1_statutory_name": to_structure_OptionalType_CustomTextType_100(self.level_1_statutory_name),
-            "compliance_frequency": to_structure_OptionalType_EnumType_core_COMPLIANCE_FREQUENCY(self.compliance_frequency),
-            "country_id": to_structure_UnsignedIntegerType_32(self.country_id),
-            "start_count": to_structure_UnsignedIntegerType_32(self.start_count)
+            "unit_id": self.unit_id,
+            "domain_id": self.domain_id,
+            "level_1_statutory_name": self.level_1_statutory_name,
+            "compliance_frequency": self.compliance_frequency,
+            "country_id": self.country_id,
+            "start_count": self.start_count
         }
 
 
@@ -1593,7 +1512,7 @@ class GetComplianceApprovalListSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["approval_list", 
+        data = parse_dictionary(data, ["approval_list",
                                        "approval_status", "total_count"])
         approval_list = data.get("approval_list")
         # approval_list = parse_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST(approval_list)
@@ -2623,7 +2542,7 @@ class APPROVALCOMPLIANCE(object):
         # delayed_by = parse_structure_OptionalType_UnsignedIntegerType_32(delayed_by)
         compliance_frequency = data.get("compliance_task_frequency")
         # compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
-        documents = data.get("uploaded_documents")        
+        documents = data.get("uploaded_documents")
         # documents = data.get("documents")
         # documents = parse_structure_OptionalType_VectorType_CustomTextType_500(documents)
         upload_date = data.get("upload_date")
