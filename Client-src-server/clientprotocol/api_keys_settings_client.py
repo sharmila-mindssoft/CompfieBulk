@@ -625,4 +625,6 @@ api_params = {
     "compliance_file_name":  make_vector_type_string(is_optional=True),
     "in_units":make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
     "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),    
+    "pr_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
+    
 }
