@@ -1573,7 +1573,7 @@ def get_compliance_approval_list(
     # result = convert_to_dict(rows, columns)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
-    count = 0    
+    count = 0
     for row in rows:
         no_of_days, ageing = calculate_ageing(
             due_date=row["due_date"],
@@ -1640,9 +1640,9 @@ def get_compliance_approval_list(
         description = row["compliance_description"]
         concurrence_status = None if (
                 row["concurrence_status"] in [None, "None", ""]
-            ) else bool(int(row["concurrence_status"]))        
+            ) else bool(int(row["concurrence_status"]))
         statutory_dates = [] if (
-            row["statutory_dates"] is [None, "None", ""]            
+            row["statutory_dates"] is [None, "None", ""]
         ) else json.loads(row["statutory_dates"])
         validity_date = None if (
             row["validity_date"] is [None, "None", ""]
@@ -1725,7 +1725,7 @@ def save_compliance_activity(
         unit_id, compliance_id, compliance_history_id, activity_by,
         activity_on,  action
     ]
-    
+
     if remarks:
         columns.append("remarks")
         values.append(remarks)
@@ -2072,7 +2072,7 @@ def concur_compliance(
     next_due_date, validity_date, session_user
 ):
     columns = ["concurrence_status", "concurred_on","current_status"]
-    
+
     values = [1, get_date_time(),"2"]
     if validity_date is not None:
         columns.append("validity_date")
@@ -2737,9 +2737,11 @@ def get_review_settings_compliance(db, request, session_user):
             " ifnull(t03.repeats_every, t02.repeats_every) as repeats_every, " + \
             " ifnull(t03.repeats_type_id, t02.repeats_type_id) as repeats_type_id, " + \
             " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates, " + \
-            " group_concat(DISTINCT t01.unit_id) as unit_ids, t02.statutory_mapping from tbl_client_compliances as t01 " + \
+            " group_concat(t01.unit_id) as unit_ids, t02.statutory_mapping " + \
+            " from tbl_client_compliances as t01 " + \
             " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id " + \
-            " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s "  # group by t01.unit_id
+            " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s " + \
+            " group by t01.compliance_id "
 
     query = query % (where_qry)
     if condition_val is None:
@@ -2747,12 +2749,6 @@ def get_review_settings_compliance(db, request, session_user):
     else:
         rows = db.select_all(query, condition_val)
 
-    # rows = db.select_all(query, condition_val)
-    # results = convert_to_dict(rows, [
-    #     "compliance_id", "compliance_task", "compliance_id", "statutory_provision", "repeats_every",
-    #     "statutory_dates", "statutory_date", "trigger_before_days", "due_date", "units"
-    # ])
-    print rows
     return return_review_settings_compliance(rows)
 
 
@@ -2772,7 +2768,8 @@ def return_review_settings_compliance(data):
             )
             date_list.append(s_date)
         unit_ids = [int(x) for x in d["unit_ids"].split(',')]
-        statutories = d["statutory_mapping"].split(">>")
+        s_maps = json.loads(d["statutory_mapping"])
+        statutories = s_maps[0].split(">>")
         level_1_statutory_name = statutories[0].strip()
         results.append(
             clientcore.ReviewSettingsCompliance(
@@ -2801,18 +2798,21 @@ def get_review_settings_timeline(db, request, session_user):
 
 def save_review_settings_compliance(db, compliances, session_user):
     for c in compliances:
-        units = c["unit_id"]
+        units = c.unit_ids
         for u in units:
+            statutory_dates = []
             for s_d in c.statu_dates:
                 statutory_dates.append(s_d.to_structure())
             statutory_dates = json.dumps(statutory_dates)
 
+            old_statutory_dates = []
             for s_d1 in c.old_statu_dates:
                 old_statutory_dates.append(s_d1.to_structure())
             old_statutory_dates = json.dumps(old_statutory_dates)
+
             query = "select count(*) as count from tbl_compliance_dates " + \
                     "where compliance_id = %s and domain_id = %s and unit_id = %s"
-            param = [c['compliance_id'], c['domain_id'], u]
+            param = [c.compliance_id, c.domain_id, u]
             rows = db.select_all(query, param)
             print rows
             if rows[0]['count'] > 0:
@@ -2821,9 +2821,9 @@ def save_review_settings_compliance(db, compliances, session_user):
                     "repeats_type_id", "repeats_every", "statutory_date", "trigger_before_days", "due_date"
                 ]
                 values = [
-                    c["f_id"], old_statutory_dates, c["old_repeat_type_id"], c["old_repeat_by"],
-                    c["repeat_by"], c["repeat_type_id"], statutory_dates, c["trigger_before_days"],
-                    string_to_datetime(c["due_date"]).date(), c["complaince_id"], c["domain_id"],  u
+                    c.f_id, old_statutory_dates, c.old_repeat_type_id, c.old_repeat_by,
+                    c.repeat_by, c.repeat_type_id, statutory_dates, c.trigger_before_days,
+                    string_to_datetime(c.due_date).date(), c.compliance_id, c.domain_id,  u
                 ]
                 condition = "compliance_id = %s and  domain_id = %s and unit_id = %s "
                 result = db.update(
@@ -2839,10 +2839,10 @@ def save_review_settings_compliance(db, compliances, session_user):
                     "repeats_type_id", "repeats_every", "statutory_date", "trigger_before_days", "due_date"
                 ]
                 values = [
-                    c["legal_entity_id"], c["complaince_id"], c["f_id"], u, c["domain_id"],
-                    old_statutory_dates, c["old_repeat_type_id"], c["old_repeat_by"],
-                    c["repeat_by"], c["repeat_type_id"], statutory_dates, c["trigger_before_days"],
-                    string_to_datetime(c["due_date"]).date()
+                    c.legal_entity_id, c.compliance_id, c.f_id, u, c.domain_id,
+                    old_statutory_dates, c.old_repeat_type_id, c.old_repeat_by,
+                    c.repeat_by, c.repeat_type_id, statutory_dates, c.trigger_before_days,
+                    string_to_datetime(c.due_date).date()
                 ]
                 result = db.insert(
                     tblComplianceDates, columns, values
@@ -2850,17 +2850,19 @@ def save_review_settings_compliance(db, compliances, session_user):
                 if result is False:
                     raise client_process_error("E031")
                 status = "inserted"
+            print "c.compliance_id----", c.compliance_id
+            unit_name = db.get_data(tblUnits, ['unit_name'], "unit_id = %s", [u])
+            domain_name = db.get_data(tblDomains, ['domain_name'], "domain_id = %s", [c.domain_id])
+            frequency_name = db.get_data(tblComplianceFrequency, ['frequency'], "frequency_id = %s", [c.f_id])
+            compliance_name = db.get_data(tblCompliances, ['compliance_task'], "compliance_id = %s", [c.compliance_id])
+            print status, unit_name[0]['unit_name'], domain_name[0]['domain_name'], frequency_name[0]['frequency'], compliance_name[0]['compliance_task']
 
-            unit_name = db.get_data(tblUnits, ['unit_name'], "unit_id = %s", [unit_id])
-            domain_name = db.get_data(tblDomains, ['domain_name'], "domain_id = %s", [c["domain_id"]])
-            frequency_name = db.get_data(tbl_compliance_frequency, ['frequency'], "frequency_id = %s", [c["f_id"]])
-            compliance_name = db.get_data(tblCompliances, ['compliance_name'], "compliance_id = %s", [c["complaince_id"]])
-
-            action = "Repeats every has been %s for following " + \
-                     "compliance in  %s - %s - %s and %s " % (
-                        status, unit_name, domain_name, frequency_name, compliance_name
+            action = "Repeats every has been %s for following compliance in  %s - %s - %s and %s " % (
+                        status, unit_name[0]['unit_name'], domain_name[0]['domain_name'],
+                        frequency_name[0]['frequency'], compliance_name[0]['compliance_task']
                         )
-            db.save_activity(session_user, frmReviewSettings, action, c["legal_entity_id"], unit_id)
+
+            db.save_activity(session_user, frmReviewSettings, action, c.legal_entity_id, u)
             return result
 
 # get_units_to_reassign

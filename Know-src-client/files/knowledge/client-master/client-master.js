@@ -483,6 +483,8 @@ function saveClient() {
             var country_id = le_table.find(".country").val();
             var business_group_id = null;
             var business_group_name = null;
+            var business_group_id_text = null;
+            business_group_id_text = le_table.find(".business-group-id").val();
             business_group_id = le_table.find(".business-group").val();
             business_group_name = le_table.find(".business-group-text").val().trim();            
             var le_name = le_table.find("#legal_entity_text").val();
@@ -679,9 +681,11 @@ function saveClient() {
 
                     }
                     le_name_duplicate_check_temp.push(le_name);
-                    if(business_group_id == null){
+                    if(business_group_id_text == null){
                         temp_businessgroup = business_group_name;
                         business_group_id = 0;
+                    }else{
+                        business_group_id = business_group_id_text;
                     }
 
                     legal_entities.push(
@@ -1111,6 +1115,7 @@ function editEntity(e, le_count, value, domain_details) {
             le_table.find(".select_business_group").hide();
 
             if (value.business_group) {
+                showEditable(le_table.find(".business-group-id"), value.business_group.business_group_id);
                 showEditable(le_table.find(".business-group-text"), value.business_group.business_group_name);
             }
 
