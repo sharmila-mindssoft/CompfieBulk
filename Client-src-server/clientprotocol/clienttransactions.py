@@ -1051,7 +1051,7 @@ def _init_Request_class_map():
         GetStatutorySettingsFilters, ChangeStatutorySettingsLock,
         GetStatutorySettings, GetSettingsCompliances, UpdateStatutorySettings,
         GetAssignCompliancesFormData, GetComplianceForUnits, SaveAssignedCompliance,
-        GetUserwiseCompliances, GetAssigneeCompliances, ReassignCompliance,
+        GetUserwiseCompliances, ReassignCompliance,
         GetComplianceApprovalList, ApproveCompliance, GetPastRecordsFormData,
         GetStatutoriesByUnit, SavePastRecords, GetReviewSettingsFilters,
         GetReviewSettingsUnitFilters, GetReviewSettingsComplianceFilters,
