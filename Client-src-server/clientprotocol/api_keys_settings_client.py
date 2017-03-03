@@ -48,6 +48,9 @@ def make_map_type(module, klass_name, validfun=is_numeric, is_optional=False):
 def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
     return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name}
 
+def make_map_type_vector_type_string(length=150, is_optional=False):
+    return {'type': 'MAP_TYPE_VECTOR_TYPE_STRING', 'is_optional': is_optional, 'length': length}
+
 def make_widget_type():
     # customized widget data from backend
     return {'type': 'WIDGET_TYPE'}
@@ -618,7 +621,7 @@ api_params = {
     "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
-    "level_1_statutories": make_text_field(),    
+    "level_1_statutories": make_text_field(),
     "compliance_file_name":  make_vector_type_string(is_optional=True),
     "in_units":make_vector_type_field(module="clienttransactions", klass_name="IndustryWiseUnits"),
     "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),

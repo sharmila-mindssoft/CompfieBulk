@@ -77,11 +77,6 @@ def process_client_transaction_requests(request, db, session_user, session_categ
             db, request, session_user
         )
 
-    # elif type(request) is clienttransactions.GetUserwiseCompliances:
-    #     result = process_get_user_wise_compliances(
-    #         db, session_user
-    #     )
-
     elif type(request) is clienttransactions.GetAssigneeCompliances:
         result = process_get_assignee_compliances(db, request, session_user)
 
@@ -389,7 +384,7 @@ def process_approve_compliance(db, request, session_user):
     next_due_date = request.next_due_date
     validity_date = request.validity_date
     legal_entity_id = request.legal_entity_id
-    
+
     status = status[0]
 
     if status == "Approve":
@@ -401,7 +396,7 @@ def process_approve_compliance(db, request, session_user):
         reject_compliance_approval(
             db, compliance_history_id, remarks,  next_due_date
         )
-    elif status == "Concur":        
+    elif status == "Concur":
         concur_compliance(
             db, compliance_history_id, remarks,
             next_due_date, validity_date, session_user
@@ -415,7 +410,7 @@ def process_approve_compliance(db, request, session_user):
     #         db, compliance_history_id, remarks,
     #         next_due_date, validity_date, session_user
     #     )
-        
+
     return clienttransactions.ApproveComplianceSuccess()
 
 

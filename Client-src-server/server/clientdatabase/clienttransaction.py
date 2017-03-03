@@ -327,7 +327,7 @@ def return_compliance_for_statutory_settings(
 
     compliance_id_wise = {}
     for r in rows:
-        
+
         compliance_applicable = False
         if r["compliance_applicable_status"] == 1:
             compliance_applicable = True
@@ -1046,6 +1046,8 @@ def save_assigned_compliance(db, request, session_user):
                 request.approval_person_name,
                 compliance_names
             )
+        print "concurrence approval"
+        print concurrence, approval
         cc = [
             get_email_id_for_users(db, concurrence)[1],
             get_email_id_for_users(db, approval)[1]

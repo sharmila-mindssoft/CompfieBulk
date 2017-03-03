@@ -1570,10 +1570,9 @@ def get_user_countries(db, user_id):
 
 
 def get_email_id_for_users(db, user_id):
-    q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
-        user_id
-    )
-    row = db.select_one(q)
+    q = "SELECT employee_name, email_id from tbl_users where user_id = %s"
+    print q
+    row = db.select_one(q, [user_id])
     if row:
         return row["employee_name"], row["email_id"]
     else:
@@ -1949,7 +1948,9 @@ def get_trail_id(db, type=None):
     else:
         query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id " + \
             " from tbl_audit_log;"
+    print query
     row = db.select_one(query)
+
     trail_id = row.get("audit_trail_id")
     return trail_id
 

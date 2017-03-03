@@ -954,7 +954,7 @@ DELIMITER //
 CREATE TRIGGER `after_tbl_compliances_update` AFTER UPDATE ON `tbl_compliances`
  FOR EACH ROW BEGIN
     SET @action = 0;
-   IF NEW.is_approved <> old.is_approved and (NEW.is_approved = 2 or NEW.is_approved = 3) THEN
+   IF NEW.is_approved = 2 or NEW.is_approved = 3 THEN
         INSERT INTO tbl_audit_log(action,
                              client_id,
                              legal_entity_id,
