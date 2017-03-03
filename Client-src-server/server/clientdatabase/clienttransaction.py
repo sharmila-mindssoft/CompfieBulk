@@ -1157,12 +1157,12 @@ def get_level_1_statutories_for_user_with_domain(
     level_1_statutory = {}
     for row in rows:
         domain_id = str(row["domain_id"])
-        statutory_mapping = row["statutory_mapping"]
+        statutory_mapping = json.loads(row["statutory_mapping"])
         if domain_id not in level_1_statutory:
             level_1_statutory[domain_id] = []
-        statutories = statutory_mapping.split(">>")
-        if statutories[0].strip() not in level_1_statutory[domain_id]:
-            level_1_statutory[domain_id].append(statutories[0].strip())
+        statutories = statutory_mapping[0]
+        if statutories.strip() not in level_1_statutory[domain_id]:
+            level_1_statutory[domain_id].append(statutories.strip())
     return level_1_statutory
 
 
