@@ -953,5 +953,6 @@ h2.chart-title: hover{
 .f-s-10 {
   font-size: 10px;
 }
-
-
+.auto-selected {
+    background: #EAE8E8;
+}
