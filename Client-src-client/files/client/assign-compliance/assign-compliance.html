@@ -267,7 +267,7 @@
                 <span class="compliancetask"> </span>
               </td>
 
-              <td class="text-center applicableunits"> </td>
+              <td class="text-center applicableunits"> <a class="c-pointer"> </a> </td>
 
               <td class="frequency"> </td>
 
@@ -283,8 +283,13 @@
 
           </tr>
         </table>
-      </div>
+    </div>
 
+    <table class="table-popup-list">
+        <tr class="table-row">
+          <td class="popup_unitname" style="text-align:left"></td>
+        </tr>
+    </table>
 
 </div>
 <!-- Modal -->
@@ -295,12 +300,14 @@
     <h4 class="custom-modal-title p-t-10 p-b-10">Applicable Units</h4>
     <div class="custom-modal-text">
         <div role="form">
-            <p class="form-control-static text-left">RG1001 - Corporate Office - 15/9, New Delhi, New Delhi, North Region, India</p>
-            <p class="form-control-static text-left">RG1002 - Regional Office - 24-1/4, South Delhi Municipal Corporation, Delhi</p>
-            <p class="form-control-static text-left">RG1003 - Branch Office - 12, KK nagar, Chennai, Tamil Nadu, South Region</p>
+            <table width="100%" id="popup_table">
+                <tbody class="popup-list">
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
 <script type="text/javascript" src="/script/assign-compliance/assign-compliance.js"></script>

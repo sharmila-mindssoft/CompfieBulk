@@ -446,6 +446,28 @@ function get_selected_count(element){
 	$('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
 }
 
+function displayPopup(units_string){
+	$('.popup-list').find('tr').remove();
+	var units = units_string.split(',');
+	for (var i = 0; i < units.length - 1; i++) {
+	    var dispUnit = '';
+	    $.each(UNITS, function (index, value) {
+	      if (value.u_id == parseInt(units[i])) {
+	        dispUnit = value.u_name + ', ' + value.address;
+	      }
+	    });
+	    var tableRow = $('#templates .table-popup-list .table-row');
+	    var clone = tableRow.clone();
+	    $('.popup_unitname', clone).text(dispUnit);
+	    $('.popup-list').append(clone);
+	}
+
+    Custombox.open({
+        target: '#custom-modal',
+        effect: 'contentscale',
+    });
+}
+
 function loadCompliances(){
 	if (SCOUNT <= 1) {
 	    $('.tbody-accordion-list').empty();
@@ -544,8 +566,6 @@ function loadCompliances(){
 
 			    $('.compliancetask', clone2).text(compliance_name);
 			    $('.desc', clone2).attr('title', compliance_description);
-			    $('.applicableunits', clone2).text(disp_appl_unit);
-			    $('.frequency', clone2).text(frequency);
 
 			    var dispUnit = '';
 			    for (var i = 0; i < applicable_units.length; i++) {
@@ -553,6 +573,13 @@ function loadCompliances(){
 			    }
 			    $('.appl_unit', clone2).attr('id', 'appl_unit' + SCOUNT);
 			    $('.appl_unit', clone2).val(dispUnit);
+
+			    $('.applicableunits', clone2).find('a').text(disp_appl_unit);
+			    $('.applicableunits', clone2).find('a').on('click', function(e) {
+		            displayPopup(dispUnit);
+		        });
+
+			    $('.frequency', clone2).text(frequency);
 
 			    if (summary != null) {
 			        if (statutorydate.trim() != '') {
