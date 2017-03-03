@@ -3,6 +3,11 @@ from server.jsontocsvconverter import ConvertJsonToCSV
 from clientprotocol import (clientmasters, clientcore, clientreport)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
+from server.common import (
+    datetime_to_string, get_date_time,
+    string_to_datetime, generate_and_return_password, datetime_to_string_time,
+    get_current_date, new_uuid, addHours
+)
 from server.clientdatabase.general import (
     verify_password,
     get_business_groups_for_user, get_legal_entities_for_user,
@@ -136,11 +141,11 @@ def process_client_master_requests(request, db, session_user, client_id, le_ids_
         result = update_user_profile(
             db, request, session_user, client_id
         )
-    elif type(request) is clientmasters.get_user_management_details:
-        result = process_get_user_management_details(db, request, session_user)
+
+    elif type(request) is clientmasters.UserManagementList:
+        result = process_UserManagement_list(db, request, session_user)
 
     return result
-
 
 ########################################################
 # To get the list of all service providers
@@ -248,6 +253,19 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
         legal_units=legalUnits,
         service_providers=serviceProviders
     )
+########################################################
+# User Management - List users
+########################################################
+def process_UserManagement_list(db, request, session_user):
+    legalEntities = {}
+    users = {}
+
+    legalEntities = process_UserManagement_list_LegalEntities(db, request, session_user)
+    users = process_UserManagement_list_users(db, request, session_user)
+
+    return clientmasters.UserManagementListSuccess(
+        legal_entities=legalEntities,
+        users=users)
 
 ########################################################
 # To get all client forms to load in User privilege form
@@ -421,9 +439,54 @@ def process_UserManagement_ServiceProviders(db):
         short_name = row["short_name"]
         spList.append(
             clientcore.ClientServiceProviders_UserManagement(service_provider_id,
-                                                       service_provider_name, short_name)
+                                                             service_provider_name, short_name)
         )
     return spList
+########################################################
+# User Management List - Get legal entities
+########################################################
+def process_UserManagement_list_LegalEntities(db, request, session_user):
+    resultRows = userManagement_list_GetLegalEntities(db)
+    leList = []
+    for row in resultRows:
+        country_name = row["country_name"]
+        business_group_name = row["business_group_name"]
+        legal_entity_id = row["legal_entity_id"]
+        legal_entity_name = row["legal_entity_name"]
+        contract_from = datetime_to_string(row["contract_from"])
+        contract_to = datetime_to_string(row["contract_to"])
+        total_licence = row["total_licence"]
+        used_licence = row["used_licence"]
+        leList.append(
+            clientcore.ClientLegalEntities_UserManagementList(country_name, business_group_name,
+                                                              legal_entity_id, legal_entity_name,
+                                                              contract_from, contract_to,
+                                                              total_licence, used_licence)
+        )
+    return leList
+
+########################################################
+# User Management List - Get Users
+########################################################
+def process_UserManagement_list_users(db, request, session_user):
+    resultRows = userManagement_list_GetUsers(db)
+    userList = []
+    for row in resultRows:
+        user_id = row["user_id"]
+        user_category_id = row["user_category_id"]
+        employee_code = row["employee_code"]
+        employee_name = row["employee_name"]
+        username = row["username"]
+        email_id = row["email_id"]
+        mobile_no = row["mobile_no"]
+        legal_entity_id = row["legal_entity_id"]
+        userList.append(
+            clientcore.ClientUsers_UserManagementList(user_id, user_category_id,
+                                                      employee_code, employee_name,
+                                                      username, email_id,
+                                                      mobile_no, legal_entity_id)
+        )
+    return userList
 
 ########################################################
 # To get all user groups with details
@@ -865,58 +928,3 @@ def update_user_profile(db, request, session_user, client_id):
     result = update_profile(db, session_user, request)
     if result is True:
         return clientmasters.UpdateUserProfileSuccess()
-###############################################################################################
-# Objective: To Get User Management Details
-# Parameter: request object and the client id
-# Result: User Management Details
-###############################################################################################
-# def process_get_user_management_details(db, request, session_user):    
-    # return clientmasters.getuser
-
-# def process_UserManagementAddPrerequisite(db, request, session_user):
-#     userCategory = {}
-#     userGroup = {}
-#     businessGroup = {}
-#     legalEntity = {}
-#     groupCategory = {}
-#     groupDivision = {}
-#     legalDomains = {}
-#     legalUnits = {}
-
-#     userCategory = process_UserManagement_category(db)
-#     userGroup = process_UserManagement_UserGroup(db)
-#     businessGroup = process_UserManagement_BusinessGroup(db)
-#     legalEntity = process_UserManagement_LegalEntity(db)
-#     groupDivision = process_UserManagement_GroupDivision(db)
-#     groupCategory = process_UserManagement_GroupCategory(db)
-#     legalDomains = process_UserManagement_LegalDomains(db)
-#     legalUnits = process_UserManagement_LegalUnits(db)
-
-#     return clientmasters.GetUserManagementPrerequisiteSuccess(
-#         user_category=userCategory,
-#         user_group=userGroup,
-#         business_group=businessGroup,
-#         legal_entity=legalEntity,
-#         group_division=groupDivision,
-#         group_category=groupCategory,
-#         legal_Domains=legalDomains,
-#         legal_units=legalUnits
-#     )
-
-# def get_work_flow_score_card(db, request, session_user, session_category):
-#     if not request.csv:
-#         country_id = request.c_id
-#         legal_entity_id = request.legal_entity_id
-#         domain_id = request.d_id
-
-#         work_flow_score_card_list = report_work_flow_score_card(
-#             db, country_id, legal_entity_id, domain_id, session_user
-#         )
-#         return clientreport.GetWorkFlowScoreCardSuccess(work_flow_score_card_list)
-#     else:
-#         converter = ConvertJsonToCSV(
-#             db, request, session_user, "Reassign"
-#         )
-#         return clientreport.ExportToCSVSuccess(
-#             link=converter.FILE_DOWNLOAD_PATH
-#         )

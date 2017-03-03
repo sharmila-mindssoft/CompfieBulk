@@ -1,3 +1,5 @@
+import MySQLdb as mysql
+import requests
 from server.exceptionmessage import process_error, fetch_run_error
 from protocol import consoleadmin
 from forms import *
@@ -110,7 +112,10 @@ def save_db_server(db, request, session_user):
     #  Parameters : Db server name, ip, port, username, password
     #  Return : returns last inserted row id
     #
-    try:
+    # try:
+        is_valid = validate_database_server_before_save(db, request)
+        if is_valid is not True:
+            raise fetch_run_error(is_valid)
         db.call_insert_proc(
             "sp_databaseserver_save", (
                 request.db_server_id, request.db_server_name, request.ip,
@@ -123,10 +128,23 @@ def save_db_server(db, request, session_user):
         else:
             action = "Database server %s updated" % (request.db_server_name)
         db.save_activity(session_user, frmConfigureDatabaseServer, action)
-    except:
-        raise process_error("E074")
+    # except:
+    #     raise process_error("E074")
 
-
+def validate_database_server_before_save(db, request):
+        dhost = request.ip
+        uname = request.username
+        pwd = request.password
+        port = request.port
+        try :
+            connection = mysql.connect(host=dhost, user=uname, passwd=pwd, port=port)
+            c = connection.cursor()
+            c.close()
+            connection.close()
+            return True
+        except mysql.Error, e :
+            print e
+            return "Database server connection failed"
 ###############################################################################
 # To Get list of client servers
 # parameter : Object of database
@@ -198,7 +216,10 @@ def save_client_server(db, request, session_user):
     #  Parameters : Client server id, Client server name, ip, port
     #  Return : returns last inserted id
     #
-    try:
+    # try:
+        is_valid = validate_application_server_before_save(request)
+        if is_valid is not True:
+            raise fetch_run_error(is_valid)
         print "args"
         print request.client_server_id, request.client_server_name, request.ip, request.port
         new_id = db.call_insert_proc(
@@ -214,11 +235,24 @@ def save_client_server(db, request, session_user):
         if request.client_server_id is not None:
             action = "Machine %s updated" % (request.client_server_name)
         db.save_activity(session_user,  frmConfigureApplicationServer, action)
-    except Exception, e:
-        print e
-        raise process_error("E075")
+    # except Exception, e:
+    #     print e
+    #     raise process_error("E075")
 
+def validate_application_server_before_save(request):
+    port = request.port
+    ip = request.ip
+    try :
+        r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+        print r
+        print "-" * 50
+        if r.status_code != 200 :
+            return "Application server connection failed"
+        else :
+            return True
 
+    except :
+        raise RuntimeError("Application server connection failed")
 ###############################################################################
 # To Get data required for allocating database environment
 # parameter : Object of database

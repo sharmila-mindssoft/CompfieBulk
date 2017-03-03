@@ -2449,7 +2449,7 @@ class ActiveCompliance(object):
                 "compliance_history_id", "compliance_name",
                 "compliance_task_frequency", "domain_name", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
-                "format_file_name", "unit_name", "address", "compliance_description",
+                "compliance_file_name", "unit_name", "address", "compliance_description",
                 "remarks", "compliance_id", "file_names", "compliance_download_url"
             ]
         )
@@ -2473,7 +2473,7 @@ class ActiveCompliance(object):
         # next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         ageing = data.get("ageing")
         # ageing = parse_structure_CustomTextType_20(ageing)
-        format_file_name = data.get("format_file_name")
+        format_file_name = data.get("compliance_file_name")
         # format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_250(format_file_name)
         unit_name = data.get("unit_name")
         # unit_name = parse_structure_CustomTextType_200(unit_name)
@@ -2509,7 +2509,7 @@ class ActiveCompliance(object):
             "validity_date": self.validity_date,
             "next_due_date": self.next_due_date,
             "ageing": self.ageing,
-            "format_file_name": self.format_file_name,
+            "compliance_file_name": self.format_file_name,
             "unit_name" : self.unit_name,
             "address" : self.address,
             "compliance_description" : self.compliance_description,
@@ -4615,6 +4615,92 @@ class ClientServiceProviders_UserManagement(object):
             "u_sp_id": self.service_provider_id,
             "u_sp_name": self.service_provider_name,
             "u_sp_short": self.short_name
+        }
+##############################################################################
+# User Management List - Get Legal Entity details
+##############################################################################
+class ClientLegalEntities_UserManagementList(object):
+    def __init__(self, country_name, business_group_name, legal_entity_id, legal_entity_name,
+                 contract_from, contract_to, total_licence, used_licence):        
+        self.country_name = country_name
+        self.business_group_name = business_group_name
+        self.legal_entity_id = legal_entity_id
+        self.legal_entity_name = legal_entity_name
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.total_licence = total_licence
+        self.used_licence = used_licence
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["country_name", "business_group_name", "legal_entity_id"
+                                       "legal_entity_name", "contract_from", "contract_to",
+                                       "total_licence", "used_licence"])
+        country_name = data.get("country_name")
+        business_group_name = data.get("business_group_name")
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_name = data.get("legal_entity_name")
+        contract_from = data.get("contract_from")
+        contract_to = data.get("contract_to")
+        total_licence = data.get("total_licence")
+        used_licence = data.get("used_licence")
+        return ClientLegalEntities_UserManagementList(country_name, business_group_name, legal_entity_id,
+                                                     legal_entity_name, contract_from, contract_to, total_licence,
+                                                     used_licence)
+
+    def to_structure(self):
+        return {
+            "c_name": self.country_name,
+            "b_g_name": self.business_group_name, 
+            "le_id": self.legal_entity_id,
+            "le_name": self.legal_entity_name,
+            "cont_from": self.contract_from,
+            "cont_to": self.contract_to,
+            "total_licences": self.total_licence,
+            "used_licences": self.used_licence
+        }
+##############################################################################
+# User Management List - Get Users
+##############################################################################
+class ClientUsers_UserManagementList(object):
+    def __init__(self, user_id, user_category_id, employee_code, employee_name, 
+                 username, email_id, mobile_no, legal_entity_id):
+        self.user_id = user_id
+        self.user_category_id = user_category_id
+        self.employee_code = employee_code
+        self.employee_name = employee_name
+        self.username = username
+        self.email_id = email_id
+        self.mobile_no = mobile_no
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "user_category_id", "employee_code"
+                                       "employee_name", "username", "email_id",
+                                       "mobile_no", "legal_entity_id"])
+        user_id = data.get("user_id")
+        user_category_id = data.get("user_category_id")
+        employee_code = data.get("employee_code")
+        employee_name = data.get("employee_name")
+        username = data.get("username")
+        email_id = data.get("email_id")
+        mobile_no = data.get("mobile_no")
+        legal_entity_id = data.get("legal_entity_id")
+        return ClientUsers_UserManagementList(user_id, user_category_id, employee_code,
+                                                     employee_name, username, email_id, mobile_no,
+                                                     legal_entity_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "u_cat_id": self.user_category_id,
+            "emp_code": self.employee_code,
+            "emp_name": self.employee_name,
+            "user_name": self.username,
+            "email_id": self.email_id,
+            "mob_no": self.mobile_no,
+            "le_id": self.legal_entity_id
         }
 
 class ReassignedHistoryReportSuccess(object):

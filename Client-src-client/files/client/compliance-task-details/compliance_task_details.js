@@ -356,8 +356,7 @@ function showSideBar(c, a) {
                     $(".upload-progress-count").html("");
                     $(".upload-progress-count").show()
                 }
-                var le_id = 2;
-                client_mirror.updateComplianceDetail(le_id, n, v, p, o, q, w, remarks,
+                client_mirror.updateComplianceDetail(parseInt(LegalEntityId.val()), n, v, p, o, q, w, remarks,
                     function(error, response) {
                         if (error == null) {
                             // onSuccess(response);

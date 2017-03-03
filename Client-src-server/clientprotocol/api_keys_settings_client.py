@@ -168,7 +168,7 @@ api_params = {
     'business_group_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'is_active': make_bool_field(is_optional=False),
     "closed_on": make_text_field(length=200, is_optional=True),
-    'validity_days': make_int_field(length=365, is_optional=True),
+    'validity_days': make_int_field(length=10000, is_optional=True),
     'grp_mode': make_string_field(length=50, is_optional=False),
     "closed_remarks": make_text_field(length=500, is_optional=True),
     "compliance_id": make_int_field(length=10000, is_optional=True),
@@ -615,4 +615,12 @@ api_params = {
     "um_service_providers": make_vector_type_field(module="clientcore", klass_name="ClientServiceProviders_UserManagement"),  # User Management
     "freq_name": make_text_field(is_optional=True),
     "reference_link": make_text_field(is_optional=True),
+    "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
+    "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
+    "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
+    "level_1_statutories": make_text_field(),    
+    "compliance_file_name":  make_vector_type_string(is_optional=True),
+    "in_units":make_vector_type_field(module="clienttransactions", klass_name="IndustryWiseUnits"),
+    "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
+    'location': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
 }

@@ -4,6 +4,56 @@
 --
 
 DROP TRIGGER IF EXISTS `after_tbl_client_groups_update`;
+
+DELIMITER //
+CREATE TRIGGER `after_tbl_client_groups_update` AFTER INSERT ON `tbl_client_groups`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+   SET @save = 0;
+
+    IF OLD.email_id <> NEW.email_id THEN
+       INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    0,
+                    NEW.client_id,
+                    'email_id',
+                    NEW.email_id,
+                    'tbl_client_groups');
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE client_id = NEW.client_id and is_group = 1;
+
+    END IF;
+    IF OLD.total_view_licence <> NEW.total_view_licence THEN
+   INSERT INTO tbl_audit_log(action,
+                             client_id,
+                             legal_entity_id,
+                             tbl_auto_id,
+                             column_name,
+                             value,
+                             tbl_name)
+        VALUES (@action,
+                NEW.client_id,
+                0,
+                NEW.client_id,
+                'total_view_licence',
+                NEW.total_view_licence,
+                'tbl_client_groups');
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE client_id = NEW.client_id and is_group = 1;
+
+    END IF;
+
+END
+//
+DELIMITER ;
+
 DROP TRIGGER IF EXISTS `after_tbl_client_groups_insert`;
 
 DELIMITER //
@@ -72,7 +122,6 @@ CREATE TRIGGER `after_tbl_client_groups_insert` AFTER INSERT ON `tbl_client_grou
 
     INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group)
     values(new.client_id, 0, 1);
-
 
 END
 //
@@ -143,6 +192,34 @@ END
 //
 DELIMITER ;
 
+
+DROP TRIGGER IF EXISTS `after_tbl_business_groups_update`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_business_groups_update` AFTER UPDATE ON `tbl_business_groups`
+ FOR EACH ROW BEGIN
+   SET @action = 1;
+
+   IF OLD.business_group_name <> NEW.business_group_name THEN
+       INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    0,
+                    NEW.business_group_id,
+                    'business_group_name',
+                    NEW.business_group_name,
+                    'tbl_business_groups');
+        UPDATE tbl_client_replication_status set is_new_data = 1
+        WHERE client_id = NEW.client_id and is_group = 1;
+    END IF ;
+END
+//
+DELIMITER ;
 
 -- ------------
 -- legal entities
@@ -296,8 +373,8 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
         UPDATE tbl_client_replication_status set is_new_data = 1
         WHERE client_id = NEW.client_id and is_group = 1;
 
-        INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group) values(new.legal_entity_id, 0, 0)
-        on duplicate key update is_new_data = 0;
+        INSERT INTO tbl_client_replication_status (client_id, is_new_data, is_group) values(new.legal_entity_id, 1, 0)
+        on duplicate key update is_new_data = 1;
 
         -- legal entity domains insert
 
@@ -335,6 +412,23 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
         where client_id = NEW.client_id
 
         order by cn_config_id, col_name;
+
+        IF OLD.business_group_id <> NEW.business_group_id THEN
+           INSERT INTO tbl_audit_log(action,
+                                     client_id,
+                                     legal_entity_id,
+                                     tbl_auto_id,
+                                     column_name,
+                                     value,
+                                     tbl_name)
+                select 1, NEW.client_id, NEW.legal_entity_id,
+                    business_group_id, 'business_group_name',
+                    business_group_name from tbl_business_groups
+                    where ifnull(business_group_id,0) = new.business_group_id;
+
+            UPDATE tbl_client_replication_status set is_new_data = 1
+            WHERE client_id = NEW.client_id and is_group = 1;
+        END IF ;
 
    END IF ;
 
