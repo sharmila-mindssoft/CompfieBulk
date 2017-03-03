@@ -126,7 +126,7 @@
             <div class="form-group">
             <label class=" col-sm-5 control-label" for="example-input-small">Deletion Period: </label>
             <div class="col-sm-7 controls">
-              <input type="text" id="deletion-period" class="form-control input-sm width-30" placeholder="00" tabindex="3">
+              <input type="text" id="deletion-period" class="form-control input-sm width-30" placeholder="00" tabindex="3" maxlength="2">
             </div>
           </div>
         </div>
@@ -135,34 +135,26 @@
         </div>
         </div>
         
-      <div class="table-responsive p-l-15 p-r-15 unit-view">
-        <form class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
-              <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
-                <thead>
-                  <tr>
-                    <th width="25%">Unit</th>
-                    <th width="15%">Deletion Period <span class="mandatory">*</span></th>
-                  </tr>
-                </thead>
-                <tbody class="tbody-unit-list">
-                  <!-- <tr>
-                    <td>
-                    <i class="zmdi zmdi-info" data-toggle="tooltip" title="15/9, New Delhi, 110001"></i> 
-                    RG10001 - Corporate Office
-                    </td>
-                    <td>
-                    <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm width-20 " placeholder="00" value="7">
-                    </td>
-                  </tr> -->
-                 
-                </tbody>
-              </table>
-              </form>
-      </div>
-      <div class="form-group text-center">
+      <div class="table-responsive p-l-15 p-r-15 default-display-none unit-view">
+        <div class="form-horizontal group-border-dashed km-view" action="#" novalidate="">
+          <table id="datatable-responsive" class="table table-striped dt-responsive nowrap highlight" cellspacing="0" width="100%">
+            <thead>
+              <tr>
+                <th width="25%">Unit</th>
+                <th width="15%">Deletion Period <span class="mandatory">*</span></th>
+              </tr>
+            </thead>
+            <tbody class="tbody-unit-list">
+             
+            </tbody>
+          </table>
+        </div>
+
+        <div class="form-group text-center">
           <button class="btn btn-primary waves-effect waves-light btn-submit" type="button"> Submit </button>
-        <!-- <button class="btn btn-info waves-effect m-l-5" type="reset" onclick="location.href='/auto-deletion/list'"> Cancel </button> -->
+        </div>
       </div>
+      
     
     <!-- end col -->
     </div>
@@ -193,7 +185,7 @@
             <span class="unit-name"> </span>
             </td>
             <td>
-            <input type="text" class="form-control input-sm width-20 unit-deletion-period" placeholder="00">
+            <input type="text" class="form-control input-sm width-20 unit-deletion-period" placeholder="00" maxlength="2">
             </td>
         </tr>
     </table>
