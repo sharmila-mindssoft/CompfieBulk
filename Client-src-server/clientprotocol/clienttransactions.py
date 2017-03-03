@@ -1591,7 +1591,7 @@ class GetPastRecordsFormDataSuccess(Response):
         data = parse_dictionary(
             data, [
                     "business_groups", "pr_legal_entities",
-                    "client_divisions", "client_categories", "in_units", "domains", "level_1_statutories", "compliance_frequency"
+                    "client_divisions", "pr_categories", "in_units", "domains", "level_1_statutories", "compliance_frequency"
                 ]
             )
         # countries = data.get("countries")
@@ -1602,7 +1602,7 @@ class GetPastRecordsFormDataSuccess(Response):
         # legal_entities = parse_structure_VectorType_RecordType_core_ClientLegalEntity(legal_entities)
         divisions = data.get("client_divisions")
         # divisions = parse_structure_VectorType_RecordType_core_ClientDivision(divisions)
-        category = data.get("client_categories")
+        category = data.get("pr_categories")
         units = data.get("in_units")
         # units = parse_structure_VectorType_RecordType_client_transactions_IndustryWiseUnits(units) TO DO
         domains = data.get("domains")
@@ -1621,7 +1621,7 @@ class GetPastRecordsFormDataSuccess(Response):
             "business_groups": self.business_groups,
             "pr_legal_entities": self.legal_entities,
             "client_divisions": self.divisions,
-            "client_categories": self.category,
+            "pr_categories": self.category,
             "in_units": self.units,
             "domains": self.domains,
             "level_1_statutories": self.level_1_statutories,
