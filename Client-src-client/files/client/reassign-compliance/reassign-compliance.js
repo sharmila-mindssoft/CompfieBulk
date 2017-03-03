@@ -70,6 +70,8 @@ var mUnit = 5;
 
 var SELECTED_COMPLIANCE = {};
 
+var Filter_List = $('.filter-list');
+
 function callAPI(api_type) {
     if (api_type == REASSIGN_FILTER) { 
         displayLoader();
@@ -1094,6 +1096,16 @@ function pageControls(){
                 }, condition_fields, condition_values);
         }
         
+    });
+
+    Filter_List.keyup(function() {
+        var currentFilter = '#' + $(this).attr("class").split(' ').pop() + ' > li';
+        var searchText = $(this).val().toLowerCase();
+        $(currentFilter).each(function() {
+            var currentLiText = $(this).text().toLowerCase();
+            showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
     });
 }
 

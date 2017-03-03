@@ -41,6 +41,8 @@ var totalRecord = 0;
 var mUnit = 20;
 var mCompliances = 500;
 
+var Filter_List = $('.filter-list');
+
 function convert_month(data) {
   var months = [
     'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
@@ -1206,6 +1208,16 @@ function pageControls(){
 	            callAPI(SUBMIT_API)
 	        }, 500);
 		}
+    });
+
+    Filter_List.keyup(function() {
+    	var currentFilter = '#' + $(this).attr("class").split(' ').pop() + ' > li';
+        var searchText = $(this).val().toLowerCase();
+        $(currentFilter).each(function() {
+            var currentLiText = $(this).text().toLowerCase();
+            showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
     });
 
 }
