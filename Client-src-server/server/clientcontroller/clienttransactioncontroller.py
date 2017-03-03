@@ -15,7 +15,8 @@ from server.clientdatabase.general import (
     get_assignees,
     get_client_users, get_units_for_user, get_user_based_units,
     save_user_widget_settings, get_user_widget_settings, get_widget_list,
-    get_themes_for_user, save_themes_for_user, update_themes_for_user
+    get_themes_for_user, save_themes_for_user, update_themes_for_user,
+    get_categories_for_user
 )
 
 from server.clientdatabase.dashboard import (
@@ -88,15 +89,16 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_reassign_compliance(
             db, request, session_user
         )
-    elif type(request) is clienttransactions.GetPastRecordsFormData:
-        result = process_get_past_records_form_data(
-            db, request, session_user
-        )
     elif type(request) is clienttransactions.GetStatutoriesByUnit:
         result = process_get_statutories_by_unit(
             db, request, session_user
         )
 
+    elif type(request) is clienttransactions.GetPastRecordsFormData:
+        result = process_get_past_records_form_data(
+            db, request, session_user, session_category
+        )
+        
     elif type(request) is clienttransactions.SavePastRecords:
         result = process_save_past_records(
             db, request, session_user, client_id
@@ -248,25 +250,28 @@ def process_save_assigned_compliance(db, request, session_user):
 # To get data to populate the completed task -
 # current year form wizards
 ########################################################
-def process_get_past_records_form_data(db, request, session_user):
-    countries = get_countries_for_user(db, session_user)
+def process_get_past_records_form_data(db, request, session_user, session_category):
+    # countries = get_countries_for_user(db, session_user)    
     row = get_user_company_details(db, session_user)
     business_groups = get_business_groups_for_user(db, row[3])
     legal_entities = get_legal_entities_for_user(db, row[2])
     divisions = get_divisions_for_user(db, row[1])
-    units = get_units_for_user_grouped_by_industry(db, row[0])
-    domains = get_domains_for_user(db, session_user)
+    category = get_categories_for_user(db, row[4])
+    # units = get_units_for_user_grouped_by_industry(db, row[0])
+    units = get_user_based_units(db, session_user, session_category)
+    domains = get_domains_for_user(db, session_user, session_category)
     level1_statutories = get_level_1_statutories_for_user_with_domain(
         db, session_user
     )
     compliance_frequency = get_compliance_frequency(
-        db, "frequency_id in (2,3)"
+        db, "frequency_id in (1,2,3)"
     )
+    # countries=countries,
     return clienttransactions.GetPastRecordsFormDataSuccess(
-        countries=countries,
         business_groups=business_groups,
         legal_entities=legal_entities,
         divisions=divisions,
+        category=category,
         units=units,
         domains=domains,
         level_1_statutories=level1_statutories,
@@ -535,6 +540,7 @@ def process_client_master_filters_request(request, db, session_user, session_cat
 
     elif type(request) is clienttransactions.ChangeThemes:
         result = process_change_theme(db, request, session_user)
+    
 
     return result
 
