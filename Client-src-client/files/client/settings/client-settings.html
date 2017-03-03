@@ -43,11 +43,11 @@
                       <label class=" col-sm-offset-1 col-sm-5 control-label" for="example-input-small">Enable 2 levels of approval: <span class="mandatory">*</span></label>
                       <div class="col-sm-6 controls">
                         <div class="radio radio-info radio-inline">
-                          <input type="radio" id="inlineRadio1" value="option1" name="radioInline" checked>
+                          <input type="radio" id="approvallevel_yes" value="option1" name="ApprovalLevel">
                           <label for="inlineRadio1"> Yes </label>
                         </div>
                         <div class="radio radio-inline">
-                          <input type="radio" id="inlineRadio2" value="option2" name="radioInline" checked>
+                          <input type="radio" id="approvallevel_no" value="option2" name="ApprovalLevel">
                           <label for="inlineRadio2"> No </label>
                         </div>
                       </div>
@@ -62,7 +62,7 @@
                       <div class="col-sm-6 controls">
                         <label class="col-sm-2 control-label">For Every</label>
                         <div class="col-sm-1 no-padding">
-                          <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0" id="assignee_reminder">
+                          <input type="text" name="example-input-small" class="form-control input-sm" placeholder="0" id="assignee_reminder" maxlength="2">
                         </div>
                         <label class="col-sm-1 control-label t-a-l">Days</label>
                       </div>
@@ -71,7 +71,7 @@
                       <label class=" col-sm-offset-1 col-sm-5 control-label" for="example-input-small">Escalation Reminders to Concurrence & Approval Person: <span class="mandatory">*</span></label>
                       <div class="col-sm-6 controls">
                         <div class="col-sm-1 no-padding">
-                          <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0" id="conc_app_reminder">
+                          <input type="text" name="example-input-small" class="form-control input-sm" placeholder="0" id="conc_app_reminder" maxlength="2">
                         </div>
                         <label class="col-sm-1 control-label t-a-l">Days</label>
                       </div>
@@ -81,7 +81,7 @@
                       <div class="col-sm-6 controls">
                         <label class="col-sm-2 control-label">For Every</label>
                         <div class="col-sm-1 no-padding">
-                          <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0" id="ass_app_conc_days">
+                          <input type="text" name="example-input-small" class="form-control input-sm" placeholder="0" id="ass_app_conc_days" maxlength="2">
                         </div>
                         <label class="col-sm-4 control-label t-a-l">Days after due date</label>
                       </div>
@@ -91,9 +91,9 @@
                       <div class="col-sm-6 controls">
                         <label class="col-sm-2 control-label">For Every</label>
                         <div class="col-sm-1 no-padding">
-                          <input type="text" id="example-input-small" name="example-input-small" class="form-control input-sm" placeholder="0" id="sp_compl_reminder">
+                          <input type="text" name="example-input-small" class="form-control input-sm" placeholder="0" id="sp_compl_reminder" maxlength="2">
                         </div>
-                        <label class="col-sm-4 control-label t-a-l">Days</label>
+                        <label class="col-sm-1 control-label t-a-l">Days</label>
                       </div>
                     </div>
                   </div>
@@ -278,7 +278,7 @@
       </div>
 </div>
 <div id="templates">
-    <table class="le-domain">
+    <table id="le-domain">
       <tr class="table-row">
         <td class="domain-name"></td>
         <td class="activation-date"></td>
@@ -287,7 +287,7 @@
         </td>
       </tr>
     </table>
-    <table class="user-details">
+    <table id="user-details">
       <tr class="table-row">
         <td class="sno"></td>
         <td class="employee-name"></td>
@@ -298,4 +298,14 @@
       </tr>
     </table>
 </div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/settings/client-settings.js"></script>
+<script src="js/jquery-ui.js"></script>
 {% endblock %}
