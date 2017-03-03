@@ -80,6 +80,8 @@ def parse_string(x):
     # elif x  == "":
     #     raise empty_error()
     t = type(x)
+    if t not in [str, unicode] :
+        raise expectation_error("a string ", x)
     if (x.find('>>') < 0):
         x = x.replace(">", "")
         x = x.replace("<", "")
@@ -324,7 +326,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         param = api_params.get(field_name)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
-            
+
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')
