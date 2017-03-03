@@ -174,6 +174,7 @@ var message = {
   'reminder_assignee_required': 'Reminder to Assignee is Required',
   'escalationreminder_concurrence_approval_required': 'Escalation Reminders to Concurrence & Approval Person is Required',
   'escalationreminder_all': 'Escalation Reminders to Assignee, Concurrence & Approval is Required',
+  'reassignreminder_all': 'Reassign Service Provider Reminders to All is required',
   'act_remarks_required': 'Remarks required for not Applicable Act',
   'countryname_exists': 'Country Name Already Exists',
   'countryname_invalid': 'Country Name Invalid',
