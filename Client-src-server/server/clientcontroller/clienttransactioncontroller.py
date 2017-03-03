@@ -219,7 +219,8 @@ def process_get_assign_compliance_unit(db, request, session_user, session_catego
 def process_get_compliance_total(db, request, session_user):
     u_ids = request.unit_ids
     d_id = request.domain_id
-    total = total_compliance_for_units(db, u_ids, d_id)
+    f_ids = request.frequency_ids
+    total = total_compliance_for_units(db, u_ids, d_id, f_ids)
     return clienttransactions.GetComplianceTotalToAssignSuccess(total)
 
 def process_get_compliance_for_units(db, request, session_user):
@@ -234,7 +235,6 @@ def process_get_compliance_for_units(db, request, session_user):
     return clienttransactions.GetComplianceForUnitsSuccess(
         level_1_name, statutories
     )
-
 
 def process_save_assigned_compliance(db, request, session_user):
     status, task = validate_compliance_due_date(db, request)

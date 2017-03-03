@@ -726,7 +726,7 @@ def get_users_for_seating_units(db, session_user):
     return user_list
 
 
-def total_compliance_for_units(db, unit_ids, domain_id):
+def total_compliance_for_units(db, unit_ids, domain_id, sf_ids):
     q = " select " + \
         " count(distinct t01.compliance_id) as ccount" + \
         " From " + \
@@ -739,12 +739,13 @@ def total_compliance_for_units(db, unit_ids, domain_id):
         " where " + \
         " find_in_set(t01.unit_id, %s)" + \
         " and t01.domain_id = %s " + \
+        " and find_in_set(t04.frequency_id, %s) " + \
         " and t01.compliance_opted_status = 1 " + \
         " and t04.is_active = 1 " + \
         " and t03.compliance_id IS NULL "
 
     row = db.select_one(q, [
-        ",".join([str(x) for x in unit_ids]), domain_id
+        ",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids])
     ])
     if row:
         return row["ccount"]
