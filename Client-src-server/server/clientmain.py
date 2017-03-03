@@ -141,6 +141,7 @@ class API(object):
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
+                # print company.to_structure()
                 # print self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
                     if company.is_group is True:
@@ -176,6 +177,9 @@ class API(object):
                                 logger.logClient("error", "clientmain.py-le_database-added", e)
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
+
+            print self._le_databases
+            print self._group_databases
 
             def client_added(clients):
                 for client in clients:
