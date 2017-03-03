@@ -611,4 +611,7 @@ api_params = {
     "um_service_providers": make_vector_type_field(module="clientcore", klass_name="ClientServiceProviders_UserManagement"),  # User Management
     "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
+    "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
+    "level_1_statutories": make_text_field(),    
+    "compliance_file_name":  make_vector_type_string(is_optional=True),
 }
