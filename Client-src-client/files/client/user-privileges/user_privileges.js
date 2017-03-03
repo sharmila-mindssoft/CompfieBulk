@@ -25,7 +25,10 @@ var Search_status = $('#search-status');
 var Search_status_ul = $('.search-status-list');
 var Search_status_li = $('.search-status-li');
 
-UserPrivilegesPage = function () {
+var uId = null;
+var status = null;
+
+UserPrivilegesPage = function() {
     this._FormsList = [];
     this._UserGroupsList = [];
     this._UserCategoryList = [];
@@ -59,7 +62,7 @@ UserPrivilegesPage.prototype.fetchUserPrivileges = function() {
 
 UserPrivilegesPage.prototype.possibleFailures = function(error) {
     if (error == "UserGroupNameAlreadyExists") {
-        displayMessage(message.domainname_required);
+        displayMessage(message.usergroupname_exists);
     } else if (error == 'InvalidUserGroupId') {
         displayMessage(message.invalid_usergroupid);
     } else if (error == 'InvalidPassword') {
@@ -76,7 +79,7 @@ UserPrivilegesPage.prototype.renderList = function(u_g_data) {
     $.each(u_g_data, function(k, v) {
         var cloneRow = $('#template .table-user-privileges .table-row').clone();
         $('.sno', cloneRow).text(j);
-        
+
         $('.user-group-name', cloneRow).text(v.u_g_name);
         $('.category-name', cloneRow).text(v.u_c_name);
 
@@ -87,15 +90,14 @@ UserPrivilegesPage.prototype.renderList = function(u_g_data) {
         if (v.is_active == true) {
             $('.status i', cloneRow).removeClass('fa-times text-danger');
             $('.status i', cloneRow).addClass('fa-check text-success');
+            $('.status i', cloneRow).attr('title','Click here to Deactivate');
         } else {
             $('.status i', cloneRow).removeClass('fa-check text-success');
             $('.status i', cloneRow).addClass('fa-times text-danger');
+            $('.status i', cloneRow).attr('title','Click here to Activate');
         }
         $('.status i', cloneRow).on('click', function(e) {
             t_this.showModalDialog(e, v.u_g_id, v.is_active);
-        });
-        $('.status').hover(function() {
-            showTitle(this);
         });
         ListContainer.append(cloneRow);
         j = j + 1;
@@ -153,6 +155,7 @@ UserPrivilegesPage.prototype.renderFormList = function(cat_id, arr) {
                         FormRowList.append(cloneRow);
                     });
                 });
+                select_checkbox();
             }
         });
     } else {
@@ -221,24 +224,14 @@ UserPrivilegesPage.prototype.submitProcess = function() {
     }
 };
 
-//Status Title
-showTitle = function(e) {
-    if (e.className == "fa c-pointer status fa-times text-danger") {
-        e.title = 'Click Here to Activate';
-    } else if (e.className == "fa c-pointer status fa-check text-success") {
-        e.title = 'Click Here to Deactivate';
-    }
-}
-
 //open password dialog
 UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive) {
     t_this = this;
-    var passStatus = null;
     if (isActive == true) {
-        passStatus = false;
+        status = false;
         statusmsg = message.deactive_message;
     } else {
-        passStatus = true;
+        status = true;
         statusmsg = message.active_message;
     }
     CurrentPassword.val('');
@@ -249,12 +242,7 @@ UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive
                 effect: 'contentscale',
                 complete: function() {
                     CurrentPassword.focus();
-                    isAuthenticate = false;
-                },
-                close: function() {
-                    if (isAuthenticate) {
-                        t_this.changeStatus(userGroupId, passStatus);
-                    }
+                    uId = userGroupId;
                 },
             });
             e.preventDefault();
@@ -262,35 +250,25 @@ UserPrivilegesPage.prototype.showModalDialog = function(e, userGroupId, isActive
     });
 }
 
-//validate
-UserPrivilegesPage.prototype.validateAuthentication = function() {
-    t_this = this;
-    if (CurrentPassword) {
-        if (isNotEmpty(CurrentPassword, message.password_required) == false)
-            return false;
-    }
-    var password = CurrentPassword.val().trim();
-    client_mirror.verifyPassword(password, function(error, response) {
-        isAuthenticate = true;
-        Custombox.close();
-        if (error == null) {
-            isAuthenticate = true;
-            Custombox.close();
-        } else {
-            t_this.possibleFailures(error);
-        }
-    });
-}
-
 UserPrivilegesPage.prototype.changeStatus = function(userGroupId, status) {
-    client_mirror.changeDomainStatus(userGroupId, status, function(error, response) {
-        console.log(error, response)
-        if (error == null) {
-            t_this.showList();
-        } else {
-            displayMessage(error);
-        }
-    });
+    t_this = this;
+    if (isNotEmpty(CurrentPassword, message.password_required) == false) {
+        return false;
+    } else {
+        var password = CurrentPassword.val();
+        if(status == "false") { status = false; }
+        if(status == "true") { status = true; }
+        client_mirror.changeClientUserGroupStatus(userGroupId, status, password, function(error, response) {
+            console.log(error, response)
+            if (error == null) {
+                Custombox.close();
+                displayMessage(message.status_success);
+                t_this.showList();
+            } else {
+                t_this.possibleFailures(error);
+            }
+        });
+    }
 };
 
 UserPrivilegesPage.prototype.showEdit = function(u_g_id, u_g_name, u_c_id, f_ids) {
@@ -312,8 +290,7 @@ key_search = function(mainList) {
         uGName = mainList[entity].u_g_name;
         cNames = mainList[entity].u_c_name;
         dStatus = mainList[entity].is_active;
-        if ((~uGName.toLowerCase().indexOf(key_one)) 
-            && (~cNames.toLowerCase().indexOf(key_two))) {
+        if ((~uGName.toLowerCase().indexOf(key_one)) && (~cNames.toLowerCase().indexOf(key_two))) {
             if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
                 fList.push(mainList[entity]);
             }
@@ -348,7 +325,7 @@ PageControls = function() {
     });
 
     PasswordSubmitButton.click(function() {
-        u_p_page.validateAuthentication();
+        t_this.changeStatus(uId, status);
     });
 
     FilterUserGroupName.keyup(function() {

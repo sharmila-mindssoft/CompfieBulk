@@ -540,8 +540,9 @@ def process_update_user_privileges(db, request, session_user):
     ):
         return clientmasters.InvalidUserGroupId()
     elif is_duplicate_user_privilege(
-        db, request.user_category_id, request.user_group_name
+        db, request.user_category_id, request.user_group_name, request.user_group_id
     ):
+
         return clientmasters.UserGroupNameAlreadyExists()
     elif update_user_privilege(db, request, session_user):
         return clientmasters.UpdateUserPrivilegesSuccess()
@@ -551,17 +552,14 @@ def process_update_user_privileges(db, request, session_user):
 # To change the status of user privilege
 ########################################################
 def process_change_user_privilege_status(db, request, session_user):
-    if db.is_invalid_id(
-        tblUserGroups, "user_group_id", request.user_group_id
-    ):
+    password = request.password
+    if db.is_invalid_id(tblUserGroups, "user_group_id", request.user_group_id):
         return clientmasters.InvalidUserGroupId()
-    elif is_user_exists_under_user_group(
-        db, request.user_group_id
-    ):
+    elif verify_password_user_privilege(db, session_user, password):
+        return clientmasters.InvalidPassword()
+    elif is_user_exists_under_user_group(db, request.user_group_id):
         return clientmasters.CannotDeactivateUserExists()
-    elif update_user_privilege_status(
-        db, request.user_group_id, request.is_active, session_user
-    ):
+    elif update_user_privilege_status(db, request.user_group_id, request.is_active, session_user):
         return clientmasters.ChangeUserPrivilegeStatusSuccess()
 
 
