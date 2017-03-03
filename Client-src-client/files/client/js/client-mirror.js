@@ -2354,7 +2354,7 @@ function initClientMirror() {
     }
 
     // User Management List
-    function getUserManagement_List(callback) {        
+    function getUserManagement_List(callback) {
         callerName = 'client_masters';
         var request = [
             'UserManagementList',
@@ -2588,7 +2588,31 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getSettingsFormDetails(le_id, callback) {
+        var request = [
+            'GetSettingsFormDetails', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
 
+    function saveSettingsFormDetails(le_id, le_name, app_opt, ass_rem, esc_rem_adv, esc_rem, reassign_sp, callback) {
+        var request = [
+            'SaveSettingsFormDetails', {
+                'le_id': le_id,
+                'legal_entity_name': le_name,
+                'two_level_approve': app_opt,
+                'assignee_reminder': ass_rem,
+                'advance_escalation_reminder': esc_rem_adv,
+                'escalation_reminder': esc_rem,
+                'reassign_sp': reassign_sp
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
 
     return {
         log: log,
@@ -2783,6 +2807,8 @@ function initClientMirror() {
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
         getUserManagement_List: getUserManagement_List,
+        getSettingsFormDetails: getSettingsFormDetails,
+        saveSettingsFormDetails: saveSettingsFormDetails
     };
 }
 
