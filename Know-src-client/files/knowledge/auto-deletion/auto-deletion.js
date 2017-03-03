@@ -223,14 +223,13 @@ function validate(){
     deletion_details = [];
     $.each(UNITS, function(key, value){
         if(value.legal_entity_id == parseInt(LegalEntity.val())){
-
             var unit_id = parseInt(value.unit_id);
-            var deletion_period = parseInt($("#dp_"+value.unit_id).val());
-
-            if(deletion_period == '' || deletion_period == '0'){
+            if($("#dp_"+value.unit_id).val() == '' || $("#dp_"+value.unit_id).val() == '0'){
                 displayMessage(message.deletion_period_required)
                 result = false;
+                return false;
             }else{
+                var deletion_period = parseInt($("#dp_"+value.unit_id).val());
                 deletion_details.push(
                     mirror.getDeletionDetails(
                         value.client_id, value.legal_entity_id,
@@ -239,9 +238,8 @@ function validate(){
                 );
             }
         }
-        
     });
-    return result
+    return result;
 }
 
 function saveAutoDeletion(){

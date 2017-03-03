@@ -168,6 +168,7 @@ function callAPI(api_type) {
             if (error == null) {
                 //ComplianceList = data.reassign_compliances;
                 //ActList = data.level_one_name;
+                displaySuccessMessage(message.submit_success);
                 ReassignView.show();
                 ReassignAdd.hide();
                 initialize();
@@ -652,7 +653,7 @@ function getNoRecord(){
 
 function reset(){
     LegalEntityId.val('');
-    LegalEntityId.val('');
+    LegalEntityName.val('');
     DomainId.val('');
     DomainName.val('');
     UserName.val('');
@@ -1003,6 +1004,7 @@ function validateAndShow() {
     }
 }
 
+
 function pageControls(){
     ShowButton.click(function() {
         LastUserType = '';
@@ -1030,10 +1032,12 @@ function pageControls(){
     });
 
     SubmitButton.click(function() {
-        displayLoader();
-        setTimeout(function() {
-            callAPI(SUBMIT_API)
-        }, 500);
+        if (validate_thirdtab()) {
+            displayLoader();
+            setTimeout(function() {
+                callAPI(SUBMIT_API)
+            }, 500);
+        }
     });
 
     LegalEntityName.keyup(function(e) {
@@ -1091,9 +1095,25 @@ function pageControls(){
         }
         
     });
+}
 
-
-
+//validation on third wizard
+function validate_thirdtab() {
+    if ($('.assigneelist.active').text() == '') {
+        displayMessage(message.assignee_required);
+        return false;
+    } else if ($('.concurrencelist.active').text() == '' && two_level_approve) {
+        displayMessage(message.concurrence_required);
+        return false;
+    } else if ($('.approvallist.active').text() == '') {
+        displayMessage(message.approval_required);
+        return false;
+    } else if (Reason.val() == '') {
+        displayMessage(message.reason_required);
+        return false;
+    } else {
+        return true;
+    }
 }
 
 function loadEntityDetails(){

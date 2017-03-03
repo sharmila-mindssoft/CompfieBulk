@@ -1587,12 +1587,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getComplianceTotalToAssign(legalEntityId, unitIds, domainId, callback) {
+    function getComplianceTotalToAssign(legalEntityId, unitIds, domainId, frequency_ids, callback) {
         var request = [
             'GetComplianceTotalToAssign', {
                 'le_id': legalEntityId,
                 'u_ids': unitIds,
-                'd_id': domainId
+                'd_id': domainId,
+                'f_ids': frequency_ids
             }
         ];
         var callerName = 'client_transaction';
@@ -2153,6 +2154,7 @@ function initClientMirror() {
             {}
         ];
         callerName = 'client_master_filters';
+        clientApiRequest(callerName, request, callback);
     }
 
     /* Unit List report - updated*/
