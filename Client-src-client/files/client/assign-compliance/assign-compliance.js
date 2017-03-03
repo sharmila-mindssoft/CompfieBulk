@@ -338,7 +338,7 @@ function callAPI(api_type) {
 		    }
 
 		    function onSuccess(data) {
-		        displayMessage(message.save_success);
+		        displaySuccessMessage(message.save_success);
 		        CURRENT_TAB = 1;
 		        initialize();
 		    }
@@ -371,7 +371,18 @@ function callAPI(api_type) {
 }
 
 function validateFirstTab() {
-	if (ACTIVE_UNITS.length == 0) {
+	var le_id = LEList.find("li.active").attr("id");
+    var d_id = DomainList.find("li.active").attr("id");
+
+	if (le_id == undefined) {
+        displayMessage(message.legalentity_required)
+        return false;
+    }
+    else if (d_id == undefined) {
+        displayMessage(message.domain_required)
+        return false;
+    }
+	else if (ACTIVE_UNITS.length == 0) {
         displayMessage(message.unit_required)
         return false;
     }
@@ -870,7 +881,7 @@ function showTab() {
         	var d_id = DomainList.find("li.active").attr("id");
 
             client_mirror.getComplianceTotalToAssign(
-                parseInt(le_id), ACTIVE_UNITS, parseInt(d_id),
+                parseInt(le_id), ACTIVE_UNITS, parseInt(d_id), ACTIVE_FREQUENCY, 
                 function(error, data) {
                     if (error == null) {
                     	totalRecord = data.r_count;
@@ -1131,6 +1142,22 @@ function loadFrequency(){
     });
 }
 
+//validation on third wizard
+function validate_thirdtab() {
+  if ($('.assigneelist.active').text() == '') {
+    displayMessage(message.assignee_required);
+    return false;
+  } else if ($('.concurrencelist.active').text() == '' && two_level_approve) {
+    displayMessage(message.concurrence_required);
+    return false;
+  } else if ($('.approvallist.active').text() == '') {
+    displayMessage(message.approval_required);
+    return false;
+  } else {
+    return true;
+  }
+}
+
 function pageControls(){
 	NextButton.click(function() {
         //$('.tbody-compliance-list').empty();
@@ -1146,10 +1173,12 @@ function pageControls(){
         callAPI(GET_COMPLIANCE);
     });
     SubmitButton.click(function() {
-        displayLoader();
-        setTimeout(function() {
-            callAPI(SUBMIT_API)
-        }, 500);
+    	if (validate_thirdtab()) {
+		    displayLoader();
+	        setTimeout(function() {
+	            callAPI(SUBMIT_API)
+	        }, 500);
+		}
     });
 
 }

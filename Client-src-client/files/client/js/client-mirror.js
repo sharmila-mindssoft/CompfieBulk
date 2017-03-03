@@ -1587,12 +1587,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getComplianceTotalToAssign(legalEntityId, unitIds, domainId, callback) {
+    function getComplianceTotalToAssign(legalEntityId, unitIds, domainId, frequency_ids, callback) {
         var request = [
             'GetComplianceTotalToAssign', {
                 'le_id': legalEntityId,
                 'u_ids': unitIds,
-                'd_id': domainId
+                'd_id': domainId,
+                'f_ids': frequency_ids
             }
         ];
         var callerName = 'client_transaction';
@@ -2117,7 +2118,7 @@ function initClientMirror() {
 
     function saveReviewSettingsComplianceDict(
         compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days,
-        statu_dates, old_repeat_by, old_repeat_type_id, old_due_date, statu_dates
+        statu_dates, old_repeat_by, old_repeat_type_id, old_due_date, old_statu_dates
     ) {
         return {
             'comp_id': compliance_id,
@@ -2137,10 +2138,11 @@ function initClientMirror() {
         };
     }
 
-    function saveReviewSettingsCompliance(compliances_list, callback) {
+    function saveReviewSettingsCompliance(le_id, compliances_list, callback) {
         var request = [
             'SaveReviewSettingsCompliance', {
-                'compliances': compliances_list
+                'le_id': le_id,
+                'rs_compliances': compliances_list
             }
         ];
         clientApiRequest('client_transaction', request, callback);
@@ -2152,6 +2154,7 @@ function initClientMirror() {
             {}
         ];
         callerName = 'client_master_filters';
+        clientApiRequest(callerName, request, callback);
     }
 
     /* Unit List report - updated*/
@@ -2351,7 +2354,7 @@ function initClientMirror() {
     }
 
     // User Management List
-    function getUserManagement_List(callback) {
+    function getUserManagement_List(callback) {        
         callerName = 'client_masters';
         var request = [
             'UserManagementList',
@@ -2389,27 +2392,27 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function saveReviewSettingsComplianceDict(
-        compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days,
-        statu_dates, old_repeat_by, old_repeat_type_id, old_due_date, statu_dates
-    ) {
-        return {
-            'comp_id': compliance_id,
-            'le_id': le_id,
-            'd_id': d_id,
-            'f_id': f_type,
-            'unit_ids': units,
-            'repeat_by': repeat_by,
-            'repeat_type_id': repeat_type_id,
-            'due_date': due_date,
-            'trigger_before_days': trigger_before_days,
-            'statu_dates': statu_dates,
-            'old_repeat_by': old_repeat_by,
-            'old_repeat_type_id': old_repeat_type_id,
-            'old_due_date': old_due_date,
-            'old_statu_dates': old_statu_dates,
-        };
-    }
+    // function saveReviewSettingsComplianceDict(
+    //     compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days,
+    //     statu_dates, old_repeat_by, old_repeat_type_id, old_due_date, old_statu_dates
+    // ) {
+    //     return {
+    //         'comp_id': compliance_id,
+    //         'le_id': le_id,
+    //         'd_id': d_id,
+    //         'f_id': f_type,
+    //         'unit_ids': units,
+    //         'repeat_by': repeat_by,
+    //         'repeat_type_id': repeat_type_id,
+    //         'due_date': due_date,
+    //         'trigger_before_days': trigger_before_days,
+    //         'statu_dates': statu_dates,
+    //         'old_repeat_by': old_repeat_by,
+    //         'old_repeat_type_id': old_repeat_type_id,
+    //         'old_due_date': old_due_date,
+    //         'old_statu_dates': old_statu_dates,
+    //     };
+    // }
     // Widget api call begin
     function getUserWidgetData(callback) {
         var request = [
@@ -2498,6 +2501,7 @@ function initClientMirror() {
         callerName = "widgets";
         clientApiRequest(callerName, request, callback);
     }
+
     function getWidgetUserScoreCard(callback){
          var request = [
             "GetUserScoreCard", {

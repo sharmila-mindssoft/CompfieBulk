@@ -1435,7 +1435,7 @@ def get_unit_closure_units_list(db, request):
             "category_id = t1.category_id) as category_name, " + \
             "t1.is_closed as is_active, t1.closed_on, " + \
             "(case when t1.closed_on is not null then " + \
-            "DATEDIFF(NOW(), t1.closed_on) else 0 end) as validity_days, " + \
+            "abs(DATEDIFF(NOW(), t1.closed_on)) else 0 end) as validity_days, " + \
             "t1.legal_entity_id from tbl_units as t1 where t1.legal_entity_id = %s " + \
             "order by t1.unit_name; "
     result = db.select_all(query, [le_id])

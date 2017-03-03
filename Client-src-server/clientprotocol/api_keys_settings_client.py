@@ -168,7 +168,7 @@ api_params = {
     'business_group_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'is_active': make_bool_field(is_optional=False),
     "closed_on": make_text_field(length=200, is_optional=True),
-    'validity_days': make_int_field(length=365, is_optional=True),
+    'validity_days': make_int_field(length=10000, is_optional=True),
     'grp_mode': make_string_field(length=50, is_optional=False),
     "closed_remarks": make_text_field(length=500, is_optional=True),
     "compliance_id": make_int_field(length=10000, is_optional=True),
@@ -354,7 +354,7 @@ api_params = {
     'document_name': make_text_field(is_optional=True),
     "repeats_type_id": make_int_field(is_optional=True),
     "repeats_type": make_string_field(is_optional=True),
-    "rs_compliances": make_vector_type_field(module="clienttransaction", klass_name="SaveReviewSettingsComplianceDict"),
+    "rs_compliances": make_vector_type_field(module="clienttransactions", klass_name="SaveReviewSettingsComplianceDict"),
     "m_name_from": make_string_field(),
     "m_name_to": make_string_field(),
     "cat_info": make_vector_type_field(module="clientcore", klass_name="Category", is_optional=True),
@@ -605,14 +605,16 @@ api_params = {
     "concurrenced_by": make_text_field(is_optional=True),
     "statutory_dates": make_vector_type_field(module="clientcore", klass_name="StatutoryDate"),
     "theme": make_text_field(is_optional=True),
+    "repeat_type_id": make_int_field(is_optional=True),
+    "old_repeat_by": make_int_field(is_optional=True),
+    "old_repeat_type_id": make_int_field(is_optional=True),
+    "old_due_date":  make_text_field(length=20, is_optional=True),
     "u_sp_id": make_int_field(),  # User Management
     "u_sp_name": make_text_field(),  # User Management
     "u_sp_short": make_text_field(),  # User Management
     "um_service_providers": make_vector_type_field(module="clientcore", klass_name="ClientServiceProviders_UserManagement"),  # User Management
-
     "freq_name": make_text_field(is_optional=True),
     "reference_link": make_text_field(is_optional=True),
     "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
-
 }

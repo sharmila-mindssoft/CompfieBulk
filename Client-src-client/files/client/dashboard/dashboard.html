@@ -50,9 +50,9 @@ $(function() {
             <div id="level-filter" class="card-box">
               <input type="hidden" id="hidden"/>           
               <div class="graph-box">
-                <input type="button" id="btn-pie-chart" class="pull-right btn btn-info m-r-10"  value="View as pie chart"/>
-                <input type="button" id="btn-bar-chart" class="pull-right btn btn-info m-r-10" value="View as bar chart"/>
-                <input type="button" id="btn-back"  class="pull-right btn btn-info m-r-10" value="Back"/>
+                <input type="button" class="pull-right btn btn-info m-r-10 btn-pie-chart"  value="View as pie chart"/>
+                <input type="button" class="pull-right btn btn-info m-r-10 btn-bar-chart" value="View as bar chart"/>
+                <input type="button" class="pull-right btn btn-info m-r-10 btn-back" value="Back"/>
                <!--  <p id="year-para"> <span >Select Year:</span>
                   <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
                     <option value="2009" >2009</option>
@@ -82,11 +82,11 @@ $(function() {
               </div>
             </div>
             <div class="clearfix"></div>
-            <div class="m-t-0 m-b-30">
-                  <input type="button" id="btn-previous-year" class="pull-left btn btn-primary btn-trans  m-r-10" value="<< Previous Year"/>
-                  <input type="button" id="btn-next-year" class="pull-right btn btn-primary btn-trans " value="Next Year >>"/>                  
-                  <input type="button" id="btn-previous" class="pull-left btn btn-primary btn-trans " value="<< Previous"/>
-                  <input type="button" id="btn-next" class="pull-right btn btn-primary btn-trans  m-r-10" value="Next >>" />
+            <div class="m-t-0 m-b-30 graph-selections-bottom">
+                  <input type="button" class="pull-left btn btn-primary btn-trans  m-r-10 btn-previous-year" value="<< Previous Year"/>
+                  <input type="button" class="pull-right btn btn-primary btn-trans btn-next-year" value="Next Year >>"/>                  
+                  <input type="button" class="pull-left btn btn-primary btn-trans btn-previous" value="<< Previous"/>
+                  <input type="button" class="pull-right btn btn-primary btn-trans  m-r-10 btn-next" value="Next >>" />
             </div>
           </div>
           <!-- End Chart -->

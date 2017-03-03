@@ -6,7 +6,11 @@ var divisionList;
 var categoryList;
 var domainList;
 var unitArray;
-var spArray;
+var spList;
+var listLegalEntity;
+var listUsers;
+
+var listContainer = $("#listContainer");
 
 var addScreen = $("#add-screen");
 var viewScreen = $("#list-screen");
@@ -48,6 +52,8 @@ var SelectAll = $('.select_all');
 var SelectedUnitCount = $(".selected_checkbox_count");
 var chkSelectAll = $('.select_all');
 
+var legalEntityRow = $("#template .legal-entity-row");
+
 var CURRENT_TAB = 1;
 
 var businessGroup_ids = [];
@@ -76,6 +82,21 @@ userManagementPage.prototype.showList = function() {
 userManagementPage.prototype.fetchUserManagement = function() {
     t_this = this;
 
+    client_mirror.getUserManagement_List(function(error, response) {
+        if (error == null) {
+            listLegalEntity = response.ul_legal_entity;
+            listUsers = response.ul_users;
+
+            // this.renderList(listLegalEntity);
+            t_this.renderList(listLegalEntity, listUsers);
+
+            // loadBusinessGroup(businessGroupList);
+
+        } else {
+            // t_this.possibleFailures(error);
+        }
+    });
+
     client_mirror.getUserManagement_Prerequisite(function(error, response) {
         if (error == null) {
             t_this._userCategory = response.um_user_category;
@@ -86,7 +107,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
             categoryList = response.um_group_category;
             domainList = response.um_legal_domain;
             unitArray = response.um_legal_units;
-            spArray = response.um_service_providers;
+            spList = response.um_service_providers;
 
             loadUserCategories(t_this._userCategory)
             loadBusinessGroup(businessGroupList);
@@ -98,9 +119,67 @@ userManagementPage.prototype.fetchUserManagement = function() {
     });
 };
 
-userManagementPage.prototype.renderList = function(um_data) {
+userManagementPage.prototype.renderList = function(ul_legal, ul_users) {
     t_this = this;
-}
+    listContainer.empty();
+    if (ul_legal.length == 0) {
+        //No Records Found
+    } else {
+        $.each(ul_legal, function(k, v) {
+            var cloneRow = $('#template .legal-entity-row').clone();
+
+            var total_licences = parseInt(v.total_licences);
+            var used_licences = parseInt(v.used_licences);
+            var remaining_licences = parseInt(total_licences - used_licences);
+
+            $('.um-country', cloneRow).text(v.c_name);
+            $('.um-business-group', cloneRow).text(v.b_g_name);
+            $('.um-legal-entity', cloneRow).text(v.le_name);
+            $('.um-contract-from', cloneRow).text(v.cont_from);
+            $('.um-contract-to', cloneRow).text(v.cont_to);
+            $('.um-total-licence', cloneRow).text(v.total_licences);
+            $('.um-used-licence', cloneRow).text(v.used_licences);
+            $('.um-remaining-licence', cloneRow).text(remaining_licences);
+
+            var j = 1;
+            $.each(ul_users, function(k1, v1) {
+                if (v.le_id == v1.le_id) {
+                    var cloneUserRow = $('#template .user-row-table tr').clone();
+
+                    var user_name = v1.user_name;
+                    $('.sno', cloneUserRow).text(j);
+                    $('.um-employee-name', cloneUserRow).text(v1.emp_name);
+                    $('.um-user-name', cloneUserRow).text(user_name);
+                    $('.um-user-email', cloneUserRow).text(v1.email_id);
+                    $('.um-user-mobile', cloneUserRow).text(v1.mob_no);
+
+                    var cat_class = "";
+                    if (v1.u_cat_id == 2) {
+                        cat_class = "text-muted";
+                    } else if (v1.u_cat_id == 3) {
+                        cat_class = "text-warning";
+                    } else if (v1.u_cat_id == 4) {
+                        cat_class = "text-info";
+                    } else if (v1.u_cat_id == 5) {
+                        cat_class = "text-danger";
+                    }
+
+                    if (user_name == null) {
+                        $('.um-email-resend a', cloneUserRow).html("Resend");
+                    }
+
+                    $('.um-category i', cloneUserRow).addClass(cat_class);
+                    $('.user-row-body', cloneRow).append(cloneUserRow);
+
+                    j = j + 1;
+                }
+            });
+            listContainer.append(cloneRow);
+
+        });
+    }
+    // $('[data-toggle="tooltip"]').tooltip();
+};
 
 //User Group Auto Complete
 txtUserGroup.keyup(function(e) {
@@ -146,7 +225,7 @@ txtServiceProvider.keyup(function(e) {
         var text_val = $(this).val();
         commonAutoComplete(
             e, divServiceProvider, hdnServiceProvider, text_val,
-            spArray, "u_sp_name", "u_sp_id",
+            spList, "u_sp_name", "u_sp_id",
             function(val) {
                 onAutoCompleteSuccess(txtServiceProvider, hdnServiceProvider, val);
             }, condition_fields, condition_values);
