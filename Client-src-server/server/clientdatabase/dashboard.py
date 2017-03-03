@@ -131,6 +131,7 @@ def get_compliance_status_count(db, request, user_id, user_category):
         param.append(filter_ids)
 
     rows = db.select_all(q, param)
+
     return frame_compliance_status(rows)
 
 
@@ -1012,7 +1013,7 @@ def return_compliance_details_drill_down(
         compliance = dashboard.Level1Compliance(
             name, r["compliance_description"], employee_name,
             str(r["start_date"]), str(due_date),
-            completion_date, status,
+            str(completion_date), status,
             str(ageing)
         )
 
