@@ -21,7 +21,7 @@ from server.clientdatabase.general import (
     is_admin, calculate_due_date, filter_out_due_dates,
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
-    get_user_category,
+    get_user_category, is_primary_admin
 )
 from server.exceptionmessage import client_process_error
 from server.clientdatabase.savetoknowledge import *
@@ -1121,12 +1121,12 @@ def get_units_for_user_grouped_by_industry(db, unit_ids):
 def get_level_1_statutories_for_user_with_domain(
     db, session_user, domain_id=None
 ):
-    if not is_admin(db, session_user):
-        condition = " tac.assignee = %s "
-        condition_val = [session_user]
-    else:
+    if is_primary_admin(db, session_user):          
         condition = "1"
         condition_val = None
+    else:
+        condition = " tac.assignee = %s "
+        condition_val = [session_user]
 
     query = " SELECT domain_id, statutory_mapping " + \
         " FROM tbl_compliances tc WHERE compliance_id in ( " + \
@@ -1135,10 +1135,10 @@ def get_level_1_statutories_for_user_with_domain(
     query = query % condition
     rows = db.select_all(query, condition_val)
     columns = ["domain_id", "statutory_mapping"]
-    result = convert_to_dict(rows, columns)
+    # result = convert_to_dict(rows, columns)
 
     level_1_statutory = {}
-    for row in result:
+    for row in rows:
         domain_id = str(row["domain_id"])
         statutory_mapping = row["statutory_mapping"]
         if domain_id not in level_1_statutory:
