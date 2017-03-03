@@ -272,10 +272,11 @@ ServiceProviderDetails.prototype.showReportValues = function() {
 };
 
 ServiceProviderDetails.prototype.possibleFailures = function(error) {
+    t_this = this;
     if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage("Domain name exists");
+        t_this.displayMessage("Domain name exists");
     } else {
-        this.displayMessage(error);
+        t_this.displayMessage(error);
     }
 };
 

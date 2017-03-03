@@ -6046,11 +6046,13 @@ SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id =
         legal_entity_id = t2.legal_entity_id and country_id = t2.country_id) as unit_count,
         (select country_name from tbl_countries where country_id = t2.country_id) as
             country_name,
-        (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id and unit_sent_on is not null)
+        (select count(*) from tbl_group_admin_email_notification where client_id =
+            t2.client_id and legal_entity_id = t2.legal_entity_id and unit_sent_on is not null
+            and unit_creation_informed=1)
         as unit_creation_informed,
-        (select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id and statu_sent_on is not null)
+        (select count(*) from tbl_group_admin_email_notification where client_id =
+            t2.client_id and legal_entity_id = t2.legal_entity_id and statu_sent_on is not null
+            and assign_statutory_informed=1)
         as statutory_assigned_informed,
         (select email_id from tbl_client_groups where client_id = t1.client_id) as email_id,
         (select user_id from tbl_client_users where client_id = t1.client_id) as user_id,

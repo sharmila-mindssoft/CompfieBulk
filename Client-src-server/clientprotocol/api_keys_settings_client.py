@@ -168,7 +168,7 @@ api_params = {
     'business_group_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'is_active': make_bool_field(is_optional=False),
     "closed_on": make_text_field(length=200, is_optional=True),
-    'validity_days': make_int_field(length=365, is_optional=True),
+    'validity_days': make_int_field(length=10000, is_optional=True),
     'grp_mode': make_string_field(length=50, is_optional=False),
     "closed_remarks": make_text_field(length=500, is_optional=True),
     "compliance_id": make_int_field(length=10000, is_optional=True),
