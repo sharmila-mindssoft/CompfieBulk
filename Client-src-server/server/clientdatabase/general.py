@@ -142,7 +142,7 @@ def return_countries(data):
 
 def get_domains_for_user(db, user_id, user_category):
     print user_category
-    if user_category > 1 :
+    if user_category > 3 :
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
@@ -858,7 +858,7 @@ def get_user_company_details(db, user_id):
             " WHERE user_id = %s )"
         condition_val = [user_id]
     columns = [
-        "unit_id", "division_id", "legal_entity_id", "business_group_id"
+        "unit_id", "division_id", "legal_entity_id", "business_group_id", "category_id"
     ]
     rows = db.get_data(tblUnits, columns, condition, condition_val)
 
@@ -866,6 +866,7 @@ def get_user_company_details(db, user_id):
     division_ids = []
     legal_entity_ids = []
     business_group_ids = []
+    category_ids =[]
     for row in rows:
         unit_ids.append(
             int(row["unit_id"])
@@ -878,11 +879,15 @@ def get_user_company_details(db, user_id):
         if row["business_group_id"] is not None:
             if int(row["business_group_id"]) not in business_group_ids:
                 business_group_ids.append(int(row["business_group_id"]))
+        if row["category_id"] is not None:
+            if int(row["category_id"]) not in category_ids:
+                category_ids.append(int(row["category_id"]))
     return (
         ",".join(str(x) for x in unit_ids),
         ",".join(str(x) for x in division_ids),
         ",".join(str(x) for x in legal_entity_ids),
-        ",".join(str(x) for x in business_group_ids)
+        ",".join(str(x) for x in business_group_ids),
+        ",".join(str(x) for x in category_ids),
     )
 
 
