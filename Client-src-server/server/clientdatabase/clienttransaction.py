@@ -261,7 +261,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " (select is_new from tbl_client_compliances where is_new = 1 AND unit_id = t2.unit_id AND domain_id = t2.domain_id limit 1) is_new, " + \
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " t2.updated_on, t2.is_locked, " + \
-            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
+            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category, " + \
             " (select count(tc1.client_compliance_id) " + \
             " from tbl_client_compliances tc1 " + \
             " where tc1.unit_id = t1.unit_id and tc1.domain_id = t2.domain_id " + \
