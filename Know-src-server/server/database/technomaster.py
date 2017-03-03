@@ -351,7 +351,14 @@ def return_business_group_id(
     if request.business_group is None:
         return None
     elif request.business_group.business_group_id is not 0:
-        return request.business_group.business_group_id
+        business_group_name = request.business_group.business_group_name
+        business_group_id = request.business_group.business_group_id
+        db.call_insert_proc(
+                "sp_business_group_update", (
+                    business_group_id, business_group_name
+                )
+            )
+        return business_group_id
     else:
         business_group_name = request.business_group.business_group_name
         if is_duplicate_business_group(

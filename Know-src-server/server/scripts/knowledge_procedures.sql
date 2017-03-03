@@ -9001,3 +9001,20 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: update business group name 
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_business_group_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_business_group_update`(IN bg_id INT(11), bg_name VARCHAR(100))
+BEGIN
+    UPDATE tbl_business_groups SET
+    business_group_name = bg_name
+    WHERE business_group_id = bg_id;
+END //
+
+DELIMITER ;

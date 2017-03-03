@@ -10,13 +10,13 @@ from server.clientdatabase.common import (
     calculate_ageing_in_hours, calculate_years,
 )
 from server.common import (
-    get_date_time_in_date, convert_to_dict,
-    datetime_to_string_time, datetime_to_string
+    get_date_time_in_date,
+    datetime_to_string
 )
 from server.clientdatabase.general import (
-    get_user_unit_ids, calculate_ageing, get_admin_id,
-    get_user_domains, get_group_name, is_primary_admin,
-    get_all_users, convert_datetime_to_date
+    get_user_unit_ids, get_admin_id,
+    get_user_domains, get_group_name,
+    convert_datetime_to_date
 )
 from server.clientdatabase.clienttransaction import (
     get_units_for_assign_compliance
@@ -41,6 +41,8 @@ __all__ = [
     "get_messages",
     "get_statutory",
     "update_notification_status",
+    "update_statutory_notification_status",
+    "statutory_notification_detail",
     "notification_detail",
     "get_user_company_details",
     "get_assigneewise_compliances_list",
@@ -52,6 +54,85 @@ __all__ = [
     "need_to_display_deletion_popup",
     # "get_dashboard_notification_counts"
 ]
+
+
+def get_compliance_status_count(db, request, user_id, user_category):
+    from_date = request.from_date
+    to_date = request.to_date
+    chart_year = request.chart_year
+    country_ids = request.country_ids
+    domain_ids = request.domain_ids
+    filter_type = request.filter_type
+
+    # where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+    if filter_type == "Group":
+        group_by_name = "T3.country_id"
+        filter_type_ids = None
+        filter_ids = country_ids
+
+    elif filter_type == "BusinessGroup":
+        group_by_name = "T3.business_group_id"
+        filter_type_ids = " AND find_in_set(T3.business_group_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "LegalEntity":
+
+        group_by_name = "T3.legal_entity_id"
+        filter_type_ids = " AND find_in_set(T3.legal_entity_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "Division":
+        group_by_name = "T3.division_id"
+        filter_type_ids = " AND find_in_set(T3.division_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "Category" :
+        group_by_name = "T3.category_id"
+        filter_type_ids = " AND find_in_set(T3.category_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "Unit":
+        group_by_name = "T3.unit_id"
+        filter_type_ids = " AND find_in_set(T3.unit_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "Consolidated":
+        group_by_name = "T3.country_id"
+        filter_type_ids = None
+        filter_ids = country_ids
+
+    # where_qry += filter_type_ids
+
+    if user_category <= 3 :
+        q = "select " + group_by_name + ", sum(ifnull(complied_count, 0)) as comp_count, " + \
+            " sum(ifnull(delayed_count, 0)) as delay_count, " + \
+            " sum(ifnull(inprogress_count, 0)) as inp_count, sum(ifnull(overdue_count, 0)) as over_count" + \
+            " from tbl_compliance_status_chart_unitwise as t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " where chart_year = %s and t1.domain_id = %s and t1.country_id = %s"
+        param = [
+            chart_year, ",".join([str(x) for x in country_ids]),
+            ",".join([str(x) for x in domain_ids])
+        ]
+    else :
+        q = "select " + group_by_name + ", sum(ifnull(complied_count, 0)) as comp_count, sum(ifnull(delayed_count,0)) as delay_count, " + \
+            " sum(ifnull(inprogress_count,0)) as inp_count, sum(ifnull(overdue_count,0)) as over_count" + \
+            " from tbl_compliance_status_chart_userwise as t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " where chart_year = %s and user_id = %s " + \
+            " and t1.doamin_id = %s and t1.country_id = %s"
+        param = [
+            chart_year, user_id, ",".join([str(x) for x in country_ids]),
+            ",".join([str(x) for x in domain_ids])
+        ]
+    if filter_type_ids is not None :
+        q += filter_type_ids
+        param.append(filter_ids)
+
+    rows = db.select_all(q, param)
+
+    return frame_compliance_status(rows)
 
 
 def get_units_for_dashboard_filters(db, session_user, is_closed=True):
@@ -932,7 +1013,7 @@ def return_compliance_details_drill_down(
         compliance = dashboard.Level1Compliance(
             name, r["compliance_description"], employee_name,
             str(r["start_date"]), str(due_date),
-            completion_date, status,
+            str(completion_date), status,
             str(ageing)
         )
 
@@ -1845,31 +1926,6 @@ def get_messages(
         notifications.append(notification)
     return notifications
 
-def get_statutory(
-    db, start_count, to_count, session_user, session_category
-):
-    notification_type = 4
-    query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
-            "from tbl_notifications_log as nl " + \
-            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
-            "Where nlu.user_id = %s " + \
-            "AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
-            "order by nl.notification_id desc) as t1, " + \
-            "(SELECT @rownum := 0) r) as t " + \
-            "where t.rank >= %s and t.rank <= %s"
-    rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
-    #print rows
-    notifications = []
-    for r in rows :
-        legal_entity_id = int(r["legal_entity_id"])
-        notification_id = int(r["notification_id"])
-        notification_text = r["notification_text"]
-        created_on = datetime_to_string(r["created_on"])
-        notification = dashboard.StatutorySuccess(legal_entity_id, notification_id, notification_text, created_on)
-        notifications.append(notification)
-    return notifications
-
-
 def update_notification_status(
     db, notification_id, session_user
 ):
@@ -1912,6 +1968,87 @@ def notification_detail(
             assignee_name, concurrer_name, approver_name)
         notifications.append(notification)
     return notifications
+
+
+def get_statutory(
+    db, start_count, to_count, session_user, session_category
+):
+    query = "SELECT s.notification_id, s.compliance_id, s.notification_text, s.created_on, " + \
+            "su.user_id, CONCAT(ifnull(u.employee_code,''), ' - ', u.employee_name) as user_name " + \
+            "from tbl_statutory_notifications s " + \
+            "INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id AND su.user_id = %s AND su.is_read = 0 " + \
+            "INNER JOIN tbl_users u ON u.user_id = su.user_id " + \
+            "order by s.created_on DESC Limit %s, %s"
+    rows = db.select_all(query, [session_user, start_count, to_count])
+    #print rows
+    notifications = []
+    for r in rows :
+        notification_id = int(r["notification_id"])
+        compliance_id = int(r["compliance_id"])
+        notification_text = r["notification_text"]
+        user_name = r["user_name"]
+        created_on = datetime_to_string(r["created_on"])
+        notification = dashboard.StatutorySuccess(notification_id, compliance_id, notification_text, user_name, created_on)
+        notifications.append(notification)
+    return notifications
+
+def update_statutory_notification_status(db, notification_id, session_user):
+    columns = ["is_read"]
+    values = [1]
+    condition = " notification_id = %s " % notification_id + " AND user_id = %s " % session_user
+    db.update(
+        tblStatutoryNotificationsUsers, columns, values, condition
+    )
+
+def statutory_notification_detail(
+    db, notification_id, session_user
+):
+    query = "SELECT t1.compliance_id, t1.statutory_mapping_id, t1.country_id, " + \
+            "t1.domain_id, t1.statutory_provision, t1.compliance_task, t1.document_name, " + \
+            "t1.compliance_description, t1.penal_consequences, t1.reference_link, t1.frequency_id, " + \
+            "t1.statutory_dates, t1.repeats_type_id, t1.repeats_every, t1.duration_type_id, " + \
+            "t1.duration, t1.is_active, " + \
+            "(select frequency from tbl_compliance_frequency where frequency_id = t1.frequency_id) as freq_name, " + \
+            "(select repeat_type from tbl_compliance_repeat_type where repeat_type_id = t1.repeats_type_id) as repeat_type, " + \
+            "(select duration_type from tbl_compliance_duration_type where duration_type_id = t1.duration_type_id) as duration_type " + \
+            "FROM tbl_compliances as t1  " + \
+            "inner join tbl_statutory_notifications as t2 on t2.compliance_id = t1.compliance_id " + \
+            "where t2.notification_id = %s "
+    rows = db.select_all(query, [notification_id])
+
+    notifications = []
+    for r in rows :
+        if r["document_name"] is None or r["document_name"] == '':
+            c_name = r["compliance_task"]
+        else :
+            c_name = r["document_name"] + " - " + r["compliance_task"]
+
+        date_list = []
+
+        statutory_dates = r["statutory_dates"]
+
+        if statutory_dates is not None and statutory_dates != "":
+            statutory_dates = json.loads(statutory_dates)
+
+            for date in statutory_dates:
+                s_date = clientcore.StatutoryDate(
+                    date["statutory_date"],
+                    date["statutory_month"],
+                    date["trigger_before_days"],
+                    date.get("repeat_by")
+                )
+                date_list.append(s_date)
+                print date_list, r["frequency_id"], r
+        summary, dates, trigger = make_summary(date_list, r["frequency_id"], r)
+        if summary != "" and dates is not None and dates != "" :
+            summary += ' on (%s)' % (dates)
+
+        notification = dashboard.StatutoryNotificationDetailsSuccess(
+            r["compliance_id"], r["statutory_provision"], c_name, r["compliance_description"],
+            r["penal_consequences"], r["freq_name"], summary, r["reference_link"])
+        notifications.append(notification)
+    return notifications
+
 
 
 def get_user_company_details(db, user_id=None):

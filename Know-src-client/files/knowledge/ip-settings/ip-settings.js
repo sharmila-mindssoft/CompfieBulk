@@ -82,7 +82,9 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     id_element.val(val[0]);
     value_element.focus();
     
-    callEditAPI(val[0]); 
+    if(val[1] != ''){
+        callEditAPI(val[0]);
+    }
 }
 
 function pageControls() {

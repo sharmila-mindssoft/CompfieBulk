@@ -470,8 +470,8 @@ def get_current_inprogess_overdue(db, user_id):
     rows = db.select_one(q, [user_id])
     overdue = inprogress = 0
     if rows :
-        overdue = int(rows["overdue_count"])
-        inprogress = int(rows["inprogress_count"])
+        overdue = int(rows["overdue_count"]) if rows["overdue_count"] is not None else 0
+        inprogress = int(rows["inprogress_count"]) if rows["inprogress_count"] is not None else 0
     return overdue, inprogress
 
 def frame_calendar_view(db, data, user_id):
