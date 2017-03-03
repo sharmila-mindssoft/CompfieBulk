@@ -2449,7 +2449,7 @@ class ActiveCompliance(object):
                 "compliance_history_id", "compliance_name",
                 "compliance_task_frequency", "domain_name", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
-                "format_file_name", "unit_name", "address", "compliance_description",
+                "compliance_file_name", "unit_name", "address", "compliance_description",
                 "remarks", "compliance_id", "file_names", "compliance_download_url"
             ]
         )
@@ -2473,7 +2473,7 @@ class ActiveCompliance(object):
         # next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         ageing = data.get("ageing")
         # ageing = parse_structure_CustomTextType_20(ageing)
-        format_file_name = data.get("format_file_name")
+        format_file_name = data.get("compliance_file_name")
         # format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_250(format_file_name)
         unit_name = data.get("unit_name")
         # unit_name = parse_structure_CustomTextType_200(unit_name)
@@ -2509,7 +2509,7 @@ class ActiveCompliance(object):
             "validity_date": self.validity_date,
             "next_due_date": self.next_due_date,
             "ageing": self.ageing,
-            "format_file_name": self.format_file_name,
+            "compliance_file_name": self.format_file_name,
             "unit_name" : self.unit_name,
             "address" : self.address,
             "compliance_description" : self.compliance_description,
