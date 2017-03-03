@@ -15,11 +15,6 @@
 <link href="/css/responsive.css" rel="stylesheet" type="text/css" />
 <link href="/css/animate.css" rel="stylesheet" type="text/css" />
 <link href="/css/style.css" rel="stylesheet" type="text/css" />
-<!-- <link href="/css/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
-<link href="/css/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="/css/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="/css/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="/css/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" /> -->
 <link href="/css/custombox/custombox.min.css" rel="stylesheet" type="text/css" />
 <link href="/css/pagination.css" rel="stylesheet" type="text/css" />
 <link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
@@ -27,8 +22,8 @@
 <link rel="stylesheet" type="text/css" href="/css/jquery-ui/jquery-ui.css">
 <!--link rel="stylesheet" type="text/css" id="theme_setting" href="/css/theme_three.css"-->
 <script type="text/javascript">
-    var theme_name = "one";
-    if(window.localStorage.theme_name != null && window.localStorage.theme_name != '')
+    var theme_name = "theme_one";
+    if(window.localStorage.theme_name != "" && window.localStorage.theme_name != 'null' && window.localStorage.theme_name != 'undefined' )
         theme_name = window.localStorage.theme_name;
     var fileref=document.createElement("link");
         fileref.setAttribute("rel", "stylesheet");
