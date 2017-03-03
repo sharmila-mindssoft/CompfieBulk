@@ -2863,6 +2863,11 @@ CREATE PROCEDURE `sp_clientdatabase_save`(
     _created_by int(11), _created_on timestamp
 )
 BEGIN
+    if(select count(*) from tbl_client_database where client_id = clientid) > 0 then
+        update tbl_client_database set machine_id = machineid,
+        client_database_server_id = db_server_id where client_id = clientid;
+    end if;
+
     insert into tbl_client_database
     (client_id, legal_entity_id, machine_id, file_server_id, database_server_id,
     client_database_server_id, created_by, created_on)
@@ -2925,8 +2930,8 @@ BEGIN
     client_database_server_id = db_server_id, updated_by = _created_by
     where client_database_id = client_db_id;
 
-    update tbl_client_database set client_database_server_id = db_server_id
-    where client_id = clientid;
+    update tbl_client_database set machine_id = machineid,
+    client_database_server_id = db_server_id where client_id = clientid;
 
     update tbl_application_server set client_ids = _cl_ids
     where machine_id = machineid;
@@ -3573,7 +3578,10 @@ BEGIN
         right join tbl_units as tu
         on tu.unit_id = tuu.unit_id and tu.legal_entity_id = LegalEntityID and
         tu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
-        and user_category_id=8) and tu.is_approved=1
+        and user_category_id=8 and client_id=clientid and domain_id=domainid and
+        legal_entity_id = LegalEntityID) and tu.is_approved=1
+        INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id and
+        tui.domain_id=tuu.domain_id
         where
         tuu.user_id = userid and
         tuu.client_id=clientid and tuu.domain_id=domainid
@@ -3591,7 +3599,9 @@ BEGIN
         from tbl_user_units as tuu
         right join tbl_units_organizations as t1
         on tuu.unit_id = t1.unit_id and
-        tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid and user_category_id=8)
+        tuu.unit_id not in (select unit_id from tbl_user_units where
+        user_id!=userid and user_category_id=8 and client_id=clientid and
+        domain_id=domainid and legal_entity_id = LegalEntityID)
 
         where
         tuu.user_id = userid and
@@ -6036,11 +6046,13 @@ SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id =
         legal_entity_id = t2.legal_entity_id and country_id = t2.country_id) as unit_count,
         (select country_name from tbl_countries where country_id = t2.country_id) as
             country_name,
-        (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id and unit_sent_on is not null)
+        (select count(*) from tbl_group_admin_email_notification where client_id =
+            t2.client_id and legal_entity_id = t2.legal_entity_id and unit_sent_on is not null
+            and unit_creation_informed=1)
         as unit_creation_informed,
-        (select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id and statu_sent_on is not null)
+        (select count(*) from tbl_group_admin_email_notification where client_id =
+            t2.client_id and legal_entity_id = t2.legal_entity_id and statu_sent_on is not null
+            and assign_statutory_informed=1)
         as statutory_assigned_informed,
         (select email_id from tbl_client_groups where client_id = t1.client_id) as email_id,
         (select user_id from tbl_client_users where client_id = t1.client_id) as user_id,
@@ -8915,3 +8927,94 @@ END //
 
 DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_export`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_db_environment_report_export`(
+in cl_id varchar(10), le_id varchar(10))
+BEGIN
+    select t1.client_id, (select group_name from tbl_client_groups where
+    client_id = t1.client_id)as group_name, t1.legal_entity_id,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id =
+    t1.legal_entity_id) as legal_entity_name, t1.machine_id,
+    (select machine_name from tbl_application_server where machine_id =
+    t1.machine_id) as machine_name, (select concat(ip,":",port) from
+    tbl_application_server where machine_id = t1.machine_id) as machine_ip_port,
+    t1.database_server_id, t1.client_database_server_id,
+    (select database_server_name from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_server_name,
+    (select concat(database_ip,":",database_port) from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_s_ip_port,
+    (select database_server_name from tbl_database_server where database_server_id =
+    client_database_server_id) as client_db_server_name,
+    (select concat(database_ip,":",database_port) from tbl_database_server where
+    database_server_id = t1.client_database_server_id) as client_db_s_ip_port,
+    t1.file_server_id, (select file_server_name from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_server_name,
+    (select concat(ip,":",port) from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_s_ip_port
+    from
+    tbl_client_database as t1 where coalesce(t1.client_id,'') like cl_id and
+    coalesce(t1.legal_entity_id,'') like le_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_created_server_details_byid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_created_server_details_byid`(
+in _m_id int(11), _d_s_id int(11), _le_d_s_id int(11), _f_s_id int(11), _cl_id int(11),
+_le_id int(11))
+BEGIN
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port,
+    (select database_username from tbl_client_database_info where
+    db_owner_id = _cl_id and is_group=1) as database_username,
+    (select database_password from tbl_client_database_info where
+    db_owner_id = _cl_id and is_group=1) as database_password
+    FROM tbl_database_server WHERE database_server_id = _d_s_id;
+
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port,
+    (select database_username from tbl_client_database_info where
+    db_owner_id = _le_id and is_group=0) as database_username,
+    (select database_password from tbl_client_database_info where
+    db_owner_id = _le_id and is_group=0) as database_password
+    FROM tbl_database_server WHERE database_server_id = _le_d_s_id;
+
+    SELECT machine_id, machine_name, ip, port
+    FROM tbl_application_server where machine_id = _m_id;
+
+    SELECT file_server_id, file_server_name, ip, port
+    FROM tbl_file_server WHERE file_server_id = _f_s_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: update business group name 
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_business_group_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_business_group_update`(IN bg_id INT(11), bg_name VARCHAR(100))
+BEGIN
+    UPDATE tbl_business_groups SET
+    business_group_name = bg_name
+    WHERE business_group_id = bg_id;
+END //
+
+DELIMITER ;

@@ -1,138 +1,5 @@
 
 from clientprotocol.jsonvalidators_client import (parse_dictionary, parse_static_list, to_structure_dictionary_values)
-from clientprotocol.parse_structure import (
-    parse_structure_VectorType_RecordType_core_Compliance,
-    parse_structure_VectorType_RecordType_dashboard_CompliedMap,
-    parse_structure_VariantType_dashboard_Request,
-    parse_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails,
-    parse_structure_UnsignedIntegerType_32,
-    parse_structure_VectorType_RecordType_dashboard_ChartDataMap,
-    parse_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance,
-    parse_structure_VectorType_RecordType_core_BusinessGroup,
-    parse_structure_EnumType_core_FILTER_TYPE,
-    parse_structure_CustomTextType_500,
-    parse_structure_VectorType_RecordType_core_Country,
-    parse_structure_VectorType_RecordType_dashboard_ApplicableDrillDown,
-    parse_structure_CustomTextType_50,
-    parse_structure_EnumType_core_COMPLIANCE_STATUS,
-    parse_structure_CustomTextType_100,
-    parse_structure_EnumType_core_APPLICABILITY_STATUS,
-    parse_structure_VectorType_SignedIntegerType_8,
-    parse_structure_VectorType_RecordType_core_Unit,
-    parse_structure_VectorType_RecordType_core_Division,
-    parse_structure_RecordType_dashboard_DelayedCompliance,
-    parse_structure_VectorType_RecordType_dashboard_DomainWise,
-    parse_structure_VectorType_RecordType_dashboard_RessignedCompliance,
-    parse_structure_CustomTextType_250, parse_structure_Text,
-    parse_structure_VectorType_RecordType_core_LegalEntity,
-    parse_structure_VectorType_RecordType_core_Domain,
-    parse_structure_VectorType_RecordType_dashboard_DrillDownData,
-    parse_structure_VectorType_RecordType_dashboard_TrendData,
-    parse_structure_CustomTextType_20,
-    parse_structure_VectorType_RecordType_dashboard_AssigneeChartData,
-    parse_structure_VectorType_RecordType_dashboard_EscalationData,
-    parse_structure_VectorType_RecordType_core_ClientBusinessGroup,
-    parse_structure_VectorType_RecordType_core_ClientLegalEntity,
-    parse_structure_VectorType_RecordType_core_ClientDivision,
-    parse_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
-    parse_structure_VectorType_RecordType_core_NumberOfCompliances,
-    parse_structure_OptionalType_VectorType_SignedIntegerType_8,
-    parse_structure_OptionalType_Text,
-    parse_structure_VectorType_UnsignedIntegerType_32,
-    parse_structure_OptionalType_VectorType_UnsignedIntegerType_32,
-    parse_structure_SignedIntegerType_8,
-    parse_structure_VectorType_RecordType_dashboard_TrendCompliance,
-    parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance,
-    parse_structure_VectorType_RecordType_dashboard_TrendDrillDownData,
-    parse_structure_OptionalType_UnsignedIntegerType_32,
-    parse_structure_EnumType_core_NOT_COMPLIED_TYPE,
-    parse_structure_VectorType_RecordType_dashboard_Notification,
-    parse_structure_Bool,
-    parse_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
-    parse_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
-    parse_structure_VectorType_RecordType_dashboard_YearWise,
-    parse_structure_OptionalType_CustomTextType_20,
-    parse_structure_OptionalType_CustomTextType_50,
-    parse_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_DomainWiseYearConfiguration,
-    parse_structure_OptionalType_VectorType_RecordType_core_FileList,
-    parse_structure_OptionalType_SignedIntegerType_8,
-    parse_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
-    parse_structure_OptionalType_CustomTextType_500,
-    parse_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    parse_structure_VectorType_CustomTextType_500,
-    parse_structure_OptionalType_CustomTextType_100,
-    parse_structure_OptionalType_VectorType_CustomTextType_500,
-    parse_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance,
-    parse_structure_OptionalType_Bool,
-    parse_structure_UnsignedIntegerType_32,
-    parse_structure_RecordType_dashboard_AssigneeWiseCompliance
-)
-from clientprotocol.to_structure import (
-    to_structure_VectorType_RecordType_core_Compliance,
-    to_structure_VectorType_RecordType_dashboard_CompliedMap,
-    to_structure_VariantType_dashboard_Request,
-    to_structure_VectorType_RecordType_dashboard_AssigneeWiseDetails,
-    to_structure_SignedIntegerType_8,
-    to_structure_VectorType_RecordType_dashboard_ChartDataMap,
-    to_structure_MapType_CustomTextType_50_VectorType_RecordType_dashboard_Level1Compliance,
-    to_structure_VectorType_RecordType_core_BusinessGroup,
-    to_structure_EnumType_core_FILTER_TYPE,
-    to_structure_CustomTextType_500,
-    to_structure_VectorType_RecordType_core_Country,
-    to_structure_VectorType_RecordType_dashboard_ApplicableDrillDown,
-    to_structure_CustomTextType_50,
-    to_structure_EnumType_core_COMPLIANCE_STATUS,
-    to_structure_CustomTextType_100,
-    to_structure_EnumType_core_APPLICABILITY_STATUS,
-    to_structure_VectorType_SignedIntegerType_8,
-    to_structure_VectorType_RecordType_core_Unit,
-    to_structure_VectorType_RecordType_core_Division,
-    to_structure_VectorType_RecordType_dashboard_DomainWise,
-    to_structure_VectorType_RecordType_dashboard_RessignedCompliance,
-    to_structure_CustomTextType_250, to_structure_Text,
-    to_structure_VectorType_RecordType_core_LegalEntity,
-    to_structure_VectorType_RecordType_core_Domain,
-    to_structure_VectorType_RecordType_dashboard_DrillDownData,
-    to_structure_VectorType_RecordType_dashboard_TrendData,
-    to_structure_CustomTextType_20,
-    to_structure_VectorType_RecordType_dashboard_AssigneeChartData,
-    to_structure_VectorType_RecordType_dashboard_EscalationData,
-    to_structure_VectorType_RecordType_core_ClientBusinessGroup,
-    to_structure_VectorType_RecordType_core_ClientLegalEntity,
-    to_structure_VectorType_RecordType_core_ClientDivision,
-    to_structure_VectorType_RecordType_clienttransactions_ASSIGN_COMPLIANCE_UNITS,
-    to_structure_VectorType_RecordType_core_NumberOfCompliances,
-    to_structure_OptionalType_VectorType_SignedIntegerType_8,
-    to_structure_OptionalType_Text,
-    to_structure_VectorType_UnsignedIntegerType_32,
-    to_structure_OptionalType_VectorType_UnsignedIntegerType_32,
-    to_structure_UnsignedIntegerType_32,
-    to_structure_VectorType_RecordType_dashboard_TrendCompliance,
-    to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_TrendCompliance,
-    to_structure_VectorType_RecordType_dashboard_TrendDrillDownData,
-    to_structure_OptionalType_UnsignedIntegerType_32,
-    to_structure_EnumType_core_NOT_COMPLIED_TYPE,
-    to_structure_VectorType_RecordType_dashboard_Notification,
-    to_structure_Bool,
-    to_structure_VectorType_RecordType_core_ClientUnit,
-    to_structure_VectorType_RecordType_clientreport_User,
-    to_structure_OptionalType_VectorType_RecordType_dashboard_RessignedCompliance,
-    to_structure_MapType_CustomTextType_500_VectorType_RecordType_dashboard_AssigneeWiseLevel1Compliance,
-    to_structure_VectorType_RecordType_dashboard_YearWise,
-    to_structure_OptionalType_CustomTextType_20,
-    to_structure_OptionalType_CustomTextType_50,
-    to_structure_MapType_CustomTextType_100_VectorType_RecordType_dashboard_DomainWiseYearConfiguration,
-    to_structure_OptionalType_VectorType_RecordType_core_FileList,
-    to_structure_OptionalType_SignedIntegerType_8,
-    to_structure_OptionalType_VectorType_RecordType_core_StatutoryDate,
-    to_structure_OptionalType_CustomTextType_500,
-    to_structure_EnumType_core_COMPLIANCE_FREQUENCY,
-    to_structure_VectorType_CustomTextType_500,
-    to_structure_OptionalType_CustomTextType_100,
-    to_structure_OptionalType_VectorType_CustomTextType_500,
-    to_structure_MapType_CustomTextType_250_VectorType_RecordType_dashboard_Compliance,
-    to_structure_RecordType_dashboard_AssigneeWiseCompliance
-)
 
 #
 # Request
@@ -763,6 +630,48 @@ class UpdateNotificationStatus(Request):
             "has_read": self.has_read
         }
 
+class GetStatutoryNotifications(Request):
+    def __init__(self, legal_entity_ids, start_count, end_count):
+        self.legal_entity_ids = legal_entity_ids
+        self.start_count = start_count
+        self.end_count = end_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_ids", "start_count", "end_count"])
+        legal_entity_ids = data.get("le_ids")
+        start_count = data.get("start_count")
+        end_count = data.get("end_count")
+        return GetStatutoryNotifications(legal_entity_ids, start_count, end_count)
+
+    def to_inner_structure(self):
+        return {
+            "le_ids": self.legal_entity_ids,
+            "start_count": self.start_count,
+            "end_count": self.end_count
+        }
+
+class UpdateStatutoryNotificationsStatus(Request):
+    def __init__(self, legal_entity_ids, notification_id, has_read):
+        self.legal_entity_ids = legal_entity_ids
+        self.notification_id = notification_id
+        self.has_read = has_read
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_ids", "notification_id", "has_read"])
+        legal_entity_ids = data.get("le_ids")
+        notification_id = data.get("notification_id")
+        has_read = data.get("has_read")
+        return UpdateStatutoryNotificationsStatus(legal_entity_ids, notification_id, has_read)
+
+    def to_inner_structure(self):
+        return {
+            "le_ids": self.legal_entity_ids,
+            "notification_id": self.notification_id,
+            "has_read": self.has_read
+        }
+
 def _init_Request_class_map():
     classes = [
         GetChartFilters, GetComplianceStatusChart, GetEscalationsChart,
@@ -772,7 +681,8 @@ def _init_Request_class_map():
         GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
         GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
         CheckContractExpiration,
-        GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes
+        GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes,
+        GetStatutoryNotifications, UpdateStatutoryNotificationsStatus
     ]
     class_map = {}
     for c in classes:
@@ -955,13 +865,13 @@ class CheckContractExpirationSuccesss(Response):
             ]
         )
         no_of_days_left = data.get("no_of_days_left")
-        no_of_days_left = parse_structure_UnignedIntegerType_32(no_of_days_left)
+        # no_of_days_left = parse_structure_UnignedIntegerType_32(no_of_days_left)
         notification_count = data.get("notification_count")
-        notification_count = parse_structure_UnignedIntegerType_32(notification_count)
+        # notification_count = parse_structure_UnignedIntegerType_32(notification_count)
         reminder_count = data.get("reminder_count")
-        reminder_count = parse_structure_UnignedIntegerType_32(reminder_count)
+        # reminder_count = parse_structure_UnignedIntegerType_32(reminder_count)
         escalation_count = data.get("escalation_count")
-        escalation_count = parse_structure_UnignedIntegerType_32(escalation_count)
+        # escalation_count = parse_structure_UnignedIntegerType_32(escalation_count)
         show_popup = data.get("show_popup")
         show_popup = parse_structure_OptionalType_Bool(show_popup)
         notification_text = data.get("notification_text")
@@ -971,15 +881,15 @@ class CheckContractExpirationSuccesss(Response):
             show_popup, notification_text
         )
 
-    def to_inner_structure(self):
-        return {
-            "no_of_days_left": to_structure_UnsignedIntegerType_32(self.no_of_days_left),
-            "notification_count": to_structure_UnsignedIntegerType_32(self.notification_count),
-            "reminder_count": to_structure_UnsignedIntegerType_32(self.reminder_count),
-            "escalation_count": to_structure_UnsignedIntegerType_32(self.escalation_count),
-            "show_popup": to_structure_Bool(self.show_popup),
-            "notification_text": to_structure_Text(self.notification_text)
-        }
+    # def to_inner_structure(self):
+    #     return {
+    #         "no_of_days_left": to_structure_UnsignedIntegerType_32(self.no_of_days_left),
+    #         "notification_count": to_structure_UnsignedIntegerType_32(self.notification_count),
+    #         "reminder_count": to_structure_UnsignedIntegerType_32(self.reminder_count),
+    #         "escalation_count": to_structure_UnsignedIntegerType_32(self.escalation_count),
+    #         "show_popup": to_structure_Bool(self.show_popup),
+    #         "notification_text": to_structure_Text(self.notification_text)
+    #     }
 
 class GetComplianceApplicabilityStatusChartSuccess(Response):
     def __init__(self, unassign_count, not_opted_count, rejected_count, not_complied_count):
@@ -1171,91 +1081,93 @@ class GetTrendChartDrillDownDataSuccess(Response):
         }
 
 class GetRemindersSuccess(Response):
-    def __init__(self, reminders, total_count):
+    def __init__(self, reminders):
         self.reminders = reminders
-        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["reminders", "total_count"])
+        data = parse_dictionary(data, ["reminders"])
         reminders = data.get("reminders")
-        total_count = data.get("total_count")
-        return GetRemindersSuccess(reminders, total_count)
+        return GetRemindersSuccess(reminders)
 
     def to_inner_structure(self):
         return {
-            "reminders": self.reminders,
-            "total_count": self.total_count
+            "reminders": self.reminders
         }
 
 class GetEscalationsSuccess(Response):
-    def __init__(self, escalations, total_count):
+    def __init__(self, escalations):
         self.escalations = escalations
-        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["escalations", "total_count"])
+        data = parse_dictionary(data, ["escalations"])
         escalations = data.get("escalations")
-        total_count = data.get("total_count")
-        return GetEscalationsSuccess(escalations, total_count)
+        return GetEscalationsSuccess(escalations)
 
     def to_inner_structure(self):
         return {
-            "escalations": self.escalations,
-            "total_count": self.total_count
+            "escalations": self.escalations
         }
 
 class GetMessagesSuccess(Response):
-    def __init__(self, messages, total_count):
+    def __init__(self, messages):
         self.messages = messages
-        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["messages", "total_count"])
+        data = parse_dictionary(data, ["messages"])
         messages = data.get("messages")
-        total_count = data.get("total_count")
-        return GetMessagesSuccess(messages, total_count)
+        return GetMessagesSuccess(messages)
 
     def to_inner_structure(self):
         return {
-            "messages": self.messages,
-            "total_count": self.total_count
-        }
-
-class GetStatutorySuccess(Response):
-    def __init__(self, statutory, total_count):
-        self.statutory = statutory
-        self.total_count = total_count
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory", "total_count"])
-        statutory = data.get("statutory")
-        total_count = data.get("total_count")
-        return GetStatutorySuccess(statutory, total_count)
-
-    def to_inner_structure(self):
-        return {
-            "statutory": self.statutory,
-            "total_count": self.total_count
+            "messages": self.messages
         }
 
 class UpdateNotificationStatusSuccess(Response):
     def __init__(self, notification_details):
         self.notification_details = notification_details
-        pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["notification_details"])
         notification_details = data.get("notification_details")
-        return UpdateNotificationStatusSuccess()
+        return UpdateNotificationStatusSuccess(notification_details)
 
     def to_inner_structure(self):
         return {
             "notification_details": self.notification_details
+        }
+
+class GetStatutorySuccess(Response):
+    def __init__(self, statutory):
+        self.statutory = statutory
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutory"])
+        statutory = data.get("statutory")
+        return GetStatutorySuccess(statutory)
+
+    def to_inner_structure(self):
+        return {
+            "statutory": self.statutory
+        }
+
+class StatutoryUpdateNotificationStatusSuccess(Response):
+    def __init__(self, statutory_notification_details):
+        self.statutory_notification_details = statutory_notification_details
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutory_notification_details"])
+        statutory_notification_details = data.get("statutory_notification_details")
+        return StatutoryUpdateNotificationStatusSuccess(statutory_notification_details)
+
+    def to_inner_structure(self):
+        return {
+            "statutory_notification_details": self.statutory_notification_details
         }
 
 
@@ -1277,6 +1189,7 @@ def _init_Response_class_map():
         GetMessagesSuccess,
         GetStatutorySuccess,
         UpdateNotificationStatusSuccess,
+        StatutoryUpdateNotificationStatusSuccess,
         CheckContractExpirationSuccesss,
         GetAssigneewiseYearwiseCompliancesSuccess
     ]
@@ -1300,15 +1213,14 @@ class RequestFormat(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
-        session_token = parse_structure_CustomTextType_50(session_token)
         request = data.get("request")
-        request = parse_structure_VariantType_dashboard_Request(request)
+        request = Request.parse_structure(request)
         return RequestFormat(session_token, request)
 
     def to_structure(self):
         return {
-            "session_token": to_structure_CustomTextType_50(self.session_token),
-            "request": to_structure_VariantType_dashboard_Request(self.request),
+            "session_token": self.session_token,
+            "request": Request.to_structure(self.request)
         }
 
 #
@@ -1974,7 +1886,7 @@ class EscalationsSuccess(object):
         notification_id = data.get("notification_id")
         notification_text = data.get("notification_text")
         created_on = data.get("created_on")
-        return EscalationsSuccess(notification_id, notification_id, notification_text, created_on)
+        return EscalationsSuccess(legal_entity_id, notification_id, notification_text, created_on)
 
     def to_structure(self):
         return {
@@ -2009,26 +1921,29 @@ class MessagesSuccess(object):
         }
 
 class StatutorySuccess(object):
-    def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
-        self.legal_entity_id = legal_entity_id
+    def __init__(self, notification_id, compliance_id, notification_text, user_name, created_on):
         self.notification_id = notification_id
+        self.compliance_id = compliance_id
         self.notification_text = notification_text
+        self.user_name = user_name
         self.created_on = created_on
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["le_id", "notification_id", "notification_text", "created_on"])
-        legal_entity_id = data.get("le_id")
+        data = parse_dictionary(data, ["le_id", "notification_id", "compliance_id", "notification_text", "user_name", "created_on"])
         notification_id = data.get("notification_id")
+        compliance_id = data.get("compliance_id")
         notification_text = data.get("notification_text")
+        user_name = data.get("user_name")
         created_on = data.get("created_on")
-        return StatutorySuccess(legal_entity_id, notification_id, notification_text, created_on)
+        return StatutorySuccess(notification_id, compliance_id, notification_text, user_name, created_on)
 
     def to_structure(self):
         return {
-            "le_id" : self.legal_entity_id,
             "notification_id" : self.notification_id,
+            "compliance_id" : self.compliance_id,
             "notification_text" : self.notification_text,
+            "user_name" : self.user_name,
             "created_on" : self.created_on,
         }
 
@@ -2043,6 +1958,7 @@ class NotificationDetailsSuccess(object):
         self.assignee_name = assignee_name
         self.concurrer_name = concurrer_name
         self.approver_name = approver_name
+
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["notification_id", "act_name", "unit", "compliance_name", "due_date", "delayed_by", "assignee_name", "concurrer_name", "approver_name"])
@@ -2068,6 +1984,42 @@ class NotificationDetailsSuccess(object):
             "assignee_name" : self.assignee_name,
             "concurrer_name" : self.concurrer_name,
             "approver_name" : self.approver_name
+        }
+
+class StatutoryNotificationDetailsSuccess(object):
+    def __init__(self, compliance_id, statutory_provision, compliance_task, compliance_description, penal_consequences, freq_name, summary, reference_link):
+        self.compliance_id = compliance_id
+        self.statutory_provision = statutory_provision
+        self.compliance_task = compliance_task
+        self.compliance_description = compliance_description
+        self.penal_consequences = penal_consequences
+        self.freq_name = freq_name
+        self.summary = summary
+        self.reference_link = reference_link
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_id", "statutory_provision", "compliance_task", "compliance_description", "penal_consequences", "freq_name", "summary", "reference_link"])
+        compliance_id = data.get("compliance_id")
+        statutory_provision = data.get("statutory_provision")
+        compliance_task = data.get("compliance_task")
+        compliance_description = data.get("compliance_description")
+        penal_consequences = data.get("penal_consequences")
+        freq_name = data.get("freq_name")
+        summary = data.get("summary")
+        reference_link = data.get("reference_link")
+        return StatutoryNotificationDetailsSuccess(compliance_id, statutory_provision, compliance_task, compliance_description, penal_consequences, freq_name, summary, reference_link)
+
+    def to_structure(self):
+        return {
+            "compliance_id" : self.compliance_id,
+            "statutory_provision" : self.statutory_provision,
+            "compliance_task" : self.compliance_task,
+            "compliance_description" : self.compliance_description,
+            "penal_consequences" : self.penal_consequences,
+            "freq_name" : self.freq_name,
+            "summary" : self.summary,
+            "reference_link" : self.reference_link
         }
 
 #

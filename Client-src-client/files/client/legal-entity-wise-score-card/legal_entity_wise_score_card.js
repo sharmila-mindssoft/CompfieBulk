@@ -71,7 +71,7 @@ function PageControls() {
         if (domainList.length == 0 && text_val != '')
             displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
-        var condition_values = [true, 1];
+        var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
             onDomainAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);

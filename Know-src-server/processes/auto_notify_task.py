@@ -4,9 +4,9 @@ from processes.process_logger import logNotifyError, logNotifyInfo
 from processes.process_dbase import Database
 from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
-from server.common import (return_hour_minute, convert_to_dict, get_current_date)
+from server.common import (return_hour_minute, get_current_date)
 
-NOTIFY_TIME = "13:42"
+NOTIFY_TIME = "10:00"
 email = EmailHandler()
 class AutoNotify(Database):
     def __init__(
@@ -286,10 +286,10 @@ class NotifyProcess(KnowledgeConnect):
         current_date = datetime.datetime.now()
         logNotifyInfo("current_date", current_date)
         current_time = return_hour_minute(current_date)
-        # if current_time != NOTIFY_TIME :
-        #     logNotifyInfo("current_time", current_time)
-        #     logNotifyInfo("NOTIFY_TIME", NOTIFY_TIME)
-        #     return
+        if current_time != NOTIFY_TIME :
+            logNotifyInfo("current_time", current_time)
+            logNotifyInfo("NOTIFY_TIME", NOTIFY_TIME)
+            return
 
         client_info = self.get_client_db_list()
         print client_info

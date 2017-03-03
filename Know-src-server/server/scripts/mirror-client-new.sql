@@ -88,6 +88,7 @@ CREATE TABLE `tbl_legal_entities` (
   UNIQUE KEY(`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entity_domains` (
+  `le_domain_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `activation_date` timestamp NULL DEFAULT NULL,
@@ -113,6 +114,7 @@ CREATE TABLE `tbl_categories` (
   UNIQUE KEY(`category_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_configuration` (
+  `cn_config_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -141,6 +143,7 @@ CREATE TABLE `tbl_units` (
   UNIQUE KEY(`unit_id`, `client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_units_organizations` (
+  `unit_org_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `organisation_id` int(11) DEFAULT NULL,

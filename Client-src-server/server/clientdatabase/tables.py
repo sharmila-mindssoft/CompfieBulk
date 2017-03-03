@@ -75,4 +75,5 @@ tblComplianceDates = "tbl_compliance_dates"
 tblComplianceDatesHistory = "tbl_compliance_dates_history"
 tblAssignCompliances = "tbl_assign_compliances"
 tblThemes = "tbl_themes"
+tblStatutoryNotificationsUsers = "tbl_statutory_notifications_users"
 

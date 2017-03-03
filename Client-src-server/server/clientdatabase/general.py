@@ -586,10 +586,10 @@ def get_user_domains(db, user_id):
     param = [user_id]
 
     rows = db.select_all(q + condition, param)
-    d_ids = []    
-    for r in rows:        
+    d_ids = []
+    for r in rows:
         d_ids.append(int(r["domain_id"]))
-    
+
     return d_ids
 
 
@@ -712,6 +712,8 @@ def get_legal_entity_info(db, user_id, user_category_id):
 
 
 def verify_password(db, password, user_id):
+    print "inside verify"
+    print user_id
     columns = "count(0) as result"
     encrypted_password = encrypt(password)
     condition = "1"
@@ -1446,7 +1448,7 @@ def save_compliance_activity(
         unit_id, compliance_id, compliance_history_id, activity_by,
         activity_on,  action
     ]
-    
+
     if remarks:
         columns.append("remarks")
         values.append(remarks)
@@ -1881,7 +1883,7 @@ def update_password(db, password, user_id):
     condition = " user_id=%s"
     values.append(user_id)
     result = db.update(
-        tblUsers, columns, values, condition
+        tblUserLoginDetails, columns, values, condition
     )
     columns = "employee_code, employee_name"
     condition = "user_id = %s"
@@ -1991,8 +1993,6 @@ def get_widget_rights(db, user_id, user_category):
     showCalendar = False
     showUserScore = False
     showDomainScore = False
-    print forms
-    print " \n"
     if 34 in forms :
         showDashboard = True
 
@@ -2007,32 +2007,54 @@ def get_widget_rights(db, user_id, user_category):
 
     return showDashboard, showCalendar, showUserScore, showDomainScore
 
-def get_widget_list(db):
-    q = "select form_id, form_name from tbl_widget_forms"
+def get_widget_list(db, user_id, user_category):
+    q = "select form_id, form_name from tbl_widget_forms order by form_id"
     rows = db.select_all(q, [])
-    return rows
+    showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
+    print showDashboard, showCalendar, showUserScore, showDomainScore
+    data = []
+    for r in rows :
+        print r["form_id"]
+        if showDashboard is True and int(r["form_id"]) in [1, 2, 3, 4, 5] :
+            data.append(r)
+        elif showUserScore is True and int(r["form_id"]) == 6 :
+            data.append(r)
+        elif showDomainScore is True and int(r["form_id"]) == 7 :
+            data.append(r)
+        elif showCalendar is True and int(r["form_id"]) == 8 :
+            data.append(r)
+    return data
 
 def get_user_widget_settings(db, user_id, user_category):
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
-    print "--- \n"
-    print showDashboard, showCalendar, showUserScore, showDomainScore
     q = "select user_id, widget_data from tbl_widget_settings where user_id = %s"
     rows = db.select_one(q, [user_id])
-    data = []
     if rows :
-        data = json.loads(rows["widget_data"])
+        rows = json.loads(rows["widget_data"])
+    else :
+        rows = []
+
+    data = []
+    if len(rows) > 0 :
+        data = rows
+
         for i, d in enumerate(data) :
-            w_id = d["w_id"]
+            w_id = int(d["w_id"])
+            print w_id
             if showDashboard is False and w_id in [1, 2, 3, 4, 5]:
+                print "dashboard"
                 data.pop(i)
 
             elif showUserScore is False and w_id == 6 :
+                print "userscore"
                 data.pop(i)
 
             elif showCalendar is False and w_id == 8 :
+                print "calendar"
                 data.pop(i)
 
             elif showDomainScore is False and w_id == 7 :
+                print "domainscore"
                 data.pop(i)
 
     return data

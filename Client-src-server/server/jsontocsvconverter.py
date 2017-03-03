@@ -2309,7 +2309,7 @@ class ConvertJsonToCSV(object):
         if not is_header:
             csv_headers = [
                 "SNO", "Business Group", "Legal Entity", "Division Name", "Unit Code", "Unit Name", "Domain",
-                "Organization Type", "State", "City", "Address", "Postal Code",  "Status", "Date"
+                "Organization Type", "Address", "Postal Code",  "Status", "Date"
             ]
             self.write_csv(csv_headers, None)
             is_header = True
@@ -2322,7 +2322,7 @@ class ConvertJsonToCSV(object):
             address = row["address"]
             postal_code = row["postal_code"]
             division_name = row["division_name"]
-            if row["is_closed"] == "0":
+            if row["is_closed"] == 0:
                 unit_status = "Active"
             else:
                 unit_status = "Closed"
@@ -2333,12 +2333,14 @@ class ConvertJsonToCSV(object):
             else:
                 closed_date = None
 
-            if geography_name.find(">>") >= 0:
-                state = geography_name.split(">>")[2]
-                city = geography_name.split(">>")[3]
-            else:
-                state = None
-                city = None
+            # if geography_name.find(">>") >= 0:
+            #     val = geography_name.split(">>")
+            #     split_len = len(geography_name.split(">>"))
+            #     state = val[split_len-1]
+            #     city = val[split_len-1]
+            # else:
+            #     state = None
+            #     city = None
 
             last = object()
             last_1 = object()
@@ -2352,7 +2354,7 @@ class ConvertJsonToCSV(object):
                         i_names.append(row_1["organisation_name"])
             csv_values = [
                 j, row["business_group_name"], row["legal_entity_name"], division_name, unit_code, unit_name,
-                d_names, i_names, state, city, address, postal_code, unit_status, closed_date
+                (",").join(d_names), (",").join(i_names), address, postal_code, unit_status, closed_date
             ]
             j = j + 1
             self.write_csv(None, csv_values)

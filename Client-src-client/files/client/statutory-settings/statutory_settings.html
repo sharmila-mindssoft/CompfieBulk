@@ -219,18 +219,15 @@
                                 </td>
                             </tr> -->
                     </table>
-                    
+
                     <div class="selected_checkbox">
-                        <br>
-                        <br> Selected Unit: <span class="selected_checkbox_count">0</span>
+                        <p>Selected Unit: <span class="selected_checkbox_count">0</span>
                     </div>
 
-                    <p>
-                    <button class="btn btn-primary waves-effect waves-light btn-edit default-display-none" type="button"> Edit 
-                    </button>
-                   
+                    <p><button class="btn btn-primary waves-effect waves-light btn-edit default-display-none" type="button"> Edit </button>
                     <p>*  Statutes assigned to those units are marked in Black color</p>
                     <p class="text-info m-b-0">*  Units to be assigned are marked in Blue color</p>
+                    
                     </div>
                     </div>
                 </div>
@@ -564,7 +561,10 @@
                     <label></label>
                 </div>
             </td>
-            <td class="tbl_unit"> </td>
+            <td>
+                <i class="fa fa-info-circle text-primary c-pointer tbl_address" data-toggle="tooltip"></i> 
+                <span class="tbl_unit"> </span>
+            </td>
             <td class="tbl_location"></td>
             <td class="tbl_domain"></td>
             <td class="tbl_no_of_compliance"></td>
@@ -643,33 +643,22 @@
           <input type="hidden" class="combineid-class" />
           <td><span class="sno"> </span></td>
           <td class="statutoryprovision"></td>
-          <td>
-            <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
-            <span class="compliancetask"> </span>
-          </td>
-          <td class="compliancefrequency"> 
-
-          </td>
-
-          <td class="compliancedescription"> 
-
-          </td>
-          <td align="center" class="applicable">
-             
-          </td>
-
+          <td class="compliancetask"></td>
+          <td class="compliancefrequency"> </td>
+          <td class="compliancedescription"> </td>
+          <td align="center" class="applicable"></td>
           <td align="center">
                <label class="opted" for="1"> 
                 <img src="images/tick1bold.png">
                </label>
           </td>
-
-          <td class="comp-remark">
-            <div class="default-display-none c-remark-view"> 
-                <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="Remarks text goes here."></i> Remarks...
+          <td class="c-remark">
+            <div class="c-remark-view"> 
+                <i class="fa fa-info-circle c-pointer" data-toggle="tooltip"></i>
+                <span> </span>
             </div>
             <div class="default-display-none c-remark-add"> 
-                <textarea class="form-control input-sm" placeholder="Enter Remarks" rows="1"></textarea>
+                <textarea class="form-control input-sm c-remark-input" placeholder="Enter Remarks" rows="1"></textarea>
                 <small>(max 500 characters)</small>
             </div>
           </td>
@@ -732,20 +721,10 @@
         <tr>
             <td><span class="sno"> </span></td>
             <td class="statutoryprovision"></td>
-            <td>
-              <i class="fa fa-info-circle text-primary c-pointer org-name" data-toggle="tooltip" title=""></i> 
-              <span class="compliancetask"> </span>
-            </td>
-            <td class="compliancefrequency"> 
-
-           </td>
-            <td class="compliancedescription"> 
-
-            </td>
-            <td colspan="3" align="center" class="applicablelocation"> 
-
-            </td>
-
+            <td class="compliancetask"></td>
+            <td class="compliancefrequency"> </td>
+            <td class="compliancedescription"> </td>
+            <td colspan="3" align="center" class="applicablelocation"> </td>
             <td align="center">
                 <i class="fa c-pointer text-warning saved"></i>
             </td>
@@ -786,12 +765,13 @@
                </label>
           </td>
 
-          <td class="comp-remark">
-            <div class="default-display-none c-remark-view"> 
-                <i class="fa fa-info-circle c-pointer" data-toggle="tooltip" title="Remarks text goes here."></i> Remarks...
+          <td class="c-remark">
+            <div class="c-remark-view"> 
+                <i class="fa fa-info-circle c-pointer" data-toggle="tooltip"></i>
+                <span> </span>
             </div>
             <div class="default-display-none c-remark-add"> 
-                <textarea class="form-control input-sm" placeholder="Enter Remarks" rows="1"></textarea>
+                <textarea class="form-control input-sm c-remark-input" placeholder="Enter Remarks" rows="1"></textarea>
                 <small>(max 500 characters)</small>
             </div>
           </td>
