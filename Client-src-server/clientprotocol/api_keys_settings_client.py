@@ -614,4 +614,9 @@ api_params = {
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
     "level_1_statutories": make_text_field(),    
     "compliance_file_name":  make_vector_type_string(is_optional=True),
+    "in_units":make_vector_type_field(module="clienttransactions", klass_name="IndustryWiseUnits"),
+    "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
+
+    # "onoccur_compliances": make_map_type(module="clientuser", klass_name="ComplianceOnOccurrence", validfun=allow_specialchar),
+    
 }
