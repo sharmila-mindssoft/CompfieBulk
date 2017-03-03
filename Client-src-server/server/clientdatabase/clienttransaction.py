@@ -261,7 +261,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " (select is_new from tbl_client_compliances where is_new = 1 AND unit_id = t2.unit_id AND domain_id = t2.domain_id limit 1) is_new, " + \
             " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " t2.updated_on, t2.is_locked, " + \
-            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category " + \
+            " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category, " + \
             " (select count(tc1.client_compliance_id) " + \
             " from tbl_client_compliances tc1 " + \
             " where tc1.unit_id = t1.unit_id and tc1.domain_id = t2.domain_id " + \
@@ -305,10 +305,13 @@ def return_compliance_for_statutory_settings(
         " t2.statutory_provision, t2.compliance_description, " + \
         " t1.is_new, if(is_submitted = 0, is_saved, 0) as save_status," + \
         " (select domain_name from tbl_domains " + \
-        " where domain_id = t2.domain_id) as domain_name, t1.unit_id " + \
+        " where domain_id = t2.domain_id) as domain_name, t1.unit_id, " + \
+        " t3.frequency" + \
         " FROM tbl_client_compliances t1 " + \
         " INNER JOIN tbl_compliances t2 " + \
         " ON t2.compliance_id = t1.compliance_id " + \
+        " INNER JOIN tbl_compliance_frequency t3 " + \
+        " ON t3.frequency_id = t2.frequency_id " + \
         " WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s " + \
         " AND IF (%s IS NOT NULL, t2.frequency_id = %s, 1) " + \
         " ORDER BY t2.statutory_mapping, t1.compliance_id " + \
@@ -389,7 +392,8 @@ def return_compliance_for_statutory_settings(
                 name,
                 r["compliance_description"],
                 provision,
-                [unit_data]
+                [unit_data],
+                r["frequency"]
             )
             compliance_id_wise[comp_id] = compliance
         else :
@@ -432,7 +436,8 @@ def return_statutory_settings(data, session_category):
                 allow_nlock,
                 d["updatedby"],
                 datetime_to_string(d["updated_on"]),
-                d["total"], d["domain_id"]
+                d["total"], d["domain_id"],
+                d["geography_name"]
             )
         else:
             domain_list = unit_statutories.domain_names

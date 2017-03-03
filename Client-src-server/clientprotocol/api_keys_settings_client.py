@@ -617,4 +617,5 @@ api_params = {
     "reference_link": make_text_field(is_optional=True),
     "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
+    'location': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
 }

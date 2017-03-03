@@ -1185,7 +1185,7 @@ class UnitStatutoryCompliances(object):
         self, unit_id, unit_name, address, domain_name,
         is_new, is_locked, allow_unlock,
         updated_by, updated_on, r_count,
-        domain_id
+        domain_id, location
     ):
         self.unit_id = unit_id
         self.unit_name = unit_name
@@ -1198,13 +1198,14 @@ class UnitStatutoryCompliances(object):
         self.updated_on = updated_on
         self.r_count = r_count
         self.domain_id = domain_id
+        self.location = location
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "u_id", "u_name", "address", "c_name", "d_name",
             "is_new", "is_locked", "allow_unlock",
-            "usr_by", "usr_on", "r_count", "d_id"
+            "usr_by", "usr_on", "r_count", "d_id", "location"
         ])
         unit_id = data.get("u_id")
         unit_name = data.get("u_name")
@@ -1217,10 +1218,12 @@ class UnitStatutoryCompliances(object):
         updated_on = data.get("usr_on")
         r_count = data.get("r_count")
         domain_id = data.get("d_id")
+        location = data.get("location")
         return UnitStatutoryCompliances(
             unit_id, unit_name, address, domain_name,
             is_new, is_locked, allow_unlock,
-            updated_by, updated_on, r_count, domain_id
+            updated_by, updated_on, r_count, domain_id,
+            location
         )
 
     def to_structure(self):
@@ -1235,7 +1238,8 @@ class UnitStatutoryCompliances(object):
             "usr_by": self.updated_by,
             "usr_on": self.updated_on,
             "r_count": self.r_count,
-            "d_id": self.domain_id
+            "d_id": self.domain_id,
+            "location": self.location
         }
 
 class GetStatutorySettingsFiltersSuccess(Response):
@@ -2821,7 +2825,7 @@ class ComplianceApplicability(object):
         self,
         level_1_statutory_name, applicable_status, opted_status, not_applicable_remarks,
         compliance_id, compliance_name, description, statutory_provision,
-        unit_wise_status
+        unit_wise_status, frequency_name
     ):
         self.level_1_statutory_name = level_1_statutory_name
         self.applicable_status = applicable_status
@@ -2832,13 +2836,14 @@ class ComplianceApplicability(object):
         self.description = description
         self.statutory_provision = statutory_provision
         self.unit_wise_status = unit_wise_status
+        self.frequency_name = frequency_name
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "lone_statu_name", "app_status", "opt_status", "not_app_remarks",
             "comp_id", "comp_name", "descp", "s_prov",
-            "unit_wise_status"
+            "unit_wise_status", "frequency_name"
         ])
         level_1_statutory_name = data.get("lone_statu_name")
         applicable_status = data.get("app_status")
@@ -2849,12 +2854,13 @@ class ComplianceApplicability(object):
         description = data.get("descp")
         statutory_provision = data.get("s_prov")
         unit_wise_status = data.get("unit_wise_status")
+        frequency_name = data.get("frequency_name")
         return ComplianceApplicability(
             level_1_statutory_name, applicable_status, opted_status,
             not_applicable_remarks,
             compliance_id, compliance_name,
             description, statutory_provision,
-            unit_wise_status
+            unit_wise_status, frequency_name
         )
 
     def to_structure(self):
@@ -2867,7 +2873,8 @@ class ComplianceApplicability(object):
             "comp_name": self.compliance_name,
             "descp": self.description,
             "s_prov": self.statutory_provision,
-            "unit_wise_status": self.unit_wise_status
+            "unit_wise_status": self.unit_wise_status,
+            "frequency_name": self.frequency_name
         }
 
 
