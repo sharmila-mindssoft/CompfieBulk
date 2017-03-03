@@ -615,4 +615,6 @@ api_params = {
     "um_service_providers": make_vector_type_field(module="clientcore", klass_name="ClientServiceProviders_UserManagement"),  # User Management
     "freq_name": make_text_field(is_optional=True),
     "reference_link": make_text_field(is_optional=True),
+    "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
+    "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
 }
