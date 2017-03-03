@@ -38,3 +38,9 @@
     line-height: 15px;
     color:#fff;
 }
+
+.btn-back,
+.btn-pie-chart,
+.btn-bar-chart {
+  display: none;
+}

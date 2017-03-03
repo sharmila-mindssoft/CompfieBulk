@@ -1818,30 +1818,34 @@ function loadCharts() {
     $('.chart-container-inner').show();
     $('.report-container-inner').hide();
   }
+  $(".assignee-wise").hide();
+  $(".div-assignee-wise-compliance").hide();
   $(".assignee-wise").empty();
   if (chartType == 'compliance_status') {
-    PageTitle.val("Compliance Status");
+    PageTitle.text("Compliance Status");
     loadComplianceStatusChart();
   } else if (chartType == 'escalations') {
-    PageTitle.html("Escalation");
+    PageTitle.text("Escalation");
     loadEscalationChart();
   } else if (chartType == 'not_complied') {
-    PageTitle.html("Not Complied");
+    PageTitle.text("Not Complied");
     loadNotCompliedChart();
   } else if (chartType == 'compliance_report') {
-    PageTitle.html("Assignee Wise Compliances");
+    PageTitle.text("Assignee Wise Compliances");
     $(".drilldown-container").empty();
     loadAssigneeWiseCompliance();
   } else if (chartType == 'trend_chart') {
-    PageTitle.html("Trend Chart");
+    PageTitle.text("Trend Chart");
     loadTrendChart();
   } else if (chartType == 'applicability_status') {
-    PageTitle.html("Risk Report");
+    PageTitle.text("Risk Report");
     loadComplianceApplicabilityChart();
-  } else if (chartType == 'assignee_wise_compliance') {
-    PageTitle.html("Assignee Wise Compliances");
-    loadAssignessWiseComplianceChart();
-  } else {
+  }
+  // else if (chartType == 'assignee_wise_compliance') {
+  //   PageTitle.html("Assignee Wise Compliances");
+  //   loadAssigneeWiseComplianceChart();
+  // } 
+  else {
     hideLoader();
   }
 }
