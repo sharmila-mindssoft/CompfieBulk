@@ -76,8 +76,8 @@ def process_client_transaction_requests(request, db, session_user, session_categ
             db, request, session_user
         )
 
-    elif type(request) is clienttransactions.GetAssigneeCompliances:
-        result = process_get_assignee_compliances(db, request, session_user)
+    # elif type(request) is clienttransactions.GetAssigneeCompliances:
+    #     result = process_get_assignee_compliances(db, request, session_user)
 
     elif type(request) is clienttransactions.ReassignCompliance:
         result = process_reassign_compliance(

@@ -57,8 +57,6 @@ __all__ = [
 
 
 def get_compliance_status_count(db, request, user_id, user_category):
-    from_date = request.from_date
-    to_date = request.to_date
     chart_year = request.chart_year
     country_ids = request.country_ids
     domain_ids = request.domain_ids
@@ -67,47 +65,49 @@ def get_compliance_status_count(db, request, user_id, user_category):
     # where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
     if filter_type == "Group":
-        group_by_name = "T3.country_id"
+        group_by_name = "t3.country_id"
         filter_type_ids = None
         filter_ids = country_ids
 
     elif filter_type == "BusinessGroup":
-        group_by_name = "T3.business_group_id"
-        filter_type_ids = " AND find_in_set(T3.business_group_id, %s) "
+        group_by_name = "t3.business_group_id"
+        filter_type_ids = " AND find_in_set(t3.business_group_id, %s) "
         filter_ids = ",".join([str(x) for x in filter_ids])
 
     elif filter_type == "LegalEntity":
 
-        group_by_name = "T3.legal_entity_id"
-        filter_type_ids = " AND find_in_set(T3.legal_entity_id, %s) "
+        group_by_name = "t3.legal_entity_id"
+        filter_type_ids = " AND find_in_set(t3.legal_entity_id, %s) "
         filter_ids = ",".join([str(x) for x in filter_ids])
 
     elif filter_type == "Division":
-        group_by_name = "T3.division_id"
-        filter_type_ids = " AND find_in_set(T3.division_id, %s) "
+        group_by_name = "t3.division_id"
+        filter_type_ids = " AND find_in_set(t3.division_id, %s) "
         filter_ids = ",".join([str(x) for x in filter_ids])
 
     elif filter_type == "Category" :
-        group_by_name = "T3.category_id"
-        filter_type_ids = " AND find_in_set(T3.category_id, %s) "
+        group_by_name = "t3.category_id"
+        filter_type_ids = " AND find_in_set(t3.category_id, %s) "
         filter_ids = ",".join([str(x) for x in filter_ids])
 
     elif filter_type == "Unit":
-        group_by_name = "T3.unit_id"
-        filter_type_ids = " AND find_in_set(T3.unit_id, %s) "
+        group_by_name = "t3.unit_id"
+        filter_type_ids = " AND find_in_set(t3.unit_id, %s) "
         filter_ids = ",".join([str(x) for x in filter_ids])
 
     elif filter_type == "Consolidated":
-        group_by_name = "T3.country_id"
+        group_by_name = "t3.country_id"
         filter_type_ids = None
         filter_ids = country_ids
 
     # where_qry += filter_type_ids
 
     if user_category <= 3 :
-        q = "select " + group_by_name + ", sum(ifnull(complied_count, 0)) as comp_count, " + \
+        q = "select " + group_by_name + " as filter_name, t1.country_id, t1.domain_id, " + \
+            " sum(ifnull(complied_count, 0)) as comp_count, " + \
             " sum(ifnull(delayed_count, 0)) as delay_count, " + \
-            " sum(ifnull(inprogress_count, 0)) as inp_count, sum(ifnull(overdue_count, 0)) as over_count" + \
+            " sum(ifnull(inprogress_count, 0)) as inp_count, sum(ifnull(overdue_count, 0)) as over_count, " + \
+            " chart_year " + \
             " from tbl_compliance_status_chart_unitwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " where chart_year = %s and t1.domain_id = %s and t1.country_id = %s"
@@ -116,8 +116,10 @@ def get_compliance_status_count(db, request, user_id, user_category):
             ",".join([str(x) for x in domain_ids])
         ]
     else :
-        q = "select " + group_by_name + ", sum(ifnull(complied_count, 0)) as comp_count, sum(ifnull(delayed_count,0)) as delay_count, " + \
+        q = "select " + group_by_name + " as filter_name, t1.country_id, t1.domain_id, " + \
+            " sum(ifnull(complied_count, 0)) as comp_count, sum(ifnull(delayed_count,0)) as delay_count, " + \
             " sum(ifnull(inprogress_count,0)) as inp_count, sum(ifnull(overdue_count,0)) as over_count" + \
+            " chart_year " + \
             " from tbl_compliance_status_chart_userwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " where chart_year = %s and user_id = %s " + \
@@ -130,275 +132,300 @@ def get_compliance_status_count(db, request, user_id, user_category):
         q += filter_type_ids
         param.append(filter_ids)
 
+    q += " group by " + group_by_name
     rows = db.select_all(q, param)
 
     return frame_compliance_status(rows)
 
+def frame_compliance_status(data):
+    filter_wise_data = {}
+    for d in data :
+        filter_name = d["filter_name"]
+        c = clientcore.NumberOfCompliances(
+            d["domain_id"], d["country_id"], str(d["chart_year"]),
+            0 if d["comp_count"] is None else int(d["comp_count"]),
+            0 if d["delay_count"] is None else int(d["delay_count"]),
+            0 if d["inp_count"] is None else int(d["inp_count"]),
+            0 if d["over_count"] is None else int(d["over_count"])
+        )
+        if filter_wise_data.get(filter_name) is None :
+            filter_wise_data[filter_name] = [c]
+        else :
+            lst = filter_wise_data.get(filter_name)
+            lst.append(c)
+            filter_wise_data[filter_name] = lst
+    chart_data = []
+    for k, v in filter_wise_data.iteritems() :
+        chart_data.append(dashboard.ChartDataMap(k, v))
+    return chart_data
+
+def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
+    pass
 
 def get_units_for_dashboard_filters(db, session_user, is_closed=True):
     return get_units_for_assign_compliance(db, session_user, is_closed)
 
 
-def get_status_wise_compliances_count(db, request, session_user):
-    user_id = int(session_user)
-    from_date = request.from_date
-    to_date = request.to_date
-    chart_year = request.chart_year
+# def get_status_wise_compliances_count(db, request, session_user):
+#     user_id = int(session_user)
+#     from_date = request.from_date
+#     to_date = request.to_date
+#     chart_year = request.chart_year
 
-    filter_ids = []
+#     filter_ids = []
 
-    inprogress_qry = " AND ((IFNULL(T2.duration_type_id, 0) = 2 " + \
-        " AND T1.due_date >= now()) " + \
-        " or (IFNULL(T2.duration_type_id, 0) != 2 " + \
-        " and T1.due_date >= CURDATE())) " + \
-        " AND IFNULL(T1.approve_status,0) != 1"
+#     inprogress_qry = " AND ((IFNULL(T2.duration_type_id, 0) = 2 " + \
+#         " AND T1.due_date >= now()) " + \
+#         " or (IFNULL(T2.duration_type_id, 0) != 2 " + \
+#         " and T1.due_date >= CURDATE())) " + \
+#         " AND IFNULL(T1.approve_status,0) != 1"
 
-    complied_qry = " AND T1.due_date >= T1.completion_date " + \
-        " AND IFNULL(T1.approve_status,0) = 1"
+#     complied_qry = " AND T1.due_date >= T1.completion_date " + \
+#         " AND IFNULL(T1.approve_status,0) = 1"
 
-    delayed_qry = " AND T1.due_date < T1.completion_date " + \
-        " AND IFNULL(T1.approve_status,0) = 1"
+#     delayed_qry = " AND T1.due_date < T1.completion_date " + \
+#         " AND IFNULL(T1.approve_status,0) = 1"
 
-    not_complied_qry = " AND ((IFNULL(T2.duration_type_id, 0) = 2 " + \
-        " AND T1.due_date < now()) " + \
-        " or (IFNULL(T2.duration_type_id, 0) != 2 " + \
-        " and T1.due_date < CURDATE())) " + \
-        " AND IFNULL(T1.approve_status,0) != 1"
+#     not_complied_qry = " AND ((IFNULL(T2.duration_type_id, 0) = 2 " + \
+#         " AND T1.due_date < now()) " + \
+#         " or (IFNULL(T2.duration_type_id, 0) != 2 " + \
+#         " and T1.due_date < CURDATE())) " + \
+#         " AND IFNULL(T1.approve_status,0) != 1"
 
-    filter_ids, inprogress = get_compliance_status(
-        db, inprogress_qry, request, user_id
-        )
-    filter_ids, complied = get_compliance_status(
-        db, complied_qry, request, user_id
-        )
-    filter_ids, delayed = get_compliance_status(
-        db, delayed_qry, request, user_id
-        )
-    filter_ids, not_complied = get_compliance_status(
-        db, not_complied_qry, request, user_id
-        )
-    if from_date is not None and to_date is not None:
+#     filter_ids, inprogress = get_compliance_status(
+#         db, inprogress_qry, request, user_id
+#         )
+#     filter_ids, complied = get_compliance_status(
+#         db, complied_qry, request, user_id
+#         )
+#     filter_ids, delayed = get_compliance_status(
+#         db, delayed_qry, request, user_id
+#         )
+#     filter_ids, not_complied = get_compliance_status(
+#         db, not_complied_qry, request, user_id
+#         )
+#     if from_date is not None and to_date is not None:
 
-        return frame_compliance_status_count(
-            db, inprogress, complied, delayed,
-            not_complied
-        )
-    else:
+#         return frame_compliance_status_count(
+#             db, inprogress, complied, delayed,
+#             not_complied
+#         )
+#     else:
 
-        return frame_compliance_status_yearwise_count(
-            db, inprogress, complied, delayed, not_complied,
-            filter_ids, chart_year
-        )
-
-
-def get_compliance_status(
-    db, status_type_qry,
-    request, user_id, chart_type=None
-):
-
-    country_ids = request.country_ids
-
-    if len(country_ids) == 1:
-        country_ids.append(0)
-    domain_ids = request.domain_ids
-
-    if len(domain_ids) == 1:
-        domain_ids.append(0)
-    filter_type = request.filter_type
-
-    # domain_ids = request.domain_ids
-    filter_ids = request.filter_ids
-    year_range_qry = ""
-    where_qry = ""
-    where_qry += status_type_qry
-    where_qry_val = []
-    if chart_type is None:
-        from_date = request.from_date
-        if from_date == "":
-            from_date = None
-        to_date = request.to_date
-        if to_date == "":
-            to_date = None
-        chart_year = request.chart_year
-        year_condition = get_client_domain_configuration(db, chart_year)[1]
-
-        for i, y in enumerate(year_condition):
-            if i == 0:
-                year_range_qry = y
-            else:
-                year_range_qry += " OR %s " % (y)
-        if len(year_condition) > 0:
-            year_range_qry = " AND (%s) " % year_range_qry
-        else:
-            year_range_qry = ""
-    else:
-        from_date = None
-        to_date = None
-
-    where_qry += year_range_qry
-
-    if filter_type == "Group":
-        group_by_name = "T3.country_id"
-        filter_type_ids = ""
-        filter_ids = country_ids
-
-    elif filter_type == "BusinessGroup":
-        group_by_name = "T3.business_group_id"
-        filter_type_ids = " AND find_in_set(T3.business_group_id, %s) "
-        where_qry_val.append(",".join([str(x) for x in filter_ids]))
-
-    elif filter_type == "LegalEntity":
-
-        group_by_name = "T3.legal_entity_id"
-        filter_type_ids = " AND find_in_set(T3.legal_entity_id, %s) "
-        where_qry_val.append(",".join([str(x) for x in filter_ids]))
-
-    elif filter_type == "Division":
-        group_by_name = "T3.division_id"
-        filter_type_ids = " AND find_in_set(T3.division_id, %s) "
-        where_qry_val.append(",".join([str(x) for x in filter_ids]))
-
-    elif filter_type == "Category" :
-        group_by_name = "T3.category_id"
-        filter_type_ids = " AND find_in_set(T3.category_id, %s) "
-        where_qry_val.append(",".join([str(x) for x in filter_ids]))
-
-    elif filter_type == "Unit":
-        group_by_name = "T3.unit_id"
-        filter_type_ids = " AND find_in_set(T3.unit_id, %s) "
-        where_qry_val.append(",".join([str(x) for x in filter_ids]))
-
-    elif filter_type == "Consolidated":
-        group_by_name = "T3.country_id"
-        filter_type_ids = ""
-        filter_ids = country_ids
-
-    where_qry += filter_type_ids
-
-    # if is_primary_admin(db, user_id):
-    #     user_qry = ""
-    # else:
-    #     user_qry = " AND (T1.completed_by LIKE %s " + \
-    #         " OR T1.concurred_by LIKE %s " + \
-    #         " OR T1.approved_by LIKE %s) "
-    #     where_qry += user_qry
-    #     where_qry_val.extend([user_id, user_id, user_id])
-
-    date_qry = ""
-    if from_date is not None and to_date is not None:
-        from_date = string_to_datetime(from_date)
-        to_date = string_to_datetime(to_date)
-        date_qry = " AND T1.due_date >= %s AND T1.due_date <= %s "
-        where_qry += date_qry
-        where_qry_val.extend([from_date, to_date])
-
-    query = "SELECT %s as filter_type, " + \
-        " T3.country_id, " + \
-        " T2.domain_id, " + \
-        " YEAR(T1.due_date) as year, " + \
-        " MONTH(T1.due_date) as month, " + \
-        " count(1) as compliances " + \
-        " FROM tbl_compliance_history T1  " + \
-        " INNER JOIN tbl_compliances T2 " + \
-        " ON T1.compliance_id = T2.compliance_id " + \
-        " INNER JOIN tbl_units T3 " + \
-        " ON T1.unit_id = T3.unit_id " + \
-        " WHERE "
-    query = query % (group_by_name)
-
-    order = "GROUP BY month, year, T2.domain_id, %s " + \
-        " ORDER BY month desc, year desc, %s "
-    order = order % (group_by_name, group_by_name)
-
-    where_qry1 = " find_in_set(T3.country_id, %s) " + \
-        " AND find_in_set(T2.domain_id, %s)  " + where_qry
-
-    param = [",".join([str(x) for x in country_ids]), ",".join([str(x) for x in domain_ids])]
-    param.extend(where_qry_val)
-    q = "%s %s %s" % (query, where_qry1, order)
-    print q % tuple(param)
-    rows = db.select_all(q, param)
-
-    return filter_ids, rows
+#         return frame_compliance_status_yearwise_count(
+#             db, inprogress, complied, delayed, not_complied,
+#             filter_ids, chart_year
+#         )
 
 
-def frame_compliance_status_count(
-    db,
-    inprogress, complied, delayed,
-    not_complied
-):
-    calculated_data = {}
+# def get_compliance_status(
+#     db, status_type_qry,
+#     request, user_id, chart_type=None
+# ):
 
-    def compliance_count(compliances, status):
-        for i in compliances:
-            filter_type = int(i["filter_type"])
-            domain_id = int(i["domain_id"])
-            domain_wise = calculated_data.get(filter_type)
+#     country_ids = request.country_ids
 
-            # domain_wise = country.get(domain_id)
-            if domain_wise is None:
-                domain_wise = {}
+#     if len(country_ids) == 1:
+#         country_ids.append(0)
+#     domain_ids = request.domain_ids
 
-            compliance_count_info = domain_wise.get(domain_id)
-            if compliance_count_info is None:
-                compliance_count_info = {
-                    "inprogress_count": 0,
-                    "complied_count": 0,
-                    "delayed_count": 0,
-                    "not_complied_count": 0,
-                }
+#     if len(domain_ids) == 1:
+#         domain_ids.append(0)
+#     filter_type = request.filter_type
 
-            compliance_count_info[status] += int(i["compliances"])
-            compliance_count_info["domain_id"] = i["domain_id"]
-            compliance_count_info["country_id"] = i["country_id"]
-            domain_wise[domain_id] = compliance_count_info
-            calculated_data[filter_type] = domain_wise
-        return calculated_data
+#     # domain_ids = request.domain_ids
+#     filter_ids = request.filter_ids
+#     year_range_qry = ""
+#     where_qry = ""
+#     where_qry += status_type_qry
+#     where_qry_val = []
+#     if chart_type is None:
+#         from_date = request.from_date
+#         if from_date == "":
+#             from_date = None
+#         to_date = request.to_date
+#         if to_date == "":
+#             to_date = None
+#         chart_year = request.chart_year
+#         year_condition = get_client_domain_configuration(db, chart_year)[1]
 
-    calculated_data = compliance_count(inprogress, "inprogress_count")
-    calculated_data = compliance_count(complied, "complied_count")
-    calculated_data = compliance_count(delayed, "delayed_count")
-    calculated_data = compliance_count(not_complied, "not_complied_count")
+#         for i, y in enumerate(year_condition):
+#             if i == 0:
+#                 year_range_qry = y
+#             else:
+#                 year_range_qry += " OR %s " % (y)
+#         if len(year_condition) > 0:
+#             year_range_qry = " AND (%s) " % year_range_qry
+#         else:
+#             year_range_qry = ""
+#     else:
+#         from_date = None
+#         to_date = None
 
-    current_year = datetime.datetime.now().year
-    filter_type_wise = {}
-    for key, value in calculated_data.iteritems():
-        domain_wise = {}
-        compliance_list = []
+#     where_qry += year_range_qry
 
-        for k, v in value.iteritems():
-            year = current_year
-            inprogress = v["inprogress_count"]
-            complied = v["complied_count"]
-            delayed = v["delayed_count"]
-            not_complied = v["not_complied_count"]
-            country_id = v["country_id"]
-            domain_id = v["domain_id"]
-            if len(compliance_list) == 0:
-                compliance_count = clientcore.NumberOfCompliances(
-                    domain_id, country_id, str(year), complied,
-                    delayed, inprogress, not_complied
-                )
-                compliance_list.append(compliance_count)
-            else:
-                compliance_count = compliance_list[0]
-                compliance_count.inprogress_compliance_count += v[0]
-                compliance_count.complied_count += v[1]
-                compliance_count.delayed_compliance_count += v[2]
-                compliance_count.not_complied_count += v[3]
+#     if filter_type == "Group":
+#         group_by_name = "T3.country_id"
+#         filter_type_ids = ""
+#         filter_ids = country_ids
 
-            domain_wise[k] = compliance_list
-            compliance_list = []
-        filter_type_wise[key] = domain_wise
+#     elif filter_type == "BusinessGroup":
+#         group_by_name = "T3.business_group_id"
+#         filter_type_ids = " AND find_in_set(T3.business_group_id, %s) "
+#         where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
-    final_result_list = []
-    for k, v in filter_type_wise.items():
-        data_list = []
-        for i, j in v.items():
-            data_list.extend(j)
-        chart = dashboard.ChartDataMap(k, data_list)
-        final_result_list.append(chart)
-    return final_result_list
+#     elif filter_type == "LegalEntity":
+
+#         group_by_name = "T3.legal_entity_id"
+#         filter_type_ids = " AND find_in_set(T3.legal_entity_id, %s) "
+#         where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+#     elif filter_type == "Division":
+#         group_by_name = "T3.division_id"
+#         filter_type_ids = " AND find_in_set(T3.division_id, %s) "
+#         where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+#     elif filter_type == "Category" :
+#         group_by_name = "T3.category_id"
+#         filter_type_ids = " AND find_in_set(T3.category_id, %s) "
+#         where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+#     elif filter_type == "Unit":
+#         group_by_name = "T3.unit_id"
+#         filter_type_ids = " AND find_in_set(T3.unit_id, %s) "
+#         where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+#     elif filter_type == "Consolidated":
+#         group_by_name = "T3.country_id"
+#         filter_type_ids = ""
+#         filter_ids = country_ids
+
+#     where_qry += filter_type_ids
+
+#     # if is_primary_admin(db, user_id):
+#     #     user_qry = ""
+#     # else:
+#     #     user_qry = " AND (T1.completed_by LIKE %s " + \
+#     #         " OR T1.concurred_by LIKE %s " + \
+#     #         " OR T1.approved_by LIKE %s) "
+#     #     where_qry += user_qry
+#     #     where_qry_val.extend([user_id, user_id, user_id])
+
+#     date_qry = ""
+#     if from_date is not None and to_date is not None:
+#         from_date = string_to_datetime(from_date)
+#         to_date = string_to_datetime(to_date)
+#         date_qry = " AND T1.due_date >= %s AND T1.due_date <= %s "
+#         where_qry += date_qry
+#         where_qry_val.extend([from_date, to_date])
+
+#     query = "SELECT %s as filter_type, " + \
+#         " T3.country_id, " + \
+#         " T2.domain_id, " + \
+#         " YEAR(T1.due_date) as year, " + \
+#         " MONTH(T1.due_date) as month, " + \
+#         " count(1) as compliances " + \
+#         " FROM tbl_compliance_history T1  " + \
+#         " INNER JOIN tbl_compliances T2 " + \
+#         " ON T1.compliance_id = T2.compliance_id " + \
+#         " INNER JOIN tbl_units T3 " + \
+#         " ON T1.unit_id = T3.unit_id " + \
+#         " WHERE "
+#     query = query % (group_by_name)
+
+#     order = "GROUP BY month, year, T2.domain_id, %s " + \
+#         " ORDER BY month desc, year desc, %s "
+#     order = order % (group_by_name, group_by_name)
+
+#     where_qry1 = " find_in_set(T3.country_id, %s) " + \
+#         " AND find_in_set(T2.domain_id, %s)  " + where_qry
+
+#     param = [",".join([str(x) for x in country_ids]), ",".join([str(x) for x in domain_ids])]
+#     param.extend(where_qry_val)
+#     q = "%s %s %s" % (query, where_qry1, order)
+#     print q % tuple(param)
+#     rows = db.select_all(q, param)
+
+#     return filter_ids, rows
+
+
+# def frame_compliance_status_count(
+#     db,
+#     inprogress, complied, delayed,
+#     not_complied
+# ):
+#     calculated_data = {}
+
+#     def compliance_count(compliances, status):
+#         for i in compliances:
+#             filter_type = int(i["filter_type"])
+#             domain_id = int(i["domain_id"])
+#             domain_wise = calculated_data.get(filter_type)
+
+#             # domain_wise = country.get(domain_id)
+#             if domain_wise is None:
+#                 domain_wise = {}
+
+#             compliance_count_info = domain_wise.get(domain_id)
+#             if compliance_count_info is None:
+#                 compliance_count_info = {
+#                     "inprogress_count": 0,
+#                     "complied_count": 0,
+#                     "delayed_count": 0,
+#                     "not_complied_count": 0,
+#                 }
+
+#             compliance_count_info[status] += int(i["compliances"])
+#             compliance_count_info["domain_id"] = i["domain_id"]
+#             compliance_count_info["country_id"] = i["country_id"]
+#             domain_wise[domain_id] = compliance_count_info
+#             calculated_data[filter_type] = domain_wise
+#         return calculated_data
+
+#     calculated_data = compliance_count(inprogress, "inprogress_count")
+#     calculated_data = compliance_count(complied, "complied_count")
+#     calculated_data = compliance_count(delayed, "delayed_count")
+#     calculated_data = compliance_count(not_complied, "not_complied_count")
+
+#     current_year = datetime.datetime.now().year
+#     filter_type_wise = {}
+#     for key, value in calculated_data.iteritems():
+#         domain_wise = {}
+#         compliance_list = []
+
+#         for k, v in value.iteritems():
+#             year = current_year
+#             inprogress = v["inprogress_count"]
+#             complied = v["complied_count"]
+#             delayed = v["delayed_count"]
+#             not_complied = v["not_complied_count"]
+#             country_id = v["country_id"]
+#             domain_id = v["domain_id"]
+#             if len(compliance_list) == 0:
+#                 compliance_count = clientcore.NumberOfCompliances(
+#                     domain_id, country_id, str(year), complied,
+#                     delayed, inprogress, not_complied
+#                 )
+#                 compliance_list.append(compliance_count)
+#             else:
+#                 compliance_count = compliance_list[0]
+#                 compliance_count.inprogress_compliance_count += v[0]
+#                 compliance_count.complied_count += v[1]
+#                 compliance_count.delayed_compliance_count += v[2]
+#                 compliance_count.not_complied_count += v[3]
+
+#             domain_wise[k] = compliance_list
+#             compliance_list = []
+#         filter_type_wise[key] = domain_wise
+
+#     final_result_list = []
+#     for k, v in filter_type_wise.items():
+#         data_list = []
+#         for i, j in v.items():
+#             data_list.extend(j)
+#         chart = dashboard.ChartDataMap(k, data_list)
+#         final_result_list.append(chart)
+#     return final_result_list
 
 
 def frame_compliance_status_yearwise_count(
@@ -461,9 +488,16 @@ def frame_compliance_status_yearwise_count(
     return final_result_list
 
 
-def get_compliance_status_chart(db, request, session_user):
-
-    result = get_status_wise_compliances_count(db, request, session_user)
+def get_compliance_status_chart(db, request, user_id, user_category):
+    from_date = request.from_date
+    to_date = request.to_date
+    if from_date is not None and to_date is not None:
+        result = frame_compliance_status_count(
+            db, inprogress, complied, delayed,
+            not_complied
+        )
+    else:
+        result = get_compliance_status_count(db, request, user_id, user_category)
 
     final = []
     filter_types = []
