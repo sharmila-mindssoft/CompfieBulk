@@ -189,7 +189,9 @@ class UpdateServiceProvider(Request):
             "email_id": self.email_id,
             "address": self.address,
         }
-#============================================================================================
+##################################################
+# Change Service Provider Status
+##################################################
 class ChangeServiceProviderStatus(Request):
     def __init__(self, service_provider_id, is_active):
         self.service_provider_id = service_provider_id
@@ -197,17 +199,15 @@ class ChangeServiceProviderStatus(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["s_id", "active"])
-        service_provider_id = data.get("s_id")
-        service_provider_id = parse_structure_UnsignedIntegerType_32(service_provider_id)
-        is_active = data.get("active")
-        is_active = parse_structure_Bool(is_active)
+        data = parse_dictionary(data, ["sp_id", "active_status"])
+        service_provider_id = data.get("sp_id")
+        is_active = data.get("active_status")
         return ChangeServiceProviderStatus(service_provider_id, is_active)
 
     def to_inner_structure(self):
         return {
-            "s_id": to_structure_SignedIntegerType_8(self.service_provider_id),
-            "active": to_structure_Bool(self.is_active),
+            "sp_id": self.service_provider_id,
+            "active_status": self.is_active,
         }
 
 ########################################################
