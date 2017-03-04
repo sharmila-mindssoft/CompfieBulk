@@ -1339,7 +1339,7 @@ function initClientMirror() {
         callerName = 'client_masters';
         var request = [
             'ChangeServiceProviderStatus', {
-                's_id': sId,
+                'sp_id': sId,
                 'active': active
             }
         ];
@@ -1671,9 +1671,10 @@ function initClientMirror() {
         clientApiRequest('client_transaction', request, callback);
     }
 
-    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name, compliance_frequency, country_id, start_count, callback) {
+    function getStatutoriesByUnit(legalEntityId, unit_id, domain_id, level_1_statutory_name, compliance_frequency, country_id, start_count, callback) {
         var request = [
             'GetStatutoriesByUnit', {
+                'le_id': legalEntityId,
                 'unit_id': unit_id,
                 'domain_id': domain_id,
                 'level_1_statutory_name': level_1_statutory_name,
@@ -2355,7 +2356,7 @@ function initClientMirror() {
     }
 
     // User Management List
-    function getUserManagement_List(callback) {        
+    function getUserManagement_List(callback) {
         callerName = 'client_masters';
         var request = [
             'UserManagementList',
@@ -2503,8 +2504,8 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetUserScoreCard(callback){
-         var request = [
+    function getWidgetUserScoreCard(callback) {
+        var request = [
             "GetUserScoreCard", {
                 "le_ids": getLEids()
             }
@@ -2513,8 +2514,8 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetDomainScoreCard(callback){
-         var request = [
+    function getWidgetDomainScoreCard(callback) {
+        var request = [
             "GetDomainScoreCard", {
                 "le_ids": getLEids()
             }

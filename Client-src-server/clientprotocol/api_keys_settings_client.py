@@ -48,6 +48,9 @@ def make_map_type(module, klass_name, validfun=is_numeric, is_optional=False):
 def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
     return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name}
 
+def make_map_type_vector_type_string(length=150, is_optional=False):
+    return {'type': 'MAP_TYPE_VECTOR_TYPE_STRING', 'is_optional': is_optional, 'length': length}
+
 def make_widget_type():
     # customized widget data from backend
     return {'type': 'WIDGET_TYPE'}
@@ -618,9 +621,13 @@ api_params = {
     "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
-    "level_1_statutories": make_text_field(),    
+    "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
     "compliance_file_name":  make_vector_type_string(is_optional=True),
-    "in_units":make_vector_type_field(module="clienttransactions", klass_name="IndustryWiseUnits"),
-    "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
-    'location': {'type': 'TEXT', 'length': None, 'validation_method': None, 'is_optional': True},
+    "in_units":make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
+    "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),    
+    "pr_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
+    "statutory_wise_compliances": make_vector_type_field(module="clienttransactions", klass_name="STATUTORY_WISE_COMPLIANCES"),
+    "pr_users": make_vector_type_field(module="clientcore", klass_name="User"),
+    "level_1_statutory_name":make_text_field(length=500, is_optional=True),
+    "pr_compliances" : make_vector_type_field(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS"),
 }

@@ -77,13 +77,8 @@ def process_client_transaction_requests(request, db, session_user, session_categ
             db, request, session_user
         )
 
-    # elif type(request) is clienttransactions.GetUserwiseCompliances:
-    #     result = process_get_user_wise_compliances(
-    #         db, session_user
-    #     )
-
-    elif type(request) is clienttransactions.GetAssigneeCompliances:
-        result = process_get_assignee_compliances(db, request, session_user)
+    # elif type(request) is clienttransactions.GetAssigneeCompliances:
+    #     result = process_get_assignee_compliances(db, request, session_user)
 
     elif type(request) is clienttransactions.ReassignCompliance:
         result = process_reassign_compliance(
@@ -282,6 +277,7 @@ def process_get_past_records_form_data(db, request, session_user, session_catego
 
 ########################################################
 # To get the compliances under the selected filters
+# Completed Task - Current Year (Past Data)
 ########################################################
 def process_get_statutories_by_unit(
         db, request, session_user
@@ -291,11 +287,12 @@ def process_get_statutories_by_unit(
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
     compliance_frequency = request.compliance_frequency
-    country_id = request.country_id
+    # country_id = request.country_id
     start_count = request.start_count
+    # country_id
     statutory_wise_compliances, total_count = get_statutory_wise_compliances(
         db, unit_id, domain_id, level_1_statutory_name,
-        compliance_frequency, country_id, session_user, start_count,
+        compliance_frequency, session_user, start_count,
         to_count
     )
     users = get_users_by_unit_and_domain(db, unit_id, domain_id)
@@ -389,7 +386,7 @@ def process_approve_compliance(db, request, session_user):
     next_due_date = request.next_due_date
     validity_date = request.validity_date
     legal_entity_id = request.legal_entity_id
-    
+
     status = status[0]
 
     if status == "Approve":
@@ -401,7 +398,7 @@ def process_approve_compliance(db, request, session_user):
         reject_compliance_approval(
             db, compliance_history_id, remarks,  next_due_date
         )
-    elif status == "Concur":        
+    elif status == "Concur":
         concur_compliance(
             db, compliance_history_id, remarks,
             next_due_date, validity_date, session_user
@@ -415,7 +412,7 @@ def process_approve_compliance(db, request, session_user):
     #         db, compliance_history_id, remarks,
     #         next_due_date, validity_date, session_user
     #     )
-        
+
     return clienttransactions.ApproveComplianceSuccess()
 
 
