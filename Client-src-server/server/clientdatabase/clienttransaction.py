@@ -1165,10 +1165,13 @@ def get_level_1_statutories_for_user_with_domain(
             level_1_statutory[domain_id].append(statutories.strip())
     return level_1_statutory
 
-
+########################################################
+# To get the compliances under the selected filters
+# Completed Task - Current Year (Past Data)
+########################################################
 def get_statutory_wise_compliances(
     db, unit_id, domain_id, level_1_statutory_name, frequency_name,
-    country_id, session_user, start_count, to_count
+    session_user, start_count, to_count
 ):
     condition = ""
     condition_val = []
@@ -1178,7 +1181,7 @@ def get_statutory_wise_compliances(
             " frequency = %s)"
         condition_val.append(frequency_name)
     else:
-        condition += "AND c.frequency_id in (2,3)"
+        condition += "AND c.frequency_id in (1,2,3)"
 
     if level_1_statutory_name is not None:
         condition += " AND statutory_mapping like %s"
@@ -1213,11 +1216,11 @@ def get_statutory_wise_compliances(
         "repeats_type_id",  "repeat_type", "repeat_every", "frequency",
         "frequency_id"
     ]
-    client_compliance_rows = convert_to_dict(rows, columns)
+    # client_compliance_rows = convert_to_dict(rows, columns)
     level_1_statutory_wise_compliances = {}
     total_count = 0
     compliance_count = 0
-    for compliance in client_compliance_rows:
+    for compliance in rows:
         statutories = compliance["statutory_mapping"].split(">>")
         if level_1_statutory_name is None:
 
@@ -1240,14 +1243,14 @@ def get_statutory_wise_compliances(
         due_dates = []
         # statutory_dates_list = []
         summary = ""
+        # country_id=country_id
         if compliance["repeats_type_id"] == 1:  # Days
             due_dates, summary = calculate_due_date(
                 db,
                 repeat_by=1,
                 repeat_every=compliance["repeat_every"],
                 due_date=compliance["due_date"],
-                domain_id=domain_id,
-                country_id=country_id
+                domain_id=domain_id
             )
         elif compliance["repeats_type_id"] == 2:  # Months
             due_dates, summary = calculate_due_date(
@@ -1256,8 +1259,7 @@ def get_statutory_wise_compliances(
                 repeat_by=2,
                 repeat_every=compliance["repeat_every"],
                 due_date=compliance["due_date"],
-                domain_id=domain_id,
-                country_id=country_id
+                domain_id=domain_id
             )
         elif compliance["repeats_type_id"] == 3:  # years
             due_dates, summary = calculate_due_date(
@@ -1266,8 +1268,7 @@ def get_statutory_wise_compliances(
                 statutory_dates=compliance["statutory_dates"],
                 repeat_every=compliance["repeat_every"],
                 due_date=compliance["due_date"],
-                domain_id=domain_id,
-                country_id=country_id
+                domain_id=domain_id
             )
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
