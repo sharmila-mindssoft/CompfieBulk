@@ -621,10 +621,13 @@ api_params = {
     "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
-    "level_1_statutories": make_map_type_vector_type_string(),
+    "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
     "compliance_file_name":  make_vector_type_string(is_optional=True),
     "in_units":make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
     "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),    
     "pr_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
-    
+    "statutory_wise_compliances": make_vector_type_field(module="clienttransactions", klass_name="STATUTORY_WISE_COMPLIANCES"),
+    "pr_users": make_vector_type_field(module="clientcore", klass_name="User"),
+    "level_1_statutory_name":make_text_field(length=500, is_optional=True),
+    "pr_compliances" : make_vector_type_field(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS"),
 }
