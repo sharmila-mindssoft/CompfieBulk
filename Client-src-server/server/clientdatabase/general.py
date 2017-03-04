@@ -1323,8 +1323,10 @@ def get_user_ids_by_unit_and_domain(
     else:
         user_ids = None
     return user_ids
-
-
+########################################################
+# To get the compliances under the selected filters
+# Used in - Completed Task - Current Year (Past Data)
+########################################################
 def get_users_by_unit_and_domain(
     db, unit_id, domain_id
 ):
