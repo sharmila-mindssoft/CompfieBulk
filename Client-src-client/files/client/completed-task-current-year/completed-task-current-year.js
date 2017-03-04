@@ -708,7 +708,7 @@ function getPastRecords () {
   }
   function onFailure(error){
   }
-  client_mirror.getPastRecordsFormData(LE_ID,
+  client_mirror.getPastRecordsFormData(parseInt(LE_ID),
     function (error, response) {
           if (error == null){
             onSuccess(response);
@@ -724,14 +724,14 @@ function getLegalEntity(){
   legalentitiesList = client_mirror.getSelectedLegalEntity();
   $.each(legalentitiesList, function(key, value) {
       id = value.le_id;
-      text = value.le_name;
-      LE_ID = value.le_id
+      text = value.le_name;      
       var clone = ULRow.clone();
       clone.html(text + '<i></i>');
       clone.attr('id', id);      
       legalentityul.append(clone);
       clone.click(function() {
-          activateList(this, 'legalentity');
+          LE_ID = clone.attr('id');      
+          activateList(this, 'legalentity');          
       });
   });
 }
