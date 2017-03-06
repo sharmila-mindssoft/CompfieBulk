@@ -403,7 +403,7 @@ function loadUser(userType) {
         }
         if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
             var userId = USERS[user].usr_id;
-            var userName = USERS[user].emp_name;
+            var userName = USERS[user].emp_code + ' - ' +USERS[user].emp_name;
             var combine = userId + '-' + serviceProviderId;
             var isAssignee = USERS[user].is_assignee;
             var isConcurrence = USERS[user].is_approver;
