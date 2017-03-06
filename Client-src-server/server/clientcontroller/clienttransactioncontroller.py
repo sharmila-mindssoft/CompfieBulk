@@ -93,7 +93,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_get_past_records_form_data(
             db, request, session_user, session_category
         )
-        
+
     elif type(request) is clienttransactions.SavePastRecords:
         result = process_save_past_records(
             db, request, session_user, client_id
@@ -247,7 +247,7 @@ def process_save_assigned_compliance(db, request, session_user):
 # current year form wizards
 ########################################################
 def process_get_past_records_form_data(db, request, session_user, session_category):
-    # countries = get_countries_for_user(db, session_user)    
+    # countries = get_countries_for_user(db, session_user)
     row = get_user_company_details(db, session_user)
     business_groups = get_business_groups_for_user(db, row[3])
     legal_entities = get_legal_entities_for_user(db, row[2])
@@ -538,7 +538,6 @@ def process_client_master_filters_request(request, db, session_user, session_cat
 
     elif type(request) is clienttransactions.ChangeThemes:
         result = process_change_theme(db, request, session_user)
-    
 
     return result
 
@@ -685,11 +684,11 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
 ########################################################
 def process_change_theme(db, request, session_user):
     theme_name = request.theme
-    theme_id = get_themes_for_user(db, session_user);
+    theme_id = get_themes_for_user(db, session_user)
 
     if not theme_id:
-        theme_value = save_themes_for_user(db, session_user, theme_name);
+        theme_value = save_themes_for_user(db, session_user, theme_name)
     else:
-        theme_value = update_themes_for_user(db, session_user, theme_id, theme_name);
+        theme_value = update_themes_for_user(db, session_user, theme_id, theme_name)
 
     return clienttransactions.ChangeThemeSuccess(theme_value)

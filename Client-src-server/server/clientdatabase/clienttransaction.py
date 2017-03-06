@@ -1138,7 +1138,7 @@ def get_units_for_user_grouped_by_industry(db, unit_ids):
 def get_level_1_statutories_for_user_with_domain(
     db, session_user, domain_id=None
 ):
-    if is_primary_admin(db, session_user):          
+    if is_primary_admin(db, session_user):
         condition = "1"
         condition_val = None
     else:
