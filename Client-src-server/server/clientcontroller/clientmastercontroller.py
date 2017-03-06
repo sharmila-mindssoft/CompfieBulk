@@ -3,11 +3,15 @@ from server.jsontocsvconverter import ConvertJsonToCSV
 from clientprotocol import (clientmasters, clientcore, clientreport)
 from server.clientdatabase.tables import *
 from server.clientdatabase.clientmaster import *
+from server.common import (
+    datetime_to_string, get_date_time,
+    string_to_datetime, generate_and_return_password, datetime_to_string_time,
+    get_current_date, new_uuid, addHours
+)
 from server.clientdatabase.general import (
-    get_domains_for_user, verify_password,
-    get_countries_for_user, get_countries, get_domains,
+    verify_password,
     get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user, get_units_for_user, have_compliances,
+    get_divisions_for_user, have_compliances,
     is_seating_unit, get_user_company_details, is_primary_admin,
     is_service_proivder_user, is_old_primary_admin
     )
@@ -15,12 +19,11 @@ __all__ = [
     "process_client_master_requests"
 ]
 
-
 ########################################################
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_master_requests(request, db, session_user, client_id):
+def process_client_master_requests(request, db, session_user, client_id, le_ids_dbase):
     request = request.request
 
     if type(request) is clientmasters.GetServiceProviders:
@@ -40,6 +43,11 @@ def process_client_master_requests(request, db, session_user, client_id):
 
     elif type(request) is clientmasters.ChangeServiceProviderStatus:
         result = process_change_service_provider_status(
+            db, request, session_user
+        )
+
+    elif type(request) is clientmasters.BlockServiceProvider:
+        result = process_block_service_provider(
             db, request, session_user
         )
 
@@ -102,6 +110,9 @@ def process_client_master_requests(request, db, session_user, client_id):
     elif type(request) is clientmasters.SaveUnitClosureData:
         result = process_save_unit_closure_unit_data(db, request, session_user)
 
+    elif type(request) is clientmasters.UserManagementPrerequisite:
+        result = process_UserManagementAddPrerequisite(db, request, session_user)
+
     elif type(request) is clientmasters.GetServiceProviderDetailsReportFilters:
         result = get_service_provider_details_report_filter_data(
             db, request, session_user)
@@ -131,15 +142,21 @@ def process_client_master_requests(request, db, session_user, client_id):
             db, request, session_user, client_id
         )
 
-    return result
+    elif type(request) is clientmasters.UpdateUserProfile:
+        result = update_user_profile(
+            db, request, session_user, client_id
+        )
 
+    elif type(request) is clientmasters.UserManagementList:
+        result = process_UserManagement_list(db, request, session_user)
+
+    return result
 
 ########################################################
 # To get the list of all service providers
 ########################################################
 def process_get_service_providers(db, request, session_user):
     service_provider_list = get_service_provider_details_list(db)
-    print service_provider_list
     return clientmasters.GetServiceProvidersSuccess(
         service_providers=service_provider_list)
 
@@ -149,11 +166,9 @@ def process_get_service_providers(db, request, session_user):
 ########################################################
 def process_save_service_provider(db, request, session_user):
     # create fail class for false res status
-
     service_provider_id = None
-    if is_duplicate_service_provider(
-        db, service_provider_id, request.service_provider_name
-    ):
+    if is_duplicate_service_provider(db, service_provider_id,
+                                     request.service_provider_name, request.short_name):
         return clientmasters.ServiceProviderNameAlreadyExists()
     res = save_service_provider(db, request, session_user)
     if(res):
@@ -173,7 +188,8 @@ def process_update_service_provider(db, request, session_user):
     elif is_duplicate_service_provider(
         db,
         request.service_provider_id,
-        request.service_provider_name
+        request.service_provider_name,
+        request.short_name
     ):
         return clientmasters.ServiceProviderNameAlreadyExists()
     elif update_service_provider(db, request, session_user):
@@ -193,31 +209,93 @@ def process_change_service_provider_status(
         request.service_provider_id
     ):
         return clientmasters.InvalidServiceProviderId()
-    # elif is_service_provider_in_contract(
-    #     db, request.service_provider_id
-    # ) is False:
-    #     return clientmasters.CannotChangeStatusOfContractExpiredSP()
-    elif is_user_exists_under_service_provider(
+    elif is_service_provider_in_contract(
+        db, request.service_provider_id
+    ) is False:
+        return clientmasters.CannotChangeStatusOfContractExpiredSP()
+    if is_user_exists_under_service_provider(
         db, request.service_provider_id
     ):
         return clientmasters.CannotDeactivateUserExists()
-    elif update_service_provider_status(
+    if update_service_provider_status(
         db,
         request.service_provider_id,
         is_active, session_user
     ):
         return clientmasters.ChangeServiceProviderStatusSuccess()
 
+########################################################
+# To block the service provider
+########################################################
+def process_block_service_provider(
+    db, request, session_user
+):
+    is_blocked = 0 if request.is_blocked is False else 1    
+    if block_service_provider(
+        db,
+        request.service_provider_id,
+        is_blocked, session_user
+    ):
+        return clientmasters.BlockServiceProviderSuccess()
+
+########################################################
+# User Management Add Prerequisite
+########################################################
+def process_UserManagementAddPrerequisite(db, request, session_user):
+    userCategory = {}
+    userGroup = {}
+    businessGroup = {}
+    legalEntity = {}
+    groupCategory = {}
+    groupDivision = {}
+    legalDomains = {}
+    legalUnits = {}
+    serviceProviders = {}
+
+    userCategory = process_UserManagement_category(db)
+    userGroup = process_UserManagement_UserGroup(db)
+    businessGroup = process_UserManagement_BusinessGroup(db)
+    legalEntity = process_UserManagement_LegalEntity(db)
+    groupDivision = process_UserManagement_GroupDivision(db)
+    groupCategory = process_UserManagement_GroupCategory(db)
+    legalDomains = process_UserManagement_LegalDomains(db)
+    legalUnits = process_UserManagement_LegalUnits(db)
+    serviceProviders = process_UserManagement_ServiceProviders(db)
+
+    return clientmasters.GetUserManagementPrerequisiteSuccess(
+        user_category=userCategory,
+        user_group=userGroup,
+        business_group=businessGroup,
+        legal_entity=legalEntity,
+        group_division=groupDivision,
+        group_category=groupCategory,
+        legal_Domains=legalDomains,
+        legal_units=legalUnits,
+        service_providers=serviceProviders
+    )
+########################################################
+# User Management - List users
+########################################################
+def process_UserManagement_list(db, request, session_user):
+    legalEntities = {}
+    users = {}
+
+    legalEntities = process_UserManagement_list_LegalEntities(db, request, session_user)
+    users = process_UserManagement_list_users(db, request, session_user)
+
+    return clientmasters.UserManagementListSuccess(
+        legal_entities=legalEntities,
+        users=users)
 
 ########################################################
 # To get all client forms to load in User privilege form
 ########################################################
 def process_get_forms(db, cat_id):
     result_rows = get_forms(db, cat_id)
+    # print result_rows;
     forms = []
     for row in result_rows:
-        parent_menu = None if (
-            row["parent_menu"] == None) else row["parent_menu"]
+        parent_menu = None if (row["parent_menu"] == None) else row["parent_menu"]
         form = clientcore.Form(
             form_id=row["form_id"],
             form_name=row["form_name"],
@@ -227,7 +305,6 @@ def process_get_forms(db, cat_id):
         )
         forms.append(form)
     return process_user_menus(forms)
-
 
 ########################################################
 # To get all client Menu to load in User privilege form
@@ -243,6 +320,193 @@ def process_get_user_category(db):
         )
     return user_category_list
 
+########################################################
+# User Management - Load User Category
+########################################################
+def process_UserManagement_category(db):
+    resultRows = userManagement_GetUserCategory(db)
+    userCategoryList = []
+    for row in resultRows:
+        userCategoryId = int(row["user_category_id"])
+        userCategoryName = row["user_category_name"]
+        userCategoryList.append(
+            clientcore.ClientUsercategory_UserManagement(userCategoryId, userCategoryName)
+        )
+    return userCategoryList
+
+########################################################
+# User Management - Load User Group
+########################################################
+def process_UserManagement_UserGroup(db):
+    resultRows = userManagement_GetUserGroup(db)
+    userGroupList = []
+    for row in resultRows:
+        userGroupId = int(row["user_group_id"])
+        userGroupName = row["user_group_name"]
+        userCategoryId = int(row["user_category_id"])
+        userGroupList.append(
+            clientcore.ClientUserGroup_UserManagement(userGroupId, userGroupName, userCategoryId)
+        )
+    return userGroupList
+########################################################
+# User Management - Load Business Group
+########################################################
+def process_UserManagement_BusinessGroup(db):
+    resultRows = userManagement_GetBusinessGroup(db)
+    businessGroupList = []
+    for row in resultRows:
+        businessGroupId = row["business_group_id"]
+        businessGroupName = row["business_group_name"]
+        businessGroupList.append(
+            clientcore.ClientUserBusinessGroup_UserManagement(businessGroupId, businessGroupName)
+        )
+    return businessGroupList
+########################################################
+# User Management - Load Legal Entity
+########################################################
+def process_UserManagement_LegalEntity(db):
+    resultRows = userManagement_GetLegalEntity(db)
+    legalEntityList = []
+    for row in resultRows:
+        legalEntityId = int(row["legal_entity_id"])
+        businessGroupId = row["business_group_id"]
+        legalEntityName = row["legal_entity_name"]
+        legalEntityList.append(
+            clientcore.ClientUserLegalEntity_UserManagement(legalEntityId,
+                                                            businessGroupId, legalEntityName)
+        )
+    return legalEntityList
+########################################################
+# User Management - Load Group Division
+########################################################
+def process_UserManagement_GroupDivision(db):
+    resultRows = userManagement_GetDivision(db)
+    divisionList = []
+    for row in resultRows:
+        divisionId = row["division_id"]
+        divisionName = row["division_name"]
+        legalEntityId = row["legal_entity_id"]
+        businessGroupId = row["business_group_id"]
+        divisionList.append(
+            clientcore.ClientUserDivision_UserManagement(divisionId, divisionName,
+                                                         legalEntityId, businessGroupId)
+        )
+    return divisionList
+
+########################################################
+# User Management - Load Group Category
+########################################################
+def process_UserManagement_GroupCategory(db):
+    resultRows = userManagement_GetGroupCategory(db)
+    categoryList = []
+    for row in resultRows:
+        categoryId = row["category_id"]
+        categoryName = row["category_name"]
+        legalEntityId = row["legal_entity_id"]
+        businessGroupId = row["business_group_id"]
+        divisionId = row["division_id"]
+        categoryList.append(
+            clientcore.ClientGroupCategory_UserManagement(categoryId, categoryName,
+                                                          legalEntityId, businessGroupId, divisionId)
+        )
+    return categoryList
+
+########################################################
+# User Management - Load Legal Entity Domains
+########################################################
+def process_UserManagement_LegalDomains(db):
+    resultRows = userManagement_GetLegalEntity_Domain(db)
+    domainList = []
+    for row in resultRows:
+        legalEntityId = row["legal_entity_id"]
+        domain_id = row["domain_id"]
+        domain_name = row["domain_name"]
+        domainList.append(
+            clientcore.ClientLegalDomains_UserManagement(legalEntityId, domain_id, domain_name)
+        )
+    return domainList
+########################################################
+# User Management - Load Legal Entity Units
+########################################################
+def process_UserManagement_LegalUnits(db):
+    resultRows = userManagement_GetLegalEntity_Units(db)
+    unitList = []
+    for row in resultRows:
+        unit_id = row["unit_id"]
+        business_group_id = row["business_group_id"]
+        legal_entity_id = row["legal_entity_id"]
+        division_id = row["division_id"]
+        category_id = row["category_id"]
+        unit_code = row["unit_code"]
+        unit_name = row["unit_name"]
+        address = row["address"]
+        postal_code = str(row["postal_code"])
+        unitList.append(
+            clientcore.ClientLegalUnits_UserManagement(unit_id, business_group_id, legal_entity_id,
+                                                       division_id, category_id, unit_code,
+                                                       unit_name, address, postal_code)
+        )
+    return unitList
+########################################################
+# User Management - Service Providers
+########################################################
+def process_UserManagement_ServiceProviders(db):
+    resultRows = userManagement_GetServiceProviders(db)
+    spList = []
+    for row in resultRows:
+        service_provider_id = row["service_provider_id"]
+        service_provider_name = row["service_provider_name"]
+        short_name = row["short_name"]
+        spList.append(
+            clientcore.ClientServiceProviders_UserManagement(service_provider_id,
+                                                             service_provider_name, short_name)
+        )
+    return spList
+########################################################
+# User Management List - Get legal entities
+########################################################
+def process_UserManagement_list_LegalEntities(db, request, session_user):
+    resultRows = userManagement_list_GetLegalEntities(db)
+    leList = []
+    for row in resultRows:
+        country_name = row["country_name"]
+        business_group_name = row["business_group_name"]
+        legal_entity_id = row["legal_entity_id"]
+        legal_entity_name = row["legal_entity_name"]
+        contract_from = datetime_to_string(row["contract_from"])
+        contract_to = datetime_to_string(row["contract_to"])
+        total_licence = row["total_licence"]
+        used_licence = row["used_licence"]
+        leList.append(
+            clientcore.ClientLegalEntities_UserManagementList(country_name, business_group_name,
+                                                              legal_entity_id, legal_entity_name,
+                                                              contract_from, contract_to,
+                                                              total_licence, used_licence)
+        )
+    return leList
+
+########################################################
+# User Management List - Get Users
+########################################################
+def process_UserManagement_list_users(db, request, session_user):
+    resultRows = userManagement_list_GetUsers(db)
+    userList = []
+    for row in resultRows:
+        user_id = row["user_id"]
+        user_category_id = row["user_category_id"]
+        employee_code = row["employee_code"]
+        employee_name = row["employee_name"]
+        username = row["username"]
+        email_id = row["email_id"]
+        mobile_no = row["mobile_no"]
+        legal_entity_id = row["legal_entity_id"]
+        userList.append(
+            clientcore.ClientUsers_UserManagementList(user_id, user_category_id,
+                                                      employee_code, employee_name,
+                                                      username, email_id,
+                                                      mobile_no, legal_entity_id)
+        )
+    return userList
 
 ########################################################
 # To get all user groups with details
@@ -258,9 +522,6 @@ def process_get_user_privilege_details_list(db):
 # To get all user groups list
 ########################################################
 def process_get_user_privileges(db, request, session_user):
-    # call form category
-    # loop user category
-    # process_get_forms --> process_get_menus -- > append to dictionary key
     form_category = {}
     user_category = {}
     for cat_id in [2, 3, 4, 5, 6] :
@@ -299,8 +560,9 @@ def process_update_user_privileges(db, request, session_user):
     ):
         return clientmasters.InvalidUserGroupId()
     elif is_duplicate_user_privilege(
-        db, request.user_category_id, request.user_group_name
+        db, request.user_category_id, request.user_group_name, request.user_group_id
     ):
+
         return clientmasters.UserGroupNameAlreadyExists()
     elif update_user_privilege(db, request, session_user):
         return clientmasters.UpdateUserPrivilegesSuccess()
@@ -310,94 +572,94 @@ def process_update_user_privileges(db, request, session_user):
 # To change the status of user privilege
 ########################################################
 def process_change_user_privilege_status(db, request, session_user):
-    if db.is_invalid_id(
-        tblUserGroups, "user_group_id", request.user_group_id
-    ):
+    password = request.password
+    if db.is_invalid_id(tblUserGroups, "user_group_id", request.user_group_id):
         return clientmasters.InvalidUserGroupId()
-    elif is_user_exists_under_user_group(
-        db, request.user_group_id
-    ):
+    elif verify_password_user_privilege(db, session_user, password):
+        return clientmasters.InvalidPassword()
+    elif is_user_exists_under_user_group(db, request.user_group_id):
         return clientmasters.CannotDeactivateUserExists()
-    elif update_user_privilege_status(
-        db, request.user_group_id, request.is_active, session_user
-    ):
+    elif update_user_privilege_status(db, request.user_group_id, request.is_active, session_user):
         return clientmasters.ChangeUserPrivilegeStatusSuccess()
 
 
 ########################################################
 # To get the list of all users with details
 ########################################################
-def process_get_client_users(db, request, session_user):
-    user_company_info = get_user_company_details(
-        db, session_user
-    )
-    unit_ids = user_company_info[0]
-    division_ids = user_company_info[1]
-    legal_entity_ids = user_company_info[2]
-    business_group_ids = user_company_info[3]
-    user_country_list = get_countries_for_user(db, session_user)
-    user_domain_list = get_domains_for_user(db, session_user)
-    country_list = get_countries(db)
-    domain_list = get_domains(db)
-    business_group_list = get_business_groups_for_user(
-        db,
-        business_group_ids
-    )
-    legal_entity_list = get_legal_entities_for_user(
-        db,
-        legal_entity_ids
-    )
-    division_list = get_divisions_for_user(
-        db,
-        division_ids
-    )
-    unit_list = get_units_for_user(db, None)
-    session_user_unit_list = get_units_for_user(db, unit_ids)
-    user_group_list = get_user_privileges(db)
-    user_list = get_user_details(db)
-    service_provider_list = get_service_providers(db)
-    remaining_licence = get_no_of_remaining_licence(db)
-    is_primary_user = is_primary_admin(db, session_user)
-    return clientmasters.GetClientUsersSuccess(
-        user_countries=user_country_list,
-        user_domains=user_domain_list,
-        countries=country_list,
-        domains=domain_list,
-        business_groups=business_group_list,
-        legal_entities=legal_entity_list,
-        divisions=division_list,
-        units=unit_list,
-        session_user_units=session_user_unit_list,
-        user_groups=user_group_list,
-        users=user_list,
-        service_providers=service_provider_list,
-        remaining_licence=remaining_licence,
-        is_primary_admin=is_primary_user
-    )
+# def process_get_client_users(db, request, session_user, country_id,
+#                              business_group_id, legal_entity_id):
+#     country_id = request.c_id
+#     business_group_id = request.bg_id
+#     legal_entity_id = request.lg_id
 
+#     client_user_details_list = get_user_management_details_(db, country_id, legal_entity_id,
+#                                                             domain_id, session_user)
+#     return clientreport.GetWorkFlowScoreCardSuccess(work_flow_score_card_list)
+
+    # users_list = getUserManagementList(db)
+    # service_provider_list = get_service_provider_details_list(db)
+    # user_company_info = get_user_company_details(
+    #     db, session_user
+    # )
+    # unit_ids = user_company_info[0]
+    # division_ids = user_company_info[1]
+    # legal_entity_ids = user_company_info[2]
+    # business_group_ids = user_company_info[3]
+    # session_user_unit_list = get_units_for_user(db, unit_ids)
+    # user_list = get_user_details(db)
+    # service_provider_list = get_service_providers(db)
+    # service_providers=service_provider_list
+    # remaining_licence = get_no_of_remaining_licence(db)
+    # remaining_licence=remaining_licence
+    # is_primary_user = is_primary_admin(db, session_user)
+    # is_primary_admin=is_primary_user
+    # domain_list = get_domains(db)
+    # domains=domain_list,
+    # user_domain_list = get_domains_for_user(db, session_user)
+    # user_domains=user_domain_list,
+    # country_list = get_countries(db)
+    # countries=country_list,
+    # business_group_list = get_business_groups_for_user(
+    #     db,
+    #     business_group_ids
+    # )
+    # business_groups=business_group_list,
+    # division_list = get_divisions_for_user(
+    #     db,
+    #     division_ids
+    # )
+    # divisions=division_list,
+    # user_group_list = get_user_privileges(db)
+    # user_groups=user_group_list,
+    # legal_entity_list = get_legal_entities_for_user(
+    #     db,
+    #     legal_entity_ids
+    # )
+    # legal_entities=legal_entity_list,
+    # user_countries=user_country_list,
+    # user_country_list = get_countries_for_user(db, session_user)
+    # unit_list = get_units_for_user(db, None)
+    # units=unit_list,
+    # return clientmasters.GetClientUsersSuccess(
+    #     # session_user_units=session_user_unit_list,
+    #     # users=user_list
+    # )
 
 ########################################################
 # To validate and save a user
 ########################################################
 def process_save_client_user(db, request, session_user, client_id):
     # user_id = db.get_new_id("user_id", tblUsers)
-    if (get_no_of_remaining_licence(db) <= 0):
-        return clientmasters.UserLimitExceeds()
-    elif is_duplicate_user_email(db, request.email_id, user_id=None):
-        return clientmasters.EmailIdAlreadyExists()
-    elif is_duplicate_employee_code(
-        db,
-        request.employee_code.replace(" ", ""),
-        user_id=None
-    ):
-        return clientmasters.EmployeeCodeAlreadyExists()
-    elif is_duplicate_employee_name(
-        db, request.employee_name, user_id=None
-    ):
-        return clientmasters.EmployeeNameAlreadyExists()
-    elif save_user(db, request, session_user, client_id):
+    # if (get_no_of_remaining_licence(db) <= 0):
+    #     return clientmasters.UserLimitExceeds()
+    # elif is_duplicate_employee_code(
+    #     db,
+    #     request.employee_code.replace(" ", ""),
+    #     user_id=None
+    # ):
+    #     return clientmasters.EmployeeCodeAlreadyExists()
+    if save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
-
 
 ########################################################
 # To validate and update user
@@ -543,6 +805,8 @@ def reorder_menu(menus):
     new_menu = collections.OrderedDict()
     if "Home" in menus:
         new_menu["Home"] = menus["Home"]
+    if "Dashboard" in menus:
+        new_menu["Dashboard"] = menus["Dashboard"]
     if "Master" in menus:
         new_menu["Master"] = menus["Master"]
     if "Transaction" in menus:
@@ -551,8 +815,8 @@ def reorder_menu(menus):
         new_menu["Report"] = menus["Report"]
     if "Settings" in menus:
         new_menu["Settings"] = menus["Settings"]
-    if "My Accounts" in menus:
-        new_menu["My Accounts"] = menus["My Accounts"]
+    # if "My Accounts" in menus:
+    #     new_menu["My Accounts"] = menus["My Accounts"]
     return new_menu
 
 
@@ -660,7 +924,7 @@ def get_login_trace_report_data(db, request, session_user, client_id):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_login_trace_report(db, request)
+        result = process_login_trace_report(db, request, client_id)
         return clientmasters.GetLoginTraceReportDataSuccess(log_trace_activities=result)
 
 
@@ -672,3 +936,13 @@ def get_login_trace_report_data(db, request, session_user, client_id):
 def get_user_profile(db, request, session_user, client_id):
     result = get_user_info(db, session_user, client_id)
     return clientmasters.GetUserProfileSuccess(user_profile=result)
+
+###############################################################################################
+# Objective: To update user details
+# Parameter: request object and the client id
+# Result: updates user details
+###############################################################################################
+def update_user_profile(db, request, session_user, client_id):
+    result = update_profile(db, session_user, request)
+    if result is True:
+        return clientmasters.UpdateUserProfileSuccess()

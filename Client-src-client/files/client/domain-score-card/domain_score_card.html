@@ -1,5 +1,4 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
-<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
     <div class="content">
         <div class="container">
@@ -18,7 +17,8 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-6 has-feedback">
+                                            <p class="form-control-static filter-country-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="country-id" value="">
@@ -29,7 +29,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
-                                            <div class="col-sm-6 has-feedback">
+                                            <p class="form-control-static filter-business-group-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="business-group" placeholder="Enter Business Group">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="business-group-id" value="">
@@ -40,7 +41,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-6 has-feedback">
+                                            <p class="form-control-static filter-legal-entity-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="legal-entity-id" value="">
@@ -89,7 +91,6 @@
                                         <center>
                                             <div class="form-group m-b-0">
                                                 <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button"> Show </button>
-                                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button"> Export </button>
                                             </div>
                                         </center>
                                     </div>
@@ -98,13 +99,12 @@
                             </div>
                         </div>
                     </div>
-
                     <div id="compliance_animation">
                         <div id="report-view" style="display: none;">
                             <div class="card-box details">
                                 <div class="table-responsive">
                                     <div class="col-sm-12">
-                                        <div class="col-sm-12 text-center"><img class="rpt-logo" id="client-logo" ></div>
+                                        <div class="col-sm-12 text-center"><img class="rpt-logo" id="client-logo"></div>
                                         <div class="col-sm-12 text-center">
                                             <h4>Domain Score Card</h4></div>
                                         <div class="col-sm-6 text-center">
@@ -124,7 +124,6 @@
                                             </tr>
                                         </thead>
                                         <tbody id="report-table-tbody">
-                                            
                                         </tbody>
                                     </table>
                                     <div class="domain-table-view" style="display: none;">
@@ -149,7 +148,6 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="report-table-tbody-new">
-                                                
                                             </tbody>
                                         </table>
                                     </div>
@@ -167,7 +165,9 @@
     <table id="report-table">
         <tr class="report-row">
             <td class="sno"></td>
-            <td><a class="labour-view c-pointer domain-name"></a></td>
+            <td>
+                <a class="labour-view c-pointer domain-name"></a>
+            </td>
             <td class="text-center assigned"></td>
             <td class="text-center un-assigned"></td>
             <td class="text-center not-opted"></td>
@@ -183,8 +183,8 @@
         </tr>
         <tr class="unit-details report-new-row">
             <td class="unit-name">UN001 - Unit One</td>
-            <td class="text-center inprogress "></td>
-            <td class="text-center complied "></td>
+            <td class="text-center inprogress"></td>
+            <td class="text-center complied"></td>
             <td class="text-center delayed-complied "></td>
             <td class="text-center not-complied "></td>
             <td class="text-center un-assigned "></td>
@@ -203,6 +203,5 @@
         </tr>
     </table>
 </div>
-<script src="/js/toastr/toastr.min.js"></script>
 <script src="/script/domain-score-card/domain_score_card.js"></script>
 {% endblock %}

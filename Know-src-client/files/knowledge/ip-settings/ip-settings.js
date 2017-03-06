@@ -82,7 +82,9 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
     id_element.val(val[0]);
     value_element.focus();
     
-    callEditAPI(val[0]); 
+    if(val[1] != ''){
+        callEditAPI(val[0]);
+    }
 }
 
 function pageControls() {
@@ -173,7 +175,7 @@ function loadForms(){
         
     });
     if(count == 0){
-        var clone = unit_row.clone();
+        var clone = g_row.clone();
         $(".form-name", clone).text("No Forms Found");
         $(".ip-address", clone).hide();
         $(".tbody-form-list").append(clone);    

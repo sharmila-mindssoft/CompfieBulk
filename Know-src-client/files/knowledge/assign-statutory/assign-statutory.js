@@ -192,12 +192,14 @@ function callAPI(api_type) {
                 }
             }
         }
+
         var selected_compliances_list = [];
         $.each(SELECTED_COMPLIANCE, function(key, value) {
             selected_compliances_list.push(
                 value
             );
         });
+
         if (submission_status == 1 && selected_compliances_list.length == 0) {
             displayMessage(message.nocompliance_selected_forassign);
             hideLoader();
@@ -208,9 +210,8 @@ function callAPI(api_type) {
             hideLoader();
             return false;
         } else {
-
             mirror.saveAssignedStatutory(selected_compliances_list, submission_status, int(val_group_id), int(val_legal_entity_id),
-                int(val_domain_id), DomainName.val(),
+                int(val_domain_id), DomainName.val(), ACTIVE_UNITS,
                 function(error, data) {
                     if (error == null) {
                         if (submission_status == 1) {
@@ -244,7 +245,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
         LegalEntityName.val('');
         LegalEntityId.val('');
         DivisionName.val('');
-        DomainId.val('');
+        DivisionId.val('');
         CategoryName.val('');
         CategoryId.val('');
         DomainName.val('');
@@ -253,14 +254,14 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
         LegalEntityName.val('');
         LegalEntityId.val('');
         DivisionName.val('');
-        DomainId.val('');
+        DivisionId.val('');
         CategoryName.val('');
         CategoryId.val('');
         DomainName.val('');
         DomainId.val('');
     } else if (current_id == 'legal_entity_id') {
         DivisionName.val('');
-        DomainId.val('');
+        DivisionId.val('');
         CategoryName.val('');
         CategoryId.val('');
         DomainName.val('');

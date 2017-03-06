@@ -2,10 +2,12 @@
 var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
+var filterCountryName = $(".filter-country-name");
 
 var legalEntity = $("#legal-entity");
 var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
+var filterLegalEntityName = $(".filter-legal-entity-name");
 
 var domain = $("#domain");
 var domainId = $("#domain-id");
@@ -26,30 +28,26 @@ var template = $("#template");
 var reportTable = $("#report-table");
 var REPORT = null;
 
-LEWiseScoreCard = function() {
-    this._countries = [];
+WorkFlowScoreCard = function() {
     this._entities = [];
     this._domains = [];
     this._report_data = [];
 }
 
-LEWiseScoreCard.prototype.fetchSearchList = function() {
+WorkFlowScoreCard.prototype.fetchSearchList = function() {
     t_this = this;
-    var jsondata = '{"countries":[{"c_id":1,"c_name":"india","is_active":true},{"c_id":2,"c_name":"srilanka","is_active":true}],"entities":[{"le_id":1,"le_name":"RG Legal Entity","c_id":1,"is_active":true},{"le_id":2,"le_name":"ABC Legal Entity","c_id":1,"is_active":true}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._countries = object.countries;
-    t_this._entities = object.entities;
+    t_this._entities = client_mirror.getSelectedLegalEntity();
 };
 
 function PageControls() {
 
     country.keyup(function(e) {
         var text_val = country.val().trim();
-        var countryList = REPORT._countries;
+        var countryList = REPORT._entities;
         if (countryList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+            displayMessage(message.country_required);
+        var condition_fields = [];
+        var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -59,9 +57,9 @@ function PageControls() {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
         if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["is_active", "c_id"];
-        var condition_values = [true, countryId.val()];
+            displayMessage(message.legalentity_required);
+        var condition_fields = ["c_id"];
+        var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -70,33 +68,34 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
+        if (domainList.length == 0 && text_val != '')
+            displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
-        var condition_values = [true, 1];
+        var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
             onDomainAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
 
     showButton.click(function() {
-        if (REPORT.validate()) {
-            reportView.show();
-            taskDetails.hide();
-            showAnimation(reportView);
-            REPORT.fetchReportValues();
-            REPORT.showReportValues();
-        }
+        var csv = false;
+        processSubmit(csv);
     });
 
     exportButton.click(function() {
-        if (REPORT.validate()) {
-            REPORT.fetchReportValues();
-            REPORT.exportReportValues();
-        }
+        var csv = true;
+        processSubmit(csv);
     });
 }
 
+processSubmit = function(csv) {
+    if (REPORT.validate()) {
+        REPORT.fetchReportValues(csv);
+    }
+}
+
 clearElement = function(arr) {
-    if(arr.length > 0) {
+    if (arr.length > 0) {
         $.each(arr, function(i, element) {
             element.val('');
         });
@@ -124,24 +123,31 @@ onDomainAutoCompleteSuccess = function(REPORT, val) {
     domain.focus();
 }
 
-LEWiseScoreCard.prototype.loadSearch = function() {
+WorkFlowScoreCard.prototype.loadSearch = function() {
     reportView.hide();
     clearElement([country, countryId, legalEntity, legalEntityId, domain, domainId]);
     this.fetchSearchList();
 };
 
-LEWiseScoreCard.prototype.fetchDomainList = function(le_id) {
+WorkFlowScoreCard.prototype.fetchDomainList = function(le_id) {
     t_this = this;
-    if(le_id != "") {
+    /*if(le_id != "") {
         var jsondata = '{"domains":[{"d_id":1,"d_name":"Labour Law","le_id":1,"is_active":true},{"d_id":2,"d_name":"Finance Law","le_id":1,"is_active":true},{"d_id":3,"d_name":"Economic Law","le_id":1,"is_active":true}]}';
         var object = jQuery.parseJSON(jsondata);
         t_this._domains = object.domains;
     } else {
         displayMessage(message.legalentity_required);
-    }
+    }*/
+    client_mirror.getWorkFlowScoreCardFilters(parseInt(le_id), function(error, response) {
+        if (error == null) {
+            t_this._domains = response.domains;
+        } else {
+            t_this.possibleFailures(error);
+        }
+    });
 };
 //country legalEntity domain
-LEWiseScoreCard.prototype.validate = function() {
+WorkFlowScoreCard.prototype.validate = function() {
     if (country) {
         if (isNotEmpty(country, message.country_required) == false)
             return false;
@@ -176,14 +182,30 @@ showAnimation = function(element) {
         });
 }
 
-LEWiseScoreCard.prototype.fetchReportValues = function() {
+WorkFlowScoreCard.prototype.fetchReportValues = function(csv) {
     t_this = this;
-    var jsondata = '{"data_lists":[{"c_id":1,"le_id":1,"dom_id":1,"completed_assignee_count":25,"completed_concur_count":10,"completed_approver_count":15,"inprogress_assignee_count":25,"inprogress_concur_count":10,"inprogress_approver_count":15,"overdue_assignee_count":25,"overdue_concur_count":10,"overdue_approver_count":15,"completed_unit_wise":[{"unit_name":"RG1001 - Corporate Office","submit":1,"concur":2,"approve":4},{"unit_name":"RG1002 - Regional Office","submit":1,"concur":2,"approve":4},{"unit_name":"RG1004 - Branch Office","submit":1,"concur":2,"approve":4}],"inprogress_unit_wise":[{"unit_name":"RG1001 - Corporate Office","submit":1,"concur":2,"approve":4},{"unit_name":"RG1002 - Regional Office","submit":1,"concur":2,"approve":4},{"unit_name":"RG1004 - Branch Office","submit":1,"concur":2,"approve":4}],"overdue_unit_wise":[{"unit_name":"RG1001 - Corporate Office","submit":1,"concur":2,"approve":4},{"unit_name":"RG1002 - Regional Office","submit":1,"concur":2,"approve":4},{"unit_name":"RG1004 - Branch Office","submit":1,"concur":2,"approve":4}],"overdue_user_wise":[{"user_name":"Sathish","submit":1,"concur":2,"approve":4},{"user_name":"Arun","submit":1,"concur":2,"approve":4},{"user_name":"Mani","submit":1,"concur":2,"approve":4}]}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._report_data = object.data_lists;
+
+    var c_id = parseInt(countryId.val());
+    var le_id = parseInt(legalEntityId.val());
+    var d_id = parseInt(domainId.val());
+
+    client_mirror.getWorkFlowScoreCard(c_id, le_id, d_id, csv, function(error, response) {
+        if (error == null) {
+            t_this._report_data = response.work_flow_score_card_list;
+            if (csv == false) {
+                reportView.show();
+                showAnimation(reportView);
+                REPORT.showReportValues();
+            } else {
+                REPORT.exportReportValues();
+            }
+        } else {
+            t_this.possibleFailures(error);
+        }
+    });
 };
 
-LEWiseScoreCard.prototype.showReportValues = function() {
+WorkFlowScoreCard.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
     clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
@@ -193,31 +215,32 @@ LEWiseScoreCard.prototype.showReportValues = function() {
     var completed_count = 0;
     var inprogress_count = 0;
     var over_due_count = 0;
+    taskDetails.hide();
     $.each(data, function(k, v) {
-        $('.completed-assignee-count').text(v.completed_assignee_count);
-        $('.completed-concur-count').text(v.completed_concur_count);
-        $('.completed-approver-count').text(v.completed_approver_count);
+        $('.completed-assignee-count').text(v.c_assignee);
+        $('.completed-concur-count').text(v.c_concur);
+        $('.completed-approver-count').text(v.c_approver);
 
-        $('.inprogress-assignee-count').text(v.inprogress_assignee_count);
-        $('.inprogress-concur-count').text(v.inprogress_concur_count);
-        $('.inprogress-approver-count').text(v.inprogress_approver_count);
+        $('.inprogress-assignee-count').text(v.inp_assignee);
+        $('.inprogress-concur-count').text(v.inp_concur);
+        $('.inprogress-approver-count').text(v.inp_approver);
 
-        $('.overdue-assignee-count').text(v.overdue_assignee_count);
-        $('.overdue-concur-count').text(v.overdue_concur_count);
-        $('.overdue-approver-count').text(v.overdue_approver_count);
+        $('.overdue-assignee-count').text(v.ov_assignee);
+        $('.overdue-concur-count').text(v.ov_concur);
+        $('.overdue-approver-count').text(v.ov_approver);
 
-        completed_count = completed_count + parseInt(v.completed_assignee_count) + parseInt(v.inprogress_assignee_count) + parseInt(v.overdue_assignee_count);
-        inprogress_count = inprogress_count + parseInt(v.completed_concur_count) + parseInt(v.inprogress_concur_count) + parseInt(v.overdue_concur_count);
-        over_due_count = over_due_count + parseInt(v.completed_approver_count) + parseInt(v.inprogress_approver_count) + parseInt(v.overdue_approver_count);
+        completed_count = completed_count + parseInt(v.c_assignee) + parseInt(v.inp_assignee) + parseInt(v.ov_assignee);
+        inprogress_count = inprogress_count + parseInt(v.c_concur) + parseInt(v.inp_concur) + parseInt(v.ov_concur);
+        over_due_count = over_due_count + parseInt(v.c_approver) + parseInt(v.inp_approver) + parseInt(v.ov_approver);
 
         $('.inprogress-unit-view').on('click', function() {
-            t_this.inprogressUnitView(v.inprogress_unit_wise);
+            t_this.inprogressUnitView(v.inprogress_within_duedate_task_count);
         });
         $('.completed-unit-view').on('click', function() {
-            t_this.completedUnitView(v.completed_unit_wise);
+            t_this.completedUnitView(v.completed_task_count);
         });
         $('.overdue-unit-view').on('click', function() {
-            t_this.overdueUnitView(v.overdue_unit_wise);
+            t_this.overdueUnitView(v.over_due_task_count);
         });
     });
     $('.total-assignee-count').html(completed_count);
@@ -225,76 +248,161 @@ LEWiseScoreCard.prototype.showReportValues = function() {
     $('.total-approver-count').html(over_due_count);
 };
 
-LEWiseScoreCard.prototype.inprogressUnitView = function(data) {
+WorkFlowScoreCard.prototype.inprogressUnitView = function(data) {
     t_this = this;
     $('.task-name').html("Unit Wise - In progress Within Due Date Task Count");
     $('.title-submit').html('Yet to Submit');
     $('.title-concur').html('Yet to Concurr');
     $('.title-approve').html('Yet to Approve');
-    t_this.renderReportDetails(data);
-};
-
-LEWiseScoreCard.prototype.completedUnitView = function(data) {
-    t_this = this;
-    $('.task-name').html("Unit Wise - Completed Task Count");
-    $('.title-submit').html('You Submitted');
-    $('.title-concur').html('You Concurred');
-    $('.title-approve').html('You Approved');
-    t_this.renderReportDetails(data);
-};
-
-LEWiseScoreCard.prototype.overdueUnitView = function(data) {
-    t_this = this;
-    $('.task-name').html("Unit Wise - In progress Over Due Task Count");
-    $('.title-submit').html('Yet to Submit');
-    $('.title-concur').html('Yet to Concurr');
-    $('.title-approve').html('Yet to Approve');
-    t_this.renderReportDetails(data);
-};
-
-LEWiseScoreCard.prototype.renderReportDetails = function(data) {
     taskDetails.show();
     reportTableTbody.find('tr').remove();
     var submit_total = 0;
     var concur_total = 0;
     var approve_total = 0;
     var grand_total = 0;
-    var j =0;
-    $.each(data, function(k, v) {
-        var cloneone = $('#template #report-table .report-row').clone();
-        $('.submit', cloneone).text(v.submit);
-        $('.concur', cloneone).text(v.concur);
-        $('.approve', cloneone).text(v.approve);
-        reportTableTbody.append(cloneone);
-        submit_total = submit_total + parseInt(v.submit);
-        concur_total = concur_total + parseInt(v.concur);
-        approve_total = approve_total + parseInt(v.approve);
-        j = j + 1;
-    });
-    if(j > 1) {
-        var clonetwo = $('#template #report-table .report-total-row').clone();
-        $('.submit-total', clonetwo).text(submit_total);
-        $('.concur-total', clonetwo).text(concur_total);
-        $('.approve-total', clonetwo).text(approve_total);
-        reportTableTbody.append(clonetwo);
+    var j = 0;
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var cloneone = $('#template #report-table .report-row').clone();
+            $('.task-row-title', cloneone).text(v.unit);
+            $('.submit', cloneone).text(v.inp_assignee);
+            $('.concur', cloneone).text(v.inp_concur);
+            $('.approve', cloneone).text(v.inp_approver);
+            reportTableTbody.append(cloneone);
+            submit_total = submit_total + parseInt(v.inp_assignee);
+            concur_total = concur_total + parseInt(v.inp_concur);
+            approve_total = approve_total + parseInt(v.inp_approver);
+            j = j + 1;
+        });
+        if (j > 1) {
+            var clonetwo = $('#template #report-table .report-total-row').clone();
+            $('.submit-total', clonetwo).text(submit_total);
+            $('.concur-total', clonetwo).text(concur_total);
+            $('.approve-total', clonetwo).text(approve_total);
+            reportTableTbody.append(clonetwo);
+        }
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
     }
 };
 
-LEWiseScoreCard.prototype.exportReportValues = function() {
+WorkFlowScoreCard.prototype.completedUnitView = function(data) {
+    t_this = this;
+    $('.task-name').html("Unit Wise - Completed Task Count");
+    $('.title-submit').html('You Submitted');
+    $('.title-concur').html('You Concurred');
+    $('.title-approve').html('You Approved');
+    taskDetails.show();
+    reportTableTbody.find('tr').remove();
+    var submit_total = 0;
+    var concur_total = 0;
+    var approve_total = 0;
+    var grand_total = 0;
+    var j = 0;
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var cloneone = $('#template #report-table .report-row').clone();
+            $('.task-row-title', cloneone).text(v.unit);
+            $('.submit', cloneone).text(v.c_assignee);
+            $('.concur', cloneone).text(v.c_concur);
+            $('.approve', cloneone).text(v.c_approver);
+            reportTableTbody.append(cloneone);
+            submit_total = submit_total + parseInt(v.c_assignee);
+            concur_total = concur_total + parseInt(v.c_concur);
+            approve_total = approve_total + parseInt(v.c_approver);
+            j = j + 1;
+        });
+        if (j > 1) {
+            var clonetwo = $('#template #report-table .report-total-row').clone();
+            $('.submit-total', clonetwo).text(submit_total);
+            $('.concur-total', clonetwo).text(concur_total);
+            $('.approve-total', clonetwo).text(approve_total);
+            reportTableTbody.append(clonetwo);
+        }
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+    }
+};
+
+WorkFlowScoreCard.prototype.overdueUnitView = function(data) {
+    t_this = this;
+    $('.task-name').html("Unit Wise - In progress Over Due Task Count");
+    $('.title-submit').html('Yet to Submit');
+    $('.title-concur').html('Yet to Concurr');
+    $('.title-approve').html('Yet to Approve');
+    taskDetails.show();
+    reportTableTbody.find('tr').remove();
+    var submit_total = 0;
+    var concur_total = 0;
+    var approve_total = 0;
+    var grand_total = 0;
+    var j = 0;
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            var cloneone = $('#template #report-table .report-row').clone();
+            $('.task-row-title', cloneone).text(v.unit);
+            $('.submit', cloneone).text(v.ov_assignee);
+            $('.concur', cloneone).text(v.ov_approver);
+            $('.approve', cloneone).text(v.ov_concur);
+            reportTableTbody.append(cloneone);
+            submit_total = submit_total + parseInt(v.ov_assignee);
+            concur_total = concur_total + parseInt(v.ov_approver);
+            approve_total = approve_total + parseInt(v.ov_concur);
+            j = j + 1;
+        });
+        if (j > 1) {
+            var clonetwo = $('#template #report-table .report-total-row').clone();
+            $('.submit-total', clonetwo).text(submit_total);
+            $('.concur-total', clonetwo).text(concur_total);
+            $('.approve-total', clonetwo).text(approve_total);
+            reportTableTbody.append(clonetwo);
+        }
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+    }
+};
+
+WorkFlowScoreCard.prototype.exportReportValues = function() {
     alert('export');
 };
 
-LEWiseScoreCard.prototype.possibleFailures = function(error) {
+WorkFlowScoreCard.prototype.possibleFailures = function(error) {
     if (error == 'DomainNameAlreadyExists') {
-        this.displayMessage("Domain name exists");
+        displayMessage("Domain name exists");
     } else {
-        this.displayMessage(error);
+        displayMessage(error);
     }
 };
 
-REPORT = new LEWiseScoreCard();
+WorkFlowScoreCard.prototype.loadEntityDetails = function() {
+    t_this = this;
+    if (t_this._entities.length > 1) {
+        country.parent().show();
+        filterCountryName.hide();
+
+        legalEntity.parent().show();
+        filterLegalEntityName.hide();
+    } else {
+        filterCountryName.show();
+        filterCountryName.html(t_this._entities[0]["c_name"]);
+        countryId.val(t_this._entities[0]["c_id"]);
+        country.parent().hide();
+        country.val(t_this._entities[0]["c_name"]);
+
+        filterLegalEntityName.show();
+        filterLegalEntityName.html(t_this._entities[0]["le_name"]);
+        legalEntityId.val(t_this._entities[0]["le_id"]);
+        legalEntity.parent().hide();
+        legalEntity.val(t_this._entities[0]["le_name"]);
+
+        REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
+    }
+};
+
+REPORT = new WorkFlowScoreCard();
 
 $(document).ready(function() {
     PageControls();
     REPORT.loadSearch();
+    REPORT.loadEntityDetails();
 });

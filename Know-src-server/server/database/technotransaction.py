@@ -4,10 +4,12 @@ from server.exceptionmessage import process_error
 from server.database.tables import *
 from server.common import (
     get_date_time, get_current_date,
-    generate_and_return_password,
     addHours, new_uuid
 )
-from server.constants import REGISTRATION_EXPIRY, KNOWLEDGE_URL
+
+from server.database.general import get_short_name
+from server.database.saveclientdata import *
+from server.constants import REGISTRATION_EXPIRY, CLIENT_URL
 from server.emailcontroller import EmailHandler as email
 
 __all__ = [
@@ -524,19 +526,22 @@ def return_groupadmin_registration_unitlist(unitslist):
 # Return Type : Return list of group admin registered email list
 ######################################################################################
 def resave_registraion_token(db, client_id, email_id):
-    def _del_olddata():
-        condition = "client_id = %s and verification_type_id = %s"
-        condition_val = [client_id, 1]
-        db.delete(tblClientEmailVerification, condition, condition_val)
-        return True
 
+    # def _del_olddata():
+    #     condition = "client_id = %s and verification_type_id = %s"
+    #     condition_val = [client_id, 1]
+    #     db.delete(tblClientEmailVerification, condition, condition_val)
+    #     return True
+
+    short_name = get_short_name(db, client_id)
     current_time_stamp = get_current_date()
     registration_token = new_uuid()
     expiry_date = addHours(int(REGISTRATION_EXPIRY), current_time_stamp)
 
-    link = "%s/userregistration/%s" % (
-        KNOWLEDGE_URL, registration_token
+    link = "%suserregistration/%s/%s" % (
+        CLIENT_URL, short_name, registration_token
     )
+    print link
 
     notify_user_thread = threading.Thread(
         target=notify_user, args=[
@@ -544,12 +549,8 @@ def resave_registraion_token(db, client_id, email_id):
         ]
     )
     notify_user_thread.start()
-
-    if (_del_olddata()) :
-        db.call_insert_proc(
-            "sp_tbl_client_email_verification_save",
-            (client_id, email_id, registration_token, 1, expiry_date)
-        )
+    if short_name:
+        SaveRegistrationData(db, registration_token, expiry_date, email_id, client_id)
         return True
     else :
         return False

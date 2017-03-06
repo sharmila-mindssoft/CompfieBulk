@@ -15,7 +15,7 @@ var mobileNo = $('#mobile_no');
 var employeeCode = $('.emp-code');
 var userName = $('.user-name');
 var userGroup = $('.user-group');
-var Address = $('.address');
+var Address = $('#address');
 
 var SubmitAction = $('#btn_submit');
 var PasswordAction = $('#btn_chg_pwd');
@@ -68,13 +68,13 @@ function loadUserDetails(){
 		}
 
 		userGroup.text(userDetails[0].u_g_name);
-		Address.text(userDetails[0].address);
+		Address.val(userDetails[0].address);
 	}
 }
 
 //submit/update user details
 SubmitAction.click(function() {
-	if (ValidateRequest() == true){
+	if (ValidateRequest()){
 		c_no = c_intnlCode.val().trim()+'-'+c_localCode.val().trim()+'-'+contactNo.val().trim();
 		m_no = m_intnlCode.val().trim()+'-'+mobileNo.val().trim();
 		function onSuccess(data) {
@@ -84,7 +84,7 @@ SubmitAction.click(function() {
 	    function onFailure(error) {
 	        displayMessage(error);
 	    }
-	    client_mirror.updateUserProfile(userId, emailId.val(), c_no, m_no, Address.val().trim(), function(error, response) {
+	    client_mirror.updateUserProfile(userId, emailId.val(), c_no, m_no, Address.val().trim(), employeeCode.text().trim(), employeeName.text().trim(), function(error, response) {
 	        if (error == null) {
 	            onSuccess(response);
 	        } else {
@@ -92,19 +92,16 @@ SubmitAction.click(function() {
 	        }
 	    });
 	}
-	else{
-		displayMessage("Invalid Request");
-	}
-}
+});
 
 //Validation
 function ValidateRequest(){
 	var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
-	if (userId != null){
+	if (userId == null){
 		displayMessage(message.invalid_userid);
 		return false;
 	}
-	else if (emailId.val() == "" || emailId.val().length == 0){
+	else if (emailId.val() == ""){
 		displayMessage(message.emailid_required);
 		emailId.focus();
 		return false;

@@ -75,6 +75,7 @@ function clearFields(){
     db_server_port.val("");
     db_server_uname.val("");
     db_server_pwd.val("");
+    db_svr_name.focus();
 }
 
 btnDbServerAdd.click(function(){
@@ -268,7 +269,7 @@ $(function () {
     db_server_ip.on('keypress', function (e) {
         var k = e.which || e.keyCode;
         var ok = k >= 48 && k <= 57 || k == 46 || k ==8 || k == 9 || k == Key.LEFT ||
-                k == Key.RIGHT;
+                k == Key.RIGHT || k != 37;
 
       if (!ok){
           e.preventDefault();
@@ -288,6 +289,15 @@ $(function () {
 
 });
 
+db_server_ip.on('input', function (e) {
+  this.value = isNumbersWithDot($(this));
+});
+db_server_port.on('input', function (e) {
+  this.value = isNumbers($(this));
+});
+$('#db-server-name').on('input', function (e) {
+  this.value = isAlphanumeric($(this));
+});
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
 });

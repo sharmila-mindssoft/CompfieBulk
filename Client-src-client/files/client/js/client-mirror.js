@@ -18,14 +18,14 @@ function initClientMirror() {
 
     function parseJSON(data) {
         if (data == undefined)
-            redirect_login();
+            return data;
         else
             return JSON.parse(data);
     }
 
     function initSession(userProfile, shortName) {
         // console.log(toJSON(userProfile))
-        window.sessionStorage.userInfo = toJSON(userProfile);
+        window.sessionStorage.userInfo = userProfile;
         window.localStorage.shortName = shortName;
     }
 
@@ -44,7 +44,7 @@ function initClientMirror() {
     //     window.sessionStorage["userInfo"] = toJSON(info);
     // }
     function clearSession() {
-        delete window.sessionStorage.userInfo;
+        // delete window.sessionStorage.userInfo;
         delete window.localStorage.shortName;
         delete window.sessionStorage.CLIENT_NOTIFICATION_COUNT;
         delete window.sessionStorage.CLIENT_REMINDER_COUNT;
@@ -60,8 +60,17 @@ function initClientMirror() {
     }
 
     function getSelectedLegalEntity() {
-        var info = window.sessionStorage.selectedEntity;
+        var info = parseJSON(window.sessionStorage.selectedEntity);
         return info;
+    }
+
+    function getLEids() {
+        le_ids = []
+        le_data = getSelectedLegalEntity();
+        $.each(le_data, function(i, v) {
+            le_ids.push(v.le_id);
+        });
+        return le_ids;
     }
 
     function updateUserInfo(response) {
@@ -84,14 +93,23 @@ function initClientMirror() {
         else
             return null;
     }
-    function getUserCountry(){
+
+    function getUserCountry() {
         var info = getUserInfo();
         return info.country_info;
+
     }
+
+    function getUserBusinessGroup() {
+        var info = getUserInfo();
+        return info.entity_info;
+    }
+
     function getUserLegalEntity() {
         var info = getUserInfo();
         return info.entity_info;
     }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -118,7 +136,7 @@ function initClientMirror() {
         if (info != null) {
             return info.menu;
         } else {
-            login_url = '/login/' + window.localStorage.recent_short_name;
+            // alert(info);
             window.location.href = login_url;
         }
     }
@@ -186,6 +204,7 @@ function initClientMirror() {
             contentType: 'application/json',
             data: toJSON(body),
             success: function(data) {
+                //console.log(data);
                 var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
@@ -195,8 +214,8 @@ function initClientMirror() {
                 if (status.toLowerCase().indexOf(matchString) != -1) {
                     callback(null, response);
                 } else if (status == 'InvalidSessionToken') {
-                    // console.log(status)
-                    // redirect_login();
+                    console.log(status)
+                    redirect_login();
                 } else {
                     if (status == 'SavePastRecordsFailed') {
                         callback(data, null);
@@ -207,8 +226,8 @@ function initClientMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
-                    alert('Server connection not found');
-                    // redirect_login();
+                    // alert('Server connection not found');
+                    redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
                 }
@@ -356,10 +375,13 @@ function initClientMirror() {
     }
 
     /* Compliance Approal */
-    function getComplianceApprovalList(start_count, callback) {
+    function getComplianceApprovalList(le_id, start_count, callback) {
         var request = [
             'GetComplianceApprovalList',
-            { 'start_count': start_count }
+            {
+                'le_id': le_id,
+                'start_count': start_count
+            }
         ];
         clientApiRequest('client_transaction', request, callback);
     }
@@ -409,9 +431,10 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
+    function approveCompliance(le_id, compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
         var request = [
             'ApproveCompliance', {
+                'le_id': le_id,
                 'compliance_history_id': compliance_history_id,
                 'approval_status': compliance_approval_status,
                 'remarks': remarks,
@@ -428,7 +451,7 @@ function initClientMirror() {
             'GetChartFilters',
             {}
         ];
-        var callerName = 'client_dashboard';
+        var callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
     }
     // function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
@@ -608,73 +631,80 @@ function initClientMirror() {
         var callerName = 'client_admin_settings';
         clientApiRequest(callerName, request, callback);
     }
+
     /* Notifications */
-    function getNotifications(notification_type, start_count, callback) {
+    function getNotifications(le_ids, notification_type, start_count, end_count, callback) {
         callerName = 'client_dashboard';
         var request = [
             'GetNotifications', {
+                'le_ids': le_ids,
                 'notification_type': notification_type,
-                'start_count': start_count
+                'start_count': start_count,
+                'end_count': end_count
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function updateNotificationStatus(notification_id, has_read, callback) {
+    function updateNotificationStatus(le_ids, notification_id, has_read, callback) {
         callerName = 'client_dashboard';
         var request = [
             'UpdateNotificationStatus', {
+                'le_ids': le_ids,
                 'notification_id': notification_id,
                 'has_read': has_read
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
+
+    /* Statutory Notifications */
+    function getStatutoryNotifications(le_ids, start_count, end_count, callback) {
+        callerName = 'client_dashboard';
+        var request = [
+            'GetStatutoryNotifications', {
+                'le_ids': le_ids,
+                'start_count': start_count,
+                'end_count': end_count
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function updateStatutoryNotificationsStatus(le_ids, notification_id, has_read, callback) {
+        callerName = 'client_dashboard';
+        var request = [
+            'UpdateStatutoryNotificationsStatus', {
+                'le_ids': le_ids,
+                'notification_id': notification_id,
+                'has_read': has_read
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     /* Get Compliance List*/
-    function getCurrentComplianceDetail(current_start_count, callback) {
+    function getCurrentComplianceDetail(le_id, current_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetCurrentComplianceDetail',
-            { 'current_start_count': current_start_count }
+            {
+                'le_id': le_id,
+                'current_start_count': current_start_count
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUpcomingComplianceDetail(upcoming_start_count, callback) {
+    function getUpcomingComplianceDetail(le_id, upcoming_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetUpcomingComplianceDetail',
-            { 'upcoming_start_count': upcoming_start_count }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-    /* Risk Report */
-    function getRiskReportFilters(callback) {
-        var request = [
-            'GetRiskReportFilters',
-            {}
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getRiskReport(country_id, domain_id, business_group_id, legal_entity_id, division_id, unit_id, level_1_statutory_name, statutory_status, csv, from_count, page_count, callback) {
-        var request = [
-            'GetRiskReport', {
-                'country_id': country_id,
-                'domain_id': domain_id,
-                'business_group_id': business_group_id,
-                'legal_entity_id': legal_entity_id,
-                'division_id': division_id,
-                'unit_id': unit_id,
-                'level_1_statutory_name': level_1_statutory_name,
-                'statutory_status': statutory_status,
-                'csv': csv,
-                'from_count': from_count,
-                'page_count': page_count
+            {
+                'le_id': le_id,
+                'upcoming_start_count': upcoming_start_count
             }
         ];
-        callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
 
@@ -684,11 +714,12 @@ function initClientMirror() {
     }
 
     function updateComplianceDetail(
-        compliance_history_id, documents, uploaded_documents,
+        le_id, compliance_history_id, documents, uploaded_documents,
         completion_date, validity_date, next_due_date, remarks, callback
     ) {
         var request = [
             'UpdateComplianceDetail', {
+                'le_id': le_id,
                 'compliance_history_id': compliance_history_id,
                 'documents': documents,
                 'uploaded_documents': uploaded_documents,
@@ -754,7 +785,7 @@ function initClientMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 if (errorThrown == 'Not Found') {
-                    alert('Server connection not found');
+                    // alert('Server connection not found');
                     redirect_login();
                 } else {
                     callback(jqXHR.responseText, errorThrown);
@@ -792,19 +823,19 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-    /* Reassigned History Report */
+
+    // Reassigned History Report Start
     function getReassignedHistoryReportFilters(le_id, callback) {
         var request = [
-            'GetReassignedHistoryReportFilters',
-            {
-                'le_id' : le_id
+            'GetReassignedHistoryReportFilters', {
+                'le_id': le_id
             }
         ];
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
 
-    function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, csv, callback) {
+    function getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, callback) {
         var request = [
             'GetReassignedHistoryReport', {
                 'c_id': c_id,
@@ -817,13 +848,165 @@ function initClientMirror() {
                 'from_date': from_date,
                 'to_date': to_date,
                 'csv': csv,
-                'f_count': 1,
-                't_count': 50,
+                'f_count': f_count,
+                't_count': t_count
             }
         ];
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+    // Reassigned History Report End
+
+    // Status Report Consolidated Report Start
+    function getStatusReportConsolidatedFilters(le_id, callback) {
+        var request = [
+            'GetStatusReportConsolidatedFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+
+    function getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, callback) {
+        var request = [
+            'GetStatusReportConsolidated', {
+                'c_id': c_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'unit_id': u_id,
+                'act': act,
+                'compliance_id': compliance_task_id,
+                'frequency_id': comp_fre_id,
+                'user_type_id': user_type_id,
+                'status_name': comp_task_status_id,
+                'usr_id': usr_id,
+                'from_date': from_date,
+                'to_date': to_date,
+                'csv': csv,
+                'f_count': f_count,
+                't_count': t_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Status Report Consolidated Report End
+
+
+    // Statutory Settings Unit Wise Start
+    function getStatutorySettingsUnitWiseFilters(le_id, callback) {
+        var request = [
+            'GetStatutorySettingsUnitWiseFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id, comp_fre_id, comp_task_status_id, f_count, t_count, csv, callback) {
+        var request = [
+            'GetStatutorySettingsUnitWise', {
+                'c_id': c_id,
+                'bg_id': bg_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'unit_id': u_id,
+                'div_id': div_id,
+                'cat_id': cat_id,
+                'act': act,
+                'compliance_id': compliance_task_id,
+                'frequency_id': comp_fre_id,
+                'status_name': comp_task_status_id,
+                'csv': csv,
+                'f_count': f_count,
+                't_count': t_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Statutory Settings Unit Wise End
+
+    // Domain Score Card Start
+    function getDomainScoreCardFilters(le_id, callback) {
+        var request = [
+            'GetDomainScoreCardFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getDomainScoreCard(c_id, bg_id, le_id, d_id, div_id, cat_id, csv, callback) {
+        var request = [
+            'GetDomainScoreCard', {
+                'c_id': c_id,
+                'bg_id': bg_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'div_id': div_id,
+                'cat_id': cat_id,
+                'csv': csv
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Domain Score Card End
+
+    // Legal Entity Wise Score Card Start
+    function getLEWiseScoreCardFilters(le_id, callback) {
+        var request = [
+            'GetLEWiseScoreCardFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getLEWiseScoreCard(c_id, le_id, d_id, csv, callback) {
+        var request = [
+            'GetLEWiseScoreCard', {
+                'c_id': c_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'csv': csv
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Legal Entity Wise Score Card End
+
+    // Work Flow Score Card Start
+    function getWorkFlowScoreCardFilters(le_id, callback) {
+        var request = [
+            'GetWorkFlowScoreCardFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getWorkFlowScoreCard(c_id, le_id, d_id, csv, callback) {
+        var request = [
+            'GetWorkFlowScoreCard', {
+                'c_id': c_id,
+                'le_id': le_id,
+                'd_id': d_id,
+                'csv': csv
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+    // Work Flow Score Card End
 
     function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
         var request = [
@@ -898,19 +1081,19 @@ function initClientMirror() {
             'GetAssigneewiseComplianesFilters',
             {}
         ];
-        callerName = 'client_dashboard';
+        callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
     }
 
     function getAssigneewiseComplianes(country_id, business_group_id, legal_entity_id, division_id, unit_id, user_id, csv, callback) {
         var request = [
             'GetAssigneeWiseCompliancesChart', {
-                'country_id': country_id,
-                'business_group_id': business_group_id,
-                'legal_entity_id': legal_entity_id,
-                'division_id': division_id,
+                'c_id': country_id,
+                'bg_id': business_group_id,
+                'le_ids': legal_entity_id,
+                'div_id': division_id,
                 'unit_id': unit_id,
-                'user_id': user_id,
+                'usr_id': user_id,
                 'csv': csv
             }
         ];
@@ -918,12 +1101,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, callback) {
+    function getAssigneewiseYearwiseComplianes(country_id, unit_id, user_id, legalEntityIds, callback) {
         var request = [
             'GetAssigneewiseYearwiseCompliances', {
-                'country_id': country_id,
-                'unit_id': unit_id,
-                'user_id': user_id
+                'c_id': country_id,
+                'u_id': unit_id,
+                'usr_id': user_id,
+                'le_ids': legalEntityIds,
+
             }
         ];
         callerName = 'client_dashboard';
@@ -943,15 +1128,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, callback) {
+    function getAssigneewiseCompliancesDrilldown(country_id, assignee_id, domain_id, year, unit_id, start_count, legalEntityIds, callback) {
         var request = [
             'GetAssigneeWiseComplianceDrillDown', {
-                'country_id': country_id,
+                'c_id': country_id,
                 'assignee_id': assignee_id,
-                'domain_id': domain_id,
-                'year': year,
+                'd_id': domain_id,
+                'chart_year': year,
                 'unit_id': unit_id,
-                'start_count': start_count
+                'start_count': start_count,
+                'le_ids': legalEntityIds
             }
         ];
         callerName = 'client_dashboard';
@@ -986,18 +1172,22 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getOnOccurrenceCompliances(start_count, callback) {
+    function getOnOccurrenceCompliances(le_id, start_count, callback) {
         var request = [
             'GetOnOccurrenceCompliances',
-            { 'start_count': start_count }
+            {
+                'le_id': le_id,
+                'start_count': start_count
+            }
         ];
         callerName = 'client_user';
         clientApiRequest(callerName, request, callback);
     }
 
-    function startOnOccurrenceCompliance(compliance_id, start_date, unit_id, duration, callback) {
+    function startOnOccurrenceCompliance(le_id, compliance_id, start_date, unit_id, duration, callback) {
         var request = [
             'StartOnOccurrenceCompliance', {
+                'le_id': le_id,
                 'compliance_id': compliance_id,
                 'start_date': start_date,
                 'unit_id': unit_id,
@@ -1069,12 +1259,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeClientUserGroupStatus(ugId, active, callback) {
+    function changeClientUserGroupStatus(ugId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeUserPrivilegeStatus', {
-                'ug_id': ugId,
-                'active': active
+                'u_g_id': ugId,
+                'is_active': active,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1105,11 +1296,20 @@ function initClientMirror() {
         return result;
     }
 
-    function saveServiceProvider(serviceProviderDetail, callback) {
+    function saveServiceProvider(s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address, callback) {
         callerName = 'client_masters';
         var request = [
-            'SaveServiceProvider',
-            serviceProviderDetail
+            'SaveServiceProvider', {
+                "s_p_name": s_p_name,
+                "s_p_short": s_p_short,
+                "cont_from": cont_from,
+                "cont_to": cont_to,
+                "cont_person": cont_person,
+                "cont_no": cont_no,
+                "mob_no": mob_no,
+                "e_id": e_id,
+                "address": address
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -1118,15 +1318,20 @@ function initClientMirror() {
         add = serviceProviderDetail[2];
         if (add == '') {
             add = null;
+        } else {
+            add = serviceProviderDetail[9]
         }
         return {
-            's_id': serviceProviderDetail[0],
-            's_name': serviceProviderDetail[1],
-            'add': add,
-            'c_from': serviceProviderDetail[3],
-            'c_to': serviceProviderDetail[4],
-            'c_person': serviceProviderDetail[5],
-            'c_no': serviceProviderDetail[6]
+            's_p_id': serviceProviderDetail[0],
+            's_p_name': serviceProviderDetail[1],
+            's_p_short': serviceProviderDetail[2],
+            'address': add,
+            'cont_from': serviceProviderDetail[3],
+            'cont_to': serviceProviderDetail[4],
+            'cont_person': serviceProviderDetail[5],
+            'cont_no': serviceProviderDetail[6],
+            'mob_no': serviceProviderDetail[7],
+            'e_id': serviceProviderDetail[8]
         };
     }
 
@@ -1143,8 +1348,19 @@ function initClientMirror() {
         callerName = 'client_masters';
         var request = [
             'ChangeServiceProviderStatus', {
-                's_id': sId,
+                'sp_id': sId,
                 'active': active
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function blockServiceProvider(sId, block, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'BlockServiceProvider', {
+                'sp_id': sId,
+                'is_blocked': block
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1302,45 +1518,53 @@ function initClientMirror() {
     //
     // Statutory settings
     //
-    function getStatutorySettings(callback) {
+    function getStatutorySettings(legalEntityId, divisionId, categoryId, callback) {
         callerName = 'client_transaction';
         var request = [
-            'GetStatutorySettings',
-            {}
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getStatutorySettingsCompliance(unitId, recordCount, callback) {
-        callerName = 'client_transaction';
-        var request = [
-            'GetSettingsCompliances', {
-                'unit_id': unitId,
-                'record_count': recordCount
+            'GetStatutorySettings', {
+                'le_id': legalEntityId,
+                'div_id': divisionId,
+                'cat_id': categoryId
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function updateStatutory(clientSId, clientCId, aStatus, aRemarks, compId, oStatus, remarks) {
+    function getStatutorySettingsCompliance(legalEntityId, unitIds, recordCount, domainId, callback) {
+        callerName = 'client_transaction';
+        var request = [
+            'GetSettingsCompliances', {
+                'le_id': legalEntityId,
+                'u_ids': unitIds,
+                'r_count': recordCount,
+                'd_id': domainId
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function updateStatutory(clientCId, aStatus, naRemarks, compId, oStatus, remarks, uName, uId) {
         return {
-            'c_s_id': clientSId,
             'c_c_id': clientCId,
             'a_status': aStatus,
-            'n_a_remarks': aRemarks,
+            'n_a_remarks': naRemarks,
             'comp_id': compId,
             'c_o_status': oStatus,
-            'c_remarks': remarks
+            'c_remarks': remarks,
+            'u_name': uName,
+            'u_id': uId
         };
     }
 
-    function updateStatutorySettings(password, uName, uId, statutories, callback) {
+    function updateStatutorySettings(password, statutories, legalEntityId, submissionStatus, dId, uIds, callback) {
         var request = [
             'UpdateStatutorySettings', {
                 'password': password,
-                'u_name': uName,
-                'u_id': uId,
-                'statutories': statutories
+                'update_statutories': statutories,
+                'le_id': legalEntityId,
+                's_s': submissionStatus,
+                'd_id': dId,
+                'u_ids': uIds
             }
         ];
         var callerName = 'client_transaction';
@@ -1354,21 +1578,60 @@ function initClientMirror() {
             'GetAssignCompliancesFormData',
             {}
         ];
-        var callerName = 'client_transaction';
+        var callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssignComplianceForUnits(unitIds, domainId, recordCount, callback) {
+    function getAssignComplianceUnits(legalEntityId, domainId, callback) {
         var request = [
-            'GetComplianceForUnits', {
-                'u_ids': unitIds,
-                'd_id': domainId,
-                'record_count': recordCount
+            'GetAssignComplianceUnits', {
+                'le_id': legalEntityId,
+                'd_id': domainId
             }
         ];
         var callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
+    function getAssignComplianceForUnits(legalEntityId, unitIds, domainId, recordCount, frequency_ids, callback) {
+        var request = [
+            'GetComplianceForUnits', {
+                'le_id': legalEntityId,
+                'u_ids': unitIds,
+                'd_id': domainId,
+                'r_count': recordCount,
+                "f_ids": frequency_ids
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getComplianceTotalToAssign(legalEntityId, unitIds, domainId, frequency_ids, callback) {
+        var request = [
+            'GetComplianceTotalToAssign', {
+                'le_id': legalEntityId,
+                'u_ids': unitIds,
+                'd_id': domainId,
+                'f_ids': frequency_ids
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getUserToAssignCompliance(domainId, unitIds, legalEntityId, callback) {
+        var request = [
+            'GetUserToAssignCompliance', {
+                'd_id': domainId,
+                'u_ids': unitIds,
+                'le_id': legalEntityId
+            }
+        ];
+        var callerName = 'client_master_filters';
+        clientApiRequest(callerName, request, callback);
+    }
+
 
     function statutoryDates(date, month, triggerBefore, repeatBy) {
         var statutoryDate = {};
@@ -1386,7 +1649,7 @@ function initClientMirror() {
             'statu_dates': sDateList,
             'd_date': dDate,
             'v_date': vDate,
-            'trig_before': trigBefore,
+            'trigger_before_days': trigBefore,
             'u_ids': uIds
         };
     }
@@ -1400,35 +1663,38 @@ function initClientMirror() {
         };
     }
 
-    function saveAssignedComplianceFormData(cId, assignee, aName, concurrence, conName, approval, appName, compliances, newUnits, callback) {
+    function saveAssignedComplianceFormData(assignee, aName, concurrence, conName, approval, appName, compliances, legalEntityId, domainId, callback) {
         var request = [
             'SaveAssignedCompliance', {
-                'c_id': cId,
                 'assignee': assignee,
-                'a_name': aName,
-                'con_person': concurrence,
-                'con_person_name': conName,
-                'a_person': approval,
-                'a_person_name': appName,
-                'compliances': compliances,
-                'n_units': newUnits
+                'assignee_name': aName,
+                'concurrence_person': concurrence,
+                'concurrer_name': conName,
+                'approval_person': approval,
+                'approver_name': appName,
+                'assign_compliances': compliances,
+                'le_id': legalEntityId,
+                'd_id': domainId
             }
         ];
         var callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
     /* Past Records */
-    function getPastRecordsFormData(callback) {
+    function getPastRecordsFormData(le_id, callback) {
         var request = [
-            'GetPastRecordsFormData',
-            {}
+            'GetPastRecordsFormData', {
+                'le_id': le_id
+            }
         ];
         clientApiRequest('client_transaction', request, callback);
     }
 
-    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name, compliance_frequency, country_id, start_count, callback) {
+    function getStatutoriesByUnit(legalEntityId, unit_id, domain_id, level_1_statutory_name, compliance_frequency, country_id, start_count, callback) {
         var request = [
             'GetStatutoriesByUnit', {
+                'le_id': legalEntityId,
                 'unit_id': unit_id,
                 'domain_id': domain_id,
                 'level_1_statutory_name': level_1_statutory_name,
@@ -1522,289 +1788,6 @@ function initClientMirror() {
             }
         }
     }
-    /* Compliance Approal */
-    function getComplianceApprovalList(start_count, callback) {
-        var request = [
-            'GetComplianceApprovalList',
-            { 'start_count': start_count }
-        ];
-        clientApiRequest('client_transaction', request, callback);
-    }
-
-    function getClientReportFilters(callback) {
-        var request = [
-            'GetClientReportFilters',
-            {}
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-
-
-    function approveCompliance(compliance_history_id, compliance_approval_status, remarks, next_due_date, validity_date, callback) {
-        var request = [
-            'ApproveCompliance', {
-                'compliance_history_id': compliance_history_id,
-                'approval_status': compliance_approval_status,
-                'remarks': remarks,
-                'next_due_date': next_due_date,
-                'validity_date': validity_date
-            }
-        ];
-        callerName = 'client_transaction';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getChartFilters(callback) {
-        var request = [
-            'GetChartFilters',
-            {}
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-    // function getComplianceStatusChartData(countryIds, domainIds, filterType, filterIds, fromDate, toDate, callback) {
-    //     var request = [
-    //         "GetComplianceStatusChart", {
-    //             "country_ids": countryIds,
-    //             "domain_ids": domainIds,
-    //             "filter_type": filterType,
-    //             "filter_ids": filterIds,
-    //             "from_date": fromDate,
-    //             "to_date": toDate,
-    //         }
-    function getComplianceStatusChartData(requestData, callback) {
-        var request = [
-            'GetComplianceStatusChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceStatusDrillDown(requestData, callback) {
-        var request = [
-            'GetComplianceStatusDrillDownData',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getEscalationChartData(requestData, callback) {
-        var request = [
-            'GetEscalationsChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getEscalationDrillDown(requestData, callback) {
-        var request = [
-            'GetEscalationsDrillDownData',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /* Trend Chart */
-    function getTrendChart(requestData, callback) {
-        var request = [
-            'GetTrendChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getTrendChartDrillDown(requestData, callback) {
-        var request = [
-            'GetTrendChartDrillDownData',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getNotCompliedData(requestData, callback) {
-        var request = [
-            'GetNotCompliedChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getNotCompliedDrillDown(requestData, callback) {
-        var request = [
-            'GetNotCompliedDrillDown',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceApplicabilityChart(requestData, callback) {
-        var request = [
-            'GetComplianceApplicabilityStatusChart',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceApplicabilityDrillDown(requestData, callback) {
-        var request = [
-            'GetComplianceApplicabilityStatusDrillDown',
-            requestData
-        ];
-        var callerName = 'client_dashboard';
-        clientApiRequest(callerName, request, callback);
-    }
-    /* Settings */
-    function getSettings(callback) {
-        var request = [
-            'GetSettings',
-            {}
-        ];
-        var callerName = 'client_admin_settings';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function updateSettings(is_two_levels_of_approval, assignee_reminder_days, escalation_reminder_In_advance_days, escalation_reminder_days, callback) {
-        var request = [
-            'UpdateSettings', {
-                'is_two_levels_of_approval': is_two_levels_of_approval,
-                'assignee_reminder_days': assignee_reminder_days,
-                'escalation_reminder_In_advance_days': escalation_reminder_In_advance_days,
-                'escalation_reminder_days': escalation_reminder_days
-            }
-        ];
-        var callerName = 'client_admin_settings';
-        clientApiRequest(callerName, request, callback);
-    }
-    /* Notifications */
-    function getNotifications(notification_type, start_count, callback) {
-        callerName = 'client_dashboard';
-        var request = [
-            'GetNotifications', {
-                'notification_type': notification_type,
-                'start_count': start_count
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function updateNotificationStatus(notification_id, has_read, callback) {
-        callerName = 'client_dashboard';
-        var request = [
-            'UpdateNotificationStatus', {
-                'notification_id': notification_id,
-                'has_read': has_read
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-    /* Get Compliance List*/
-    function getCurrentComplianceDetail(current_start_count, callback) {
-        callerName = 'client_user';
-        var request = [
-            'GetCurrentComplianceDetail',
-            { 'current_start_count': current_start_count }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getUpcomingComplianceDetail(upcoming_start_count, callback) {
-        callerName = 'client_user';
-        var request = [
-            'GetUpcomingComplianceDetail',
-            { 'upcoming_start_count': upcoming_start_count }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    /*Statutory Notifications List*/
-    function getStatutoryNotificationsListFilters(callback) {
-        callerName = 'client_reports';
-        var request = [
-            'GetStatutoryNotificationsListFilters',
-            {}
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getStatutoryNotificationsListReport(countryName, domainName, businessGroupId, legalEntityId, divisionId, unitId, level1Id, fromdate, todate, csv, callback) {
-        callerName = 'client_reports';
-        var request = [
-            'GetStatutoryNotificationsListReport', {
-                'country_name': countryName,
-                'domain_name': domainName,
-                'business_group_id': businessGroupId,
-                'legal_entity_id': legalEntityId,
-                'division_id': divisionId,
-                'unit_id': unitId,
-                'level_1_statutory_name': level1Id,
-                'from_date': fromdate,
-                'to_date': todate,
-                'csv': csv
-            }
-        ];
-        clientApiRequest(callerName, request, callback);
-    }
-
-
-    function getLoginTrace(record_count, user_id, from_date, to_date, callback) {
-        var request = [
-            'GetLoginTrace', {
-                'record_count': record_count,
-                'user_id': user_id,
-                'from_date': from_date,
-                'to_date': to_date
-            }
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceActivityReportFilters(callback) {
-        var request = [
-            'GetComplianceActivityReportFilters',
-            {}
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-
-    function getComplianceActivityReportData(user_type, user_id, country_id, domain_id, level_1_statutory_name, unit_id, compliance_id, from_date, to_date, csv, callback) {
-        var request = [
-            'GetComplianceActivityReport', {
-                'user_type': user_type,
-                'user_id': user_id,
-                'country_id': country_id,
-                'domain_id': domain_id,
-                'level_1_statutory_name': level_1_statutory_name,
-                'unit_id': unit_id,
-                'compliance_id': compliance_id,
-                'from_date': from_date,
-                'to_date': to_date,
-                'csv': csv
-            }
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
-    // Client Details Report
-    function getClientDetailsReportFilters(callback) {
-        var request = [
-            'GetClientDetailsReportFilters',
-            {}
-        ];
-        callerName = 'client_reports';
-        clientApiRequest(callerName, request, callback);
-    }
 
     function getAssigneeWiseCompliances(assignee, record_count, callback) {
         var request = [
@@ -1817,27 +1800,30 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate) {
+    function reassignComplianceDet(uID, cID, cNAME, cHistoryId, dDate, oAssignee, oConcurrence, oApprover) {
         return {
             'u_id': uID,
-            'c_id': cID,
-            'c_name': cNAME,
-            'c_history_id': cHistoryId,
-            'd_date': dDate
+            'comp_id': cID,
+            'compliance_name': cNAME,
+            'c_h_id': cHistoryId,
+            'd_date': dDate,
+            'o_assignee': oAssignee,
+            'o_concurrence_person': oConcurrence,
+            'o_approval_person': oApprover
         };
     }
 
-    function saveReassignCompliance(rFrom, rTo, aName, cPerson, aPerson, cList, reason, newUnits, callback) {
+    function saveReassignCompliance(legalEntityId, rFrom, rTo, aName, cPerson, aPerson, cList, reason, callback) {
         request = [
             'ReassignCompliance', {
+                'le_id': legalEntityId,
                 'r_from': rFrom,
                 'assignee': rTo,
-                'a_name': aName,
-                'c_person': cPerson,
-                'a_person': aPerson,
-                'compliances': cList,
-                'r_reason': reason,
-                'n_units': newUnits
+                'assignee_name': aName,
+                'concurrence_person': cPerson,
+                'approval_person': aPerson,
+                'reassigned_compliance': cList,
+                'reason': reason
             }
         ];
         callerName = 'client_transaction';
@@ -1865,7 +1851,7 @@ function initClientMirror() {
         }
     }
 
-    function getUnitClosureData(callback){
+    function getUnitClosureData(callback) {
         var request = [
             'GetUnitClosureData',
             {}
@@ -1874,29 +1860,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUnitClosureUnitList(le_id, callback){
+    function getUnitClosureUnitList(le_id, callback) {
         var request = [
-            'GetUnitClosureUnitData',
-            {
+            'GetUnitClosureUnitData', {
                 "legal_entity_id": le_id
             }
         ];
         callerName = 'client_masters';
-        console.log(request)
         clientApiRequest(callerName, request, callback);
     }
 
-    function saveUnitClosureData(password, remarks, unit_id, action_mode, callback)
-    {
+    function saveUnitClosureData(password, remarks, unit_id, action_mode, callback) {
         callerName = 'client_masters';
         var request = [
-          'SaveUnitClosureData',
-          {
-            "password": password,
-            "closed_remarks": remarks,
-            "unit_id": unit_id,
-            "grp_mode": action_mode
-          }
+            'SaveUnitClosureData', {
+                "password": password,
+                "closed_remarks": remarks,
+                "unit_id": unit_id,
+                "grp_mode": action_mode
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -1924,12 +1906,11 @@ function initClientMirror() {
 
     /* Legal entity wise report - updated*/
     function getLegalEntityWiseReportFilters(country_id, le_id, callback) {
-        console.log(country_id+' - '+le_id);
+        console.log(country_id + ' - ' + le_id);
         var request = [
-            'GetLegalEntityWiseReportFilters',
-            {
+            'GetLegalEntityWiseReportFilters', {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -1940,12 +1921,11 @@ function initClientMirror() {
         country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
         compliance_id, frequency_id, user_type, user_id, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
-            'GetLegalEntityWiseReport',
-            {
+            'GetLegalEntityWiseReport', {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'domain_id': domain_id,
                 'unit_id': unit_id,
                 'statutory_mapping': statutory_mapping,
@@ -1964,10 +1944,10 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+
     function getReviewSettingsFilters(le_id, callback) {
         var request = [
-            'GetReviewSettingsFilters',
-            {
+            'GetReviewSettingsFilters', {
                 "le_id": le_id
             }
         ];
@@ -1978,25 +1958,24 @@ function initClientMirror() {
     /* Domain Wise report - updated*/
     function getDomainWiseReportFilters(country_id, le_id, callback) {
         var request = [
-            'GetDomainWiseReportFilters',
-            {
+            'GetDomainWiseReportFilters', {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+
     function getDomainWiseReport(
         country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
         compliance_id, frequency_id, user_type, user_id, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
-            'GetDomainWiseReport',
-            {
+            'GetDomainWiseReport', {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'domain_id': domain_id,
                 'unit_id': unit_id,
                 'statutory_mapping': statutory_mapping,
@@ -2019,10 +1998,9 @@ function initClientMirror() {
     /* Domain Wise report - updated*/
     function getUnitWiseReportFilters(country_id, le_id, callback) {
         var request = [
-            'GetUnitWiseReportFilters',
-            {
+            'GetUnitWiseReportFilters', {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2030,17 +2008,16 @@ function initClientMirror() {
     }
 
     function getUnitWiseReport(
-        country_id, legal_entity_id, domain_id, unit_id, statutory_mapping,
+        country_id, legal_entity_id, unit_id, domain_id, statutory_mapping,
         compliance_id, frequency_id, user_type, user_id, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
-            'GetUnitWiseReport',
-            {
+            'GetUnitWiseReport', {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'unit_id': unit_id,
-                'domain_id': domain_id,
+                'd_id_optional': domain_id,
                 'statutory_mapping': statutory_mapping,
                 'compliance_id': compliance_id,
                 'frequency_id': frequency_id,
@@ -2060,10 +2037,9 @@ function initClientMirror() {
     /* Service Provider Wise report - updated*/
     function getServiceProviderWiseReportFilters(country_id, le_id, callback) {
         var request = [
-            'GetServiceProviderWiseReportFilters',
-            {
+            'GetServiceProviderWiseReportFilters', {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2074,12 +2050,11 @@ function initClientMirror() {
         country_id, legal_entity_id, sp_id, domain_id, unit_id, statutory_mapping,
         compliance_id, user_id, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
-            'GetServiceProviderWiseReport',
-            {
+            'GetServiceProviderWiseReport', {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'sp_id': sp_id,
                 'domain_id': domain_id,
                 'unit_id': unit_id,
@@ -2101,10 +2076,9 @@ function initClientMirror() {
     /* User Wise report - updated*/
     function getUserWiseReportFilters(country_id, le_id, callback) {
         var request = [
-            'GetUserWiseReportFilters',
-            {
+            'GetUserWiseReportFilters', {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2115,12 +2089,11 @@ function initClientMirror() {
         country_id, legal_entity_id, user_id, domain_id, unit_id, statutory_mapping,
         compliance_id, frequency_id, user_type, from_date, to_date,
         task_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
-            'GetUserWiseReport',
-            {
+            'GetUserWiseReport', {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'user_id': user_id,
                 'domain_id': domain_id,
                 'unit_id': unit_id,
@@ -2139,10 +2112,10 @@ function initClientMirror() {
         callerName = 'client_reports';
         clientApiRequest(callerName, request, callback);
     }
+
     function getReviewSettingsUnitFilters(le_id, d_id, callback) {
         var request = [
-            'GetReviewSettingsUnitFilters',
-            {
+            'GetReviewSettingsUnitFilters', {
                 "le_id": le_id,
                 "d_id": d_id
             }
@@ -2151,10 +2124,9 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback){
+    function getReviewSettingsComplianceFilters(le_id, d_id, units, f_type, sno, callback) {
         var request = [
-            'GetReviewSettingsComplianceFilters',
-            {
+            'GetReviewSettingsComplianceFilters', {
                 "le_id": le_id,
                 "d_id": d_id,
                 "unit_ids": units,
@@ -2166,14 +2138,54 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function saveReviewSettingsComplianceDict(
+        compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days,
+        statu_dates, old_repeat_by, old_repeat_type_id, old_due_date, old_statu_dates
+    ) {
+        return {
+            'comp_id': compliance_id,
+            'le_id': le_id,
+            'd_id': d_id,
+            'f_id': f_type,
+            'unit_ids': units,
+            'repeat_by': repeat_by,
+            'repeat_type_id': repeat_type_id,
+            'due_date': due_date,
+            'trigger_before_days': trigger_before_days,
+            'statu_dates': statu_dates,
+            'old_repeat_by': old_repeat_by,
+            'old_repeat_type_id': old_repeat_type_id,
+            'old_due_date': old_due_date,
+            'old_statu_dates': old_statu_dates,
+        };
+    }
+
+    function saveReviewSettingsCompliance(le_id, compliances_list, callback) {
+        var request = [
+            'SaveReviewSettingsCompliance', {
+                'le_id': le_id,
+                'rs_compliances': compliances_list
+            }
+        ];
+        clientApiRequest('client_transaction', request, callback);
+    }
+
+    function getStatutorySettingsFilters(callback) {
+        var request = [
+            'GetStatutorySettingsFilters',
+            {}
+        ];
+        callerName = 'client_master_filters';
+        clientApiRequest(callerName, request, callback);
+    }
+
     /* Unit List report - updated*/
     function getUnitListReportFilters(country_id, business_group_id, le_id, callback) {
         var request = [
-            'GetUnitListReportFilters',
-            {
+            'GetUnitListReportFilters', {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2183,13 +2195,12 @@ function initClientMirror() {
     function getUnitListReport(
         country_id, business_group_id, legal_entity_id, division_id, category_id,
         unit_id, domain_id, organisation_id, unit_status, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
-            'GetUnitListReport',
-            {
+            'GetUnitListReport', {
                 'country_id': country_id,
                 'business_group_id': business_group_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'division_id': division_id,
                 'category_id': category_id,
                 'unit_id': unit_id,
@@ -2208,10 +2219,9 @@ function initClientMirror() {
     /* Statutory Notifications List report - updated*/
     function getStatutoryNotificationsListReportFilters(country_id, le_id, callback) {
         var request = [
-            'GetStatutoryNotificationsListReportFilters',
-            {
+            'GetStatutoryNotificationsListReportFilters', {
                 'country_id': country_id,
-                'legal_entity_id' : le_id
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_reports';
@@ -2221,12 +2231,11 @@ function initClientMirror() {
     function getStatutoryNotificationsListReportData(
         country_id, legal_entity_id, domain_id, statutory_mapping, from_date,
         to_date, csv, from_count, page_count, callback
-    ){
+    ) {
         var request = [
-            'GetStatutoryNotificationsListReportData',
-            {
+            'GetStatutoryNotificationsListReportData', {
                 'country_id': country_id,
-                'legal_entity_id' : legal_entity_id,
+                'legal_entity_id': legal_entity_id,
                 'domain_id': domain_id,
                 'statutory_mapping': statutory_mapping,
                 'due_from_date': from_date,
@@ -2243,22 +2252,19 @@ function initClientMirror() {
     /* Service Provider Details report - updated*/
     function getServiceProviderDetailsReportFilters(callback) {
         var request = [
-            'GetServiceProviderDetailsReportFilters',
-            {
-            }
+            'GetServiceProviderDetailsReportFilters', {}
         ];
         callerName = 'client_masters';
         clientApiRequest(callerName, request, callback);
     }
 
     function getServiceProviderDetailsReport(
-        sp_id, user_id, s_p_status, callback
-    ){
-        var request = [GetServiceProviderDetailsReport
-            'GetServiceProviderDetailsReport',
-            {
+        sp_id, user_id, s_p_status, from_count, page_count, callback
+    ) {
+        var request = [
+            'GetServiceProviderDetailsReport', {
                 'sp_id': sp_id,
-                'user_id' : user_id,
+                'user_id': user_id,
                 's_p_status': s_p_status,
                 'from_count': from_count,
                 'page_count': page_count
@@ -2271,9 +2277,8 @@ function initClientMirror() {
     /* Audit Trail - updated*/
     function getAuditTrailReportFilters(le_id, callback) {
         var request = [
-            'GetAuditTrailReportFilters',
-            {
-                'legal_entity_id' : le_id
+            'GetAuditTrailReportFilters', {
+                'legal_entity_id': le_id
             }
         ];
         callerName = 'client_masters';
@@ -2284,13 +2289,12 @@ function initClientMirror() {
         le_id, user_id, form_id, from_date, to_date, csv, from_count, page_count, callback
     ) {
         var request = [
-            'GetAuditTrailReportData',
-            {
-                'legal_entity_id' : le_id,
-                'user_id' : user_id,
-                'form_id_optional' : form_id,
-                'due_from_date' : from_date,
-                'due_to_date' : to_date,
+            'GetAuditTrailReportData', {
+                'legal_entity_id': le_id,
+                'user_id': user_id,
+                'form_id_optional': form_id,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
                 'csv': csv,
                 'from_count': from_count,
                 'page_count': page_count
@@ -2303,9 +2307,7 @@ function initClientMirror() {
     /* Login Trace - updated*/
     function getLoginTraceReportFilters(callback) {
         var request = [
-            'GetLogintraceReportFilters',
-            {
-            }
+            'GetLogintraceReportFilters', {}
         ];
         callerName = 'client_masters';
         clientApiRequest(callerName, request, callback);
@@ -2313,11 +2315,10 @@ function initClientMirror() {
 
     function getLoginTraceReportData(user_id, from_date, to_date, csv, from_count, page_count, callback) {
         var request = [
-            'GetLoginTraceReportData',
-            {
-                'user_id' : user_id,
-                'due_from_date' : from_date,
-                'due_to_date' : to_date,
+            'GetLoginTraceReportData', {
+                'user_id': user_id,
+                'due_from_date': from_date,
+                'due_to_date': to_date,
                 'csv': csv,
                 'from_count': from_count,
                 'page_count': page_count
@@ -2330,28 +2331,286 @@ function initClientMirror() {
     /* View Profile */
     function getUserProfile(callback) {
         var request = [
-            'GetUserProfile',
-            {
+            'GetUserProfile', {}
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function updateUserProfile(user_id, emailId, c_no, m_no, address, employee_code, employee_name, callback) {
+        var request = [
+            'UpdateUserProfile', {
+                'user_id': user_id,
+                'email_id': emailId,
+                'con_no': c_no,
+                'mob_no': m_no,
+                'address': address,
+                'emp_code': employee_code,
+                'emp_name': employee_name
             }
         ];
         callerName = 'client_masters';
         clientApiRequest(callerName, request, callback);
     }
 
-    function updateUserProfile(user_id, emailId, c_no, m_no, address, callback) {
+    // Reassign Compliance Filter Start
+    function getReassignComplianceFilters(le_id, callback) {
         var request = [
-            'UpdateUserProfile',
-            {
-                'user_id': user_id,
-                'email_id': emailId,
-                'con_no': c_no,
-                'mob_no': m_no,
-                'address': address
+            'GetReassignComplianceFilters', {
+                'le_id': le_id
             }
         ];
-        callerName = 'client_masters';
+        callerName = 'client_transaction';
         clientApiRequest(callerName, request, callback);
     }
+
+
+    // User Management Prerequisite
+    function getUserManagement_Prerequisite(callback) {
+        callerName = 'client_masters';
+        var request = [
+            'UserManagementPrerequisite',
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    // User Management List
+    function getUserManagement_List(callback) {
+        callerName = 'client_masters';
+        var request = [
+            'UserManagementList',
+            {}
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getReAssignComplianceUnits(legalEntityId, domainId, userId, userType, unitId, callback) {
+        var request = [
+            'GetReAssignComplianceUnits', {
+                'le_id': legalEntityId,
+                'd_id': domainId,
+                'usr_id': userId,
+                'user_type_id': userType,
+                'unit_id': unitId
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getReAssignComplianceForUnits(legalEntityId, domainId, userId, userType, unitIds, recordCount, callback) {
+        var request = [
+            'GetReAssignComplianceForUnits', {
+                'le_id': legalEntityId,
+                'd_id': domainId,
+                'usr_id': userId,
+                'user_type_id': userType,
+                'u_ids': unitIds,
+                'r_count': recordCount
+            }
+        ];
+        var callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    // function saveReviewSettingsComplianceDict(
+    //     compliance_id, le_id, d_id, f_type, units, repeat_by, repeat_type_id, due_date, trigger_before_days,
+    //     statu_dates, old_repeat_by, old_repeat_type_id, old_due_date, old_statu_dates
+    // ) {
+    //     return {
+    //         'comp_id': compliance_id,
+    //         'le_id': le_id,
+    //         'd_id': d_id,
+    //         'f_id': f_type,
+    //         'unit_ids': units,
+    //         'repeat_by': repeat_by,
+    //         'repeat_type_id': repeat_type_id,
+    //         'due_date': due_date,
+    //         'trigger_before_days': trigger_before_days,
+    //         'statu_dates': statu_dates,
+    //         'old_repeat_by': old_repeat_by,
+    //         'old_repeat_type_id': old_repeat_type_id,
+    //         'old_due_date': old_due_date,
+    //         'old_statu_dates': old_statu_dates,
+    //     };
+    // }
+    // Widget api call begin
+    function getUserWidgetData(callback) {
+        var request = [
+            "GetUserWidgetData", {}
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function saveUserWidgetDataDict(w_id, width, height, pinstatus) {
+        return {
+            "w_id": w_id,
+            "width": width,
+            "height": height,
+            "pin_status": pinstatus
+        }
+    }
+
+    function saveUserWidgetData(widget_info, callback) {
+        var request = [
+            "SaveWidgetData", {
+                "widget_info": widget_info
+            }
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getWidgetComplianceChart(callback) {
+        var request = [
+            "GetComplianceChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getWidgetEscalationChart(callback) {
+        var request = [
+            "GetEscalationChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getWidgetNotCompliedChart(callback) {
+        var request = [
+            "GetNotCompliedChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
+
+    function getWidgetRiskChart(callback) {
+        var request = [
+            "GetRiskChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getWidgetTrendChart(callback) {
+        var request = [
+            "GetTrendChart", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getWidgetCalender(callback) {
+        var request = [
+            "GetCalendarView", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getWidgetUserScoreCard(callback) {
+        var request = [
+            "GetUserScoreCard", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getWidgetDomainScoreCard(callback) {
+        var request = [
+            "GetDomainScoreCard", {
+                "le_ids": getLEids()
+            }
+        ];
+        callerName = "widgets";
+        clientApiRequest(callerName, request, callback);
+    }
+    // Widget api call end
+
+    /* Risk report - updated*/
+    function getRiskReportFilters(country_id, business_group_id, le_id, callback) {
+        var request = [
+            'GetRiskReportFilters', {
+                'country_id': country_id,
+                'business_group_id': business_group_id,
+                'legal_entity_id': le_id
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function getRiskReportData(
+        country_id, business_group_id, legal_entity_id, domain_id, division_id,
+        category_id, unit_id, statutory_mapping, compliance_id,
+        task_status, csv, from_count, page_count, callback
+    ) {
+        var request = [
+            'GetRiskReportData', {
+                'country_id': country_id,
+                'business_group_id': business_group_id,
+                'legal_entity_id': legal_entity_id,
+                'domain_id': domain_id,
+                'division_id': division_id,
+                'category_id': category_id,
+                'unit_id': unit_id,
+                'statutory_mapping': statutory_mapping,
+                'compliance_id': compliance_id,
+                'task_status': task_status,
+                'csv': csv,
+                'from_count': from_count,
+                'page_count': page_count
+            }
+        ];
+        callerName = 'client_reports';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function changeStatutorySettingsLock(
+        le_id, d_id, u_id, lock, password, callback
+    ) {
+        var request = [
+            'ChangeStatutorySettingsLock', {
+                'le_id': le_id,
+                'd_id': d_id,
+                'u_id': u_id,
+                'lock': lock,
+                'password': password
+            }
+        ];
+        callerName = 'client_transaction';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function changeThemes(theme, callback) {
+        var request = [
+            "ChangeThemes", {
+                "theme": theme
+            }
+        ];
+        callerName = "client_master_filters";
+        clientApiRequest(callerName, request, callback);
+    }
+
+
 
     return {
         log: log,
@@ -2369,6 +2628,7 @@ function initClientMirror() {
         getUserInfo: getUserInfo,
         getUserProfile: getUserProfile,
         getUserCountry: getUserCountry,
+        getUserBusinessGroup: getUserBusinessGroup,
         getUserLegalEntity: getUserLegalEntity,
         getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
@@ -2411,7 +2671,10 @@ function initClientMirror() {
         updateStatutory: updateStatutory,
         updateStatutorySettings: updateStatutorySettings,
         getAssignComplianceFormData: getAssignComplianceFormData,
+        getAssignComplianceUnits: getAssignComplianceUnits,
         getAssignComplianceForUnits: getAssignComplianceForUnits,
+        getComplianceTotalToAssign: getComplianceTotalToAssign,
+        getUserToAssignCompliance: getUserToAssignCompliance,
         statutoryDates: statutoryDates,
         assignCompliances: assignCompliances,
         newUnitSettings: newUnitSettings,
@@ -2444,12 +2707,22 @@ function initClientMirror() {
         updateSettings: updateSettings,
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
+        getStatutoryNotifications: getStatutoryNotifications,
+        updateStatutoryNotificationsStatus: updateStatutoryNotificationsStatus,
         getCurrentComplianceDetail: getCurrentComplianceDetail,
         getUpcomingComplianceDetail: getUpcomingComplianceDetail,
-        getRiskReportFilters: getRiskReportFilters,
-        getRiskReport: getRiskReport,
         getReassignedHistoryReportFilters: getReassignedHistoryReportFilters,
         getReassignedHistoryReport: getReassignedHistoryReport,
+        getStatusReportConsolidatedFilters: getStatusReportConsolidatedFilters,
+        getStatusReportConsolidated: getStatusReportConsolidated,
+        getStatutorySettingsUnitWiseFilters: getStatutorySettingsUnitWiseFilters,
+        getDomainScoreCardFilters: getDomainScoreCardFilters,
+        getDomainScoreCard: getDomainScoreCard,
+        getLEWiseScoreCardFilters: getLEWiseScoreCardFilters,
+        getLEWiseScoreCard: getLEWiseScoreCard,
+        getWorkFlowScoreCardFilters: getWorkFlowScoreCardFilters,
+        getWorkFlowScoreCard: getWorkFlowScoreCard,
+        getStatutorySettingsUnitWise: getStatutorySettingsUnitWise,
         updateComplianceDetail: updateComplianceDetail,
         getLoginTrace: getLoginTrace,
         uploadFile: uploadFile,
@@ -2485,9 +2758,12 @@ function initClientMirror() {
         saveUnitClosureData: saveUnitClosureData,
         getLegalEntityWiseReportFilters: getLegalEntityWiseReportFilters,
         getLegalEntityWiseReport: getLegalEntityWiseReport,
+
         getReviewSettingsFilters: getReviewSettingsFilters,
         getReviewSettingsUnitFilters: getReviewSettingsUnitFilters,
         getReviewSettingsComplianceFilters: getReviewSettingsComplianceFilters,
+        saveReviewSettingsComplianceDict: saveReviewSettingsComplianceDict,
+        saveReviewSettingsCompliance: saveReviewSettingsCompliance,
         getDomainWiseReportFilters: getDomainWiseReportFilters,
         getDomainWiseReport: getDomainWiseReport,
         getUnitWiseReportFilters: getUnitWiseReportFilters,
@@ -2496,6 +2772,7 @@ function initClientMirror() {
         getServiceProviderWiseReport: getServiceProviderWiseReport,
         getUserWiseReportFilters: getUserWiseReportFilters,
         getUserWiseReport: getUserWiseReport,
+        getStatutorySettingsFilters: getStatutorySettingsFilters,
         getUnitListReportFilters: getUnitListReportFilters,
         getUnitListReport: getUnitListReport,
         getStatutoryNotificationsListReportFilters: getStatutoryNotificationsListReportFilters,
@@ -2507,7 +2784,28 @@ function initClientMirror() {
         getLoginTraceReportFilters: getLoginTraceReportFilters,
         getLoginTraceReportData: getLoginTraceReportData,
         getUserProfile: getUserProfile,
-        updateUserProfile: updateUserProfile
+        updateUserProfile: updateUserProfile,
+        getReassignComplianceFilters: getReassignComplianceFilters,
+        getReAssignComplianceUnits: getReAssignComplianceUnits,
+        getReAssignComplianceForUnits: getReAssignComplianceForUnits,
+        getUserManagement_Prerequisite: getUserManagement_Prerequisite,
+        getUserWidgetData: getUserWidgetData,
+        saveUserWidgetDataDict: saveUserWidgetDataDict,
+        saveUserWidgetData: saveUserWidgetData,
+        getWidgetComplianceChart: getWidgetComplianceChart,
+        getWidgetEscalationChart: getWidgetEscalationChart,
+        getWidgetNotCompliedChart: getWidgetNotCompliedChart,
+        getWidgetRiskChart: getWidgetRiskChart,
+        getWidgetTrendChart: getWidgetTrendChart,
+        getWidgetCalender: getWidgetCalender,
+        getWidgetUserScoreCard: getWidgetUserScoreCard,
+        getWidgetDomainScoreCard: getWidgetDomainScoreCard,
+        getRiskReportFilters: getRiskReportFilters,
+        getRiskReportData: getRiskReportData,
+        changeStatutorySettingsLock: changeStatutorySettingsLock,
+        changeThemes: changeThemes,
+        getUserManagement_List: getUserManagement_List,
     };
 }
+
 var client_mirror = initClientMirror();

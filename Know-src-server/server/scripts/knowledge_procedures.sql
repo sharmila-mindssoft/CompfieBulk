@@ -92,9 +92,6 @@ END //
 
 DELIMITER ;
 
-
-
-
 -- --------------------------------------------------------------------------------
 -- Returns Coutries that has been mapped with domain
 -- --------------------------------------------------------------------------------
@@ -2866,6 +2863,11 @@ CREATE PROCEDURE `sp_clientdatabase_save`(
     _created_by int(11), _created_on timestamp
 )
 BEGIN
+    if(select count(*) from tbl_client_database where client_id = clientid) > 0 then
+        update tbl_client_database set machine_id = machineid,
+        client_database_server_id = db_server_id where client_id = clientid;
+    end if;
+
     insert into tbl_client_database
     (client_id, legal_entity_id, machine_id, file_server_id, database_server_id,
     client_database_server_id, created_by, created_on)
@@ -2880,7 +2882,7 @@ BEGIN
     where database_server_id = le_db_server_id;
 
     update tbl_file_server set legal_entity_ids = _le_ids
-    where file_server_id = file_server_id;
+    where file_server_id = _f_s_id;
 
     update tbl_legal_entities set is_created = 1
     where legal_entity_id = le_id;
@@ -2918,7 +2920,9 @@ DELIMITER //
 CREATE PROCEDURE `sp_clientdatabase_update`(
 IN client_db_id int(11), clientid INT(11), le_id INT(11), machineid INT(11), db_server_id int(11),
     le_db_server_id int(11), _f_s_id int(11), _cl_ids longtext, _le_ids longtext,
-    _created_by int(11), _created_on timestamp
+    old_machineid INT(11), old_grp_d_s_id int(11), old_le_d_s_id int(11),
+    old_le_f_s_id int(11), old_cl_ids longtext, old_grp_le_ids longtext,
+    old_le_ids longtext, old_f_le_ids longtext, _created_by int(11), _created_on timestamp
 )
 BEGIN
     update tbl_client_database set client_id = clientid, legal_entity_id = le_id,
@@ -2926,17 +2930,29 @@ BEGIN
     client_database_server_id = db_server_id, updated_by = _created_by
     where client_database_id = client_db_id;
 
-    update tbl_client_database set client_database_server_id = db_server_id
-    where client_id = clientid;
+    update tbl_client_database set machine_id = machineid,
+    client_database_server_id = db_server_id where client_id = clientid;
 
     update tbl_application_server set client_ids = _cl_ids
     where machine_id = machineid;
 
+    update tbl_application_server set client_ids = old_cl_ids
+    where machine_id = old_machineid;
+
     update tbl_database_server set legal_entity_ids = _le_ids
     where database_server_id = le_db_server_id;
 
+    update tbl_database_server set legal_entity_ids = old_grp_le_ids
+    where database_server_id = old_grp_d_s_id;
+
+    update tbl_database_server set legal_entity_ids = old_le_ids
+    where database_server_id = old_le_d_s_id;
+
     update tbl_file_server set legal_entity_ids = _le_ids
-    where file_server_id = file_server_id;
+    where file_server_id = _f_s_id;
+
+    update tbl_file_server set legal_entity_ids = old_f_le_ids
+    where file_server_id = old_le_f_s_id;
 
 END //
 
@@ -3492,7 +3508,8 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
--- To get list of units under a client
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_units_list`;
 
@@ -3559,9 +3576,12 @@ BEGIN
         ) as geography_name
         from tbl_user_units as tuu
         right join tbl_units as tu
-        on tu.unit_id = tuu.unit_id and
+        on tu.unit_id = tuu.unit_id and tu.legal_entity_id = LegalEntityID and
         tu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid
-        and user_category_id=8) and tu.is_approved=1
+        and user_category_id=8 and client_id=clientid and domain_id=domainid and
+        legal_entity_id = LegalEntityID) and tu.is_approved=1
+        INNER JOIN tbl_units_organizations tui on tui.unit_id=tu.unit_id and
+        tui.domain_id=tuu.domain_id
         where
         tuu.user_id = userid and
         tuu.client_id=clientid and tuu.domain_id=domainid
@@ -3579,7 +3599,9 @@ BEGIN
         from tbl_user_units as tuu
         right join tbl_units_organizations as t1
         on tuu.unit_id = t1.unit_id and
-        tuu.unit_id not in (select unit_id from tbl_user_units where user_id!=userid and user_category_id=8)
+        tuu.unit_id not in (select unit_id from tbl_user_units where
+        user_id!=userid and user_category_id=8 and client_id=clientid and
+        domain_id=domainid and legal_entity_id = LegalEntityID)
 
         where
         tuu.user_id = userid and
@@ -4537,7 +4559,8 @@ BEGIN
     (select division_name from tbl_divisions where division_id = t2.division_id) as division_name,
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
-    t.status, t.reason
+    t.status, t.reason,
+    (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and client_statutory_id = t1.client_statutory_id) as rcount
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
@@ -4734,6 +4757,65 @@ BEGIN
      (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
         (select parent_ids from tbl_geographies where geography_id = @gid)))
     order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
+    limit fromcount, tocount;
+
+END //
+
+DELIMITER ;
+
+
+
+DROP PROCEDURE IF EXISTS `sp_clientstatutories_compliance_to_approve`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_clientstatutories_compliance_to_approve`(
+    IN unitid INT(11), domainid INT(11), fromcount INT(11), tocount INT(11)
+)
+BEGIN
+    -- unit location
+    select @gid := geography_id from tbl_units where unit_id = unitid;
+    -- mapped statu names
+    select t2.statutory_name, t1.statutory_id, IFNULL(t2.parent_ids, 0) as parent_ids, t2.parent_names, t1.statutory_mapping_id
+    from tbl_mapped_statutories as t1 inner join tbl_statutories as t2
+    on t1.statutory_id = t2.statutory_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    where t4.geography_id IN
+    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
+    -- mapped organistaion
+    select t2.organisation_name, t1.organisation_id, t1.statutory_mapping_id
+    from tbl_mapped_industries as t1 inner join tbl_organisation as t2
+    on t1.organisation_id = t2.organisation_id
+    inner join tbl_statutory_mappings as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_mapped_locations as t4 on t1.statutory_mapping_id = t4.statutory_mapping_id
+    where t4.geography_id IN
+    (select geography_id from tbl_geographies where geography_id = @gid or find_in_set(geography_id,
+    (select parent_ids from tbl_geographies where geography_id = @gid)))
+    order by TRIM(LEADING '[' FROM t3.statutory_mapping);
+
+    -- only assigned compliance
+    select distinct t1.statutory_mapping_id, t1.compliance_id,
+    t1.compliance_task, t1.document_name,
+    t1.compliance_description, t1.statutory_provision,
+    t.statutory_mapping,
+    t6.unit_id, t6.domain_id, t6.compliance_id as assigned_compid,
+    t6.statutory_id, t6.statutory_applicable_status, t6.remarks,
+    t6.compliance_applicable_status, t6.is_approved
+    from tbl_compliances as t1
+    inner join tbl_statutory_mappings as t on t1.statutory_mapping_id = t.statutory_mapping_id
+    inner join tbl_mapped_industries as t2 on t1.statutory_mapping_id = t2.statutory_mapping_id
+    inner join tbl_mapped_locations as t3 on t1.statutory_mapping_id = t3.statutory_mapping_id
+    inner join tbl_units as t4 on t4.country_id = t1.country_id
+    inner join tbl_units_organizations as t5 on t4.unit_id = t5.unit_id  and t5.domain_id = t1.domain_id
+    and t5.organisation_id = t2.organisation_id
+    inner join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
+    and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
+     where t1.is_active = 1 and t1.is_approved in (2, 3) and t4.unit_id = unitid and t1.domain_id = domainid
+     and IFNULL(t6.is_approved, 0) = 2
+     order by TRIM(LEADING '[' FROM t.statutory_mapping), t4.unit_id
     limit fromcount, tocount;
 
 END //
@@ -5924,7 +6006,7 @@ in _user_id int(11))
 BEGIN
     select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
         no_of_legal_entities, t3.group_admin_username as ug_name,
-        (select email_id from tbl_client_users where client_id = t3.client_id) as email_id,
+        (select email_id from tbl_client_groups where client_id = t3.client_id) as email_id,
         (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
         (select concat(employee_name,'-',(case when employee_code is null then
             '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name
@@ -5932,12 +6014,14 @@ BEGIN
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
         where
 
-        t3.client_id = t2.client_id and t2.client_id = t1.client_id
+        t3.client_id = t2.client_id and t2.client_id = t1.client_id and
+        t2.is_created = 1
         group by t2.client_id order by t3.group_name;
 
         select t2.client_id, t3.country_id, t3.country_name
         from tbl_user_clients as t1, tbl_legal_entities as t2, tbl_countries as t3
-        where t3.country_id = t2.country_id and t2.client_id = t1.client_id;
+        where t3.country_id = t2.country_id and t2.client_id = t1.client_id and
+        t2.is_created = 1;
 END //
 
 DELIMITER ;
@@ -5950,11 +6034,10 @@ DROP PROCEDURE IF EXISTS `sp_groupadmin_registration_email_unitslist`;
 
 DELIMITER //
 
-
 CREATE PROCEDURE `sp_groupadmin_registration_email_unitslist`(
 in _user_id int(11))
 BEGIN
-    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
+SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _user_id;
 
     if @u_cat_id = 1 then
 
@@ -5963,10 +6046,14 @@ BEGIN
         legal_entity_id = t2.legal_entity_id and country_id = t2.country_id) as unit_count,
         (select country_name from tbl_countries where country_id = t2.country_id) as
             country_name,
-        (select unit_creation_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id) as unit_creation_informed,
-        (select assign_statutory_informed from tbl_group_admin_email_notification where client_id =
-            t2.client_id and legal_entity_id = t2.legal_entity_id) as statutory_assigned_informed,
+        (select count(*) from tbl_group_admin_email_notification where client_id =
+            t2.client_id and legal_entity_id = t2.legal_entity_id and unit_sent_on is not null
+            and unit_creation_informed=1)
+        as unit_creation_informed,
+        (select count(*) from tbl_group_admin_email_notification where client_id =
+            t2.client_id and legal_entity_id = t2.legal_entity_id and statu_sent_on is not null
+            and assign_statutory_informed=1)
+        as statutory_assigned_informed,
         (select email_id from tbl_client_groups where client_id = t1.client_id) as email_id,
         (select user_id from tbl_client_users where client_id = t1.client_id) as user_id,
         'Group Admin' as emp_code_name,
@@ -8840,3 +8927,94 @@ END //
 
 DELIMITER ;
 
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_allocate_db_environment_report_export`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_allocate_db_environment_report_export`(
+in cl_id varchar(10), le_id varchar(10))
+BEGIN
+    select t1.client_id, (select group_name from tbl_client_groups where
+    client_id = t1.client_id)as group_name, t1.legal_entity_id,
+    (select legal_entity_name from tbl_legal_entities where legal_entity_id =
+    t1.legal_entity_id) as legal_entity_name, t1.machine_id,
+    (select machine_name from tbl_application_server where machine_id =
+    t1.machine_id) as machine_name, (select concat(ip,":",port) from
+    tbl_application_server where machine_id = t1.machine_id) as machine_ip_port,
+    t1.database_server_id, t1.client_database_server_id,
+    (select database_server_name from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_server_name,
+    (select concat(database_ip,":",database_port) from tbl_database_server where
+    database_server_id = t1.database_server_id) as db_s_ip_port,
+    (select database_server_name from tbl_database_server where database_server_id =
+    client_database_server_id) as client_db_server_name,
+    (select concat(database_ip,":",database_port) from tbl_database_server where
+    database_server_id = t1.client_database_server_id) as client_db_s_ip_port,
+    t1.file_server_id, (select file_server_name from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_server_name,
+    (select concat(ip,":",port) from tbl_file_server where
+    file_server_id = t1.file_server_id) as file_s_ip_port
+    from
+    tbl_client_database as t1 where coalesce(t1.client_id,'') like cl_id and
+    coalesce(t1.legal_entity_id,'') like le_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_created_server_details_byid`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_created_server_details_byid`(
+in _m_id int(11), _d_s_id int(11), _le_d_s_id int(11), _f_s_id int(11), _cl_id int(11),
+_le_id int(11))
+BEGIN
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port,
+    (select database_username from tbl_client_database_info where
+    db_owner_id = _cl_id and is_group=1) as database_username,
+    (select database_password from tbl_client_database_info where
+    db_owner_id = _cl_id and is_group=1) as database_password
+    FROM tbl_database_server WHERE database_server_id = _d_s_id;
+
+    SELECT database_server_id, database_server_name,
+        database_ip, database_port,
+    (select database_username from tbl_client_database_info where
+    db_owner_id = _le_id and is_group=0) as database_username,
+    (select database_password from tbl_client_database_info where
+    db_owner_id = _le_id and is_group=0) as database_password
+    FROM tbl_database_server WHERE database_server_id = _le_d_s_id;
+
+    SELECT machine_id, machine_name, ip, port
+    FROM tbl_application_server where machine_id = _m_id;
+
+    SELECT file_server_id, file_server_name, ip, port
+    FROM tbl_file_server WHERE file_server_id = _f_s_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: update business group name 
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_business_group_update`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_business_group_update`(IN bg_id INT(11), bg_name VARCHAR(100))
+BEGIN
+    UPDATE tbl_business_groups SET
+    business_group_name = bg_name
+    WHERE business_group_id = bg_id;
+END //
+
+DELIMITER ;

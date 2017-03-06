@@ -88,7 +88,7 @@ function fillGroupAdmingroupData(groupAdminList)
         if (v.ug_name == null){
           $('#btnResend', rowClone).show();
           $('#btnResend', rowClone).on('click', function() {
-            sendCredentials(v.client_id, v.emp_code_name, v.email_id);
+            sendCredentials(v.client_id, v.email_id);
           });
         }
         else {
@@ -102,16 +102,15 @@ function fillGroupAdmingroupData(groupAdminList)
         i++;
 	});
 }
-function sendCredentials(_cl_id, _u_name, _e_id ) {
+function sendCredentials(_cl_id, _e_id ) {
   req_dict = {
     'user_id': _cl_id,
-    'username': _u_name,
     'email_id': _e_id
   };
   mirror.resendGroupAdminRegnmail(req_dict, function(error, response) {
 
     if (error == null) {
-      displaySuccessMessage(msg.resend);
+      displaySuccessMessage(message.resend);
     }
     else {
       displayMessage(error);
@@ -139,6 +138,9 @@ function bindsearchedUnitList(data)
       		{
       			$('#btnunit', rowClone).css("background", "#999");
       			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created")
+      			$('#btnunit', rowClone).on('click', function() {
+      				displayEmptyMsg("Unit(s) not yet created");
+  				});
       		}
       		else
       		{
@@ -157,6 +159,9 @@ function bindsearchedUnitList(data)
         	{
         		$('#btnstatutory', rowClone).css("background", "#999");
       			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned")
+      			$('#btnstatutory', rowClone).on('click', function() {
+      				displayEmptyMsg("Statutory(s) not yet assigned");
+      			});
         	}
     		else
     		{
@@ -175,6 +180,9 @@ function bindsearchedUnitList(data)
         $('.tbody-grp-admin-unit-email-list').append(rowClone);
         i++;
 	});
+}
+function displayEmptyMsg(msgText){
+	displayMessage(msgText)
 }
 function displayLegalEntityList(client_id, group_name)
 {
@@ -199,11 +207,14 @@ function displayLegalEntityList(client_id, group_name)
           		{
           			$('#btnunit', rowClone).css("background", "#999");
           			$('#btnunit', rowClone).attr('title', "Unit(s) not yet created")
+          			$('#btnunit', rowClone).on('click', function() {
+	      				displayEmptyMsg("Unit(s) not yet created");
+	  				});
           		}
           		else
           		{
           			$('#btnunit', rowClone).on('click', function() {
-	            		sendmail('unit', v.user_id, v.emp_code_name, v.email_id, v.client_id,
+	            		sendmail('unit', v.emp_code_name, v.email_id, v.client_id,
             			group_name, v.legal_entity_id, v.legal_entity_name);
 	          		});
           		}
@@ -217,11 +228,14 @@ function displayLegalEntityList(client_id, group_name)
 	        	{
 	        		$('#btnstatutory', rowClone).css("background", "#999");
           			$('#btnstatutory', rowClone).attr('title', "Statutory(s) not yet assigned")
+          			$('#btnstatutory', rowClone).on('click', function() {
+	      				displayEmptyMsg("Statutory(s) not yet assigned");
+	      			});
 	        	}
         		else
         		{
         			$('#btnstatutory', rowClone).on('click', function() {
-						sendmail('statutory', v.user_id, v.emp_code_name, v.email_id, v.client_id,
+						sendmail('statutory', v.emp_code_name, v.email_id, v.client_id,
             			group_name, v.legal_entity_id, v.legal_entity_name);
 					});
         		}
@@ -237,10 +251,10 @@ function displayLegalEntityList(client_id, group_name)
 		}
 	});
 }
-function sendmail(_mode, _u_id, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_name) {
+function sendmail(_mode, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_name) {
+	alert(_e_id)
 	req_dict = {
 		'grp_mode': _mode,
-	    'user_id': _u_id,
 	    'username': _u_name,
 	    'email_id': _e_id,
 	    'client_id': _cl_id,

@@ -4,9 +4,14 @@ CLIENT_TEMPLATE_PATHS = [
         "files/client/login/login.html",
         None, {}
     ),
+    # (
+    #     r"/forgot_password/([a-zA-Z-0-9]+)",
+    #     "files/client/forgotpassword.html",
+    #     None, {}
+    # ),
     (
-        r"/forgot_password/([a-zA-Z-0-9]+)",
-        "files/client/forgotpassword.html",
+        "/forgot-password",
+        "files/client/forgot-password/forgot-password.html",
         None, {}
     ),
     (
@@ -20,10 +25,10 @@ CLIENT_TEMPLATE_PATHS = [
     # Widgets ---------------------------------------------------------------------
     (
         "/home",
-        "files/client/home/home.html",
+        "files/client/widgets/widgets.html",
         None, {}
     ),
-     # Welcome ---------------------------------------------------------------------
+    # Welcome ---------------------------------------------------------------------
     (
         "/welcome",
         "files/client/home/welcome.html",
@@ -32,13 +37,13 @@ CLIENT_TEMPLATE_PATHS = [
     # Dashboard ---------------------------------------------------------------------
     (
         "/dashboard",
-        "files/client/client-home/client-home.html",
+        "files/client/dashboard/dashboard.html",
         None, {}
     ),
     # Master ---------------------------------------------------------------------
     (
         "/service-provider",
-        "files/client/service-provider/service_provider_list.html",
+        "files/client/service-provider/service_provider.html",
         None, {}
     ),
     (
@@ -48,12 +53,17 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/client-user-management",
-        "files/client/client-user-management/client-user-management.html",
+        "files/client/client-user-management/client_user_management.html",
         None, {}
     ),
     (
         "/unit-closure",
         "files/client/unit-closure/unit_closure.html",
+        None, {}
+    ),
+    (
+        r"/userregistration/([a-zA-Z-0-9]+)/([a-zA-Z-0-9]+)",
+        "files/client/login/user-create-login-details.html",
         None, {}
     ),
     # transactions ---------------------------------------------------------------------
@@ -69,32 +79,33 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/assign-compliance",
-        "files/client/assign-compliance/assigncompliance.html",
+        "files/client/assign-compliance/assign-compliance.html",
         None, {}
     ),
     (
         "/reassign-compliance",
-        "files/client/reassign-compliance/reassigncompliance.html",
+        "files/client/reassign-compliance/reassign-compliance.html",
         None, {}
     ),
     (
         "/compliance-approval",
-        "files/client/compliance-approval/complianceapproval.html",
+        "files/client/compliance-approval/compliance-approval.html",
+
         None, {}
     ),
     (
         "/completed-tasks-current-year",
-        "files/client/completed-tasks-current-year/completed-task-current-year.html",
+        "files/client/completed-task-current-year/completed-task-current-year.html",
         None, {}
     ),
     (
         "/on-occurrence-compliances",
-        "files/client/on-occurrence-compliances/onoccurrencecompliances.html",
+        "files/client/on-occurrence-compliances/on_occurrence_compliances.html",
         None, {}
     ),
     (
-        "/compliance-details",
-        "files/client/compliance-details/compliancedetails.html",
+        "/compliance-task-details",
+        "files/client/compliance-task-details/compliance_task_details.html",
         None, {}
     ),
     # reports ---------------------------------------------------------------------
@@ -105,42 +116,22 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/domain-wise-report",
-         "files/client/domain-wise-report/domain_wise_report.html",
+        "files/client/domain-wise-report/domain_wise_report.html",
         None, {}
     ),
     (
         "/unit-wise-compliance",
-        "files/client/unit-wise-compliance/unitwisecompliance.html",
-        None, {}
-    ),
-    (
-        "/unit-wise-report",
         "files/client/unit-wise-report/unit_wise_report.html",
         None, {}
     ),
     (
         "/service-provider-wise-compliance",
-        "files/client/service-provider-wise-compliance/serviceproviderwisecompliance.html",
-        None, {}
-    ),
-    (
-        "/user-wise-report",
-        "files/client/user-wise-report/user_wise_report.html",
-        None, {}
-    ),
-    (
-        "/user-wise-compliance",
-        "files/client/user-wise-compliance/user-wise-compliance.html",
-        None, {}
-    ),
-    (
-        "/service-provider-wise-report",
         "files/client/service-provider-wise-report/service_provider_wise_report.html",
         None, {}
     ),
     (
-        "/statutory-notification-list",
-        "files/client/statutory-notification-list/statutory_notification_list.html",
+        "/user-wise-compliance",
+        "files/client/user-wise-report/user_wise_report.html",
         None, {}
     ),
     (
@@ -175,7 +166,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/risk-report",
-        "files/client/risk-report/risk-report.html",
+        "files/client/risk-report/risk_report.html",
         None, {}
     ),
     (
@@ -185,7 +176,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/statutory-notification-list",
-        "files/client/statutory-notification-list/statutory-notification-list.html",
+        "files/client/statutory-notifications-list/statutory-notifications-list.html",
         None, {}
     ),
     (
@@ -205,13 +196,13 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     # My Accounts ---------------------------------------------------------------------
     (
-        "/view-profile",
-        "files/client/view-profile/view-profile.html",
+        "/profile",
+        "files/client/profile/profile.html",
         None, {}
     ),
     (
-        "/client-view-profile",
-        "files/client/client-view-profile/client-view-profile.html",
+        "/profile",
+        "files/client/profile/profile.html",
         None, {}
     ),
     (
@@ -226,13 +217,13 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/themes",
-        "files/client/themes/themes.html",
+        "files/client/settings/themes.html",
         None, {}
     ),
     # Notification ---------------------------------------------------------------------
     (
         "/notifications",
-        "files/client/notifications/notifications.html",
+        "files/client/statutory-notification/statutory_notification.html",
         None, {}
     ),
     # Reminders ---------------------------------------------------------------------
@@ -250,7 +241,7 @@ CLIENT_TEMPLATE_PATHS = [
     # Message ---------------------------------------------------------------------
     (
         "/message",
-        "files/client/message/message.html",
+        "files/client/messages/messages.html",
         None, {}
     )
 ]

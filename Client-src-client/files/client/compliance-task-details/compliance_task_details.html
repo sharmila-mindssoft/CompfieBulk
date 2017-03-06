@@ -1,5 +1,11 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 <link href="/files/client/common/css/calender.css" rel="stylesheet" type="text/css" />
+<div class='loading-indicator-spin'>
+    <span><img src='/files/desktop/common/images/loading-img.gif' alt=""></span>
+</div>
+<!--<div align="center" style="padding-top:10px;">
+                    <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination">
+                  </div>-->
 <div class="content-page">
     <div class="content">
         <div class="container page_font_size_13">
@@ -18,9 +24,16 @@
                                     <div class="col-sm-offset-1 col-md-4">
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-8 has-feedback">
-                                                <input class="form-control input-sm" placeholder="Enter Legal Entity" value="RG Legal Entity" type="text">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                            <div class="col-sm-3 controls">
+                                                <p class="form-control-static legal-entity-name default-display-none"></p>
+                                                <div class="legal-entity-name-ac default-display-none">
+                                                    <input class="form-control input-sm" type="text" id="legal_entity_name" tabindex="1" placeholder="Enter Legal Entity">
+                                                    <i class="form-control-feedback fa fa-search"></i>
+                                                    <input type="hidden" id="legal_entity_id" value="">
+                                                    <div id="ac-entity" class="ac-textbox default-display-none">
+                                                        <ul class="width85Percent"></ul>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -35,19 +48,21 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group m-b-0 text-center">
-                                            <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
+                                            <!--<button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>-->
+                                            <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="clearfix"></div>
                                 <div id="basicwizard">
                                     <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
-                                        <li class="active"><a href="#tab1" data-toggle="tab" aria-expanded="true">Calendar View</a></li>
-                                        <li><a href="#tab2" data-toggle="tab">Current Tasks</a></li>
-                                        <li><a href="#tab3" data-toggle="tab">Upcoming Compliance Tasks</a></li>
+                                        <li class="calendar-tab"><a href="#tab1" data-toggle="tab" aria-expanded="true">Calendar View</a></li>
+                                        <li class="current-tab active"><a href="#tab2" data-toggle="tab">Current Tasks</a></li>
+                                        <li class="upcoming-tab"><a href="#tab3" data-toggle="tab">Upcoming Compliance Tasks</a></li>
                                     </ul>
                                     <div class="tab-content b-0 m-b-0">
-                                        <div class="tab-pane fade active in" id="tab1">
+                                        <!--Calendar Tab-->
+                                        <div class="tab-pane fade m-t-0 fade b-0 m-b-0" id="tab1">
                                             <div class="col-md-12">
                                                 <div class="clearfix"></div>
                                                 <center>
@@ -220,7 +235,8 @@
                                             </div>
                                             <div class="clear"></div>
                                         </div>
-                                        <div class="tab-pane m-t-0 fade b-0 m-b-0" id="tab2">
+                                        <!--Current Compliance Tab-->
+                                        <div class="tab-pane active in" id="tab2">
                                             <div class="table-responsive">
                                                 <table class="table_inprogress">
                                                     <tr>
@@ -278,91 +294,12 @@
                                                                         <td></td>
                                                                     </tr>
                                                                 </thead>
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <th colspan="100%">
-                                                                            <mark class="p-l-10 p-r-10"> Over due Compliances </mark>
-                                                                        </th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>1</td>
-                                                                        <td>
-                                                                            <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM V - Dealer Half yearly returns
-                                                                            <br>
-                                                                            <small>Assigned on 22-Jul-2015</small>
-                                                                        </td>
-                                                                        <td>Industrial Law</td>
-                                                                        <td>26-Jul-2015</td>
-                                                                        <td>29-Jul-2015</td>
-                                                                        <td class="text-danger">Over Due By 7 Days</td>
-                                                                        <td class="icon-3x text-center">Not Complied</td>
-                                                                        <td class="icon-3x text-center"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>2</td>
-                                                                        <td>
-                                                                            <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM VII - Recycler Half yearly returns
-                                                                            <br>
-                                                                            <small>Assigned on 22-Jul-2015</small>
-                                                                        </td>
-                                                                        <td>Industrial Law</td>
-                                                                        <td>26-Jul-2015</td>
-                                                                        <td>31-Jul-2015</td>
-                                                                        <td class="text-danger"> Over Due By 4 Days</td>
-                                                                        <td class="icon-3x text-center">Not Complied</td>
-                                                                        <td class="icon-3x text-center"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th colspan="100%">
-                                                                            <mark class="p-l-10 p-r-10"> Inprogress Compliances </mark>
-                                                                        </th>
-                                                                    </tr>
-                                                                    <tr class="expand_inprogress rejected_row" id="1">
-                                                                        <td>1</td>
-                                                                        <td>
-                                                                            <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM I - Half yearly returns Submission
-                                                                            <br>
-                                                                            <small>Assigned on 10-Aug-2015</small>
-                                                                        </td>
-                                                                        <td>Industrial Law</td>
-                                                                        <td>15-Aug-2015</td>
-                                                                        <td>24-Aug-2015</td>
-                                                                        <td class="text-danger">10 Days left</td>
-                                                                        <td class="icon-3x text-center">Inprogress</td>
-                                                                        <td class="icon-3x text-center"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></td>
-                                                                    </tr>
-                                                                    <tr class="expand_inprogress" id="2">
-                                                                        <td>2</td>
-                                                                        <td>
-                                                                            <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM II - Registration
-                                                                            <br>
-                                                                            <small>Assigned on 14-Aug-2015</small>
-                                                                        </td>
-                                                                        <td>Industrial Law</td>
-                                                                        <td>20-Aug-2015</td>
-                                                                        <td>24-Aug-2015</td>
-                                                                        <td class="text-danger">5 Days left</td>
-                                                                        <td class="icon-3x text-center">Inprogress</td>
-                                                                        <td class="icon-3x text-center"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>3</td>
-                                                                        <td>
-                                                                            <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM III - Undertaking submission
-                                                                            <br>
-                                                                            <small>Assigned on 17-Aug-2015</small>
-                                                                        </td>
-                                                                        <td>Industrial Law</td>
-                                                                        <td>21-Aug-2015</td>
-                                                                        <td>26-Aug-2015</td>
-                                                                        <td class="text-danger">6 Days left</td>
-                                                                        <td class="icon-3x text-center">Inprogress</td>
-                                                                        <td class="icon-3x text-center"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></td>
-                                                                    </tr>
+                                                                <tbody class="tbody-compliances-task-list-overdue">
                                                                 </tbody>
+                                                                <tbody class="tbody-compliances-task-list-inprogress"></tbody>
                                                             </table>
                                                         </td>
-                                                        <td width="40%" class="td_inprogress" style="display: none;">
+                                                        <td width="40%" class="half-width-task-details" style="display: none;">
                                                             <table id="datatable-responsive" class="table dt-responsive borderless inprogress_bg" cellspacing="0" width="100%">
                                                                 <tbody>
                                                                     <tr>
@@ -370,102 +307,6 @@
                                                                             <span class="pull-right close_inprogress c-pointer">
                                                           <i class="fa fa-times fa-1-3x text-primary"></i>
                                                         </span>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr align="left">
-                                                                        <td width="30%"><span>Unit</span></td>
-                                                                        <td colspan="3" width="70%">
-                                                                            <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title="Thambaram, Chennai, TN"></i> UT00005-Tamilnadu Unit
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr align="left">
-                                                                        <td width="30%"><span>Compliance Task:</span></td>
-                                                                        <td colspan="3" width="70%">
-                                                                            <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned."></i> FORM I - Half yearly returns Submission
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><span>Compliance Frequency:</span></td>
-                                                                        <td>One Time</td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><span>Upload Documents:</span></td>
-                                                                        <td>
-                                                                            <span style="float:right;"><span >25-Aug-2015</span>
-                                                                            <br><span style="font-size:10px"> (Upload Date) </span></span>
-                                                                            <input class="input-box" style="width:65%;" value="" type="file">
-                                                                            <span style="font-size:0.75em;">(max 50 MB)</span>
-                                                                        </td>
-                                                                        <td></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><span>Attached Documents:</span></td>
-                                                                        <td colspan="2">
-                                                                            <table class="tablenopadd">
-                                                                                <tbody>
-                                                                                    <tr>
-                                                                                        <td width="80%">Form I.pdf </td>
-                                                                                        <td width="10%">
-                                                                                            <i class="fa fa-times text-primary"></i>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                    <tr>
-                                                                                        <td width="80%">Document 2.pdf</td>
-                                                                                        <td width="10%">
-                                                                                            <i class="fa fa-times text-primary"></i>
-                                                                                        </td>
-                                                                                    </tr>
-                                                                                </tbody>
-                                                                            </table>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><span>Document / Completion Date:<span style="color: #f00; margin-left: 3px;">*</span></span>
-                                                                        </td>
-                                                                        <td>
-                                                                            <input class="form-control input-sm box-width-100" value="23-Aug-2015" type="text">
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr class="val-date">
-                                                                        <td><span>Validity Date: <span class="mandatory">*</span></span>
-                                                                        </td>
-                                                                        <td class="view-date">
-                                                                            25-Aug-2016
-                                                                            <span class="date-edit c-pointer ">
-                                                        &nbsp; <i class="fa fa-pencil c-pointer text-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Click here to Edit"></i>
-                                                      </span>
-                                                                        </td>
-                                                                        <td class="edit-date" style="display: none;">
-                                                                            <input class="form-control input-sm box-width-100" value="25-Aug-2016" type="text">
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr class="val-date">
-                                                                        <td><span>Next Due Date: <span class="mandatory">*</span></span>
-                                                                        </td>
-                                                                        <td class="view-date">
-                                                                            15-Aug-2016
-                                                                            </span>
-                                                                        </td>
-                                                                        <td class="edit-date" style="display: none;">
-                                                                            <input class="form-control input-sm box-width-100" value="15-Aug-2016" type="text">
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td><span>Status:</span></td>
-                                                                        <td>
-                                                                            <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title="Rectify reason goes here"></i> Rectify
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td style="vertical-align:middle;"><span>Remarks:<span style="color: #f00; margin-left: 3px;">*</span></span>
-                                                                        </td>
-                                                                        <td colspan="3">
-                                                                            <textarea class="form-control input-sm"></textarea>
-                                                                            <br><span style="font-size:0.75em;">(max 500 characters)</span></td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td colspan="2" align="center">
-                                                                            <a href="#" class="btn btn-primary waves-effect waves-light">Submit</a>
                                                                         </td>
                                                                     </tr>
                                                                 </tbody>
@@ -478,6 +319,7 @@
                                             <p>Total Inprogress Compliances : 3 </p>
                                             <div class="clear"></div>
                                         </div>
+                                        <!--Upcoming Compliance Tab-->
                                         <div class="tab-pane m-t-0 fade b-0 m-b-0" id="tab3">
                                             <div class="table-responsive">
                                                 <table id="datatable-responsive" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
@@ -526,7 +368,8 @@
                                                         <tr>
                                                             <td>1</td>
                                                             <td>
-                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM V - Dealer Half yearly returns
+                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM V - Dealer
+                                                                Half yearly returns
                                                                 <br>
                                                                 <small>Assigned on 22-Jul-2015</small>
                                                             </td>
@@ -538,7 +381,8 @@
                                                         <tr>
                                                             <td>2</td>
                                                             <td>
-                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM VII - Recycler Half yearly returns
+                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM VII - Recycler
+                                                                Half yearly returns
                                                                 <br>
                                                                 <small>Assigned on 22-Jul-2015</small>
                                                             </td>
@@ -553,7 +397,8 @@
                                                         <tr>
                                                             <td>1</td>
                                                             <td>
-                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM I - Half yearly returns Submission
+                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM I - Half
+                                                                yearly returns Submission
                                                                 <br>
                                                                 <small>Assigned on 10-Aug-2015</small>
                                                             </td>
@@ -565,7 +410,8 @@
                                                         <tr>
                                                             <td>2</td>
                                                             <td>
-                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM III - Undertaking submission
+                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM III - Undertaking
+                                                                submission
                                                                 <br>
                                                                 <small>Assigned on 14-Aug-2015</small>
                                                             </td>
@@ -577,7 +423,8 @@
                                                         <tr>
                                                             <td>3</td>
                                                             <td>
-                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM III - Undertaking submission
+                                                                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by dealer to manufacturer"></i> FORM III - Undertaking
+                                                                submission
                                                                 <br>
                                                                 <small>Assigned on 17-Aug-2015</small>
                                                             </td>
@@ -591,11 +438,7 @@
                                             </div>
                                             <div class="clearfix"></div>
                                         </div>
-                                        <!--ul class="pager wizard m-b-0">
-                                      <li class="previous disabled"><a href="#" class="btn btn-custom waves-effect waves-light">Previous</a></li>
-                                      <li class="next"><a href="#" class="btn btn-primary waves-effect waves-light">Next</a></li>
-                                      <li class="finish pull-right"><a href="#" class="btn btn-primary waves-effect waves-light">Submit</a></li>
-                                  </ul-->
+
                                     </div>
                                 </div>
                             </div>
@@ -606,37 +449,162 @@
         </div>
     </div>
 </div>
-<script>
-$(document).ready(function() {
-    $('#basicwizard').bootstrapWizard({
-        'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
-    });
+<div id="templates">
+    <table class="table-compliances-task-list">
+        <tr class="headingRow">
+            <th colspan="100%" class="p-l-10 p-r-10 compliance-types">
+                <!--<mark class=" p-l-10 p-r-10 "> </mark>-->
+            </th>
+        </tr>
+        <tr class="expand_inprogress table-row-list" id="2 ">
+            <td class="sno"></td>
+            <td>
+                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip " title=" " data-original-title="Whether half yearly returns submitted by dealer to manufacturer "></i>
+                <br>
+                <abbr class="page-load compliance-task" title="">
+          <span></span></abbr>
+                <!--<small>Assigned on 14-Aug-2015</small>-->
+            </td>
+            <td class="domain"></td>
+            <td class="startdate"></td>
+            <td class="duedate"></td>
+            <td class="days-text">text-danger</td>
+            <td class="icon-3x text-center status">Inprogress</td>
+            <td class="icon-3x text-center "><i class="fa fa-download text-primary c-pointer " data-toggle="tooltip " title="Download Format "></i></td>
+        </tr>
+    </table>
+    <div class="sideview-div" style="width:100%; height:100%;">
+        <table class="managetask">
+            <tr align="left">
+                <td width="30%"><span>Unit</span></td>
+                <td colspan="3" width="70%" class="sideview-compliance-unit">
+                    <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title="Thambaram, Chennai, TN"></i> <span></span>
+                </td>
+            </tr>
+            <tr align="left">
+                <td width="30%"><span>Compliance Task:</span></td>
+                <td colspan="3" width="70%" class="sideview-compliance-task">
+                    <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title="Whether half yearly returns submitted by manufacturer, importer, bulk consumer, assembler and reconditioned."></i> <span class="ct"></span>
+                </td>
+            </tr>
+            <tr>
+                <td><span>Compliance Frequency:</span></td>
+                <td class="sideview-compliance-frequency"></td>
+            </tr>
+            <tr>
+                <td><span>Upload Documents:</span></td>
+                <td>
+                    <input type="file" class="input-box upload-documents custom-file-input" id="upload_file" multiple="multiple" style="width: 83px; height: 25px; overflow: hidden; " value="" />
+                    <span style="float:right;"><span class="sideview-upload-date" ></span>
+                    <br><span style="font-size:10px"> (Upload Date) </span></span>
+                    <input class="input-box" style="width:65%;" value="" type="file">
+                    <span style="font-size:0.75em;">(max 50 MB)</span>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><span>Attached Documents:</span></td>
+                <td colspan="2" class="uploaded-filename">
+                </td>
+            </tr>
+            <tr>
+                <td><span>Document / Completion Date:<span style="color: #f00; margin-left: 3px;">*</span><input type="hidden" class="sideview-startdate" /></span>
+                </td>
+                <td class="sideview-completion-date-td"></td>
+                <!--<td>
+                    <input class="form-control input-sm box-width-100" value="23-Aug-2015" type="text">
+                </td>-->
+            </tr>
+            <tr class="val-date validityAndDueDate">
+                <td><span>Validity Date: <span class="mandatory">*</span></span>
+                </td>
+                <td class="view-date">
+                    <span class="date-edit c-pointer validity1_label"><abbr></abbr>
+                                                        &nbsp; <i class="fa fa-pencil c-pointer text-primary" data-toggle="tooltip" data-placement="top" title="" data-original-title="Click here to Edit"></i>
+                                                      </span>
+                    <span class="validity1_textbox" style="display:none;">
+            <input type="text" value="" class="input-box validity1-textbox-input" readonly="readonly" />
+          </span>
+                </td>
+                <td class="edit-date" style="display: none;">
+                    <input class="form-control input-sm box-width-100" value="25-Aug-2016" type="text">
+                </td>
+            </tr>
+            <tr class="val-date validityAndDueDate">
+                <td><span>Next Due Date: <span class="mandatory">*</span></span>
+                </td>
+                <td class="view-date">
+                    15-Aug-2016
+                    </span>
+                </td>
+                <td>
+                    <span class="duedate1_label"><abbr></abbr></span>
+                    <span class="duedate1_textbox" style="display:none;">
+            <input type="text" value="" class="input-box duedate1-textbox-input" readonly="readonly"/>
+          </span>
+                </td>
+                <td class="edit-date" style="display: none;">
+                    <input class="form-control input-sm box-width-100" value="15-Aug-2016" type="text">
+                </td>
+            </tr>
+            <tr>
+                <td><span>Status:</span></td>
+                <td class="sideview-compliance-status">
+                    <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title="Rectify reason goes here"></i>
+                </td>
+            </tr>
+            <tr>
+                <td style="vertical-align:middle;">
+                    <span>Remarks:<span style="color: #f00; margin-left: 3px;">*</span></span>
+                </td>
+                <td colspan="3">
+                    <span class="sideview-remarks-td"></span>
+                    <!--<textarea class="form-control input-sm"></textarea>-->
+                    <br><span style="font-size:0.75em;">(max 500 characters)</span></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <a href="#" class="btn btn-primary waves-effect waves-light btn-submit">Submit</a>
+                </td>
+            </tr>
 
-    $(".due-date, .inprogress, .over-due, .cur_2").click(function() {
-        $('.nav-tabs li:eq(1) a').tab('show');
+        </table>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function() {
+        $('#basicwizard').bootstrapWizard({
+            'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+        });
+
+        $(".due-date, .inprogress, .over-due, .cur_2 ").click(function() {
+            $('.nav-tabs li:eq(1) a').tab('show');
+        });
+        $(".upcomming, .cur_3 ").click(function() {
+            $('.nav-tabs li:eq(2) a').tab('show');
+        });
+        //val-date
+        // $(".expand_inprogress ").click(function() {
+        //     $('.expand_inprogress').removeClass('info');
+        //     $(".td_inprogress ").show();
+        //     $(this).addClass('info');
+        //     if ($(this).attr("id ") == "2 ")
+        //         $(".val-date ").show();
+        //     else
+        //         $(".val-date ").hide();
+        // });
+        $(".close_inprogress ").click(function() {
+            $(".td_inprogress ").hide();
+            $('.expand_inprogress').removeClass('info');
+        });
+        $('.date-edit').click(function() {
+            $('.edit-date').show();
+            $('.view-date').hide();
+        });
     });
-    $(".upcomming, .cur_3").click(function() {
-        $('.nav-tabs li:eq(2) a').tab('show');
-    });
-    //val-date
-    $(".expand_inprogress").click(function() {
-        $('.expand_inprogress').removeClass('info');
-        $(".td_inprogress").show();
-        $(this).addClass('info');
-        if ($(this).attr("id") == "2")
-            $(".val-date").show();
-        else
-            $(".val-date").hide();
-    });
-    $(".close_inprogress").click(function() {
-        $(".td_inprogress").hide();
-        $('.expand_inprogress').removeClass('info');
-    });
-    $('.date-edit').click(function() {
-        $('.edit-date').show();
-        $('.view-date').hide();
-    });
-});
 </script>
-<script src="/files/knowledge/common/js/wizard/jquery.bootstrap.wizard.js"></script>
+<script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
+<script src="/script/compliance-task-details/compliance_task_details.js"></script>
+
 {% endblock %}

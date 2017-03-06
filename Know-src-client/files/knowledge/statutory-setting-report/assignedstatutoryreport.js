@@ -464,17 +464,26 @@ $('#groupsval').keyup(function (e) {
     {
       if(groupList[i].country_id == $('#country-id').val())
       {
-        ctry_grps.push({
-          "client_id": groupList[i].client_id,
-          "group_name": groupList[i].short_name,
-          "is_active": groupList[i].is_active
-        });
+        var occur = -1
+        for(var j=0;j<ctry_grps.length;j++){
+          if(ctry_grps[j].client_id == groupList[i].client_id){
+            occur = 1;
+            break;
+          }
+        }
+        if(occur < 0){
+          ctry_grps.push({
+            "client_id": groupList[i].client_id,
+            "group_name": groupList[i].short_name,
+            "is_active": groupList[i].is_active
+          });
+        }
       }
     }
-      commonAutoComplete(
-        e, ACGroup, Group, textval,
-        ctry_grps, "group_name", "client_id", function (val) {
-          onAutoCompleteSuccess(GroupVal, Group, val);
+    commonAutoComplete(
+      e, ACGroup, Group, textval,
+      ctry_grps, "group_name", "client_id", function (val) {
+        onAutoCompleteSuccess(GroupVal, Group, val);
     });
   }
   else
@@ -674,11 +683,17 @@ $('#statutoryval').keyup(function (e) {
   {
     for(var i=0;i<domain_compl_stat_List.length;i++)
     {
-      var unit_check = $('#unitid').val()>0?($('#unitid').val() == domain_compl_stat_List[i].unit_id):false;
-      var domain_check = $('#domain').val()>0?($('#domain').val() === domain_compl_stat_List[i].domain_id):false;
+      var unit_check = true;
+      if($('#unitid').val()>0 && ($('#unitid').val() != domain_compl_stat_List[i].unit_id)){
+        unit_check =false;
+      }
+      var domain_check = true;
+      if($('#domain').val()>0 && ($('#domain').val() != domain_compl_stat_List[i].domain_id)){
+        domain_check =false;
+      }
       if($('#group-id').val() == domain_compl_stat_List[i].client_id &&
         $('#legalentityid').val() == domain_compl_stat_List[i].legal_entity_id &&
-        (unit_check == true || unit_check == false) && (domain_check == true || domain_check == false))
+        unit_check == true && domain_check == true)
       {
         console.log("inside act")
         act_list.push({
@@ -716,14 +731,17 @@ $('#compliance-task').keyup(function (e) {
   {
     for(var i=0;i<domain_compl_stat_List.length;i++)
     {
-      var unit_check = $('#unitid').val()>0?($('#unitid').val() === domain_compl_stat_List[i].unit_id):false;
-      console.log("unit check:"+unit_check)
-      var domain_check = $('#domain').val()>0?($('#domain').val() === domain_compl_stat_List[i].domain_id):false;
-      console.log("domain check:"+domain_check)
-
+      var unit_check = true;
+      if($('#unitid').val()>0 && ($('#unitid').val() != domain_compl_stat_List[i].unit_id)){
+        unit_check =false;
+      }
+      var domain_check = true;
+      if($('#domain').val()>0 && ($('#domain').val() != domain_compl_stat_List[i].domain_id)){
+        domain_check =false;
+      }
       if($('#group-id').val() == domain_compl_stat_List[i].client_id &&
         $('#legalentityid').val() == domain_compl_stat_List[i].legal_entity_id
-        && (unit_check == true || unit_check == false) && (domain_check == true || domain_check == false))
+        && unit_check == true && domain_check == true)
       {
         compl_task_list.push({
           "compliance_id": domain_compl_stat_List[i].compliance_id,

@@ -235,6 +235,29 @@
     padding-left: 5px;
     border-top: 1px dashed #ccc;
 }
+
+.new_row {
+  color: #4556c1 !important;
+}
+.new_row input {
+  color: #4556c1 !important;
+}
+.new_row .CaptionCont {
+  color: #4556c1 !important;
+}
+.new_row .ms-choice {
+  color: #4556c1 !important;
+}
+.new_row textarea {
+  color: #4556c1 !important;
+}
+.new_row td {
+  color: #4556c1 !important;
+}
+.new_row span {
+  color: #4556c1 !important;
+}
+
 .rejected_row {
   color: #e96154 !important;
 }
@@ -781,6 +804,9 @@ button.btn-success {
 #template {
     display: none;
 }
+#templates {
+    display: none;
+}
 .custombox-modal {
     width: 100%;
 }
@@ -792,8 +818,7 @@ button.btn-success {
 
 .ac-textbox li
 {
-list-style-type:none; line-height:25px;
-
+  list-style-type:none; line-height:25px;
 }
 .ac-textbox ul {
   background: #FFFFFF none repeat scroll 0 0;
@@ -819,3 +844,120 @@ list-style-type:none; line-height:25px;
 }
 
 /* Autocomplete selectbox Style */
+.applicable-count {
+  cursor: pointer;
+}
+.table-review-settings td{
+  vertical-align: top !important;
+}
+.text-middle {
+  vertical-align: middle;
+}
+.tr-level1 .heading{
+  background-color: #ffffff !important;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  box-shadow: none;
+  color: #435966;
+  height: 38px;
+  max-width: 100%;
+  padding: 7px 12px;
+  transition: all 300ms linear 0s;
+  line-height: 27px;
+}
+.div-compliance-list .panel-title{    
+    color: #797979;
+    background-color: #eeeeee;
+    border: medium none !important;
+    border-bottom: medium none;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+/*.panel-title td[data-toggle="collapse"]::before {
+    content: '\f0d8';
+    display: block;
+    float: right;
+    font-family: "FontAwesome";
+    font-size: 14px;
+    text-align: right;
+    width: 25px;
+}
+*/
+.panel-title td{
+  background-color: #eeeeee
+}
+.escalation-status-text {
+  background: #ccc;
+  color: #343434;
+  font-weight: bold;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+.table > thead > tr > th {
+    background-color: #47a1ef;
+    border-bottom: 2px solid #e0e0e0;
+/*    color: #f7f9fa !important;
+*/    vertical-align: middle;
+}
+.compliance_count_assignee {
+  clear: both;
+}
+h2.chart-title: hover{
+  text-decoration: underline;
+}
+.l-h-30{
+  line-height:30px;
+}
+.total-usc-assignee, .total-usc-concur, .total-usc-approve, .total-role,
+.dsc-total-assigned, .dsc-total-unassigned, .dsc-total-notopted,
+.dsc-grandtotal, .dsc-total-text{
+  font-weight: bold !important;
+}
+.cal-label-div{
+  display: inline-block;
+  margin-right: 10px;  
+}
+.cal-label-duedate{
+  background: #c69ee2;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.cal-label-inprogress{
+  background: #f0f468;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.cal-label-overdue{
+  background: #f32d2b;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.cal-label-upcoming{
+  background: #87ceeb;
+  height: 12px; 
+  width: 12px; 
+  border-radius: 25px;
+  float: left;
+  margin-right: 5px  
+}
+.f-s-10 {
+  font-size: 10px;
+}
+.auto-selected {
+    background: #EAE8E8;
+}
+
+.task-current-year-tab{
+    border: medium none;
+    padding: 0 !important;
+}

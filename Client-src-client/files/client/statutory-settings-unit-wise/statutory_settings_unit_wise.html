@@ -1,6 +1,4 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
-<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="/css/jquery-ui.css">
 <div class="content-page">
     <div class="content">
         <div class="container">
@@ -17,8 +15,9 @@
                                 <form class="form-horizontal group-border-dashed">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-6 has-feedback">
+                                            <label class="col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                            <p class="form-control-static filter-country-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="country-id" value="">
@@ -29,7 +28,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
-                                            <div class="col-sm-6 has-feedback">
+                                            <p class="form-control-static filter-business-group-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="business-group" placeholder="Enter Business Group">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="business-group-id" value="">
@@ -40,7 +40,8 @@
                                         </div>
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
-                                            <div class="col-sm-6 has-feedback">
+                                            <p class="form-control-static filter-legal-entity-name default-display-none col-sm-6"></p>
+                                            <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="legal-entity-id" value="">
@@ -120,15 +121,14 @@
                                         <div class="form-group">
                                             <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Frequency:</label>
                                             <div class="col-sm-6">
-                                                <select class="form-control input-sm" id="compliance-frequency" >
-                                                <option>dsfdsf</option>
+                                                <select class="form-control input-sm" id="compliance-frequency">
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Compliance Task Status:</label>
                                             <div class="col-sm-6">
-                                                <select class="form-control input-sm" id="compliance-task-status" >
+                                                <select class="form-control input-sm" id="compliance-task-status">
                                                 </select>
                                             </div>
                                         </div>
@@ -176,7 +176,23 @@
                                             
                                         </tbody>
                                     </table>
-                                    <p class="rpt-count m-b-0">Total : <span id="total-record" ></span> record(s)</p>
+                                    <table class="pagination-view">
+                                        <tr>
+                                            <td>
+                                                <span class="compliance_count"> </span>
+                                                <span class="divider-view"> | </span>
+                                                <span class="items-per-page">
+                                                    Show
+                                                    <select id="items_per_page"> </select>
+                                                    entries
+                                                </span>
+                                            </td>
+                                            <td style="width:650px;"></td>
+                                            <td style="text-align:right; padding-right:10px;">
+                                                <ul id="pagination-rpt"></ul>
+                                            </td>
+                                        </tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -215,21 +231,21 @@
                 <ul class="tree">
                     <li>
                         <table width="100%">
-                            <tbody class="tree-row">
-                                
+                            <tbody class="tree-body">
+                                <tr class="smallfont row-five">
+                                   <td width="19%" class="user-name"></td>
+                                   <td width="19%" class="due-date"></td>
+                                   <td width="20%"></td>
+                                   <td width="0%"></td>
+                                </tr>
                             </tbody>
                         </table>
                     </li>
                 </ul>
             </td>
         </tr>
-        <tr class="smallfont row-five">
-           <td width="27%" class="user-name"></td>
-           <td width="19%" class="due-date" colspan="100%"></td>
-        </tr>
+        
     </table>
 </div>
-<script src="/js/toastr/toastr.min.js"></script>
 <script src="/script/statutory-settings-unit-wise/statutory_settings_unit_wise.js"></script>
-<script src="js/jquery-ui.js"></script>
 {% endblock %}

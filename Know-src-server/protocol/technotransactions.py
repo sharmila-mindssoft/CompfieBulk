@@ -33,33 +33,29 @@ class Request(object):
 
 
 class ResendGroupAdminRegnMail(Request):
-    def __init__(self, user_id, username, email_id):
+    def __init__(self, user_id, email_id):
         self.user_id = user_id
         self.email_id = email_id
-        self.username = username
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["user_id", "username", "email_id"])
+        data = parse_dictionary(data, ["user_id", "email_id"])
         user_id = data.get("user_id")
-        username = data.get("username")
         email_id = data.get("email_id")
-        return ResendGroupAdminRegnMail(user_id, username, email_id)
+        return ResendGroupAdminRegnMail(user_id, email_id)
 
     def to_inner_structure(self):
         return {
             "user_id": self.user_id,
-            "username": self.username,
             "email_id": self.email_id
         }
 
 class SendGroupAdminRegnMail(Request):
     def __init__(
-        self, grp_mode, user_id, username, email_id, client_id, group_name, legal_entity_id,
+        self, grp_mode, username, email_id, client_id, group_name, legal_entity_id,
         legal_entity_name
     ):
         self.grp_mode = grp_mode
-        self.user_id = user_id
         self.username = username
         self.email_id = email_id
         self.client_id = client_id
@@ -71,13 +67,13 @@ class SendGroupAdminRegnMail(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "grp_mode", "user_id", "username", "email_id",
+                "grp_mode", "username", "email_id",
                 "client_id", "group_name", "legal_entity_id",
                 "legal_entity_name"
             ]
         )
         return SendGroupAdminRegnMail(
-            data.get("grp_mode"), data.get("user_id"),  data.get("username"),
+            data.get("grp_mode"), data.get("username"),
             data.get("email_id"), data.get("client_id"), data.get("group_name"),
             data.get("legal_entity_id"), data.get("legal_entity_name")
         )
@@ -85,7 +81,6 @@ class SendGroupAdminRegnMail(Request):
     def to_inner_structure(self):
         return {
             "grp_mode": self.grp_mode,
-            "user_id": self.user_id,
             "username": self.username,
             "email_id": self.email_id,
             "client_id": self.client_id,

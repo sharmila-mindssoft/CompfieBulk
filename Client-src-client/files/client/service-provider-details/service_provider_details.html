@@ -1,6 +1,7 @@
-{% extends "files/client/common/html/container.html" %}{% block content %}
-<!-- <link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="/css/jquery-ui.css"> -->
+{% extends "files/client/common/html/container.html" %}
+{% block content %}
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="/css/jquery-ui.css">
 <div class="content-page">
 <div class="content">
 <div class="container">
@@ -23,69 +24,44 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: 
-                                <span class="mandatory">*</span> </label>
-                            <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                                                <input type="hidden" id="country-id" value="">
-                                                <div id="ac-country" class="ac-textbox default-display-none">
-                                                    <ul class="hidemenu"></ul>
-                                                </div>
-                                            </div>
-
-                        </div>
-                        <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Service Provider: </label>
                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="service-provider" placeholder="Enter Country" tabindex="1">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                                                <input type="hidden" id="service-provider-id" value="">
-                                                <div id="ac-service-provider" class="ac-textbox default-display-none">
-                                  <ul class="hidemenu"></ul>
-                              </div>
-                          </div>
+                                <input type="text" class="form-control input-sm" placeholder="Enter Service Provider"
+                                id="service-provider" tabindex="1">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                <input type="hidden" id="service-provider-id" value="">
+                                <div id="ac-service-provider" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
+                            </div>
                         </div>
-                    </div> 
-
-
-
-                    <div class="col-sm-6">
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="1">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                                                <input type="hidden" id="user-id" value="">
-                                                <div id="ac-service-provider" class="ac-textbox default-display-none">
-                                                    <ul class="hidemenu"></ul>
-                                                </div>
-                                            </div>
-
-
-
-
+                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="2">
+                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                 <input type="hidden" id="user-id" value="">
+                                 <div id="ac-user" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
+                            </div>
                         </div>
+                    </div>
+                    <div class="col-sm-6">
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Status:</label>
                             <div class="col-sm-6">
-                                <select class="form-control input-sm">
-                                  <option>All</option>
-                                  <option>Active</option>
-                                  <option>Inactive</option>
-                                  <option>Blocked</option>
+                                <select class="form-control input-sm" id="sp-status" tabindex="3">
+
                                 </select>
                             </div>
                         </div>
                     </div>
-
-
-
                     <div class="col-sm-12">
                         <center>
                             <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" onclick="show_div()"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" type="button"> Export </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="12"> Show </button>
+
                             </div>
                         </center>
                     </div>
@@ -93,24 +69,15 @@
                 </form>
                 </div>
                 </div>
-                <script type="text/javascript">
-                    function show_div() {
-                        $('.details').show();
-                        $('#compliance_animation')
-                          .removeClass().addClass('bounceInLeft animated')
-                          .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-                          $(this).removeClass();
-                        });
-                    }
-                </script>
                 </div>
+
                 <div id="compliance_animation">
-                <div class="card-box details" style="display: none;">
+                <div id="report-view" style="display: none;">
+                <div class="card-box">
                 <div class="table-responsive">
                     <div class="col-sm-12">
-                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo"></div>
+                        <div class="col-sm-12 text-center"><img class="rpt-logo m-t-0 client-logo"></div>
                         <div class="col-sm-12 text-center"><h4>Service Provider Details</h4></div>
-                        <div class="col-sm-12 text-center"><h6>Country : India</h6></div>
                     </div>
                     <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
@@ -126,60 +93,30 @@
                                 <th width="08%">Date</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>SP01 - ABC Consultant</td>
-                                <td>02</td>
-                                <td>091 - 9741048855</td>
-                                <td>admin@abc.com</td>
-                                <td>No.14, 80 feed road, Anna nagar, Madurai</td>
-                                <td>01-Jan-2016 to 31-Dec-2016</td>
-                                <td>Active</td>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td colspan="100%">
-                                    <ul class="tree">
-                                        <li>
-                                            <table width="100%">
-                                                <tbody>
-                                                    <tr class="smallfont">
-                                                       <td width="26%">Mr. Rajkumar</td>
-                                                       <td width="12%">091 - 9894600480</td>
-                                                       <td width="45%">bac@abc.com</td>
-                                                       <td width="09%">Active</td>
-                                                       <td width="10%">&nbsp;</td>
-                                                    </tr>
-                                                    <tr class="smallfont">
-                                                       <td>Mr. Vinoth</td>
-                                                       <td>091 - 8145689700</td>
-                                                       <td>cba@abc.com</td>
-                                                       <td>InActive</td>
-                                                       <td>06-May-2016</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>SP02 - XYZ Consultant</td>
-                                <td>01</td>
-                                <td>091 - 9841056994</td>
-                                <td>admin@xyz.com</td>
-                                <td>80 feed road, Gandhi nagar, Madurai</td>
-                                <td>01-Feb-2016 to 31-Dec-2016</td>
-                                <td>Blocked</td>
-                                <td>26-May-2016</td>
-                            </tr>
+                        <tbody id="report-table-tbody">
+
                         </tbody>
                     </table>
-                    <p class="rpt-count m-b-0">Total : 2 record(s)</p>
+                    <table class="pagination-view default-display-none">
+                      <tr>
+                        <td>
+                          <span class="compliance_count"> </span>
+                          <span class="divider-view"> | </span>
+                          <span class="items-per-page">
+                          Show
+                          <select id="items_per_page">
+                          </select>
+                          entries
+                          </span>
+                        </td>
+                        <td style="width:600px;"></td>
+                        <td style="text-align:right;padding-right:10px;">
+                          <ul id="pagination-rpt"></ul>
+                        </td>
+                      </tr>
+                    </table>
                 </div>
+            </div>
             </div>
             </div>
         </div>
@@ -188,7 +125,51 @@
 </div>
 </div>
 </div>
-<!-- <script src="/js/toastr/toastr.min.js"></script>
+<div id="template">
+    <table id="report-table">
+        <tr class="row-three">
+            <td class="sno"></td>
+            <td class="sp-name"></td>
+            <td class="unit-count"></td>
+            <td class="contact-no"></td>
+            <td class="email-id"></td>
+            <td class="address"></td>
+            <td class="contract-period"></td>
+            <td class="status"></a></td>
+            <td class="action-date"></td>
+        </tr>
+        <tr class="row-four">
+            <td>&nbsp;</td>
+            <td colspan="100%">
+                <ul class="tree">
+                    <li>
+                        <table width="100%">
+                            <tbody>
+                                <tr class="smallfont">
+                                   <td width="26%" class="user-name-new"></td>
+                                   <td width="12%" class="contact-no-new"></td>
+                                   <td width="45%" class="email-id-new"></td>
+                                   <td width="9%" class="status-new"></td>
+                                   <td width="10%" class="action-date-new">&nbsp;</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold">
+
+            </td>
+        </tr>
+    </table>
+</div>
+<script src="/js/toastr/toastr.min.js"></script>
 <script src="/script/service-provider-details/service_provider_details.js"></script>
-<script src="js/jquery-ui.js"></script> -->
+<script src="js/jquery-ui.js"></script>
 {% endblock %}

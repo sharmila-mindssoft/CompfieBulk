@@ -2,25 +2,58 @@
 -- Triggers `tbl_statutory_notifications_units`
 --
 
-DROP TRIGGER IF EXISTS `after_tbl_statutory_notifications_units_insert`;
+DROP TRIGGER IF EXISTS `tbl_statutory_notifications_insert`;
 DELIMITER //
-CREATE TRIGGER `after_tbl_statutory_notifications_units_insert` AFTER INSERT ON `tbl_statutory_notifications_units`
+CREATE TRIGGER `tbl_statutory_notifications_insert` AFTER INSERT ON `tbl_statutory_notifications`
  FOR EACH ROW BEGIN
-    SET @notificationid = NEW.statutory_notification_id;
-    SET @unitid = NEW.unit_id;
-
-    INSERT INTO tbl_statutory_notification_status (
-    	statutory_notification_id, user_id, read_status)
-    	SELECT NEW.statutory_notification_id, t1.user_id, 0
-     	FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id;
-    INSERT INTO tbl_statutory_notification_status (
-    	statutory_notification_id,
-    	user_id, read_status)
-        SELECT NEW.statutory_notification_id, t1.user_id, 0 FROM
-        tbl_users t1 where t1.is_active = 1 and t1.is_primary_admin = 1;
+    SET @notificationid = NEW.notification_id;
+    INSERT INTO tbl_statutory_notifications_users (
+    	notification_id, user_id, is_read)
+    	select @notificationid, t1.user_id, 0 from tbl_users as t1
+        left join tbl_user_domains as t3 on t1.user_id = t3.user_id
+        left join tbl_compliances as t2
+        on t3.domain_id = t2.domain_id and t2.compliance_id = new.compliance_id;
 END
 //
 DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS `after_tbl_legal_entity_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_legal_entity_insert` AFTER INSERT ON `tbl_legal_entities`
+ FOR EACH ROW BEGIN
+    INSERT INTO tbl_le_replication_status(legal_entity_id) values(new.legal_entity_id);
+    INSERT INTO tbl_reminder_settings(client_id, legal_entity_id)
+    select client_id, new.legal_entity_id from tbl_client_groups ;
+END
+//
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `after_tbl_user_legal_entities_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_user_legal_entities_insert` AFTER INSERT ON `tbl_user_legal_entities`
+ FOR EACH ROW BEGIN
+    INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action)
+    values(new.legal_entity_id, new.user_id, 1) on duplicate key update s_action = 1;
+    UPDATE tbl_le_replication_status set user_data = 1
+    where legal_entity_id = new.legal_entity_id;
+END
+//
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `after_tbl_user_legal_entities_delete`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_user_legal_entities_delete` AFTER DELETE ON `tbl_user_legal_entities`
+ FOR EACH ROW BEGIN
+ if old.user_id is not null then
+ INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action)
+ values(old.legal_entity_id, old.user_id, 3) on duplicate key update s_action = 3;
+ UPDATE tbl_le_replication_status set user_data = 1 where legal_entity_id = old.legal_entity_id;
+ end if;
+ END
+ //
+ DELIMITER ;
+
 
 DROP TRIGGER IF EXISTS `after_tbl_units_insert`;
 DELIMITER //

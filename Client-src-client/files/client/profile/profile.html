@@ -1,5 +1,7 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<link href="/css/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
+<link href="/css/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
 <div class="content-page">
 <div class="content">
 <div class="container">
@@ -26,7 +28,7 @@
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Employee Name</label>
             <div class="col-sm-6 controls">
-              <p class="form-control-static"><span class="emp-name"></span>/p>
+              <p class="form-control-static"><span class="emp-name"></span></p>
             </div>
           </div>
           <div class="form-group">
@@ -35,12 +37,12 @@
               <p class="form-control-static"><span class="short-name"></span></p>
             </div>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Designation</label>
             <div class="col-sm-6 controls">
               <p class="form-control-static"><span class="designation"></span></p>
             </div>
-          </div>
+          </div> -->
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Email ID <span class="mandatory">*</span></label>
             <div class="col-sm-6 controls">
@@ -97,8 +99,7 @@
           <div class="form-group">
             <label class=" col-sm-offset-1 col-sm-4 control-label" for="example-input-small">Address</label>
             <div class="col-sm-6 controls">
-              <textarea class="form-control input-sm" rows="2" placeholder="Enter Address">
-                <span class="address"></span>
+              <textarea class="form-control input-sm" rows="2" placeholder="Enter Address" id="address">
               </textarea>
             </div>
           </div>
@@ -109,8 +110,8 @@
         <div class="clear"></div>
       <div class="form-group text-center">
           <button class="btn btn-primary waves-effect waves-light" type="button" id="btn_submit"> Submit </button>
-          <button class="btn btn-info waves-effect waves-light" type="button" id="btn_chg_pwd"> Change Password</button>
-          <!-- onclick="location.href='/change-password-client'" -->
+          <button class="btn btn-info waves-effect waves-light" type="button" id="btn_chg_pwd" onclick="location.href='/change-password'"> Change Password</button>
+          <!-- onclick="location.href='/change-password'" -->
       </div>
 
     <!-- end col -->
@@ -120,4 +121,8 @@
 </div>
 </div>
 </div>
+<script src="/js/toastr/toastr.min.js"></script>
+<script src="/script/profile/profile.js"></script>
+<script src="/js/bootstrap-sweetalert/sweet-alert.min.js"></script>
+<script src="/js/jquery.sweet-alert.init.js"></script>
 {% endblock %}

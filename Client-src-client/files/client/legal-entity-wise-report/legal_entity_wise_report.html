@@ -19,26 +19,33 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class="col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span> </label>
-                              <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                                                <input type="hidden" id="country-id" value="">
-                                                <div id="ac-country" class="ac-textbox default-display-none">
-                                                    <ul class="hidemenu"></ul>
-                                                </div>
-                                            </div>
+                            <label class="col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span>
+                            </label>
+                            <div class="col-sm-6 has-feedback">
+                            <p class="form-control-static country-name default-display-none"></p>
+                                <div class="country-name-ac default-display-none">
+                                    <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
+                                    <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                    <input type="hidden" id="country-id" value="">
+                                    <div id="ac-country" class="ac-textbox default-display-none">
+                                        <ul class="hidemenu"></ul>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="2">
-                                                <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                                                <input type="hidden" id="legal-entity-id" value="">
-                                                <div id="ac-legal-entity" class="ac-textbox default-display-none">
-                                                    <ul class="hidemenu"></ul>
-                                                </div>
-                                            </div>
+                                <p class="form-control-static legal-entity-name default-display-none"></p>
+                                    <div class="legal-entity-name-ac default-display-none">
+                                        <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="2">
+                                        <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                        <input type="hidden" id="legal-entity-id" value="">
+                                        <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                            <ul class="hidemenu"></ul>
+                                        </div>
+                                    </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
@@ -47,7 +54,7 @@
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                 <input type="hidden" id="domain-id" value="">
                                 <div id="ac-domain" class="ac-textbox default-display-none">
-                                <ul class="hidemenu"></ul>
+                                    <ul class="hidemenu"></ul>
                                 </div>
                             </div>
                         </div>
@@ -58,8 +65,8 @@
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                 <input type="hidden" id="unit-id" value="">
                                 <div id="ac-unit" class="ac-textbox default-display-none">
-                                                    <ul class="hidemenu"></ul>
-                                                </div>
+                                    <ul class="hidemenu"></ul>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -68,10 +75,10 @@
                                 <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act" tabindex="5">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                 <input type="hidden" id="act-id" value="">
-                                                <div id="ac-act" class="ac-textbox default-display-none">
-                                                    <ul class="hidemenu"></ul>
+                                <div id="ac-act" class="ac-textbox default-display-none">
+                                    <ul class="hidemenu"></ul>
+                                </div>
                             </div>
-                        </div>
                         </div>
                         <div class="form-group">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
@@ -80,8 +87,8 @@
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                 <input type="hidden" id="compliance-task-id" value="">
                                 <div id="ac-compliance-task" class="ac-textbox default-display-none">
-                                                    <ul class="hidemenu"></ul>
-                                                </div>
+                                    <ul class="hidemenu"></ul>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -90,6 +97,7 @@
                             <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Frequency:</label>
                             <div class="col-sm-6">
                                 <select class="form-control input-sm" id="compliance-frequency" tabindex="7">
+                                    <option>Select</option>
                                 </select>
                             </div>
                         </div>
@@ -107,30 +115,30 @@
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                  <input type="hidden" id="user-id" value="">
                                  <div id="ac-user" class="ac-textbox default-display-none">
-                                                    <ul class="hidemenu"></ul>
-                                                </div>
+                                    <ul class="hidemenu"></ul>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm from-date" id="from-date" placeholder="DD-MM-YYYY" tabindex="10">
+                                <input type="text" class="form-control input-sm from-date" id="from_date" placeholder="DD-MM-YYYY" tabindex="10" readonly="readonly">
                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
                             <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm to-date" id="to-date" placeholder="DD-MM-YYYY" tabindex="11">
+                                <input type="text" class="form-control input-sm to-date" id="to_date" placeholder="DD-MM-YYYY" tabindex="11" readonly="readonly">
                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-4 control-label">Compliance Task Status:</label>
                              <div class="col-sm-6">
-                                                <select class="form-control input-sm" id="compliance-task-status" tabindex="12">
-                                                </select>
-                                            </div>
+                                <select class="form-control input-sm" id="compliance-task-status" tabindex="12">
+                                </select>
+                            </div>
                         </div>
                     </div>
                     <div class="col-sm-12">
@@ -161,11 +169,11 @@
                 <div class="card-box">
                 <div class="table-responsive ">
                     <div class="col-sm-12">
-                        <div class="col-sm-12 text-center"><img src="/files/client/common/images/yourlogo.png" class="rpt-logo m-t-0"></div>
+                        <div class="col-sm-12 text-center"><img class="rpt-logo m-t-0 client-logo"></div>
                         <div class="col-sm-12 text-center"><h4>Legal Entity Wise Report</h4></div>
-                        <div class="col-sm-4 text-center"><h6>Legal Entity : RG Legal Entity</h6></div>
-                        <div class="col-sm-4 text-center"><h6>Country : India</h6></div>
-                        <div class="col-sm-4 text-center"><h6>Domain : Labour Law</h6></div>
+                        <div class="col-sm-4 text-center"><h6>Legal Entity : <span class="le-header"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Country : <span class="ctry-header"></span></h6></div>
+                        <div class="col-sm-4 text-center"><h6>Domain : <span class="dom-header"></span></h6></div>
                     </div>
                     <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
@@ -182,138 +190,28 @@
                                 <th width="10%">Completion Date</th>
                             </tr>
                         </thead>
-                       <!--  <tbody>
-                            <tr class="bg-lightdark">
-                              <td colspan="100%">Unit: AP0003 - Madurai - No.14, 80 feet road, Anna nagar, Madurai</td>
-                            </tr>
-                            <tr>
-                                <td colspan="100%" >
-                                    <div class="col-sm-2 no-padding">
-                                        
-                                        <mark class="p-l-10 p-r-10">Test Act Central</mark>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="c-pointer" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                                <td>1</td>
-                                <td>FORM I - Half yearly returns Submission</td>
-                                <td>One Time</td>
-                                <td>19-Aug-2016</td>
-                                <td>Inprogress</td>
-                                <td>EMP1004 - Suresh</td>
-                                <td>Pending</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                            </tr>
-                            <tr class="collapse" id="collapseExample">
-                                <td colspan="5">&nbsp;</td>
-                                <td colspan="100%">
-                                    <ul class="tree">
-                                        <li>
-                                            <table width="100%">
-                                                <tbody>
-                                                    <tr class="smallfont">
-                                                       <td width="27%">EMP1002 - Rajkumar</td>
-                                                       <td width="19%">
-                                                            Submitted
-                                                        </td>
-                                                       <td width="20%">18-Aug-2016</td>
-                                                       <td width="20%"><a href="#">Form A</a></td>
-                                                       <td width="0%">&nbsp;</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr class="c-pointer" data-toggle="collapse" href="#collapseExample-1" aria-expanded="false" aria-controls="collapseExample">
-                                <td>2</td>
-                                <td>FORM II - Submission</td>
-                                <td>Review</td>
-                                <td>20-Aug-2016</td>
-                                <td>Complied</td>
-                                <td>EMP1004 - Suresh</td>
-                                <td>Approved</td>
-                                <td>19-Aug-2016</td>
-                                <td>-</td>
-                                <td>18-Aug-2016</td>
-                            </tr>
-                            <tr class="collapse" id="collapseExample-1">
-                                <td colspan="5">&nbsp;</td>
-                                <td colspan="100%">
-                                    <ul class="tree">
-                                        <li>
-                                            <table width="100%">
-                                                <tbody>
-                                                    <tr class="smallfont">
-                                                       <td width="27%">EMP1002 - Rajkumar</td>
-                                                       <td width="19%">
-                                                            Submitted
-                                                        </td>
-                                                       <td width="20%">18-Aug-2016</td>
-                                                       <td width="20%"><a href="#">Form B</a></td>
-                                                       <td width="0%">&nbsp;</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr class="bg-lightdark">
-                              <td colspan="100%">Unit: AP0004 - Trichy - No.1, 80 feet road, K.K. nagar, Tirchy</td>
-                            </tr>
-                            <tr>
-                                <td colspan="100%" >
-                                    <div class="col-sm-2 no-padding">
-                                        
-                                        <mark class="p-l-10 p-r-10">Test Act Central</mark>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="c-pointer" data-toggle="collapse" href="#collapseExample-2" aria-expanded="false" aria-controls="collapseExample">
-                                <td>3</td>
-                                <td>FORM II - Registration</td>
-                                <td>On Occurrence</td>
-                                <td>20-Aug-2016</td>
-                                <td>Not Complied</td>
-                                <td>EMP1004 - Suresh</td>
-                                <td>Rejected</td>
-                                <td>19-Aug-2016</td>
-                                <td>-</td>
-                                <td>-</td>
-                            </tr>
-                            <tr class="collapse" id="collapseExample-2">
-                                <td colspan="5">&nbsp;</td>
-                                <td colspan="100%">
-                                    <ul class="tree">
-                                        <li>
-                                            <table width="100%">
-                                                <tbody>
-                                                    <tr class="smallfont">
-                                                       <td width="27%">EMP1002 - Rajkumar</td>
-                                                       <td width="19%">
-                                                            Submitted
-                                                        </td>
-                                                       <td width="20%">18-Aug-2016</td>
-                                                       <td width="20%"><a href="#">Form C</a></td>
-                                                       <td width="0%">&nbsp;</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </li>
-                                    </ul>
-                                </td>
-                            </tr>
-                        </tbody> -->
                           <tbody id="report-table-tbody">
-                                            
-                                        </tbody>
+
+                            </tbody>
                     </table>
-                   <!--  <p class="rpt-count m-b-0">Total : 3 record(s)</p> -->
-                    <p class="rpt-count m-b-0">Total : <span id="total-record" ></span> record(s)</p>
+                    <table class="pagination-view default-display-none">
+                      <tr>
+                        <td>
+                          <span class="compliance_count"> </span>
+                          <span class="divider-view"> | </span>
+                          <span class="items-per-page">
+                          Show
+                          <select id="items_per_page">
+                          </select>
+                          entries
+                          </span>
+                        </td>
+                        <td style="width:600px;"></td>
+                        <td style="text-align:right;padding-right:10px;">
+                          <ul id="pagination-rpt"></ul>
+                        </td>
+                      </tr>
+                    </table>
                 </div>
                 </div>
             </div>
@@ -338,19 +236,19 @@
                 </div>
             </td>
         </tr>
-        <tr class="row-three">
+        <tr class="tree-open-close">
             <td class="sno"></td>
             <td class="compliance-task"></td>
             <td class="frequency"></td>
             <td class="due-date"></td>
             <td class="compliance-task-status"></td>
-            <td class="user-name"></td>
+            <td><a class="user-name c-pointer"></a></td>
             <td class="activity-status"></td>
             <td class="activity-date"></td>
-            <td class="uploaded-document"><a></a></td>
+            <td><a class="uploaded-document c-pointer"></a></td>
             <td class="completion-date"></td>
         </tr>
-        <tr class="row-four">
+        <tr class="tree-data">
             <td colspan="5">&nbsp;</td>
             <td colspan="100%">
                 <ul class="tree">
@@ -361,7 +259,8 @@
                                    <td width="27%" class="user-name-new"></td>
                                    <td width="19%" class="activity-status-new"></td>
                                    <td width="20%" class="activity-date-new"></td>
-                                   <td width="20%" class="uploaded-document-new"><a></a></td>
+                                   <td width="20%">
+                                   <a class="uploaded-document-new c-pointer"></a></td>
                                    <td width="0%" class="completion-date-new" >&nbsp;</td>
                                 </tr>
                             </tbody>
@@ -372,7 +271,13 @@
         </tr>
     </table>
 </div>
-
+<div id="no-record-templates" class="default-display-none">
+    <table class="table-no-content">
+        <tr align="left" class="table-row-no-content">
+            <td  align="center" colspan="10" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold"></td>
+        </tr>
+    </table>
+</div>
 <script src="/js/toastr/toastr.min.js"></script>
 <script src="/script/legal-entity-wise-report/legal_entity_wise_report.js"></script>
 <script src="js/jquery-ui.js"></script>

@@ -156,6 +156,7 @@ function onAutoCompleteSuccess(value_element, id_element, val) {
 function pageControls() {
 
     btnShow.click(function(){
+        $(".tbody-form-list").empty();
         on_current_page = 1;
         $('.details').show();
         $('#compliance_animation')

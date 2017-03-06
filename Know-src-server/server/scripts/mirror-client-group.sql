@@ -99,6 +99,7 @@ CREATE TABLE `tbl_legal_entities` (
   UNIQUE KEY(`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entity_domains` (
+  `le_domain_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `activation_date` timestamp NULL DEFAULT NULL,
@@ -124,6 +125,7 @@ CREATE TABLE `tbl_categories` (
   UNIQUE KEY(`category_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_configuration` (
+  `cn_config_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -152,6 +154,7 @@ CREATE TABLE `tbl_units` (
   UNIQUE KEY(`unit_id`, `client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_units_organizations` (
+  `unit_org_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `organisation_id` int(11) DEFAULT NULL,
@@ -179,27 +182,27 @@ CREATE TABLE `tbl_user_group_forms` (
 CREATE TABLE `tbl_service_providers` (
   `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
-  `address` varchar(500) DEFAULT NULL,
-  `short_name` varchar(20) DEFAULT NULL,
-  `contract_from` date DEFAULT NULL,
-  `contract_to` date DEFAULT NULL,
-  `contact_person` varchar(50) DEFAULT NULL,
-  `contact_no` varchar(20) DEFAULT NULL,
-  `mobile_no` varchar(20) DEFAULT NULL,
+  `short_name` varchar(20) NOT NULL,
+  `contract_from` date NOT NULL,
+  `contract_to` date NOT NULL,
+  `contact_person` varchar(50) NOT NULL,
+  `contact_no` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `is_active` tinyint(1) DEFAULT '1',
+  `mobile_no` varchar(20) DEFAULT NULL,
+  `address` varchar(500) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `status_changed_by` int(11) DEFAULT NULL,
   `status_changed_on` timestamp NULL DEFAULT NULL,
-  `is_blocked` tinyint(1) DEFAULT '0',
+  `is_blocked` tinyint(1) NOT NULL DEFAULT '0',
   `blocked_by` int(11) DEFAULT NULL,
   `blocked_on` timestamp NULL DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` int(11) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_by` int(11) NOT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`service_provider_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) NOT NULL,
@@ -214,6 +217,7 @@ CREATE TABLE `tbl_users` (
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,
   `address` varchar(500) DEFAULT NULL,
+  `is_service_provider` tinyint(4) DEFAULT '0',
   `is_active` tinyint(4) DEFAULT '1',
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
@@ -248,6 +252,11 @@ CREATE TABLE `tbl_user_sessions` (
   `last_accessed_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`session_token`),
   UNIQUE KEY(`user_id`, `session_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_user_legal_entities` (
+  `user_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  UNIQUE KEY (`user_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
@@ -293,6 +302,45 @@ CREATE TABLE `tbl_reminder_settings` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   UNIQUE KEY(`client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_widget_settings`(
+ `user_id` int(11) PRIMARY KEY NOT NULL,
+  `widget_data` TEXT DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_widget_forms`(
+  `form_id` int(11) PRIMARY KEY NOT NULL,
+  `form_name` TEXT NOT NULL
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_replication_status`(
+  `legal_entity_id` int(11) PRIMARY KEY NOT NULL,
+  `user_data` tinyint(2) DEFAULT '0',
+  `settings_data` tinyint(2) DEFAULT '0',
+  `provider_data` tinyint(2) DEFAULT '0'
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_user_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`, `user_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_provider_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `provider_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`, `provider_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_le_settings_replication_status`(
+  `legal_entity_id` int(11) NOT NULL,
+  `s_action` tinyint(4) DEFAULT '0',
+  UNIQUE KEY(`legal_entity_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_themes` (
+  `theme_id` int(11) NOT NULL AUTO_INCREMENT,
+  `theme_name` varchar(45) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`theme_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
 INSERT INTO tbl_user_category VALUES(2, "View Only");
@@ -324,7 +372,7 @@ INSERT INTO tbl_forms VALUES(14, 3, 'Unit Wise Compliance', "/unit-wise-complian
 INSERT INTO tbl_forms VALUES(15, 3, 'Service Provider Wise Compliance', "/service-provider-wise-compliance", 15, null);
 INSERT INTO tbl_forms VALUES(16, 3, 'User Wise Compliance', "/user-wise-compliance", 16, null);
 INSERT INTO tbl_forms VALUES(17, 3, 'Status Report Consolidated', "/status-report-consolidated", 17, null);
-INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-wise-report", 18, null);
+INSERT INTO tbl_forms VALUES(18, 3, 'Domain Score Card', "/domain-score-card", 18, null);
 INSERT INTO tbl_forms VALUES(19, 3, 'Legal Entity Wise Score Card', "/legal-entity-wise-score-card", 19, null);
 INSERT INTO tbl_forms VALUES(20, 3, 'Work Flow Score Card', "/work-flow-score-card", 20, null);
 INSERT INTO tbl_forms VALUES(21, 3, 'Statutory Settings Unit Wise Report', "/statutory-settings-unit-wise-report", 21, null);
@@ -335,11 +383,10 @@ INSERT INTO tbl_forms VALUES(25, 3, 'Statutory Notification List', "/statutory-n
 INSERT INTO tbl_forms VALUES(26, 3, 'Service Provider Details', "/service-provider-details", 26, null);
 INSERT INTO tbl_forms VALUES(27, 3, 'Audit Trail', "/audit-trail", 27, null);
 INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 28, null);
-INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/view-profile", 29, null);
-INSERT INTO tbl_forms VALUES(30, 4, 'Client View Profile', "/client-view-profile", 30, null);
+INSERT INTO tbl_forms VALUES(29, 4, 'View Profile', "/view-profile", 29, null);
 INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 31, null);
 INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 32, null);
-INSERT INTO tbl_forms VALUES(33, 4, 'themes', "/themes", 33, null);
+INSERT INTO tbl_forms VALUES(33, 4, 'Themes', "/themes", 33, null);
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
 INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-details", 35, null);
 INSERT INTO tbl_forms VALUES(36, 4, 'Reminders', "/reminders", 36, null);
@@ -377,7 +424,6 @@ insert into tbl_form_category values (26, 26, 1);
 insert into tbl_form_category values (27, 27, 1);
 insert into tbl_form_category values (28, 28, 1);
 insert into tbl_form_category values (29, 29, 1);
-insert into tbl_form_category values (30, 30, 1);
 insert into tbl_form_category values (31, 31, 1);
 insert into tbl_form_category values (32, 32, 1);
 insert into tbl_form_category values (33, 33, 1);
@@ -417,7 +463,6 @@ insert into tbl_form_category values (59, 26, 3);
 insert into tbl_form_category values (60, 27, 3);
 insert into tbl_form_category values (61, 28, 3);
 insert into tbl_form_category values (62, 29, 3);
-insert into tbl_form_category values (63, 30, 3);
 insert into tbl_form_category values (64, 31, 3);
 insert into tbl_form_category values (65, 32, 3);
 insert into tbl_form_category values (66, 33, 3);
@@ -451,7 +496,6 @@ insert into tbl_form_category values (87, 25, 4);
 insert into tbl_form_category values (88, 26, 4);
 insert into tbl_form_category values (89, 28, 4);
 insert into tbl_form_category values (90, 29, 4);
-insert into tbl_form_category values (91, 30, 4);
 insert into tbl_form_category values (92, 31, 4);
 insert into tbl_form_category values (93, 32, 4);
 insert into tbl_form_category values (94, 33, 4);
@@ -472,7 +516,6 @@ insert into tbl_form_category values (102, 20, 5);
 insert into tbl_form_category values (103, 24, 5);
 insert into tbl_form_category values (104, 25, 5);
 insert into tbl_form_category values (105, 29, 5);
-insert into tbl_form_category values (106, 30, 5);
 insert into tbl_form_category values (107, 31, 5);
 insert into tbl_form_category values (108, 32, 5);
 insert into tbl_form_category values (109, 33, 5);
@@ -492,7 +535,6 @@ insert into tbl_form_category values (117, 20, 6);
 insert into tbl_form_category values (118, 24, 6);
 insert into tbl_form_category values (119, 26, 6);
 insert into tbl_form_category values (120, 29, 6);
-insert into tbl_form_category values (121, 30, 6);
 insert into tbl_form_category values (122, 31, 6);
 insert into tbl_form_category values (123, 32, 6);
 insert into tbl_form_category values (124, 33, 6);
@@ -519,7 +561,6 @@ insert into tbl_form_category values (139, 25, 2);
 insert into tbl_form_category values (140, 26, 2);
 insert into tbl_form_category values (141, 28, 2);
 insert into tbl_form_category values (142, 29, 2);
-insert into tbl_form_category values (143, 30, 2);
 insert into tbl_form_category values (144, 31, 2);
 insert into tbl_form_category values (145, 32, 2);
 insert into tbl_form_category values (146, 33, 2);
@@ -533,3 +574,13 @@ INSERT INTO tbl_session_types VALUES(4, "blackberry");
 INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");
+
+-- tbl_widget_forms
+INSERT INTO tbl_widget_forms VALUES(1, "Compliance Status");
+INSERT INTO tbl_widget_forms VALUES(2, "Escalations");
+INSERT INTO tbl_widget_forms VALUES(3, "Not Complied");
+INSERT INTO tbl_widget_forms VALUES(4, "Trend Chart");
+INSERT INTO tbl_widget_forms VALUES(5, "Risk Chart");
+INSERT INTO tbl_widget_forms VALUES(6, "User Scorecard");
+INSERT INTO tbl_widget_forms VALUES(7, "Domain Scorecard");
+INSERT INTO tbl_widget_forms VALUES(8, "Calendar View");

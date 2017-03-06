@@ -507,18 +507,19 @@ def process_get_GroupAdminReportData(db, user_id):
     groupList = []
     countriesList = []
     group_admin_data = []
-    for groups in result[0]:
+    print result[1]
+    for groups in result[1]:
         groupList.append(technoreports.GroupAdminClientGroup(
                 groups.get("client_id"), groups.get("group_name"), bool(groups.get("is_active"))
             ))
 
-    for countries in result[1]:
+    for countries in result[2]:
         countriesList.append(technoreports.GroupAdminCountry(
                 countries.get("client_id"), countries.get("country_id"), countries.get("country_name"),
                 bool(countries.get("is_active"))
             ))
 
-    for groupadmin in result[2]:
+    for groupadmin in result[3]:
         group_admin_data.append(technoreports.GroupAdminClientGroupData(
                 groupadmin.get("client_id"), groupadmin.get("legal_entity_id"),
                 groupadmin.get("legal_entity_name"), groupadmin.get("unit_count"),

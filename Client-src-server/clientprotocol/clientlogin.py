@@ -188,7 +188,7 @@ class CheckRegistrationToken(Request):
             "reset_token": self.reset_token,
         }
 
-class SaveRegistraion(Request):
+class SaveRegistration(Request):
     def __init__(self, token, username, password, captcha):
         self.token = token
         self.username = username
@@ -202,7 +202,7 @@ class SaveRegistraion(Request):
         username = data.get("uname")
         pword = data.get("pword")
         captcha = data.get("captcha")
-        return SaveRegistraion(token, username, pword, captcha)
+        return SaveRegistration(token, username, pword, captcha)
 
     def to_inner_structure(self):
         return {
@@ -231,7 +231,7 @@ def _init_Request_class_map():
     classes = [
         Login, ForgotPassword, ResetTokenValidation, ResetPassword,
         ChangePassword, Logout, UpdateUserProfile, CheckRegistrationToken,
-        SaveRegistraion, CheckUsername
+        SaveRegistration, CheckUsername
     ]
     class_map = {}
     for c in classes:
@@ -272,7 +272,7 @@ class UserLoginSuccess(Response):
     def __init__(
         self, user_id, session_token, email_id, user_group_name, menu,
         employee_name, employee_code, contact_no, address, client_id,
-        username, mobile_no, entity_info, country_info
+        username, mobile_no, entity_info, country_info, theme
     ):
         self.user_id = user_id
         self.session_token = session_token
@@ -288,13 +288,14 @@ class UserLoginSuccess(Response):
         self.mobile_no = mobile_no
         self.entity_info = entity_info
         self.country_info = country_info
+        self.theme = theme
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "usr_id", "session_token", "email_id",
             "u_g_name", "menu", "emp_name", "emp_code",
-            "con_no", "address", "ct_id", "username", "mob_no", "entity_info", "country_info"])
+            "con_no", "address", "ct_id", "username", "mob_no", "entity_info", "country_info", "theme"])
         user_id = data.get("usr_id")
         session_token = data.get("session_token")
         email_id = data.get("email_id")
@@ -309,10 +310,11 @@ class UserLoginSuccess(Response):
         mobile_no = data.get("mob_no")
         entity_info = data.get("entity_info")
         country_info = data.get("country_info")
+        theme = data.get("theme")
         return UserLoginSuccess(
             user_id, session_token, email_id, user_group_name, menu,
             employee_name, employee_code, contact_no, address,
-            client_id, username, mobile_no, entity_info, country_info
+            client_id, username, mobile_no, entity_info, country_info, theme
 
         )
 
@@ -331,7 +333,8 @@ class UserLoginSuccess(Response):
             "username": self.username,
             "mob_no": self.mobile_no,
             "entity_info": self.entity_info,
-            "country_info": self.country_info
+            "country_info": self.country_info,
+            "theme": self.theme
         }
 
 class AdminLoginSuccess(Response):
@@ -511,6 +514,19 @@ class InvalidCurrentPassword(Response):
         return {
         }
 
+class InvalidPassword(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidPassword()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 class LogoutSuccess(Response):
     def __init__(self):
         pass
@@ -637,14 +653,14 @@ class CheckRegistrationTokenSuccess(Response):
         }
 
 
-class SaveRegistraionSuccess(Response):
+class SaveRegistrationSuccess(Response):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-        return SaveRegistraionSuccess()
+        return SaveRegistrationSuccess()
 
     def to_inner_structure(self):
         return {
@@ -699,7 +715,8 @@ def _init_Response_class_map():
         ClientDatabaseNotExists, ContractExpired, EnterDifferentPassword,
         NotConfigured, LegalEntityNotAvailable, ContractNotYetStarted, UpdateUserProfileSuccess,
         CheckRegistrationTokenSuccess, InvalidCaptcha,
-        SaveRegistraionSuccess, CheckUsernameSuccess, UsernameAlreadyExists
+        SaveRegistrationSuccess, CheckUsernameSuccess, UsernameAlreadyExists,
+        InvalidPassword
     ]
     class_map = {}
     for c in classes:

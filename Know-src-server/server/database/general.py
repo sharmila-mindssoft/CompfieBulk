@@ -21,6 +21,7 @@ __all__ = [
     "get_trail_log",
     "get_trail_log_for_domain",
     "remove_trail_log", "get_servers", "get_group_servers",
+    "get_group_server_info",
     "get_client_replication_list",
     "update_client_replication_status",
     "update_client_domain_status", "get_user_forms",
@@ -32,7 +33,8 @@ __all__ = [
     "update_profile", "return_compliance_duration",
     "return_compliance_repeat", "return_compliance_frequency",
     "return_approval_status",
-    "update_statutory_notification_status"
+    "update_statutory_notification_status",
+    "get_short_name"
 ]
 
 
@@ -133,10 +135,8 @@ def get_servers(db):
     rows = db.select_all(query)
     return return_companies(rows)
 
-
-def get_group_servers(db):
-
-    query = "select t2.database_ip, t2.database_port, ct1.database_username, ct1.database_password," + \
+def get_group_server_info(db, group_id=None):
+    query = "select distinct t2.database_ip, t2.database_port, ct1.database_username, ct1.database_password," + \
         " ct1.database_name , t1.client_id, t1.legal_entity_id, t4.short_name, " + \
         " t3.machine_id, t3.machine_name, t3.ip as server_ip, t3.port as server_port, ct1.is_group " + \
         " from tbl_client_database as t1 " + \
@@ -144,8 +144,18 @@ def get_group_servers(db):
         " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
         " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
         " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
-    rows = db.select_all(query)
+    param = []
+    if group_id is not None :
+        query += " WHERE ct1.is_group=1 and t1.client_id=%s"
+        param = [group_id]
+
+    rows = db.select_all(query, param)
+    return rows
+
+def get_group_servers(db):
+    rows = get_group_server_info(db)
     return return_companies(rows)
+
 
 
 def return_companies(data):
@@ -599,3 +609,10 @@ def verify_password(db, user_id, encrypt_password):
     #     raise process_error("E065")
     # else
     return int(row[0]["count"])
+
+
+#  get_short_name
+def get_short_name(db, client_id):
+    q = "select short_name from tbl_client_groups where client_id = %s"
+    row = db.select_one(q, [client_id])
+    return row.get("short_name")

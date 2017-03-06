@@ -1,9 +1,11 @@
+import MySQLdb as mysql
+import requests
 from server.exceptionmessage import process_error, fetch_run_error
 from protocol import consoleadmin
 from forms import *
 from tables import *
 from server.common import get_date_time
-from server.database.validateEnvironment import ServerValidation
+from server.database.validateEnvironment import ServerValidation, UpdateServerValidation
 from server.database.createclientdatabase import ClientGroupDBCreate, ClientLEDBCreate
 
 __all__ = [
@@ -58,16 +60,23 @@ def get_db_server_list(db):
 ###############################################################################
 def return_database_servers(data):
     fn = consoleadmin.DBServer
-    result = [
-        fn(
-            db_server_id=datum["database_server_id"], db_server_name=datum["database_server_name"],
-            ip=datum["database_ip"], port=datum["database_port"],
-            username=datum["database_username"], password=datum["database_password"],
-            no_of_clients=0 if(
-                datum["legal_entity_ids"] is None
-            ) else len(datum["legal_entity_ids"].split(","))
-        ) for datum in data
-    ]
+    result = []
+    for datum in data:
+        no_of_clients = 0
+        if datum["legal_entity_ids"] is not None:
+            if datum["legal_entity_ids"].find(",") >= 0:
+                no_of_clients = len(datum["legal_entity_ids"].split(","))
+            else:
+                no_of_clients = 1
+
+        result.append(
+            fn(
+                db_server_id=datum["database_server_id"], db_server_name=datum["database_server_name"],
+                ip=datum["database_ip"], port=datum["database_port"],
+                username=datum["database_username"], password=datum["database_password"],
+                no_of_clients=no_of_clients
+            )
+        )
     return result
 
 
@@ -103,7 +112,10 @@ def save_db_server(db, request, session_user):
     #  Parameters : Db server name, ip, port, username, password
     #  Return : returns last inserted row id
     #
-    try:
+    # try:
+        is_valid = validate_database_server_before_save(db, request)
+        if is_valid is not True:
+            raise fetch_run_error(is_valid)
         db.call_insert_proc(
             "sp_databaseserver_save", (
                 request.db_server_id, request.db_server_name, request.ip,
@@ -116,10 +128,23 @@ def save_db_server(db, request, session_user):
         else:
             action = "Database server %s updated" % (request.db_server_name)
         db.save_activity(session_user, frmConfigureDatabaseServer, action)
-    except:
-        raise process_error("E074")
+    # except:
+    #     raise process_error("E074")
 
-
+def validate_database_server_before_save(db, request):
+        dhost = request.ip
+        uname = request.username
+        pwd = request.password
+        port = request.port
+        try :
+            connection = mysql.connect(host=dhost, user=uname, passwd=pwd, port=port)
+            c = connection.cursor()
+            c.close()
+            connection.close()
+            return True
+        except mysql.Error, e :
+            print e
+            return "Database server connection failed"
 ###############################################################################
 # To Get list of client servers
 # parameter : Object of database
@@ -191,7 +216,10 @@ def save_client_server(db, request, session_user):
     #  Parameters : Client server id, Client server name, ip, port
     #  Return : returns last inserted id
     #
-    try:
+    # try:
+        is_valid = validate_application_server_before_save(request)
+        if is_valid is not True:
+            raise fetch_run_error(is_valid)
         print "args"
         print request.client_server_id, request.client_server_name, request.ip, request.port
         new_id = db.call_insert_proc(
@@ -207,11 +235,24 @@ def save_client_server(db, request, session_user):
         if request.client_server_id is not None:
             action = "Machine %s updated" % (request.client_server_name)
         db.save_activity(session_user,  frmConfigureApplicationServer, action)
-    except Exception, e:
-        print e
-        raise process_error("E075")
+    # except Exception, e:
+    #     print e
+    #     raise process_error("E075")
 
+def validate_application_server_before_save(request):
+    port = request.port
+    ip = request.ip
+    try :
+        r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+        print r
+        print "-" * 50
+        if r.status_code != 200 :
+            return "Application server connection failed"
+        else :
+            return True
 
+    except :
+        raise RuntimeError("Application server connection failed")
 ###############################################################################
 # To Get data required for allocating database environment
 # parameter : Object of database
@@ -360,20 +401,38 @@ def return_File_servers_List(data):
 # return type : Raises process error if save fails otherwise returns None
 ###############################################################################
 def validated_env_before_save(db, request):
+    client_db_id = request.client_database_id
     db_server_id = request.db_server_id
+    le_db_server_id = request.le_db_server_id
     machine_id = request.machine_id
     file_server_id = request.file_server_id
-    vobj = ServerValidation(db, machine_id, db_server_id, file_server_id)
-    is_valid = vobj.perform_validation()
-    print is_valid
-    if is_valid[0] is not True :
-        return is_valid[0]
-    elif is_valid[1] is not True :
-        return is_valid[1]
-    elif is_valid[2] is not True :
-        return is_valid[2]
-    else :
-        return True
+    legal_entity_id = request.legal_entity_id
+    client_id = request.client_id
+    if client_db_id is None:
+        vobj = ServerValidation(db, machine_id, db_server_id, file_server_id)
+        is_valid = vobj.perform_validation()
+        print is_valid
+        if is_valid[0] is not True :
+            return is_valid[0]
+        elif is_valid[1] is not True :
+            return is_valid[1]
+        elif is_valid[2] is not True :
+            return is_valid[2]
+        else :
+            return True
+    else:
+        vobj = UpdateServerValidation(db, client_db_id, legal_entity_id, client_id, machine_id, db_server_id, le_db_server_id, file_server_id)
+        is_valid = vobj.perform_update_validation()
+        if is_valid[0] is not True :
+            return is_valid[0]
+        elif is_valid[1] is not True :
+            return is_valid[1]
+        elif is_valid[2] is not True :
+            return is_valid[2]
+        elif is_valid[3] is not True :
+            return is_valid[3]
+        else :
+            return True
 
 def create_db_process(db, client_database_id, client_id, legal_entity_id, db_server_id, le_db_server_id):
 
@@ -482,7 +541,9 @@ def save_allocated_db_env(db, request, session_user):
         db.call_insert_proc(
             "sp_clientdatabase_update",
             (client_db_id, client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
-                client_ids, legal_entity_ids, session_user, get_date_time())
+                client_ids, legal_entity_ids, request.old_grp_app_id, request.old_grp_db_s_id, request.old_le_db_s_id,
+                request.old_le_f_s_id, request.new_cl_ids, request.new_grp_le_ids, request.new_le_le_ids,
+                request.new_le_f_s_ids, session_user, get_date_time())
         )
     #
     #  To get legal entity name by it's id to save activity
@@ -718,8 +779,9 @@ def return_file_servers(data):
     file_server_list = []
     for datum in data:
         no_of_clients = 0
-        if(datum["legal_entity_ids"] is not None and datum["legal_entity_ids"].find(",") > 0):
+        if(datum["legal_entity_ids"] is not None):
             no_of_clients = len(datum["legal_entity_ids"].split(","))
+
         file_server_list.append(consoleadmin.FileServerList(
             datum["file_server_id"], datum["file_server_name"],
             datum["ip"], datum["port"], no_of_clients

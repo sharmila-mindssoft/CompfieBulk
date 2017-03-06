@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 <head>
     <style type="text/css">
-        .default-display-none {
-            display: none;
-        }
+    .default-display-none {
+        display: none;
+    }
     </style>
-
     <link href='/files/client/common/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     <link href='/files/client/common/css/core.css' rel='stylesheet' type='text/css'>
     <link href="/files/client/common/css/pages.css" rel="stylesheet" type="text/css" />
     <link href="/files/client/common/css/components.css" rel="stylesheet" type="text/css" />
 </head>
+
 <body>
     <div class='container'>
         <div class=''>
@@ -28,36 +29,34 @@
                         <div class="form-horizontal m-t-10">
                             <div class="form-group has-feedback">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" id="txt-username" placeholder="Username" value="lggroupadmin">
+                                    <input class="form-control" type="text" id="txt-username" placeholder="Username" value="">
                                     <i class="glyphicon glyphicon-user glyphicon-2x form-control-feedback l-h-34"></i>
                                 </div>
                             </div>
                             <div class="form-group has-feedback">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="password" id="txt-password" placeholder="Password" value="p@$$word@123">
+                                    <input class="form-control" type="password" id="txt-password" placeholder="Password" value="">
                                     <i class="glyphicon glyphicon-lock glyphicon-2x form-control-feedback l-h-34"></i>
                                 </div>
                             </div>
                             <div class="form-group has-feedback">
                                 <div class="col-xs-12">
-                                    <input class="form-control" type="text" id="txt-shortname" placeholder="Group Name" value="lggroup">
+                                    <input class="form-control" type="text" id="txt-shortname" placeholder="Group Name" value="">
                                     <i class="glyphicon glyphicon-home glyphicon-2x form-control-feedback l-h-34"></i>
                                 </div>
                             </div>
-                            <div class="input-container default-display-none"   style="text-align:left" id="captcha-view">
+                            <div class="input-container default-display-none" style="text-align:left" id="captcha-view">
                                 <table style="width:100%;">
-                                <tr>
-                                <td style="width:50%;vertical-align:middle">
-                                  <canvas id='captchaCanvas' width="100" height="30" style="background:#ffffff"></canvas>
-                                </td>
-
-                                <td style="width:50%;vertical-align:middle;text-align:right">
-                                  <input type="text" id="txt-captcha" placeholder="Captcha code" maxlength="6" style="width: 90%;">
-                                </td>
-                                </tr>
+                                    <tr>
+                                        <td style="width:50%;vertical-align:middle">
+                                            <canvas id='captchaCanvas' width="100" height="30" style="background:#ffffff"></canvas>
+                                        </td>
+                                        <td style="width:50%;vertical-align:middle;text-align:right">
+                                            <input type="text" id="txt-captcha" placeholder="Captcha code" maxlength="6" style="width: 90%;">
+                                        </td>
+                                    </tr>
                                 </table>
                             </div>
-
                             <div class="form-group text-center m-t-20">
                                 <div class="col-sm-8 pull-left">
                                     <a href="/forgot-password" class="text-muted pull-left m-t-5"><i class="fa fa-lock m-r-5"></i> Forgot your password?</a>
@@ -76,17 +75,23 @@
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/script/login/login.js"></script>
 <script>
-    $("#submit").click(function() {
-            jQuery.ajax({
-              url: "../post/login",
-              type: "post",
-              dataType: 'json',
-              cache : false,
-              contentType: "application/json; charset=utf-8",
-              data: JSON.stringify( {"data": {"username" : $('#username').val(), "password":$('#password').val(),"shortname":$('#shortname').val()}} ),
-              success: function(msg) {
-                  window.location = msg
-              }
-          });
+$("#submit").click(function() {
+    jQuery.ajax({
+        url: "../post/login",
+        type: "post",
+        dataType: 'json',
+        cache: false,
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify({
+            "data": {
+                "username": $('#username').val(),
+                "password": $('#password').val(),
+                "shortname": $('#shortname').val()
+            }
+        }),
+        success: function(msg) {
+            window.location = msg
+        }
     });
+});
 </script>

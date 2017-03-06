@@ -88,6 +88,7 @@ CREATE TABLE `tbl_legal_entities` (
   UNIQUE KEY(`legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_legal_entity_domains` (
+  `le_domain_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `activation_date` timestamp NULL DEFAULT NULL,
@@ -113,6 +114,7 @@ CREATE TABLE `tbl_categories` (
   UNIQUE KEY(`category_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_configuration` (
+  `cn_config_id` int(11) NOT NULL,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -141,6 +143,7 @@ CREATE TABLE `tbl_units` (
   UNIQUE KEY(`unit_id`, `client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_units_organizations` (
+  `unit_org_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `organisation_id` int(11) DEFAULT NULL,
@@ -183,11 +186,11 @@ CREATE TABLE `tbl_client_compliances` (
   `domain_id` int(11) DEFAULT NULL,
   `statutory_name` varchar(150) DEFAULT NULL,
   `statutory_applicable_status` tinyint(4) DEFAULT '0',
-  `statutory_opted_status` tinyint(4) DEFAULT '0',
+  `statutory_opted_status` tinyint(4) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   `compliance_id` int(11) NOT NULL,
   `compliance_applicable_status` tinyint(4) DEFAULT '0',
-  `compliance_opted_status` tinyint(4) DEFAULT '0',
+  `compliance_opted_status` tinyint(4) DEFAULT NULL,
   `not_opted_remarks` varchar(500) DEFAULT NULL,
   `opted_by` int(11) DEFAULT NULL,
   `opted_on` timestamp NULL DEFAULT NULL,
@@ -199,7 +202,7 @@ CREATE TABLE `tbl_client_compliances` (
   `submitted_by` int(11) DEFAULT NULL,
   `submitted_on` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`client_compliance_id`),
-  UNIQUE KEY(`unit_id`, `domain_id`, `compliance_id`)
+  UNIQUE KEY(`client_compliance_id`, `legal_entity_id`, `unit_id`, `domain_id`, `compliance_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_client_statutories`(
     `client_statutory_id` int(11) NOT NULL,
@@ -248,30 +251,35 @@ CREATE TABLE `tbl_notifications_log` (
   `extra_details` longtext,
   `created_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE tbl_notifications_user_log(
+  `notification_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `read_status` tinyint(4) DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_service_providers` (
   `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,
   `service_provider_name` varchar(50) NOT NULL,
-  `address` varchar(500) DEFAULT NULL,
-  `short_name` varchar(20) DEFAULT NULL,
-  `contract_from` date DEFAULT NULL,
-  `contract_to` date DEFAULT NULL,
-  `contact_person` varchar(50) DEFAULT NULL,
-  `contact_no` varchar(20) DEFAULT NULL,
-  `mobile_no` varchar(20) DEFAULT NULL,
+  `short_name` varchar(20) NOT NULL,
+  `contract_from` date NOT NULL,
+  `contract_to` date NOT NULL,
+  `contact_person` varchar(50) NOT NULL,
+  `contact_no` varchar(20) NOT NULL,
   `email_id` varchar(100) NOT NULL,
-  `is_active` tinyint(1) DEFAULT '1',
+  `mobile_no` varchar(20) DEFAULT NULL,
+  `address` varchar(500) DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `status_changed_by` int(11) DEFAULT NULL,
   `status_changed_on` timestamp NULL DEFAULT NULL,
-  `is_blocked` tinyint(1) DEFAULT '0',
+  `is_blocked` tinyint(1) NOT NULL DEFAULT '0',
   `blocked_by` int(11) DEFAULT NULL,
   `blocked_on` timestamp NULL DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_on` timestamp NULL DEFAULT NULL,
-  `updated_by` int(11) DEFAULT NULL,
-  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `created_by` int(11) NOT NULL,
+  `created_on` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_by` int(11) NOT NULL,
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`service_provider_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) NOT NULL,
@@ -285,11 +293,17 @@ CREATE TABLE `tbl_users` (
   `employee_code` varchar(50) DEFAULT NULL,
   `contact_no` varchar(20) DEFAULT NULL,
   `mobile_no` varchar(20) DEFAULT NULL,
+  `is_service_provider` tinyint(4) DEFAULT '0',
   `is_active` tinyint(4) DEFAULT '1',
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`user_id`),
   CONSTRAINT `category_fk2` FOREIGN KEY (`user_category_id`) REFERENCES `tbl_user_category` (`user_category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_user_legal_entities` (
+  `user_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  UNIQUE KEY (`user_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_user_domains` (
   `user_id` int(11) NOT NULL,
@@ -347,7 +361,6 @@ CREATE TABLE `tbl_compliance_dates_history` (
   `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_assign_compliances` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -369,6 +382,7 @@ CREATE TABLE `tbl_assign_compliances` (
   `trigger_before_days` int(11) DEFAULT NULL,
   `due_date` date DEFAULT NULL,
   `validity_date` date DEFAULT NULL,
+  `is_active` tinyint(4) DEFAULT '1',
   CONSTRAINT `legalentity_fk1` FOREIGN KEY (`legal_entity_id`) REFERENCES `tbl_legal_entities` (`legal_entity_id`),
   CONSTRAINT `country_fk2` FOREIGN KEY (`country_id`) REFERENCES `tbl_countries` (`country_id`),
   CONSTRAINT `domain_fk3` FOREIGN KEY (`domain_id`) REFERENCES `tbl_domains` (`domain_id`),
@@ -415,6 +429,7 @@ CREATE TABLE `tbl_compliance_history` (
   `approve_status` varchar(20) DEFAULT NULL,
   `approved_by` int(11) NOT NULL,
   `approved_on` datetime DEFAULT NULL,
+  `current_status` tinyint(4) DEFAULT '0',
   PRIMARY KEY (`compliance_history_id`),
   CONSTRAINT `ch_unit_fk11` FOREIGN KEY (`unit_id`) REFERENCES `tbl_units` (`unit_id`),
   CONSTRAINT `ch_compliance_fk12` FOREIGN KEY (`compliance_id`) REFERENCES `tbl_compliances` (`compliance_id`),
@@ -437,44 +452,42 @@ CREATE TABLE `tbl_compliance_activity_log` (
   `unit_id` int(11) DEFAULT NULL,
   `compliance_id` int(11) DEFAULT NULL,
   `compliance_history_id` int(11) DEFAULT NULL,
-  `activity_date` date DEFAULT NULL,
+  `activity_by` int(11) DEFAULT NULL,
   `activity_on` timestamp NULL DEFAULT NULL,
+  `action` varchar(500) DEFAULT NULL,
   `remarks` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`compliance_activity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_status_chart_unitwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
-  `complied` int(11) DEFAULT NULL,
-  `delayed` int(11) DEFAULT NULL,
-  `inprogress` int(11) DEFAULT NULL,
-  `overdue` int(11) DEFAULT NULL,
+  `complied_count` int(11) DEFAULT NULL,
+  `delayed_count` int(11) DEFAULT NULL,
+  `inprogress_count` int(11) DEFAULT NULL,
+  `overdue_count` int(11) DEFAULT NULL,
   `chart_year` int(11) DEFAULT NULL,
   `month_from` int(11) DEFAULT NULL,
   `month_to` int(11) DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`, `chart_year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_status_chart_userwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `complied` int(11) DEFAULT NULL,
-  `delayed` int(11) DEFAULT NULL,
-  `inprogress` int(11) DEFAULT NULL,
-  `overdue` int(11) DEFAULT NULL,
+  `complied_count` int(11) DEFAULT NULL,
+  `delayed_count` int(11) DEFAULT NULL,
+  `inprogress_count` int(11) DEFAULT NULL,
+  `overdue_count` int(11) DEFAULT NULL,
   `chart_year` int(11) DEFAULT NULL,
   `month_from` int(11) DEFAULT NULL,
   `month_to` int(11) DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`, `user_id`, `chart_year`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_notcomplied_chart_unitwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -486,7 +499,6 @@ CREATE TABLE `tbl_notcomplied_chart_unitwise` (
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_notcomplied_chart_userwise` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -499,7 +511,6 @@ CREATE TABLE `tbl_notcomplied_chart_userwise` (
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_compliance_applicability_chart` (
-  `client_id` int(11) NOT NULL,
   `legal_entity_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -510,7 +521,7 @@ CREATE TABLE `tbl_compliance_applicability_chart` (
   `opted_count` int(11) DEFAULT NULL,
   UNIQUE KEY(`legal_entity_id`, `country_id`, `domain_id`, `unit_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-CREATE TABLE `tbl_calender_view` (
+CREATE TABLE `tbl_calendar_view` (
   `legal_entity_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `year` int(11) NOT NULL,
@@ -526,6 +537,20 @@ CREATE TABLE `tbl_validity_date_settings` (
   `domain_id` int(11) NOT NULL,
   `days` int(11) NOT NULL,
   PRIMARY KEY (`validity_date_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE `tbl_reminder_settings` (
+  `client_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) NOT NULL,
+  `two_levels_of_approval` tinyint(1) DEFAULT '1',
+  `assignee_reminder` int(11) DEFAULT '7',
+  `escalation_reminder_in_advance` int(11) DEFAULT '7',
+  `escalation_reminder` int(11) DEFAULT '7',
+  `reassign_service_provider` int(11) DEFAULT '7',
+  `created_by` int(11) DEFAULT NULL,
+  `created_on` timestamp NULL DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_on` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  UNIQUE KEY(`client_id`, `legal_entity_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 insert into tbl_audit_log values(0, 0);
 INSERT INTO tbl_user_category VALUES(1, "Group Admin");
@@ -548,3 +573,7 @@ INSERT INTO tbl_compliance_frequency VALUES(2, "Periodical");
 INSERT INTO tbl_compliance_frequency VALUES(3, "Review");
 INSERT INTO tbl_compliance_frequency VALUES(4, "Flexi Review");
 INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
+INSERT INTO tbl_notification_types VALUES(1, "Notification");
+INSERT INTO tbl_notification_types VALUES(2, "Reminder");
+INSERT INTO tbl_notification_types VALUES(3, "Escalation");
+INSERT INTO tbl_notification_types VALUES(4, "Messages");

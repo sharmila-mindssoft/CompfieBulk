@@ -318,6 +318,13 @@ class ClientDBBase(object):
         if values :
             self.bulk_insert(db_cur, 'tbl_business_groups', columns, values)
 
+    def save_reminder_settings(self, db_cur, le_id, client_id):
+        columns = ["client_id", "legal_entity_id"]
+        values = [(client_id, le_id)]
+        if values :
+            self.bulk_insert(db_cur, 'tbl_reminder_settings', columns, values)
+
+
 class ClientGroupDBCreate(ClientDBBase):
     def __init__(
         self, db, client_id, short_name, email_id, database_ip, database_port,
@@ -361,6 +368,7 @@ class ClientGroupDBCreate(ClientDBBase):
             self._create_tables(db_cursor)
             logger.logGroup("_create_database", "table create success")
 
+            self._create_trigger(db_cursor)
             self._create_admin_user(db_cursor)
             logger.logGroup("_create_database", "admin create success")
             # self._create_procedure(db_cursor)
@@ -422,71 +430,49 @@ class ClientGroupDBCreate(ClientDBBase):
 
     def _create_trigger(self, cursor):
         try:
-            t1 = "CREATE TRIGGER " + \
-                " `after_tbl_statutory_notifications_units_insert` " + \
-                " AFTER INSERT ON `tbl_statutory_notifications_units` " + \
+
+            t1 = "CREATE TRIGGER `after_tbl_legal_entity_insert` AFTER INSERT ON `tbl_legal_entities` " + \
                 " FOR EACH ROW BEGIN " + \
-                " INSERT INTO tbl_statutory_notification_status ( " + \
-                " statutory_notification_id, " + \
-                " user_id, read_status) " + \
-                " SELECT NEW.statutory_notification_id, t1.user_id, 0 " + \
-                " FROM tbl_user_units t1 where t1.unit_id = NEW.unit_id; " + \
-                " INSERT INTO tbl_statutory_notification_status ( " + \
-                " statutory_notification_id, " + \
-                " user_id, read_status) " + \
-                " SELECT NEW.statutory_notification_id, t1.user_id, 0  " + \
-                " FROM tbl_users t1 where t1.is_active = 1 " + \
-                " and t1.is_primary_admin = 1;" + \
+                "  INSERT INTO tbl_le_replication_status(legal_entity_id) values(new.legal_entity_id); " + \
+                " INSERT INTO tbl_reminder_settings(client_id, legal_entity_id) select client_id, new.legal_entity_id from " + \
+                " tbl_client_groups ;" + \
                 " END; "
             cursor.execute(t1)
-            t2 = " CREATE TRIGGER `after_tbl_units_insert` AFTER " + \
-                " INSERT ON `tbl_units` " + \
+
+            t2 = " CREATE TRIGGER `after_tbl_user_legal_entities_insert` AFTER INSERT ON `tbl_user_legal_entities` " + \
                 " FOR EACH ROW BEGIN " + \
-                " CALL procedure_to_update_version('unit'); " + \
+                " INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action) " + \
+                " values(new.legal_entity_id, new.user_id, 1) on duplicate key update s_action = 1; " + \
+                " UPDATE tbl_le_replication_status set user_data = 1 where legal_entity_id = new.legal_entity_id; " + \
                 " END; "
             cursor.execute(t2)
-            t3 = "CREATE TRIGGER `after_tbl_units_update` " + \
-                " AFTER UPDATE ON `tbl_units` " + \
+
+            t3 = "CREATE TRIGGER `after_tbl_user_legal_entities_delete` AFTER DELETE ON `tbl_user_legal_entities` " + \
                 " FOR EACH ROW BEGIN " + \
-                " CALL procedure_to_update_version('unit'); " + \
+                " if old.user_id is not null then " + \
+                " INSERT INTO tbl_le_user_replication_status(legal_entity_id, user_id, s_action) " + \
+                " values(old.legal_entity_id, old.user_id, 3) on duplicate key update s_action = 3; " + \
+                " UPDATE tbl_le_replication_status set user_data = 1 where legal_entity_id = old.legal_entity_id; " + \
+                " end if; " + \
                 " END; "
             cursor.execute(t3)
-            t4 = "CREATE TRIGGER `after_tbl_users_update` " + \
-                " AFTER UPDATE ON `tbl_users` " + \
+
+            t4 = "CREATE TRIGGER `after_tbl_service_providers_insert` AFTER INSERT ON `tbl_service_providers` " + \
                 " FOR EACH ROW BEGIN " + \
-                " CALL procedure_to_update_version('user'); " + \
-                " END; "
+                " insert into tbl_le_provider_replication_status(legal_entity_id, provider_id, s_action) " + \
+                " select legal_entity_id, new.service_provider_id, 1 from tbl_legal_entities on duplicate key update s_action = 1; " + \
+                " UPDATE tbl_le_replication_status set provider_data = 1 ; " + \
+                " END ;"
             cursor.execute(t4)
-            t5 = "CREATE TRIGGER `after_tbl_users_insert` " + \
-                " AFTER INSERT ON `tbl_users` " + \
+
+            t5 = "CREATE TRIGGER `after_tbl_service_providers_update` AFTER UPDATE ON `tbl_service_providers` " + \
                 " FOR EACH ROW BEGIN " + \
-                " CALL procedure_to_update_version('user'); " + \
-                " END; "
+                " insert into tbl_le_provider_replication_status(legal_entity_id, provider_id, s_action) " + \
+                " select legal_entity_id, new.service_provider_id, 1 from tbl_legal_entities on duplicate key update s_action = 1; " + \
+                " UPDATE tbl_le_replication_status set provider_data = 1 ; " + \
+                " END ;"
             cursor.execute(t5)
-            t6 = "CREATE TRIGGER `after_tbl_compliance_history_insert` " + \
-                " AFTER INSERT ON `tbl_compliance_history` " + \
-                " FOR EACH ROW BEGIN " + \
-                " CALL procedure_to_update_version('history'); " + \
-                " END; "
-            cursor.execute(t6)
-            t7 = "CREATE TRIGGER `after_tbl_compliance_history_update` " + \
-                " AFTER UPDATE ON `tbl_compliance_history` " + \
-                " FOR EACH ROW BEGIN " + \
-                " CALL procedure_to_update_version('history'); " + \
-                " END; "
-            cursor.execute(t7)
-            t8 = "CREATE TRIGGER `after_tbl_client_compliances_update` " + \
-                " AFTER UPDATE ON `tbl_client_compliances` " + \
-                " FOR EACH ROW BEGIN " + \
-                " CALL procedure_to_update_version('compliance'); " + \
-                " END; "
-            cursor.execute(t8)
-            t9 = "CREATE TRIGGER `after_tbl_client_compliances_insert` " + \
-                " AFTER INSERT ON `tbl_client_compliances` " + \
-                " FOR EACH ROW BEGIN " + \
-                " CALL procedure_to_update_version('compliance'); " + \
-                " END; "
-            cursor.execute(t9)
+
         except Exception, e:
             logger.logGroup("_create_trigger", str(e))
             logger.logGroup("_create_trigger", "failed")
@@ -552,7 +538,9 @@ class ClientLEDBCreate(ClientDBBase):
 
             self._create_tables(db_cursor)
             logger.logGroup("_create_database", "table create success")
-
+            self._create_admin_user(db_cursor)
+            self._create_le_trigger(db_cursor)
+            self.save_reminder_settings(db_cursor, self._legal_entity_id, self._client_id)
             db_con.commit()
             return (True, self._db_name, self._db_username, self._db_password)
         except Exception, e:
@@ -566,6 +554,19 @@ class ClientLEDBCreate(ClientDBBase):
             if not self._is_db_failed :
                 self.delete_database()
             raise Exception(e)
+
+    def _create_le_trigger(self, cursor):
+        t6 = "CREATE TRIGGER `tbl_statutory_notifications_insert` AFTER INSERT ON `tbl_statutory_notifications` " + \
+                " FOR EACH ROW BEGIN " + \
+                "   SET @notificationid = NEW.notification_id; " + \
+                " INSERT INTO tbl_statutory_notifications_users ( " + \
+                " notification_id, user_id, is_read) " + \
+                " select @notificationid, t1.user_id, 0 from tbl_users as t1 " + \
+                " left join tbl_user_domains as t3 on t1.user_id = t3.user_id " + \
+                " left join tbl_compliances as t2 " + \
+                " on t3.domain_id = t2.domain_id and t2.compliance_id = new.compliance_id;" + \
+                " END ;"
+        cursor.execute(t6)
 
     def _save_master_info(self):
         args = [self._client_id, self._legal_entity_id]

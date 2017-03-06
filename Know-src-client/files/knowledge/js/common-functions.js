@@ -130,6 +130,10 @@ function isNumbers(inputElm) {
   //allowed => only numbers
   return inputElm.val().replace(/[^0-9]/gi, '');
 }
+function isNumbersWithDot(inputElm) {
+  //allowed => only numbers
+  return inputElm.val().replace(/[^0-9.]/gi, '');
+}
 function isNonZeroNumbers(inputElm) {
   //allowed => only numbers
   return inputElm.val().replace(/[^0-9]/gi, '');
@@ -1094,13 +1098,13 @@ function commonAutoComplete1(
                                   dresult = true;
                               }
                           }
-                          
+
                       }
                       if(cresult && dresult){
                           condition_result = true;
                       }else{
                           condition_result = false;
-                      } 
+                      }
                       /*var cresult = false;
                       var dresult = false;
                       for(var j=0; j<list_val[i][value].length; j++){

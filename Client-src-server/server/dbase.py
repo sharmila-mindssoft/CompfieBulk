@@ -1,6 +1,7 @@
 # from flaskext.mysql import MySQL
+import mysql.connector
 import logger
-from server.common import (convert_to_dict, get_date_time)
+from server.common import (convert_to_dict, get_date_time, encrypt)
 from server.exceptionmessage import fetch_error, process_procedure_error
 
 class BaseDatabase(object):
@@ -105,12 +106,16 @@ class Database(object):
          12: 31,
     }
 
-    # def dbConfig(self, app):
-    #     app.config['MYSQL_DATABASE_USER'] = self._mysqlUser
-    #     app.config['MYSQL_DATABASE_PASSWORD'] = self._mysqlPassword
-    #     app.config['MYSQL_DATABASE_DB'] = self._mysqlDatabase
-    #     app.config['MYSQL_DATABASE_HOST'] = self._mysqlHost
-    #     mysql.init_app(app)
+    @classmethod
+    def make_connection(self, data):
+        return mysql.connector.connect(
+            autocommit=False,
+            user=data.db_username,
+            password=data.db_password,
+            host=data.db_ip.ip_address,
+            database=data.db_name,
+            port=data.db_ip.port
+        )
 
     ########################################################
     # To Redirect Requests to Functions
@@ -144,7 +149,7 @@ class Database(object):
     ########################################################
     def close(self):
         assert self._connection is not None
-        self._cursor.close()
+        # self._cursor.close()
         self._connection.close()
         self._connection = None
 
@@ -287,8 +292,8 @@ class Database(object):
             return res
         except Exception, e:
             print e
-            # print query
-            # print param
+            #print query
+            #print param
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
             raise fetch_error()
@@ -567,7 +572,7 @@ class Database(object):
                 query += column+" = %s "
 
         query += " WHERE " + condition
-        # print query
+        # print query, values
         try:
             status = self.execute(query, values)
             return status
@@ -602,7 +607,7 @@ class Database(object):
                 query += "%s = VALUES(%s)," % (updateColumn, updateColumn)
             else:
                 query += "%s = VALUES(%s)" % (updateColumn, updateColumn)
-        print query
+        # print query
         return self.execute(query)
 
     ########################################################
@@ -711,6 +716,8 @@ class Database(object):
         column = ["user_category_id, client_id"]
         condition_val = "user_id= %s" % user_id
         rows = self.get_data(tblUsers, column, condition_val)
+        print '-------------'
+        print rows
         client_id = rows[0]["client_id"]
         category_id = rows[0]["user_category_id"]
         query = " INSERT INTO tbl_activity_log " + \
@@ -895,3 +902,17 @@ class Database(object):
         m2 = "INSERT INTO tbl_message_users (message_id, user_id) values (%s, %s)"
         for u in user_ids :
             self.execute(m2 , [msg_id, u])
+
+    ##########################################################
+    #  verify password
+    ##########################################################
+
+    def verify_password(db, user_id, password):
+        ec_password = encrypt(password)
+        q = "SELECT username from tbl_user_login_details where user_id = %s and password = %s"
+        #print q
+        data_list = db.select_one(q, [user_id, ec_password])
+        if data_list is None:
+            return False
+        else:
+            return True

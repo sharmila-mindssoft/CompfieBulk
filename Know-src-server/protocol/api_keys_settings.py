@@ -347,6 +347,15 @@ api_params = {
     "file_server_name": {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "file_servers": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "FileServerList"},
 
+    "old_grp_app_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "old_grp_db_s_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "old_le_db_s_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "old_le_f_s_id": {'type': 'INT', 'length': 100000, 'validation_method': None, 'is_optional': True},
+    "new_cl_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    "new_grp_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    "new_le_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    "new_le_f_s_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+
     "client_dbs": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientDatabase"},
     "client_groups": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "ClientGroup"},
     "client_legal_entities": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'consoleadmin', "class_name": "LegalEntity"},
@@ -487,6 +496,7 @@ api_params = {
     "compliances_applicablity_status": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "SaveComplianceStatus"},
     "level_1_statutory_wise_compliances": {},
     "assigned_statutories": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignedStatutories"},
+    "assigned_statutories_approve": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "AssignedStatutoriesApprove"},
     "unit_code_with_name": {'type': 'TEXT', 'length': 150, 'validation_method': None, 'is_optional': False},
     "submission_status": {'type': 'INT', 'length': 4, 'validation_method': None, 'is_optional': True},
     "s_s": {'type': 'INT', 'length': 5, 'validation_method': None, 'is_optional': True},

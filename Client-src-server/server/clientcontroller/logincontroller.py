@@ -16,7 +16,7 @@ from server.clientdatabase.general import (
     verify_username,
     validate_reset_token, update_password, delete_used_token,
     remove_session, update_profile, verify_password, get_user_name_by_id,
-    get_user_forms, get_forms_by_category, get_legal_entity_info, get_country_info
+    get_user_forms, get_forms_by_category, get_legal_entity_info, get_country_info, get_themes
     )
 from server.exceptionmessage import client_process_error
 from server.clientcontroller.corecontroller import process_user_forms
@@ -34,6 +34,8 @@ __all__ = [
 def process_login_request(
     request, db, company_id, session_user_ip
 ):
+    print "process_login_request============================="
+
     if type(request) is clientlogin.Login:
         logger.logClientApi("Login", "begin")
         result = process_login(db, request, company_id, session_user_ip)
@@ -55,7 +57,7 @@ def process_login_request(
 
     elif type(request) is clientlogin.ChangePassword:
         logger.logClientApi("ResetPassword", "begin")
-        result = process_change_password(db, request)
+        result = process_change_password(db, company_id, request)
         logger.logClientApi("ResetPassword", "end")
 
     elif type(request) is clientlogin.Logout:
@@ -67,6 +69,18 @@ def process_login_request(
         logger.logClientApi("UpdateUserProfile", "begin")
         result = process_update_profile(db, request)
         logger.logClientApi("UpdateUserProfile", "end")
+
+    elif type(request) is clientlogin.CheckRegistrationToken:
+        print "login-controller>>72"
+        result = process_validate_rtoken(db, request)
+
+    elif type(request) is clientlogin.SaveRegistration:
+        result = process_save_logindetails(db, request)
+
+    elif type(request) is clientlogin.CheckUsername:
+        result = process_check_username(db, request)
+
+    
 
     return result
 
@@ -239,6 +253,7 @@ def user_login_response(db, data, client_id, ip):
     user_group_name = data["user_group_name"]
     le_info = get_legal_entity_info(db, user_id, cat_id)
     c_info = get_country_info(db, user_id, cat_id)
+    theme = get_themes(db, user_id)
 
     if len(le_info) == 0:
         return clientlogin.LegalEntityNotAvailable()
@@ -254,7 +269,7 @@ def user_login_response(db, data, client_id, ip):
     return clientlogin.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
-        client_id, username, mobile_no, le_info, c_info
+        client_id, username, mobile_no, le_info, c_info, theme
     )
 
 
@@ -326,13 +341,19 @@ def process_reset_password(db, request):
         return clientlogin.InvalidResetToken()
 
 
-def process_change_password(db, request):
+def process_change_password(db, company_id, request):
     client_info = request.session_token.split("-")
+
+    # session_token = "%s-%s" % (
+    #     client_info[0], client_info[2]
+    # )
     session_token = "%s-%s" % (
-        client_info[0], client_info[2]
+        company_id, client_info[2]
     )
+    print session_token
     # client_id = int(client_info[0])
-    session_user = db.validate_session_token(session_token)
+    user_details = db.validate_session_token(session_token)
+    session_user = int(user_details[0])
     if verify_password(db, request.current_password, session_user):
         update_password(db, request.new_password, session_user)
         return clientlogin.ChangePasswordSuccess()
@@ -355,3 +376,41 @@ def process_update_profile(db, request):
     session_user = db.validate_session_token(session_token)
     update_profile(db, request.contact_no, request.address, session_user)
     return clientlogin.UpdateUserProfileSuccess(request.contact_no, request.address)
+
+#############################################################################
+# Check Registration Token Valid
+#############################################################################
+def process_validate_rtoken(db, request):
+    token = request.reset_token
+    if validate_email_token(db, token):
+        captcha_text = generate_random(CAPTCHA_LENGTH)
+        return clientlogin.CheckRegistrationTokenSuccess(captcha_text)
+    else:
+        return clientlogin.InvalidSessionToken()
+#############################################################################
+# Check Registration Token Valid
+#############################################################################
+def process_save_logindetails(db, request):
+    username = request.username
+    password = request.password
+    # duplication username validation
+    if check_username_duplicate(db, username) is False:
+        return clientlogin.UsernameAlreadyExists()
+    else:
+        encrypt_password = encrypt(password)
+        token = request.token
+        if save_login_details(db, token, username, encrypt_password):
+            return clientlogin.SaveRegistrationSuccess()
+        else:
+            return clientlogin.InvalidSessionToken()
+#############################################################################
+# Check Registration Token Valid
+#############################################################################
+def process_check_username(db, request):
+    uname = request.username
+
+    if check_username_duplicate(db, uname):
+        return clientlogin.CheckUsernameSuccess()
+    else :
+        return clientlogin.UsernameAlreadyExists()
+

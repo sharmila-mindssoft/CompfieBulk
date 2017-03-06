@@ -2,10 +2,12 @@
 var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
+var filterCountryName = $(".filter-country-name");
 
 var legalEntity = $("#legal-entity");
 var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
+var filterLegalEntityName = $(".filter-legal-entity-name");
 
 var domain = $("#domain");
 var domainId = $("#domain-id");
@@ -41,9 +43,14 @@ var domainName = $("#domain-name");
 var reportTableTbody = $("#report-table-tbody");
 var template = $("#template");
 var reportTable = $("#report-table");
-var totalRecord = $("#total-record");
-var treeShowHide = $(".row-three");
 var REPORT = null;
+
+var ItemsPerPage = $('#items_per_page');
+var PaginationView = $('.pagination-view');
+var Pagination = $('#pagination-rpt');
+var CompliacneCount = $('.compliance_count');
+var on_current_page = 1;
+var f_count = 0;
 
 function PageControls() {
     // To call date picker function. assign to date field 
@@ -66,11 +73,11 @@ function PageControls() {
     //when click the country text box to initiate auto complete to display & get values from object 
     country.keyup(function(e) {
         var text_val = country.val().trim();
-        var countryList = REPORT._countries;
+        var countryList = REPORT._entities;
         if (countryList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+            displayMessage(message.country_required);
+        var condition_fields = [];
+        var condition_values = [];
         // to call auto complete common function to required variable to pass
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             // on success to return the ID and value  
@@ -82,7 +89,7 @@ function PageControls() {
         var text_val = legalEntity.val().trim();
         var legalEntityList = REPORT._entities;
         if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
+            displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
@@ -93,6 +100,8 @@ function PageControls() {
     domain.keyup(function(e) {
         var text_val = domain.val().trim();
         var domainList = REPORT._domains;
+        if (domainList.length == 0 && text_val != '')
+            displayMessage(message.domain_required);
         var condition_fields = ["is_active", "le_id"];
         var condition_values = [true, legalEntityId.val()];
         commonAutoComplete(e, acDomain, domainId, text_val, domainList, "d_name", "d_id", function(val) {
@@ -104,7 +113,7 @@ function PageControls() {
         var text_val = unit.val().trim();
         var unitList = REPORT._units;
         if (unitList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
+            displayMessage(message.unit_required);
         var condition_fields = ["d_ids"];
         var condition_values = [domainId.val()];
         commonAutoComplete(e, acUnit, unitId, text_val, unitList, "unit_name", "unit_id", function(val) {
@@ -115,8 +124,6 @@ function PageControls() {
     act.keyup(function(e) {
         var text_val = act.val().trim();
         var actList = REPORT._acts;
-        if (actList.length == 0)
-            displayMessage(message.act_required);
         var condition_fields = ["d_id"];
         var condition_values = [domainId.val()];
         commonAutoComplete(e, acAct, actId, text_val, actList, "act", "act", function(val) {
@@ -127,8 +134,6 @@ function PageControls() {
     complianceTask.keyup(function(e) {
         var text_val = complianceTask.val().trim();
         var complianceTaskList = REPORT._compliance_task;
-        if (complianceTaskList.length == 0)
-            displayMessage(message.complianceTask_required);
         var condition_fields = ["d_id"];
         var condition_values = [domainId.val()];
         commonAutoComplete(e, acComplianceTask, complianceTaskId, text_val, complianceTaskList, "c_task", "compliance_id", function(val) {
@@ -147,47 +152,30 @@ function PageControls() {
     });
 
     showButton.click(function() {
-        if (REPORT.validate()) {
-            reportView.show();
-            showAnimation(reportView);
-            var c_id = parseInt(countryId.val());
-            var le_id = parseInt(legalEntityId.val());
-            var d_id = parseInt(domainId.val());
-            var u_id = parseInt(unitId.val());
-            if (!u_id) u_id = null
-            var act = actId.val();
-            if (!act) act = null
-            var compliance_task_id = parseInt(complianceTaskId.val());
-            if (!compliance_task_id) compliance_task_id = null
-            var usr_id = parseInt(usersId.val());
-            if (!usr_id) usr_id = null
-            var from_date = fromDate.val();
-            var to_date = toDate.val();
-            var csv = false;
-            REPORT.fetchReportValues(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, csv);
-        }
+        var csv = false;
+        on_current_page = 1;
+        processSubmit(csv);
     });
 
     exportButton.click(function() {
-        if (REPORT.validate()) {
-            var c_id = parseInt(countryId.val());
-            var le_id = parseInt(legalEntityId.val());
-            var d_id = parseInt(domainId.val());
-            var u_id = parseInt(unitId.val());
-            if (!u_id) u_id = null
-            var act = actId.val();
-            if (!act) act = null
-            var compliance_task_id = parseInt(complianceTaskId.val());
-            if (!compliance_task_id) compliance_task_id = null
-            var usr_id = parseInt(usersId.val());
-            if (!usr_id) usr_id = null
-            var from_date = fromDate.val();
-            var to_date = toDate.val();
-            var csv = true;
-            REPORT.fetchReportValues(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, csv);
-        }
+        var csv = true;
+        processSubmit(csv);
     });
 
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        f_count = 0;
+        on_current_page = 1;
+        createPageView(t_this._total_count);
+        var csv = false;
+        processSubmit(csv);
+    });
+}
+
+processSubmit = function(csv) {
+    if (REPORT.validate()) {
+        REPORT.fetchReportValues(csv);
+    }
 }
 
 clearElement = function(arr) {
@@ -247,7 +235,6 @@ onUserAutoCompleteSuccess = function(REPORT, val) {
 }
 
 ReassignHistory = function() {
-    this._countries = []; // To declare empty array object 
     this._entities = [];
     this._domains = [];
     this._units = [];
@@ -266,8 +253,10 @@ ReassignHistory.prototype.loadSearch = function() {
 
 ReassignHistory.prototype.fetchSearchList = function() {
     t_this = this;
-    t_this._countries = client_mirror.getUserCountry();
-    t_this._entities = client_mirror.getUserLegalEntity();
+    /*var jsondata = '[{"c_id":1,"le_name":"LG Legal Entity","le_id":1,"bg_name":"LG Business Group","bg_id":1,"c_name":"India"},{"c_id":1,"le_name":"LG Legal Entity","le_id":1,"bg_name":"LG Business Group","bg_id":1,"c_name":"India"}]';
+    var object = jQuery.parseJSON(jsondata);
+    t_this._entities = object;*/
+    t_this._entities = client_mirror.getSelectedLegalEntity();
 };
 
 ReassignHistory.prototype.fetchDomainList = function(le_id) {
@@ -354,19 +343,41 @@ showAnimation = function(element) {
         });
 }
 
-ReassignHistory.prototype.fetchReportValues = function(c_id, le_id, d_id, u_id, act, compliance_task_id, users_id, from_date, to_date, csv) {
+ReassignHistory.prototype.fetchReportValues = function(csv) {
     t_this = this;
     /*var jsondata = '{"data_lists":[{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Aug-2016","assigned":"EMP0016 - Rajkumar / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Approved"},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Jun-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Assignee Re-deployed"},{"le_id":1,"c_id":1,"d_id":1,"u_id":1,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form A - Registration","due_date":"28-Aug-2016","assigned_date":"01-Jan-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":""},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form B - Annual Returns Submission","due_date":"01-Sep-2016","assigned_date":"20-Aug-2016","assigned":"EEMP0016 -Rajkumar / EMP0013 - Suresh / EMP0014 -Praveen","reason":"Role Changed"},{"le_id":1,"c_id":1,"d_id":1,"u_id":2,"u_name":"RG1034 - RG Madurai Unit - 142, North Street, Madurai-625001","l_name":"Batteries Act","compliance_task":"Form B - Annual Returns Submission","due_date":"01-Sep-2016","assigned_date":"01-Jan-2016","assigned":"EMP0011 - Murali / EMP0013 - Suresh / EMP0014 - Praveen","reason":"Assignee Re-deployed"}]}';
     var object = jQuery.parseJSON(jsondata);
     t_this._report_data = object.data_lists;*/
-    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, users_id, from_date, to_date, csv, function(error, response) {
+    var c_id = parseInt(countryId.val());
+    var le_id = parseInt(legalEntityId.val());
+    var d_id = parseInt(domainId.val());
+    var u_id = parseInt(unitId.val());
+    if (!u_id) u_id = null
+    var act = actId.val();
+    if (!act) act = null
+    var compliance_task_id = parseInt(complianceTaskId.val());
+    if (!compliance_task_id) compliance_task_id = null
+    var usr_id = parseInt(usersId.val());
+    if (!usr_id) usr_id = null
+    var from_date = fromDate.val();
+    var to_date = toDate.val();
+
+    var t_count = parseInt(ItemsPerPage.val());
+    if (on_current_page == 1) { f_count = 0 } else { f_count = (on_current_page - 1) * t_count; }
+
+    client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, function(error, response) {
         if (error == null) {
             t_this._report_data = response.reassigned_history_list;
             t_this._total_count = response.total_count;
-            if (csv == false)
+            if (csv == false) {
+                reportView.show();
+                showAnimation(reportView);
                 REPORT.showReportValues();
-            else
+                if (f_count == 0)
+                    createPageView(t_this._total_count);
+            } else {
                 REPORT.exportReportValues();
+            }
         } else {
             t_this.possibleFailures(error);
         }
@@ -386,68 +397,103 @@ ReassignHistory.prototype.showReportValues = function() {
     var actname = "";
     var complianceid = "";
     var tree = "";
-    $.each(data, function(k, v) {
-        if (unitid != v.unit_id) {
-            var cloneone = $('#template #report-table .row-one').clone();
-            $('.unit-name', cloneone).text(v.unit);
-            reportTableTbody.append(cloneone);
-            unitid = v.unit_id;
-        }
+    if(data.length > 0) {
+        $.each(data, function(k, v) {
+            if (unitid != v.unit_id) {
+                var cloneone = $('#template #report-table .row-one').clone();
+                $('.unit-name', cloneone).text(v.unit);
+                reportTableTbody.append(cloneone);
+                unitid = v.unit_id;
+            }
 
-        if (actname != v.act_name) {
-            var clonetwo = $('#template #report-table .row-two').clone();
-            $('.act-name', clonetwo).text(v.act_name);
-            reportTableTbody.append(clonetwo);
-            actname = v.act_name;
-        }
+            if (actname != v.act_name) {
+                var clonetwo = $('#template #report-table .row-two').clone();
+                $('.act-name', clonetwo).text(v.act_name);
+                reportTableTbody.append(clonetwo);
+                actname = v.act_name;
+            }
 
-        if (complianceid != v.compliance_id) {
-            j = j + 1;
-            var clonethree = $('#template #report-table .row-three').clone();
-            $('.sno', clonethree).text(j);
-            $('.compliance-task', clonethree).text(v.compliance_task);
-            $('.due-date', clonethree).text(v.due_date);
-            $('.assigned-date', clonethree).text(v.assigned_on);
-            $('.assigned', clonethree).text(v.new_user);
-            if (v.reason != "") { $('.reason', clonefour).text(v.remarks); } else { $('.reason', clonefour).text('-'); }
-            $(clonethree).on('click', function (e) {
-              treeShowHide(e, "tree"+v.compliance_id);
-            });
-            $(clonethree).attr("id","tree"+v.compliance_id);
-            reportTableTbody.append(clonethree);
-            complianceid = v.compliance_id;
-        } else {
-            if (tree == v.compliance_id) {
-                var clonefive = $('#template #report-table .row-five').clone();
-                $('.assigned-date-new', clonefive).text(v.assigned_on);
-                $('.assigned-new', clonefive).text(v.new_user);
-                $('.reason-new', clonefive).text(v.remarks);
-                if (v.reason != "") { $('.reason-new', clonefive).text(v.remarks); } else { $('.reason-new', clonefive).text('-'); }
-                $('.tree'+v.compliance_id).append(clonefive);
-            } else {
-                var clonefour = $('#template #report-table .row-four').clone();
-                $(clonefour).addClass("tree"+v.compliance_id);
-                $('.assigned-date-new', clonefour).text(v.assigned_on);
-                $('.assigned-new', clonefour).text(v.new_user);
-                $('.reason-new', clonefour).text(v.remarks);
-                if (v.reason != "") { $('.reason-new', clonefour).text(v.remarks); } else { $('.reason-new', clonefour).text('-'); }
-                reportTableTbody.append(clonefour);
+            if (complianceid != v.compliance_id) {
+                j = j + 1;
+                var clonethree = $('#template #report-table .row-three').clone();
+                $('.sno', clonethree).text(j);
+                $('.compliance-task', clonethree).text(v.compliance_task);
+                $('.due-date', clonethree).text(v.due_date);
+                $('.assigned-date', clonethree).text(v.assigned_on);
+                $('.assigned', clonethree).text(v.new_user);
+                if (v.reason != "") { $('.reason', clonethree).text(v.remarks); } else { $('.reason', clonethree).text('-'); }
+                $(clonethree).on('click', function(e) {
+                    treeShowHide(e, "tree" + v.compliance_id);
+                });
+                $(clonethree).attr("id", "tree" + v.compliance_id);
+                reportTableTbody.append(clonethree);
                 complianceid = v.compliance_id;
-                tree = v.compliance_id
+            } else {
+                if (tree == v.compliance_id) {
+                    var clonefive = $('#template #report-table .row-five').clone();
+                    $('.assigned-date-new', clonefive).text(v.assigned_on);
+                    $('.assigned-new', clonefive).text(v.new_user);
+                    $('.reason-new', clonefive).text(v.remarks);
+                    if (v.reason != "") { $('.reason-new', clonefive).text(v.remarks); } else { $('.reason-new', clonefive).text('-'); }
+                    $('.tree' + v.compliance_id + ' .tree-body').append(clonefive);
+                } else {
+                    var clonefour = $('#template #report-table .row-four').clone();
+                    $(clonefour).addClass("tree" + v.compliance_id);
+                    $('.assigned-date-new', clonefour).text(v.assigned_on);
+                    $('.assigned-new', clonefour).text(v.new_user);
+                    $('.reason-new', clonefour).text(v.remarks);
+                    if (v.reason != "") { $('.reason-new', clonefour).text(v.remarks); } else { $('.reason-new', clonefour).text('-'); }
+                    reportTableTbody.append(clonefour);
+                    tree = v.compliance_id
+                }
+                complianceid = v.compliance_id;
+            }
+        });
+        showPagePan(f_count, j, t_this._total_count);
+    } else {
+        reportTableTbody.html('<tr><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>');
+        hidePagePan();
+    }
+};
+
+treeShowHide = function(e, tree) {
+    if ($('.' + tree)) {
+        if ($('.' + tree).is(":visible") == true)
+            $('.' + tree).hide();
+        else
+            $('.' + tree).show();
+    }
+};
+
+showPagePan = function(start, end, total) {
+    var firstCount = parseInt(start) + 1;
+    var showText = 'Showing ' + firstCount + ' to ' + end + ' of ' + total + ' entries ';
+    CompliacneCount.text(showText);
+    PaginationView.show();
+};
+
+hidePagePan = function() {
+    CompliacneCount.text('');
+    PaginationView.hide();
+}
+
+createPageView = function(total_records) {
+    perPage = parseInt(ItemsPerPage.val());
+    Pagination.empty();
+    Pagination.removeData('twbs-pagination');
+    Pagination.unbind('page');
+
+    Pagination.twbsPagination({
+        totalPages: Math.ceil(total_records / perPage),
+        visiblePages: visiblePageCount,
+        onPageClick: function(event, page) {
+            cPage = parseInt(page);
+            if (parseInt(on_current_page) != cPage) {
+                on_current_page = cPage;
+                processSubmit();
             }
         }
     });
-    var total = t_this._total_count;
-    totalRecord.html(total);
-};
-
-treeShowHide = function(e, tree ) {
-    if($('.'+tree)) {
-        if($('.'+tree).is(":visible") == true)
-            $('.'+tree).hide();
-        else
-            $('.'+tree).show();
-    }
 };
 
 ReassignHistory.prototype.exportReportValues = function() {
@@ -462,6 +508,31 @@ ReassignHistory.prototype.possibleFailures = function(error) {
     }
 };
 
+ReassignHistory.prototype.loadEntityDetails = function() {
+    t_this = this;
+    if (t_this._entities.length > 1) {
+        country.parent().show();
+        filterCountryName.hide();
+
+        legalEntity.parent().show();
+        filterLegalEntityName.hide();
+    } else {
+        filterCountryName.show();
+        filterCountryName.html(t_this._entities[0]["c_name"]);
+        countryId.val(t_this._entities[0]["c_id"]);
+        country.parent().hide();
+        country.val(t_this._entities[0]["c_name"]);
+
+        filterLegalEntityName.show();
+        filterLegalEntityName.html(t_this._entities[0]["le_name"]);
+        legalEntityId.val(t_this._entities[0]["le_id"]);
+        legalEntity.parent().hide();
+        legalEntity.val(t_this._entities[0]["le_name"]);
+
+        REPORT.fetchDomainList(t_this._entities[0]["le_id"]);
+    }
+};
+
 // call class ReassignHistory to store the REPORT object
 REPORT = new ReassignHistory();
 
@@ -470,5 +541,6 @@ $(document).ready(function() {
     PageControls();
     // To store values in object & search list element 
     REPORT.loadSearch();
-
+    REPORT.loadEntityDetails();
+    loadItemsPerPage();
 });

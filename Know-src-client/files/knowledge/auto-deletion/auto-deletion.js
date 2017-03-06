@@ -25,6 +25,10 @@ var client_map = {};
 var unit_map = {};
 */
 function initialize(type_of_form){
+    $(".tbody-unit-list").empty();
+    btnSubmit.hide();
+    $(".unit-view").hide();
+
     showPage(type_of_form);
     clearFields();
     if(type_of_form == "list"){
@@ -53,12 +57,6 @@ function generateMaps(){
     $.each(CLIENT_GROUPS, function(key, value){
         client_map[value.client_id] = value.group_name
     });
-    /*$.each(LEGAL_ENTITIES, function(key, value){
-        entity_map[value.legal_entity_id] = value.legal_entity_name
-    });
-    $.each(UNITS, function(key, value){
-        unit_map[value.unit_id] = value.unit_code + " - " + value.unit_name
-    })*/
 }
 
 function showPage(type_of_form){
@@ -214,7 +212,8 @@ function loadUnits(){
         var clone = unit_row.clone();
         $(".unit-name", clone).text("No Units Found");
         $(".unit-deletion-period", clone).hide();
-        $(".tbody-unit-list").append(clone);    
+        $(".tbody-unit-list").append(clone); 
+        btnSubmit.hide();   
     }
 }
 
@@ -223,14 +222,13 @@ function validate(){
     deletion_details = [];
     $.each(UNITS, function(key, value){
         if(value.legal_entity_id == parseInt(LegalEntity.val())){
-
             var unit_id = parseInt(value.unit_id);
-            var deletion_period = parseInt($("#dp_"+value.unit_id).val());
-
-            if(deletion_period == '' || deletion_period == '0'){
+            if($("#dp_"+value.unit_id).val() == '' || $("#dp_"+value.unit_id).val() == '0'){
                 displayMessage(message.deletion_period_required)
                 result = false;
+                return false;
             }else{
+                var deletion_period = parseInt($("#dp_"+value.unit_id).val());
                 deletion_details.push(
                     mirror.getDeletionDetails(
                         value.client_id, value.legal_entity_id,
@@ -239,9 +237,8 @@ function validate(){
                 );
             }
         }
-        
     });
-    return result
+    return result;
 }
 
 function saveAutoDeletion(){
