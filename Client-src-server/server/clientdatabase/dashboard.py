@@ -123,12 +123,12 @@ def get_compliance_status_count(db, request, user_id, user_category):
     else :
         q = "select " + group_by_name + " as filter_name, t1.country_id, t1.domain_id, " + \
             " sum(ifnull(complied_count, 0)) as comp_count, sum(ifnull(delayed_count,0)) as delay_count, " + \
-            " sum(ifnull(inprogress_count,0)) as inp_count, sum(ifnull(overdue_count,0)) as over_count" + \
+            " sum(ifnull(inprogress_count,0)) as inp_count, sum(ifnull(overdue_count,0)) as over_count, " + \
             " chart_year " + \
             " from tbl_compliance_status_chart_userwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " where chart_year = %s and user_id = %s " + \
-            " and t1.doamin_id = %s and t1.country_id = %s"
+            " and t1.domain_id = %s and t1.country_id = %s"
         param = [
             chart_year, user_id, ",".join([str(x) for x in country_ids]),
             ",".join([str(x) for x in domain_ids])
@@ -400,12 +400,12 @@ def get_escalation_chart(db, request, user_id, user_category):
     else :
         q = "select t1.country_id, t1.domain_id, " + \
             " sum(ifnull(delayed_count,0)) as delay_count, " + \
-            " sum(ifnull(overdue_count,0)) as over_count" + \
+            " sum(ifnull(overdue_count,0)) as over_count, " + \
             " chart_year " + \
             " from tbl_compliance_status_chart_userwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " where find_in_set(chart_year, %s) and user_id = %s " + \
-            " and t1.doamin_id = %s and t1.country_id = %s"
+            " and t1.domain_id = %s and t1.country_id = %s"
         param = [
             years, user_id, ",".join([str(x) for x in country_ids]),
             ",".join([str(x) for x in domain_ids])
@@ -575,7 +575,7 @@ def get_risk_chart_count(db, request, user_id, user_category):
             " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
             " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
             " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            "  where find_in_set(t2.domain_id, %s)) as ch, " + \
+            "  and find_in_set(t2.domain_id, %s) ) as ch, " + \
             " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
             " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
             " from tbl_client_compliances as t1  " + \
@@ -583,9 +583,9 @@ def get_risk_chart_count(db, request, user_id, user_category):
             " on t1.compliance_id = t2.compliance_id  " + \
             " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
             " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            "  where find_in_set(t.domain_id, %s)) as cc)," + \
+            " and find_in_set(t1.domain_id, %s)) as cc)," + \
             " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id and t3.is_closed = 0"
-        param = [user_id, user_id, d_ids, d_ids]
+        param = [user_id, d_ids, user_id, d_ids]
 
     if filter_type_ids is not None :
         q += filter_type_ids
@@ -655,7 +655,7 @@ def get_trend_chart_drill_down(
         " (SELECT division_name FROM tbl_divisions " + \
         " where division_id = u.division_id ) as division_name, " + \
         " (SELECT category_name FROM tbl_categories " + \
-        " where category_id = u.categpry_id ) as category_name, " + \
+        " where category_id = u.category_id ) as category_name, " + \
         " concat(unit_code, '-', unit_name) as unit_name," + \
         " address, u.unit_id " + \
         " FROM tbl_compliance_history tch " + \
@@ -676,6 +676,7 @@ def get_trend_chart_drill_down(
     param.extend(where_qry_val)
     history_rows = db.select_all(query, param)
 
+    print query % tuple(param)
     trend_comp = {}
     for d in history_rows:
         print d

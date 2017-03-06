@@ -402,6 +402,7 @@ class AutoStart(Database):
     def update_unit_wise_task_status(self):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
         year = self.get_year_to_update_chart()
+        year.append(getCurrentYear() - 1)
         year.append(getCurrentYear())
         years = ",".join([str(x) for x in year])
 
@@ -430,15 +431,16 @@ class AutoStart(Database):
             " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
             " group by ccf.country_id,ccf.domain_id,ccf.month_from,ccf.month_to,ch.unit_id"
 
-        if len(self.started_unit_id) > 0 :
-            self.execute(q_delete, [years])
-            for y in year :
-                self.execute(q, [y, y, y])
+        self.execute(q_delete, [years])
+        for y in year :
+            print "y ------ ", y
+            self.execute(q, [y, y, y])
 
     def update_user_wise_task_status(self):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
         # user_ids = ",".join([str(y) for y in self.started_user_id])
         year = self.get_year_to_update_chart()
+        year.append(getCurrentYear() - 1)
         year.append(getCurrentYear())
         years = ",".join([str(x) for x in year])
 
@@ -468,10 +470,10 @@ class AutoStart(Database):
             " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
             " group by ccf.country_id,ccf.domain_id, ch.unit_id, ccf.month_from,ccf.month_to,usr.user_id "
 
-        if len(self.started_unit_id) > 0 :
-            self.execute(q_delete, [years])
-            for y in year :
-                self.execute(q, [y, y, y])
+        # if len(self.started_unit_id) > 0 :
+        self.execute(q_delete, [years])
+        for y in year :
+            self.execute(q, [y, y, y])
 
     def update_duedate_in_calendar_view(self):
         q = "insert into tbl_calendar_view(legal_entity_id, user_id, year, month, date, due_date_count) " + \
