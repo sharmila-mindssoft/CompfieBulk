@@ -2541,25 +2541,25 @@ class UpcomingCompliance(object):
     def parse_structure(data):
         data = parse_dictionary(data, [
             "compliance_name", "domain_name", "start_date",
-            "due_date", "format_file_name", "unit_name", "address",
+            "due_date", "upcoming_format_file_name", "unit_name", "address",
             "compliance_description"
         ])
         compliance_name = data.get("compliance_name")
-        compliance_name = parse_structure_CustomTextType_250(compliance_name)
+        # compliance_name = parse_structure_CustomTextType_250(compliance_name)
         domain_name = data.get("domain_name")
-        domain_name = parse_structure_CustomTextType_50(domain_name)
+        # domain_name = parse_structure_CustomTextType_50(domain_name)
         start_date = data.get("start_date")
-        start_date = parse_structure_CustomTextType_20(start_date)
+        # start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
-        format_file_name = data.get("format_file_name")
-        format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_250(format_file_name)
+        # due_date = parse_structure_CustomTextType_20(due_date)
+        format_file_name = data.get("upcoming_format_file_name")
+        # format_file_name = parse_structure_OptionalType_VectorType_CustomTextType_250(format_file_name)
         unit_name = data.get("unit_name")
-        unit_name = parse_structure_CustomTextType_100(unit_name)
+        # unit_name = parse_structure_CustomTextType_100(unit_name)
         address = data.get("address")
-        address = parse_structure_CustomTextType_500(address)
+        # address = parse_structure_CustomTextType_500(address)
         compliance_description = data.get("compliance_description")
-        compliance_description = parse_structure_CustomTextType_500(compliance_description)
+        # compliance_description = parse_structure_CustomTextType_500(compliance_description)
         return UpcomingCompliance(
             compliance_name, domain_name, start_date, due_date,
             format_file_name, unit_name, address, compliance_description
@@ -2567,14 +2567,14 @@ class UpcomingCompliance(object):
 
     def to_structure(self):
         return {
-            "compliance_name": to_structure_CustomTextType_250(self.compliance_name),
-            "domain_name": to_structure_CustomTextType_50(self.domain_name),
-            "start_date": to_structure_CustomTextType_20(self.start_date),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
-            "format_file_name": to_structure_OptionalType_VectorType_CustomTextType_250(self.format_file_name),
-            "unit_name": to_structure_CustomTextType_100(self.unit_name),
-            "address" : to_structure_CustomTextType_500(self.address),
-            "compliance_description" : to_structure_CustomTextType_500(self.compliance_description)
+            "compliance_name": self.compliance_name,
+            "domain_name": self.domain_name,
+            "start_date": self.start_date,
+            "due_date": self.due_date,
+            "upcoming_format_file_name": self.format_file_name,
+            "unit_name": self.unit_name,
+            "address" : self.address,
+            "compliance_description" : self.compliance_description
         }
 
 #
