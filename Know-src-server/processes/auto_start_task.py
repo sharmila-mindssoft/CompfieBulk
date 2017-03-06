@@ -391,11 +391,21 @@ class AutoStart(Database):
         except Exception, e :
             logProcessError("check_service_provider_contract_period %s" % self.client_id, str(e))
 
+    def get_year_to_update_chart(self):
+        q = "select chart_year from tbl_compliance_status_chart_unitwise where inprogress_count > 0"
+        rows = self.select_all(q)
+        years = []
+        for r in rows :
+            years.append(r["chart_year"])
+        return years
+
     def update_unit_wise_task_status(self):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
-        year = getCurrentYear()
+        year = self.get_year_to_update_chart()
+        year.append(getCurrentYear())
+        years = ",".join([str(x) for x in year])
 
-        q_delete = "delete from tbl_compliance_status_chart_unitwise where chart_year = %s"
+        q_delete = "delete from tbl_compliance_status_chart_unitwise where find_in_set(chart_year, %s)"
 
         q = "insert into tbl_compliance_status_chart_unitwise( " + \
             "     legal_entity_id, country_id, domain_id, unit_id,  " + \
@@ -421,15 +431,18 @@ class AutoStart(Database):
             " group by ccf.country_id,ccf.domain_id,ccf.month_from,ccf.month_to,ch.unit_id"
 
         if len(self.started_unit_id) > 0 :
-            self.execute(q_delete, [year])
-            self.execute(q, [year, year, year])
+            self.execute(q_delete, [years])
+            for y in year :
+                self.execute(q, [y, y, y])
 
     def update_user_wise_task_status(self):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
         # user_ids = ",".join([str(y) for y in self.started_user_id])
-        year = getCurrentYear()
+        year = self.get_year_to_update_chart()
+        year.append(getCurrentYear())
+        years = ",".join([str(x) for x in year])
 
-        q_delete = "delete from tbl_compliance_status_chart_userwise where chart_year = %s"
+        q_delete = "delete from tbl_compliance_status_chart_userwise where find_in_set(chart_year, %s)"
 
         q = "insert into tbl_compliance_status_chart_userwise( " + \
             "     legal_entity_id, country_id, domain_id, unit_id, user_id, " + \
@@ -456,8 +469,9 @@ class AutoStart(Database):
             " group by ccf.country_id,ccf.domain_id, ch.unit_id, ccf.month_from,ccf.month_to,usr.user_id "
 
         if len(self.started_unit_id) > 0 :
-            self.execute(q_delete, [year])
-            self.execute(q, [year, year, year])
+            self.execute(q_delete, [years])
+            for y in year :
+                self.execute(q, [y, y, y])
 
     def update_duedate_in_calendar_view(self):
         q = "insert into tbl_calendar_view(legal_entity_id, user_id, year, month, date, due_date_count) " + \
@@ -476,6 +490,8 @@ class AutoStart(Database):
         self.execute(q)
 
     def update_upcoming_in_calendar_view(self):
+        self.execute("delete from tbl_calendar_view where date < day(now())")
+
         q = "insert into tbl_calendar_view (legal_entity_id, user_id, year, month, date, upcoming_count) " + \
             " select t.legal_entity_id, t.assignee, t.up_year, t.up_month, t.up_date, t.up_count " + \
             " from ( " + \

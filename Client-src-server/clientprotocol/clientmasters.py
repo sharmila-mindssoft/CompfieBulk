@@ -225,23 +225,23 @@ class UserManagementPrerequisite(Request):
     def to_inner_structure(self):
         return {
         }
-
 ########################################################
-# Get User Management - List User Details
+# Get User Management List - Get users list
 ########################################################
-class get_user_management_details(Request):
+class UserManagementList(Request):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data)
-
-        return GetWorkFlowScoreCard()
+        return UserManagementList()
 
     def to_inner_structure(self):
         return {
         }
+
+
 
 class GetUserPrivileges(Request):
     def __init__(self):
@@ -863,7 +863,7 @@ def _init_Request_class_map():
         UserManagementPrerequisite,
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
-        GetUserProfile, UpdateUserProfile
+        GetUserProfile, UpdateUserProfile, UserManagementList,
     ]
     class_map = {}
     for c in classes:
@@ -1041,6 +1041,30 @@ class GetUserManagementPrerequisiteSuccess(Response):
             "um_legal_domain": self.legal_Domains,
             "um_legal_units": self.legal_units,
             "um_service_providers": self.service_providers
+        }
+
+##############################################################################
+# User Management Add - List Users
+##############################################################################
+class UserManagementListSuccess(Response):
+    def __init__(self, legal_entities, users):
+        self.legal_entities = legal_entities
+        self.users = users
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["ul_legal_entity", "ul_users"])
+        legal_entities = data.get("ul_legal_entity")
+        users = data.get("ul_users")
+
+        legal_entities = legal_entities
+        users = users
+        return UserManagementListSuccess(legal_entities, users)
+
+    def to_inner_structure(self):
+        return {
+            "ul_legal_entity": self.legal_entities,
+            "ul_users": self.users
         }
 ##############################################################################
 class GetUserPrivilegesSuccess(Response):
@@ -1706,7 +1730,7 @@ def _init_Response_class_map():
         GetServiceProviderDetailsFilterSuccess,
         GetServiceProviderDetailsReportSuccess, GetAuditTrailFilterSuccess,
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
-        GetUserProfileSuccess, UpdateUserProfileSuccess
+        GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess
     ]
     class_map = {}
     for c in classes:

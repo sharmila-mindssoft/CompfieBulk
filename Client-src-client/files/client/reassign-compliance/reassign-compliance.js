@@ -70,6 +70,8 @@ var mUnit = 5;
 
 var SELECTED_COMPLIANCE = {};
 
+var Filter_List = $('.filter-list');
+
 function callAPI(api_type) {
     if (api_type == REASSIGN_FILTER) { 
         displayLoader();
@@ -168,6 +170,7 @@ function callAPI(api_type) {
             if (error == null) {
                 //ComplianceList = data.reassign_compliances;
                 //ActList = data.level_one_name;
+                displaySuccessMessage(message.submit_success);
                 ReassignView.show();
                 ReassignAdd.hide();
                 initialize();
@@ -400,7 +403,7 @@ function loadUser(userType) {
         }
         if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
             var userId = USERS[user].usr_id;
-            var userName = USERS[user].emp_name;
+            var userName = USERS[user].emp_code + ' - ' +USERS[user].emp_name;
             var combine = userId + '-' + serviceProviderId;
             var isAssignee = USERS[user].is_assignee;
             var isConcurrence = USERS[user].is_approver;
@@ -652,7 +655,7 @@ function getNoRecord(){
 
 function reset(){
     LegalEntityId.val('');
-    LegalEntityId.val('');
+    LegalEntityName.val('');
     DomainId.val('');
     DomainName.val('');
     UserName.val('');
@@ -1003,6 +1006,7 @@ function validateAndShow() {
     }
 }
 
+
 function pageControls(){
     ShowButton.click(function() {
         LastUserType = '';
@@ -1030,10 +1034,12 @@ function pageControls(){
     });
 
     SubmitButton.click(function() {
-        displayLoader();
-        setTimeout(function() {
-            callAPI(SUBMIT_API)
-        }, 500);
+        if (validate_thirdtab()) {
+            displayLoader();
+            setTimeout(function() {
+                callAPI(SUBMIT_API)
+            }, 500);
+        }
     });
 
     LegalEntityName.keyup(function(e) {
@@ -1092,8 +1098,34 @@ function pageControls(){
         
     });
 
+    Filter_List.keyup(function() {
+        var currentFilter = '#' + $(this).attr("class").split(' ').pop() + ' > li';
+        var searchText = $(this).val().toLowerCase();
+        $(currentFilter).each(function() {
+            var currentLiText = $(this).text().toLowerCase();
+            showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
+    });
+}
 
-
+//validation on third wizard
+function validate_thirdtab() {
+    if ($('.assigneelist.active').text() == '') {
+        displayMessage(message.assignee_required);
+        return false;
+    } else if ($('.concurrencelist.active').text() == '' && two_level_approve) {
+        displayMessage(message.concurrence_required);
+        return false;
+    } else if ($('.approvallist.active').text() == '') {
+        displayMessage(message.approval_required);
+        return false;
+    } else if (Reason.val() == '') {
+        displayMessage(message.reason_required);
+        return false;
+    } else {
+        return true;
+    }
 }
 
 function loadEntityDetails(){

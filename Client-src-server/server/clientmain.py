@@ -410,7 +410,7 @@ class API(object):
 
             if hasattr(request_data.request, "password") :
                 if (self._validate_user_password(session, session_user, request_data.request.password)) is False :
-                    return respond(clientlogin.InvalidCurrentPassword())
+                    return respond(clientlogin.InvalidPassword())
 
         # request process in controller
         if is_group :

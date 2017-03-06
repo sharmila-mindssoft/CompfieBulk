@@ -10,13 +10,13 @@ from server.clientdatabase.common import (
     calculate_ageing_in_hours, calculate_years,
 )
 from server.common import (
-    get_date_time_in_date, convert_to_dict,
-    datetime_to_string_time, datetime_to_string, make_summary
+    get_date_time_in_date,
+    datetime_to_string
 )
 from server.clientdatabase.general import (
-    get_user_unit_ids, calculate_ageing, get_admin_id,
-    get_user_domains, get_group_name, is_primary_admin,
-    get_all_users, convert_datetime_to_date
+    get_user_unit_ids, get_admin_id,
+    get_user_domains, get_group_name,
+    convert_datetime_to_date
 )
 from server.clientdatabase.clienttransaction import (
     get_units_for_assign_compliance
@@ -54,6 +54,85 @@ __all__ = [
     "need_to_display_deletion_popup",
     # "get_dashboard_notification_counts"
 ]
+
+
+def get_compliance_status_count(db, request, user_id, user_category):
+    from_date = request.from_date
+    to_date = request.to_date
+    chart_year = request.chart_year
+    country_ids = request.country_ids
+    domain_ids = request.domain_ids
+    filter_type = request.filter_type
+
+    # where_qry_val.append(",".join([str(x) for x in filter_ids]))
+
+    if filter_type == "Group":
+        group_by_name = "T3.country_id"
+        filter_type_ids = None
+        filter_ids = country_ids
+
+    elif filter_type == "BusinessGroup":
+        group_by_name = "T3.business_group_id"
+        filter_type_ids = " AND find_in_set(T3.business_group_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "LegalEntity":
+
+        group_by_name = "T3.legal_entity_id"
+        filter_type_ids = " AND find_in_set(T3.legal_entity_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "Division":
+        group_by_name = "T3.division_id"
+        filter_type_ids = " AND find_in_set(T3.division_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "Category" :
+        group_by_name = "T3.category_id"
+        filter_type_ids = " AND find_in_set(T3.category_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "Unit":
+        group_by_name = "T3.unit_id"
+        filter_type_ids = " AND find_in_set(T3.unit_id, %s) "
+        filter_ids = ",".join([str(x) for x in filter_ids])
+
+    elif filter_type == "Consolidated":
+        group_by_name = "T3.country_id"
+        filter_type_ids = None
+        filter_ids = country_ids
+
+    # where_qry += filter_type_ids
+
+    if user_category <= 3 :
+        q = "select " + group_by_name + ", sum(ifnull(complied_count, 0)) as comp_count, " + \
+            " sum(ifnull(delayed_count, 0)) as delay_count, " + \
+            " sum(ifnull(inprogress_count, 0)) as inp_count, sum(ifnull(overdue_count, 0)) as over_count" + \
+            " from tbl_compliance_status_chart_unitwise as t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " where chart_year = %s and t1.domain_id = %s and t1.country_id = %s"
+        param = [
+            chart_year, ",".join([str(x) for x in country_ids]),
+            ",".join([str(x) for x in domain_ids])
+        ]
+    else :
+        q = "select " + group_by_name + ", sum(ifnull(complied_count, 0)) as comp_count, sum(ifnull(delayed_count,0)) as delay_count, " + \
+            " sum(ifnull(inprogress_count,0)) as inp_count, sum(ifnull(overdue_count,0)) as over_count" + \
+            " from tbl_compliance_status_chart_userwise as t1  " + \
+            " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+            " where chart_year = %s and user_id = %s " + \
+            " and t1.doamin_id = %s and t1.country_id = %s"
+        param = [
+            chart_year, user_id, ",".join([str(x) for x in country_ids]),
+            ",".join([str(x) for x in domain_ids])
+        ]
+    if filter_type_ids is not None :
+        q += filter_type_ids
+        param.append(filter_ids)
+
+    rows = db.select_all(q, param)
+
+    return frame_compliance_status(rows)
 
 
 def get_units_for_dashboard_filters(db, session_user, is_closed=True):
@@ -934,7 +1013,7 @@ def return_compliance_details_drill_down(
         compliance = dashboard.Level1Compliance(
             name, r["compliance_description"], employee_name,
             str(r["start_date"]), str(due_date),
-            completion_date, status,
+            str(completion_date), status,
             str(ageing)
         )
 
@@ -1965,7 +2044,7 @@ def statutory_notification_detail(
             summary += ' on (%s)' % (dates)
 
         notification = dashboard.StatutoryNotificationDetailsSuccess(
-            r["compliance_id"], r["statutory_provision"], c_name, r["compliance_description"], 
+            r["compliance_id"], r["statutory_provision"], c_name, r["compliance_description"],
             r["penal_consequences"], r["freq_name"], summary, r["reference_link"])
         notifications.append(notification)
     return notifications

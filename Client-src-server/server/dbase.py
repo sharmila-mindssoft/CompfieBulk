@@ -327,6 +327,7 @@ class Database(object):
                         self._for_client, "select_one", query % param
                     )
                     cursor.execute(query)
+                # print query % tuple(param)
             cursor.nextset()
             res = cursor.fetchone()
             cursor.nextset()

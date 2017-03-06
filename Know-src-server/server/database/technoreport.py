@@ -81,7 +81,7 @@ def return_compliance_statutory(db, stat_compl_list):
             technoreports.ComplianceStatutory(
                 st_cmp["client_id"], st_cmp["legal_entity_id"], st_cmp["unit_id"],
                 st_cmp["domain_id"], st_cmp["statutory_id"], st_cmp["compliance_id"],
-                st_cmp["c_task"], st_cmp["document_name"], st_cmp["statutory_name"]
+                st_cmp["compliance_task"], st_cmp["document_name"], st_cmp["statutory_name"]
             )
         )
     return results
@@ -1141,7 +1141,7 @@ def get_usermapping_report_dataset(
 # Return Type : Return list of group admin registered email data
 ######################################################################################
 def get_GroupAdminReportData(db, user_id):
-    result = db.call_proc_with_multiresult_set("sp_group_admin_registration_email_report_data", (user_id,), 3)
+    result = db.call_proc_with_multiresult_set("sp_group_admin_registration_email_report_data", (user_id,), 4)
     return result
 ######################################################################################
 # To get reassigned user group user category and filter data

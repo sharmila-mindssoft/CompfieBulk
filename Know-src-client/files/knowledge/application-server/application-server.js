@@ -233,6 +233,15 @@ $(function () {
     });
 });
 
+$("#application-server-ip").on('input', function (e) {
+  this.value = isNumbersWithDot($(this));
+});
+$("#application-server-port").on('input', function (e) {
+  this.value = isNumbers($(this));
+});
+$('#application-server-name').on('input', function (e) {
+  this.value = isAlphanumeric($(this));
+});
 $(document).find('.js-filtertable').each(function(){
     $(this).filtertable().addFilter('.js-filter');
 });

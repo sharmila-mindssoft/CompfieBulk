@@ -3969,8 +3969,8 @@ def process_unit_list_report(db, request):
         "from tbl_units as t1 where "
     where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
     condition_val.extend([legal_entity_id, country_id])
-
-    if int(business_group_id) > 0:
+    print business_group_id
+    if business_group_id is not None and int(business_group_id) > 0:
         where_clause = where_clause + "and t1.business_group_id = %s "
         condition_val.append(business_group_id)
 
@@ -4012,7 +4012,7 @@ def process_unit_list_report(db, request):
     where_clause = "t1.legal_entity_id = %s and t1.country_id = %s "
     condition_val.extend([legal_entity_id, country_id])
 
-    if int(business_group_id) > 0:
+    if business_group_id is not None and int(business_group_id) > 0:
         where_clause = where_clause + "and t1.business_group_id = %s "
         condition_val.append(business_group_id)
 
@@ -4059,7 +4059,8 @@ def process_unit_list_report(db, request):
         address = row["address"]
         postal_code = row["postal_code"]
         division_name = row["division_name"]
-        if row["is_closed"] == "0":
+        print row["is_closed"]
+        if row["is_closed"] == 0:
             unit_status = "Active"
         else:
             unit_status = "Closed"

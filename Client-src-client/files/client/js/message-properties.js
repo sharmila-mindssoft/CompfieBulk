@@ -1,5 +1,6 @@
 var message = {
   //Common
+  "submit_success" : "Record Submitted Successfully",
   "save_success" : "Record Saved Successfully",
   "update_success" : "Record Updated Successfully",
   'enter_password': 'Please Enter password',
@@ -356,7 +357,7 @@ var message = {
   "unit_saved": "Unit(s) Saved successfully",
   "unit_updated": "Units(s) Updated Successfully",
   "domain_manager_required": "Domain Manager required",
-  "atleast_one_unit_required": "Select atleast one unit to assign",
+  "atleast_one_unit_required_assign": "Select atleast one unit to assign",
   "assign_success": "Assigned successfully",
   "techno_executive_required": "Techno executive required",
   "domain_executive_required": "Domain executive required",
@@ -383,6 +384,7 @@ var message = {
   "maximum_compliance_selection_reached_select_all": "Maximum limit reached for processing.",
   "unit_selection_should_be_same_domain": "Please select same domain unit(s).",
   'user_required': 'User Required',
+  "atleast_one_unit_required": "Select atleast one unit",
 
   //Service Provider Master
   'spname_required': 'Enter Service Provider Name ',

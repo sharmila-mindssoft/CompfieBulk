@@ -1635,6 +1635,7 @@ function updateAssigneeWiseComplianceList(data) {
   $('.table-assignee-wise-compliance-list').show();
   $('#pagination-assignee').hide();
   $('.compliance_count_assignee').text('');
+  $(".assignee-wise").show();
   $(".assignee-wise").empty();
   var aSno = 0;
   var country_assignee = parseInt(Country.val().trim());

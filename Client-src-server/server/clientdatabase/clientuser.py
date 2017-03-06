@@ -407,9 +407,7 @@ def update_compliances(
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tc.compliance_id=tch.compliance_id) " + \
-        " WHERE compliance_history_id=%s "
-    print "query>>>", query
-    print "compliance_history_id>>>", compliance_history_id
+        " WHERE compliance_history_id=%s "        
     param = [compliance_history_id]
     row = db.select_one(query, param)
     columns = [
