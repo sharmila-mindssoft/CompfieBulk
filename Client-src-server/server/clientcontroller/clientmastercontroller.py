@@ -197,21 +197,21 @@ def process_change_service_provider_status(
     db, request, session_user
 ):
     is_active = 0 if request.is_active is False else 1
-    if db.is_invalid_id(
-        tblServiceProviders,
-        "service_provider_id",
-        request.service_provider_id
-    ):
-        return clientmasters.InvalidServiceProviderId()
+    # if db.is_invalid_id(
+    #     tblServiceProviders,
+    #     "service_provider_id",
+    #     request.service_provider_id
+    # ):
+    #     return clientmasters.InvalidServiceProviderId()
     # elif is_service_provider_in_contract(
     #     db, request.service_provider_id
     # ) is False:
     #     return clientmasters.CannotChangeStatusOfContractExpiredSP()
-    elif is_user_exists_under_service_provider(
-        db, request.service_provider_id
-    ):
-        return clientmasters.CannotDeactivateUserExists()
-    elif update_service_provider_status(
+    # if is_user_exists_under_service_provider(
+    #     db, request.service_provider_id
+    # ):
+    #     return clientmasters.CannotDeactivateUserExists()
+    if update_service_provider_status(
         db,
         request.service_provider_id,
         is_active, session_user

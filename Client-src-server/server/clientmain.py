@@ -141,6 +141,7 @@ class API(object):
                 company_id = company.company_id
                 company_server_ip = company.company_server_ip
                 ip, port = self._address
+                # print company.to_structure()
                 # print self._address
                 if company_server_ip.ip_address == ip and company_server_ip.port == port :
                     if company.is_group is True:
@@ -176,6 +177,9 @@ class API(object):
                                 logger.logClient("error", "clientmain.py-le_database-added", e)
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
+
+            print self._le_databases
+            print self._group_databases
 
             def client_added(clients):
                 for client in clients:
@@ -216,16 +220,17 @@ class API(object):
                         if le_db is not None :
                             if is_new_data is True and is_new_domain is False :
                                 # replication for group db only master data
-                                rep_man = ReplicationManagerWithBase(
-                                    self._knowledge_server_address,
-                                    le_db,
-                                    _client_id,
-                                    client.is_group
-                                )
-
                                 if self._replication_managers_for_le.get(_client_id) is None :
+                                    rep_man = ReplicationManagerWithBase(
+                                        self._knowledge_server_address,
+                                        le_db,
+                                        _client_id,
+                                        client.is_group
+                                    )
                                     rep_man.start()
                                     self._replication_managers_for_le[_client_id] = rep_man
+                                else :
+                                    self._replication_managers_for_le[_client_id].start()
 
                             # if is_new_domain is True and _domain_id is not None :
                             #     d_rep_man = {}

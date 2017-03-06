@@ -328,6 +328,7 @@ class Database(object):
                     )
                     cursor.execute(query)
                 # print query % tuple(param)
+
             cursor.nextset()
             res = cursor.fetchone()
             cursor.nextset()

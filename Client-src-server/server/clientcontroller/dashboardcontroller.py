@@ -4,13 +4,6 @@ from server.jsontocsvconverter import ConvertJsonToCSV
 from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.dashboard import *
 
-from server.clientdatabase.general import (
-    get_countries_for_user, get_domains_for_user,
-    get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user,
-    get_units_for_user, get_assignees
-)
-
 __all__ = [
     "process_client_dashboard_requests"
 ]
@@ -28,7 +21,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     if type(request) is dashboard.GetComplianceStatusChart:
 
         result = process_compliance_status_chart(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetComplianceStatusDrillDownData:
@@ -132,9 +125,9 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     return result
 
-def process_compliance_status_chart(db, request, session_user):
+def process_compliance_status_chart(db, request, session_user, session_category):
 
-    return get_compliance_status_chart(db, request, session_user)
+    return get_compliance_status_chart(db, request, session_user, session_category)
 
 
 def process_trend_chart(db, request, session_user, session_category):

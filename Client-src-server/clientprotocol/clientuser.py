@@ -82,9 +82,8 @@ class GetCurrentComplianceDetail(Request):
             data, ["le_id", "current_start_count"]
         )
         current_start_count = data.get("current_start_count")
-        legal_entity_id = data.get("le_id")
+        legal_entity_id = data.get("le_id")   
 
-        # current_start_count = parse_structure_UnsignedIntegerType_32(current_start_count)
         return GetCurrentComplianceDetail(legal_entity_id, current_start_count)
 
     def to_inner_structure(self):
@@ -92,7 +91,6 @@ class GetCurrentComplianceDetail(Request):
             "le_id": self.legal_entity_id,
             "current_start_count": self.current_start_count
         }
-
 class GetUpcomingComplianceDetail(Request):
     def __init__(
         self, upcoming_start_count
