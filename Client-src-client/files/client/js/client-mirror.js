@@ -186,6 +186,11 @@ function initClientMirror() {
         window.location.href = login_url;
     }
 
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -199,7 +204,7 @@ function initClientMirror() {
         //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
-            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: {'X-Xsrftoken': getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),
