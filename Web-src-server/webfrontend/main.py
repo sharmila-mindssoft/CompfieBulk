@@ -191,7 +191,6 @@ class TemplateHandler(RequestHandler):
         output = template.render(**self.__parameters)
         output = self.update_static_urls(output)
         self.xsrf_token
-
         self.write(output)
 
     def options(self):

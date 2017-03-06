@@ -764,7 +764,7 @@ function initClientMirror() {
             },
 
             url: CLIENT_BASE_URL + 'client_user',
-            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: {'X-Xsrftoken': getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),

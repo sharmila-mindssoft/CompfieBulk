@@ -182,6 +182,7 @@ class API(object):
             print self._group_databases
 
             def client_added(clients):
+                print "client added callback"
                 for client in clients:
                     _client_id = client.client_id
                     # print _client_id
@@ -651,7 +652,9 @@ class API(object):
     def handle_widget_request(self, request, db, session_user, session_category):
         return controller.process_client_widget_requests(request, db, session_user, session_category)
 
-
+    @api_request(clientuser.RequestFormat)
+    def handle_client_format_file():
+        pass
 def handle_isalive():
     return Response("Application is alive", status=200, mimetype="application/json")
 
@@ -681,7 +684,7 @@ def run_server(address, knowledge_server_address):
             ("/api/client_user", api.handle_client_user),
             ("/api/mobile", api.handle_mobile_request),
             ("/api/widgets", api.handle_widget_request),
-            # (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
+            (r"/api/files", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])
