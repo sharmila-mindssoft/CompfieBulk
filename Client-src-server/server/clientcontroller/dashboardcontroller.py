@@ -30,7 +30,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
 
     elif type(request) is dashboard.GetEscalationsChart:
-        result = process_escalation_chart(db, request, session_user)
+        result = process_escalation_chart(db, request, session_user, session_category)
 
     elif type(request) is dashboard.GetEscalationsDrillDownData:
         result = process_escalation_chart_drilldown(
@@ -39,7 +39,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     elif type(request) is dashboard.GetNotCompliedChart:
         result = process_not_complied_chart(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetNotCompliedDrillDown:
@@ -57,7 +57,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     elif type(request) is dashboard.GetComplianceApplicabilityStatusChart:
         result = process_compliance_applicability_chat(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetComplianceApplicabilityStatusDrillDown:
@@ -169,8 +169,8 @@ def process_compliance_status_chart_drilldown(
     )
 
 
-def process_escalation_chart(db, request, session_user):
-    return get_escalation_chart(db, request, session_user)
+def process_escalation_chart(db, request, session_user, session_category):
+    return get_escalation_chart(db, request, session_user, session_category)
 
 
 def process_escalation_chart_drilldown(db, request, session_user):
@@ -187,8 +187,8 @@ def process_escalation_chart_drilldown(db, request, session_user):
     )
 
 
-def process_not_complied_chart(db, request, session_user):
-    return get_not_complied_chart(db, request, session_user)
+def process_not_complied_chart(db, request, session_user, session_category):
+    return get_not_complied_count(db, request, session_user, session_category)
 
 
 def process_not_complied_drill_down(db, request, session_user):
@@ -203,10 +203,10 @@ def process_not_complied_drill_down(db, request, session_user):
 
 
 def process_compliance_applicability_chat(
-    db, request, session_user
+    db, request, session_user, session_category
 ):
-    return get_compliance_applicability_chart(
-        db, request, session_user
+    return get_risk_chart_count(
+        db, request, session_user, session_category
     )
 
 
@@ -436,5 +436,3 @@ def process_get_messages(
         show_popup=show_popup,
         notification_text=notification_text
     )
-
-
