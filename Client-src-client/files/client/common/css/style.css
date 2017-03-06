@@ -956,3 +956,8 @@ h2.chart-title: hover{
 .auto-selected {
     background: #EAE8E8;
 }
+
+.task-current-year-tab{
+    border: medium none;
+    padding: 0 !important;
+}

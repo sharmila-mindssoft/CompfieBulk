@@ -1663,11 +1663,10 @@ function initClientMirror() {
     }
 
     /* Past Records */
-    function getPastRecordsFormData(legalEntityId, callback) {
+    function getPastRecordsFormData(le_id, callback) {
         var request = [
-            'GetPastRecordsFormData',
-            {
-                'le_id': legalEntityId
+            'GetPastRecordsFormData', {
+                'le_id': le_id
             }
         ];
         clientApiRequest('client_transaction', request, callback);
