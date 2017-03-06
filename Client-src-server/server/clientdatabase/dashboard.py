@@ -414,7 +414,7 @@ def get_escalation_chart(db, request, user_id, user_category):
         q += filter_type_ids
         param.append(filter_ids)
 
-    # q += " group by chart_year, " + group_by_name
+    q += " group by chart_year"
     rows = db.select_all(q, param)
 
     return frame_escalation_status(rows)
