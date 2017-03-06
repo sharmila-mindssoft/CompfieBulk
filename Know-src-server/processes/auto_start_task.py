@@ -287,8 +287,6 @@ class AutoStart(Database):
 
     def start_new_task(self):
         def notify(d, due_date, next_due_date, approval_person, trigger_before):
-            print d
-            print "\n"
             start_date = self.actual_start_date(due_date, trigger_before)
 
             compliance_history_id = self.save_in_compliance_history(
@@ -433,7 +431,6 @@ class AutoStart(Database):
 
         self.execute(q_delete, [years])
         for y in year :
-            print "y ------ ", y
             self.execute(q, [y, y, y])
 
     def update_user_wise_task_status(self):
@@ -470,6 +467,7 @@ class AutoStart(Database):
             " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
             " group by ccf.country_id,ccf.domain_id, ch.unit_id, ccf.month_from,ccf.month_to,usr.user_id "
 
+        print q
         # if len(self.started_unit_id) > 0 :
         self.execute(q_delete, [years])
         for y in year :

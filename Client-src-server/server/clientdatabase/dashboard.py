@@ -676,7 +676,6 @@ def get_trend_chart_drill_down(
     param.extend(where_qry_val)
     history_rows = db.select_all(query, param)
 
-    print query % tuple(param)
     trend_comp = {}
     for d in history_rows:
         print d
