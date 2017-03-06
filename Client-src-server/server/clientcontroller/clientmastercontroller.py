@@ -46,6 +46,11 @@ def process_client_master_requests(request, db, session_user, client_id, le_ids_
             db, request, session_user
         )
 
+    elif type(request) is clientmasters.BlockServiceProvider:
+        result = process_block_service_provider(
+            db, request, session_user
+        )
+
     elif type(request) is clientmasters.GetUserPrivileges:
         result = process_get_user_privileges(
             db, request, session_user
@@ -183,7 +188,8 @@ def process_update_service_provider(db, request, session_user):
     elif is_duplicate_service_provider(
         db,
         request.service_provider_id,
-        request.service_provider_name
+        request.service_provider_name,
+        request.short_name
     ):
         return clientmasters.ServiceProviderNameAlreadyExists()
     elif update_service_provider(db, request, session_user):
@@ -197,26 +203,40 @@ def process_change_service_provider_status(
     db, request, session_user
 ):
     is_active = 0 if request.is_active is False else 1
-    # if db.is_invalid_id(
-    #     tblServiceProviders,
-    #     "service_provider_id",
-    #     request.service_provider_id
-    # ):
-    #     return clientmasters.InvalidServiceProviderId()
-    # elif is_service_provider_in_contract(
-    #     db, request.service_provider_id
-    # ) is False:
-    #     return clientmasters.CannotChangeStatusOfContractExpiredSP()
-    # if is_user_exists_under_service_provider(
-    #     db, request.service_provider_id
-    # ):
-    #     return clientmasters.CannotDeactivateUserExists()
+    if db.is_invalid_id(
+        tblServiceProviders,
+        "service_provider_id",
+        request.service_provider_id
+    ):
+        return clientmasters.InvalidServiceProviderId()
+    elif is_service_provider_in_contract(
+        db, request.service_provider_id
+    ) is False:
+        return clientmasters.CannotChangeStatusOfContractExpiredSP()
+    if is_user_exists_under_service_provider(
+        db, request.service_provider_id
+    ):
+        return clientmasters.CannotDeactivateUserExists()
     if update_service_provider_status(
         db,
         request.service_provider_id,
         is_active, session_user
     ):
         return clientmasters.ChangeServiceProviderStatusSuccess()
+
+########################################################
+# To block the service provider
+########################################################
+def process_block_service_provider(
+    db, request, session_user
+):
+    is_blocked = 0 if request.is_blocked is False else 1    
+    if block_service_provider(
+        db,
+        request.service_provider_id,
+        is_blocked, session_user
+    ):
+        return clientmasters.BlockServiceProviderSuccess()
 
 ########################################################
 # User Management Add Prerequisite
