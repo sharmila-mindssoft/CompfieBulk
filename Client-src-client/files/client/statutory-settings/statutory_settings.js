@@ -558,7 +558,8 @@ function loadUnits() {
         $('.tbl_unit', clone).text(value.u_name);
         $('.tbl_address', clone).attr('title', value.address);
 
-        $('.tbl_location', clone).text(value.location.replace(/ >>/gi, ','));
+        var location = value.location.replace(/ >>/gi, ',');
+        $('.tbl_location', clone).text(location);
         $('.tbl_domain', clone).text(value.d_name);
         $('.tbl_no_of_compliance', clone).text(value.r_count);
         $('.tbl_updated_by', clone).text(upd_by);
@@ -588,7 +589,7 @@ function loadUnits() {
 
         UNIT_CS_ID[value.u_id] = {
             'u_name': value.u_name,
-            'u_address': value.address
+            'u_address': location
         }
 
     });

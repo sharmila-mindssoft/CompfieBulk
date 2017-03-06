@@ -247,7 +247,7 @@ def process_save_assigned_compliance(db, request, session_user):
 # current year form wizards
 ########################################################
 def process_get_past_records_form_data(db, request, session_user, session_category):
-    # countries = get_countries_for_user(db, session_user)
+    countries = get_countries_for_user(db, session_user)
     row = get_user_company_details(db, session_user)
     business_groups = get_business_groups_for_user(db, row[3])
     legal_entities = get_legal_entities_for_user(db, row[2])
@@ -262,8 +262,9 @@ def process_get_past_records_form_data(db, request, session_user, session_catego
     compliance_frequency = get_compliance_frequency(
         db, "frequency_id in (1,2,3)"
     )
-    # countries=countries,
+
     return clienttransactions.GetPastRecordsFormDataSuccess(
+        countries=countries,
         business_groups=business_groups,
         legal_entities=legal_entities,
         divisions=divisions,

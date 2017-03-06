@@ -5,7 +5,7 @@ from clientprotocol import (clientcore, general)
 from server.common import (
     datetime_to_string, get_date_time,
     string_to_datetime, generate_and_return_password, datetime_to_string_time,
-    get_current_date, new_uuid, addHours
+    get_current_date, new_uuid, addHours, encrypt
 )
 from server.emailcontroller import EmailHandler as email
 from clientprotocol import clientmasters
@@ -37,6 +37,7 @@ __all__ = [
     "save_user_privilege",
     "update_user_privilege",
     "is_user_exists_under_user_group",
+    "verify_password_user_privilege",
     "update_user_privilege_status",
     "get_user_details",
     "get_service_providers",
@@ -76,7 +77,8 @@ __all__ = [
     "get_login_users_list",
     "process_login_trace_report",
     "get_user_info",
-    "update_profile"
+    "update_profile",
+    "block_service_provider"
 ]
 
 ############################################################################
@@ -140,9 +142,9 @@ def is_duplicate_service_provider(db, service_provider_id, service_provider_name
     column = ["short_name", "service_provider_name"]
     condition = "short_name = %s AND service_provider_name = %s "
     condition_val = [short_name, service_provider_name]
-    # if service_provider_id is not None:
-        # condition += " AND service_provider_id != %s"
-        # condition_val.append(service_provider_id)
+    if service_provider_id is not None:
+        condition += " AND service_provider_id != %s"
+        condition_val.append(service_provider_id)
     res = db.is_already_exists(tblServiceProviders, condition, condition_val)
     return res
 
@@ -262,7 +264,7 @@ def update_service_provider(db, service_provider, session_user):
     action = "Updated Service Provider \"%s\"" % (
         service_provider.service_provider_name
     )
-    # db.save_activity(session_user, 2, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 
@@ -319,8 +321,8 @@ def is_user_exists_under_service_provider(db, service_provider_id):
 def update_service_provider_status(
     db, service_provider_id,  is_active, session_user
 ):
-    columns = ["is_active", "updated_on", "updated_by"]
-    values = [is_active, get_date_time(), session_user, service_provider_id]
+    columns = ["is_active", "updated_on", "updated_by", "status_changed_on", "status_changed_by"]
+    values = [is_active, get_date_time(), session_user, get_date_time(), session_user, service_provider_id]
     condition = "service_provider_id= %s "
     result = db.update(tblServiceProviders, columns, values, condition)
     if result is False:
@@ -336,6 +338,37 @@ def update_service_provider_status(
         action = "Activated Service Provider \"%s\"" % service_provider_name
     else:
         action = "Deactivated Service Provider \"%s\"" % service_provider_name
+    db.save_activity(session_user, 2, action)
+
+    return result
+##############################################################################
+# To Block service provider
+# Parameter(s) - Object of database, Service provider id, block status and
+#                session user
+# Return Type - Boolean
+#             - Returns True on successfull block 
+#             - Returns RuntimeError on failure block
+##############################################################################
+def block_service_provider(
+    db, service_provider_id,  is_blocked, session_user
+):
+    columns = ["is_blocked", "updated_on", "updated_by", "blocked_on", "blocked_by"]
+    values = [is_blocked, get_date_time(), session_user, get_date_time(), session_user, service_provider_id]
+    condition = "service_provider_id= %s "
+    result = db.update(tblServiceProviders, columns, values, condition)
+    if result is False:
+        raise client_process_error("E003")
+
+    action_column = "service_provider_name"
+    rows = db.get_data(
+        tblServiceProviders, action_column, condition, [service_provider_id]
+    )
+    service_provider_name = rows[0]["service_provider_name"]
+    action = None
+    if is_blocked == 1:
+        action = "Blocked Service Provider \"%s\"" % service_provider_name
+    else:
+        action = "Unblocked Service Provider \"%s\"" % service_provider_name
     db.save_activity(session_user, 2, action)
 
     return result
@@ -475,13 +508,16 @@ def get_user_category(db):
 #             - Returns False if a duplicate doen't exists
 ##############################################################################
 def is_duplicate_user_privilege(
-    db, user_category_id, user_privilege_name
+    db, user_category_id, user_privilege_name, user_group_id=None
 ):
     condition = "user_group_name = %s "
     condition_val = [user_privilege_name]
-    if user_category_id is not None:
-        condition += " AND user_category_id != %s "
-        condition_val.append(user_category_id)
+    # if user_category_id is not None:
+    #     condition += " AND user_category_id != %s "
+    #     condition_val.append(user_category_id)
+    if user_group_id is not None:
+        condition += " AND user_group_id != %s "
+        condition_val.append(user_group_id)
     return db.is_already_exists(tblUserGroups, condition, condition_val)
 
 
@@ -637,6 +673,16 @@ def is_user_exists_under_user_group(db, user_group_id):
     else:
         return False
 
+def verify_password_user_privilege(db, user_id, password):
+    ec_password = encrypt(password)
+    q = "SELECT username from tbl_user_login_details where user_id = %s and password = %s"
+    #print q
+    data_list = db.select_one(q, [user_id, ec_password])
+    if data_list is None:
+        return True
+    else:
+        return False
+
 
 ##############################################################################
 # To Activate or Inactivate user privilege
@@ -649,7 +695,10 @@ def is_user_exists_under_user_group(db, user_group_id):
 def update_user_privilege_status(
     db, user_group_id, is_active, session_user
 ):
+    print "+++++++++++++++++++++++++"
+    print is_active
     is_active = 0 if is_active is not True else 1
+    print is_active
     columns = ["is_active", "updated_by", "updated_on"]
     values = [is_active, session_user, get_date_time(), user_group_id]
     condition = "user_group_id=%s"

@@ -620,6 +620,7 @@ api_params = {
     "reference_link": make_text_field(is_optional=True),
     "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
+    "location": make_text_field(is_optional=True),
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
     "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
     "compliance_file_name":  make_vector_type_string(is_optional=True),
@@ -630,4 +631,7 @@ api_params = {
     "pr_users": make_vector_type_field(module="clientcore", klass_name="User"),
     "level_1_statutory_name":make_text_field(length=500, is_optional=True),
     "pr_compliances" : make_vector_type_field(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS"),
+    "upcoming_start_count": make_int_field(),
+    "upcoming_compliances": make_vector_type_field(module="clientcore", klass_name="UpcomingCompliance"),
+    "upcoming_format_file_name":  make_vector_type_string(is_optional=True),
 }

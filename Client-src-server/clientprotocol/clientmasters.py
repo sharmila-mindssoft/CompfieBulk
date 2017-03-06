@@ -93,7 +93,9 @@ class GetServiceProviders(Request):
     def to_inner_structure(self):
         return {
         }
-#============================================================================================
+#############################################################
+# Save Service Provider Details
+#############################################################
 class SaveServiceProvider(Request):
     def __init__(self, service_provider_name, short_name, contract_from, contract_to, contact_person, 
     contact_no, mobile_no, email_id, address):
@@ -139,7 +141,9 @@ class SaveServiceProvider(Request):
             "email_id": self.email_id,
             "address": self.address,
         }
-#============================================================================================
+#############################################################
+# Update Service Provider Details
+#############################################################
 class UpdateServiceProvider(Request):
     def __init__(self, service_provider_id, service_provider_name, short_name, contract_from,
     contract_to, contact_person, contact_no, mobile_no, email_id, address):
@@ -208,6 +212,26 @@ class ChangeServiceProviderStatus(Request):
         return {
             "sp_id": self.service_provider_id,
             "active_status": self.is_active,
+        }
+#################################################
+# Block Service Provider Status
+##################################################
+class BlockServiceProvider(Request):
+    def __init__(self, service_provider_id, is_blocked):
+        self.service_provider_id = service_provider_id
+        self.is_blocked = is_blocked
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["sp_id", "is_blocked"])
+        service_provider_id = data.get("sp_id")
+        is_blocked = data.get("is_blocked")
+        return BlockServiceProvider(service_provider_id, is_blocked)
+
+    def to_inner_structure(self):
+        return {
+            "sp_id": self.service_provider_id,
+            "is_blocked": self.is_blocked,
         }
 
 ########################################################
@@ -303,23 +327,24 @@ class UpdateUserPrivileges(Request):
         }
 
 class ChangeUserPrivilegeStatus(Request):
-    def __init__(self, user_group_id, is_active):
+    def __init__(self, user_group_id, is_active, password):
         self.user_group_id = user_group_id
         self.is_active = is_active
+        self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ug_id", "active"])
-        user_group_id = data.get("ug_id")
-        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
-        is_active = data.get("active")
-        is_active = parse_structure_Bool(is_active)
-        return ChangeUserPrivilegeStatus(user_group_id, is_active)
+        data = parse_dictionary(data, ["u_g_id", "is_active", "password"])
+        user_group_id = data.get("u_g_id")
+        is_active = data.get("is_active")
+        password = data.get("password")
+        return ChangeUserPrivilegeStatus(user_group_id, is_active, password)
 
     def to_inner_structure(self):
         return {
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
-            "is_active": to_structure_Bool(self.is_active),
+            "u_g_id": self.user_group_id,
+            "is_active": self.is_active,
+            "password": self.password,
         }
 
 class GetClientUsers(Request):
@@ -862,7 +887,7 @@ def _init_Request_class_map():
         UserManagementPrerequisite,
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
-        GetUserProfile, UpdateUserProfile, UserManagementList,
+        GetUserProfile, UpdateUserProfile, UserManagementList, BlockServiceProvider
     ]
     class_map = {}
     for c in classes:
@@ -968,7 +993,24 @@ class CannotChangeStatusOfContractExpiredSP(Response):
     def to_inner_structure(self):
         return {
         }
+##############################################################################
+# User Management Add - Prerequisite
+##############################################################################
+class BlockServiceProviderSuccess(Response):
+    def __init__(self):
+        pass
 
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return BlockServiceProviderSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+##############################################################################
+# User Management Add - Prerequisite
+##############################################################################
 class ChangeServiceProviderStatusSuccess(Response):
     def __init__(self):
         pass
@@ -1729,7 +1771,8 @@ def _init_Response_class_map():
         GetServiceProviderDetailsFilterSuccess,
         GetServiceProviderDetailsReportSuccess, GetAuditTrailFilterSuccess,
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
-        GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess
+        GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess,
+        BlockServiceProviderSuccess
     ]
     class_map = {}
     for c in classes:

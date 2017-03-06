@@ -82,8 +82,7 @@ class GetCurrentComplianceDetail(Request):
             data, ["le_id", "current_start_count"]
         )
         current_start_count = data.get("current_start_count")
-        legal_entity_id = data.get("le_id")   
-
+        legal_entity_id = data.get("le_id")
         return GetCurrentComplianceDetail(legal_entity_id, current_start_count)
 
     def to_inner_structure(self):
@@ -91,26 +90,32 @@ class GetCurrentComplianceDetail(Request):
             "le_id": self.legal_entity_id,
             "current_start_count": self.current_start_count
         }
+#############################################################
+# Get Upcoming Compliances List
+#############################################################
 class GetUpcomingComplianceDetail(Request):
     def __init__(
-        self, upcoming_start_count
+        self, legal_entity_id, upcoming_start_count
     ):
+        self.legal_entity_id = legal_entity_id
         self.upcoming_start_count = upcoming_start_count
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
-            data, ["upcoming_start_count", ]
+            data, ["le_id", "upcoming_start_count"]
         )
         upcoming_start_count = data.get("upcoming_start_count")
-        upcoming_start_count = parse_structure_UnsignedIntegerType_32(upcoming_start_count)
+        legal_entity_id = data.get("le_id")
+        # upcoming_start_count = parse_structure_UnsignedIntegerType_32(upcoming_start_count)
         return GetUpcomingComplianceDetail(
-            upcoming_start_count
+            legal_entity_id, upcoming_start_count
         )
 
     def to_inner_structure(self):
         return {
-            "upcoming_start_count": to_structure_UnsignedIntegerType_32(self.upcoming_start_count),
+            "le_id": self.legal_entity_id,
+            "upcoming_start_count": self.upcoming_start_count,
         }
 
 
@@ -314,7 +319,9 @@ class GetCurrentComplianceDetailSuccess(Response):
             "overdue_count" : self.overdue_count,
             "inprogress_count": self.inprogress_count
         }
-
+#############################################################
+# Get Upcoming Compliances List - Success
+#############################################################
 class GetUpcomingComplianceDetailSuccess(Response):
     def __init__(self, upcoming_compliances, total_count):
         self.upcoming_compliances = upcoming_compliances
@@ -324,15 +331,15 @@ class GetUpcomingComplianceDetailSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["upcoming_compliances", "total_count"])
         upcoming_compliances = data.get("upcoming_compliances")
-        upcoming_compliances = parse_structure_VectorType_RecordType_core_UpcomingCompliance(upcoming_compliances)
+        # upcoming_compliances = parse_structure_VectorType_RecordType_core_UpcomingCompliance(upcoming_compliances)
         total_count = data.get("total_count")
-        total_count = parse_structure_UnsignedIntegerType_32(total_count)
+        # total_count = parse_structure_UnsignedIntegerType_32(total_count)
         return GetUpcomingComplianceDetailSuccess(upcoming_compliances, total_count)
 
     def to_inner_structure(self):
         return {
-            "upcoming_compliances": to_structure_VectorType_RecordType_core_UpcomingCompliance(self.upcoming_compliances),
-            "total_count":  to_structure_UnsignedIntegerType_32(self.total_count)
+            "upcoming_compliances": self.upcoming_compliances,
+            "total_count":  self.total_count
         }
 
 

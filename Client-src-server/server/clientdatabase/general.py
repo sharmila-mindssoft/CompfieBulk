@@ -1334,7 +1334,7 @@ def get_users_by_unit_and_domain(
         db, unit_id, domain_id
     )
     if user_ids is not None:
-        columns = "user_id, employee_name, employee_code, is_active"
+        columns = "user_id, employee_name, employee_code, is_active, user_category_id"
         condition = " is_active = 1 and user_id in (%s)"
         condtion_val = [user_ids]
         rows = db.get_data(
@@ -1384,7 +1384,7 @@ def return_users(users):
         else:
             employee_name = "Administrator"
         results.append(clientcore.User(
-            user["user_id"], employee_name, bool(user["is_active"])
+            user["user_id"], user["user_category_id"], employee_name, bool(user["is_active"])
         ))
     return results
 
@@ -1607,18 +1607,23 @@ def get_user_email_name(db, user_ids):
     return email_ids, employee_name
 
 
-def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
+def calculate_from_and_to_date_for_domain(db, domain_id):
+    # country_id
     columns = "contract_from, contract_to"
-    rows = db.get_data(tblClientGroups, columns, "1")
+    # rows = db.get_data(tblClientGroups, columns, "1")
+    rows = db.get_data(tblLegalEntities, columns, "1")
     if rows:
         contract_from = rows[0]["contract_from"]
     else:
         contract_from = None
     # contract_to = rows[0][1]
 
-    columns = "period_from, period_to"
-    condition = "country_id = %s and domain_id = %s"
-    condition_val = [country_id, domain_id]
+    # columns = "period_from, period_to"
+    columns = "month_from, month_to"
+    # condition = "country_id = %s and domain_id = %s"
+    # condition_val = [country_id, domain_id]
+    condition = " domain_id = %s"
+    condition_val = [domain_id]
     rows = db.get_data(
         tblClientConfigurations, columns, condition, condition_val
     )
@@ -1640,9 +1645,14 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
 
 
 def calculate_due_date(
-    db, country_id, domain_id, statutory_dates=None, repeat_by=None,
+    db, domain_id, statutory_dates=None, repeat_by=None,
     repeat_every=None, due_date=None
 ):
+    # print "domain_id>>>", domain_id 
+    # print"statutory_dates", statutory_dates 
+    # print"repeat_by>>>", statutory_dates
+    # print "repeat_every>>>", repeat_every
+    # print "due_date>>>", due_date
     def is_future_date(test_date):
         result = False
         current_date = datetime.date.today()
@@ -1652,8 +1662,12 @@ def calculate_due_date(
             result = True
         return result
     from_date, to_date = calculate_from_and_to_date_for_domain(
-        db, country_id, domain_id
+        db, domain_id
     )
+    # print "from_date>>>", from_date
+    # print "to_date>>>", to_date
+    # print "statutory_dates>>>", statutory_dates
+    # country_id
     due_dates = []
     summary = ""
     # For Monthly Recurring compliances
@@ -1682,11 +1696,13 @@ def calculate_due_date(
     elif repeat_by:
         date_details = ""
         if statutory_dates not in ["None", None, ""]:
+            print "statutory_dates>>>>", statutory_dates
             statutory_date_json = json.loads(statutory_dates)
             if len(statutory_date_json) > 0:
                 date_details += "(%s)" % (
                     statutory_date_json[0]["statutory_date"]
                 )
+        print "repeat_by>>>>>>>>>>", repeat_by
         # For Compliances Recurring in days
         if repeat_by == 1:  # Days
             summary = "Every %s day(s)" % (repeat_every)
@@ -1704,11 +1720,16 @@ def calculate_due_date(
                     due_dates.append(iter_due_date)
         elif repeat_by == 2:   # Months
             summary = "Every %s month(s) %s " % (repeat_every, date_details)
+            print "summary>>>", summary
             iter_due_date = due_date
+            print "iter_due_date>>", iter_due_date
+            print "from_date>>>", from_date
+            print "to_date>>>", to_date
             while iter_due_date > from_date:
                 iter_due_date = iter_due_date + relativedelta.relativedelta(
                     months=-repeat_every
                 )
+                print "iter_due_date-1", iter_due_date
                 if from_date <= iter_due_date <= to_date:
                     due_dates.append(iter_due_date)
         elif repeat_by == 3:   # Years

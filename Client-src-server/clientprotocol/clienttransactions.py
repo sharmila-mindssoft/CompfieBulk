@@ -1576,9 +1576,10 @@ class IndustryWiseUnits(object):
 ####################################################
 class GetPastRecordsFormDataSuccess(Response):
     def __init__(
-        self, business_groups, legal_entities, divisions, category, units,
+        self, countries, business_groups, legal_entities, divisions, category, units,
         domains, level_1_statutories, compliance_frequency
     ):
+        self.countries = countries
         self.business_groups = business_groups
         self.legal_entities = legal_entities
         self.divisions = divisions
@@ -1592,11 +1593,11 @@ class GetPastRecordsFormDataSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                    "business_groups", "pr_legal_entities",
+                    "countries", "business_groups", "pr_legal_entities",
                     "client_divisions", "pr_categories", "in_units", "domains", "level_1_statutories", "compliance_frequency"
                 ]
             )
-        # countries = data.get("countries")
+        countries = data.get("countries")
         # countries = parse_structure_VectorType_RecordType_core_Country(countries)
         business_groups = data.get("business_groups")
         # business_groups = parse_structure_VectorType_RecordType_core_ClientBusinessGroup(business_groups)
@@ -1614,12 +1615,13 @@ class GetPastRecordsFormDataSuccess(Response):
         compliance_frequency = data.get("compliance_frequency")
         # compliance_frequency = parse_structure_VectorType_RecordType_core_ComplianceFrequency(compliance_frequency)
         return GetPastRecordsFormDataSuccess(
-            business_groups, legal_entities, divisions, category,
+            countries, business_groups, legal_entities, divisions, category,
             units, domains, level_1_statutories, compliance_frequency
         )
 
     def to_inner_structure(self):
-        return {            
+        return {
+            "countries": self.countries,         
             "business_groups": self.business_groups,
             "pr_legal_entities": self.legal_entities,
             "client_divisions": self.divisions,

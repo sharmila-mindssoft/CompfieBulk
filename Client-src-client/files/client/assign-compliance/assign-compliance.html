@@ -36,7 +36,7 @@
                                                         <td class="width-31">
                                                             <h6 class="m-t-0">Legal Entity <span class="mandatory">*</span></h6>
                                                             <div class="form-group has-feedback m-b-0">
-                                                                <input class="form-control input-sm" placeholder="Enter Legal Entity" type="text">
+                                                                <input class="form-control input-sm filter-list legalentity" placeholder="Enter Legal Entity" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled  box-height-150" id="legalentity">
@@ -45,7 +45,7 @@
                                                         <td class="width-34">
                                                             <h6 class="m-t-0">Division</h6>
                                                             <div class="form-group has-feedback m-b-0">
-                                                                <input class="form-control input-sm" placeholder="Enter Division" type="text">
+                                                                <input class="form-control input-sm filter-list division" placeholder="Enter Division" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled  box-height-150" id="division">
@@ -55,7 +55,7 @@
                                                         <td class="width-33">
                                                             <h6 class="m-t-0">Category</h6>
                                                             <div class="form-group has-feedback m-b-0">
-                                                                <input class="form-control input-sm" placeholder="Enter Category" type="text">
+                                                                <input class="form-control input-sm filter-list category" placeholder="Enter Category" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled  box-height-150" id="category">
@@ -73,7 +73,7 @@
                                                         <td class="width-31">
                                                             <h6 class="m-t-0">Domain <span class="mandatory">*</span></h6>
                                                             <div class="form-group has-feedback m-b-0">
-                                                                <input class="form-control input-sm" placeholder="Enter Domain" type="text">
+                                                                <input class="form-control input-sm filter-list domain" placeholder="Enter Domain" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled  box-height-150" id="domain">
@@ -83,7 +83,7 @@
                                                         <td class="width-34">
                                                             <h6 class="m-t-0">Unit <span class="mandatory">*</span></h6>
                                                             <div class="form-group has-feedback m-b-0">
-                                                                <input class="form-control input-sm" placeholder="Enter Unit" type="text">
+                                                                <input class="form-control input-sm filter-list unit" placeholder="Enter Unit" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled box-height-150" id="unit">
@@ -93,7 +93,7 @@
                                                         <td class="width-33">
                                                             <h6 class="m-t-0">Compliance Frequency <span class="mandatory">*</span></h6>
                                                             <div class="form-group has-feedback m-b-0">
-                                                                <input class="form-control input-sm" placeholder="Enter Compliance Frequency" type="text">
+                                                                <input class="form-control input-sm filter-list frequency" placeholder="Enter Compliance Frequency" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled  box-height-150" id="frequency">
@@ -129,7 +129,7 @@
                                                              
                                                             </select>
                                                             <div class="form-group has-feedback m-b-0">
-                                                                <input class="form-control input-sm" placeholder="Search" type="text">
+                                                                <input class="form-control input-sm filter-list assignee" placeholder="Search" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled" id="assignee">
@@ -142,7 +142,7 @@
                                                               
                                                             </select>
                                                             <div class="form-group has-feedback m-b-0">
-                                                                <input class="form-control input-sm" placeholder="Search" type="text">
+                                                                <input class="form-control input-sm filter-list concurrence" placeholder="Search" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled" id="concurrence">
@@ -155,7 +155,7 @@
                                                              
                                                             </select>
                                                             <div class="form-group has-feedback m-b-0">
-                                                                <input class="form-control input-sm" placeholder="Search" type="text">
+                                                                <input class="form-control input-sm filter-list approval" placeholder="Search" type="text">
                                                                 <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                             </div>
                                                             <ul class="list-unstyled" id="approval">
@@ -267,7 +267,7 @@
                 <span class="compliancetask"> </span>
               </td>
 
-              <td class="text-center applicableunits"> </td>
+              <td class="text-center applicableunits"> <a class="c-pointer"> </a> </td>
 
               <td class="frequency"> </td>
 
@@ -283,8 +283,13 @@
 
           </tr>
         </table>
-      </div>
+    </div>
 
+    <table class="table-popup-list">
+        <tr class="table-row">
+          <td class="popup_unitname" style="text-align:left"></td>
+        </tr>
+    </table>
 
 </div>
 <!-- Modal -->
@@ -295,12 +300,14 @@
     <h4 class="custom-modal-title p-t-10 p-b-10">Applicable Units</h4>
     <div class="custom-modal-text">
         <div role="form">
-            <p class="form-control-static text-left">RG1001 - Corporate Office - 15/9, New Delhi, New Delhi, North Region, India</p>
-            <p class="form-control-static text-left">RG1002 - Regional Office - 24-1/4, South Delhi Municipal Corporation, Delhi</p>
-            <p class="form-control-static text-left">RG1003 - Branch Office - 12, KK nagar, Chennai, Tamil Nadu, South Region</p>
+            <table width="100%" id="popup_table">
+                <tbody class="popup-list">
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
 
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
 <script type="text/javascript" src="/script/assign-compliance/assign-compliance.js"></script>
