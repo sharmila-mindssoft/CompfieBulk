@@ -4938,7 +4938,14 @@ def _init_Request_class_map():
         GetServiceProviderWiseReport, GetUserWiseReportFilters, GetUserWiseReport,
         GetUnitListReportFilters, GetUnitListReport, GetStatutoryNotificationsListReportFilters,
         GetStatutoryNotificationsListReportData, GetAuditTrailReportData,
-        GetStatusReportConsolidatedFilters
+        
+        GetReassignedHistoryReportFilters, GetReassignedHistoryReport, 
+        GetStatusReportConsolidatedFilters, GetStatusReportConsolidated, 
+        GetStatutorySettingsUnitWiseFilters, GetStatutorySettingsUnitWise, 
+        GetDomainScoreCardFilters, GetDomainScoreCard, 
+        GetLEWiseScoreCardFilters, GetLEWiseScoreCard, 
+        GetWorkFlowScoreCardFilters, GetWorkFlowScoreCard, 
+        
     ]
     class_map = {}
     for c in classes:
@@ -4980,7 +4987,12 @@ def _init_Response_class_map():
         GetStatutoryNotificationReportDataSuccess,
         GetAuditTrailReportDataSuccess,
         GetRiskReportSuccess,
-        GetStatusReportConsolidatedFiltersSuccess
+        GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess, 
+        GetStatusReportConsolidatedFiltersSuccess, GetStatusReportConsolidatedSuccess, 
+        GetStatutorySettingsUnitWiseFiltersSuccess, GetStatutorySettingsUnitWiseSuccess, 
+        GetDomainScoreCardFiltersSuccess, GetDomainScoreCardSuccess, 
+        GetLEWiseScoreCardFiltersSuccess, GetLEWiseScoreCardSuccess, 
+        GetWorkFlowScoreCardFiltersSuccess, GetWorkFlowScoreCardSuccess,
     ]
     class_map = {}
     for c in classes:
