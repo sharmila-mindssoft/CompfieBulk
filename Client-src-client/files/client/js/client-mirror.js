@@ -696,11 +696,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUpcomingComplianceDetail(upcoming_start_count, callback) {
+    function getUpcomingComplianceDetail(le_id, upcoming_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetUpcomingComplianceDetail',
-            { 'upcoming_start_count': upcoming_start_count }
+            {
+                'le_id': le_id,
+                'upcoming_start_count': upcoming_start_count
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -1314,15 +1317,20 @@ function initClientMirror() {
         add = serviceProviderDetail[2];
         if (add == '') {
             add = null;
+        } else {
+            add = serviceProviderDetail[9]
         }
         return {
-            's_id': serviceProviderDetail[0],
-            's_name': serviceProviderDetail[1],
-            'add': add,
-            'c_from': serviceProviderDetail[3],
-            'c_to': serviceProviderDetail[4],
-            'c_person': serviceProviderDetail[5],
-            'c_no': serviceProviderDetail[6]
+            's_p_id': serviceProviderDetail[0],
+            's_p_name': serviceProviderDetail[1],
+            's_p_short': serviceProviderDetail[2],
+            'address': add,
+            'cont_from': serviceProviderDetail[3],
+            'cont_to': serviceProviderDetail[4],
+            'cont_person': serviceProviderDetail[5],
+            'cont_no': serviceProviderDetail[6],
+            'mob_no': serviceProviderDetail[7],
+            'e_id': serviceProviderDetail[8]
         };
     }
 
@@ -1341,6 +1349,17 @@ function initClientMirror() {
             'ChangeServiceProviderStatus', {
                 'sp_id': sId,
                 'active': active
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function blockServiceProvider(sId, block, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'BlockServiceProvider', {
+                'sp_id': sId,
+                'is_blocked': block
             }
         ];
         clientApiRequest(callerName, request, callback);

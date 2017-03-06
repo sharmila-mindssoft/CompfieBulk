@@ -219,8 +219,9 @@ def get_current_compliances_list(
             )
         )
     return current_compliances_list
-
-
+#############################################################
+# Get Upcoming Compliances List - Count
+#############################################################
 def get_upcoming_count(db, session_user):
     all_compliance_query = " SELECT ac.compliance_id, ac.unit_id " + \
         " FROM tbl_assign_compliances ac " + \
@@ -249,7 +250,9 @@ def get_upcoming_count(db, session_user):
     count = len(combined_rows)
     return all_compliance_count - count
 
-
+#############################################################
+# Get Upcoming Compliances List
+#############################################################
 def get_upcoming_compliances_list(
     db, upcoming_start_count, to_count, session_user
 ):
@@ -280,11 +283,11 @@ def get_upcoming_compliances_list(
         "description", "format_file", "unit_code", "unit_name", "address",
         "domain_name", "start_date"
     ]
-    upcoming_compliances_result = convert_to_dict(
-        upcoming_compliances_rows, columns
-    )
+    # upcoming_compliances_result = convert_to_dict(
+    #     upcoming_compliances_rows, columns
+    # )
     upcoming_compliances_list = []
-    for compliance in upcoming_compliances_result:
+    for compliance in upcoming_compliances_rows:
         document_name = compliance["document_name"]
         compliance_task = compliance["compliance_task"]
         compliance_name = compliance_task
@@ -313,7 +316,7 @@ def get_upcoming_compliances_list(
                 format_file_name=format_files,
                 unit_name=unit_name,
                 address=address,
-                compliance_description=compliance["description"]
+                compliance_description=compliance["compliance_description"]
             ))
     return upcoming_compliances_list
 

@@ -76,7 +76,8 @@ __all__ = [
     "get_login_users_list",
     "process_login_trace_report",
     "get_user_info",
-    "update_profile"
+    "update_profile",
+    "block_service_provider"
 ]
 
 ############################################################################
@@ -140,9 +141,9 @@ def is_duplicate_service_provider(db, service_provider_id, service_provider_name
     column = ["short_name", "service_provider_name"]
     condition = "short_name = %s AND service_provider_name = %s "
     condition_val = [short_name, service_provider_name]
-    # if service_provider_id is not None:
-        # condition += " AND service_provider_id != %s"
-        # condition_val.append(service_provider_id)
+    if service_provider_id is not None:
+        condition += " AND service_provider_id != %s"
+        condition_val.append(service_provider_id)
     res = db.is_already_exists(tblServiceProviders, condition, condition_val)
     return res
 
@@ -262,7 +263,7 @@ def update_service_provider(db, service_provider, session_user):
     action = "Updated Service Provider \"%s\"" % (
         service_provider.service_provider_name
     )
-    # db.save_activity(session_user, 2, action)
+    db.save_activity(session_user, 2, action)
     return result
 
 
@@ -319,8 +320,8 @@ def is_user_exists_under_service_provider(db, service_provider_id):
 def update_service_provider_status(
     db, service_provider_id,  is_active, session_user
 ):
-    columns = ["is_active", "updated_on", "updated_by"]
-    values = [is_active, get_date_time(), session_user, service_provider_id]
+    columns = ["is_active", "updated_on", "updated_by", "status_changed_on", "status_changed_by"]
+    values = [is_active, get_date_time(), session_user, get_date_time(), session_user, service_provider_id]
     condition = "service_provider_id= %s "
     result = db.update(tblServiceProviders, columns, values, condition)
     if result is False:
@@ -336,6 +337,37 @@ def update_service_provider_status(
         action = "Activated Service Provider \"%s\"" % service_provider_name
     else:
         action = "Deactivated Service Provider \"%s\"" % service_provider_name
+    db.save_activity(session_user, 2, action)
+
+    return result
+##############################################################################
+# To Block service provider
+# Parameter(s) - Object of database, Service provider id, block status and
+#                session user
+# Return Type - Boolean
+#             - Returns True on successfull block 
+#             - Returns RuntimeError on failure block
+##############################################################################
+def block_service_provider(
+    db, service_provider_id,  is_blocked, session_user
+):
+    columns = ["is_blocked", "updated_on", "updated_by", "blocked_on", "blocked_by"]
+    values = [is_blocked, get_date_time(), session_user, get_date_time(), session_user, service_provider_id]
+    condition = "service_provider_id= %s "
+    result = db.update(tblServiceProviders, columns, values, condition)
+    if result is False:
+        raise client_process_error("E003")
+
+    action_column = "service_provider_name"
+    rows = db.get_data(
+        tblServiceProviders, action_column, condition, [service_provider_id]
+    )
+    service_provider_name = rows[0]["service_provider_name"]
+    action = None
+    if is_blocked == 1:
+        action = "Blocked Service Provider \"%s\"" % service_provider_name
+    else:
+        action = "Unblocked Service Provider \"%s\"" % service_provider_name
     db.save_activity(session_user, 2, action)
 
     return result

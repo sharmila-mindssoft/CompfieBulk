@@ -74,8 +74,9 @@ def process_get_current_compliance_detail(
         overdue_count=overdue_count,
         inprogress_count=inprogress_count
     )
-
-
+#############################################################
+# Get Upcoming Compliances List
+#############################################################
 def process_get_upcoming_compliance_detail(
     db, request, session_user
 ):
