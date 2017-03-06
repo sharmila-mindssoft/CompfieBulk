@@ -100,7 +100,7 @@ class ClientReplicationManager(object) :
                     json.loads(response)
                 )
             except Exception, e :
-                # print err, e
+                print err, e
                 self._poll()
                 return
 

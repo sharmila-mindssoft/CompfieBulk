@@ -21,7 +21,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     if type(request) is dashboard.GetComplianceStatusChart:
 
         result = process_compliance_status_chart(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetComplianceStatusDrillDownData:
@@ -125,9 +125,9 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     return result
 
-def process_compliance_status_chart(db, request, session_user):
+def process_compliance_status_chart(db, request, session_user, session_category):
 
-    return get_compliance_status_chart(db, request, session_user)
+    return get_compliance_status_chart(db, request, session_user, session_category)
 
 
 def process_trend_chart(db, request, session_user, session_category):

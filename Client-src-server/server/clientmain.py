@@ -220,16 +220,17 @@ class API(object):
                         if le_db is not None :
                             if is_new_data is True and is_new_domain is False :
                                 # replication for group db only master data
-                                rep_man = ReplicationManagerWithBase(
-                                    self._knowledge_server_address,
-                                    le_db,
-                                    _client_id,
-                                    client.is_group
-                                )
-
                                 if self._replication_managers_for_le.get(_client_id) is None :
+                                    rep_man = ReplicationManagerWithBase(
+                                        self._knowledge_server_address,
+                                        le_db,
+                                        _client_id,
+                                        client.is_group
+                                    )
                                     rep_man.start()
                                     self._replication_managers_for_le[_client_id] = rep_man
+                                else :
+                                    self._replication_managers_for_le[_client_id].start()
 
                             # if is_new_domain is True and _domain_id is not None :
                             #     d_rep_man = {}

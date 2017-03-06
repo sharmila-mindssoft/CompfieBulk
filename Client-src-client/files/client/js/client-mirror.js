@@ -1259,12 +1259,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeClientUserGroupStatus(ugId, active, callback) {
+    function changeClientUserGroupStatus(ugId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeUserPrivilegeStatus', {
-                'ug_id': ugId,
-                'active': active
+                'u_g_id': ugId,
+                'is_active': active,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1681,11 +1682,10 @@ function initClientMirror() {
     }
 
     /* Past Records */
-    function getPastRecordsFormData(legalEntityId, callback) {
+    function getPastRecordsFormData(le_id, callback) {
         var request = [
-            'GetPastRecordsFormData',
-            {
-                'le_id': legalEntityId
+            'GetPastRecordsFormData', {
+                'le_id': le_id
             }
         ];
         clientApiRequest('client_transaction', request, callback);

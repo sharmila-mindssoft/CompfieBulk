@@ -1,7 +1,5 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
-<link rel="stylesheet" href="/files/client/common/css/multiselect/bootstrap-multiselect.css" type="text/css">
-<script type="text/javascript" src="/files/client/common/js/multiselect/bootstrap-multiselect.js"></script>
 <div class="content-page">
 <div class="content">
 <div class="container page_font_size_13">
@@ -27,51 +25,32 @@
                             <li><a href="#tab2" data-toggle="tab">2. Select Domain</a></li>
                             <li><a href="#tab3" data-toggle="tab">3. Select Compliance</a></li>
                         </ul>
-                        <div class="tab-content b-0 m-b-0">
+                        <div class="tab-content b-0 m-b-0 task-current-year-tab" >
                             <div class="tab-pane m-t-0 fade active in box-height-350" id="tab1">
                                 <div class="row">
                                     <div class="col-sm-12 scroll_box">
-                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                        <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list" width="100%" cellspacing="0">
                                             <tbody>
                                                 <tr>
-                                                    <td>
-                                                        <h6 class="m-t-0">Business Group</h6>
-                                                        <div class="form-group has-feedback">
-                                                            <input class="form-control input-sm" placeholder="Enter Business Group" type="text">
-                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                        </div>
-                                                        <ul class="list-unstyled  box-height-150">
-                                                            <li>RG Business Group 01</li>
-                                                            <li class="active">RG Business Group 02<i class="fa fa-check pull-right"></i></li>
-                                                            <li>RG Business Group 03</li>
-                                                            <li>RG Business Group 04</li>
-                                                            <li>RG Business Group 05</li>
-                                                        </ul>
-                                                    </td>
-                                                    <td>
-                                                        <h6 class="m-t-0">Country</h6>
-                                                        <div class="form-group has-feedback">
-                                                            <input class="form-control input-sm" placeholder="Enter Country" type="text">
-                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                        </div>
-                                                        <ul class="list-unstyled  box-height-150">
-                                                            <li class="active">India<i class="fa fa-check pull-right"></i></li>
-                                                            <li>Malaysia</li>
-                                                            <li>Singapore</li>
-                                                        </ul>
-                                                    </td>
-                                                    <td>
-                                                        <h6 class="m-t-0">Legal Entity</h6>
+                                                    <td class="width-50">
+                                                        <h6 class="m-t-0">Legal Entity <span class="mandatory">*</span></h6>
                                                         <div class="form-group has-feedback">
                                                             <input class="form-control input-sm" placeholder="Enter Legal Entity" type="text">
                                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                         </div>
+                                                        <ul class="list-unstyled  box-height-150" id="legalentity">
+                                                          <!--   <li class="active">RG Legal Entity<i class="fa fa-check pull-right"></i></li> -->
+                                                        </ul>
+                                                    </td>
+                                                    <td class="width-50">
+                                                        <h6 class="m-t-0">Division</h6>
+                                                        <div class="form-group has-feedback">
+                                                            <input class="form-control input-sm" placeholder="Enter Division" type="text">
+                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                                                        </div>
                                                         <ul class="list-unstyled  box-height-150">
-                                                            <li class="active">RG Legal Entity 01<i class="fa fa-check pull-right"></i></li>
-                                                            <li>RG Legal Entity 02</li>
-                                                            <li>RG Legal Entity 03</li>
-                                                            <li>RG Legal Entity 04</li>
-                                                            <li>RG Legal Entity 05</li>
+                                                            <!-- <li class="active">RG Division 01<i class="fa fa-check pull-right"></i></li> -->
+                                                            
                                                         </ul>
                                                     </td>
                                                 </tr>
@@ -81,45 +60,31 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-12 scroll_box">
-                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                        <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list" width="100%" cellspacing="0">
                                             <tbody>
                                                 <tr>
-                                                    <td>
-                                                        <h6 class="m-t-0">Division</h6>
-                                                        <div class="form-group has-feedback">
-                                                            <input class="form-control input-sm" placeholder="Enter Division" type="text">
-                                                            <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                                                        </div>
-                                                        <ul class="list-unstyled  box-height-150">
-                                                            <li class="active">RG Division 01<i class="fa fa-check pull-right"></i></li>
-                                                            <li>RG Division 02</li>
-                                                            <li>RG Division 03</li>
-                                                            <li>RG Division 04</li>
-                                                            <li>RG Division 05</li>
-                                                        </ul>
-                                                    </td>
-                                                    <td>
+                                                    <td class="width-50">
                                                         <h6 class="m-t-0">Category</h6>
                                                         <div class="form-group has-feedback">
                                                             <input class="form-control input-sm" placeholder="Enter Category" type="text">
                                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                         </div>
-                                                        <ul class="list-unstyled  box-height-150">
-                                                            <li>RG Category 01</li>
+                                                        <ul class="list-unstyled  box-height-150" id="category">
+                                                         <!--    <li>RG Category 01</li>
                                                             <li>RG Category 02</li>
                                                             <li>RG Category 03</li>
                                                             <li>RG Category 04</li>
-                                                            <li>RG Category 05</li>
+                                                            <li>RG Category 05</li> -->
                                                         </ul>
                                                     </td>
-                                                    <td>
-                                                        <h6 class="m-t-0">Unit</h6>
+                                                    <td class="width-50">
+                                                        <h6 class="m-t-0">Unit <span class="mandatory">*</span></h6>
                                                         <div class="form-group has-feedback">
                                                             <input class="form-control input-sm" placeholder="Enter Unit" type="text">
                                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                         </div>
-                                                        <ul class="list-unstyled box-height-150">
-                                                            <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1001 - Corporate Office</li>
+                                                        <ul class="list-unstyled box-height-150" id="units">
+                                                           <!--  <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1001 - Corporate Office</li>
                                                             <li class="active"><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1003 - Regional Office - South <i class="fa fa-check pull-right"></i></li>
                                                             <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1004 - Branch Office - 1</li>
                                                             <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1005 - Branch Office - 2</li>
@@ -127,7 +92,7 @@
                                                             <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1007 - Branch Office - 4</li>
                                                             <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1008 - Branch Office - 5</li>
                                                             <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1008 - Branch Office - 6</li>
-                                                            <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1008 - Branch Office - 7</li>
+                                                            <li><i class="zmdi zmdi-info" data-toggle="tooltip" title="871, South Gate, Delhi, 110012"></i> RG1008 - Branch Office - 7</li> -->
                                                         </ul>
                                                     </td>
                                                 </tr>
@@ -139,33 +104,33 @@
                             <div class="tab-pane m-t-0 fade box-height-350" id="tab2">
                                 <div class="row">
                                     <div class="col-sm-12 scroll_box">
-                                        <table id="datatable-fixed-header" class="table table-striped dt-responsive nowrap table-list" width="100%" cellspacing="0">
+                                        <table id="datatable-fixed-header" class="table dt-responsive nowrap table-list" width="100%" cellspacing="0">
                                             <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <h6 class="m-t-0">Domain</h6>
+                                                <tr class="height-400">
+                                                    <td class="width-32">
+                                                        <h6 class="m-t-0">Domain <span class="mandatory">*</span></h6>
                                                         <div class="form-group has-feedback">
                                                             <input class="form-control input-sm" placeholder="Enter Domain" type="text">
                                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                         </div>
-                                                        <ul class="list-unstyled box-height-350">
-                                                            <li>Finance Law</li>
+                                                        <ul class="list-unstyled box-height-350" id="domain">
+                                                            <!-- <li>Finance Law</li>
                                                             <li>Industrial Law</li>
-                                                            <li class="active">Labour Law<i class="fa fa-check pull-right"></i></li>
+                                                            <li class="active">Labour Law<i class="fa fa-check pull-right"></i></li> -->
                                                         </ul>
                                                     </td>
-                                                    <td>
+                                                    <td class="width-33">
                                                         <h6 class="m-t-0">Act</h6>
                                                         <div class="form-group has-feedback">
                                                             <input class="form-control input-sm" placeholder="Enter Act" type="text">
                                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                         </div>
-                                                        <ul class="list-unstyled box-height-350">
-                                                            <li>Gratuity Act, 1972</li>
+                                                        <ul class="list-unstyled box-height-350" id="">
+                                                            <!-- <li>Gratuity Act, 1972</li>
                                                             <li>Batteries Act</li>
                                                             <li>Industrial Disputes (Central) Rules, 1957</li>
                                                             <li>Indian Partnership Act, 1932</li>
-                                                            <li>Payment of Bonus Act</li>
+                                                            <li>Payment of Bonus Act</li> -->
                                                         </ul>
                                                     </td>
                                                     <td>
@@ -174,10 +139,10 @@
                                                             <input class="form-control input-sm" placeholder="Enter Frequency" type="text">
                                                             <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                         </div>
-                                                        <ul class="list-unstyled box-height-350">
-                                                            <li>One Time</li>
+                                                        <ul class="list-unstyled box-height-350" id="">
+                                                            <!-- <li>One Time</li>
                                                             <li>Periodical</li>
-                                                            <li>Review</li>
+                                                            <li>Review</li> -->
                                                         </ul>
                                                     </td>
                                                 </tr>
@@ -210,12 +175,12 @@
                                                       <th width="13%">Compliance Task</th>
                                                       <th width="07%">Compliance Frequency</th>
                                                       <th width="10%">Statutory Date</th>
-                                                      <th width="08%">Due Date</th>
-                                                      <th width="08%">Completion Date</th>
+                                                      <th width="08%">Due Date <span class="mandatory">*</span></th>
+                                                      <th width="08%">Completion Date <span class="mandatory">*</span></th>
                                                       <th width="10%">Document Upload</th>
-                                                      <th width="8%">Assignee</th>
-                                                      <th width="8%">Compliance Status</th>
-                                                      <th width="03%">Completed</th>
+                                                      <th width="8%">Assignee <span class="mandatory">*</span></th>
+                                                      <th width="8%">Compliance Status <span class="mandatory">*</span></th>
+                                                      <th width="03%">Completed <span class="mandatory">*</span></th>
                                                     </tr>
                                                   </thead>
                                                   <tbody>
@@ -625,7 +590,6 @@
                     </div>
                <!--  </form> -->
                 <div class="clearfix"></div>
-                <br>
             </div>
         </div>
     </div>
@@ -653,17 +617,19 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div id="templates">
+    <div class="ul-row">
+        <ul>
+            <li></li>
+        </ul>
+    </div>
+</div>
 
+<script type="text/javascript" src="/script/completed-task-current-year/completed-task-current-year.js"></script>
 <script>
     var resizefunc = [];
 </script>
-<script src="/js/wizard/jquery.bootstrap.wizard.js"></script>
-<script type="text/javascript">
-var resizefunc = [];
-$(document).ready(function() {
-    $('#basicwizard').bootstrapWizard({'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'});
 
-    
-});
-</script>
+
+
 {% endblock %}
