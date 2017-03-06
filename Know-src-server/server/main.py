@@ -124,6 +124,7 @@ class API(object):
     def _remove_old_session(self):
 
         def on_session_timeout():
+            print "session timeout"
             _db_con_clr = before_first_request()
             _db_clr = Database(_db_con_clr)
             _db_clr.begin()
