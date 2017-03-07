@@ -146,7 +146,7 @@ CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_clie
         select @action, NEW.client_id, 0, cn_config_id, 'month_from' col_name, month_from value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
         union all
-        select @action, NEW.client_id, 0, cn_config_id, 'month_to' col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
+        select @action, NEW.client_id, 0, cn_config_id, 'month_to' col_name, month_to value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
 
         order by cn_config_id, col_name;
@@ -408,7 +408,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
         select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'month_from' col_name, month_from value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
         union all
-        select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'month_to' col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
+        select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'month_to' col_name, month_to value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
 
         order by cn_config_id, col_name;
