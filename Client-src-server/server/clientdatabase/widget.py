@@ -326,19 +326,19 @@ def frame_not_complied_chart(data):
         above_90_days = int(above_90_days) if above_90_days is not None else 0
 
         chartData.append({
-            "name": "Below 30",
+            "name": "0 - 30 days",
             "y": below_30_days
         })
         chartData.append({
-            "name": "Below 60",
+            "name": "31 - 60 days",
             "y": b_31_60_days
         })
         chartData.append({
-            "name": "Below 90",
+            "name": "61 - 90 days",
             "y": b_61_90_days
         })
         chartData.append({
-            "name": "Above 90",
+            "name": "Above 90 days",
             "y": above_90_days
         })
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)

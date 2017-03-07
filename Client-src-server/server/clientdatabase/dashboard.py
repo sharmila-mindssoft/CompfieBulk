@@ -729,6 +729,8 @@ def frame_compliance_details_query(
     db, chart_type, compliance_status, request,
     from_count, to_count, user_id, chart_year=None
 ):
+    print chart_type
+    print chart_year
     domain_ids = request.domain_ids
     filter_type = request.filter_type
     if chart_type == "compliance_status":
@@ -740,19 +742,16 @@ def frame_compliance_details_query(
         from_date = None
         to_date = None
 
-    if len(domain_ids) == 1:
-        domain_ids.append(0)
-
     if chart_year is not None:
         year_condition = get_client_domain_configuration(db, chart_year)[1]
-
+        print year_condition
         for i, y in enumerate(year_condition):
             if i == 0:
                 year_range_qry = y
             else:
                 year_range_qry += " OR %s " % (y)
         if len(year_condition) > 0:
-            year_range_qry = " AND (%s) " % year_range_qry
+            year_range_qry = " AND %s " % year_range_qry
         else:
             year_range_qry = ""
     else:
@@ -772,7 +771,7 @@ def frame_compliance_details_query(
             " AND T1.approve_status = 1"
 
     elif compliance_status == "Delayed Compliance":
-        where_qry = " AND T1.due_date < T1.completion_date " + \
+        where_qry = " AND T1.due_date <= T1.completion_date " + \
             " AND T1.approve_status = 1"
 
     elif compliance_status == "Not Complied":
@@ -890,7 +889,11 @@ def frame_compliance_details_query(
     q = "%s %s %s " % (query, where_qry, order)
     param = [",".join([str(x) for x in domain_ids])]
     param.extend(where_qry_val)
+    print chart_type
+    print q, param
+    print "\n"
     rows = db.select_all(q, param)
+
     return rows
 
 
@@ -907,6 +910,7 @@ def compliance_details_query(
 def get_client_domain_configuration(
     db, current_year=None
 ):
+    print current_year
     query = "SELECT country_id, domain_id, " + \
         " month_from, month_to " + \
         " FROM  tbl_client_configuration "
@@ -916,14 +920,16 @@ def get_client_domain_configuration(
     year_condition = []
     cond = "(T3.country_id = %s " + \
         "  AND T2.domain_id = %s " + \
-        " AND YEAR(T1.due_date) IN %s)"
+        " AND find_in_set(YEAR(T1.due_date),%s))"
     for d in rows:
+
         info = {}
         country_id = int(d["country_id"])
         domain_id = int(d["domain_id"])
         info["country_id"] = country_id
         info["domain_id"] = domain_id
         year_list = calculate_years(int(d["month_from"]), int(d["month_to"]))
+
         years_list = []
         if current_year is None:
             years_list = year_list
@@ -931,10 +937,8 @@ def get_client_domain_configuration(
             for y in year_list:
                 if current_year == y[0]:
                     years_list.append(y)
-                    if len(y) == 1:
-                        y.append(0)
                     year_condition.append(
-                        cond % (country_id, domain_id, str(tuple(y)))
+                        cond % (country_id, domain_id, ",".join([str(x) for x in y]))
                     )
         if len(years_list) == 0:
             info["years"] = []
@@ -943,6 +947,7 @@ def get_client_domain_configuration(
         info["month_from"] = int(d["month_from"])
         info["month_to"] = int(d["month_to"])
         years_range.append(info)
+    print years_range, year_condition
     return (years_range, year_condition)
 
 
