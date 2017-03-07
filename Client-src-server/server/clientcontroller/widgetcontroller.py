@@ -104,7 +104,7 @@ def merge_domain_scorecard(data, new_data):
             old = old_xaxis.index(val)
             old_data = data.chart_data[old]
             new = new_data.chart_data[idx]
-            old_data["assigned"] += new["assinged"]
+            old_data["assigned"] += new["assigned"]
             old_data["unassinged"] += new["unassinged"]
             old_data["notopted"] += new["notopted"]
             data.chart_data[old] = old_data

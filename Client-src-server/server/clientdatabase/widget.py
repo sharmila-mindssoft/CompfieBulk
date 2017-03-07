@@ -486,10 +486,8 @@ def frame_calendar_view(db, data, user_id):
     for i in range(totalDays()) :
         overdue = 0
         inprogress = 0
-        print i+1 == currentDay()
         if i+1 == currentDay() :
             overdue, inprogress = get_current_inprogess_overdue(db, user_id)
-            print overdue, inprogress
 
         xaxis.append(str(i+1))
         cdata.append({
@@ -507,10 +505,6 @@ def frame_calendar_view(db, data, user_id):
         duedate = 0 if duedate is None else int(duedate)
         upcoming = d["upcoming_count"]
         upcoming = 0 if upcoming is None else int(upcoming)
-        # inprogress = d["inprogress_count"]
-        # inprogress = 0 if inprogress is None else int(inprogress)
-        # overdue = d["overdue_count"]
-        # overdue = 0 if overdue is None else int(overdue)
 
         c["overdue"] += overdue
         c["upcoming"] += upcoming

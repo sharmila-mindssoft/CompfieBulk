@@ -493,7 +493,6 @@ class API(object):
                     p_response.chart_data.extend(data.chart_data)
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
-
                     p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
                     p_response.T_31_to_60_days_count += data.T_31_to_60_days_count
                     p_response.T_61_to_90_days_count += data.T_61_to_90_days_count
@@ -535,7 +534,8 @@ class API(object):
                     p_response = controller.merge_user_scorecard(p_response, data)
 
                 elif type(request_data.request) is widgetprotocol.GetDomainScoreCard :
-                    p_response = controller.merge_domain_scorecard(p_response, data)
+                    if type(data) is widgetprotocol.ChartSuccess :
+                        p_response = controller.merge_domain_scorecard(p_response, data)
 
                 elif type(request_data.request) is widgetprotocol.GetCalendarView :
                     p_response = controller.merge_calendar_view(p_response, data)
