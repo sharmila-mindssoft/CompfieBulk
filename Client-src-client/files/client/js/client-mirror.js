@@ -110,6 +110,8 @@ function initClientMirror() {
         return info.entity_info;
     }
 
+
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -1344,23 +1346,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeServiceProviderStatus(sId, active, callback) {
+    function changeServiceProviderStatus(sId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeServiceProviderStatus', {
                 'sp_id': sId,
-                'active': active
+                'active_status': active,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function blockServiceProvider(sId, block, callback) {
+    function blockServiceProvider(sId, block, password, callback) {
         callerName = 'client_masters';
         var request = [
             'BlockServiceProvider', {
                 'sp_id': sId,
-                'is_blocked': block
+                'is_blocked': block,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -2805,6 +2809,7 @@ function initClientMirror() {
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
         getUserManagement_List: getUserManagement_List,
+        blockServiceProvider: blockServiceProvider,
     };
 }
 
