@@ -381,25 +381,23 @@ def report_statutory_settings_unit_Wise_total(
 def report_domain_score_card(
     db, country_id, bg_id, legal_entity_id, domain_id, div_id, cat_id, session_user
 ):
+
     query = "select cc.domain_id,(select domain_name from tbl_domains where domain_id = cc.domain_id) as domain_name, " + \
-            "IFNULL(sum(IF(IFNULL(cc.compliance_opted_status,0) = 0,1,0)), 0) as not_opted_count, " + \
-            "count(IFNULL(ac.compliance_id,0)) as unassigned_count, " + \
-            "IFNULL(csu.assigned_count,0) as assigned_count " + \
-            "from tbl_client_compliances as cc " + \
+            "sum(IF(cc.compliance_opted_status = 0,1,0)) as not_opted_count, " + \
+            "SUM(IF(cc.compliance_opted_status = 1 and IFNULL(ac.compliance_id,0) = 0,1,0)) as unassigned_count, " + \
+            "SUM(IF(cc.compliance_opted_status IS NOT NULL and IFNULL(ac.compliance_id,0) > 0,1,0)) as assigned_count " + \
+            "from  tbl_client_compliances as cc " + \
             "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \
-            "left join (select domain_id,sum(complied_count + delayed_count + inprogress_count + overdue_count) as assigned_count,unit_id " + \
-            "from tbl_compliance_status_chart_unitwise group by domain_id,unit_id) as csu on cc.domain_id = csu.domain_id and cc.unit_id = csu.unit_id " + \
             "left join tbl_assign_compliances as ac on cc.compliance_id = ac.compliance_id and cc.unit_id = ac.unit_id and cc.domain_id = ac.domain_id " + \
             "where unt.country_id = %s " + \
             "and IF(%s IS NOT NULL,unt.business_group_id = %s,1) " + \
             "and cc.legal_entity_id = %s " + \
             "and IF(%s IS NOT NULL,unt.division_id = %s,1) " + \
             "and IF(%s IS NOT NULL,unt.category_id = %s,1) " + \
-            "and IF(%s IS NOT NULL,cc.domain_id = %s,1) " + \
-            "group by cc.domain_id,csu.unit_id,csu.domain_id "
+            "and IF(%s IS NOT NULL,cc.domain_id = %s,1)"
 
-    domain_wise_count = db.select_all(
-        query, [country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
+
+    domain_wise_count = db.select_all(query, [country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
     # print domain_wise_count
 
     def domain_wise_unit_count(country_id, bg_id, legal_entity_id, div_id, cat_id, domain_id):
@@ -423,8 +421,7 @@ def report_domain_score_card(
             "and IF(%s IS NOT NULL,cc.domain_id = %s,1) " + \
             "group by cc.domain_id,cc.unit_id "
 
-        rows = db.select_all(query_new, [
-                             country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
+        rows = db.select_all(query_new, [country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
         # print rows
         units = []
         for r in rows:
@@ -442,6 +439,7 @@ def report_domain_score_card(
             units.append(unit_row)
         return units
 
+    print "========>", domain_wise_count
     compliances = []
     for r in domain_wise_count:
         domain_id = int(r["domain_id"])

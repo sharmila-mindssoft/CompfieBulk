@@ -1784,40 +1784,6 @@ class ClientDivision(object):
 
 class ClientCategory(object):
     def __init__(
-        self, category_id, category_name, division_id, legal_entity_id, business_group_id
-    ):
-        self.category_id = category_id
-        self.category_name = category_name
-        self.division_id = division_id
-        self.legal_entity_id = legal_entity_id
-        self.business_group_id = business_group_id
-
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(
-            data, [ "cat_id", "cat_name", "div_id",
-                "le_id", "bg_id"]
-        )
-        category_id = data.get("cat_id")
-        category_name = data.get("cat_name")
-        division_id = data.get("div_id")
-        legal_entity_id = data.get("le_id")
-        business_group_id = data.get("bg_id")
-        return Division(
-            category_id, category_name, division_id, legal_entity_id, business_group_id
-        )
-
-    def to_structure(self):
-        return {
-            "cat_id": self.category_id,
-            "cat_name": self.category_name,
-            "div_id": self.division_id,
-            "le_id": self.legal_entity_id,
-            "bg_id": self.business_group_id,
-        }
-
-class ClientCategory(object):
-    def __init__(
         self, category_id, category_name, legal_entity_id, business_group_id, division_id
     ):
         self.category_id = category_id
