@@ -1833,6 +1833,7 @@ function loadCharts() {
   } else if (chartType == 'compliance_report') {
     PageTitle.text("Assignee Wise Compliances");
     $(".drilldown-container").empty();
+    $(".div-assignee-wise-compliance").empty();
     loadAssigneeWiseCompliance();
   } else if (chartType == 'trend_chart') {
     PageTitle.text("Trend Chart");

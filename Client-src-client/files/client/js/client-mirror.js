@@ -110,6 +110,8 @@ function initClientMirror() {
         return info.entity_info;
     }
 
+
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -696,11 +698,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getUpcomingComplianceDetail(upcoming_start_count, callback) {
+    function getUpcomingComplianceDetail(le_id, upcoming_start_count, callback) {
         callerName = 'client_user';
         var request = [
             'GetUpcomingComplianceDetail',
-            { 'upcoming_start_count': upcoming_start_count }
+            {
+                'le_id': le_id,
+                'upcoming_start_count': upcoming_start_count
+            }
         ];
         clientApiRequest(callerName, request, callback);
     }
@@ -1315,15 +1320,20 @@ function initClientMirror() {
         add = serviceProviderDetail[2];
         if (add == '') {
             add = null;
+        } else {
+            add = serviceProviderDetail[9]
         }
         return {
-            's_id': serviceProviderDetail[0],
-            's_name': serviceProviderDetail[1],
-            'add': add,
-            'c_from': serviceProviderDetail[3],
-            'c_to': serviceProviderDetail[4],
-            'c_person': serviceProviderDetail[5],
-            'c_no': serviceProviderDetail[6]
+            's_p_id': serviceProviderDetail[0],
+            's_p_name': serviceProviderDetail[1],
+            's_p_short': serviceProviderDetail[2],
+            'address': add,
+            'cont_from': serviceProviderDetail[3],
+            'cont_to': serviceProviderDetail[4],
+            'cont_person': serviceProviderDetail[5],
+            'cont_no': serviceProviderDetail[6],
+            'mob_no': serviceProviderDetail[7],
+            'e_id': serviceProviderDetail[8]
         };
     }
 
@@ -1336,12 +1346,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeServiceProviderStatus(sId, active, callback) {
+    function changeServiceProviderStatus(sId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeServiceProviderStatus', {
-                's_id': sId,
-                'active': active
+                'sp_id': sId,
+                'active_status': active,
+                "password": password
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function blockServiceProvider(sId, block, password, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'BlockServiceProvider', {
+                'sp_id': sId,
+                'is_blocked': block,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1663,17 +1686,19 @@ function initClientMirror() {
     }
 
     /* Past Records */
-    function getPastRecordsFormData(callback) {
+    function getPastRecordsFormData(le_id, callback) {
         var request = [
-            'GetPastRecordsFormData',
-            {}
+            'GetPastRecordsFormData', {
+                'le_id': le_id
+            }
         ];
         clientApiRequest('client_transaction', request, callback);
     }
 
-    function getStatutoriesByUnit(unit_id, domain_id, level_1_statutory_name, compliance_frequency, country_id, start_count, callback) {
+    function getStatutoriesByUnit(legalEntityId, unit_id, domain_id, level_1_statutory_name, compliance_frequency, country_id, start_count, callback) {
         var request = [
             'GetStatutoriesByUnit', {
+                'le_id': legalEntityId,
                 'unit_id': unit_id,
                 'domain_id': domain_id,
                 'level_1_statutory_name': level_1_statutory_name,
@@ -2355,7 +2380,7 @@ function initClientMirror() {
     }
 
     // User Management List
-    function getUserManagement_List(callback) {        
+    function getUserManagement_List(callback) {
         callerName = 'client_masters';
         var request = [
             'UserManagementList',
@@ -2513,8 +2538,8 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetDomainScoreCard(callback){
-         var request = [
+    function getWidgetDomainScoreCard(callback) {
+        var request = [
             "GetDomainScoreCard", {
                 "le_ids": getLEids()
             }
@@ -2784,6 +2809,7 @@ function initClientMirror() {
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
         getUserManagement_List: getUserManagement_List,
+        blockServiceProvider: blockServiceProvider,
     };
 }
 

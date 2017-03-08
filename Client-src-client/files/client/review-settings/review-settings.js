@@ -306,13 +306,13 @@ validateFirstTab = function()  {
     }
 };
 
-clearElement = function(arr) {
-    if (arr.length > 0) {
-        $.each(arr, function(i, element) {
-            element.val('');
-        });
-    }
-}
+// clearElement = function(arr) {
+//     if (arr.length > 0) {
+//         $.each(arr, function(i, element) {
+//             element.val('');
+//         });
+//     }
+// }
 
 
 showTab = function(){    
@@ -323,7 +323,9 @@ showTab = function(){
         $('#tab1').hide();
         $('#tab2').hide();
         $(".UnitList").empty();
-        clearElement(Domain, DomainId);
+        //clearElement(Domain, DomainId);
+        Domain.val('');
+        DomainId.val('');
         SubmitButton.hide();
         NextButton.hide();
         PreviousButton.hide();

@@ -142,7 +142,7 @@ def return_countries(data):
 
 def get_domains_for_user(db, user_id, user_category):
     print user_category
-    if user_category > 1 :
+    if user_category > 3 :
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
@@ -847,7 +847,7 @@ def get_user_company_details(db, user_id):
             " WHERE user_id = %s )"
         condition_val = [user_id]
     columns = [
-        "unit_id", "division_id", "legal_entity_id", "business_group_id"
+        "unit_id", "division_id", "legal_entity_id", "business_group_id", "category_id"
     ]
     rows = db.get_data(tblUnits, columns, condition, condition_val)
 
@@ -855,6 +855,7 @@ def get_user_company_details(db, user_id):
     division_ids = []
     legal_entity_ids = []
     business_group_ids = []
+    category_ids =[]
     for row in rows:
         unit_ids.append(
             int(row["unit_id"])
@@ -867,11 +868,15 @@ def get_user_company_details(db, user_id):
         if row["business_group_id"] is not None:
             if int(row["business_group_id"]) not in business_group_ids:
                 business_group_ids.append(int(row["business_group_id"]))
+        if row["category_id"] is not None:
+            if int(row["category_id"]) not in category_ids:
+                category_ids.append(int(row["category_id"]))
     return (
         ",".join(str(x) for x in unit_ids),
         ",".join(str(x) for x in division_ids),
         ",".join(str(x) for x in legal_entity_ids),
-        ",".join(str(x) for x in business_group_ids)
+        ",".join(str(x) for x in business_group_ids),
+        ",".join(str(x) for x in category_ids),
     )
 
 
@@ -1305,8 +1310,10 @@ def get_user_ids_by_unit_and_domain(
     else:
         user_ids = None
     return user_ids
-
-
+########################################################
+# To get the compliances under the selected filters
+# Used in - Completed Task - Current Year (Past Data)
+########################################################
 def get_users_by_unit_and_domain(
     db, unit_id, domain_id
 ):
@@ -1314,7 +1321,7 @@ def get_users_by_unit_and_domain(
         db, unit_id, domain_id
     )
     if user_ids is not None:
-        columns = "user_id, employee_name, employee_code, is_active"
+        columns = "user_id, employee_name, employee_code, is_active, user_category_id"
         condition = " is_active = 1 and user_id in (%s)"
         condtion_val = [user_ids]
         rows = db.get_data(
@@ -1364,7 +1371,7 @@ def return_users(users):
         else:
             employee_name = "Administrator"
         results.append(clientcore.User(
-            user["user_id"], employee_name, bool(user["is_active"])
+            user["user_id"], user["user_category_id"], employee_name, bool(user["is_active"])
         ))
     return results
 
@@ -1552,10 +1559,9 @@ def get_user_countries(db, user_id):
 
 
 def get_email_id_for_users(db, user_id):
-    q = "SELECT employee_name, email_id from tbl_users where user_id = %s" % (
-        user_id
-    )
-    row = db.select_one(q)
+    q = "SELECT employee_name, email_id from tbl_users where user_id = %s"
+    print q
+    row = db.select_one(q, [user_id])
     if row:
         return row["employee_name"], row["email_id"]
     else:
@@ -1588,18 +1594,23 @@ def get_user_email_name(db, user_ids):
     return email_ids, employee_name
 
 
-def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
+def calculate_from_and_to_date_for_domain(db, domain_id):
+    # country_id
     columns = "contract_from, contract_to"
-    rows = db.get_data(tblClientGroups, columns, "1")
+    # rows = db.get_data(tblClientGroups, columns, "1")
+    rows = db.get_data(tblLegalEntities, columns, "1")
     if rows:
         contract_from = rows[0]["contract_from"]
     else:
         contract_from = None
     # contract_to = rows[0][1]
 
-    columns = "period_from, period_to"
-    condition = "country_id = %s and domain_id = %s"
-    condition_val = [country_id, domain_id]
+    # columns = "period_from, period_to"
+    columns = "month_from, month_to"
+    # condition = "country_id = %s and domain_id = %s"
+    # condition_val = [country_id, domain_id]
+    condition = " domain_id = %s"
+    condition_val = [domain_id]
     rows = db.get_data(
         tblClientConfigurations, columns, condition, condition_val
     )
@@ -1621,9 +1632,14 @@ def calculate_from_and_to_date_for_domain(db, country_id, domain_id):
 
 
 def calculate_due_date(
-    db, country_id, domain_id, statutory_dates=None, repeat_by=None,
+    db, domain_id, statutory_dates=None, repeat_by=None,
     repeat_every=None, due_date=None
 ):
+    # print "domain_id>>>", domain_id 
+    # print"statutory_dates", statutory_dates 
+    # print"repeat_by>>>", statutory_dates
+    # print "repeat_every>>>", repeat_every
+    # print "due_date>>>", due_date
     def is_future_date(test_date):
         result = False
         current_date = datetime.date.today()
@@ -1633,8 +1649,12 @@ def calculate_due_date(
             result = True
         return result
     from_date, to_date = calculate_from_and_to_date_for_domain(
-        db, country_id, domain_id
+        db, domain_id
     )
+    # print "from_date>>>", from_date
+    # print "to_date>>>", to_date
+    # print "statutory_dates>>>", statutory_dates
+    # country_id
     due_dates = []
     summary = ""
     # For Monthly Recurring compliances
@@ -1663,11 +1683,13 @@ def calculate_due_date(
     elif repeat_by:
         date_details = ""
         if statutory_dates not in ["None", None, ""]:
+            print "statutory_dates>>>>", statutory_dates
             statutory_date_json = json.loads(statutory_dates)
             if len(statutory_date_json) > 0:
                 date_details += "(%s)" % (
                     statutory_date_json[0]["statutory_date"]
                 )
+        print "repeat_by>>>>>>>>>>", repeat_by
         # For Compliances Recurring in days
         if repeat_by == 1:  # Days
             summary = "Every %s day(s)" % (repeat_every)
@@ -1685,11 +1707,16 @@ def calculate_due_date(
                     due_dates.append(iter_due_date)
         elif repeat_by == 2:   # Months
             summary = "Every %s month(s) %s " % (repeat_every, date_details)
+            print "summary>>>", summary
             iter_due_date = due_date
+            print "iter_due_date>>", iter_due_date
+            print "from_date>>>", from_date
+            print "to_date>>>", to_date
             while iter_due_date > from_date:
                 iter_due_date = iter_due_date + relativedelta.relativedelta(
                     months=-repeat_every
                 )
+                print "iter_due_date-1", iter_due_date
                 if from_date <= iter_due_date <= to_date:
                     due_dates.append(iter_due_date)
         elif repeat_by == 3:   # Years
@@ -1931,7 +1958,9 @@ def get_trail_id(db, type=None):
     else:
         query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id " + \
             " from tbl_audit_log;"
+    print query
     row = db.select_one(query)
+
     trail_id = row.get("audit_trail_id")
     return trail_id
 

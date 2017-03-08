@@ -21,7 +21,7 @@ from server.clientdatabase.general import (
     is_admin, calculate_due_date, filter_out_due_dates,
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
-    get_user_category,
+    get_user_category, is_primary_admin
 )
 from server.exceptionmessage import client_process_error
 from server.clientdatabase.savetoknowledge import *
@@ -327,7 +327,7 @@ def return_compliance_for_statutory_settings(
 
     compliance_id_wise = {}
     for r in rows:
-        
+
         compliance_applicable = False
         if r["compliance_applicable_status"] == 1:
             compliance_applicable = True
@@ -1046,6 +1046,8 @@ def save_assigned_compliance(db, request, session_user):
                 request.approval_person_name,
                 compliance_names
             )
+        print "concurrence approval"
+        print concurrence, approval
         cc = [
             get_email_id_for_users(db, concurrence)[1],
             get_email_id_for_users(db, approval)[1]
@@ -1136,12 +1138,12 @@ def get_units_for_user_grouped_by_industry(db, unit_ids):
 def get_level_1_statutories_for_user_with_domain(
     db, session_user, domain_id=None
 ):
-    if not is_admin(db, session_user):
-        condition = " tac.assignee = %s "
-        condition_val = [session_user]
-    else:
+    if is_primary_admin(db, session_user):          
         condition = "1"
         condition_val = None
+    else:
+        condition = " tac.assignee = %s "
+        condition_val = [session_user]
 
     query = " SELECT domain_id, statutory_mapping " + \
         " FROM tbl_compliances tc WHERE compliance_id in ( " + \
@@ -1150,23 +1152,26 @@ def get_level_1_statutories_for_user_with_domain(
     query = query % condition
     rows = db.select_all(query, condition_val)
     columns = ["domain_id", "statutory_mapping"]
-    result = convert_to_dict(rows, columns)
+    # result = convert_to_dict(rows, columns)
 
     level_1_statutory = {}
-    for row in result:
+    for row in rows:
         domain_id = str(row["domain_id"])
-        statutory_mapping = row["statutory_mapping"]
+        statutory_mapping = json.loads(row["statutory_mapping"])
         if domain_id not in level_1_statutory:
             level_1_statutory[domain_id] = []
-        statutories = statutory_mapping.split(">>")
-        if statutories[0].strip() not in level_1_statutory[domain_id]:
-            level_1_statutory[domain_id].append(statutories[0].strip())
+        statutories = statutory_mapping[0]
+        if statutories.strip() not in level_1_statutory[domain_id]:
+            level_1_statutory[domain_id].append(statutories.strip())
     return level_1_statutory
 
-
+########################################################
+# To get the compliances under the selected filters
+# Completed Task - Current Year (Past Data)
+########################################################
 def get_statutory_wise_compliances(
     db, unit_id, domain_id, level_1_statutory_name, frequency_name,
-    country_id, session_user, start_count, to_count
+    session_user, start_count, to_count
 ):
     condition = ""
     condition_val = []
@@ -1176,11 +1181,11 @@ def get_statutory_wise_compliances(
             " frequency = %s)"
         condition_val.append(frequency_name)
     else:
-        condition += "AND c.frequency_id in (2,3)"
+        condition += "AND c.frequency_id in (1,2,3)"
 
     if level_1_statutory_name is not None:
         condition += " AND statutory_mapping like %s"
-        condition_val.append(str(level_1_statutory_name + "%"))
+        condition_val.append("%" + str(level_1_statutory_name + "%"))
 
     query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, " + \
         " assignee, employee_code, employee_name, statutory_mapping, " + \
@@ -1208,14 +1213,14 @@ def get_statutory_wise_compliances(
         "compliance_id", "statutory_dates", "due_date", "assignee",
         "employee_code", "employee_name", "statutory_mapping",
         "document_name", "compliance_task", "compliance_description",
-        "repeats_type_id",  "repeat_type", "repeat_every", "frequency",
+        "repeats_type_id",  "repeat_type", "repeats_every", "frequency",
         "frequency_id"
     ]
-    client_compliance_rows = convert_to_dict(rows, columns)
+    # client_compliance_rows = convert_to_dict(rows, columns)
     level_1_statutory_wise_compliances = {}
     total_count = 0
     compliance_count = 0
-    for compliance in client_compliance_rows:
+    for compliance in rows:
         statutories = compliance["statutory_mapping"].split(">>")
         if level_1_statutory_name is None:
 
@@ -1236,37 +1241,37 @@ def get_statutory_wise_compliances(
             employee_code, compliance["employee_name"]
         )
         due_dates = []
-        # statutory_dates_list = []
+        # statutory_dates_list = [] old
         summary = ""
+        # country_id=country_id,
         if compliance["repeats_type_id"] == 1:  # Days
             due_dates, summary = calculate_due_date(
-                db,
+                db,                
                 repeat_by=1,
-                repeat_every=compliance["repeat_every"],
+                repeat_every=compliance["repeats_every"],
                 due_date=compliance["due_date"],
-                domain_id=domain_id,
-                country_id=country_id
+                domain_id=domain_id
             )
         elif compliance["repeats_type_id"] == 2:  # Months
             due_dates, summary = calculate_due_date(
                 db,
                 statutory_dates=compliance["statutory_dates"],
                 repeat_by=2,
-                repeat_every=compliance["repeat_every"],
+                repeat_every=compliance["repeats_every"],
                 due_date=compliance["due_date"],
-                domain_id=domain_id,
-                country_id=country_id
+                domain_id=domain_id
             )
         elif compliance["repeats_type_id"] == 3:  # years
             due_dates, summary = calculate_due_date(
                 db,
                 repeat_by=3,
                 statutory_dates=compliance["statutory_dates"],
-                repeat_every=compliance["repeat_every"],
+                repeat_every=compliance["repeats_every"],
                 due_date=compliance["due_date"],
-                domain_id=domain_id,
-                country_id=country_id
+                domain_id=domain_id
             )
+        print "due_dates>>>", due_dates 
+        print "summary>>>", summary
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
         )
@@ -1282,7 +1287,8 @@ def get_statutory_wise_compliances(
                 day = due_date_parts[2]
                 due_date = datetime.date(int(year), int(month), int(day))
                 level_1_statutory_wise_compliances[
-                    statutories[0].strip()
+                    # statutories[0].strip()
+                    statutories[0]
                 ].append(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                         compliance["compliance_id"], compliance_name,

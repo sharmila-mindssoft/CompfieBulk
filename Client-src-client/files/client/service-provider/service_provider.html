@@ -22,11 +22,11 @@
                                     <thead>
                                         <tr>
                                             <th width="1%"># <span class="none-sort-sno"></span></th>
-                                            <th width="15%">Service Provider <span class="fa fa-sort pull-right sort active"></span></th>
-                                            <th width="15%">Contact Person <span class="fa fa-sort pull-right sort active"></span></th>
-                                            <th width="10%">Contact No. <span class="fa fa fa-sort sort pull-right active"></span></th>
-                                            <th width="10%">Email ID <span class="fa fa fa-sort sort pull-right active"></span></th>
-                                            <th width="10%">Remarks <span class="fa fa fa-sort sort pull-right active"></span></th>
+                                            <th width="15%">Service Provider <span class="fa fa-sort pull-right sort"></span></th>
+                                            <th width="15%">Contact Person <span class="fa fa-sort pull-right sort"></span></th>
+                                            <th width="10%">Contact No. <span class="fa fa fa-sort sort pull-right"></span></th>
+                                            <th width="10%">Email ID <span class="fa fa fa-sort sort pull-right"></span></th>
+                                            <th width="10%">Remarks <span class="fa fa fa-sort sort pull-right"></span></th>
                                             <th width="06%" class="text-center">Edit</th>
                                             <th width="06%" class="text-center">Status</th>
                                             <th width="06%" class="text-center">Block</th>
@@ -213,19 +213,19 @@
     <table class="table-service-provider">
         <tr class="table-row">
             <td class="sno ">1</td>
-            <td class="sp-name">Service provider 1</td>
-            <td class="sp-contact-name">John</td>
-            <td class="sp-contact-number">+919876543210</td>
-            <td class="sp-contact-email">john@domain.com</td>
+            <td class="sp-name"></td>
+            <td class="sp-contact-name"></td>
+            <td class="sp-contact-number"></td>
+            <td class="sp-contact-email"></td>
             <td>&nbsp;</td>
-            <td class="icon-3x text-center ">
-                <i class="fa fa-pencil c-pointer text-primary " data-toggle="tooltip" data-placement="top " title="Click here to Edit " data-original-title="Tooltip on top "></i>
+            <td class="icon-3x text-center edit">
+                <i class="fa fa-pencil c-pointer text-primary " data-toggle="tooltip" data-placement="top" title="Click here to Edit " data-original-title="Tooltip on top"></i>
             </td>
             <td class="icon-3x text-center status">
-                <i class="fa fa-check text-success c-pointer" data-toggle="tooltip " data-placement="top " title="Click here to Deactivate " data-original-title="Tooltip on top "></i></td>
+                <i class="fa fa-check text-success c-pointer" data-toggle="tooltip" data-placement="top" title="Click here to Deactivate " data-original-title="Tooltip on to "></i></td>
             <td class="icon-3x text-center blocked">
                 <a href="#custom-modal " data-animation="contentscale " data-plugin="custommodal" data-overlayColor="#36404a">
-                    <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip " data-placement="top " title="Click here to Block " data-original-title="Tooltip on top "></i>
+                    <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip " data-placement="top" title="Click here to Block " data-original-title="Tooltip on top"></i>
                 </a>
             </td>
         </tr>
@@ -233,21 +233,22 @@
 </div>
 
 <!-- Modal -->
-<div id="custom-modal " class="modal-demo box-width-400 ">
-    <span class="pull-right m-t-10 m-r-15 c-pointer text-white " onclick="Custombox.close(); ">
-        <i class="zmdi zmdi-close zmdi-hc-2x "></i>
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
         </span>
-    <h4 class="custom-modal-title p-t-10 p-b-10 ">Enter Password</h4>
-    <div class="custom-modal-text p-t-0 ">
-        <div role="form ">
-            <div class="form-group ">
-                <label for="current-password " class="pull-left ">Password <span class="mandatory ">*</span></label>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text p-t-0">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
             </div>
-            <div class="clearfix "></div>
-            <div class="form-group ">
-                <input type="password " class="form-control input-sm " id="current-password " placeholder="Password " maxlength="20 ">
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
             </div>
-            <button type="button " class="btn btn-primary waves-effect waves-light " id="password-submit ">Submit</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="btnPasswordSubmit_Status">Submit</button>
+            <button type="button" class="btn btn-primary waves-effect waves-light" id="btnPasswordSubmit_Block">Submit</button>
         </div>
     </div>
 </div>

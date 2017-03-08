@@ -100,7 +100,7 @@ class ClientReplicationManager(object) :
                     json.loads(response)
                 )
             except Exception, e :
-                # print err, e
+                print err, e
                 self._poll()
                 return
 
@@ -277,6 +277,16 @@ class ReplicationBase(object):
                 " unit_code = values(unit_code), geography_name = values(geography_name), " + \
                 " address = values(address), postal_code = values(postal_code), is_closed = values(is_closed), " + \
                 " closed_on = values(closed_on), closed_by = values(closed_by), closed_remarks = values(closed_remarks) "
+        elif tbl_name == "tbl_compliances" :
+            query += " ON DUPLICATE KEY UPDATE statutory_provision = values(statutory_provision), " + \
+                " compliance_task = values(compliance_task), document_name = values(document_name), " + \
+                " compliance_description = values(compliance_description), penal_consequences = values(penal_consequences), " + \
+                " reference_link = values(reference_link), frequency_id = values(frequency_id),  " + \
+                " statutory_dates = values(statutory_dates), repeats_type_id = values(repeats_type_id), " + \
+                " duration_type_id = values(duration_type_id), repeats_every = values(repeats_every), " + \
+                " duration = values(duration), is_active = values(is_active), " + \
+                " format_file = values(format_file), format_file_size = values(format_file_size), " + \
+                " statutory_nature = values(statutory_nature), statutory_mapping = values(statutory_mapping)"
         else :
             query += ""
 
@@ -411,6 +421,7 @@ class ReplicationManagerWithBase(ReplicationBase):
             self._received_count = get_trail_id(self._db)
             self._db.commit()
         except Exception, e:
+            print "Error--------"
             print e
             self._received_count = None
             self._db.rollback()

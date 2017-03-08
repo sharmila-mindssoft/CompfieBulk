@@ -80,6 +80,8 @@ def parse_string(x):
     # elif x  == "":
     #     raise empty_error()
     t = type(x)
+    if t not in [str, unicode] :
+        raise expectation_error("a string ", x)
     if (x.find('>>') < 0):
         x = x.replace(">", "")
         x = x.replace("<", "")
@@ -106,6 +108,9 @@ def parse_custom_string(x, length):
     # elif x is "":
     #     raise empty_error()
     t = type(x)
+    if t not in [str, unicode] :
+        raise expectation_error("a string ", x)
+
     if (x.find('>>') < 0):
         x = x.replace(">", "")
         x = x.replace("<", "")
@@ -325,6 +330,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         param = api_params.get(field_name)
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
+
         print field_name, param, val
         _type = param.get('type')
         _module_name = param.get('module_name')
@@ -359,7 +365,18 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
                     _module_name, _class_name, val
                 )
                 map[key] = vals
+            val = map
+
+        elif _type == 'MAP_TYPE_VECTOR_TYPE_STRING' :
+            map = {}
+            if _is_optional is False :
+                for key, value in val.items() :
+                    key = _validation_method(key)
+                    vals = parse_string_list(value)
+                    map[key] = vals
                 val = map
+            else :
+                val = val
 
         elif param.get('type') == 'RECORD_TYPE':
             assert param.get('module_name') is not None
