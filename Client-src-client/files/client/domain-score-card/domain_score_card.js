@@ -399,7 +399,7 @@ DomainScoreCard.prototype.possibleFailures = function(error) {
     }
 };
 
-DomainScoreCard.prototype.loadEntityDetails = function(){
+DomainScoreCard.prototype.loadEntityDetails = function() {
     t_this = this;
     if(t_this._entities.length > 1) {
         country.parent().show();
