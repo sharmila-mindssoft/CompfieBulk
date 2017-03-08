@@ -153,6 +153,7 @@ class API(object):
         else:
             s = response_data
 
+        # print s
         key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
         s = base64.b64encode(s)
         s = json.dumps(key+s)

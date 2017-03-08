@@ -191,7 +191,7 @@ $('#show-button').click(function () {
     displayMessage(message.group_required);
     $('.grid-table-rpt').hide();
   } else if (legalentity == '') {
-    displayMessage(message.legal_entity_required);
+    displayMessage(message.legalentity_required);
     $('.grid-table-rpt').hide();
   } else {
     displayLoader();
@@ -576,7 +576,6 @@ $('#legalentityval').keyup(function (e) {
 $('#unitval').keyup(function (e) {
   var text_val = $(this).val();
   var unit_list = [];
-  console.log(textval)
   if($('#group-id').val() > 0 && $('#legalentityid').val() > 0)
   {
     for(var i=0;i<unitList.length;i++)
@@ -584,16 +583,25 @@ $('#unitval').keyup(function (e) {
       if(unitList[i].client_id == $('#group-id').val() &&
         unitList[i].legal_entity_id == $('#legalentityid').val())
       {
-        unit_list.push({
-          "unit_id": unitList[i].unit_id,
-          "unit_name": unitList[i].unit_code+"-"+unitList[i].unit_name,
-        });
+        var occur = -1;
+        for(var u=0;u<unit_list.length;u++){
+          if(unit_list[u].unit_id == unitList[i].unit_id){
+            occur = 1;
+            break;
+          }
+        }
+        if(occur < 0){
+          unit_list.push({
+            "unit_id": unitList[i].unit_id,
+            "unit_name": unitList[i].unit_code+"-"+unitList[i].unit_name,
+          });
+        }
       }
     }
     console.log("unit:"+unit_list)
     commonAutoComplete(
       e, ACUnit, Unit, text_val,
-      unit_list, "unit_id", "unit_name", function (val) {
+      unit_list, "unit_name", "unit_id", function (val) {
         onAutoCompleteSuccess(UnitVal, Unit, val);
     });
   }
@@ -631,11 +639,20 @@ $('#domainval').keyup(function (e) {
           {
             if(domainsList[j].domain_id == domain_compl_stat_List[i].domain_id)
             {
-              domain_list.push({
-                "domain_id": domainsList[j].domain_id,
-                "domain_name": domainsList[j].domain_name,
-                "is_active": domainsList[j].is_active
-              });
+              var occur = -1;
+              for(var d=0;d<domain_list.length;d++){
+                if(domainsList[j].domain_id == domain_list[d].domain_id){
+                  occur = 1;
+                  break;
+                }
+              }
+              if(occur < 0){
+                domain_list.push({
+                  "domain_id": domainsList[j].domain_id,
+                  "domain_name": domainsList[j].domain_name,
+                  "is_active": domainsList[j].is_active
+                });
+              }
             }
           }
         }
@@ -645,11 +662,20 @@ $('#domainval').keyup(function (e) {
           {
             if(domainsList[j].domain_id == domain_compl_stat_List[i].domain_id)
             {
-              domain_list.push({
-                "domain_id": domainsList[j].domain_id,
-                "domain_name": domainsList[j].domain_name,
-                "is_active": domainsList[j].is_active
-              });
+              var occur = -1;
+              for(var d=0;d<domain_list.length;d++){
+                if(domainsList[j].domain_id == domain_list[d].domain_id){
+                  occur = 1;
+                  break;
+                }
+              }
+              if(occur < 0){
+                domain_list.push({
+                  "domain_id": domainsList[j].domain_id,
+                  "domain_name": domainsList[j].domain_name,
+                  "is_active": domainsList[j].is_active
+                });
+              }
             }
           }
         }
@@ -657,7 +683,7 @@ $('#domainval').keyup(function (e) {
     }
     commonAutoComplete(
     e, ACDomain, Domain, text_val,
-    domain_list, "domain_id", "domain_name", function (val) {
+    domain_list, "domain_name", "domain_id", function (val) {
         onAutoCompleteSuccess(DomainVal, Domain, val);
     });
   }
@@ -696,15 +722,24 @@ $('#statutoryval').keyup(function (e) {
         unit_check == true && domain_check == true)
       {
         console.log("inside act")
-        act_list.push({
-          "statutory_id": domain_compl_stat_List[i].statutory_id,
-          "statutory_name": domain_compl_stat_List[i].statutory_name
-        });
+        var occur = -1;
+        for(var s=0;s<act_list.length;s++){
+          if(act_list[s].statutory_id == domain_compl_stat_List[i].statutory_id){
+            occur = 1;
+            break;
+          }
+        }
+        if(occur < 0){
+          act_list.push({
+            "statutory_id": domain_compl_stat_List[i].statutory_id,
+            "statutory_name": domain_compl_stat_List[i].statutory_name
+          });
+        }
       }
     }
     commonAutoComplete(
     e, ACAct, Act, textval,
-    act_list, "statutory_id", "statutory_name", function (val) {
+    act_list, "statutory_name", "statutory_id", function (val) {
         onAutoCompleteSuccess(ActVal, Act, val);
     });
   }
@@ -743,16 +778,25 @@ $('#compliance-task').keyup(function (e) {
         $('#legalentityid').val() == domain_compl_stat_List[i].legal_entity_id
         && unit_check == true && domain_check == true)
       {
-        compl_task_list.push({
-          "compliance_id": domain_compl_stat_List[i].compliance_id,
-          "compliance_name": domain_compl_stat_List[i].c_task+" - "+domain_compl_stat_List[i].document_name
-        });
+        var occur = -1;
+        for(var c=0;c<compl_task_list.length;c++){
+          if(compl_task_list[c].compliance_id == domain_compl_stat_List[i].compliance_id){
+            occur = 1;
+            break;
+          }
+        }
+        if(occur < 0){
+          compl_task_list.push({
+            "compliance_id": domain_compl_stat_List[i].compliance_id,
+            "compliance_name": domain_compl_stat_List[i].c_task+" - "+domain_compl_stat_List[i].document_name
+          });
+        }
       }
     }
     console.log("list:"+compl_task_list)
     commonAutoComplete(
     e, ACCompltask, CTask, textval,
-    compl_task_list, "compliance_id", "compliance_name", function (val) {
+    compl_task_list, "compliance_name", "compliance_id", function (val) {
         onAutoCompleteSuccess(CTaskVal, CTask, val);
     });
   }

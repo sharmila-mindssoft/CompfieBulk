@@ -292,7 +292,7 @@ class Database(object):
             return res
         except Exception, e:
             print e
-            #print query
+            print query
             #print param
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
