@@ -90,15 +90,15 @@ class API(object):
             response_data = unbound_method(
                 self, request_data
             )
-
+            print response_data
             return respond(response_data)
         except Exception, e:
             print(traceback.format_exc())
             return self._send_response(str(e), 400)
 
-    @api_request(fileprotocol.Request)
+    @api_request(fileprotocol.RequestFormat)
     def handle_file_upload(self, request):
-        return process_file_request(request)
+        return process_file_based_request(request)
 
 def handle_isalive():
     return Response("File server is alive", status=200, mimetype="application/json")
@@ -109,7 +109,7 @@ def run_server(address):
     def delay_initialize():
         api = API()
         api_urls_and_handlers = [
-            ("/api/file_upload", api.handle_file_upload),
+            ("/api/files", api.handle_file_upload),
             ("/api/isalive", handle_isalive)
         ]
 
@@ -122,4 +122,4 @@ def run_server(address):
     settings = {
         "threaded": True
     }
-    app.run(host="0.0.0.0", port=port, *settings)
+    app.run(host="0.0.0.0", port=port, **settings)

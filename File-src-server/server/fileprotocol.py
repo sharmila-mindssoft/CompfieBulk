@@ -3,7 +3,9 @@ from fileapivalidation import (parse_dictionary, parse_static_list)
 #
 # Request
 #
-
+__all__ = [
+    "FileList"
+]
 
 class Request(object):
     def to_structure(self):
@@ -31,22 +33,24 @@ class Request(object):
 
 class UploadComplianceTaskFile(Request):
     def __init__(
-        self, client_id, legal_entity_id, country_id, unit_id, domain_id,
+        self, client_id, legal_entity_id, country_id,  unit_id, domain_id,
         start_date, file_info
     ):
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
+        self.unit_id = unit_id
         self.domain_id = domain_id
         self.start_date = start_date
         self.file_info = file_info
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ct_id", "le_id", "c_id", "d_id", "start_date", "file_info"])
+        data = parse_dictionary(data, ["ct_id", "le_id", "c_id", "u_id", "d_id", "start_date", "file_info"])
         return UploadComplianceTaskFile(
             data.get("ct_id"),
-            data.get("le_id"), data.get("c_id"), data.get("d_id"),
+            data.get("le_id"), data.get("c_id"), data.get("u_id"),
+            data.get("d_id"),
             data.get("start_date"), data.get("file_info")
         )
 
@@ -55,6 +59,7 @@ class UploadComplianceTaskFile(Request):
             "ct_id": self.client_id,
             "le_id": self.legal_entity_id,
             "c_id": self.country_id,
+            "u_id": self.unit_id,
             "d_id": self.domain_id,
             "start_date": self.start_date,
             "file_info": self.file_info
@@ -66,10 +71,10 @@ class FileList(object):
         self.file_content = file_content
 
     @staticmethod
-    def parse_inner_structure(data):
+    def parse_structure(data):
         return FileList(data.get("file_name"), data.get("file_content"))
 
-    def to_inner_structure(self):
+    def to_structure(self):
         return {
             "file_name": self.file_name,
             "file_content": self.file_content
@@ -113,20 +118,32 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
-class UploadFileSuccess(Response):
+class FileUploadSuccess(Response):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
-        return UploadFileSuccess()
+        return FileUploadSuccess()
+
+    def to_inner_structure(self):
+        return {}
+
+
+class FileUploadFailed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return FileUploadFailed()
 
     def to_inner_structure(self):
         return {}
 
 def _init_Response_class_map():
     classes = [
-        UploadFileSuccess
+        FileUploadSuccess, FileUploadFailed
 
     ]
     class_map = {}
@@ -147,7 +164,7 @@ class RequestFormat(object):
 
     @staticmethod
     def parse_structure(data):
-        # data = parse_dictionary(data, ["session_token", "request"])
+        data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
         request = data.get("request")
         request = Request.parse_structure(request)

@@ -1,4 +1,5 @@
 from collections import OrderedDict
+# import fileprotocol
 
 def make_int_field(length=10000, is_optional=False):
     return {'type': 'INT', 'length': length, 'is_optional': is_optional}
@@ -20,7 +21,7 @@ api_params = {
     "start_date": make_text_field(),
     "file_name": make_text_field(),
     "file_content": make_text_field(length=62914560),
-    "file_info": make_vector_type_field(module="fileprotocol", klass_name="")
+    "file_info": make_vector_type_field(module="fileprotocol", klass_name="FileList")
 
 }
 
@@ -141,7 +142,7 @@ def parse_list(x, length=0):
         raise expectation_error(msg, x)
 
 def return_import(module, class_name):
-    mod = __import__(module, fromlist=[class_name])
+    mod = __import__("server."+module, fromlist=[class_name])
     klass = getattr(mod, class_name)
     return klass
 

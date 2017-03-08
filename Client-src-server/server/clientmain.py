@@ -689,7 +689,7 @@ def run_server(address, knowledge_server_address):
             ("/api/client_user", api.handle_client_user),
             ("/api/mobile", api.handle_mobile_request),
             ("/api/widgets", api.handle_widget_request),
-            (r"/api/files", api.handle_client_format_file)
+            ("/api/files", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])

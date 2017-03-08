@@ -25,7 +25,8 @@ from server.dbase import Database
 from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
-    CompanyServerDetails
+    CompanyServerDetails,
+    ServerDetails
 )
 from replication.protocol import (
     GetChanges, GetDomainChanges, GetChangesSuccess,
@@ -253,7 +254,7 @@ class API(object):
     @csrf.exempt
     @api_request(DistributionRequest)
     def handle_group_server_list(self, request, db):
-        return CompanyServerDetails(gen.get_group_servers(db))
+        return ServerDetails(gen.get_group_servers(db))
 
     @csrf.exempt
     @api_request(GetClientChanges)
@@ -524,6 +525,8 @@ def run_server(port):
 
     delay_initialize()
     settings = {
-        "threaded": True
+        "threaded": True,
+        "debug": False,
+        "use_reloader": False
     }
     app.run(host="0.0.0.0", port=port, **settings)
