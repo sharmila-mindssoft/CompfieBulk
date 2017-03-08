@@ -4702,6 +4702,147 @@ class ClientUsers_UserManagementList(object):
             "mob_no": self.mobile_no,
             "le_id": self.legal_entity_id
         }
+##############################################################################
+# User Management Edit - Get Users for Edit View
+##############################################################################
+class ClientUsers_UserManagement_EditView_Users(object):
+    def __init__(self, user_id, user_category_id, seating_unit_id, user_level,
+                  user_group_id, email_id, employee_code, employee_name,
+                  contact_no, mobile_no, address, is_service_provider,
+                  is_active, is_disable):
+        self.user_id = user_id
+        self.user_category_id = user_category_id
+        self.seating_unit_id = seating_unit_id
+        self.user_level = user_level
+        self.user_group_id = user_group_id
+        self.email_id = email_id
+        self.employee_code = employee_code
+        self.employee_name = employee_name
+        self.contact_no = contact_no
+        self.mobile_no = mobile_no
+        self.address = address
+        self.is_service_provider = is_service_provider
+        self.is_active = is_active
+        self.is_disable = is_disable
+        
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "user_category_id", "seating_unit_id", "user_level",
+                                       "user_group_id", "email_id", "employee_code",
+                                       "employee_name", "contact_no", "mobile_no", "address",
+                                       "is_service_provider", "is_active", "is_disable"])
+
+        user_id = data.get("user_id")
+        user_category_id = data.get("user_category_id")
+        seating_unit_id = data.get("seating_unit_id")
+        user_level = data.get("user_level")
+        user_group_id = data.get("user_group_id")
+        email_id = data.get("email_id")
+        employee_code = data.get("employee_code")
+        employee_name = data.get("employee_name")
+        contact_no = data.get("contact_no")
+        mobile_no = data.get("mobile_no")
+        address = data.get("address")
+        is_service_provider = data.get("is_service_provider")
+        is_active = data.get("is_active")
+        is_disable = data.get("is_disable")
+        
+        return ClientUsers_UserManagement_EditView_Users(user_id, user_category_id, seating_unit_id, user_level,
+                                                   user_group_id, email_id, employee_code, employee_name,
+                                                   contact_no, mobile_no, address, is_service_provider,
+                                                   is_active, is_disable)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "u_cat_id": self.user_category_id,
+            "seating_unit_id": self.seating_unit_id,
+            "user_level": self.user_level,
+            "u_g_id":self.user_group_id,
+            "email_id": self.email_id,
+            "emp_code": self.employee_code,
+            "emp_name": self.employee_name,
+            "cont_no": self.contact_no,
+            "mob_no": self.mobile_no,
+            "address": self.address,
+            "is_sp": self.is_service_provider,
+            "is_active": self.is_active,
+            "is_disable": self.is_disable
+        }
+
+##############################################################################
+# User Management Edit - Get Legal Entities for Edit View
+##############################################################################
+class ClientUsers_UserManagement_EditView_LegalEntities(object):
+    def __init__(self, user_id, legal_entity_id):
+        self.user_id = user_id
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "le_id"])
+
+        user_id = data.get("user_id")
+        legal_entity_id = data.get("le_id")        
+        
+        return ClientUsers_UserManagement_EditView_LegalEntities(user_id, legal_entity_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "le_id": self.legal_entity_id            
+        }
+##############################################################################
+# User Management Edit - Get Domains for Edit View
+##############################################################################
+class ClientUsers_UserManagement_EditView_Domains(object):
+    def __init__(self, user_id, legal_entity_id, domain_id):
+        self.user_id = user_id
+        self.legal_entity_id = legal_entity_id
+        self.domain_id = domain_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "le_id", "u_dm_id"])
+
+        user_id = data.get("user_id")
+        legal_entity_id = data.get("le_id")
+        domain_id = data.get("u_dm_id")
+        
+        return ClientUsers_UserManagement_EditView_Domains(user_id, legal_entity_id, domain_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "le_id": self.legal_entity_id,
+            "u_dm_id": self.domain_id
+        }
+##############################################################################
+# User Management Edit - Get Units for Edit View
+##############################################################################
+class ClientUsers_UserManagement_EditView_Units(object):
+    def __init__(self, user_id, legal_entity_id, unit_id):
+        self.user_id = user_id
+        self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["user_id", "le_id", "u_unt_id"])
+
+        user_id = data.get("user_id")
+        legal_entity_id = data.get("le_id")
+        unit_id = data.get("u_unt_id")
+        
+        return ClientUsers_UserManagement_EditView_Units(user_id, legal_entity_id, unit_id)
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "le_id": self.legal_entity_id,
+            "u_unt_id": self.unit_id
+        }
 
 class ReassignedHistoryReportSuccess(object):
     def __init__(
