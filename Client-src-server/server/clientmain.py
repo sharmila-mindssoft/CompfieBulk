@@ -621,7 +621,7 @@ class API(object):
         return controller.process_client_master_requests(request, db, session_user, client_id, session_category)
 
     @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
-    def handle_client_master_filters(self, request, db, session_user, session_category):
+    def handle_client_master_filters(self, request, db, session_user, client_id, session_category):
         return controller.process_client_master_filters_request(request, db, session_user, session_category)
 
     @api_request(clienttransactions.RequestFormat, need_category=True)
@@ -659,6 +659,7 @@ class API(object):
     @api_request(clientuser.RequestFormat)
     def handle_client_format_file():
         pass
+
 def handle_isalive():
     return Response("Application is alive", status=200, mimetype="application/json")
 
