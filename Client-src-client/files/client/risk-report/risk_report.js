@@ -437,6 +437,11 @@ RiskReport.prototype.validate = function() {
         else if (isCommonName(country, message.country_str) == false)
             return false;
     }
+    if (countryId.val() == ""){
+        displayMessage(message.country_required);
+        country.focus();
+        return false;
+    }
     if (BusinessGroupName) {
         if (isNotEmpty(BusinessGroupName, message.businessgroup_required) == false)
             return false;
@@ -444,6 +449,11 @@ RiskReport.prototype.validate = function() {
             return false;
         else if (isCommonName(BusinessGroupName, message.businessgroup_str) == false)
             return false;
+    }
+    if (BusinessGroupId.val() == ""){
+        displayMessage(message.businessgroup_required);
+        BusinessGroupName.focus();
+        return false;
     }
     if (LegalEntityName) {
         if (isNotEmpty(LegalEntityName, message.legalentity_required) == false)
@@ -453,6 +463,11 @@ RiskReport.prototype.validate = function() {
         else if (isCommonName(LegalEntityName, message.legalentity_str) == false)
             return false;
     }
+    if (LegalEntityId.val() == ""){
+        displayMessage(message.legalentity_required);
+        LegalEntityName.focus();
+        return false;
+    }
     if (domain) {
         if (isNotEmpty(domain, message.domain_required) == false)
             return false;
@@ -460,6 +475,11 @@ RiskReport.prototype.validate = function() {
             return false;
         else if (isCommonName(domain, message.domain_str) == false)
             return false;
+    }
+    if (domainId.val() == ""){
+        displayMessage(message.domain_required);
+        domain.focus();
+        return false;
     }
     if (DivisionName) {
         if (isLengthMinMax(DivisionName, 0, 50, message.division_max) == false)
@@ -575,58 +595,91 @@ RiskReport.prototype.showReportValues = function() {
     var is_null = true;
     showFrom = t_this._sno + 1;
     t_this._total_record = data.length;
-    $.each(data, function(k, v) {
-        console.log(data.length)
-        is_null = false;
-        $('.client-logo').attr("src", v.logo_url);
-
-        if (unitname != v.unit_name) {
-            var cloneone = $('#template #report-table .row-one').clone();
-            $('.unit-name', cloneone).text(v.unit_name);
-            reportTableTbody.append(cloneone);
-            unitname = v.unit_name;
+    unit_names = [];
+    for (var i=0;i<data.length;i++){
+        var occur = -1;
+        for(var j=0;j<unit_names.length;j++){
+            console.log("1:"+unit_names[j])
+            if(data[i].unit_id == unit_names[j]){
+                occur = 1;
+                break;
+            }
         }
-
-        if (actname != v.statutory_mapping) {
-            var clonetwo = $('#template #report-table .row-two').clone();
-            $('.act-name', clonetwo).text(v.statutory_mapping);
-            reportTableTbody.append(clonetwo);
-            actname = v.statutory_mapping;
+        console.log("oc:"+occur)
+        if(occur < 0){
+            unit_names.push(data[i].unit_id);
         }
+    }
 
-        var clonethree = $('#template #report-table .row-three').clone();
-        t_this._sno += 1;
-        $('.sno', clonethree).text(t_this._sno);
-        $('.compliance-task', clonethree).text(v.compliance_task);
-        $('.frequency', clonethree).text(v.frequency_name);
-        $('.admin-incharge', clonethree).text(v.admin_incharge);
-        $('.assignee', clonethree).text(v.assignee_name);
-        $('.compliance-task-status', clonethree).text(v.task_status);
-        $('.penal-consq', clonethree).text(v.penal_consequences);
-        $('.view-data', clonethree).html("View");
-        if (v.assignee_name!=null){
-        	$('.view-data', clonethree).on('click', function() {
-	            displayPopup(
-	            	v.start_date, v.due_date, v.assignee_name, v.assigned_on, v.concurrer_name,
-	            	v.concurred_on, v.approver_name, v.approved_on, v.comp_remarks
-            	);
-	        });
-        }
+    var u_count = 1;
+    var sub_cnt = 0;
+    for(var i=0;i<unit_names.length;i++){
+        u_count = 1;
+        actname = "";
+        $.each(data, function(k, v) {
+            is_null = false;
+            $('.client-logo').attr("src", v.logo_url);
 
-        if (v.document_name != null) {
-            //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-            $('.uploaded-document', clonethree).html(v.document_name);
-            $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
-            $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
+            if(v.unit_id == unit_names[i]){
+                // unit name cloning
+                if(u_count == 1){
+                    var cloneone = $('#template #report-table .row-one').clone();
+                    $('.unit-name', cloneone).text(v.unit_name);
+                    reportTableTbody.append(cloneone);
+                }
 
-        } else {
-            $('.uploaded-document', clonethree).text('-');
-        }
-        reportTableTbody.append(clonethree);
-        j = j + 1;
-        complianceTask = v.compliance_task;
-    });
+                if (actname != v.statutory_mapping) {
+                    var clonetwo = $('#template #report-table .row-two').clone();
+                    $('.act-name', clonetwo).text(v.statutory_mapping);
+                    reportTableTbody.append(clonetwo);
+                    actname = v.statutory_mapping;
+                }
 
+                var clonethree = $('#template #report-table .row-three').clone();
+                t_this._sno += 1;
+                $('.sno', clonethree).text(t_this._sno);
+                $('.compliance-task', clonethree).text(v.compliance_task);
+                $('.frequency', clonethree).text(v.frequency_name);
+                $('.admin-incharge', clonethree).text(v.admin_incharge);
+                $('.assignee', clonethree).text(v.assignee_name);
+                $('.compliance-task-status', clonethree).text(v.task_status);
+                $('.penal-consq', clonethree).text(v.penal_consequences);
+                $('.view-data', clonethree).html("View");
+                if (v.assignee_name!=null){
+                    $('.view-data', clonethree).on('click', function() {
+                        displayPopup(
+                            v.start_date, v.due_date, v.assignee_name, v.assigned_on, v.concurrer_name,
+                            v.concurred_on, v.approver_name, v.approved_on, v.comp_remarks, 1
+                        );
+                    });
+                }
+                else{
+                    if (v.assignee_name!=null){
+                        $('.view-data', clonethree).on('click', function() {
+                            displayPopup(
+                                v.start_date, v.due_date, v.assignee_name, v.assigned_on, v.concurrer_name,
+                                v.concurred_on, v.approver_name, v.approved_on, v.comp_remarks, 0
+                            );
+                        });
+                    }
+                }
+
+                if (v.document_name != null) {
+                    //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
+                    $('.uploaded-document', clonethree).html(v.document_name);
+                    $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
+                    $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
+
+                } else {
+                    $('.uploaded-document', clonethree).text('-');
+                }
+                reportTableTbody.append(clonethree);
+                j = j + 1;
+                complianceTask = v.compliance_task;
+                u_count = u_count + 1;
+            }
+        });
+    }
     if (is_null == true) {
         //a_page.hidePagePan();
         reportTableTbody.empty();
@@ -653,25 +706,56 @@ $('.close').click(function() {
 
 function displayPopup(
 	start_date, due_date, assignee_name, assigned_on, concurrer_name,
-	concurred_on, approver_name, approved_on, comp_remarks
+	concurred_on, approver_name, approved_on, comp_remarks, record_cnt
 ) {
-	$('.overlay').css('visibility', 'visible');
-    $('.overlay').css('opacity', '1');
-    $('.popup-list').find('tr').remove();
-    $('.start-date').html(start_date);
-    $('.due-date').html(due_date);
-    $('.assignee-name').html(assignee_name+"<br>"+assigned_on);
-    $('.concurrer-name').html(concurrer_name+"<br>"+concurred_on);
-    $('.approver-name').html(approver_name+"<br>"+approved_on);
-    $('.compl-remarks').html(comp_remarks);
+    if(record_cnt == 0){
+        $('.overlay').css('visibility', 'visible');
+        $('.overlay').css('opacity', '1');
+        $('.popup-list').find('tr').remove();
+        $('.empty').show();
+        $('.not-empty').hide();
 
-    Custombox.open({
-        target: '#custom-modal',
-        effect: 'contentscale',
-        complete: function() {
-            isAuthenticate = false;
-        }
-    });
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                isAuthenticate = false;
+            }
+        });
+    }
+    else{
+        $('.not-empty').show();
+    	$('.overlay').css('visibility', 'visible');
+        $('.overlay').css('opacity', '1');
+        $('.popup-list').find('tr').remove();
+        $('.empty').hide();
+        $('.start-date').html(start_date);
+        $('.due-date').html(due_date);
+        if(assigned_on == null)
+            assigned_on = "-"
+        if(assignee_name == null)
+            assignee_name = "-"
+        $('.assignee-name').html(assignee_name+"<br>"+assigned_on);
+        if(concurred_on == null)
+            concurred_on = "-"
+        if(concurrer_name == null)
+            concurrer_name = "-"
+        $('.concurrer-name').html(concurrer_name+"<br>"+concurred_on);
+        if(approved_on == null)
+            approved_on = "-"
+        if(approver_name == null)
+            approver_name = "-"
+        $('.approver-name').html(approver_name+"<br>"+approved_on);
+        $('.compl-remarks').html(comp_remarks);
+
+        Custombox.open({
+            target: '#custom-modal',
+            effect: 'contentscale',
+            complete: function() {
+                isAuthenticate = false;
+            }
+        });
+    }
 
 }
 

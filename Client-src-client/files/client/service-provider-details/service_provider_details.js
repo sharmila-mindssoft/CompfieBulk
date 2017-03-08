@@ -172,7 +172,7 @@ ServiceProviderDetails.prototype.fetchReportValues = function() {
     user_id = userId.val();
     if (user_id == "")
         user_id = 0;
-    sp_s = $('#sp-status option:selected').text();
+    sp_s = $('#sp-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
@@ -274,9 +274,9 @@ ServiceProviderDetails.prototype.showReportValues = function() {
 ServiceProviderDetails.prototype.possibleFailures = function(error) {
     t_this = this;
     if (error == 'DomainNameAlreadyExists') {
-        t_this.displayMessage("Domain name exists");
+        displayMessage("Domain name exists");
     } else {
-        t_this.displayMessage(error);
+        displayMessage(error);
     }
 };
 

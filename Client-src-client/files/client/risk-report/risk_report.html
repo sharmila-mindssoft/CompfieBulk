@@ -25,7 +25,7 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group ">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: </label>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
                             <div class="col-sm-6 has-feedback">
                                 <p class="form-control-static country-name default-display-none"></p>
                                 <div class="country-name-ac default-display-none">
@@ -39,7 +39,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
+                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: <span class="mandatory">*</span></label>
                             <div class="col-sm-6 has-feedback">
                                 <p class="form-control-static business-group-name default-display-none"></p>
                                     <div class="business-group-name-ac default-display-none">
@@ -234,13 +234,16 @@
                     <td class="header-bg1 text-center" width="08%">Approver</td>
                     <td class="header-bg1" width="15%">Remarks</td>
                   </tr>
-                  <tr>
+                  <tr class="not-empty">
                     <td class="start-date">01-Aug-2016</td>
                     <td class="due-date">07-Aug-2016</td>
                     <td class="assignee-name">Rajkumar<br/>(08-Aug-2016)</td>
                     <td class="concurrer-name">Rajaram<br/>(08-Aug-2016)</td>
                     <td class="approver-name">Sivaraman<br/>(09-Aug-2016)</td>
                     <td class="compl-remarks"></td>
+                  </tr>
+                  <tr class="empty default-display-none">
+                    <td colspan="6" align="center" class="no_records" style="padding:40px; font-size:1.2em; font-weight:bold">No Records Found</td>
                   </tr>
                 </tbody>
             </table>
@@ -270,7 +273,7 @@
             <td class="assignee"></td>
             <td class="compliance-task-status"></td>
             <td class="penal-consq"></td>
-            <td class="view-data"><a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" class="history">View</a></td>
+            <td class="view-data"><a href="#custom-modal" data-animation="contentscale" data-plugin="custommodal" data-overlayColor="#36404a" class="history c-pointer">View</a></td>
             <td><a class="uploaded-document c-pointer"></a></td>
         </tr>
     </table>
