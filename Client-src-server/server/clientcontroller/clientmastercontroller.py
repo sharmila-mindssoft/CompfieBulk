@@ -23,7 +23,7 @@ __all__ = [
 # To Redirect the requests to the corresponding
 # functions
 ########################################################
-def process_client_master_requests(request, db, session_user, client_id, le_ids_dbase):
+def process_client_master_requests(request, db, session_user, client_id, session_category):
     request = request.request
 
     if type(request) is clientmasters.GetServiceProviders:
@@ -230,7 +230,7 @@ def process_change_service_provider_status(
 def process_block_service_provider(
     db, request, session_user
 ):
-    is_blocked = 0 if request.is_blocked is False else 1    
+    is_blocked = 0 if request.is_blocked is False else 1
     if block_service_provider(
         db,
         request.service_provider_id,

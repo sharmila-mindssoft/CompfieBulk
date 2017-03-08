@@ -442,6 +442,10 @@ class API(object):
                 response_data = unbound_method(
                     self, request_data, _db, company_id, ip_address
                 )
+            elif is_group is True and need_category is True :
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, client_id, session_category
+                )
             elif need_category :
                 response_data = unbound_method(
                     self, request_data, _db, session_user, session_category
@@ -612,9 +616,9 @@ class API(object):
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
 
-    @api_request(clientmasters.RequestFormat, is_group=True, save_le=True)
-    def handle_client_masters(self, request, db, session_user, client_id, le_ids):
-        return controller.process_client_master_requests(request, db, session_user, client_id, le_ids)
+    @api_request(clientmasters.RequestFormat, is_group=True, need_category=True)
+    def handle_client_masters(self, request, db, session_user, client_id, session_category):
+        return controller.process_client_master_requests(request, db, session_user, client_id, session_category)
 
     @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
     def handle_client_master_filters(self, request, db, session_user, session_category):
