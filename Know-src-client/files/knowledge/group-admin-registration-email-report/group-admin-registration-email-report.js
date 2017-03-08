@@ -191,12 +191,15 @@ function pageData(on_current_page){
   for(i=sno;i<groupadminList.length;i++)
   {
     is_null = false;
-    data.push(groupadminList[i]);
+    if($('#group-id').val() == groupadminList[i].client_id){
+    	data.push(groupadminList[i]);
+    }
     if(i == (recordLength-1))
     {
       break;
     }
   }
+  totalRecord = data.length;
   if (is_null == true) {
     hidePagePan();
   }
@@ -247,11 +250,20 @@ $('#countryval').keyup(function (e) {
 	{
 		if(client_id == countryList[i].client_id)
 		{
-			ctry_grp.push({
-				"country_id": countryList[i].country_id,
-				"country_name": countryList[i].country_name,
-				"is_active": countryList[i].is_active
-			})
+			var occur = -1;
+			for(var j=0;j<ctry_grp.length;j++){
+				if(ctry_grp[j].country_id == countryList[i].country_id){
+					occur = 1;
+					break;
+				}
+			}
+			if(occur < 0){
+				ctry_grp.push({
+					"country_id": countryList[i].country_id,
+					"country_name": countryList[i].country_name,
+					"is_active": countryList[i].is_active
+				})
+			}
 		}
 	}
 	commonAutoComplete(
@@ -302,6 +314,7 @@ function initialize_form()
 function initialize() {
 	console.log("initialize")
 	clearMessage();
+	resetAllFilter();
   	initialize_form();
 }
 
