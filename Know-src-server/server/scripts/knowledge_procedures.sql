@@ -5941,32 +5941,33 @@ DELIMITER //
 
 
 CREATE PROCEDURE `sp_statutory_setting_report_recordset`(
-in _c_id int(11), _d_id int(11), _bg_id int(11), _le_id int(11), _u_id int(11),
-_cl_id int(11), _st_id int(11), _cp_id int(11))
+in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
+_cl_id int(11), _st_id varchar(11), _cp_id varchar(11))
 BEGIN
     select t1.unit_id, t1.unit_code, t1.unit_name, t1.address
     from
-    tbl_units as t1, tbl_client_compliances as t2
+    tbl_client_compliances as t2 left join tbl_units as t1
+    on t1.unit_id = t2.unit_id and t1.country_id = _c_id and
+    coalesce(t1.business_group_id,'%') like _bg_id
     where
-    t2.is_approved = 1 and
-    t2.unit_id = t1.unit_id and
-    case when _u_id <> 0 then t1.unit_id = _u_id else t1.unit_id = t1.unit_id end and
-    case when _bg_id <> 0 then t1.business_group_id = _bg_id else t1.business_group_id = t1.business_group_id end and
-    t1.legal_entity_id = _le_id and t1.client_id = _cl_id and
-    t1.country_id = _c_id
-    group by t1.unit_id;
+    coalesce(t2.statutory_id,'%') like _st_id and
+    coalesce(t2.compliance_id,'%') like _cp_id and
+    coalesce(t2.domain_id,'%') like _d_id and
+    t2.client_id = _cl_id and t2.legal_entity_id = _le_id and
+    coalesce(t2.unit_id,'%') like _u_id and
+    t2.is_approved = 5 group by t1.unit_id;
 
     select t1.unit_id, t3.statutory_id, t3.statutory_name
     from
-    tbl_client_compliances as t1, tbl_statutories as t3
+    tbl_client_compliances as t1 left join tbl_statutories as t3 on
+    t3.statutory_id = t1.statutory_id
     where
-    t3.statutory_id = t1.statutory_id and
-    case when _st_id <> 0 then t1.statutory_id = _st_id else t1.statutory_id = t1.statutory_id end and
-    case when _cp_id <> 0 then t1.compliance_id = _cp_id else t1.compliance_id = t1.compliance_id end and
-    case when _d_id <> 0 then t1.domain_id = _d_id else t1.domain_id = t1.domain_id end and
-    case when _u_id <> 0 then t1.unit_id = _u_id else t1.unit_id = t1.unit_id end and
+    coalesce(t1.statutory_id,'%') like _st_id and
+    coalesce(t1.compliance_id,'%') like _cp_id and
+    coalesce(t1.domain_id,'%') like _d_id and
+    coalesce(t1.unit_id,'%') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
-    group by t3.statutory_id;
+    group by t1.unit_id, t3.statutory_id;
 
     select t1.unit_id, t1.statutory_id, t2.statutory_provision, t2.compliance_task as c_task,
     t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
@@ -5978,17 +5979,17 @@ BEGIN
     where tsn.statutory_nature_id = tsm.statutory_nature_id and
     tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
     from
-    tbl_client_compliances as t1, tbl_compliances as t2
+    tbl_client_compliances as t1 left join tbl_compliances as t2 on
+    t2.compliance_id = t1.compliance_id
     where
-    t2.compliance_id = t1.compliance_id and
     t2.country_id = _c_id and
-    t1.is_approved = 1 and
-    case when _st_id <> 0 then t1.statutory_id = _st_id else t1.statutory_id = t1.statutory_id end and
-    case when _cp_id <> 0 then t1.compliance_id = _cp_id else t1.compliance_id = t1.compliance_id end and
-    case when _d_id <> 0 then t1.domain_id = _d_id else t1.domain_id = t1.domain_id end and
-    case when _u_id <> 0 then t1.unit_id = _u_id else t1.unit_id = t1.unit_id end and
+    t1.is_approved = 5 and
+    coalesce(t1.statutory_id,'%') like _st_id and
+    coalesce(t1.compliance_id,'%') like _cp_id and
+    coalesce(t1.domain_id,'%') like _d_id and
+    coalesce(t1.unit_id,'%') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
-    group by t2.compliance_id;
+    group by t1.client_compliance_id;
 END //
 
 DELIMITER ;
@@ -6292,17 +6293,18 @@ BEGIN
         t2.country_id) as country_name, (select date_format(unit_sent_on, '%d/%m/%y %h:%i')
         from tbl_group_admin_email_notification where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = 1 and
-        legal_entity_id = 1)) as unit_email_date,
+        legal_entity_id = 1 and unit_creation_informed=1)) as unit_email_date,
         (select date_format(statu_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = 1 and
-        legal_entity_id = 1)) as statutory_email_date
+        legal_entity_id = 1 and assign_statutory_informed=1)) as statutory_email_date
         from
-        tbl_user_clients as t1, tbl_legal_entities as t2, tbl_units as t4
-        where
-        t4.country_id = t2.country_id and t4.legal_entity_id = t2.legal_entity_id and
-        t4.client_id = t2.client_id and
-        t2.client_id = t1.client_id order by t2.legal_entity_name;
+        tbl_user_clients as t1 inner join tbl_legal_entities as t2 on
+        t2.client_id = t1.client_id left join tbl_units as t4 on
+        t4.legal_entity_id = t2.legal_entity_id and
+        t4.client_id = t2.client_id
+        group by t1.client_id, t2.legal_entity_id
+        order by t2.legal_entity_name;
     end if;
 
 END //
@@ -9004,7 +9006,7 @@ DELIMITER ;
 
 -- --------------------------------------------------------------------------------
 -- Routine DDL
--- Note: update business group name 
+-- Note: update business group name
 -- --------------------------------------------------------------------------------
 DROP PROCEDURE IF EXISTS `sp_business_group_update`;
 
