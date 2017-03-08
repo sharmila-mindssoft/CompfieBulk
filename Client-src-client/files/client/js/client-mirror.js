@@ -110,6 +110,8 @@ function initClientMirror() {
         return info.entity_info;
     }
 
+
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -186,6 +188,11 @@ function initClientMirror() {
         window.location.href = login_url;
     }
 
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -199,7 +206,7 @@ function initClientMirror() {
         //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
-            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: {'X-Xsrftoken': getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),
@@ -759,7 +766,7 @@ function initClientMirror() {
             },
 
             url: CLIENT_BASE_URL + 'client_user',
-            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: {'X-Xsrftoken': getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),
@@ -1259,12 +1266,13 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeClientUserGroupStatus(ugId, active, callback) {
+    function changeClientUserGroupStatus(ugId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeUserPrivilegeStatus', {
-                'ug_id': ugId,
-                'active': active
+                'u_g_id': ugId,
+                'is_active': active,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1343,23 +1351,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeServiceProviderStatus(sId, active, callback) {
+    function changeServiceProviderStatus(sId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeServiceProviderStatus', {
                 'sp_id': sId,
-                'active': active
+                'active_status': active,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function blockServiceProvider(sId, block, callback) {
+    function blockServiceProvider(sId, block, password, callback) {
         callerName = 'client_masters';
         var request = [
             'BlockServiceProvider', {
                 'sp_id': sId,
-                'is_blocked': block
+                'is_blocked': block,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -2523,7 +2533,7 @@ function initClientMirror() {
     }
 
     function getWidgetUserScoreCard(callback) {
-        var request = [
+         var request = [
             "GetUserScoreCard", {
                 "le_ids": getLEids()
             }
@@ -2803,6 +2813,7 @@ function initClientMirror() {
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
         getUserManagement_List: getUserManagement_List,
+        blockServiceProvider: blockServiceProvider,
     };
 }
 

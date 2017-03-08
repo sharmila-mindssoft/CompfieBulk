@@ -196,42 +196,48 @@ class UpdateServiceProvider(Request):
 ##################################################
 # Change Service Provider Status
 ##################################################
-class ChangeServiceProviderStatus(Request):
-    def __init__(self, service_provider_id, is_active):
+class ChangeServiceProviderStatus(Request):    
+    def __init__(self, service_provider_id, is_active, password):
         self.service_provider_id = service_provider_id
         self.is_active = is_active
+        self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["sp_id", "active_status"])
+        data = parse_dictionary(data, ["sp_id", "active_status", "password"])
         service_provider_id = data.get("sp_id")
         is_active = data.get("active_status")
-        return ChangeServiceProviderStatus(service_provider_id, is_active)
+        password = data.get("password")
+        return ChangeServiceProviderStatus(service_provider_id, is_active, password)
 
     def to_inner_structure(self):
         return {
             "sp_id": self.service_provider_id,
             "active_status": self.is_active,
+            "password": self.password,
         }
 #################################################
 # Block Service Provider Status
 ##################################################
 class BlockServiceProvider(Request):
-    def __init__(self, service_provider_id, is_blocked):
+    def __init__(self, service_provider_id, is_blocked, password):
         self.service_provider_id = service_provider_id
         self.is_blocked = is_blocked
+        self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["sp_id", "is_blocked"])
+        data = parse_dictionary(data, ["sp_id", "is_blocked", "password"])
         service_provider_id = data.get("sp_id")
         is_blocked = data.get("is_blocked")
-        return BlockServiceProvider(service_provider_id, is_blocked)
+        password = data.get("password")
+        return BlockServiceProvider(service_provider_id, is_blocked, password)
 
     def to_inner_structure(self):
         return {
             "sp_id": self.service_provider_id,
             "is_blocked": self.is_blocked,
+            "password": self.password,
         }
 
 ########################################################
@@ -263,6 +269,24 @@ class UserManagementList(Request):
 
     def to_inner_structure(self):
         return {
+        }
+
+########################################################
+# User Management - Edit View 
+########################################################
+class UserManagementEditView(Request):
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_id"])
+        user_id = data.get("user_id")
+        return UserManagementEditView(user_id)
+
+    def to_inner_structure(self):
+        return {
+            "user_id": self.user_id,
         }
 
 
@@ -327,23 +351,24 @@ class UpdateUserPrivileges(Request):
         }
 
 class ChangeUserPrivilegeStatus(Request):
-    def __init__(self, user_group_id, is_active):
+    def __init__(self, user_group_id, is_active, password):
         self.user_group_id = user_group_id
         self.is_active = is_active
+        self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ug_id", "active"])
-        user_group_id = data.get("ug_id")
-        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
-        is_active = data.get("active")
-        is_active = parse_structure_Bool(is_active)
-        return ChangeUserPrivilegeStatus(user_group_id, is_active)
+        data = parse_dictionary(data, ["u_g_id", "is_active", "password"])
+        user_group_id = data.get("u_g_id")
+        is_active = data.get("is_active")
+        password = data.get("password")
+        return ChangeUserPrivilegeStatus(user_group_id, is_active, password)
 
     def to_inner_structure(self):
         return {
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
-            "is_active": to_structure_Bool(self.is_active),
+            "u_g_id": self.user_group_id,
+            "is_active": self.is_active,
+            "password": self.password,
         }
 
 class GetClientUsers(Request):
@@ -886,7 +911,8 @@ def _init_Request_class_map():
         UserManagementPrerequisite,
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
-        GetUserProfile, UpdateUserProfile, UserManagementList, BlockServiceProvider
+        GetUserProfile, UpdateUserProfile, UserManagementList, BlockServiceProvider,
+        UserManagementEditView
     ]
     class_map = {}
     for c in classes:
@@ -1105,6 +1131,36 @@ class UserManagementListSuccess(Response):
         return {
             "ul_legal_entity": self.legal_entities,
             "ul_users": self.users
+        }
+
+##############################################################################
+# User Management Add - List Users
+##############################################################################
+class UserManagementEditViewSuccess(Response):
+    def __init__(self, users, legal_entities, domains, units):
+        self.users = users
+        self.legal_entities = legal_entities
+        self.domains = domains
+        self.units = units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["ul_userDetails","ul_legal_entities", "ul_user_domains", "ul_user_units"])
+        users = data.get("ul_userDetails")
+        legal_entities = data.get("ul_legal_entities")
+        domains = data.get("ul_user_domains")
+        units = data.get("ul_user_units")
+
+        users = users
+        legal_entities = legal_entities
+        return UserManagementEditViewSuccess(users, legal_entities, domains, units)
+
+    def to_inner_structure(self):
+        return {            
+            "ul_userDetails": self.users,
+            "ul_legal_entities": self.legal_entities,
+            "ul_user_domains": self.domains,
+            "ul_user_units": self.units
         }
 ##############################################################################
 class GetUserPrivilegesSuccess(Response):
@@ -1771,7 +1827,7 @@ def _init_Response_class_map():
         GetServiceProviderDetailsReportSuccess, GetAuditTrailFilterSuccess,
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
         GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess,
-        BlockServiceProviderSuccess
+        BlockServiceProviderSuccess, UserManagementEditViewSuccess
     ]
     class_map = {}
     for c in classes:
