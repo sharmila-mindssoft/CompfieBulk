@@ -1073,8 +1073,10 @@ DROP TABLE IF EXISTS `tbl_group_admin_email_notification`;
 CREATE TABLE `tbl_group_admin_email_notification` (
   `client_informed_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) DEFAULT NULL,
   `group_admin_email_id` varchar(50) NOT NULL,
+  `registration_sent_by` int(11) DEFAULT NULL,
+  `registration_sent_on` timestamp NULL DEFAULT NULL 0,
   `unit_creation_informed` tinyint(1) DEFAULT 0,
   `unit_sent_by` int(11) DEFAULT NULL,
   `unit_sent_on` timestamp NULL DEFAULT NULL,
