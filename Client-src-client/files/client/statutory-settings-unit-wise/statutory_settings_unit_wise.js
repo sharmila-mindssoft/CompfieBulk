@@ -496,11 +496,13 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 } else {
                     $('.uploaded-document', clonethree).text('-');
                 }*/
-
                 if (v.document_name != "")
                     $('.uploaded-document', clonethree).text(v.document_name);
                 else
                     $('.uploaded-document', clonethree).text('-');
+                $(clonethree).on('click', function(e) {
+                    treeShowHide(e, "tree" + v.compliance_id);
+                });
                 $(clonethree).attr("id", "tree" + v.compliance_id);
                 reportTableTbody.append(clonethree);
                 complianceId = v.compliance_id;

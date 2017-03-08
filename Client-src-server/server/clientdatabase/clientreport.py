@@ -3712,14 +3712,8 @@ def process_service_provider_wise_report(db, request):
         condition_val.append(user_id)
 
     where_clause = where_clause + "and t4.service_provider_id = %s and t1.legal_entity_id = %s " + \
-# <<<<<<< HEAD
-#         " group by t1.compliance_history_id order by t1.due_date desc limit %s, %s;"
-#     condition_val.extend([sp_id, legal_entity_id, int(
-#         request.from_count), int(request.page_count)])
-# =======
         "order by t1.due_date, t2.compliance_activity_id desc limit %s, %s;"
     condition_val.extend([sp_id, legal_entity_id, int(request.from_count), int(request.page_count)])
-# >>>>>>> Mangesh/phase2
     query = select_qry + from_clause + where_clause
     print "qry"
     print query
@@ -3868,19 +3862,19 @@ def process_service_provider_wise_report(db, request):
             logo_url = None
 
         sp_report.append(clientreport.LegalEntityWiseReport(
-# <<<<<<< HEAD
-#             row["country_id"], row["legal_entity_id"], row[
-#                 "domain_id"], row["unit_id"],
-#             row["compliance_id"], unit_name, statutory_mapping, row[
-#                 "compliance_task"],
-#             row["frequency_name"], datetime_to_string(
-#                 row["due_date"]), task_status, row["assignee_name"],
-# =======
+        # <<<<<<< HEAD
+        #             row["country_id"], row["legal_entity_id"], row[
+        #                 "domain_id"], row["unit_id"],
+        #             row["compliance_id"], unit_name, statutory_mapping, row[
+        #                 "compliance_task"],
+        #             row["frequency_name"], datetime_to_string(
+        #                 row["due_date"]), task_status, row["assignee_name"],
+        # =======
             row["compliance_history_id"], row["compliance_activity_id"],
             row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
             row["compliance_id"], unit_name, statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
-# >>>>>>> Mangesh/phase2
+        # >>>>>>> Mangesh/phase2
             activity_status, datetime_to_string(row["activity_on"]), name,
             datetime_to_string(row["completion_date"]), url, logo_url
         ))
@@ -4108,15 +4102,15 @@ def process_user_wise_report(db, request):
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
 
-# <<<<<<< HEAD
-#     where_clause = where_clause + \
-#         "and t1.legal_entity_id = %s group by t1.compliance_history_id order by t1.due_date desc limit %s, %s;"
-#     condition_val.extend([legal_entity_id, int(
-#         request.from_count), int(request.page_count)])
-# =======
+    # <<<<<<< HEAD
+    #     where_clause = where_clause + \
+    #         "and t1.legal_entity_id = %s group by t1.compliance_history_id order by t1.due_date desc limit %s, %s;"
+    #     condition_val.extend([legal_entity_id, int(
+    #         request.from_count), int(request.page_count)])
+    # =======
     where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc, t2.compliance_activity_id limit %s, %s;"
     condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
-# >>>>>>> Mangesh/phase2
+    # >>>>>>> Mangesh/phase2
     query = select_qry + from_clause + where_clause
     print "qry"
     print query
@@ -4289,19 +4283,19 @@ def process_user_wise_report(db, request):
             logo_url = None
 
         user_report.append(clientreport.UnitWiseReport(
-# <<<<<<< HEAD
-#             row["country_id"], row["legal_entity_id"], row[
-#                 "domain_id"], row["unit_id"],
-#             row["compliance_id"], unit_name, statutory_mapping, row[
-#                 "compliance_task"],
-#             row["frequency_name"], datetime_to_string(
-#                 row["due_date"]), task_status, row["assignee_name"],
-# =======
+            # <<<<<<< HEAD
+            #             row["country_id"], row["legal_entity_id"], row[
+            #                 "domain_id"], row["unit_id"],
+            #             row["compliance_id"], unit_name, statutory_mapping, row[
+            #                 "compliance_task"],
+            #             row["frequency_name"], datetime_to_string(
+            #                 row["due_date"]), task_status, row["assignee_name"],
+            # =======
             row["compliance_history_id"], row["compliance_activity_id"],
             row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
             row["compliance_id"], unit_name, statutory_mapping, row["compliance_task"],
             row["frequency_name"], datetime_to_string(row["due_date"]), task_status, row["assignee_name"],
-# >>>>>>> Mangesh/phase2
+            # >>>>>>> Mangesh/phase2
             activity_status, datetime_to_string(row["activity_on"]), name,
             datetime_to_string(row["completion_date"]), url, row[
                 "domain_name"], logo_url
