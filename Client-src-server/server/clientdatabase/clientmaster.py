@@ -1557,7 +1557,7 @@ def get_service_provider_details_report_data(db, request):
     sp_id = request.sp_id
     user_id = request.user_id
     s_p_status = request.s_p_status
-
+    print s_p_status
     select_qry = "select t1.service_provider_id, t1.short_name, t1.service_provider_name, " + \
         "t1.contact_no, t1.email_id, t1.address, t1.contract_from, t1.contract_to, t1.is_active, " + \
         "t1.status_changed_on, t1.is_blocked, t1.blocked_on from tbl_service_providers as t1 "
