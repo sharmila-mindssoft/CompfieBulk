@@ -78,7 +78,11 @@ __all__ = [
     "process_login_trace_report",
     "get_user_info",
     "update_profile",
-    "block_service_provider"
+    "block_service_provider",
+    "userManagement_EditView_GetUsers",
+    "userManagement_EditView_GetLegalEntities",
+    "userManagement_EditView_GetDomains",
+    "userManagement_EditView_GetUnits"
 ]
 
 ############################################################################
@@ -403,14 +407,15 @@ def userManagement_GetBusinessGroup(db):
 ##############################################################################
 def userManagement_GetLegalEntity(db):
     q = "SELECT legal_entity_id, business_group_id, legal_entity_name From tbl_legal_entities " + \
-        " WHERE is_closed ='0'"
+        " WHERE is_closed ='0' order by legal_entity_name, business_group_id"
     row = db.select_all(q, None)
     return row
 ##############################################################################
 # User Management Add - Division Prerequisite
 ##############################################################################
 def userManagement_GetDivision(db):
-    q = "SELECT division_id, division_name, legal_entity_id, business_group_id From tbl_divisions "
+    q = "SELECT division_id, division_name, legal_entity_id, business_group_id From tbl_divisions " + \
+        " order by division_name, legal_entity_id "
     row = db.select_all(q, None)
     return row
 ##############################################################################
@@ -418,7 +423,8 @@ def userManagement_GetDivision(db):
 ##############################################################################
 def userManagement_GetGroupCategory(db):
     q = "SELECT category_id, category_name, legal_entity_id, "+ \
-        " business_group_id, division_id From tbl_categories "
+        " business_group_id, division_id From tbl_categories " + \
+        " order by category_name, legal_entity_id "
     row = db.select_all(q, None)
     return row
 ##############################################################################
@@ -427,7 +433,8 @@ def userManagement_GetGroupCategory(db):
 def userManagement_GetLegalEntity_Domain(db):
     q = "SELECT  T01.legal_entity_id, T01.domain_id, T02.domain_name " + \
         " From tbl_legal_entity_domains AS T01 INNER JOIN tbl_domains as T02" + \
-        " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 "
+        " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 " + \
+        " order by domain_name, legal_entity_id "
     row = db.select_all(q, None)
     return row
 ##############################################################################
@@ -476,6 +483,46 @@ def userManagement_list_GetUsers(db):
     # row = db.select_all(q, [le_ids])
     row = db.select_all(q, None)
     return row
+
+##############################################################################
+# User Management - Edit View Get User Details
+##############################################################################
+def userManagement_EditView_GetUsers(db, userID):
+    q = " SELECT  T01.user_id, T01.user_category_id, T01. seating_unit_id, T01.service_provider_id, " + \
+        " T01.user_level, T01.user_group_id, T01.email_id, T01.employee_name, T01.employee_code, " + \
+        " T01.contact_no, T01.mobile_no, T01.address, T01.is_service_provider, T01.is_active, " + \
+        " T01.is_disable FROM Tbl_users AS T01 Where T01.user_id = %s"
+
+    row = db.select_all(q, [userID])    
+    return row
+
+##############################################################################
+# User Management - Edit View Get Users - Legal Entities
+##############################################################################
+def userManagement_EditView_GetLegalEntities(db, userID):
+    q = " SELECT user_id, legal_entity_id from tbl_user_legal_entities where user_id = %s "
+
+    row = db.select_all(q, [userID])    
+    return row
+
+##############################################################################
+# User Management - Edit View Get Users - Domains
+##############################################################################
+def userManagement_EditView_GetDomains(db, userID):
+    q = " SELECT user_id, legal_entity_id, domain_id from tbl_user_domains where user_id = %s "
+
+    row = db.select_all(q, [userID])    
+    return row
+
+##############################################################################
+# User Management - Edit View Get Users - Units
+##############################################################################
+def userManagement_EditView_GetUnits(db, userID):
+    q = " SELECT user_id, legal_entity_id, unit_id from tbl_user_units where user_id = %s "
+
+    row = db.select_all(q, [userID])    
+    return row
+
 ##############################################################################
 # To Get list of all forms
 # Parameter(s) - Object of database
