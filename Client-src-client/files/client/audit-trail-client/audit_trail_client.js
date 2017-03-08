@@ -70,7 +70,7 @@ function PageControls() {
             displayMessage(message.domainname_required);
         commonAutoComplete(e, ACLegalEntity, LegalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(REPORT, val);
-        }, condition_fields, condition_values);
+        });
     });
 
     users.keyup(function(e) {
@@ -247,6 +247,7 @@ showAnimation = function(element) {
 }
 
 AuditTrailReport.prototype.fetchReportValues = function() {
+    alert("2");
     t_this = this;
     le_id = LegalEntityId.val();
     user_id = userId.val();
@@ -272,6 +273,7 @@ AuditTrailReport.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._AuditTrailList = response.audit_activities;
+            t_this._total_record = response.total_count;
             if (response.audit_activities.length == 0) {
                 t_this.hidePageView();
                 t_this.hidePagePan();
@@ -280,7 +282,7 @@ AuditTrailReport.prototype.fetchReportValues = function() {
                 t_this.showReportValues();
             }
             else{
-                t_this._total_record = response.audit_activities.length;
+                t_this._total_record = response.total_count;
                 if (t_this._sno == 0) {
                     t_this.createPageView(t_this, t_this._total_record);
                 }
@@ -295,7 +297,9 @@ AuditTrailReport.prototype.fetchReportValues = function() {
 };
 
 AuditTrailReport.prototype.showReportValues = function() {
+    alert("3");
     t_this = this;
+    alert(t_this._sno)
     var data = t_this._AuditTrailList;
     $('.le-header').text(LegalEntityName.val());
     $('.from-header').text(fromDate.val());
@@ -306,7 +310,7 @@ AuditTrailReport.prototype.showReportValues = function() {
     showFrom = t_this._sno + 1;
     t_this._total_record = data.length;
     $.each(data, function(k, v) {
-        console.log(data.length)
+        console.log(data.length);
         is_null = false;
         $('.client-logo').attr("src", v.logo_url);
 
@@ -424,6 +428,7 @@ AuditTrailReport.prototype.hidePagePan = function() {
 AuditTrailReport.prototype.renderPageControls = function(e) {
     var t_this = this;
     ItemsPerPage.on('change', function(e) {
+        alert("1")
         t_this.perPage = parseInt($(this).val());
         t_this._sno = 0;
         t_this._on_current_page = 1;

@@ -1256,8 +1256,8 @@ def get_legal_entity_wise_report(db, request, session_user, session_category):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_legal_entity_wise_report(db, request)
-        return clientreport.GetLegalEntityWiseReportSuccess(legal_entities_compliances=result)
+        result, total_record = process_legal_entity_wise_report(db, request)
+        return clientreport.GetLegalEntityWiseReportSuccess(legal_entities_compliances=result, total_count=total_record)
 
 ##########################################################################
 # Objective: To get the filters data under selected legal entity
@@ -1301,8 +1301,8 @@ def get_domain_wise_report(db, request, session_user, session_category):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_domain_wise_report(db, request)
-        return clientreport.GetDomainWiseReportSuccess(legal_entities_compliances=result)
+        result, total_record = process_domain_wise_report(db, request)
+        return clientreport.GetDomainWiseReportSuccess(legal_entities_compliances=result, total_count=total_record)
 
 
 ##########################################################################
@@ -1346,8 +1346,8 @@ def get_unit_wise_report(db, request, session_user, session_category):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_unit_wise_report(db, request)
-        return clientreport.GetUnitWiseReportSuccess(unit_compliances=result)
+        result, total_record = process_unit_wise_report(db, request)
+        return clientreport.GetUnitWiseReportSuccess(unit_compliances=result, total_count=total_record)
 
 
 ##########################################################################
@@ -1387,8 +1387,8 @@ def get_service_provider_wise_report(db, request, session_user, session_category
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_service_provider_wise_report(db, request)
-        return clientreport.GetServiceProviderWiseReportSuccess(sp_compliances=result)
+        result, total_record = process_service_provider_wise_report(db, request)
+        return clientreport.GetServiceProviderWiseReportSuccess(sp_compliances=result, total_count=total_record)
 
 
 ##########################################################################
@@ -1431,8 +1431,8 @@ def get_user_wise_report(db, request, session_user, session_category):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_user_wise_report(db, request)
-        return clientreport.GetUserWiseReportSuccess(user_compliances=result)
+        result, total_record = process_user_wise_report(db, request)
+        return clientreport.GetUserWiseReportSuccess(user_compliances=result, total_count=total_record)
 
 
 ##########################################################################
@@ -1527,8 +1527,8 @@ def get_audit_trail_report_data(db, request, session_user):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_audit_trail_report(db, request)
-        return clientreport.GetAuditTrailReportDataSuccess(audit_activities=result)
+        result, total_record = process_audit_trail_report(db, request)
+        return clientreport.GetAuditTrailReportDataSuccess(audit_activities=result, total_count=total_record)
 
 ##########################################################################
 # Objective: To get risk report filters

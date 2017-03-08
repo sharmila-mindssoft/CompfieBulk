@@ -212,7 +212,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/client-settings",
-        "files/client/client-settings/client-settings.html",
+        "files/client/settings/client-settings.html",
         None, {}
     ),
     (
