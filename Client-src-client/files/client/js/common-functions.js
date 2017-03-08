@@ -419,15 +419,18 @@ $(function() {
 
     //sort
     $('.sort').click(function(event) {
-        var table = $(this).closest("table");
+        var ele = $(this);
+        var table = ele.closest("table");
         var tbody = table.find('tbody');
-        var col_num = $(this).closest("th").index();
-        if ($(this).hasClass("asc")) {
-            $(this).addClass("desc");
-            $(this).removeClass("asc");
+        var col_num = ele.closest("th").index();
+        if (ele.hasClass("asc")) {
+            table.find("th span").each(function(i) { $(this).removeClass('desc'); $(this).removeClass('asc'); });
+            ele.addClass("desc");
+            ele.removeClass("asc");
         } else {
-            $(this).addClass("asc");
-            $(this).removeClass("desc");
+            table.find("th span").each(function(i) { $(this).removeClass('desc'); $(this).removeClass('asc'); });
+            ele.addClass("asc");
+            ele.removeClass("desc");
         }
 
         function extract_value(tr) {
@@ -455,7 +458,7 @@ $(function() {
             }
         });
 
-        if ($(this).hasClass("asc")) {
+        if (ele.hasClass("asc")) {
             for (var i = allTrs.length - 1; i >= 0; i--) {
                 $(allTrs[i]).appendTo(tbody);
             };

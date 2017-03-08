@@ -956,3 +956,9 @@ h2.chart-title: hover{
 .auto-selected {
     background: #EAE8E8;
 }
+.asc {
+  color: #F0F0F0 !important;
+}
+.desc {
+  color: #F0F0F0 !important;
+}

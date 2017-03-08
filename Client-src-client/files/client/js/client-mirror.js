@@ -2503,7 +2503,7 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getWidgetUserScoreCard(callback){
+    function getWidgetUserScoreCard(callback) {
          var request = [
             "GetUserScoreCard", {
                 "le_ids": getLEids()

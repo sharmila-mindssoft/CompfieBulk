@@ -452,7 +452,7 @@ def return_units(units):
                 unit["unit_id"], division_id, category_id, unit["legal_entity_id"],
                 b_group_id, unit["unit_code"],
                 unit["unit_name"], unit["address"],
-                [int(x) for x in unit["domain_ids"].split(",")],
+                # [int(x) for x in unit["domain_ids"].split(",")],
                 unit["country_id"],
                 bool(unit["is_closed"])
             ))

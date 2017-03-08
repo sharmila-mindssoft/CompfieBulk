@@ -23,21 +23,6 @@ from server.clientdatabase.clientmaster import (
     get_service_providers_list
 )
 
-# from clientprotocol.clientreportnew import ( 
-#     GetReassignedHistoryReportFilters, GetReassignedHistoryReport, 
-#     GetStatusReportConsolidatedFilters, GetStatusReportConsolidated, 
-#     GetStatutorySettingsUnitWiseFilters, GetStatutorySettingsUnitWise, 
-#     GetDomainScoreCardFilters, GetDomainScoreCard, 
-#     GetLEWiseScoreCardFilters, GetLEWiseScoreCard, 
-#     GetWorkFlowScoreCardFilters, GetWorkFlowScoreCard, 
-#     GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess, 
-#     GetStatusReportConsolidatedFiltersSuccess, GetStatusReportConsolidatedSuccess, 
-#     GetStatutorySettingsUnitWiseFiltersSuccess, GetStatutorySettingsUnitWiseSuccess, 
-#     GetDomainScoreCardFiltersSuccess, GetDomainScoreCardSuccess, 
-#     GetLEWiseScoreCardFiltersSuccess, GetLEWiseScoreCardSuccess, 
-#     GetWorkFlowScoreCardFiltersSuccess, GetWorkFlowScoreCardSuccess
-# )
-
 __all__ = [
     "process_client_report_requests"
 ]
@@ -872,7 +857,6 @@ def get_status_report_consolidated_filters(db, request, session_user, session_ca
     compliances_list = get_client_compliances(db, session_user)
     compliance_frequency_list = get_compliance_frequency(db)
     users_list = get_client_users(db)
-
     return clientreportnew.GetStatusReportConsolidatedFiltersSuccess(
         domains=domain_list,
         units=unit_list,

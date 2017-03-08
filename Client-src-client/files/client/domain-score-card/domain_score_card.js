@@ -61,12 +61,10 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
-        //alert(countryList.toSource());
         if (countryList.length == 0 && text_val != '')
             displayMessage(message.country_required);
         var condition_fields = [];
         var condition_values = [];
-        //alert(text_val +' - '+countryList.toSource() +' - '+)
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -314,12 +312,11 @@ DomainScoreCard.prototype.showReportValues = function() {
             $('.sno', cloneone).text(j);
             $('.domain-name', cloneone).text(v.domain_name);
             $('.domain-name', cloneone).on('click', function() {
-                t_this.showDomainDetails(v.domain_id);
+                t_this.showDomainDetails(v.domain_id, v.domain_name);
             });
             $('.assigned', cloneone).text(v.assigned_count);
             $('.un-assigned', cloneone).text(v.unassigned_count);
             $('.not-opted', cloneone).text(v.not_opted_count);
-
 
             assigned_count = assigned_count + v.assigned_count;
             un_assigned_count = un_assigned_count + v.unassigned_count;
@@ -363,7 +360,7 @@ DomainScoreCard.prototype.showReportValues = function() {
             });
             if (i > 1) {
                 var clonethree = $('#template #report-table .report-new-total-row').clone();
-                clonethree.addClass("domain-" + v.dom_id);
+                clonethree.addClass("domain-" + v.domain_id);
                 $('.total-inprogress', clonethree).text(inprogress_new_count);
                 $('.total-complied', clonethree).text(complied_new_count);
                 $('.total-delayed-complied', clonethree).text(delayed_new_count);
@@ -387,14 +384,11 @@ DomainScoreCard.prototype.showReportValues = function() {
     }
 };
 
-DomainScoreCard.prototype.showDomainDetails = function(dom_id) {
+DomainScoreCard.prototype.showDomainDetails = function(dom_id, dom_name) {
     $('.domain-table-view').show();
     $('.unit-details').hide();
+    $('#domain-name').text(dom_name);
     $('.domain-' + dom_id).show();
-};
-
-DomainScoreCard.prototype.exportReportValues = function() {
-    alert('export');
 };
 
 DomainScoreCard.prototype.possibleFailures = function(error) {

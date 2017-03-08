@@ -108,7 +108,7 @@ class API(object):
         self._io_loop.add_timeout(
             time.time() + 1080, _with_client_info
         )
-
+        
     def close_connection(self, db):
         try:
             db.close()
