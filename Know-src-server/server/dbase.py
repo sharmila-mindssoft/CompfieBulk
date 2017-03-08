@@ -16,7 +16,7 @@ class BaseDatabase(object):
         self._mysqlDatabase = mysqlDatabase
         self._connection = None
         # self._mysql = MySQL()
-        print self._mysql
+        # print self._mysql
 
     def dbConfig(self, app):
         app.config['MYSQL_DATABASE_USER'] = self._mysqlUser
@@ -36,7 +36,7 @@ class BaseDatabase(object):
             connection = self._mysql.get_db
             connection.autocommit(True)
             self._connection = connection
-            print self._connection
+            # print self._connection
             return self._connection
         except Exception:
             pass
@@ -56,7 +56,7 @@ class Database(object):
         self._connection = mysqlConnection
         self._cursor = None
         self._for_client = False
-        print "\n\n"
+        # print "\n\n"
 
     # Used to get first three letters of month by the month's integer value
     string_months = {
@@ -153,13 +153,13 @@ class Database(object):
     # To begin a database transaction
     ########################################################
     def begin(self):
-        print self._connection
-        print self._cursor
-        print "cursor " * 10
+        # print self._connection
+        # print self._cursor
+        # print "cursor " * 10
         assert self._connection is not None
         assert self._cursor is None
         self._cursor = self._connection.cursor(dictionary=True, buffered=True)
-        print self._cursor
+        # print self._cursor
         return self._cursor
 
     ########################################################

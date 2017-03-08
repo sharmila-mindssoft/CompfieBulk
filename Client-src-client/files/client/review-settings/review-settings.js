@@ -35,6 +35,8 @@ var SUBMIT_API = "submit";
 var API_LIST = "list";
 var EDIT_API = "edit"
 
+var SelectedCount = $(".selected-count");
+
 var le_id = null;
 var d_id = null;
 var sno = 1;
@@ -45,6 +47,7 @@ var LastSubAct = "";
 var count = 1;
 var repeats_type = {1:"Days", 2:"Months", 3:"Years"};
 var r_s_page = null;
+var selectedcompliance = 0;
 var userLegalentity = client_mirror.getSelectedLegalEntity();
 
 
@@ -101,11 +104,9 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         BusinessGroupSelect.show();
         LegalEntityName.hide();
         LegalEntitySelect.show();
-        var select = '<option value="">Select</option>';
-        $.each(user.entity_info, function(k, val){
-            select = select + '<option value="' + val["le_id"] + '"> ' + val["le_name"] + ' </option>';
-        });        
-        LegalEntitySelect.html(select);
+        loadBusinessGroups();
+
+       
         LegalEntitySelect.on("change", function(){
             var getle_id = $(".legal-entity-select option:selected").val()
             if(getle_id > 0 ){
@@ -123,6 +124,31 @@ ReviewSettingsPage.prototype.showLegalEntity = function (){
         le_id = userLegalentity[0]["le_id"]
         t_this.showTypeDomainList();
     }
+}
+
+function loadBusinessGroups(){
+    var bgselect = '<option value="">Select</option>';
+    $.each(user.entity_info, function(k, val){
+        if(val["bg_name"] != null){
+            bgselect = bgselect + '<option value="' + val["bg_id"] + '"> ' + val["bg_name"] + ' </option>';    
+        }            
+    });        
+    BusinessGroupSelect.html(bgselect);
+}
+
+function loadLegalEntity(){
+    LegalEntitySelect.html("");    
+    var getbg_id = $(".business-group-select option:selected").val();        
+    if(getbg_id == ""){
+        getbg_id = null;
+    }
+    var select = '<option value="">Select</option>';
+    $.each(user.entity_info, function(k, val){
+        if(getbg_id == val['bg_id'])
+            select = select + '<option value="' + val["le_id"] + '"> ' + val["le_name"] + ' </option>';
+    });        
+    LegalEntitySelect.html(select);
+    
 }
 
 ReviewSettingsPage.prototype.showTypeDomainList = function(){
@@ -163,7 +189,11 @@ ReviewSettingsPage.prototype.getUnitList = function(){
     $(".UnitList").empty();
     t_this = this;
     d_id = DomainId.val();
-    if(FType.children(':selected').val() == ""){
+    if(le_id == null){
+        displayMessage(message.legalentity_required);
+        return false;
+    }    
+    if(FType.find('option:selected').val() == ""){
         displayMessage(message.compliancefrequency_required);
         return false;
     }
@@ -189,6 +219,17 @@ ReviewSettingsPage.prototype.getUnitList = function(){
         });    
     }
 }
+
+SearchUnit.keyup(function () {
+    var filter = jQuery(this).val();
+    jQuery(".unit-list .unit-names").each(function () {
+        if (jQuery(this).text().search(new RegExp(filter, "i")) < 0) {
+            jQuery(this).hide();
+        } else {
+            jQuery(this).show()
+        }
+    });
+});
 
 ReviewSettingsPage.prototype.renderUnitList = function(_Units) {
     UNIT_CS_ID = {};
@@ -324,8 +365,8 @@ showTab = function(){
         $('#tab2').hide();
         $(".UnitList").empty();
         //clearElement(Domain, DomainId);
-        Domain.val('');
-        DomainId.val('');
+        // Domain.val('');
+        // DomainId.val('');
         SubmitButton.hide();
         NextButton.hide();
         PreviousButton.hide();
@@ -377,17 +418,23 @@ showBreadCrumbText = function() {
         BreadCrumbs.append(img_clone);
         BreadCrumbs.append(" " + BusinessGroupName.val() + " ");
     }
-    if(userLegalentity.length > 1){
+    else if(BusinessGroupSelect.find("option:selected").val()){
         BreadCrumbs.append(img_clone);
-        BreadCrumbs.append(" " + LegalEntityName.html() + " ");
-    }else{
-        BreadCrumbs.append(img_clone);
-        BreadCrumbs.append(" " + LegalEntitySelect.children(':selected').text() + " ");
+        BreadCrumbs.append(" " + BusinessGroupSelect.find("option:selected").text()+ " ");
     }
 
-    if (FType.children(':selected').val()) {
+    if(LegalEntityName.val() > 1){
         BreadCrumbs.append(img_clone);
-        BreadCrumbs.append(" " + FType.children(':selected').text() + " ");
+        BreadCrumbs.append(" " + LegalEntityName.html() + " ");
+    }
+    else if(LegalEntitySelect.find("option:selected").val()){
+        BreadCrumbs.append(img_clone);
+        BreadCrumbs.append(" " + LegalEntitySelect.find("option:selected").text() + " ");
+    }
+
+    if (FType.find("option:selected").val()) {
+        BreadCrumbs.append(img_clone);
+        BreadCrumbs.append(" " + FType.find("option:selected").text() + " ");
     }
 
     if (Domain.val()) {
@@ -418,10 +465,16 @@ loadCompliances = function(){
                 $('.coll-title', clone).attr('id', 'collapse'+actCount);
                 $('.coll-title', clone).attr('aria-labelledb', 'heading'+actCount);
                 $('.all-comp-checkbox', clone).on("click", function(){
+                    var tableelement = $(this).closest(".table").find("tbody");
+                    //var tabletbody = tableelement;
+                    console.log(tableelement);
                     if($(this).prop("checked") == true){
-
+                        console.log("welcomet 1")
+                        console.log(tableelement.find("td .checkbox .comp_checkbox"));
+                        var tdchecklist = tableelement.find(".comp_checkbox").prop("selected", true);
                     }else{
-
+                        console.log("welcomet 2")
+                        var tdchecklist = tableelement.find(".comp_checkbox").prop("selected", false);
                     }
                 });
                 $('.accordion-div').append(clone);
@@ -442,6 +495,7 @@ loadCompliances = function(){
             $('.comp-checkbox').addClass("comp-checkbox-"+actCount);
             $('.comp-checkbox', clone2).on("click", function(){
                 if($(this).prop("checked") == true){
+                    selectedcompliance += 1;
                     var sdates = value.s_dates;
                     $(".repeat-every", clone2).show();
                     $(".review", clone2).show();
@@ -472,13 +526,16 @@ loadCompliances = function(){
                         dateFormat: 'dd-M-yy',
                         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
                     });                  
-                   
+                    SelectedCount.html(selectedcompliance);
                 }
                 else{
+                    selectedcompliance -= 1;
+                    SelectedCount.html(selectedcompliance);
                     $(".repeat-every", clone2).hide();
                     $(".review", clone2).hide();
                     $(".due-date", clone2).hide();
-                    $(".trigger", clone2).hide();   
+                    $(".trigger", clone2).hide();
+
                 }
             });
             $('.compliance-id', clone2).val(value.comp_id)
@@ -652,6 +709,8 @@ r_s_page = new ReviewSettingsPage();
 
 $(document).ready(function() {
     PageControls();    
+    loadBusinessGroups();
+    loadLegalEntity();
     r_s_page.showLegalEntity();    
 });
     

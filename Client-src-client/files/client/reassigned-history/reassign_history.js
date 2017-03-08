@@ -53,19 +53,21 @@ var on_current_page = 1;
 var f_count = 0;
 
 function PageControls() {
-    // To call date picker function. assign to date field 
+    // To call date picker function. assign to date field
     $(".from-date, .to-date").datepicker({
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
-                var dateMin = $('.from-date').datepicker("getDate");
-                var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
-                $('.to-date').datepicker("option", "minDate", rMin);
+                var dateMax = $('.from-date').datepicker('getDate');
+                var dateMax = new Date(dateMax.getFullYear(), dateMax.getMonth()+3, dateMax.getDate()-1);
+                $('.to-date').datepicker('setDate', dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
-                var dateMin = $('.to-date').datepicker("getDate");
+                var dateMin = $('.to-date').datepicker('getDate');
+                var dateMin = new Date(dateMin.getFullYear(), dateMin.getMonth()-3, dateMin.getDate()+1);
+                $('.from-date').datepicker('setDate', dateMin);
             }
         }
     });

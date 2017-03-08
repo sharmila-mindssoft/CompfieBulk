@@ -1958,7 +1958,7 @@ class ClientUnit(object):
             data, [
                 "unit_id", "division_id", "category_id", "legal_entity_id",
                 "business_group_id", "unit_code", "unit_name", "address",
-                "domain_ids", "country_id", "is_closed"
+                "d_ids", "country_id", "is_closed"
             ]
         )
         unit_id = data.get("unit_id")
@@ -1969,14 +1969,13 @@ class ClientUnit(object):
         unit_code = data.get("unit_code")
         unit_name = data.get("unit_name")
         address = data.get("address")
-        domain_ids = data.get("domain_ids")
+        domain_ids = data.get("d_ids")
         country_id = data.get("country_id")
         is_closed = data.get("is_closed")
         is_closed = parse_structure_Bool(is_closed)
         return Unit(
             unit_id, division_id, category_id, legal_entity_id, business_group_id,
-            unit_code, unit_name, address, domain_ids,
-            country_id, is_closed
+            unit_code, unit_name, address, domain_ids, country_id, is_closed
         )
 
     def to_structure(self):
