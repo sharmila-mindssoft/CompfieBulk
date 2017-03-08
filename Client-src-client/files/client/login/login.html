@@ -3,9 +3,9 @@
 
 <head>
     <style type="text/css">
-    .default-display-none {
-        display: none;
-    }
+        .default-display-none {
+            display: none;
+        }
     </style>
     <link href='/files/client/common/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
     <link href='/files/client/common/css/core.css' rel='stylesheet' type='text/css'>
@@ -19,7 +19,7 @@
             <div class="site-logo text-center m-t-30 m-b-20"> <img src="/images/logo.png"> </div>
             <div style="clear:both;"></div>
             <div class="wrapper-page">
-                <div class="m-t-30 card-box">
+                <div class="m-t-30 card-box client-login">
                     <div class="text-center">
                         <h4 class="text-uppercase font-bold m-b-0">Login</h4>
                         <br>
@@ -75,23 +75,23 @@
 <script type="text/javascript" src="/js/jquery.min.js"></script>
 <script type="text/javascript" src="/script/login/login.js"></script>
 <script>
-$("#submit").click(function() {
-    jQuery.ajax({
-        url: "../post/login",
-        type: "post",
-        dataType: 'json',
-        cache: false,
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify({
-            "data": {
-                "username": $('#username').val(),
-                "password": $('#password').val(),
-                "shortname": $('#shortname').val()
+    $("#submit").click(function() {
+        jQuery.ajax({
+            url: "../post/login",
+            type: "post",
+            dataType: 'json',
+            cache: false,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify({
+                "data": {
+                    "username": $('#username').val(),
+                    "password": $('#password').val(),
+                    "shortname": $('#shortname').val()
+                }
+            }),
+            success: function(msg) {
+                window.location = msg
             }
-        }),
-        success: function(msg) {
-            window.location = msg
-        }
+        });
     });
-});
 </script>

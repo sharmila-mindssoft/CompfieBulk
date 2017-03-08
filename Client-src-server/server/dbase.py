@@ -37,7 +37,7 @@ class BaseDatabase(object):
             connection = self._mysql.get_db
             connection.autocommit(True)
             self._connection = connection
-            print self._connection
+            # print self._connection
             return self._connection
         except Exception:
             pass
@@ -160,7 +160,7 @@ class Database(object):
         assert self._connection is not None
         assert self._cursor is None
         self._cursor = self._connection.cursor(dictionary=True, buffered=True)
-        print self._cursor
+        # print self._cursor
         return self._cursor
 
     ########################################################
@@ -292,7 +292,7 @@ class Database(object):
             return res
         except Exception, e:
             print e
-            #print query
+            print query
             #print param
             logger.logClientApi("select_all", query)
             logger.logClientApi("select_all", e)
@@ -327,7 +327,6 @@ class Database(object):
                         self._for_client, "select_one", query % param
                     )
                     cursor.execute(query)
-            # print query % tuple(param)
             cursor.nextset()
             res = cursor.fetchone()
             cursor.nextset()

@@ -95,7 +95,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         "/completed-tasks-current-year",
-        "files/client/completed-tasks-current-year/completed-task-current-year.html",
+        "files/client/completed-task-current-year/completed-task-current-year.html",
         None, {}
     ),
     (

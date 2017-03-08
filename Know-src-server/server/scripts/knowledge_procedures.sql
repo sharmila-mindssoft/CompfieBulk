@@ -8861,8 +8861,7 @@ CREATE PROCEDURE `sp_get_le_master_info`(
 )
 BEGIN
     IF le_id is null then
-        select distinct c.country_id, c.country_name from tbl_countries c inner join tbl_legal_entities as le
-        on le.country_id = c.country_id where client_id = cid;
+        select distinct c.country_id, c.country_name from tbl_countries c ;
 
         select distinct d.domain_id, d.domain_name from tbl_domains d inner join tbl_legal_entity_domains as le
         on le.domain_id = d.domain_id

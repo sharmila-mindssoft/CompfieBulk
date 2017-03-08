@@ -326,19 +326,19 @@ def frame_not_complied_chart(data):
         above_90_days = int(above_90_days) if above_90_days is not None else 0
 
         chartData.append({
-            "name": "Below 30",
+            "name": "0 - 30 days",
             "y": below_30_days
         })
         chartData.append({
-            "name": "Below 60",
+            "name": "31 - 60 days",
             "y": b_31_60_days
         })
         chartData.append({
-            "name": "Below 90",
+            "name": "61 - 90 days",
             "y": b_61_90_days
         })
         chartData.append({
-            "name": "Above 90",
+            "name": "Above 90 days",
             "y": above_90_days
         })
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
@@ -486,10 +486,8 @@ def frame_calendar_view(db, data, user_id):
     for i in range(totalDays()) :
         overdue = 0
         inprogress = 0
-        print i+1 == currentDay()
         if i+1 == currentDay() :
             overdue, inprogress = get_current_inprogess_overdue(db, user_id)
-            print overdue, inprogress
 
         xaxis.append(str(i+1))
         cdata.append({
@@ -507,10 +505,6 @@ def frame_calendar_view(db, data, user_id):
         duedate = 0 if duedate is None else int(duedate)
         upcoming = d["upcoming_count"]
         upcoming = 0 if upcoming is None else int(upcoming)
-        # inprogress = d["inprogress_count"]
-        # inprogress = 0 if inprogress is None else int(inprogress)
-        # overdue = d["overdue_count"]
-        # overdue = 0 if overdue is None else int(overdue)
 
         c["overdue"] += overdue
         c["upcoming"] += upcoming

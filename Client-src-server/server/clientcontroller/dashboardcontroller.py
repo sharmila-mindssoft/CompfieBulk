@@ -4,13 +4,6 @@ from server.jsontocsvconverter import ConvertJsonToCSV
 from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.dashboard import *
 
-from server.clientdatabase.general import (
-    get_countries_for_user, get_domains_for_user,
-    get_business_groups_for_user, get_legal_entities_for_user,
-    get_divisions_for_user,
-    get_units_for_user, get_assignees
-)
-
 __all__ = [
     "process_client_dashboard_requests"
 ]
@@ -28,7 +21,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     if type(request) is dashboard.GetComplianceStatusChart:
 
         result = process_compliance_status_chart(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetComplianceStatusDrillDownData:
@@ -37,7 +30,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
         )
 
     elif type(request) is dashboard.GetEscalationsChart:
-        result = process_escalation_chart(db, request, session_user)
+        result = process_escalation_chart(db, request, session_user, session_category)
 
     elif type(request) is dashboard.GetEscalationsDrillDownData:
         result = process_escalation_chart_drilldown(
@@ -46,7 +39,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     elif type(request) is dashboard.GetNotCompliedChart:
         result = process_not_complied_chart(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetNotCompliedDrillDown:
@@ -64,7 +57,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     elif type(request) is dashboard.GetComplianceApplicabilityStatusChart:
         result = process_compliance_applicability_chat(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetComplianceApplicabilityStatusDrillDown:
@@ -132,9 +125,9 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     return result
 
-def process_compliance_status_chart(db, request, session_user):
+def process_compliance_status_chart(db, request, session_user, session_category):
 
-    return get_compliance_status_chart(db, request, session_user)
+    return get_compliance_status_chart(db, request, session_user, session_category)
 
 
 def process_trend_chart(db, request, session_user, session_category):
@@ -176,8 +169,8 @@ def process_compliance_status_chart_drilldown(
     )
 
 
-def process_escalation_chart(db, request, session_user):
-    return get_escalation_chart(db, request, session_user)
+def process_escalation_chart(db, request, session_user, session_category):
+    return get_escalation_chart(db, request, session_user, session_category)
 
 
 def process_escalation_chart_drilldown(db, request, session_user):
@@ -194,8 +187,8 @@ def process_escalation_chart_drilldown(db, request, session_user):
     )
 
 
-def process_not_complied_chart(db, request, session_user):
-    return get_not_complied_chart(db, request, session_user)
+def process_not_complied_chart(db, request, session_user, session_category):
+    return get_not_complied_count(db, request, session_user, session_category)
 
 
 def process_not_complied_drill_down(db, request, session_user):
@@ -210,10 +203,10 @@ def process_not_complied_drill_down(db, request, session_user):
 
 
 def process_compliance_applicability_chat(
-    db, request, session_user
+    db, request, session_user, session_category
 ):
-    return get_compliance_applicability_chart(
-        db, request, session_user
+    return get_risk_chart_count(
+        db, request, session_user, session_category
     )
 
 
@@ -443,5 +436,3 @@ def process_get_messages(
         show_popup=show_popup,
         notification_text=notification_text
     )
-
-

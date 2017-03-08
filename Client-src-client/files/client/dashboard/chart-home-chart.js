@@ -74,12 +74,14 @@ function updateComplianceStatusStackBarChart(data) {
         }
       }
     },
+
     colors: [
-      '#A5D17A',
-      '#F58835',
-      '#F0F468',
+      '#3ec845',
+      '#fe6271',
+      '#fbca35',
       '#F32D2B'
-    ],
+    ],//      '#A5D17A',  '#F58835',   '#F0F468',   '#F32D2B'
+
     series: chartDataSeries
   });
   $('.highcharts-axis-labels text, .highcharts-axis-labels span').click(function () {
@@ -114,6 +116,7 @@ function updateComplianceStatusStackBarChart(data) {
     });
   });  // $("#label_India").attr({placement: 'bottom', title:"HELLO India!"});
 }
+
 function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter_name) {
   var total = 0;
   for (var i = 0; i < data_list.length; i++) {
@@ -1833,6 +1836,7 @@ function loadCharts() {
   } else if (chartType == 'compliance_report') {
     PageTitle.text("Assignee Wise Compliances");
     $(".drilldown-container").empty();
+    $(".div-assignee-wise-compliance").empty();
     loadAssigneeWiseCompliance();
   } else if (chartType == 'trend_chart') {
     PageTitle.text("Trend Chart");

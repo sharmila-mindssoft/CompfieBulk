@@ -404,6 +404,11 @@ var message = {
   'email_required': 'Enter Email ID ',
   'address_max500': 'Address maximum 500 characters Allowed',
   'unlock_permission': 'You don\'t have lock/unlock permission',
+
+  "block_success": "Blocked Successfully",
+  "unblock_success": "Unblocked Successfully",
+  'block_message': 'You want to block this Service Provider',
+  'unblock_message': 'You want to unblock this Service Provider',
 };
 
 function clearMessage() {

@@ -556,15 +556,20 @@ function loadUnits() {
         $('.unit-checkbox', clone).val(value.u_id + ',' + value.d_id + ',' + value.r_count);
 
         $('.tbl_unit', clone).text(value.u_name);
-        $('.tbl_location', clone).text(value.address);
+        $('.tbl_address', clone).attr('title', value.address);
+
+        var location = value.location.replace(/ >>/gi, ',');
+        $('.tbl_location', clone).text(location);
         $('.tbl_domain', clone).text(value.d_name);
         $('.tbl_no_of_compliance', clone).text(value.r_count);
         $('.tbl_updated_by', clone).text(upd_by);
         $('.tbl_updated_on', clone).text(upd_on);
         if(value.is_locked){
             $('.tbl_lock', clone).find('i').addClass('fa-lock');
+            $('.tbl_lock', clone).find('i').attr('title', 'Click here to Unlock');
         }else{
             $('.tbl_lock', clone).find('i').addClass('fa-unlock');
+            $('.tbl_lock', clone).find('i').attr('title', 'Click here to Lock');
         }
 
         $('.tbl_lock', clone).click(function() {
@@ -584,7 +589,7 @@ function loadUnits() {
 
         UNIT_CS_ID[value.u_id] = {
             'u_name': value.u_name,
-            'u_address': value.address
+            'u_address': location
         }
 
     });
@@ -999,8 +1004,7 @@ function loadSingleUnitCompliances() {
             $('.sno', clone2).text(statutoriesCount);
             $('.statutoryprovision', clone2).text(value.s_prov);
             $('.compliancetask', clone2).text(value.comp_name);
-            $('.org-name', clone2).attr('title', value.comp_name);
-            $('.compliancefrequency', clone2).text('Frequency');
+            $('.compliancefrequency', clone2).text(value.frequency_name);
             $('.compliancedescription', clone2).text(value.descp);
 
             if(value1.comp_app_status){
@@ -1153,7 +1157,7 @@ function loadMultipleUnitCompliances() {
         $('.sno', clone2).text(sno);
         $('.statutoryprovision', clone2).text(value.s_prov);
         $('.compliancetask', clone2).text(value.comp_name);
-        $('.org-name', clone2).attr('title', value.comp_name);
+        $('.compliancefrequency', clone2).text(value.frequency_name);
         $('.compliancedescription', clone2).text(value.descp);
         $('.applicablelocation', clone2).attr('id', 'appl' + sno);
         $('.applicablelocation', clone2).text(value.unit_wise_status.length + '/' + ACTIVE_UNITS.length);

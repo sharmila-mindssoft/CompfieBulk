@@ -48,6 +48,9 @@ def make_map_type(module, klass_name, validfun=is_numeric, is_optional=False):
 def make_map_type_vector_type(module, klass_name, length=50, validfun=is_alphabet):
     return {'type': 'MAP_TYPE_VECTOR_TYPE', 'length': length, 'validation_method': validfun, 'is_optional': False, 'module_name': module, "class_name": klass_name}
 
+def make_map_type_vector_type_string(length=150, is_optional=False):
+    return {'type': 'MAP_TYPE_VECTOR_TYPE_STRING', 'is_optional': is_optional, 'length': length}
+
 def make_widget_type():
     # customized widget data from backend
     return {'type': 'WIDGET_TYPE'}
@@ -631,10 +634,28 @@ api_params = {
     "reference_link": make_text_field(is_optional=True),
     "ul_legal_entity": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntities_UserManagementList"),  # User Management
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
+    "location": make_text_field(is_optional=True),
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
-    "level_1_statutories": make_text_field(),
     "compliance_file_name":  make_vector_type_string(is_optional=True),
     "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
     "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
+    "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
+    "compliance_file_name":  make_vector_type_string(is_optional=True),
+    "in_units":make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
+    "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
+    "pr_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
+    "statutory_wise_compliances": make_vector_type_field(module="clienttransactions", klass_name="STATUTORY_WISE_COMPLIANCES"),
+    "pr_users": make_vector_type_field(module="clientcore", klass_name="User"),
+    "level_1_statutory_name":make_text_field(length=500, is_optional=True),
+    "pr_compliances" : make_vector_type_field(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS"),
+    "upcoming_start_count": make_int_field(),
+    "upcoming_compliances": make_vector_type_field(module="clientcore", klass_name="UpcomingCompliance"),
+    "upcoming_format_file_name":  make_vector_type_string(is_optional=True),
+    "user_legal_entities": make_vector_type_string(),
+    "seating_unit_id": make_int_field(is_optional=True),
+    "ul_userDetails": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Users"),  # User Management
+    "ul_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_LegalEntities"),  # User Management
+    "ul_user_domains": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Domains"),  # User Management
+    "ul_user_units": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Units"),  # User Management
 }

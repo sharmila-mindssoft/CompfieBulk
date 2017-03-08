@@ -15,7 +15,8 @@ from server.clientdatabase.general import (
     get_assignees,
     get_client_users, get_units_for_user, get_user_based_units,
     save_user_widget_settings, get_user_widget_settings, get_widget_list,
-    get_themes_for_user, save_themes_for_user, update_themes_for_user
+    get_themes_for_user, save_themes_for_user, update_themes_for_user,
+    get_categories_for_user
 )
 
 from server.clientdatabase.dashboard import (
@@ -76,25 +77,21 @@ def process_client_transaction_requests(request, db, session_user, session_categ
             db, request, session_user
         )
 
-    # elif type(request) is clienttransactions.GetUserwiseCompliances:
-    #     result = process_get_user_wise_compliances(
-    #         db, session_user
-    #     )
-
-    elif type(request) is clienttransactions.GetAssigneeCompliances:
-        result = process_get_assignee_compliances(db, request, session_user)
+    # elif type(request) is clienttransactions.GetAssigneeCompliances:
+    #     result = process_get_assignee_compliances(db, request, session_user)
 
     elif type(request) is clienttransactions.ReassignCompliance:
         result = process_reassign_compliance(
             db, request, session_user
         )
-    elif type(request) is clienttransactions.GetPastRecordsFormData:
-        result = process_get_past_records_form_data(
-            db, request, session_user
-        )
     elif type(request) is clienttransactions.GetStatutoriesByUnit:
         result = process_get_statutories_by_unit(
             db, request, session_user
+        )
+
+    elif type(request) is clienttransactions.GetPastRecordsFormData:
+        result = process_get_past_records_form_data(
+            db, request, session_user, session_category
         )
 
     elif type(request) is clienttransactions.SavePastRecords:
@@ -249,25 +246,29 @@ def process_save_assigned_compliance(db, request, session_user):
 # To get data to populate the completed task -
 # current year form wizards
 ########################################################
-def process_get_past_records_form_data(db, request, session_user):
+def process_get_past_records_form_data(db, request, session_user, session_category):
     countries = get_countries_for_user(db, session_user)
     row = get_user_company_details(db, session_user)
     business_groups = get_business_groups_for_user(db, row[3])
     legal_entities = get_legal_entities_for_user(db, row[2])
     divisions = get_divisions_for_user(db, row[1])
-    units = get_units_for_user_grouped_by_industry(db, row[0])
-    domains = get_domains_for_user(db, session_user)
+    category = get_categories_for_user(db, row[4])
+    # units = get_units_for_user_grouped_by_industry(db, row[0])
+    units = get_user_based_units(db, session_user, session_category)
+    domains = get_domains_for_user(db, session_user, session_category)
     level1_statutories = get_level_1_statutories_for_user_with_domain(
         db, session_user
     )
     compliance_frequency = get_compliance_frequency(
-        db, "frequency_id in (2,3)"
+        db, "frequency_id in (1,2,3)"
     )
+
     return clienttransactions.GetPastRecordsFormDataSuccess(
         countries=countries,
         business_groups=business_groups,
         legal_entities=legal_entities,
         divisions=divisions,
+        category=category,
         units=units,
         domains=domains,
         level_1_statutories=level1_statutories,
@@ -277,6 +278,7 @@ def process_get_past_records_form_data(db, request, session_user):
 
 ########################################################
 # To get the compliances under the selected filters
+# Completed Task - Current Year (Past Data)
 ########################################################
 def process_get_statutories_by_unit(
         db, request, session_user
@@ -286,11 +288,12 @@ def process_get_statutories_by_unit(
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
     compliance_frequency = request.compliance_frequency
-    country_id = request.country_id
+    # country_id = request.country_id
     start_count = request.start_count
+    # country_id
     statutory_wise_compliances, total_count = get_statutory_wise_compliances(
         db, unit_id, domain_id, level_1_statutory_name,
-        compliance_frequency, country_id, session_user, start_count,
+        compliance_frequency, session_user, start_count,
         to_count
     )
     users = get_users_by_unit_and_domain(db, unit_id, domain_id)
@@ -384,7 +387,7 @@ def process_approve_compliance(db, request, session_user):
     next_due_date = request.next_due_date
     validity_date = request.validity_date
     legal_entity_id = request.legal_entity_id
-    
+
     status = status[0]
 
     if status == "Approve":
@@ -396,7 +399,7 @@ def process_approve_compliance(db, request, session_user):
         reject_compliance_approval(
             db, compliance_history_id, remarks,  next_due_date
         )
-    elif status == "Concur":        
+    elif status == "Concur":
         concur_compliance(
             db, compliance_history_id, remarks,
             next_due_date, validity_date, session_user
@@ -410,7 +413,7 @@ def process_approve_compliance(db, request, session_user):
     #         db, compliance_history_id, remarks,
     #         next_due_date, validity_date, session_user
     #     )
-        
+
     return clienttransactions.ApproveComplianceSuccess()
 
 
@@ -682,11 +685,11 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
 ########################################################
 def process_change_theme(db, request, session_user):
     theme_name = request.theme
-    theme_id = get_themes_for_user(db, session_user);
+    theme_id = get_themes_for_user(db, session_user)
 
     if not theme_id:
-        theme_value = save_themes_for_user(db, session_user, theme_name);
+        theme_value = save_themes_for_user(db, session_user, theme_name)
     else:
-        theme_value = update_themes_for_user(db, session_user, theme_id, theme_name);
+        theme_value = update_themes_for_user(db, session_user, theme_id, theme_name)
 
     return clienttransactions.ChangeThemeSuccess(theme_value)

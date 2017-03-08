@@ -187,74 +187,51 @@ function isRevisedBiggest(firstInputElm, secondInputElm, errMsg) {
     postValidate(isValid, errMsg, secondInputElm);
     return isValid;
 }
-
-/*-----------------------------*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Validate that input value is not empty. */
 function isNotEmptyNew(inputElm, errMsg, errElm) {
     var isValid = (inputElm.val().trim() !== "");
-    if (isValid == false) { $(errElm).html(errMsg);
-        $(inputElm).focus(); } else { $(errElm).html(""); }
+    if (isValid == false) {
+        $(errElm).html(errMsg);
+        $(inputElm).focus();
+    } else { $(errElm).html(""); }
     return isValid;
 }
 
 function isLengthMinMaxNew(inputElm, minLength, maxLength, errMsg, errElm) {
     var inputValue = inputElm.val().trim();
     var isValid = (inputValue.length >= minLength) && (inputValue.length <= maxLength);
-    if (isValid == false) { $(errElm).html(errMsg);
-        $(inputElm).focus(); } else { $(errElm).html(""); }
+    if (isValid == false) {
+        $(errElm).html(errMsg);
+        $(inputElm).focus();
+    } else { $(errElm).html(""); }
     return isValid;
 }
 
 function isMinMaxNew(inputElm, min, max, errMsg, errElm) {
     var inputValue = parseFloat(inputElm.val().trim());
     var isValid = (inputValue >= parseFloat(min)) && (inputValue <= parseFloat(max));
-    if (isValid == false) { $(errElm).html(errMsg);
-        $(inputElm).focus(); } else { $(errElm).html(""); }
+    if (isValid == false) {
+        $(errElm).html(errMsg);
+        $(inputElm).focus();
+    } else { $(errElm).html(""); }
     return isValid;
 }
 
 function isImageNew(inputElm, errMsg, exts, errElm) {
     var isValid = new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$').test(inputElm.val());
-    if (isValid == false) { $(errElm).html(errMsg);
-        $(inputElm).focus(); } else { $(errElm).html(""); }
+    if (isValid == false) {
+        $(errElm).html(errMsg);
+        $(inputElm).focus();
+    } else { $(errElm).html(""); }
     return isValid;
 }
 
 function isDocumentAndImageNew(inputElm, errMsg, exts, errElm) {
     var isValid = new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$').test(inputElm.val());
-    if (isValid == false) { $(errElm).html(errMsg);
-        $(inputElm).focus(); } else { $(errElm).html(""); }
+    if (isValid == false) {
+        $(errElm).html(errMsg);
+        $(inputElm).focus();
+    } else { $(errElm).html(""); }
     return isValid;
 }
 
@@ -263,8 +240,10 @@ function isNumbersDotNew(inputElm, errMsg, errElm) {
     var isValid = true;
     if (inputElm.val() != "")
         isValid = (inputElm.val().trim().match(/^[0-9]*\.?[0-9]*$/) !== null);
-    if (isValid == false) { $(errElm).html(errMsg);
-        $(inputElm).focus(); } else { $(errElm).html(""); }
+    if (isValid == false) {
+        $(errElm).html(errMsg);
+        $(inputElm).focus();
+    } else { $(errElm).html(""); }
     return isValid;
 }
 
@@ -273,7 +252,9 @@ function isGreaterThenNew(startInputElm, endInputElm, errMsg, errElm) {
     var isValid = true;
     if (startInputElm.val() != "" && endInputElm.val())
         isValid = (parseInt(startInputElm.val()) < parseInt(endInputElm.val()));
-    if (isValid == false) { $(errElm).html(errMsg);
-        $(endInputElm).focus(); } else { $(errElm).html(""); }
+    if (isValid == false) {
+        $(errElm).html(errMsg);
+        $(endInputElm).focus();
+    } else { $(errElm).html(""); }
     return isValid;
 }

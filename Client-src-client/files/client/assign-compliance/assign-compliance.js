@@ -41,6 +41,8 @@ var totalRecord = 0;
 var mUnit = 20;
 var mCompliances = 500;
 
+var Filter_List = $('.filter-list');
+
 function convert_month(data) {
   var months = [
     'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
@@ -446,6 +448,28 @@ function get_selected_count(element){
 	$('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
 }
 
+function displayPopup(units_string){
+	$('.popup-list').find('tr').remove();
+	var units = units_string.split(',');
+	for (var i = 0; i < units.length - 1; i++) {
+	    var dispUnit = '';
+	    $.each(UNITS, function (index, value) {
+	      if (value.u_id == parseInt(units[i])) {
+	        dispUnit = value.u_name + ', ' + value.address;
+	      }
+	    });
+	    var tableRow = $('#templates .table-popup-list .table-row');
+	    var clone = tableRow.clone();
+	    $('.popup_unitname', clone).text(dispUnit);
+	    $('.popup-list').append(clone);
+	}
+
+    Custombox.open({
+        target: '#custom-modal',
+        effect: 'contentscale',
+    });
+}
+
 function loadCompliances(){
 	if (SCOUNT <= 1) {
 	    $('.tbody-accordion-list').empty();
@@ -544,8 +568,6 @@ function loadCompliances(){
 
 			    $('.compliancetask', clone2).text(compliance_name);
 			    $('.desc', clone2).attr('title', compliance_description);
-			    $('.applicableunits', clone2).text(disp_appl_unit);
-			    $('.frequency', clone2).text(frequency);
 
 			    var dispUnit = '';
 			    for (var i = 0; i < applicable_units.length; i++) {
@@ -553,6 +575,13 @@ function loadCompliances(){
 			    }
 			    $('.appl_unit', clone2).attr('id', 'appl_unit' + SCOUNT);
 			    $('.appl_unit', clone2).val(dispUnit);
+
+			    $('.applicableunits', clone2).find('a').text(disp_appl_unit);
+			    $('.applicableunits', clone2).find('a').on('click', function(e) {
+		            displayPopup(dispUnit);
+		        });
+
+			    $('.frequency', clone2).text(frequency);
 
 			    if (summary != null) {
 			        if (statutorydate.trim() != '') {
@@ -702,7 +731,7 @@ function loadUser(userType) {
 	    }
 	    if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
 		    var userId = USERS[user].usr_id;
-		    var userName = USERS[user].emp_name;
+		    var userName = USERS[user].emp_code + ' - ' +USERS[user].emp_name;
 		    var combine = userId + '-' + serviceProviderId;
 		    var isAssignee = USERS[user].is_assignee;
 		    var isConcurrence = USERS[user].is_approver;
@@ -1179,6 +1208,16 @@ function pageControls(){
 	            callAPI(SUBMIT_API)
 	        }, 500);
 		}
+    });
+
+    Filter_List.keyup(function() {
+    	var currentFilter = '#' + $(this).attr("class").split(' ').pop() + ' > li';
+        var searchText = $(this).val().toLowerCase();
+        $(currentFilter).each(function() {
+            var currentLiText = $(this).text().toLowerCase();
+            showCurrentLi = currentLiText.indexOf(searchText) !== -1;
+            $(this).toggle(showCurrentLi);
+        });
     });
 
 }
