@@ -186,7 +186,7 @@ ReviewSettingsPage.prototype.renderTypeList = function(data) {
 }
 
 ReviewSettingsPage.prototype.getUnitList = function(){
-    $(".UnitList").empty();
+    UnitList.empty();
     t_this = this;
     d_id = DomainId.val();
     if(le_id == null){
@@ -585,7 +585,8 @@ SubmitButton.on("click", function(){
         return false;
     }else{
         var flag_status = 0;
-        var selected_compliances_list = [];        
+        var selected_compliances_list = [];  
+        var dt = 0;      
         $.each($(".comp-checkbox:checked").closest(".compliance-details"), function () {
             console.log(this);
         // $(".comp-checkbox:checked").each(function(e){
@@ -613,6 +614,7 @@ SubmitButton.on("click", function(){
                 var months = {Jan:1, Feb:2, Mar:3, Apr:4, May:5, Jun:6, Jul:7, Aug:8, Sep:9, Oct:10, Nov:11, Dec:12 };
                 var statu_dates =[];                
                 var c = 1;
+               
                 $.each(eachloop, function(k, val){
                     var duedate_input = $(data).find(".due-date-div .col-sm-12:nth-child("+c+") input");
                     var trigger_input = $(data).find(".trigger-div .col-sm-8:nth-child("+c+") input");
@@ -627,59 +629,50 @@ SubmitButton.on("click", function(){
                     if(duedate == ""){
                         console.log('displayMessage("Due Date Required for "+comtask);');
                         displayMessage("Due Date Required for "+comtask);
+                        dt = 1;
                         return false;
                     }
-                    if(trigger == ""){
+                    else if(trigger == ""){
                         console.log('displayMessage("Trigger Before Days Required for "+comtask);');
                         displayMessage("Trigger Before Days Required for "+comtask);
+                        dt = 1;
                         return false;
                     }            
-
-                    var statu = {};                                      
-                    statu['statutory_date'] = null;
-                    statu['statutory_month'] = null;
-                    statu['trigger_before_days'] = null;
-                    statu['repeat_by'] = null;
-                    console.log("**"+duedate);
-                    if(duedate != ''){
-                        var split_date = duedate.split("-");
-                        statu['statutory_date'] = parseInt(split_date[0]);
-                        statu['statutory_month'] = months[split_date[1]];
+                    else{
+                        var statu = {};                                      
+                        statu['statutory_date'] = null;
+                        statu['statutory_month'] = null;
+                        statu['trigger_before_days'] = null;
+                        statu['repeat_by'] = null;
+                        console.log("**"+duedate);
+                        if(duedate != ''){
+                            var split_date = duedate.split("-");
+                            statu['statutory_date'] = parseInt(split_date[0]);
+                            statu['statutory_month'] = months[split_date[1]];
+                        }
+                        if(trigger != ""){
+                            statu['trigger_before_days'] = parseInt(trigger);   
+                        }
+                        statu_dates.push(statu);
+                        c++;
+                        dt = 0;
+                        console.log(repeatevery+"--"+repeateverytype+"--"+ duedate+"--"+ trigger+"--"+compid);
+                        console.log("----"+old_repeat_by+"--"+old_repeat_type_id+"--"+ old_due_date+"--"+ old_trigger_before_days+"--"+compid);
                     }
-                    if(trigger != ""){
-                        statu['trigger_before_days'] = parseInt(trigger);   
-                    }
-                    statu_dates.push(statu);
-                    c++;
-                    console.log(repeatevery+"--"+repeateverytype+"--"+ duedate+"--"+ trigger+"--"+compid);
-                    console.log("----"+old_repeat_by+"--"+old_repeat_type_id+"--"+ old_due_date+"--"+ old_trigger_before_days+"--"+compid);
                 });
                 old_due_date = null;
-               
-                // var old_statu = {};       
-                // var old_statu_dates =[];
-                // old_statu['statutory_date'] = null;
-                // old_statu['statutory_month'] = null;
-                // old_statu['trigger_before_days'] = old_trigger_before_days;
-                // old_statu['repeats_by'] = null;
-                // if(old_due_date != ''){
-                //     var old_split_date = old_due_date.split("-");
-                //     console.log("months.old_split_date[1]---"+months.old_split_date[1]);
-                //     old_statu['statutory_date'] = old_split_date[0];
-                //     old_statu['statutory_month'] = months.old_split_date[1];
-                // }
-                // if(trigger != ''){
-                //     old_statu['trigger_before_days'] = old_trigger_before_days;   
-                // }
-                old_statu_dates = jQuery.parseJSON(old_statu);                
-                selected_compliances_list.push(
-                    client_mirror.saveReviewSettingsComplianceDict(
-                        parseInt(compid), parseInt(le_id), parseInt(d_id), parseInt(temp_ftype), ACTIVE_UNITS, parseInt(repeatevery), 
-                        parseInt(repeateverytype), duedate_first, trigger_first, statu_dates, parseInt(old_repeat_by),
-                        parseInt(old_repeat_type_id), old_due_date, old_statu_dates
-                    )
-                );
-                flag_status = 1;
+                if(dt == 0){
+                    old_statu_dates = jQuery.parseJSON(old_statu);                
+                    selected_compliances_list.push(
+                        client_mirror.saveReviewSettingsComplianceDict(
+                            parseInt(compid), parseInt(le_id), parseInt(d_id), parseInt(temp_ftype), ACTIVE_UNITS, parseInt(repeatevery), 
+                            parseInt(repeateverytype), duedate_first, trigger_first, statu_dates, parseInt(old_repeat_by),
+                            parseInt(old_repeat_type_id), old_due_date, old_statu_dates
+                        )
+                    );
+                    flag_status = 1;
+                }
+                
             }
         });
         if(flag_status > 0){
@@ -694,7 +687,11 @@ SubmitButton.on("click", function(){
                     displayMessage(error);
                 }
             });    
-        }else{
+        }
+        else if(dt == 1){
+            console.log("welcome");
+        }
+        else{
             displayMessage(message.nocompliance_selected);
         }
         

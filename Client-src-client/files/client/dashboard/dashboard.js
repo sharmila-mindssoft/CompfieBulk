@@ -215,7 +215,7 @@ function showmorerecords() {
       'd_ids': chartInput.getDomains(),
       'filter_type': filterType,
       'filter_ids': filter_ids,
-      'year': parseInt(ES_YEAR),
+      'chart_year': parseInt(ES_YEAR),
       'record_count': SNO,
       'le_ids': chartInput.getLegalEntities()
     };
@@ -353,7 +353,7 @@ function showComplianceApplicabilityDrillDownRecord_complianceList(val) {
     if (statutory_date[j].trigger_before_days != null)
       tBefore = statutory_date[j].trigger_before_days + ' Days';
     if (sMonth != '')
-      sMonth = getMonth_IntegettoString(sMonth);
+      sMonth = getMonth_IntegertoString(sMonth);
     if(sDay != "" && sMonth != ""){
       statutorydate += sDay + ' - ' + sMonth + ', ';  
     }    
@@ -590,6 +590,9 @@ function notCompliedDrilldown(status, data) {
   // accordianType('accordion', 'accordion-toggle', 'accordion-content');
   $('.js-filtertable').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter');
+  });
+  $('.js-filtertable_not_c').on('keyup', function () {
+    $(this).filtertable().addFilter('.js-filter_not_c');
   });
 }
 function showEscalationDrillDownRecord(data, year) {
@@ -839,7 +842,9 @@ function escalationDrilldownnotcomplied(status, data) {
     $('.norecord', clone).html("No Record Found");
     $('.inner-table-notcomplied-escalation-list').append(clone);
   }
-  
+  $('.js-filtertable').on('keyup', function () {
+    $(this).filtertable().addFilter('.js-filter');
+  });
   $('.js-filtertable_not_c').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter_not_c');
   });
@@ -903,6 +908,9 @@ function escalationDrilldowndelayed(status, data) {
   //     $('.inner-table-delayed-escalation-list').append(clone);
   // }
   //accordianTypedelayed('accordionD', 'accordion-toggle', 'accordion-delayed-content');
+  $('.js-filtertable').on('keyup', function () {
+    $(this).filtertable().addFilter('.js-filter');
+  });
   $('.js-filtertable_delayed').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter_delayed');
   });

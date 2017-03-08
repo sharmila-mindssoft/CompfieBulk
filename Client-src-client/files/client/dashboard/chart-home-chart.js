@@ -405,9 +405,10 @@ function updateComplianceApplicabilityChart(data) {
   total = data[2];
   highchart = new Highcharts.Chart({
     colors: [
-      '#66FF66',
-      '#FFDC52',
-      '#CE253C'
+      '#FB4739',
+      '#F2746B',
+      '#FF9C80',
+      '#F62025',
     ],
     chart: {
       type: 'pie',
@@ -1333,7 +1334,7 @@ function prepareComplianceStatusChartData(chart_data) {
     var delayedCount = 0;
     var inprogressCount = 0;
     var notCompliedCount = 0;
-    for (var j = 0; j < chartData.c_data.length; j++) {
+    for (var j = 0; j < chartData.c_data.length; j++) {      
       var item = chartData.c_data[j];
       if (parseInt(item.year) != yearInput)
         continue;
