@@ -124,6 +124,7 @@ class API(object):
     def _remove_old_session(self):
 
         def on_session_timeout():
+            print "session timeout"
             _db_con_clr = before_first_request()
             _db_clr = Database(_db_con_clr)
             _db_clr.begin()
@@ -415,6 +416,7 @@ STATIC_PATHS = [
     ("/knowledge/fonts/<path:filename>", FONT_PATH),
     ("/knowledge/script/<path:filename>", SCRIPT_PATH),
     ("/knowledge/clientlogo/<path:filename>", LOGO_PATH),
+    ("/clientlogo/<path:filename>", LOGO_PATH),
     ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
     ("/knowledge/compliance_format/<path:filename>", DOC_PATH)
 

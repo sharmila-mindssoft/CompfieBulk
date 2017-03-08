@@ -37,7 +37,7 @@ class BaseDatabase(object):
             connection = self._mysql.get_db
             connection.autocommit(True)
             self._connection = connection
-            print self._connection
+            # print self._connection
             return self._connection
         except Exception:
             pass
@@ -160,7 +160,7 @@ class Database(object):
         assert self._connection is not None
         assert self._cursor is None
         self._cursor = self._connection.cursor(dictionary=True, buffered=True)
-        print self._cursor
+        # print self._cursor
         return self._cursor
 
     ########################################################

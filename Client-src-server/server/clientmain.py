@@ -182,6 +182,7 @@ class API(object):
             print self._group_databases
 
             def client_added(clients):
+                print "client added callback"
                 for client in clients:
                     _client_id = client.client_id
                     # print _client_id
@@ -441,6 +442,10 @@ class API(object):
                 response_data = unbound_method(
                     self, request_data, _db, company_id, ip_address
                 )
+            elif is_group is True and need_category is True :
+                response_data = unbound_method(
+                    self, request_data, _db, session_user, client_id, session_category
+                )
             elif need_category :
                 response_data = unbound_method(
                     self, request_data, _db, session_user, session_category
@@ -492,7 +497,6 @@ class API(object):
                     p_response.chart_data.extend(data.chart_data)
 
                 elif type(request_data.request) is dashboard.GetNotCompliedChart :
-
                     p_response.T_0_to_30_days_count += data.T_0_to_30_days_count
                     p_response.T_31_to_60_days_count += data.T_31_to_60_days_count
                     p_response.T_61_to_90_days_count += data.T_61_to_90_days_count
@@ -534,7 +538,8 @@ class API(object):
                     p_response = controller.merge_user_scorecard(p_response, data)
 
                 elif type(request_data.request) is widgetprotocol.GetDomainScoreCard :
-                    p_response = controller.merge_domain_scorecard(p_response, data)
+                    if type(data) is widgetprotocol.ChartSuccess :
+                        p_response = controller.merge_domain_scorecard(p_response, data)
 
                 elif type(request_data.request) is widgetprotocol.GetCalendarView :
                     p_response = controller.merge_calendar_view(p_response, data)
@@ -611,9 +616,9 @@ class API(object):
         logger.logLogin("info", user_ip, "login-user", "Login process end")
         return controller.process_login_request(request, db, client_id, user_ip)
 
-    @api_request(clientmasters.RequestFormat, is_group=True, save_le=True)
-    def handle_client_masters(self, request, db, session_user, client_id, le_ids):
-        return controller.process_client_master_requests(request, db, session_user, client_id, le_ids)
+    @api_request(clientmasters.RequestFormat, is_group=True, need_category=True)
+    def handle_client_masters(self, request, db, session_user, client_id, session_category):
+        return controller.process_client_master_requests(request, db, session_user, client_id, session_category)
 
     @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
     def handle_client_master_filters(self, request, db, session_user, session_category):
@@ -651,7 +656,9 @@ class API(object):
     def handle_widget_request(self, request, db, session_user, session_category):
         return controller.process_client_widget_requests(request, db, session_user, session_category)
 
-
+    @api_request(clientuser.RequestFormat)
+    def handle_client_format_file():
+        pass
 def handle_isalive():
     return Response("Application is alive", status=200, mimetype="application/json")
 
@@ -681,7 +688,7 @@ def run_server(address, knowledge_server_address):
             ("/api/client_user", api.handle_client_user),
             ("/api/mobile", api.handle_mobile_request),
             ("/api/widgets", api.handle_widget_request),
-            # (r"/api/files/([a-zA-Z-0-9]+)", api.handle_client_format_file)
+            (r"/api/files", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])

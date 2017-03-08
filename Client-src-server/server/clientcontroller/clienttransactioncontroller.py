@@ -93,7 +93,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_get_past_records_form_data(
             db, request, session_user, session_category
         )
-        
+
     elif type(request) is clienttransactions.SavePastRecords:
         result = process_save_past_records(
             db, request, session_user, client_id
@@ -262,7 +262,7 @@ def process_get_past_records_form_data(db, request, session_user, session_catego
     compliance_frequency = get_compliance_frequency(
         db, "frequency_id in (1,2,3)"
     )
-    
+
     return clienttransactions.GetPastRecordsFormDataSuccess(
         countries=countries,
         business_groups=business_groups,
@@ -539,7 +539,6 @@ def process_client_master_filters_request(request, db, session_user, session_cat
 
     elif type(request) is clienttransactions.ChangeThemes:
         result = process_change_theme(db, request, session_user)
-    
 
     return result
 
@@ -686,11 +685,11 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
 ########################################################
 def process_change_theme(db, request, session_user):
     theme_name = request.theme
-    theme_id = get_themes_for_user(db, session_user);
+    theme_id = get_themes_for_user(db, session_user)
 
     if not theme_id:
-        theme_value = save_themes_for_user(db, session_user, theme_name);
+        theme_value = save_themes_for_user(db, session_user, theme_name)
     else:
-        theme_value = update_themes_for_user(db, session_user, theme_id, theme_name);
+        theme_value = update_themes_for_user(db, session_user, theme_id, theme_name)
 
     return clienttransactions.ChangeThemeSuccess(theme_value)
