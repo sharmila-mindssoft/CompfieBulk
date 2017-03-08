@@ -142,7 +142,7 @@ api_params = {
     "c_comp_id": make_int_field(),
     "comp_id": make_int_field(),
     "comp_name": make_text_field(length=500),
-    "doc_name": make_string_field(validfun=allow_specialchar),
+    "doc_name": make_string_field(validfun=allow_specialchar, length=200),
     "descp": make_text_field(length=500),
     "s_prov": make_text_field(length=500),
     "comp_app_status": make_bool_field(),
