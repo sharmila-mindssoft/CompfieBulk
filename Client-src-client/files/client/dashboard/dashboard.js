@@ -1162,7 +1162,7 @@ function trendChartDrilldown(status, data) {
         $('.legalentity-name', clone).html(value.le_name);
         $('.division-name', clone).html(value.div_name);
         $('.industry-type-name', clone).html(value.i_name);
-        $('.compliance-name span', clone).html(val.comp_name);
+        $('.compliance-name', clone).html(val.comp_name);
         $('.assigned-to', clone).html(val.assignee_name);
         
         $(' #collapse'+actCount).append(clone);

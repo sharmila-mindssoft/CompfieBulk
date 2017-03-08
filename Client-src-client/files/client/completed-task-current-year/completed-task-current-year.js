@@ -7,6 +7,7 @@ var unitsList;
 var domainsList;
 var frequencyList;
 var actList;
+
 var file_list = [];
 var usersList;
 var statutoriesList;
@@ -15,6 +16,7 @@ var CURRENT_TAB = 1;
 var sno = 0;
 var totalRecord;
 var lastAct = '';
+var startcount = 0;
 
 var ULRow = $("#templates .ul-row li");
 var legalentityul = $("#legalentity");
@@ -363,75 +365,75 @@ function submitcompliance(){
   );
 }
 
-//create wizard
-var navListItems = $('ul.setup-panel li a'),
-allWells = $('.setup-content');
-allWells.hide();
-navListItems.click(function(e)
-{
-e.preventDefault();
-var $target = $($(this).attr('href')),
-$item = $(this).closest('li');
-if (!$item.hasClass('disabled')) {
-navListItems.closest('li').removeClass('active');
-$item.addClass('active');
-allWells.hide();
-$target.show();
-}
-});
-$('ul.setup-panel li.active a').trigger('click');
-$('#activate-step-2').on('click', function(e) {
-if (validate_firsttab()){
-$('ul.setup-panel li:eq(1)').removeClass('disabled');
-$('ul.setup-panel li a[href="#step-2"]').trigger('click');
-}
-})
+// //create wizard
+// var navListItems = $('ul.setup-panel li a'),
+// allWells = $('.setup-content');
+// allWells.hide();
+// navListItems.click(function(e)
+// {
+// e.preventDefault();
+// var $target = $($(this).attr('href')),
+// $item = $(this).closest('li');
+// if (!$item.hasClass('disabled')) {
+// navListItems.closest('li').removeClass('active');
+// $item.addClass('active');
+// allWells.hide();
+// $target.show();
+// }
+// });
+// $('ul.setup-panel li.active a').trigger('click');
+// $('#activate-step-2').on('click', function(e) {
+// if (validate_firsttab()){
+// $('ul.setup-panel li:eq(1)').removeClass('disabled');
+// $('ul.setup-panel li a[href="#step-2"]').trigger('click');
+// }
+// })
 
-$('#activate-step-3').on('click', function(e) {
-if (validate_secondtab()){
-  sno = 0;
-  $(".tbody-pastRecords").find("tr").remove();
-  getStatutories();
-  $('#activate-step-finish').show();
-  $('ul.setup-panel li:eq(2)').removeClass('disabled');
-  $('ul.setup-panel li a[href="#step-3"]').trigger('click');
-}
-})
+// $('#activate-step-3').on('click', function(e) {
+// if (validate_secondtab()){
+//   sno = 0;
+//   $(".tbody-pastRecords").find("tr").remove();
+//   getStatutories();
+//   $('#activate-step-finish').show();
+//   $('ul.setup-panel li:eq(2)').removeClass('disabled');
+//   $('ul.setup-panel li a[href="#step-3"]').trigger('click');
+// }
+// })
 
-$('#backward-step-1').on('click', function(e) {
-$('ul.setup-panel li:eq(1)').removeClass('disabled');
-$('ul.setup-panel li a[href="#step-1"]').trigger('click');
+// $('#backward-step-1').on('click', function(e) {
+// $('ul.setup-panel li:eq(1)').removeClass('disabled');
+// $('ul.setup-panel li a[href="#step-1"]').trigger('click');
 
-})
+// })
 
-$('#backward-step-2').on('click', function(e) {
-  $('ul.setup-panel li:eq(2)').removeClass('disabled');
-  $('ul.setup-panel li a[href="#step-2"]').trigger('click');
+// $('#backward-step-2').on('click', function(e) {
+//   $('ul.setup-panel li:eq(2)').removeClass('disabled');
+//   $('ul.setup-panel li a[href="#step-2"]').trigger('click');
 
-})
+// })
 
-$('#activate-step-finish').on('click', function(e) {
-  if (validate_thirdtab()){
-  submitcompliance();
-  }
-})
+// $('#activate-step-finish').on('click', function(e) {
+//   if (validate_thirdtab()){
+//   submitcompliance();
+//   }
+// })
 
 //get compliances for selected unit
 function getStatutories(){
   displayLoader();
-  var assignComplianceUnitId = null;
-  var assignComplianceDomainId = null;
-  var assignComplianceActId = null;
-  var assignComplianceFrequencyId = null;
-  //var assignComplianceCountryId = null;
+  var pastRecordsUnitId = null;
+  var pastRecordsDomainId = null;
+  var pastRecordsActId = null;
+  var pastRecordsFrequencyId = null;
+  //var pastRecordsCountryId = null;
 
-  //if($('.countrylist.active').attr('id') != undefined) assignComplianceCountryId = parseInt($('.countrylist.active').attr('id'));
-  if($('.unitlist.active').attr('id') != undefined) assignComplianceUnitId = parseInt($('.unitlist.active').attr('id'));
-  if($('.domainlist.active').attr('id') != undefined) assignComplianceDomainId = parseInt($('.domainlist.active').attr('id'));
-  if($('.actlist.active').attr('id') != undefined) assignComplianceActId = $('.actlist.active').attr('id');
-  if($('.frequencylist.active').attr('id') != undefined) assignComplianceFrequencyId = $('.frequencylist.active').attr('id');
+  //if($('.countrylist.active').attr('id') != undefined) pastRecordsCountryId = parseInt($('.countrylist.active').attr('id'));
+  if($('.unitlist.active').attr('id') != undefined) pastRecordsUnitId = parseInt(unitul.find('.active').attr('id'));
+  if($('.domainlist.active').attr('id') != undefined) pastRecordsDomainId = parseInt(domainul.find('.active').attr('id'));
+  if($('.actlist.active').attr('id') != undefined) pastRecordsActId = actul.find('.active').attr('id');
+  if($('.frequencylist.active').attr('id') != undefined) pastRecordsFrequencyId = frequencyul.find('.active').attr('id');
 
-  if(assignComplianceUnitId != null && assignComplianceDomainId != null){
+  if(pastRecordsUnitId != null && pastRecordsDomainId != null){
     function onSuccess(data){
       statutoriesList = data["statutory_wise_compliances"];
       usersList = data["users"];
@@ -442,10 +444,10 @@ function getStatutories(){
     function onFailure(error){
       hideLoader();
     }
-    //assignComplianceCountryId
+    //pastRecordsCountryId
     client_mirror.getStatutoriesByUnit(
-      assignComplianceUnitId, assignComplianceDomainId, assignComplianceActId,
-      assignComplianceFrequencyId, sno,
+      pastRecordsUnitId, pastRecordsDomainId, pastRecordsActId,
+      pastRecordsFrequencyId, sno,
       function (error, response) {
             if (error == null){
               onSuccess(response);
@@ -670,8 +672,8 @@ function loadAct(){
         clone.html(textval[0] + '<i></i>');
         clone.attr('id', id);
         actul.append(clone);
-        clone.click(function() {
-            activateList(this, 'act');
+        clone.click(function() {          
+          activateList(this, 'act');
         });
       }
         
@@ -684,7 +686,7 @@ function loadFrequency(){
         text = value.frequency;
         var clone = ULRow.clone();
         clone.html(text + '<i></i>');
-        clone.attr('id', id);
+        clone.attr('id', text);
         frequencyul.append(clone);
         clone.click(function() {
             activateList(this, 'frequency');
@@ -881,33 +883,17 @@ function showTab() {
         } else {
 
           displayLoader();
-          var le_id = LEList.find("li.active").attr("id");
-          var d_id = DomainList.find("li.active").attr("id");
-            client_mirror.getUserToAssignCompliance(
-                parseInt(d_id), ACTIVE_UNITS, parseInt(le_id), 
+          var le_id = legalentityul.find("li.active").attr("id");
+          var u_id = unitul.find("li.active").attr("id");
+          var d_id = domainul.find("li.active").attr("id");
+          var actname = actul.find("li.active").text();
+          var freqname = frequencyul.find("li.active").attr("id");
+
+          client_mirror.getStatutoriesByUnit(
+                parseInt(le_id), parseInt(u_id), parseInt(d_id), actname, freqname, startcount,
                 function(error, data) {
-                    if (error == null) {
-                      two_level_approve = data.t_l_approve;
-                      USERS = data.assign_users;
-                      $.each(USERS, function(key, value) {
-                  id = value.s_u_id;
-                  text = value.s_u_name;
-                  assignee_flag = value.is_assignee;
-                  approver_flag = value.is_approver;
-                  if (id != null && assignee_flag) ASSIGNEE_SU[id] = text;
-
-                  if (id != null && approver_flag) APPROVER_SU[id] = text;
-              });
-              loadSeatingUnits();
-
-              hideall();
-                        enabletabevent(3);
-                        $('.tab-step-3').addClass('active')
-                        $('#tab3').addClass('active in');
-                        $('#tab3').show();
-                        PreviousButton.show();
-                        NextButton.hide();
-                        SubmitButton.show();
+                    if (error == null) {                      
+                        hideall();
 
                     } else {
                         displayMessage(error);
@@ -1002,7 +988,7 @@ function validateFirstTab() {
 function validateSecondTab(){
   var d_id = domainul.find("li.active").attr("id");
 
-  if(le_id == undefined) {
+  if(d_id == undefined) {
       displayMessage(message.domain_required)
       return false;
   }
