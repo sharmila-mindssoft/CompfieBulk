@@ -1695,15 +1695,14 @@ function initClientMirror() {
         clientApiRequest('client_transaction', request, callback);
     }
 
-    function getStatutoriesByUnit(legalEntityId, unit_id, domain_id, level_1_statutory_name, compliance_frequency, country_id, start_count, callback) {
+    function getStatutoriesByUnit(legalEntityId, unit_id, domain_id, level_1_statutory_name, compliance_frequency, start_count, callback) {
         var request = [
             'GetStatutoriesByUnit', {
                 'le_id': legalEntityId,
                 'unit_id': unit_id,
                 'domain_id': domain_id,
                 'level_1_statutory_name': level_1_statutory_name,
-                'compliance_frequency': compliance_frequency,
-                'country_id': country_id,
+                'compliance_task_frequency': compliance_frequency,
                 'start_count': start_count
             }
         ];
