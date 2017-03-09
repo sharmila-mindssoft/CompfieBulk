@@ -221,7 +221,7 @@ function updateEscalationChart(data) {
   chartTitle = data[2];
   highchart = new Highcharts.Chart({
     colors: [
-      '#F58835',
+      '#FE6271',
       '#F32D2B'
     ],
     chart: {
@@ -271,10 +271,10 @@ function updateNotCompliedChart(data) {
   total = data[2];
   highchart = new Highcharts.Chart({
     colors: [
-      '#FF9C80',
+      '#F62025',
+      '#FF6052',
       '#F2746B',
-      '#FB4739',
-      '#DD070C'
+      '#FF9C80'
     ],
     chart: {
       renderTo: 'status-container',
@@ -1800,6 +1800,9 @@ function loadCharts() {
   hideButtons();
   $('.drilldown-container').hide();
   $('.graph-container.compliance-status').show();
+  $('.div-drilldown-container').hide();
+  $('.chart-container').show();
+  $('.graph-selections-bottom').show();  
   var chartType = chartInput.getChartType();
   chartInput.setChartYear(0);
   if (chartType == 'compliance_report') {
