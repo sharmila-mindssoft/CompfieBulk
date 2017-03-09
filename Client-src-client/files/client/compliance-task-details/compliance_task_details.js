@@ -71,14 +71,14 @@ function loadComplianceTaskDetails(c) {
         if (c[f].compliance_status == "Not Complied" && countOverdue == 0) {
             var g = $("#templates .table-compliances-task-list .headingRow");
             var m = g.clone();
-            $(".compliance-types", m).html("Over due Compliances");
+            $(".compliance-types mark", m).html("Over due Compliances");
             $(".tbody-compliances-task-list-overdue").append(m);
             countOverdue++
         }
         if (c[f].compliance_status == "Inprogress" && countInprogress == 0) {
             var g = $("#templates .table-compliances-task-list .headingRow");
             var m = g.clone();
-            $(".compliance-types", m).html("Inprogress Compliances");
+            $(".compliance-types mark", m).html("Inprogress Compliances");
             $(".tbody-compliances-task-list-inprogress").append(m);
             countInprogress++
         }
@@ -177,6 +177,7 @@ function showSideBar(c, a) {
     $(".half-width-task-details").show();
     $(".full-width-list").attr("width", "60%");
     $(".half-width-task-details").attr("width", "40%");
+    $(".half-width-task-details").css("display", "table-cell");
     $.each(a, function(g, m) {
         if (a[g].compliance_history_id == c) {
             var l = [];
@@ -189,6 +190,7 @@ function showSideBar(c, a) {
             var h = a[g].compliance_status;
             var d = a[g].remarks;
             $(".sideview-compliance-unit span", e).html(a[g].unit_name);
+            $('.sideview-compliance-unit i', e).attr('title', a[g].unit_name);
             // $(".sideview-compliance-unit abbr", e).attr("title", a[g].address);
             $(".sideview-compliance-task .ct", e).html(a[g].compliance_name);
             // $(".sideview-compliance-task abbr", e).attr("title", a[g].compliance_description);
@@ -237,6 +239,9 @@ function showSideBar(c, a) {
                     $(".duedate1-textbox-input", e).val(a[g].next_due_date)
                 }
             }
+
+            $('[data-toggle="tooltip"]').tooltip();
+
             $(".btn-submit", e).on("click", function(s) {
                 var o;
                 var n;
@@ -519,4 +524,10 @@ $(document).ready(function() {
         $(".current-tab-content").hide();
         $(".main-tab-content").show()
     })
+    alert('523');
+    $(".close_inprogress").click(function() {
+        alert('525');
+        $(".td_inprogress").hide();
+        $('.expand_inprogress').removeClass('info');
+    });
 });
