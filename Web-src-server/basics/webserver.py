@@ -63,7 +63,8 @@ class RequestHandler(tornado.web.RequestHandler) :
             not self.request.path.startswith("/api/files")
         ):
             print self.request.path
-            tornado.web.RequestHandler.check_xsrf_cookie(self)
+            pass
+            # tornado.web.RequestHandler.check_xsrf_cookie(self)
         else :
             pass
 
