@@ -110,6 +110,8 @@ function initClientMirror() {
         return info.entity_info;
     }
 
+
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -186,6 +188,11 @@ function initClientMirror() {
         window.location.href = login_url;
     }
 
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -199,7 +206,7 @@ function initClientMirror() {
         //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
-            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: {'X-Xsrftoken': getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),
@@ -759,7 +766,7 @@ function initClientMirror() {
             },
 
             url: CLIENT_BASE_URL + 'client_user',
-            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: {'X-Xsrftoken': getCookie('_xsrf')},
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),
@@ -1344,23 +1351,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeServiceProviderStatus(sId, active, callback) {
+    function changeServiceProviderStatus(sId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeServiceProviderStatus', {
                 'sp_id': sId,
-                'active': active
+                'active_status': active,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function blockServiceProvider(sId, block, callback) {
+    function blockServiceProvider(sId, block, password, callback) {
         callerName = 'client_masters';
         var request = [
             'BlockServiceProvider', {
                 'sp_id': sId,
-                'is_blocked': block
+                'is_blocked': block,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1691,15 +1700,14 @@ function initClientMirror() {
         clientApiRequest('client_transaction', request, callback);
     }
 
-    function getStatutoriesByUnit(legalEntityId, unit_id, domain_id, level_1_statutory_name, compliance_frequency, country_id, start_count, callback) {
+    function getStatutoriesByUnit(legalEntityId, unit_id, domain_id, level_1_statutory_name, compliance_frequency, start_count, callback) {
         var request = [
             'GetStatutoriesByUnit', {
                 'le_id': legalEntityId,
                 'unit_id': unit_id,
                 'domain_id': domain_id,
                 'level_1_statutory_name': level_1_statutory_name,
-                'compliance_frequency': compliance_frequency,
-                'country_id': country_id,
+                'compliance_task_frequency': compliance_frequency,
                 'start_count': start_count
             }
         ];
@@ -2525,7 +2533,7 @@ function initClientMirror() {
     }
 
     function getWidgetUserScoreCard(callback) {
-        var request = [
+         var request = [
             "GetUserScoreCard", {
                 "le_ids": getLEids()
             }
@@ -2610,7 +2618,31 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getSettingsFormDetails(le_id, callback) {
+        var request = [
+            'GetSettingsFormDetails', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
 
+    function saveSettingsFormDetails(le_id, le_name, app_opt, ass_rem, esc_rem_adv, esc_rem, reassign_sp, callback) {
+        var request = [
+            'SaveSettingsFormDetails', {
+                'le_id': le_id,
+                'legal_entity_name': le_name,
+                'two_level_approve': app_opt,
+                'assignee_reminder': ass_rem,
+                'advance_escalation_reminder': esc_rem_adv,
+                'escalation_reminder': esc_rem,
+                'reassign_sp': reassign_sp
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
 
     return {
         log: log,
@@ -2805,6 +2837,9 @@ function initClientMirror() {
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
         getUserManagement_List: getUserManagement_List,
+        blockServiceProvider: blockServiceProvider,
+        getSettingsFormDetails: getSettingsFormDetails,
+        saveSettingsFormDetails: saveSettingsFormDetails
     };
 }
 

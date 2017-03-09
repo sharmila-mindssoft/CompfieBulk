@@ -25,7 +25,8 @@ from server.dbase import Database
 from server.database import general as gen
 from distribution.protocol import (
     Request as DistributionRequest,
-    CompanyServerDetails
+    CompanyServerDetails,
+    ServerDetails
 )
 from replication.protocol import (
     GetChanges, GetDomainChanges, GetChangesSuccess,
@@ -124,6 +125,7 @@ class API(object):
     def _remove_old_session(self):
 
         def on_session_timeout():
+            print "session timeout"
             _db_con_clr = before_first_request()
             _db_clr = Database(_db_con_clr)
             _db_clr.begin()
@@ -253,7 +255,7 @@ class API(object):
     @csrf.exempt
     @api_request(DistributionRequest)
     def handle_group_server_list(self, request, db):
-        return CompanyServerDetails(gen.get_group_servers(db))
+        return ServerDetails(gen.get_group_servers(db))
 
     @csrf.exempt
     @api_request(GetClientChanges)
@@ -416,6 +418,7 @@ STATIC_PATHS = [
     ("/knowledge/fonts/<path:filename>", FONT_PATH),
     ("/knowledge/script/<path:filename>", SCRIPT_PATH),
     ("/knowledge/clientlogo/<path:filename>", LOGO_PATH),
+    ("/clientlogo/<path:filename>", LOGO_PATH),
     ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
     ("/knowledge/compliance_format/<path:filename>", DOC_PATH)
 
@@ -523,6 +526,8 @@ def run_server(port):
 
     delay_initialize()
     settings = {
-        "threaded": True
+        "threaded": True,
+        "debug": False,
+        "use_reloader": False
     }
     app.run(host="0.0.0.0", port=port, **settings)

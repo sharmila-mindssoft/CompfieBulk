@@ -10,10 +10,12 @@ var filterContactPerson = $('#filterContactPerson');
 var filterContactNo = $('#filterContactNo');
 var filterEmailID = $('#filterEmailID');
 var filterRemarks = $('#filterRemarks');
+var CurrentPassword = $('#current-password');
+var btnPasswordSubmit_Status = $('#btnPasswordSubmit_Status');
+var btnPasswordSubmit_Block = $('#btnPasswordSubmit_Block');
 
 var filterStatus = $('#filter-status');
 var currentPassword = $('#current-password');
-var passwordSubmitButton = $('#password-submit');
 
 var isAuthenticate;
 var sp_page = null;
@@ -35,6 +37,10 @@ var txtMobile1 = $('#txtMobile1');
 var txtMobile2 = $('#txtMobile2');
 var txtEmailID = $('#txtEmailID');
 var txtAddress = $('#txtAddress');
+
+var spId = null;
+var sp_status = null;
+var blocked_status = null
 
 serviceProviderPage = function() {
     this._serviceProviderList = [];
@@ -94,33 +100,39 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             $('.sp-contact-number', cloneRow).text(v.cont_no);
             $('.sp-contact-email', cloneRow).text(v.e_id);
 
-            // $('.edit i').attr('title', 'Click Here to Edit');
-            // $('.edit i', cloneRow).on('click', function() {
-            //     t_this.showEdit(v.u_g_id, v.u_g_name, v.u_c_id, v.f_ids);
-            // });
+            $('.edit i').attr('title', 'Click Here to Edit');
+            $('.edit i', cloneRow).on('click', function() {
+                t_this.showEdit(v.s_p_id, v.s_p_name, v.s_p_short, v.cont_from, v.cont_to, v.cont_person, v.cont_no, v.mob_no, v.e_id, v.address);
+            });
             if (v.is_active == true) {
-                $('.status i').attr('title', 'Click Here to Deactivate');
                 $('.status i', cloneRow).removeClass('fa-times text-danger');
                 $('.status i', cloneRow).addClass('fa-check text-success');
+                $('.status i', cloneRow).attr('title', 'Click here to Deactivate');
             } else {
-                $('.status i').attr('title', 'Click Here to Activate');
                 $('.status i', cloneRow).removeClass('fa-check text-success');
                 $('.status i', cloneRow).addClass('fa-times text-danger');
+                $('.status i', cloneRow).attr('title', 'Click here to Activate');
             }
             if (v.is_blocked == true) {
                 $('.blocked i', cloneRow).addClass('text-danger');
                 $('.blocked i', cloneRow).removeClass('text-muted');
+                $('.blocked i', cloneRow).attr('title', 'Click here to Unblock');
             } else {
                 $('.blocked i', cloneRow).removeClass('text-danger');
                 $('.blocked i', cloneRow).addClass('text-muted');
+                $('.blocked i', cloneRow).attr('title', 'Click here to Block');
             }
+            // Status Event
+            $('.status i', cloneRow).on('click', function(e) {
+                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.is_blocked, v.unblock_days, "STATUS");
+            });
 
-            // $('.status i', cloneRow).on('click', function(e) {
-            //     t_this.showModalDialog(e, v.u_g_id, v.is_active);
-            // });
-            // $('.status').hover(function() {
-            //     showTitle(this);
-            // });
+            // Block Event
+            $('.blocked i', cloneRow).on('click', function(e) {
+                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.is_blocked, v.unblock_days, "BLOCK");
+            });
+
+
             listContainer.append(cloneRow);
             j = j + 1;
         });
@@ -133,8 +145,7 @@ serviceProviderPage.prototype.validate = function() {
     if (isNotEmpty(txtServiceProviderName, message.spname_required) == false) {
         txtServiceProviderName.focus();
         return false;
-    }
-    if (isLengthMinMax(txtServiceProviderName, 2, 50, message.spname_max50) == false) {
+    } else if (!validateMaxLength("serviceprovidername", txtServiceProviderName.val().trim(), "Service Provider name")) {
         txtServiceProviderName.focus();
         return false;
     }
@@ -145,9 +156,8 @@ serviceProviderPage.prototype.validate = function() {
     if (isNotEmpty(txtShortName, message.shortname_required) == false) {
         txtShortName.focus();
         return false;
-    }
-    if (isLengthMinMax(txtShortName, 2, 20, message.shortname_max20) == false) {
-        shortname_max20.focus();
+    } else if (!validateMaxLength("serviceprovider_shortname", txtShortName.val().trim(), "Short Name")) {
+        txtShortName.focus();
         return false;
     }
     if (isNotEmpty(txtFromDate, message.contractfrom_required) == false) {
@@ -161,32 +171,18 @@ serviceProviderPage.prototype.validate = function() {
     if (isNotEmpty(txtContactPerson, message.contactperson_required) == false) {
         txtContactPerson.focus();
         return false;
-    }
-    if (isLengthMinMax(txtContactPerson, 2, 50, message.contactpersonname_max50) == false) {
+    } else if (!validateMaxLength("serviceprovider_contact_person", txtContactPerson.val().trim(), "Contact Person")) {
         txtContactPerson.focus();
         return false;
     }
-    if (isNotEmpty(txtContact1, message.countrycode_required) == false) {
-        txtContact1.focus();
-        return false;
-    }
-    if (isLengthMinMax(txtContact1, 3, 4, message.countrycode_max4) == false) {
-        txtContact1.focus();
-        return false;
-    }
-    if (isNotEmpty(txtContact2, message.areacode_required) == false) {
-        txtContact2.focus();
-        return false;
-    }
-    if (isLengthMinMax(txtContact2, 3, 4, message.areacode_max4) == false) {
-        txtContact2.focus();
+    if (isCommonName(txtContactPerson, message.contactname_str) == false) {
+        txtContactPerson.focus();
         return false;
     }
     if (isNotEmpty(txtContact3, message.contactno_required) == false) {
         txtContact3.focus();
         return false;
-    }
-    if (isLengthMinMax(txtContact3, 10, 10, message.contactno_max10) == false) {
+    } else if (!validateMaxLength("serviceprovider_contact_number", txtContact3.val().trim(), "Contact Number")) {
         txtContact3.focus();
         return false;
     }
@@ -206,14 +202,40 @@ serviceProviderPage.prototype.validate = function() {
         return false;
     }
     if (txtAddress.val() != '') {
-        if (isLengthMinMax(txtAddress, 10, 500, message.address_max500) == false) {
+        if (!validateMaxLength("serviceprovider_address", txtAddress.val().trim(), "Address")) {
             txtAddress.focus();
             return false;
         }
     }
-
     return (true);
 };
+
+serviceProviderPage.prototype.showEdit = function(s_p_id, s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address) {
+    t_this = this;
+    t_this.showAddScreen();
+
+    serviceProviderID.val(s_p_id);
+    txtServiceProviderName.val(s_p_name);
+    txtShortName.val(s_p_short);
+    txtFromDate.val(cont_from);
+    txtToDate.val(cont_to);
+    txtContactPerson.val(cont_person);
+    if (cont_no != null) {
+        var contact = cont_no.split('-');
+        txtContact1.val(contact[0]);
+        txtContact2.val(contact[1]);
+        txtContact3.val(contact[2]);
+    }
+    if (mob_no != null || mob_no != "-") {
+        var mobile = mob_no.split('-');
+        txtMobile1.val(mobile[0]);
+        txtMobile2.val(mobile[1]);
+    }
+
+    txtEmailID.val(e_id);
+    txtAddress.val(address);
+};
+
 
 serviceProviderPage.prototype.submitProcess = function() {
     var sp_id = serviceProviderID.val();
@@ -234,6 +256,108 @@ serviceProviderPage.prototype.submitProcess = function() {
             if (error == null) {
                 displaySuccessMessage(message.save_success);
                 t_this.showList();
+            } else {
+                t_this.possibleFailures(error);
+            }
+        });
+    } else {
+        //Update Process
+        var spDetailarray = client_mirror.getUpdateServiceProviderDict([parseInt(sp_id), s_p_name, s_p_short, cont_from, cont_to, cont_person, cont_no, mob_no, e_id, address])
+        client_mirror.updateServiceProvider(spDetailarray, function(error, response) {
+            if (error == null) {
+                displaySuccessMessage(message.update_success);
+                t_this.showList();
+            } else {
+                t_this.possibleFailures(error);
+            }
+        });
+
+    }
+};
+
+//open password dialog
+serviceProviderPage.prototype.showModalDialog = function(e, sp_id, isActive, unblock_days, isBlocked, mode) {
+    t_this = this;
+    statusmsg = "";
+    if (mode == "STATUS") {
+        btnPasswordSubmit_Status.show();
+        btnPasswordSubmit_Block.hide();
+
+        if (isActive == true) {
+            sp_status = false;
+            statusmsg = message.deactive_message;
+        } else {
+            sp_status = true;
+            statusmsg = message.active_message;
+        }
+    } else if (mode == "BLOCK") {
+        btnPasswordSubmit_Status.hide();
+        btnPasswordSubmit_Block.show();
+
+        if (isBlocked == true) {
+            blocked_status = false;
+            statusmsg = message.unblock_message;
+        } else {
+            blocked_status = true;
+            statusmsg = message.block_message;
+        }
+    }
+
+    CurrentPassword.val('');
+    confirm_alert(statusmsg, function(isConfirm) {
+        if (isConfirm) {
+            Custombox.open({
+                target: '#custom-modal',
+                effect: 'contentscale',
+                complete: function() {
+                    CurrentPassword.focus();
+                    spId = sp_id;
+                },
+            });
+            e.preventDefault();
+        }
+    });
+}
+
+serviceProviderPage.prototype.changeStatus = function(sp_id, status) {
+    t_this = this;
+    if (isNotEmpty(CurrentPassword, message.password_required) == false) {
+        return false;
+    } else {
+        var password = CurrentPassword.val();
+        if (status == "false") { status = false; }
+        if (status == "true") { status = true; }
+        client_mirror.changeServiceProviderStatus(sp_id, status, password, function(error, response) {
+            if (error == null) {
+                Custombox.close();
+                displaySuccessMessage(message.status_success);
+                t_this.showList();
+            } else {
+                t_this.possibleFailures(error);
+            }
+        });
+    }
+};
+
+serviceProviderPage.prototype.blockSP = function(sp_id, block_status) {
+    t_this = this;
+    if (isNotEmpty(CurrentPassword, message.password_required) == false) {
+        return false;
+    } else {
+        var password = CurrentPassword.val();
+        if (block_status == "false") { block_status = false; }
+        if (block_status == "true") { block_status = true; }
+        client_mirror.blockServiceProvider(sp_id, block_status, password, function(error, response) {
+            if (error == null) {
+                Custombox.close();
+                if (block_status) {
+                    displaySuccessMessage(message.block_success);
+                } else {
+                    displaySuccessMessage(message.unblock_success);
+                }
+                t_this.showList();
+            } else {
+                t_this.possibleFailures(error);
             }
         });
     }
@@ -258,7 +382,18 @@ serviceProviderPage.prototype.clearValues = function() {
     filterContactNo.val('');
     filterEmailID.val('');
     filterRemarks.val('');
+};
 
+serviceProviderPage.prototype.possibleFailures = function(error) {
+    if (error == "ServiceProviderNameAlreadyExists") {
+        displayMessage(message.spname_exists);
+    } else if (error == 'InvalidUserGroupId') {
+        displayMessage(message.CannotChangeStatusOfContractExpiredSP);
+    } else if (error == 'CannotDeactivateUserExists') {
+        displayMessage(message.cannot_deactivate_sp);
+    } else {
+        displayMessage(error);
+    }
 };
 
 
@@ -285,6 +420,35 @@ key_search = function(mainList) {
     }
     return fList
 }
+
+// Validate Input Characters
+txtServiceProviderName.on('input', function(e) {
+    this.value = isAlphanumeric_Shortname($(this));
+});
+txtShortName.on('input', function(e) {
+    this.value = isAlphanumeric_Shortname($(this));
+});
+txtContactPerson.on('input', function(e) {
+    this.value = isCommon_Name($(this));
+});
+txtContact1.on('input', function(e) {
+    this.value = isNumbers_Countrycode($(this));
+});
+txtContact2.on('input', function(e) {
+    this.value = isNumbers($(this));
+});
+txtContact3.on('input', function(e) {
+    this.value = isNumbers($(this));
+});
+txtMobile1.on('input', function(e) {
+    this.value = isNumbers_Countrycode($(this));
+});
+txtMobile2.on('input', function(e) {
+    this.value = isNumbers($(this));
+});
+txtAddress.on('input', function(e) {
+    this.value = isCommon_Address($(this));
+});
 
 
 //Page Control Events
@@ -323,14 +487,17 @@ PageControls = function() {
     btnSubmit.click(function() {
         if (sp_page.validate()) {
             sp_page.submitProcess();
-            sp_page.showList();
+            // sp_page.showList();
         }
     });
 
-    //Password Submit
-    // PasswordSubmitButton.click(function() {
-    //     u_p_page.validateAuthentication();
-    // });
+    btnPasswordSubmit_Status.click(function() {
+        sp_page.changeStatus(spId, sp_status);
+    });
+
+    btnPasswordSubmit_Block.click(function() {
+        sp_page.blockSP(spId, blocked_status);
+    });
 
     //Service Provider Name Filter
     filterserviceProvider.keyup(function() {

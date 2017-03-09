@@ -24,7 +24,7 @@ function updateComplianceStatusStackBarChart(data, id) {
       renderTo: 'cardbox'+id,
       type: 'bar'
     },
-    title: { text: chartTitle },
+    title: { text: '' }, //chartTitle
     credits: { enabled: false },
     xAxis: {
       categories: xAxis,
@@ -51,6 +51,12 @@ function updateComplianceStatusStackBarChart(data, id) {
     tooltip: {
       headerFormat: '<b>{point.series.name}</b>: {point.percentage:.0f}% ',
       pointFormat: '({point.y} out of {point.stackTotal})'
+    },
+    legend: {
+      itemStyle: {
+          fontWeight: 'normal',
+          fontSize: '11px'
+      }
     },
     plotOptions: {
       series: { pointWidth: 35 },
@@ -141,7 +147,7 @@ function updateEscalationChart(data, id) {
       type: 'column',
       renderTo: 'cardbox'+id
     },
-    title: { text: chartTitle },
+    title: { text: ''  },//chartTitle
     credits: { enabled: false },
     xAxis: {
       categories: xAxis,
@@ -151,6 +157,12 @@ function updateEscalationChart(data, id) {
       min: 0,
       title: { text: 'Total Compliances' },
       allowDecimals: false
+    },
+    legend: {
+      itemStyle: {
+          fontWeight: 'normal',
+          fontSize: '11px'
+      }
     },
     plotOptions: {
       series: {
@@ -212,14 +224,20 @@ function updateNotCompliedChart(data, id) {
         alpha: 55
       }
     },
-    title: { text: chartTitle },
+    title: { text: '' }, //chartTitle
     xAxis: { categories: true },
     credits: { enabled: false },
     tooltip: {
       headerFormat: '',
       pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b> out of ' + total
+    },    
+    legend: {
+      enabled: true,
+      itemStyle: {
+          fontWeight: 'normal',
+          fontSize: '11px'
+      }
     },
-    legend: { enabled: true },
     plotOptions: {
       pie: {
         allowPointSelect: true,
@@ -268,11 +286,11 @@ function updateTrendChart(data, id) {
 
   highchart_tc = new Highcharts.Chart({
     chart: { renderTo: 'cardbox'+id },
-    title: { text: chartTitle },
+    title: { text: '' }, //chartTitle
     credits: { enabled: false },
     xAxis: {
       categories: xAxis,
-      title: { text: 'Year' },
+      title: { text: '' }, //Year
       labels: {
         style: {
           cursor: 'pointer',
@@ -309,6 +327,7 @@ function updateTrendChart(data, id) {
         return s;
       }
     },
+
     plotOptions: {
       spline: {
         marker: {
@@ -316,6 +335,12 @@ function updateTrendChart(data, id) {
           lineColor: '#666666',
           lineWidth: 1
         }
+      }
+    },
+    legend: {      
+      itemStyle: {
+          fontWeight: 'normal',
+          fontSize: '11px'
       }
     },
     exporting: {
@@ -368,14 +393,20 @@ function updateComplianceApplicabilityChart(data, id) {
         alpha: 55
       }
     },
-    title: { text: chartTitle },
+    title: { text: '' }, //chartTitle
     xAxis: { categories: true },
     credits: { enabled: false },
     tooltip: {
       headerFormat: '',
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
+    },    
+    legend: { 
+      enabled: true     ,
+      itemStyle: {
+          fontWeight: 'normal',
+          fontSize: '11px'
+      }
     },
-    legend: { enabled: true },
     plotOptions: {
       pie: {
         allowPointSelect: true,
@@ -455,7 +486,7 @@ function userScoreCard(data, id){
 
   var usc_total = $("#templates .user-score-card-templates .usc-total-tr");
   var uscclone_total = usc_total.clone();
-  $(".total-role", uscclone_total).html("Total");
+  $(".total-usc-role", uscclone_total).html("Total");
   $(".total-usc-assignee", uscclone_total).html(total_assignee);
   $(".total-usc-concur", uscclone_total).html(total_concur);
   $(".total-usc-approve", uscclone_total).html(total_approve);
@@ -496,7 +527,7 @@ function domainScoreCard(data, id){
 
   var dsc_total = $("#templates .domain-score-card-templates .dsc-total");
   var dscclone_total = dsc_total.clone();
-  $(".dsc-total-text").html("Total")
+  $(".dsc-total-text", dscclone_total).html("Total");
   $(".dsc-total-assigned", dscclone_total).html(total_assigned);
   $(".dsc-total-unassigned", dscclone_total).html(total_unassigned);
   $(".dsc-total-notopted", dscclone_total).html(total_notopted);
@@ -630,9 +661,15 @@ function loadChart(){
     $(".menu_widgets a", liclone).attr("data-target", "#item"+v.w_id);
     if(v.active_status = true){
       $(".menu_widgets", liclone).removeClass("active_widgets");
-    }
+    }    
     $(".menu_widgets", liclone).click(function(e){
-        if(jQuery.inArray(v.w_id, WIDGET_INFO_ID) == -1){
+        var flag = 0;
+        $(".dragdrophandles li").each(function(){
+          if($(this).attr("id") == v.w_id){
+            flag = 1;
+          }
+        });
+        if(flag == 0){
           // var width = $(this).css('width');
           // var height = $(this).css('height');
           var width = "0px";
@@ -645,6 +682,7 @@ function loadChart(){
               var settings = widgetSettings();
               var cardbox = $(".chart-card-box li");
               var cardboxclone = cardbox.clone();
+              cardboxclone.attr("id", v.w_id);
               $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
               $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
               $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
@@ -686,7 +724,7 @@ function loadChart(){
             }else{
               displayMessage(error);
             }
-          });
+          });          
         }
     });
 
@@ -713,11 +751,12 @@ function loadChart(){
   }else{
     $(".page-title").show();
     $(".welcome-title").hide();
-    $.each(widget_info, function(k,v){
+    $.each(widget_info, function(k,v){      
       var status_check = 0;
       settings = widgetSettings();
       var cardbox = $(".chart-card-box li");
       var cardboxclone = cardbox.clone();
+      cardboxclone.attr("id", v.w_id);
       if(v.width != "0px"){
         cardboxclone.css("width", v.width);
         cardboxclone.css("height", v.height);

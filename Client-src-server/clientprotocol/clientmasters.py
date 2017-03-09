@@ -97,7 +97,7 @@ class GetServiceProviders(Request):
 # Save Service Provider Details
 #############################################################
 class SaveServiceProvider(Request):
-    def __init__(self, service_provider_name, short_name, contract_from, contract_to, contact_person, 
+    def __init__(self, service_provider_name, short_name, contract_from, contract_to, contact_person,
     contact_no, mobile_no, email_id, address):
         self.service_provider_name = service_provider_name
         self.short_name = short_name
@@ -174,7 +174,7 @@ class UpdateServiceProvider(Request):
         mobile_no = data.get("mob_no")
         email_id = data.get("e_id")
         address = data.get("address")
-                
+
         return UpdateServiceProvider(
             service_provider_id, service_provider_name, short_name, contract_from, contract_to, contact_person,
             contact_no, mobile_no, email_id, address
@@ -196,42 +196,48 @@ class UpdateServiceProvider(Request):
 ##################################################
 # Change Service Provider Status
 ##################################################
-class ChangeServiceProviderStatus(Request):
-    def __init__(self, service_provider_id, is_active):
+class ChangeServiceProviderStatus(Request):    
+    def __init__(self, service_provider_id, is_active, password):
         self.service_provider_id = service_provider_id
         self.is_active = is_active
+        self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["sp_id", "active_status"])
+        data = parse_dictionary(data, ["sp_id", "active_status", "password"])
         service_provider_id = data.get("sp_id")
         is_active = data.get("active_status")
-        return ChangeServiceProviderStatus(service_provider_id, is_active)
+        password = data.get("password")
+        return ChangeServiceProviderStatus(service_provider_id, is_active, password)
 
     def to_inner_structure(self):
         return {
             "sp_id": self.service_provider_id,
             "active_status": self.is_active,
+            "password": self.password,
         }
 #################################################
 # Block Service Provider Status
 ##################################################
 class BlockServiceProvider(Request):
-    def __init__(self, service_provider_id, is_blocked):
+    def __init__(self, service_provider_id, is_blocked, password):
         self.service_provider_id = service_provider_id
         self.is_blocked = is_blocked
+        self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["sp_id", "is_blocked"])
+        data = parse_dictionary(data, ["sp_id", "is_blocked", "password"])
         service_provider_id = data.get("sp_id")
         is_blocked = data.get("is_blocked")
-        return BlockServiceProvider(service_provider_id, is_blocked)
+        password = data.get("password")
+        return BlockServiceProvider(service_provider_id, is_blocked, password)
 
     def to_inner_structure(self):
         return {
             "sp_id": self.service_provider_id,
             "is_blocked": self.is_blocked,
+            "password": self.password,
         }
 
 ########################################################
@@ -263,6 +269,24 @@ class UserManagementList(Request):
 
     def to_inner_structure(self):
         return {
+        }
+
+########################################################
+# User Management - Edit View 
+########################################################
+class UserManagementEditView(Request):
+    def __init__(self, user_id):
+        self.user_id = user_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_id"])
+        user_id = data.get("user_id")
+        return UserManagementEditView(user_id)
+
+    def to_inner_structure(self):
+        return {
+            "user_id": self.user_id,
         }
 
 
@@ -369,7 +393,7 @@ class get_user_management_details(Request):
         self.c_id = c_id
         self.legal_entity_id = legal_entity_id
         self.d_id = d_id
-        self.csv = csv        
+        self.csv = csv
 
     @staticmethod
     def parse_inner_structure(data):
@@ -380,7 +404,7 @@ class get_user_management_details(Request):
         legal_entity_id = data.get("le_id")
         d_id = data.get("d_id")
         csv = data.get("csv")
-        return GetWorkFlowScoreCard( 
+        return GetWorkFlowScoreCard(
             c_id, legal_entity_id, d_id, csv)
 
     def to_inner_structure(self):
@@ -394,9 +418,9 @@ class get_user_management_details(Request):
 # Save Client Users
 class SaveClientUser(Request):
     def __init__(self, user_category, user_group_id, email_id, employee_name,
-        employee_code, contact_no, mobile_no, user_level, seating_unit_id, 
+        employee_code, contact_no, mobile_no, user_level, seating_unit_id,
         is_service_provider, service_provider_id, user_domain_ids, user_unit_ids,
-        user_entity_ids):       
+        user_entity_ids):
         self.user_category = user_category
         self.user_group_id = user_group_id
         self.email_id = email_id
@@ -413,7 +437,7 @@ class SaveClientUser(Request):
         self.user_entity_ids =user_entity_ids
 
     @staticmethod
-    def parse_inner_structure(data):        
+    def parse_inner_structure(data):
         data = parse_dictionary(data, ["u_cat_id", "u_g_id", "email_id", "emp_name", "emp_code",
         "cont_no", "mob_no", "u_level", "s_unit", "is_sp", "sp_id", "user_domain_ids", "user_unit_ids", "user_entity_ids"])
         user_category = data.get("u_cat_id")
@@ -425,12 +449,12 @@ class SaveClientUser(Request):
         mobile_no = data.get("mob_no")
         user_level = data.get("u_level")
         seating_unit_id = data.get("s_unit")
-        is_service_provider = data.get("is_sp")        
+        is_service_provider = data.get("is_sp")
         service_provider_id = data.get("sp_id")
         user_domain_ids = data.get("user_domain_ids")
         user_unit_ids = data.get("user_unit_ids")
         user_entity_ids = data.get("user_entity_ids")
-        
+
         return SaveClientUser(user_category, user_group_id, email_id, employee_name, employee_code, contact_no, mobile_no, user_level,
                               seating_unit_id, is_service_provider, service_provider_id, user_domain_ids, user_unit_ids, user_entity_ids)
 
@@ -875,6 +899,63 @@ class UpdateUserProfile(Request):
             "emp_name": self.emp_name
         }
 
+class GetSettingsFormDetails(Request):
+    def __init__(self, le_id):
+        self.le_id = le_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        le_id = data.get("le_id")
+
+        return GetSettingsFormDetails(le_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.le_id
+        }
+
+class SaveSettingsFormDetails(Request):
+    def __init__(
+        self, le_id, legal_entity_name, two_level_approve, assignee_reminder, advance_escalation_reminder,
+        escalation_reminder, reassign_sp
+    ):
+        self.le_id = le_id
+        self.legal_entity_name = legal_entity_name
+        self.two_level_approve = two_level_approve
+        self.assignee_reminder = assignee_reminder
+        self.advance_escalation_reminder = advance_escalation_reminder
+        self.escalation_reminder = escalation_reminder
+        self.reassign_sp = reassign_sp
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "le_id", "legal_entity_name", "two_level_approve", "assignee_reminder", "advance_escalation_reminder",
+            "escalation_reminder", "reassign_sp"
+        ])
+        le_id = data.get("le_id")
+        legal_entity_name = data.get("legal_entity_name")
+        two_level_approve = data.get("two_level_approve")
+        assignee_reminder = data.get("assignee_reminder")
+        advance_escalation_reminder = data.get("advance_escalation_reminder")
+        escalation_reminder = data.get("escalation_reminder")
+        reassign_sp = data.get("reassign_sp")
+        return SaveSettingsFormDetails(
+            le_id, legal_entity_name, two_level_approve, assignee_reminder, advance_escalation_reminder,
+            escalation_reminder, reassign_sp
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.le_id,
+            "legal_entity_name": self.legal_entity_name,
+            "two_level_approve": self.two_level_approve,
+            "assignee_reminder": self.assignee_reminder,
+            "advance_escalation_reminder": self.advance_escalation_reminder,
+            "escalation_reminder": self.escalation_reminder,
+            "reassign_sp": self.reassign_sp
+        }
 
 def _init_Request_class_map():
     classes = [
@@ -887,7 +968,8 @@ def _init_Request_class_map():
         UserManagementPrerequisite,
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
-        GetUserProfile, UpdateUserProfile, UserManagementList, BlockServiceProvider
+        BlockServiceProvider, UserManagementEditView, GetUserProfile, UpdateUserProfile, 
+        UserManagementList, GetSettingsFormDetails, SaveSettingsFormDetails
     ]
     class_map = {}
     for c in classes:
@@ -932,7 +1014,7 @@ class GetServiceProvidersSuccess(Response):
     def parse_inner_structure(data):
         data = parse_dictionary(data, ["service_providers"])
         service_providers = data.get("service_providers")
-        
+
         return GetServiceProvidersSuccess(service_providers)
 
     def to_inner_structure(self):
@@ -1106,6 +1188,36 @@ class UserManagementListSuccess(Response):
         return {
             "ul_legal_entity": self.legal_entities,
             "ul_users": self.users
+        }
+
+##############################################################################
+# User Management Add - List Users
+##############################################################################
+class UserManagementEditViewSuccess(Response):
+    def __init__(self, users, legal_entities, domains, units):
+        self.users = users
+        self.legal_entities = legal_entities
+        self.domains = domains
+        self.units = units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["ul_userDetails","ul_legal_entities", "ul_user_domains", "ul_user_units"])
+        users = data.get("ul_userDetails")
+        legal_entities = data.get("ul_legal_entities")
+        domains = data.get("ul_user_domains")
+        units = data.get("ul_user_units")
+
+        users = users
+        legal_entities = legal_entities
+        return UserManagementEditViewSuccess(users, legal_entities, domains, units)
+
+    def to_inner_structure(self):
+        return {            
+            "ul_userDetails": self.users,
+            "ul_legal_entities": self.legal_entities,
+            "ul_user_domains": self.domains,
+            "ul_user_units": self.units
         }
 ##############################################################################
 class GetUserPrivilegesSuccess(Response):
@@ -1751,6 +1863,41 @@ class UpdateUserProfileSuccess(Response):
         return {
         }
 
+class GetSettingsFormDetailsSuccess(Response):
+    def __init__(self, settings_details, settings_domains, settings_users):
+        self.settings_details = settings_details
+        self.settings_domains = settings_domains
+        self.settings_users = settings_users
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["settings_details", "settings_domains", "settings_users"])
+        settings_details = data.get("settings_details")
+        settings_domains = data.get("settings_domains")
+        settings_users = data.get("settings_users")
+        return GetSettingsFormDetailsSuccess(settings_details, settings_domains, settings_users)
+
+    def to_inner_structure(self):
+        return {
+            "settings_details": self.settings_details,
+            "settings_domains": self.settings_domains,
+            "settings_users": self.settings_users
+        }
+
+class SaveSettingsFormDetailsSuccess(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return SaveSettingsFormDetailsSuccess()
+
+    def to_inner_structure(self):
+        return {
+        }
+
+
 def _init_Response_class_map():
     classes = [
         GetServiceProvidersSuccess, SaveServiceProviderSuccess,
@@ -1772,7 +1919,8 @@ def _init_Response_class_map():
         GetServiceProviderDetailsReportSuccess, GetAuditTrailFilterSuccess,
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
         GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess,
-        BlockServiceProviderSuccess
+        BlockServiceProviderSuccess, UserManagementEditViewSuccess,
+        GetSettingsFormDetailsSuccess, SaveSettingsFormDetailsSuccess
     ]
     class_map = {}
     for c in classes:
@@ -2072,6 +2220,144 @@ class UserProfile(object):
             "u_g_name": self.u_g_name,
             "address": self.address
         }
+
+#
+# Settings Details
+#
+
+class SettingsInfo(object):
+    def __init__(
+        self, legal_entity_name, business_group_name, country_name, contract_from, contract_to,
+        two_level_approve, assignee_reminder, advance_escalation_reminder, escalation_reminder,
+        reassign_sp, file_space_limit, used_file_space, total_licence, used_licence
+    ):
+        self.legal_entity_name = legal_entity_name
+        self.business_group_name = business_group_name
+        self.country_name = country_name
+        self.contract_from = contract_from
+        self.contract_to = contract_to
+        self.two_level_approve = two_level_approve
+        self.assignee_reminder = assignee_reminder
+        self.advance_escalation_reminder = advance_escalation_reminder
+        self.escalation_reminder = escalation_reminder
+        self.reassign_sp = reassign_sp
+        self.file_space_limit = file_space_limit
+        self.used_file_space = used_file_space
+        self.total_licence = total_licence
+        self.used_licence = used_licence
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "legal_entity_name", "business_group_name", "country_name", "contract_from", "contract_to",
+            "two_level_approve", "assignee_reminder", "advance_escalation_reminder", "escalation_reminder",
+            "reassign_sp", "file_space_limit", "used_file_space", "total_licence", "used_licence"
+        ])
+        legal_entity_name = data.get("legal_entity_name")
+        business_group_name = data.get("business_group_name")
+        country_name = data.get("country_name")
+        contract_from = data.get("contract_from")
+        contract_to = data.get("contract_to")
+        two_level_approve = data.get("two_level_approve")
+        assignee_reminder = data.get("assignee_reminder")
+        advance_escalation_reminder = data.get("advance_escalation_reminder")
+        escalation_reminder = data.get("escalation_reminder")
+        reassign_sp = data.get("reassign_sp")
+        file_space_limit = data.get("file_space_limit")
+        used_file_space = data.get("used_file_space")
+        total_licence = data.get("total_licence")
+        used_licence = data.get("used_licence")
+
+        return SettingsInfo(
+            legal_entity_name, business_group_name, country_name, contract_from, contract_to, two_level_approve,
+            assignee_reminder, advance_escalation_reminder, escalation_reminder, reassign_sp, file_space_limit,
+            used_file_space, total_licence, used_licence
+        )
+
+    def to_structure(self):
+        return {
+            "legal_entity_name": self.legal_entity_name,
+            "business_group_name": self.business_group_name,
+            "country_name": self.country_name,
+            "contract_from": self.contract_from,
+            "contract_to": self.contract_to,
+            "two_level_approve": self.two_level_approve,
+            "assignee_reminder": self.assignee_reminder,
+            "advance_escalation_reminder": self.advance_escalation_reminder,
+            "escalation_reminder": self.escalation_reminder,
+            "reassign_sp": self.reassign_sp,
+            "file_space_limit": self.file_space_limit,
+            "used_file_space": self.used_file_space,
+            "total_licence": self.total_licence,
+            "used_licence": self.used_licence
+        }
+
+#
+# legal entity domains
+#
+
+class LegalEntityDomains(object):
+    def __init__(self, domain_name, organisation_name, org_count, activity_date):
+        self.domain_name = domain_name
+        self.organisation_name = organisation_name
+        self.org_count = org_count
+        self.activity_date = activity_date
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "domain_name", "organisation_name", "org_count", "activity_date"
+        ])
+        domain_name = data.get("domain_name")
+        organisation_name = data.get("organisation_name")
+        org_count = data.get("org_count")
+        activity_date = data.get("activity_date")
+        return LegalEntityDomains(domain_name, organisation_name, org_count, activity_date)
+
+    def to_structure(self):
+        return {
+            "domain_name": self.domain_name,
+            "organisation_name": self.organisation_name,
+            "org_count": self.org_count,
+            "activity_date": self.activity_date
+        }
+
+#
+# legal entity users
+#
+
+class LegalEntityUsers(object):
+    def __init__(self, employee_name, user_name, user_level_name, category_name, unit_code_name, address):
+        self.employee_name = employee_name
+        self.user_name = user_name
+        self.user_level_name = user_level_name
+        self.category_name = category_name
+        self.unit_code_name = unit_code_name
+        self.address = address
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "employee_name", "user_name", "user_level_name", "category_name", "unit_code_name", "address"
+        ])
+        employee_name = data.get("employee_name")
+        user_name = data.get("user_name")
+        user_level_name = data.get("user_level_name")
+        category_name = data.get("category_name")
+        unit_code_name = data.get("unit_code_name")
+        address = data.get("address")
+        return LegalEntityUsers(employee_name, user_name, user_level_name, category_name, unit_code_name, address)
+
+    def to_structure(self):
+        return {
+            "employee_name": self.employee_name,
+            "user_name": self.user_name,
+            "user_level_name": self.user_level_name,
+            "category_name": self.category_name,
+            "unit_code_name": self.unit_code_name,
+            "address": self.address
+        }
+
 
 #
 # RequestFormat

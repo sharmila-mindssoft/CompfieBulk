@@ -124,6 +124,7 @@ api_params = {
     "c_ids": make_vector_type_int(),
     "c_names": make_vector_type_string(),
     "d_id": make_int_field(is_optional=True),  # User Management , Other Forms
+    "user_level_name": make_string_field(is_optional=True),
 
     "d_ids": make_vector_type_int(),
     "d_name": make_string_field(is_optional=True),  # User Management, Other Forms
@@ -157,6 +158,7 @@ api_params = {
     "business_group_id": make_int_field(is_optional=True),
     "unit_code": make_string_field(length=50, validfun=is_alpha_numeric, is_optional=False),
     "unit_name": make_string_field(length=200, validfun=is_alpha_numeric, is_optional=False),
+    "unit_code_name": make_string_field(length=200, validfun=is_alpha_numeric, is_optional=True),
     "country_id": make_int_field(is_optional=True),
     "domain_id": make_int_field(length=10000),
     "d_id_optional": make_int_field(is_optional=True),
@@ -252,6 +254,13 @@ api_params = {
     "assign_user_info": make_vector_type_field(module="clienttransactions", klass_name="ASSIGN_COMPLIANCE_USER"),
     "two_level_approve": make_bool_field(),
     "client_admin": make_int_field(),
+    "file_space_limit": make_text_field(is_optional=True),
+    "used_file_space": make_text_field(is_optional=True),
+    "total_licence": make_text_field(is_optional=True),
+    "used_licence": make_text_field(is_optional=True),
+    'contract_from': {'type': 'TEXT', 'length': 11, 'validation_method': None, 'is_optional': False},
+    'contract_to': {'type': 'TEXT', 'length': 11, 'validation_method': None, 'is_optional': False},
+    "country_name": make_string_field(is_optional=True),
 
     "service_providers": make_vector_type_field(module="clientcore", klass_name="ServiceProviderDetails"),
     "s_p_id" : make_int_field(),
@@ -387,6 +396,7 @@ api_params = {
     "u_level": make_int_field(is_optional=True),
     "s_unit": make_int_field(is_optional=True),
     "is_sp": make_bool_field(),
+    "org_count": make_int_field(length=100000, is_optional=True),
 
     "u_dm_id": make_int_field(),  # User Management
     "u_dm_name": make_text_field(),  # User Management
@@ -568,6 +578,10 @@ api_params = {
     "start_count": make_int_field(),
     "end_count": make_int_field(),
     "notification_type": make_int_field(),
+    "assignee_reminder": make_int_field(is_optional=True),
+    "advance_escalation_reminder": make_int_field(is_optional=True),
+    "escalation_reminder": make_int_field(is_optional=True),
+    "reassign_sp": make_int_field(is_optional=True),
     "notification_id": make_int_field(is_optional=True),
     "reminders": make_vector_type_field(module="dashboard", klass_name="RemindersSuccess", is_optional=True),
     "escalations": make_vector_type_field(module="dashboard", klass_name="EscalationsSuccess", is_optional=True),
@@ -634,4 +648,14 @@ api_params = {
     "upcoming_start_count": make_int_field(),
     "upcoming_compliances": make_vector_type_field(module="clientcore", klass_name="UpcomingCompliance"),
     "upcoming_format_file_name":  make_vector_type_string(is_optional=True),
+    "user_legal_entities": make_vector_type_string(),
+    "seating_unit_id": make_int_field(is_optional=True),
+    "ul_userDetails": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Users"),  # User Management
+    "ul_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_LegalEntities"),  # User Management   
+    "ul_user_domains": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Domains"),  # User Management   
+    "ul_user_units": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Units"),  # User Management
+    # "level_1_statutories": make_text_field(),
+    "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
+    "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
+    "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
 }
