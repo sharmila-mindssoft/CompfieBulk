@@ -54,3 +54,28 @@ def to_structure_RecordType_protocol_Response_CompanyServerDetails(data):
 
 def to_structure_Bool(data):
     return parse_bool(data)
+
+
+def to_structure_RecordType_protocol_FileServer(data):
+    from distribution import protocol
+    return protocol.FileServer.to_structure(data)
+
+def to_structure_VectorType_RecordType_protocol_FileServer(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data :
+        lst.append(to_structure_RecordType_protocol_FileServer(item))
+
+    return lst
+
+def to_structure_RecordType_protocol_Server(data):
+    from distribution import protocol
+    return protocol.Server.to_structure(data)
+
+
+def to_structure_VectorType_RecordType_protocol_Server(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_protocol_Server(item))
+    return lst

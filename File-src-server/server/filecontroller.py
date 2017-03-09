@@ -2,7 +2,7 @@ import fileprotocol
 from filehandler import *
 
 __all__ = [
-    "process_file_request"
+    "process_file_based_request"
 ]
 
 def process_file_based_request(request):
@@ -13,4 +13,4 @@ def process_file_based_request(request):
     return result
 
 def process_save_file(request):
-    pass
+    return upload_file(request)

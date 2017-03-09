@@ -56,7 +56,13 @@ class RequestHandler(tornado.web.RequestHandler) :
             self.__close_callback()
 
     def check_xsrf_cookie(self):
-        if not self.request.path.startswith("/api/mobile") or not self.request.path.startswith("/api/login"):
+
+        if (
+            not self.request.path.startswith("/api/mobile") and
+            not self.request.path.startswith("/api/login") and
+            not self.request.path.startswith("/api/files")
+        ):
+            print self.request.path
             tornado.web.RequestHandler.check_xsrf_cookie(self)
         else :
             pass

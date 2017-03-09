@@ -303,20 +303,16 @@ def get_categories_for_user(db, category_ids):
     return return_categories(rows)
 
 def get_categories(db):
-    columns = "category_id, category_name, division_id, legal_entity_id, business_group_id"
-    condition = "1"
-    condition_val = None
-    rows = db.get_data(
-        tblCategories, columns, condition, condition_val
-    )
+    q = "SELECT category_id, category_name, division_id, legal_entity_id, business_group_id from tbl_categories"
+    rows = db.select_all(q)
     return return_categories(rows)
 
 def return_categories(categories):
     results = []
     for category in categories:
         category_obj = clientcore.ClientCategory(
-            category["category_id"], category["category_name"], category["division_id"],
-            category["legal_entity_id"], category["business_group_id"]
+            category["category_id"], category["category_name"], category["legal_entity_id"], 
+            category["business_group_id"], category["division_id"]
         )
         results.append(category_obj)
     return results
