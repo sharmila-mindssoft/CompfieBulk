@@ -33,10 +33,9 @@ class Request(object):
 
 class UploadComplianceTaskFile(Request):
     def __init__(
-        self, client_id, legal_entity_id, country_id,  unit_id, domain_id,
+        self, legal_entity_id, country_id,  unit_id, domain_id,
         start_date, file_info
     ):
-        self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
         self.unit_id = unit_id
@@ -46,9 +45,8 @@ class UploadComplianceTaskFile(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ct_id", "le_id", "c_id", "u_id", "d_id", "start_date", "file_info"])
+        data = parse_dictionary(data, ["le_id", "c_id", "u_id", "d_id", "start_date", "file_info"])
         return UploadComplianceTaskFile(
-            data.get("ct_id"),
             data.get("le_id"), data.get("c_id"), data.get("u_id"),
             data.get("d_id"),
             data.get("start_date"), data.get("file_info")
@@ -56,7 +54,6 @@ class UploadComplianceTaskFile(Request):
 
     def to_inner_structure(self):
         return {
-            "ct_id": self.client_id,
             "le_id": self.legal_entity_id,
             "c_id": self.country_id,
             "u_id": self.unit_id,
@@ -67,10 +64,9 @@ class UploadComplianceTaskFile(Request):
 
 class RemoveFile(Request):
     def __init__(
-        self, client_id, legal_entity_id, country_id,  unit_id, domain_id,
+        self, legal_entity_id, country_id,  unit_id, domain_id,
         start_date, file_name
     ):
-        self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
         self.unit_id = unit_id
@@ -80,9 +76,8 @@ class RemoveFile(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ct_id", "le_id", "c_id", "u_id", "d_id", "start_date", "file_name"])
+        data = parse_dictionary(data, ["le_id", "c_id", "u_id", "d_id", "start_date", "file_name"])
         return RemoveFile(
-            data.get("ct_id"),
             data.get("le_id"), data.get("c_id"), data.get("u_id"),
             data.get("d_id"),
             data.get("start_date"), data.get("file_name")
@@ -90,7 +85,6 @@ class RemoveFile(Request):
 
     def to_inner_structure(self):
         return {
-            "ct_id": self.client_id,
             "le_id": self.legal_entity_id,
             "c_id": self.country_id,
             "u_id": self.unit_id,
@@ -101,10 +95,9 @@ class RemoveFile(Request):
 
 class DownloadFile(Request):
     def __init__(
-        self, client_id, legal_entity_id, country_id,  unit_id, domain_id,
+        self, legal_entity_id, country_id,  unit_id, domain_id,
         start_date, file_name
     ):
-        self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
         self.unit_id = unit_id
@@ -114,9 +107,8 @@ class DownloadFile(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ct_id", "le_id", "c_id", "u_id", "d_id", "start_date", "file_name"])
+        data = parse_dictionary(data, ["le_id", "c_id", "u_id", "d_id", "start_date", "file_name"])
         return DownloadFile(
-            data.get("ct_id"),
             data.get("le_id"), data.get("c_id"), data.get("u_id"),
             data.get("d_id"),
             data.get("start_date"), data.get("file_name")
@@ -124,7 +116,6 @@ class DownloadFile(Request):
 
     def to_inner_structure(self):
         return {
-            "ct_id": self.client_id,
             "le_id": self.legal_entity_id,
             "c_id": self.country_id,
             "u_id": self.unit_id,

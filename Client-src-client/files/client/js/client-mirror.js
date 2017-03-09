@@ -2644,6 +2644,72 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function DownloadApiRequest(request) {
+        var sessionToken = getSessionToken();
+        var requestFrame = {
+            'session_token': sessionToken,
+            'request': request
+        };
+        var body = [
+            sessionToken,
+            requestFrame
+        ];
+
+        var saveData = (function () {
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            return function (data, fileName) {
+                var json = JSON.stringify(data),
+                    blob = new Blob([json], {type: "octet/stream"}),
+                    url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            };
+        }());
+
+        $.ajax({
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+
+                xhr.onreadystatechange = function() {
+                    // alert(this.status);
+                    if (this.readyState == 4 && this.status == 200) {
+                        var data = this.response;
+                        var fileName=this.getResponseHeader('filename');
+                        saveData(data, fileName);
+                    }
+                }
+                return xhr;
+            },
+            url: '/api/files',
+            headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            type: 'POST',
+            crossDomain: true,
+            data: toJSON(body),
+            processData: false,
+            contentType: false,
+
+        });
+    }
+
+    function downloadTestFile() {
+        var request = [
+           "DownloadFile",
+           {
+                "le_id": 10,
+                "c_id": 1,
+                "d_id": 1,
+                "u_id" : 12,
+                "start_date": "22-Feb-2017",
+                "file_name": "testimagess.txt"
+           }
+        ];
+        DownloadApiRequest(request);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2839,7 +2905,8 @@ function initClientMirror() {
         getUserManagement_List: getUserManagement_List,
         blockServiceProvider: blockServiceProvider,
         getSettingsFormDetails: getSettingsFormDetails,
-        saveSettingsFormDetails: saveSettingsFormDetails
+        saveSettingsFormDetails: saveSettingsFormDetails,
+        downloadTestFile : downloadTestFile
     };
 }
 

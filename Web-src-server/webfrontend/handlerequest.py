@@ -30,10 +30,13 @@ class HandleRequest(object):
         def client_callback(response):
             code = response.code
             body = response.body
+            print body
+
+            headers = response.headers
             if code == 200:
-                callback(None, body)
+                callback(None, body, headers)
             else:
-                callback(code, body)
+                callback(code, body, headers)
 
         body = json.dumps([self._company_id, body])
 
@@ -49,11 +52,15 @@ class HandleRequest(object):
         )
         self._http_client.fetch(request, client_callback)
 
-    def _respond(self, response_data):
+    def _respond(self, response_data, headers):
         assert self._connection_closed is False
+        for k, v in headers.items() :
+            print k, v
+            self._http_response.set_default_header(k, v)
         self._http_response.set_default_header(
             "Access-Control-Allow-Origin", "*"
         )
+
         self._http_response.send(response_data)
         self._connection_closed = True
 
@@ -71,11 +78,11 @@ class HandleRequest(object):
         self._http_response.set_status(500)
         self._http_response.send("Request timeout")
 
-    def _forward_request_callback(self, code, response_data):
+    def _forward_request_callback(self, code, response_data, headers):
         if self._connection_closed:
             return
         if code is None:
-            self._respond(response_data)
+            self._respond(response_data, headers)
         elif code == 599 :
             self._respond_connection_timeout()
         else:

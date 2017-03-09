@@ -2,6 +2,7 @@
 import os
 import io
 import datetime
+from flask import make_response
 import fileprotocol
 from constants import (FILE_MAX_LIMIT, CLIENT_DOCS_BASE_PATH, LOCAL_TIMEZONE)
 
@@ -31,8 +32,7 @@ def save_file_in_path(file_path, content, file_name):
     except IOError, e :
         print e
 
-def upload_file(request) :
-    client_id = request.client_id
+def upload_file(request, client_id) :
     legal_entity_id = request.legal_entity_id
     country_id = request.country_id
     domain_id = request.domain_id
@@ -76,8 +76,7 @@ def upload_file(request) :
     else :
         return fileprotocol.FileUploadFailed()
 
-def remove_file(request):
-    client_id = request.client_id
+def remove_file(request, client_id):
     legal_entity_id = request.legal_entity_id
     country_id = request.country_id
     domain_id = request.domain_id
@@ -97,3 +96,27 @@ def remove_file(request):
     else :
         return fileprotocol.FileRemoveFailed()
 
+def download_file(request, client_id):
+    legal_entity_id = request.legal_entity_id
+    country_id = request.country_id
+    domain_id = request.domain_id
+    unit_id = request.unit_id
+    start_date = string_to_datetime(request.start_date).date()
+    year = start_date.year
+    file_name = request.file_name
+    file_path = "%s/%s/%s/%s/%s/%s/%s/%s" % (
+        CLIENT_DOCS_BASE_PATH, client_id, country_id, legal_entity_id,
+        unit_id, domain_id, year, start_date
+    )
+    with open(file_path+"/"+file_name) as f:
+        content = f.read()
+    print "File content"
+    content = content.replace("=", ",")
+    print content
+    response = make_response(content)
+    response.headers["Access-Control-Allow-Origin"] = '*'
+    response.headers["Content-Disposition"] = "attachment; filename=%s" % (file_name)
+    response.headers["filename"] = file_name
+    response.headers["Cache-Control"] = "must-revalidate"
+    response.headers["Pragma"] = "must-revalidate"
+    return response
