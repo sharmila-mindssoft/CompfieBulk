@@ -7,10 +7,11 @@ __all__ = [
 
 def process_file_based_request(request):
     request = request.request
+
     if type(request) is fileprotocol.UploadComplianceTaskFile :
-        result = process_save_file(request)
+        result = upload_file(request)
+
+    elif type(request) is fileprotocol.RemoveFile :
+        result = remove_file(request)
 
     return result
-
-def process_save_file(request):
-    return upload_file(request)

@@ -23,15 +23,10 @@ def string_to_datetime(string):
 
 
 def save_file_in_path(file_path, content, file_name):
-    print file_path
-    print file_name
     create_path = "%s/%s" % (file_path, file_name)
     try :
-        with open(create_path, "wb") as fn :
-            print fn
-            print content
-            fn.write(content)
-            print fn
+        with io.FileIO(create_path, "wb") as fn :
+            fn.write(content.decode('base64'))
         return True
     except IOError, e :
         print e
@@ -43,7 +38,6 @@ def upload_file(request) :
     domain_id = request.domain_id
     unit_id = request.unit_id
     start_date = string_to_datetime(request.start_date).date()
-    print start_date
     year = start_date.year
     file_info = request.file_info
 
@@ -81,3 +75,25 @@ def upload_file(request) :
         return fileprotocol.FileUploadSuccess()
     else :
         return fileprotocol.FileUploadFailed()
+
+def remove_file(request):
+    client_id = request.client_id
+    legal_entity_id = request.legal_entity_id
+    country_id = request.country_id
+    domain_id = request.domain_id
+    unit_id = request.unit_id
+    start_date = string_to_datetime(request.start_date).date()
+    year = start_date.year
+    file_name = request.file_name
+
+    file_path = "%s/%s/%s/%s/%s/%s/%s/%s/%s" % (
+        CLIENT_DOCS_BASE_PATH, client_id, country_id, legal_entity_id,
+        unit_id, domain_id, year, start_date, file_name
+    )
+
+    if os.path.exists(file_path) :
+        os.remove(file_path)
+        return fileprotocol.FileRemoved()
+    else :
+        return fileprotocol.FileRemoveFailed()
+
