@@ -79,7 +79,7 @@ __all__ = [
     "get_user_info",
     "update_profile",
     "get_settings_form_data",
-    "save_settings_form_data"
+    "save_settings_form_data",
     "block_service_provider",
     "userManagement_EditView_GetUsers",
     "userManagement_EditView_GetLegalEntities",
