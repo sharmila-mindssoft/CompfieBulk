@@ -159,12 +159,23 @@ def get_assigned_statutories_report_data(db, request_data, user_id):
     country_id = request_data.country_id
     group_id = request_data.group_id
     business_group_id = request_data.business_group_id
+    if business_group_id == 0:
+        business_group_id = '%'
     legal_entity_id = request_data.legal_entity_id
     unit_id = request_data.unit_id
+    if unit_id == 0:
+        unit_id = '%'
     domain_id = request_data.domain_id_optional
+    if domain_id is None:
+        domain_id = '%'
     statutory_id = request_data.statutory_id
+    if statutory_id == 0:
+        statutory_id = '%'
     compliance_id = request_data.compliance_id
+    if compliance_id == 0:
+        compliance_id = '%'
     param_list = [country_id, domain_id, business_group_id, legal_entity_id, unit_id, group_id, statutory_id, compliance_id]
+    print param_list
     result = db.call_proc_with_multiresult_set("sp_statutory_setting_report_recordset", param_list, 3)
     return return_assigned_statutories_report_data(db, result)
 

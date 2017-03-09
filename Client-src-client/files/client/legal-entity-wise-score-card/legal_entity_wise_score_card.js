@@ -479,7 +479,7 @@ LEWiseScoreCard.prototype.overdueUserView = function(data) {
     t_this = this;
     statusDetails.empty();
     taskDetails.show();
-    $('.task-name').html("Completed wise Completed Task Count");
+    $('.task-name').html("User wise Overdue Task Count");
     var overdue_total = 0;
     var j =0;
     var clone = $('#template #overdue-user-table').clone();

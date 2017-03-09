@@ -153,6 +153,12 @@ def process_client_master_requests(request, db, session_user, client_id, session
     elif type(request) is clientmasters.UserManagementEditView:
         result = process_UserManagement_EditView(db, request, session_user)
 
+    elif type(request) is clientmasters.GetSettingsFormDetails:
+        result = process_settings_form_data(db, request, session_user)
+
+    elif type(request) is clientmasters.SaveSettingsFormDetails:
+        result = process_save_settings_form_data(db, request, session_user)
+
     return result
 
 ########################################################
@@ -996,3 +1002,25 @@ def update_user_profile(db, request, session_user, client_id):
     result = update_profile(db, session_user, request)
     if result is True:
         return clientmasters.UpdateUserProfileSuccess()
+
+###############################################################################################
+# Objective: To get reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return list of legal entity details, domains and organization
+###############################################################################################
+def process_settings_form_data(db, request, session_user):
+    settings_details, settings_domains, settings_users = get_settings_form_data(db, request)
+    return clientmasters.GetSettingsFormDetailsSuccess(
+        settings_details=settings_details, settings_domains=settings_domains,
+        settings_users=settings_users
+    )
+
+###############################################################################################
+# Objective: To save/update reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return success of the transaction
+###############################################################################################
+def process_save_settings_form_data(db, request, session_user):
+    result = save_settings_form_data(db, request, session_user)
+    if result is True:
+        return clientmasters.SaveSettingsFormDetailsSuccess()

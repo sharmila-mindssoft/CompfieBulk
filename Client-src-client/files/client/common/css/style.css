@@ -411,11 +411,6 @@
     width: 100%;
 }
 
-
-/*.statutory_mapping_tab > li > a {
-  padding: 8px 14px !important;
-}*/
-
 .sub_title_td>th {
     padding: 4px !important;
     font-size: 12px !important;
@@ -459,7 +454,6 @@
 }
 
 .toplogobar-logo {
-    /*background: rgba(0, 0, 0, 0) url("//public-assets.envato-static.com/assets/logos/envato_market-dee06317dbf75d406e29e1cd82fab4dd.svg") repeat scroll 0 0 / 152px 18px;*/
     width: 152px;
     padding-left: 20px;
 }
@@ -624,11 +618,6 @@
 .dragdrophandles li div h2 {
     cursor: move;
 }
-
-
-/*.dragdrophandles > .col-xs-4 .col-sm-4 .col-lg-4 {
-
-}*/
 
 li.highlight {
     background: #FEE25F;
@@ -831,19 +820,6 @@ li.sortable-placeholder {
     float: left;
     width: 25px;
 }
-
-
-/*.sort {
-  cursor: pointer;
-}
-.sort span {
-  margin-top:3px;
-  color: #F0F0F0 !important;
-  cursor: pointer;
-  margin-right: -15px;
-  width: 10px;
-  text-align: center;
-}*/
 
 .sort {
     margin-top: 3px;
@@ -1131,18 +1107,6 @@ button.btn-success {
     font-size: 14px;
 }
 
-
-/*.panel-title td[data-toggle="collapse"]::before {
-    content: '\f0d8';
-    display: block;
-    float: right;
-    font-family: "FontAwesome";
-    font-size: 14px;
-    text-align: right;
-    width: 25px;
-}
-*/
-
 .panel-title td {
     background-color: #eeeeee
 }
@@ -1235,11 +1199,14 @@ h2.chart-title: hover {
 .auto-selected {
     background: #EAE8E8;
 }
+
 .asc {
-  color: #F0F0F0 !important;
+    color: #F0F0F0 !important;
 }
+
 .desc {
-  color: #F0F0F0 !important;
+    color: #F0F0F0 !important;
+}
 
 .task-current-year-tab {
     border: medium none;
