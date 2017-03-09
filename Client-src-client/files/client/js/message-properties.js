@@ -386,7 +386,7 @@ var message = {
     "atleast_one_unit_required": "Select atleast one unit",
 
     //Service Provider Master
-    'spname_required': 'Enter Service Provider Name ',
+    'spname_required': 'Service Provider Name Required',
     'spname_str': 'Service Provider Name Not Valid Characters. Only Alphanumeric, dot, comma and Hyphen are allowed',
     'contactname_str': 'Contact Person Name Not Valid Characters. Only Alphanumeric, dot, comma and Hyphen are allowed',
     'spname_max50': 'Service Provider Name 2-50 characters allowed',
@@ -408,6 +408,7 @@ var message = {
     "unblock_success": "Unblocked Successfully",
     'block_message': 'You want to block this Service Provider',
     'unblock_message': 'You want to unblock this Service Provider',
+    'units_required': 'Units required',
 };
 
 function clearMessage() {
