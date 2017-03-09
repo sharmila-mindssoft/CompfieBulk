@@ -379,9 +379,15 @@ def block_service_provider(
 ##############################################################################
 # User Management Add - Category Prerequisite
 ##############################################################################
-def userManagement_GetUserCategory(db):
-    q = "SELECT user_category_id, user_category_name From tbl_user_category " + \
-        " WHERE user_category_id <> '1'"
+def userManagement_GetUserCategory(db, session_category):    
+    if session_category == 1: #Group Admin
+        condition = " WHERE user_category_id NOT IN (1)"
+    elif session_category == 3: #Legal Entity Admin        
+        condition = " WHERE user_category_id NOT IN (1,2,3)"
+    elif session_category == 4: #Domain Admin        
+        condition = " WHERE user_category_id NOT IN (1,2,3,4)"
+    
+    q = "SELECT user_category_id, user_category_name From tbl_user_category " + condition    
     row = db.select_all(q, None)
     return row
 
@@ -451,7 +457,9 @@ def userManagement_GetLegalEntity_Units(db):
 ##############################################################################
 def userManagement_GetServiceProviders(db):
     q = "SELECT service_provider_id, service_provider_name, short_name " + \
-        " From tbl_service_providers where is_active = '1' and is_blocked = '0' "
+        " From tbl_service_providers where is_active = '1' and is_blocked = '0' " + \
+        " and now() between DATE_ADD(contract_from, INTERVAL 1 DAY) " + \
+        " and DATE_ADD(contract_to, INTERVAL 1 DAY) "
     row = db.select_all(q, None)
     return row
 ##############################################################################
@@ -459,13 +467,14 @@ def userManagement_GetServiceProviders(db):
 ##############################################################################
 def userManagement_list_GetLegalEntities(db):
     le_ids = "%"
-    q = " SELECT T01.country_id, T02.country_name, T01.business_group_id, " + \
-        " T03.business_group_name, T01.legal_entity_id, T01. legal_entity_name, " + \
-       " T01.contract_from, T01.contract_to, T01.total_licence, T01.used_licence " + \
-       " From  tbl_legal_entities AS T01 INNER JOIN tbl_countries AS T02 " + \
-       " ON T01.country_id = T02.country_id LEFT JOIN tbl_business_groups AS T03 " + \
-       " ON T01.business_group_id = T03.business_group_id Where " + \
-       " T01.legal_entity_id like '%' "
+    q = " SELECT Distinct T01.legal_entity_id, T01.legal_entity_name, T01.country_id, " + \
+        " T02.country_name, T01.business_group_id, T03.business_group_name, " + \
+        " T01.contract_from, T01.contract_to, T01.total_licence, T01.used_licence " + \
+        " From tbl_legal_entities AS T01 INNER JOIN tbl_countries AS T02 " + \
+        " ON T01.country_id = T02.country_id LEFT JOIN tbl_business_groups AS T03 " + \
+        " ON T01.business_group_id = T03.business_group_id  " + \
+        " INNER JOIN tbl_user_legal_entities AS T04 ON T01.legal_entity_id = T04.legal_entity_id" + \
+        " Where T01.legal_entity_id like '%' "
     # " FIND_IN_SET(T01.legal_entity_id, %s) "
     # row = db.select_all(q, [le_ids])
     row = db.select_all(q, None)
