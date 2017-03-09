@@ -522,10 +522,10 @@ function loadCompliances(){
 			    if (due_date != '' || due_date != null) {
 			        if (due_date.length > 1) {
 			          for (var k = 0; k < due_date.length; k++) {
-			            elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>';
+			            elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="form-control input-sm" value="' + due_date[k] + '"/>';
 			          }
 			        } else {
-			          elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="input-box" value="' + due_date[0] + '" style="width:50px;"/>';
+			          elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="form-control input-sm" value="' + due_date[0] + '"/>';
 			        }
 			        due_date_length = due_date.length;
 			    }
@@ -546,9 +546,9 @@ function loadCompliances(){
 			        }
 			        statutorydate += sMonth + ' ' + sDay + ' ';
 			        if (statutory_date.length > 1) {
-			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
 			        } else {
-			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
 			        }
 			    }
 
@@ -595,8 +595,8 @@ function loadCompliances(){
 
 			    if (frequency != 'On Occurrence') {
 			        if (triggerdate == '') {
-			          $('.trigger', clone2).html(' <input type="text" value="" class="input-box trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
-			          $('.duedate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="duedate' + SCOUNT + '"/>');
+			          $('.trigger', clone2).html(' <input type="text" value="" class="form-control input-sm trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
+			          $('.duedate', clone2).html('<input type="text" value="" class="form-control input-sm" readonly="readonly" id="duedate' + SCOUNT + '"/>');
 			        } else {
 			          $('.trigger', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/delete.png" width="12"></span>' + triggerdate + '<div class="edittriggertextbox' + SCOUNT + '" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
 			          $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');

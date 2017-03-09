@@ -3813,6 +3813,14 @@ def process_service_provider_wise_report(db, request):
             logo_url = None
 
         sp_report.append(clientreport.LegalEntityWiseReport(
+        # <<<<<<< HEAD
+        #             row["country_id"], row["legal_entity_id"], row[
+        #                 "domain_id"], row["unit_id"],
+        #             row["compliance_id"], unit_name, statutory_mapping, row[
+        #                 "compliance_task"],
+        #             row["frequency_name"], datetime_to_string(
+        #                 row["due_date"]), task_status, row["assignee_name"],
+        # =======
             row["compliance_history_id"], row["compliance_activity_id"],
             row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
             row["compliance_id"], unit_name, statutory_mapping, row["compliance_task"],
@@ -4219,6 +4227,14 @@ def process_user_wise_report(db, request):
             logo_url = None
 
         user_report.append(clientreport.UnitWiseReport(
+            # <<<<<<< HEAD
+            #             row["country_id"], row["legal_entity_id"], row[
+            #                 "domain_id"], row["unit_id"],
+            #             row["compliance_id"], unit_name, statutory_mapping, row[
+            #                 "compliance_task"],
+            #             row["frequency_name"], datetime_to_string(
+            #                 row["due_date"]), task_status, row["assignee_name"],
+            # =======
             row["compliance_history_id"], row["compliance_activity_id"],
             row["country_id"], row["legal_entity_id"], row["domain_id"], row["unit_id"],
             row["compliance_id"], unit_name, statutory_mapping, row["compliance_task"],
