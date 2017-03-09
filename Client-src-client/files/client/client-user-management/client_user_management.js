@@ -60,6 +60,7 @@ var CURRENT_TAB = 1;
 var businessGroup_ids = [];
 var legalEntity_ids = [];
 var ACTIVE_UNITS = [];
+// var unit_ids = [];
 
 var um_page = null;
 
@@ -435,7 +436,7 @@ function loadDomain() {
                     if (lg_flag != v.le_id)
                         str += '<optgroup label="' + value.le_name + '">';
                     var dVal = value.le_id + '-' + v.u_dm_id;
-                    str += '<option value="' + v.dVal + '">' + v.u_dm_name + '</option>';
+                    str += '<option value="' + dVal + '">' + v.u_dm_name + '</option>';
                     lg_flag = v.le_id;
                 }
             });
@@ -451,8 +452,10 @@ function loadDomain() {
 function getLegalEntityIds() {
     legalEntity_ids = [];
     for (var i = 0; i < ddlLegalEntity.val().length; i++) {
-        split = ddlLegalEntity.val()[i].split('-');
-        legalEntity_ids.push(parseInt(split[1]))
+        // split = ddlLegalEntity.val()[i].split('-');
+        // legalEntity_ids.push(parseInt(split[1]))
+        ids = ddlLegalEntity.val();
+        legalEntity_ids.push(parseInt(ids))
     }
     return legalEntity_ids;
 }
@@ -554,6 +557,7 @@ userManagementPage.prototype.clearValues = function() {
     // legalEntity_ids = [];
     // businessGroup_ids = [];
     // Domain_ids = [];
+    UnitList.empty;
 
     ddlUserCategory.focus();
 };
@@ -744,12 +748,12 @@ userManagementPage.prototype.validateMandatory = function() {
     } else {
         if (ddlUserCategory.val().trim() == 3 || ddlUserCategory.val().trim() == 4 || ddlUserCategory.val().trim() == 5) {
             if (hdnSeatingUnit.val().trim().length == 0) {
-                displayMessage("Select Seating Unit");
+                displayMessage(message.seatingunit_required);
                 txtSeatingUnit.focus();
                 return false;
             } else if (ddlUserCategory.val().trim() == 6) {
                 if (hdnServiceProvider.val().trim().length == 0) {
-                    displayMessage("Select Seating Unit");
+                    displayMessage(message.spname_required);
                     txtServiceProvider.focus();
                     return false;
                 }
@@ -808,6 +812,12 @@ userManagementPage.prototype.validateMandatory = function() {
             ddlDomain.focus();
             return false;
         } else {}
+    }
+    if (ddlUserCategory.val().trim() == 5 || ddlUserCategory.val().trim() == 6) {
+        if (ACTIVE_UNITS.length == 0) {
+            displayMessage(message.units_required);
+            return false;
+        }
     }
     return true;
 }
