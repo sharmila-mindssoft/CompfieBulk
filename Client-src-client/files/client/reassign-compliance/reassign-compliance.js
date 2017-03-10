@@ -725,6 +725,10 @@ function loadCompliances(){
         var approver = value.approver_name;
         var unit_id = value.u_id; 
 
+        if(frequency == 'On Occurrence'){
+            triggerdate = '-';
+        }
+
         var combineId = compliance_id + '#' + unit_id + '#' + compliance_name + '#' + history_id;
         var COMPRow = $('#templates #compliances .table-compliances .row-compliances');
         var clone2 = COMPRow.clone();
