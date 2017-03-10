@@ -658,5 +658,6 @@ api_params = {
     "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
     "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
-    "le_admin": make_int_field(is_optional=True),
+    "le_admin": make_int_field(is_optional=True),    
+    "user_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
 }

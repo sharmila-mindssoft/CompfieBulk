@@ -1,8 +1,9 @@
 
+import base64
 import os
 import io
 import datetime
-from flask import make_response
+from flask import make_response, send_from_directory
 import fileprotocol
 from constants import (FILE_MAX_LIMIT, CLIENT_DOCS_BASE_PATH, LOCAL_TIMEZONE)
 
@@ -111,13 +112,13 @@ def download_file(request, client_id):
     with open(file_path+"/"+file_name) as f:
         content = f.read()
 
-    # content = content.replace("=", ",")
-    # print content
+    content = base64.b64encode(content)
     response = make_response(content)
     response.headers["Access-Control-Allow-Origin"] = '*'
     response.headers["Content-Disposition"] = "attachment; filename=%s" % (file_name)
     response.headers["filename"] = file_name
     response.headers["Cache-Control"] = "must-revalidate"
     response.headers["Pragma"] = "must-revalidate"
-    response.headers["Content-Type"] = "octet/stream"
+    response.headers["Content-Type"] = "application/octet-stream"
+    response.headers["Content-Transfer-Encoding"] = "binary"
     return response

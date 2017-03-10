@@ -398,8 +398,7 @@ def process_save_logindetails(db, request, company_id):
     else:
         encrypt_password = encrypt(password)
         token = request.token
-        if save_login_details(db, token, username, encrypt_password):
-            SaveGroupAdminName(username, company_id)
+        if save_login_details(db, token, username, encrypt_password, company_id):
             return clientlogin.SaveRegistrationSuccess()
         else:
             return clientlogin.InvalidSessionToken()
