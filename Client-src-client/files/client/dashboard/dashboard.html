@@ -35,12 +35,25 @@ $(function() {
           <h4 class="page-title pull-left"></h4>
     		  <div class="pull-right">
     		    <span class="contract_timer"><!-- Contract Renewal: 20 Days Left --></span>
-            <a href="javascript:void(0);" class="btn btn-primary btn-trans" title="Export">
+             <a href="javascript:void(0);" class="btn btn-info m-r-5 m-l-5 btn-pie-chart"  title="View as pie chart">
+              <i class="fa fa-pie-chart"></i> <small>View as Pie Chart</small>
+             </a>
+             <a href="javascript:void(0);" class="btn btn-info m-r-5 m-l-5 btn-bar-chart"  title="View as bar chart">
+              <i class="fa fa-bar-chart"></i> <small>View as Bar Chart</small>
+             </a>
+             <a href="javascript:void(0);" class="btn btn-success m-r-10 m-l-5 btn-back"  title="Back">
+              <i class="fa fa-mail-reply"></i> <small>Back</small>
+             </a>
+            <!-- <input type="button" 
+            <input type="button" class="pull-right btn btn-info m-r-10 m-l-10 btn-bar-chart" value="View as bar chart"/>
+            <input type="button" class="pull-right btn btn-info m-r-10 m-l-10 btn-back" value="Back"/> -->
+            <a href="javascript:void(0);" class="btn btn-primary  m-r-5 m-l-5 btn-trans" title="Export">
               <i class="fa fa-upload"></i> <small>Export</small>
             </a>
-    			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info" title="Filter">
+    			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info  m-r-5 m-l-5" title="Filter">
                 <i class="zmdi zmdi-sort"></i> <small>Filter</small>
             </a>
+          
     			</div>
         </div>
       </div>
@@ -50,9 +63,7 @@ $(function() {
             <div id="level-filter" class="card-box">
               <input type="hidden" id="hidden"/>           
               <div class="graph-box">
-                <input type="button" class="pull-right btn btn-info m-r-10 btn-pie-chart"  value="View as pie chart"/>
-                <input type="button" class="pull-right btn btn-info m-r-10 btn-bar-chart" value="View as bar chart"/>
-                <input type="button" class="pull-right btn btn-info m-r-10 btn-back" value="Back"/>
+               
                <!--  <p id="year-para"> <span >Select Year:</span>
                   <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
                     <option value="2009" >2009</option>
@@ -249,61 +260,71 @@ $(function() {
         <input class="form-control input-sm" id="todate">
       </div>
     </div>
-    <div class="form-group col-sm-12 no-margin group-selection">
+    <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioGroup" type="checkbox" checked="checked">
+        <input id="radioGroup" class="chart-filter btn-group" type="checkbox"">
         <label for="radioGroup"> Group </label>
       </div>
     </div>
 
-    <div class="form-group col-sm-12 no-margin business-group-selection">
+    <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioBusinessGroup" type="checkbox">
+        <input id="radioBusinessGroup" class="chart-filter btn-business-group" type="checkbox">
         <label for="radioBusinessGroup"> Business Group </label>
       </div>
-      <select class="form-control selections input-sm hide-row textboxbusiness bg-filter default-display-none" multiple id="filter-business-group">
-      </select>
+      <div class="selections business-group-selection">
+        <select class="form-control input-sm textboxbusiness bg-filter default-display-none" multiple id="filter-business-group" >
+        </select>
+      </div>
     </div>
-    <div class="form-group col-sm-12 no-margin legal-entity-selection">
+    <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radioLegalEntity" type="checkbox">
+        <input id="radioLegalEntity" class="chart-filter btn-legal-entity" type="checkbox">
         <label for="radioLegalEntity"> Legal Entity </label>
       </div>
-      <select class="form-control selections input-sm hide-row textboxlegalentity default-display-none legal-entity-filter" multiple id="filter-legal-entity">
-      </select>
+      <div class="selections legal-entity-selection">
+        <select class="form-control input-sm textboxlegalentity default-display-none legal-entity-filter" multiple id="filter-legal-entity" >
+        </select>
+      </div>
     </div>
-    <div class="form-group col-sm-12 no-margin division-selection">
+    <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin  ">
-        <input id="radioDivision" type="checkbox">
+        <input id="radioDivision" class="chart-filter btn-division" type="checkbox">
         <label for="radioDivision"> Division </label>
       </div>
-      <select class="form-control selections input-sm hide-row textboxdivision  division-filter default-display-none" multiple id="filter-division"> 
-      </select>
+      <div class="selections division-selection">
+        <select class="form-control input-sm textboxdivision division-filter default-display-none" multiple id="filter-division"> 
+        </select>
+      </div>
     </div>
-    <div class="form-group col-sm-12 no-margin category-selection">
+    <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin ">
-        <input id="radiocategorys" type="checkbox">
+        <input id="radiocategorys" class="chart-filter btn-category" type="checkbox">
         <label for="radiocategorys"> Category </label>
       </div>
-      <select class="form-control selections input-sm hide-row textboxcategory category-filter  default-display-none" multiple id="filter-category">
-      </select>
+      <div class="selections category-selection">
+        <select class="form-control input-sm textboxcategory category-filter  default-display-none" multiple id="filter-category">
+        </select>
+      </div>
     </div>
-    <div class="form-group col-sm-12 no-margin unit-selection">
+    <div class="form-group col-sm-12 no-margin ">
       <div class="checkbox checkbox-primary no-bottom-margin">
-        <input id="radioUnit" type="checkbox">
+        <input id="radioUnit" class="chart-filter btn-unit" type="checkbox">
         <label for="radioUnit"> Unit </label>
       </div>
-      <select class="form-control selections input-sm hide-row textboxunit unit-filter default-display-none" multiple id="filter-unit">
-      </select>
+      <div class="selections unit-selection">
+        <select class="form-control input-sm hide-row textboxunit unit-filter default-display-none " multiple id="filter-unit">
+        </select>
+      </div>
     </div>
     <div class="form-group col-sm-12 consolidated-selection">
       <div class="checkbox checkbox-primary">
-        <input id="radioConsolidated" type="checkbox">
+        <input class="chart-filter btn-consolidated" type="checkbox">
         <label for="radioConsolidated">Consolidated</label>
       </div>
     </div>
     <div class="form-group col-sm-12 btn-go">
-      <button class="btn  btn-bg-filter btn-primary" id="go">Go</button>
+      <button class="btn btn-bg-filter btn-primary" id="go">Go</button>
     </div>
   </div>
 </div>
@@ -311,7 +332,7 @@ $(function() {
     <!-- Compliance Status-->
     <div class="compliance-status">
       <div class="table-compliance-status">
-      <table id="datatable-responsive" class="table dt-responsive nowrap div-compliance-list" cellspacing="0" width="100%">
+      <table id="datatable-responsive" class="table dt-responsive nowrap div-compliance-list js-filtertable" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th width="02%">#</th>
@@ -329,55 +350,55 @@ $(function() {
                 <td></td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm" />
+                    <input type="text" class="form-control input-sm js-filter" />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter" />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter" />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td class="delayed-by-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
                 </td>
                 <td  class="dates-left-to-complete-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                   <td class="over-due-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
@@ -388,9 +409,11 @@ $(function() {
       </div>
       <div class="table-row-accordian-unit">
         <table>
-          <tr class="panel-title">
-            <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
-          </tr>       
+          <tbody>
+            <tr class="panel-title">
+              <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
+            </tr>
+          </tbody>       
         </table>
         <table class="compliance-list-inner">
           <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
@@ -419,14 +442,14 @@ $(function() {
     <!-- Escalation-->
     <div class="escalation-status">
       <div class="table-escalation-status">
-      <table id="datatable-responsive" class="table dt-responsive nowrap div-escalation-list" cellspacing="0" width="100%">
+        <table id="datatable-responsive" class="table dt-responsive nowrap div-escalation-list js-filtertable" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th width="3%" >#</th>
                   <th width="13%" class="business-group-row">Business Group</th>
                   <th width="13%" class="legal-entity-row">Legal Entity </th>
                   <th width="15%" class="division-row">Division </th>
-                  <th width="5%" class="type-row">Type </th>
+                  <!-- <th width="05%" class="type-row">Type </th> -->
                   <th width="20%" class="compliance-row" >Compliance </th>
                   <th width="11%" class="assigned-to-row" >Assigned To </th>
                   <th width="11%" class="delayed-by-row">Delayed By</th>
@@ -436,49 +459,49 @@ $(function() {
                 <td></td>
                 <td class="business-group-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm" />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    <input type="text" class="form-control input-sm js-filter" />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
                 </td>
                 <td class="legal-entity-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
                 </td>
                 <td class="division-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
                 </td>
-                <td class="type-row">
+                <!-- <td class="type-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
-                </td>
+                </td> -->
                 <td class="compliance-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td class="assigned-to-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td class="delayed-by-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
                 <td class="over-due-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
@@ -495,9 +518,13 @@ $(function() {
           <tr class="tr-h2">
             <td colspan="7" class="escalation-status-text"><span></span></td>
           </tr>
-          <tr class="panel-title">
-            <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
-          </tr>       
+        </table>
+        <table>
+          <tbody>
+            <tr class="panel-title">
+              <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
+            </tr>  
+          </tbody>     
         </table>
         <table class="compliance-list-inner">
           <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
@@ -513,7 +540,7 @@ $(function() {
           <td width="15%" class="businessgroup-name"></td>
           <td width="10%" class="legalentity-name"></td>
           <td width="10%" class="division-name"></td>
-          <td width="10%" class="industry-type-name"></td>
+          <!-- <td width="10%" class="industry-type-name"></td> -->
           <td width="15%" class="compliance-name"></td>
           <td width="10%" class="assigned-to"></td>
           <td class="delayed-by-row delayed-by"></td>
@@ -525,14 +552,14 @@ $(function() {
     <!-- Not Complied -->
     <div class="notcomplied-status">
       <div class="table-not-complied-status">
-      <table id="datatable-responsive" class="table dt-responsive nowrap div-notcomplied-list" cellspacing="0" width="100%">
+      <table id="datatable-responsive" class="table dt-responsive nowrap div-notcomplied-list js-filtertable_not_c" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th width="02%">#</th>
                   <th width="10%">Business Group</th>
                   <th width="10%">Legal Entity</th>
                   <th width="10%">Division</th>
-                  <th width="10%">Type</th>
+                  <!-- <th width="10%">Type</th> -->
                   <th width="15%">Compliance</th>
                   <th width="8%">Assigned To</th>
                   <th width="11%" class="over-due-row" align="left">Over Due</th>
@@ -541,44 +568,44 @@ $(function() {
                 <td></td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm" />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    <input type="text" class="form-control input-sm js-filter_not_c" />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
                 </td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
                 </td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  </div>
+                </td>
+                <!-- <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td> -->
+                <td>
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
                 </td>
                 <td>
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                  </div>
-                </td>
-                <td>
-                  <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
-                  </div>
-                </td>
-                <td>
-                  <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
                 </td>
                   <td class="over-due-row">
                   <div class="form-group col-sm-12 no-padding">
-                    <input type="text" class="form-control input-sm"  />
-                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                    <input type="text" class="form-control input-sm js-filter_not_c"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
                   </div>
                 </td>
 
@@ -588,12 +615,14 @@ $(function() {
       </div>
       <div class="table-row-accordian-unit">
         <table>
+        <tbody>
           <tr class="panel-title">
-            <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
-          </tr>       
+            <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class="p-5 unit-heading  collapsed" colspan="7"></td>
+          </tr>
+        </tbody>       
         </table>
-        <table class="compliance-list-inner">
-          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
+        <table class="compliance-list-inner">         
+          <tbody class="panel-collapse collapse coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
         </table>
       </div>
       <div class="table-row-list">
@@ -606,7 +635,7 @@ $(function() {
           <td width="15%" class="businessgroup-name"></td>
           <td width="10%" class="legalentity-name"></td>
           <td width="10%" class="division-name"></td>
-          <td width="10%" class="industry-type-name"></td>
+          <!-- <td width="10%" class="industry-type-name"></td> -->
           <td width="15%" class="compliance-name"></td>
           <td width="10%" class="assigned-to"></td>
           <td class="over-due-row over-due"></td>
@@ -633,9 +662,11 @@ $(function() {
       
       <div class="table-row-accordian-unit">
       <table class="table-heading">
-        <tr class="panel-title">
+        <tbody>
+          <tr class="panel-title">
             <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 level1-heading" colspan="7"></td>
           </tr>
+        </tbody>
       </table>
         <table class="compliance-list-inner">
             <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>

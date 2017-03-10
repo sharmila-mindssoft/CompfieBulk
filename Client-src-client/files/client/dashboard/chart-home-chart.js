@@ -221,7 +221,7 @@ function updateEscalationChart(data) {
   chartTitle = data[2];
   highchart = new Highcharts.Chart({
     colors: [
-      '#F58835',
+      '#FE6271',
       '#F32D2B'
     ],
     chart: {
@@ -271,10 +271,10 @@ function updateNotCompliedChart(data) {
   total = data[2];
   highchart = new Highcharts.Chart({
     colors: [
-      '#FF9C80',
+      '#F62025',
+      '#FF6052',
       '#F2746B',
-      '#FB4739',
-      '#DD070C'
+      '#FF9C80'
     ],
     chart: {
       renderTo: 'status-container',
@@ -405,9 +405,10 @@ function updateComplianceApplicabilityChart(data) {
   total = data[2];
   highchart = new Highcharts.Chart({
     colors: [
-      '#66FF66',
-      '#FFDC52',
-      '#CE253C'
+      '#FB4739',
+      '#F2746B',
+      '#FF9C80',
+      '#F62025',
     ],
     chart: {
       type: 'pie',
@@ -1078,45 +1079,45 @@ function initializeFilters() {
     }
   });
   loadSubFilters(selectall = true, singleSelect = false);
-  $('.btn-country').on('click', function () {
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      chartInput.setCountrySelected(true);
-      $('.country-selection').show();
-    } else {
-      chartInput.setCountrySelected(false);
-      $('.country-selection').hide();
-    }
-  });
-  $('.btn-domain').on('click', function () {
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      chartInput.setDomainSelected(true);
-      $('.domain-selection').show();
-    } else {
-      chartInput.setDomainSelected(false);
-      $('.domain-selection').hide();
-    }
-  });
-  $('.btn-date').on('click', function () {
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      chartInput.setDateSelected(true);
-      $('.date-selection').show();
-    } else {
-      chartInput.setDateSelected(false);
-      $('.date-selection').hide();
-    }
-  });
-  $('.btn-date-filter').on('click', function () {
-    var from_date = $('#fromdate').val();
-    var to_date = $('#todate').val();
-    if (from_date.length > 0 && to_date.length > 0) {
-      chartInput.setFromDate(from_date);
-      chartInput.setToDate(to_date);
-      loadCharts();
-    }
-  });
+  // $('.btn-country').on('click', function () {
+  //   $(this).toggleClass('active');
+  //   if ($(this).hasClass('active')) {
+  //     chartInput.setCountrySelected(true);
+  //     $('.country-selection').show();
+  //   } else {
+  //     chartInput.setCountrySelected(false);
+  //     $('.country-selection').hide();
+  //   }
+  // });
+  // $('.btn-domain').on('click', function () {
+  //   $(this).toggleClass('active');
+  //   if ($(this).hasClass('active')) {
+  //     chartInput.setDomainSelected(true);
+  //     $('.domain-selection').show();
+  //   } else {
+  //     chartInput.setDomainSelected(false);
+  //     $('.domain-selection').hide();
+  //   }
+  // });
+  // $('.btn-date').on('click', function () {
+  //   $(this).toggleClass('active');
+  //   if ($(this).hasClass('active')) {
+  //     chartInput.setDateSelected(true);
+  //     $('.date-selection').show();
+  //   } else {
+  //     chartInput.setDateSelected(false);
+  //     $('.date-selection').hide();
+  //   }
+  // });
+  // $('.btn-date-filter').on('click', function () {
+  //   var from_date = $('#fromdate').val();
+  //   var to_date = $('#todate').val();
+  //   if (from_date.length > 0 && to_date.length > 0) {
+  //     chartInput.setFromDate(from_date);
+  //     chartInput.setToDate(to_date);
+  //     loadCharts();
+  //   }
+  // });
   $('.chart-filter').on('click', function () {
     // if ($(this).hasClass("active"))
     //     return;
@@ -1131,10 +1132,13 @@ function initializeFilters() {
       ])
       return;
     var filter_type_selection = filter_type.replace('_', '-') + '-selection';
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      $('.chart-filter').removeClass('active');
-      $(this).addClass('active');
+    //$(this).toggleClass('active');
+    $(this).prop("checked", true);
+    if ($(this).prop("checked", true)) {
+      $(".selections").hide();
+      $('.chart-filter').prop("checked", false);
+      $(this).prop("checked", true);
+      console.log(filter_type_selection);
       $('.' + filter_type_selection).show();
     } else {
       $('.' + filter_type_selection).hide();
@@ -1333,7 +1337,7 @@ function prepareComplianceStatusChartData(chart_data) {
     var delayedCount = 0;
     var inprogressCount = 0;
     var notCompliedCount = 0;
-    for (var j = 0; j < chartData.c_data.length; j++) {
+    for (var j = 0; j < chartData.c_data.length; j++) {      
       var item = chartData.c_data[j];
       if (parseInt(item.year) != yearInput)
         continue;
@@ -1799,6 +1803,9 @@ function loadCharts() {
   hideButtons();
   $('.drilldown-container').hide();
   $('.graph-container.compliance-status').show();
+  $('.div-drilldown-container').hide();
+  $('.chart-container').show();
+  $('.graph-selections-bottom').show();  
   var chartType = chartInput.getChartType();
   chartInput.setChartYear(0);
   if (chartType == 'compliance_report') {

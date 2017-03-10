@@ -111,7 +111,7 @@ def process_client_master_requests(request, db, session_user, client_id, session
         result = process_save_unit_closure_unit_data(db, request, session_user)
 
     elif type(request) is clientmasters.UserManagementPrerequisite:
-        result = process_UserManagementAddPrerequisite(db, request, session_user)
+        result = process_UserManagementAddPrerequisite(db, request, session_user, session_category)
 
     elif type(request) is clientmasters.GetServiceProviderDetailsReportFilters:
         result = get_service_provider_details_report_filter_data(
@@ -253,7 +253,7 @@ def process_block_service_provider(
 ########################################################
 # User Management Add Prerequisite
 ########################################################
-def process_UserManagementAddPrerequisite(db, request, session_user):
+def process_UserManagementAddPrerequisite(db, request, session_user, session_category):
     userCategory = {}
     userGroup = {}
     businessGroup = {}
@@ -264,7 +264,7 @@ def process_UserManagementAddPrerequisite(db, request, session_user):
     legalUnits = {}
     serviceProviders = {}
 
-    userCategory = process_UserManagement_category(db)
+    userCategory = process_UserManagement_category(db, session_category)    
     userGroup = process_UserManagement_UserGroup(db)
     businessGroup = process_UserManagement_BusinessGroup(db)
     legalEntity = process_UserManagement_LegalEntity(db)
@@ -355,8 +355,8 @@ def process_get_user_category(db):
 ########################################################
 # User Management - Load User Category
 ########################################################
-def process_UserManagement_category(db):
-    resultRows = userManagement_GetUserCategory(db)
+def process_UserManagement_category(db, session_category):
+    resultRows = userManagement_GetUserCategory(db, session_category)
     userCategoryList = []
     for row in resultRows:
         userCategoryId = int(row["user_category_id"])
@@ -403,9 +403,10 @@ def process_UserManagement_LegalEntity(db):
         legalEntityId = int(row["legal_entity_id"])
         businessGroupId = row["business_group_id"]
         legalEntityName = row["legal_entity_name"]
+        le_admin = row["le_admin"]        
         legalEntityList.append(
             clientcore.ClientUserLegalEntity_UserManagement(legalEntityId,
-                                                            businessGroupId, legalEntityName)
+                                                            businessGroupId, legalEntityName, le_admin)
         )
     return legalEntityList
 ########################################################

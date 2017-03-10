@@ -1593,3 +1593,8 @@ pre {
 .client-login {
     float: none !important;
 }
+
+.multiselect-container>li>a>label.radio,
+.multiselect-container>li>a>label.checkbox {
+    padding-left: 45px;
+}

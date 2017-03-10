@@ -174,7 +174,7 @@ function initializeNavBar() {
                 $('.mlink').attr('href', '/knowledge/messages');
                 $('.msg-items-ul').append(msgObject);
               }
-              if(MESSAGES.length >= 2){
+              if(MESSAGES.length >= 2) {
                 var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
                 $('.mlink').attr('href', '/knowledge/messages');
                 $('.msg-items-ul').append(msgObject1);
