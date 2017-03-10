@@ -1337,7 +1337,7 @@ function prepareComplianceStatusChartData(chart_data) {
     var delayedCount = 0;
     var inprogressCount = 0;
     var notCompliedCount = 0;
-    for (var j = 0; j < chartData.c_data.length; j++) {      
+    for (var j = 0; j < chartData.c_data.length; j++) {
       var item = chartData.c_data[j];
       if (parseInt(item.year) != yearInput)
         continue;
@@ -1805,7 +1805,7 @@ function loadCharts() {
   $('.graph-container.compliance-status').show();
   $('.div-drilldown-container').hide();
   $('.chart-container').show();
-  $('.graph-selections-bottom').show();  
+  $('.graph-selections-bottom').show();
   var chartType = chartInput.getChartType();
   chartInput.setChartYear(0);
   if (chartType == 'compliance_report') {
@@ -1855,8 +1855,103 @@ function loadCharts() {
   // else if (chartType == 'assignee_wise_compliance') {
   //   PageTitle.html("Assignee Wise Compliances");
   //   loadAssigneeWiseComplianceChart();
-  // } 
+  // }
   else {
     hideLoader();
   }
 }
+function Compliance_Status_Export() {
+    cols = ["Country", "Complied", "Delayed Compliance", "Inprogress", "Not Complied"];
+    final_dict = {}
+    $.each(COMPLIANCE_STATUS_DATA, function(k,v) {
+      c_data = v.c_data;
+      var d = {}
+      if (final_dict[v.filter_type_id] == undefined) {
+        d[cols[0]] = getFilterTypeName(v.filter_type_id);
+        d[cols[1]] = 0;
+        d[cols[2]] = 0;
+        d[cols[3]] = 0;
+        d[cols[4]] = 0;
+      }
+      else {
+        d = final_dict[v.filter_type_id];
+      }
+
+      $.each(c_data, function(kk, vv) {
+        d[cols[1]] += vv.complied_count;
+        d[cols[2]] += vv.delayed_compliance_count;
+        d[cols[3]] += vv.inprogress_compliance_count;;
+        d[cols[4]] += vv.not_complied_count;;
+      });
+      final_dict[v.filter_type_id] = d;
+    });
+    data = []
+    data.push({"col1": "Compliance Status Graph"});
+    keys = Object.keys(final_dict);
+    labels = {}
+    labels['col1'] = cols[0];
+    labels['col2'] = cols[1];
+    labels['col3'] = cols[2];
+    labels['col4'] = cols[3];
+    labels['col5'] = cols[4];
+    data.push(labels);
+
+    $.each(final_dict, function(k, v) {
+      info = {}
+      keys = Object.keys(v);
+      $.each(keys, function(idx, val) {
+        info['col' + idx] = v[val];
+      });
+      data.push(info);
+    });
+    client_mirror.exportJsontoCsv(data, "Complaince Status Graph");
+}
+function Escalation_Export() {
+  cols = ["Years"];
+  final_dict = {};
+
+  $.each(ESCALATION_DATA.es_chart_data, function(k, v) {
+    if (final_dict[v.chart_year] == undefined) {
+      d = {};
+      d["not_complied_count"] = v.not_complied_count;
+      d["delayed_compliance_count"] = v.delayed_compliance_count;
+      final_dict[v.chart_year] = d ;
+    }
+    else {
+      d = final_dict[v.chart_year];
+      d["not_complied_count"] += v.not_complied_count;
+      d["delayed_compliance_count"] += v.delayed_compliance_count;
+      final_dict[v.chart_year] = d ;
+    }
+  });
+  data = [];
+  $.merge(cols, Object.keys(final_dict));
+  data.push({"col1": "Escalation Graph"});
+  years = {};
+  delays = {};
+  nots = {};
+  var i = 1;
+  years['col0'] = "Year";
+  delays['col0'] = "Delayed";
+  nots['col0'] = "Not Complied";
+  $.each(final_dict, function(k, v) {
+    if (v.delayed_compliance_count == 0 && v.not_complied_count == 0){
+      return;
+    }
+    years['col' + i] = k;
+    delays['col' + i] = v.delayed_compliance_count;
+    nots['col' + i] = v.not_complied_count;
+    i += 1;
+  });
+  data.push(years);
+  data.push(delays);
+  data.push(nots);
+  client_mirror.exportJsontoCsv(data, "Escalation Status Graph");
+}
+
+
+$('#btn-export').on('click', function(){
+  // Compliance_Status_Export();
+  // Escalation_Export();
+});
+

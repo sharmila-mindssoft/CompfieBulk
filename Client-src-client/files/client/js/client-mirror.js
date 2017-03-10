@@ -2717,6 +2717,47 @@ function initClientMirror() {
         DownloadApiRequest(request);
     }
 
+    function ConvertToCSV(objArray) {
+        var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+        // var lblarray = typeof lblsArray != 'object' ? JSON.parse(lblsArray) : lblsArray;
+
+        var str = '';
+
+        function makecsv(objContent) {
+            for (var i = 0; i < objContent.length; i++) {
+                var line = '';
+                for (var index in objContent[i]) {
+                    if (line != '') line += ','
+
+                    line += objContent[i][index];
+                }
+                str += line + '\r\n';
+            }
+            return str;
+        }
+        // str += makecsv(lblarray);
+        str += makecsv(array);
+
+        console.log(str);
+        return str;
+    }
+
+    function exportJsontoCsv(data, fileName) {
+
+        var jsonObject = JSON.stringify(data);
+
+        csv_data = ConvertToCSV(jsonObject);
+        csv_data = btoa(csv_data);
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        url = 'data:application/octet-stream;base64,' + csv_data;
+        a["href"] = url;
+        a.download = fileName + ".csv";
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
+
     return {
         log: log,
         toJSON: toJSON,
@@ -2913,7 +2954,8 @@ function initClientMirror() {
         blockServiceProvider: blockServiceProvider,
         getSettingsFormDetails: getSettingsFormDetails,
         saveSettingsFormDetails: saveSettingsFormDetails,
-        downloadTaskFile : downloadTaskFile
+        downloadTaskFile: downloadTaskFile,
+        exportJsontoCsv: exportJsontoCsv
     };
 }
 

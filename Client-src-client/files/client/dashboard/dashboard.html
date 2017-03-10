@@ -11,7 +11,7 @@ $(function() {
 <div class="left side-menu">
   <div class="sidebar-inner slimscrollleft">
     <div id="sidebar-menu">
-      <ul> 
+      <ul>
         <li class="text-muted menu-title">Chart List</li>
         <li class="has_sub chart-tab compliance-status-tab active"> <a class="waves-effect"><i class="zmdi zmdi-info-outline"></i> <span> Compliance Status </span> </a> </li>
         <li class="has_sub chart-tab escalations-tab"> <a class="waves-effect "><i class="zmdi zmdi-case"></i> <span> Escalation </span> </a> </li>
@@ -44,26 +44,26 @@ $(function() {
              <a href="javascript:void(0);" class="btn btn-success m-r-10 m-l-5 btn-back"  title="Back">
               <i class="fa fa-mail-reply"></i> <small>Back</small>
              </a>
-            <!-- <input type="button" 
+            <!-- <input type="button"
             <input type="button" class="pull-right btn btn-info m-r-10 m-l-10 btn-bar-chart" value="View as bar chart"/>
             <input type="button" class="pull-right btn btn-info m-r-10 m-l-10 btn-back" value="Back"/> -->
-            <a href="javascript:void(0);" class="btn btn-primary  m-r-5 m-l-5 btn-trans" title="Export">
+            <a href="javascript:void(0);" id="btn-export" class="btn btn-primary  m-r-5 m-l-5 btn-trans" title="Export">
               <i class="fa fa-upload"></i> <small>Export</small>
             </a>
     			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info  m-r-5 m-l-5" title="Filter">
                 <i class="zmdi zmdi-sort"></i> <small>Filter</small>
             </a>
-          
+
     			</div>
         </div>
       </div>
       <div class="row">
       <!-- Start Chart -->
-          <div class="col-lg-12 chart-container"> 
+          <div class="col-lg-12 chart-container">
             <div id="level-filter" class="card-box">
-              <input type="hidden" id="hidden"/>           
+              <input type="hidden" id="hidden"/>
               <div class="graph-box">
-               
+
                <!--  <p id="year-para"> <span >Select Year:</span>
                   <select id="year" multiple="multiple" placeholder="Select Years"  class="testSelAll2 input-box sumo2"  >
                     <option value="2009" >2009</option>
@@ -88,14 +88,14 @@ $(function() {
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                
+
                 <div id="container"></div>
               </div>
             </div>
             <div class="clearfix"></div>
             <div class="m-t-0 m-b-30 graph-selections-bottom">
                   <input type="button" class="pull-left btn btn-primary btn-trans  m-r-10 btn-previous-year" value="<< Previous Year"/>
-                  <input type="button" class="pull-right btn btn-primary btn-trans btn-next-year" value="Next Year >>"/>                  
+                  <input type="button" class="pull-right btn btn-primary btn-trans btn-next-year" value="Next Year >>"/>
                   <input type="button" class="pull-left btn btn-primary btn-trans btn-previous" value="<< Previous"/>
                   <input type="button" class="pull-right btn btn-primary btn-trans  m-r-10 btn-next" value="Next >>" />
             </div>
@@ -151,7 +151,7 @@ $(function() {
                                       </div>
                                 </div>
                             </div> -->
-                   
+
                              <div class="form-group">
                                 <label class=" col-sm-offset-1 col-sm-3 control-label">Seating Unit:</label>
                                 <div class="col-sm-6 has-feedback">
@@ -163,7 +163,7 @@ $(function() {
                                       </div>
                                 </div>
                             </div>
-                           
+
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
@@ -198,7 +198,7 @@ $(function() {
                                         <ul class="hidemenu"></ul>
                                     </div>
                                 </div>
-                            </div>                      
+                            </div>
                         </div>
                         <div class="col-sm-12">
                             <center>
@@ -226,7 +226,7 @@ $(function() {
             </div>
           </div>
         <!-- End Drilldown -->
-        
+
       </div>
     </div>
     <!-- content -->
@@ -293,7 +293,7 @@ $(function() {
         <label for="radioDivision"> Division </label>
       </div>
       <div class="selections division-selection">
-        <select class="form-control input-sm textboxdivision division-filter default-display-none" multiple id="filter-division"> 
+        <select class="form-control input-sm textboxdivision division-filter default-display-none" multiple id="filter-division">
         </select>
       </div>
     </div>
@@ -413,7 +413,7 @@ $(function() {
             <tr class="panel-title">
               <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
             </tr>
-          </tbody>       
+          </tbody>
         </table>
         <table class="compliance-list-inner">
           <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
@@ -523,8 +523,8 @@ $(function() {
           <tbody>
             <tr class="panel-title">
               <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
-            </tr>  
-          </tbody>     
+            </tr>
+          </tbody>
         </table>
         <table class="compliance-list-inner">
           <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
@@ -619,9 +619,9 @@ $(function() {
           <tr class="panel-title">
             <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne" class="p-5 unit-heading  collapsed" colspan="7"></td>
           </tr>
-        </tbody>       
+        </tbody>
         </table>
-        <table class="compliance-list-inner">         
+        <table class="compliance-list-inner">
           <tbody class="panel-collapse collapse coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
         </table>
       </div>
@@ -659,7 +659,7 @@ $(function() {
         </tr>
       </thead>
       </table>
-      
+
       <div class="table-row-accordian-unit">
       <table class="table-heading">
         <tbody>
@@ -692,7 +692,7 @@ $(function() {
       </div>
     </div>
     <!-- Assignee wise compliance-->
-    <div class="report-container-inner">             
+    <div class="report-container-inner">
        <table class="table-assignee-wise-compliance-list table dt-responsive nowrap highlight" >
        <thead>
         <tr >
@@ -755,12 +755,12 @@ $(function() {
       </table>
     </div>
     <div id="year-modal" class="modal-demo box-width-700">
-      <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
         <i class="zmdi zmdi-close zmdi-hc-2x"></i>
       </span>
       <h4 class="custom-modal-title p-t-10 p-b-10 year-heading"> </h4>
 
-      <div class="custom-modal-text">      
+      <div class="custom-modal-text">
         <div class="panel-group text-left m-b-10 tbody-legal-panel-change" >
         <div class="">
          <table class="modaltable table dt-responsive nowrap" width="100%">
@@ -778,7 +778,7 @@ $(function() {
           </thead>
           <tbody class="tbody-popup-list">
           </tbody>
-          
+
           </table>
           </div>
         </div>
@@ -790,10 +790,10 @@ $(function() {
           <div class="panel panel-default bx-shadow-none">
               <div class="panel-heading p-0" role="tab" id="headingOne">
                   <h4 class="panel-title">
-                      
+
                 <a role="button" data-toggle="collapse"
-                    data-parent="#accordion" 
-                    aria-expanded="false" 
+                    data-parent="#accordion"
+                    aria-expanded="false"
                     class="collapsed">  Status: <span class="comp-list-status"></span> </a>
                   </h4>
               </div>
@@ -811,7 +811,7 @@ $(function() {
                           </tr>
                         </thead>
                         <tbody class="tbody-compliance-details">
-                          
+
                         </tbody>
                       </table>
                     </div>
@@ -821,7 +821,7 @@ $(function() {
       </div>
     </div>
     <div class="compliance-details-list">
-      <div class="filterHeader">        
+      <div class="filterHeader">
         <div class="col-sm-4">
             <div class="form-group m-b-0">
                 <label class="col-sm-4 text-right">User: </label>
@@ -886,7 +886,7 @@ $(function() {
       </table>
 
    <!--  <div id="year-modal" class="modal-demo box-width-700">
-      <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();"> 
+      <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
         <i class="zmdi zmdi-close zmdi-hc-2x"></i>
       </span>
       <h4 class="custom-modal-title p-t-10 p-b-10"> </h4>
@@ -919,7 +919,7 @@ $(function() {
     <!-- /.modal-dialog -->
 </div>
 
-<script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script> 
+<script type="text/javascript" src="/files/client/common/js/charts/html5.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/highcharts-3d.js"></script>
 <script type="text/javascript" src="/files/client/common/js/charts/exporting.js"></script>
@@ -933,7 +933,7 @@ $(function() {
     $('#country').multiselect();
     $('#domain').multiselect();
 </script>
-<script type="text/javascript"> 
-    var resizefunc = []; 
+<script type="text/javascript">
+    var resizefunc = [];
 </script>
 {% endblock %}
