@@ -1862,6 +1862,15 @@ function loadCharts() {
 }
 function Compliance_Status_Export() {
     cols = ["Country", "Complied", "Delayed Compliance", "Inprogress", "Not Complied"];
+    if (chartInput.getFilterType() != "group") {
+      c = getFilterTypeTitle();
+      if (c == null) {
+        cols[0] = "Nil";
+      }
+      else {
+        cols[0] = c;
+      }
+    }
     final_dict = {}
     $.each(COMPLIANCE_STATUS_DATA, function(k,v) {
       c_data = v.c_data;
@@ -1963,29 +1972,29 @@ function Notcomplied_Export() {
   data.push({
     "col0" : "0 - 30 days",
     "col1" : Below30,
-    "col2" : Math.floor((Below30/total) * 100) + '%',
+    "col2" : Math.round((Below30/total) * 100) + '%',
   });
   data.push({
     "col0" : "31 - 60 days",
     "col1" : Below60,
-    "col2" : Math.floor((Below60/total) * 100) + '%',
+    "col2" : Math.round((Below60/total) * 100) + '%',
   });
   data.push({
     "col0" : "61 - 90 days",
     "col1" : Below90,
-    "col2" : Math.floor((Below90/total) * 100) + '%',
+    "col2" : Math.round((Below90/total) * 100) + '%',
   });
   data.push({
     "col0" : "Above days",
     "col1" : Above90,
-    "col2" : Math.floor((Above90/total) * 100) + '%',
+    "col2" : Math.round((Above90/total) * 100) + '%',
   });
   client_mirror.exportJsontoCsv(data, "Not Complied Graph");
 }
 function TrendChart_Export() {
   final_dict = {};
-  cols = ["Country"];
-  temp_count = {}
+  temp_count = {};
+  cols = [];
   $.each(TREND_CHART_DATA.trend_data, function(k,v) {
     var fname = getFilterTypeName(v.filter_id);
     var total = v.total_compliances;
@@ -1994,19 +2003,23 @@ function TrendChart_Export() {
 
     if (final_dict[fname] == undefined) {
       d = {};
-      cols.append(year);
-      d[year] = Math.floor((complied/total) * 100);
+      cols.push(year);
+      d[year] = Math.round((complied/total) * 100);
       final_dict[fname] = d;
-      temp_count[fname][year] = 1;
+      c = {};
+      c[year] = 1;
+      temp_count[fname] = c;
     }
     else {
       if (final_dict[fname][year] == undefined) {
         d = {};
-        cols.append(year);
-        d[year] = Math.floor((complied/total) * 100);
+        cols.push(year);
+        d[year] = Math.round((complied/total) * 100);
 
         final_dict[fname][year] = d;
-        temp_count[fname][year] = 1;
+        c = {};
+        c[year] = 1;
+        temp_count[fname] = c;
       }
       else {
         cnt = final_dict[fname][year];
@@ -2016,30 +2029,37 @@ function TrendChart_Export() {
       }
     }
   });
+
   data = [];
   data.push({"col0": "Trend Chart"});
   labels = {}
   labels['col0'] = "Country";
   cols.sort(function(a, b){return a-b});
-  for (var i = 0; i < cols.legend; i++) {
-    labels['col'+i] = cols[i];
+  for (var i = 0; i < cols.length; i++) {
+    labels['col'+i+1] = cols[i];
   }
   data.push(labels);
 
   $.each(final_dict, function(k, v) {
     info = {}
       info['col0'] = k ;
+      console.log(k);
+      console.log(v);
       for (var i=0; i<cols.length; i++) {
+        console.log(v[cols[i]]);
         if (v[cols[i]] == undefined) {
           yearvals = 0;
         }
         else {
-          yearvals = v[cols[i]];
+          yearvals = (v[cols[i]] / temp_count[k][cols[i]]);
         }
-        info['col'+i+1] = yearvals;
+        console.log(temp_count[k][cols[i]]);
+        console.log(yearvals);
+        info['col'+i+1] = yearvals + '%';
       }
-
+    data.push(info);
   });
+  client_mirror.exportJsontoCsv(data, "Trend Chart");
 }
 
 function RiskChart_Export() {
@@ -2048,10 +2068,10 @@ function RiskChart_Export() {
   unassign = COMPLIANCE_APPLICABILITY_DATA.unassign_count;
   notopted = COMPLIANCE_APPLICABILITY_DATA.not_opted_count;
   total = reject + notcomplied + unassign + notopted;
-  reject = Math.floor((reject/total) * 100) + '%';
-  notcomplied = Math.floor((notcomplied/total) * 100) + '%';
-  unassign = Math.floor((unassign/total) * 100) + '%';
-  notopted = Math.floor((notopted/total) * 100) + '%';
+  reject = Math.round((reject/total) * 100) + '%';
+  notcomplied = Math.round((notcomplied/total) * 100) + '%';
+  unassign = Math.round((unassign/total) * 100) + '%';
+  notopted = Math.round((notopted/total) * 100) + '%';
   data = [];
   data.push({"col0": "Risk Graph"});
   data.push({"col0": "Not Complied", "col1": "Rejected", "col2": "Not Opted", "col3": "Un assigned"});
@@ -2060,10 +2080,23 @@ function RiskChart_Export() {
 }
 
 $('#btn-export').on('click', function(){
-  // Compliance_Status_Export();
-  // Escalation_Export();
+  // Possiblities: "compliance_status", "escalations", "not_complied", "compliance_report", "trend_chart", "applicability_status"
+  if (chartInput.chart_type == "compliance_status") {
+      Compliance_Status_Export();
+  }
+  else if (chartInput.chart_type == "escalations") {
+      Escalation_Export();
+  }
+  else if (chartInput.chart_type == "not_complied") {
+      Notcomplied_Export();
+  }
+  else if (chartInput.chart_type == "trend_chart") {
+      TrendChart_Export();
+  }
+  else if (chartInput.chart_type == "applicability_status") {
+      RiskChart_Export();
+  }
   // client_mirror.downloadTaskFile();
-  // Notcomplied_Export();
-  RiskChart_Export();
+
 });
 

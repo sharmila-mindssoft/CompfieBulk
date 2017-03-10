@@ -210,6 +210,8 @@ class API(object):
                                 if self._replication_managers_for_group.get(_client_id) is None :
                                     rep_man.start()
                                     self._replication_managers_for_group[_client_id] = rep_man
+                                else :
+                                    self._replication_managers_for_group[_client_id].start()
                     else :
                         db_cons_info = self._le_databases.get(_client_id)
                         if db_cons_info is None :

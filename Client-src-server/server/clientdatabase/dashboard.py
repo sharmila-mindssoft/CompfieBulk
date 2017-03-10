@@ -66,6 +66,7 @@ def get_compliance_status_count(db, request, user_id, user_category):
     country_ids = request.country_ids
     domain_ids = request.domain_ids
     filter_type = request.filter_type
+    filter_ids = request.filter_ids
 
     # where_qry_val.append(",".join([str(x) for x in filter_ids]))
 
