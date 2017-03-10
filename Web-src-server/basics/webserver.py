@@ -64,7 +64,7 @@ class RequestHandler(tornado.web.RequestHandler) :
         ):
             # print self.request.path
             pass
-            tornado.web.RequestHandler.check_xsrf_cookie(self)
+            # tornado.web.RequestHandler.check_xsrf_cookie(self)
         else :
             pass
 
