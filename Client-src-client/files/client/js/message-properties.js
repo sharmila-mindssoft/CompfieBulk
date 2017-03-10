@@ -403,12 +403,13 @@ var message = {
     'mobile_max10': 'Mobile No. maximum 10 characters Allowed',
     'email_required': 'Email ID Required',
     'address_max500': 'Address maximum 500 characters Allowed',
-    'unlock_permission': 'You don\'t have lock/unlock permission',
+    'unlock_permission': 'You don\'t have unlock permission',
 
     "block_success": "Blocked Successfully",
     "unblock_success": "Unblocked Successfully",
     'block_message': 'You want to block this Service Provider',
     'unblock_message': 'You want to unblock this Service Provider',
+    'validity_gt_duedate': 'Validity Date must be Greater than or equal to Due Date',
 };
 
 function clearMessage() {
