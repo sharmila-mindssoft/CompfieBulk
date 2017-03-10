@@ -57,7 +57,7 @@ class HandleRequest(object):
         # print self._url
         if "/api/files" in self._url:
             for k, v in headers.items() :
-                # print k, v
+                print k, v
                 self._http_response.set_default_header(k, v)
         else :
             self._http_response.set_default_header(

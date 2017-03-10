@@ -2660,26 +2660,12 @@ function initClientMirror() {
             document.body.appendChild(a);
             a.style = "display: none";
             return function (data, fileName) {
-                // var json = JSON.stringify(data);
-                blob = new Blob([data], {type: "application/octet-stream"});
-                // blob = new Blob([data], {type : "image/svg+xml;charset=utf-8"});
-                // var domURL = self.URL || self.webkitURL || self;
-                url = window.URL.createObjectURL(blob);
+                url = 'data:application/octet-stream;base64,' + data;
                 a.href = url;
                 a.download = fileName;
                 a.click();
                 window.URL.revokeObjectURL(url);
             };
-            // var img = new Image();
-
-            // img.onLoad = function () {
-            //     console.log("image onload");
-            //     ctx.drawImage(this, 0, 0);
-            //     domURL.revokeObjectURL(url);
-            //     callback(this);
-            // };
-
-            // img.src = url;
         }());
 
         $.ajax({
@@ -2690,6 +2676,8 @@ function initClientMirror() {
                     // alert(this.status);
                     if (this.readyState == 4 && this.status == 200) {
                         var data = this.response;
+                        // data = atob(data);
+
                         var fileName=this.getResponseHeader('filename');
                         saveData(data, fileName);
                     }
@@ -2716,7 +2704,14 @@ function initClientMirror() {
                 "d_id": 1,
                 "u_id" : 12,
                 "start_date": "22-Feb-2017",
-                "file_name": "images.jpeg"
+                // "file_name": "images.jpeg"
+                // "file_name": "test.txt"
+                // "file_name": "img-png.png",
+                // "file_name": "Compfie_Phase II_Development_Days_version 1.1.xls",
+                // "file_name": "ComplianceDetails-08-Apr-2016.zip",
+                // "file_name": "download.jpg",
+                // "file_name": "O'Reilly - Introduction to Tornado - 2012.pdf",
+                "file_name": "Process Diagram Version 3.0.pptx",
            }
         ];
         DownloadApiRequest(request);
