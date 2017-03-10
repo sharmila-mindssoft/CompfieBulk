@@ -340,21 +340,43 @@ function loadLegalEntity() {
         var bg_flag = null;
         var bg_str = "";
         $.each(legalEntityList, function(k, v) {
-            if (v.bg_id == null) {
-                if (others_flag)
-                    others_str += '<optgroup label="Others">';
-                others_str += '<option value="' + v.le_id + '" >' + v.le_name + '</option>';
-                others_flag = false;
-            } else {
-                $.each(businessGroupList, function(key, value) {
-                    if ($.inArray(value.bg_id, sBusinessGroup) >= 0 && v.bg_id == value.bg_id) {
-                        if (bg_flag != v.bg_id)
-                            bg_str += '<optgroup label="' + value.bg_name + '">';
-                        // var dVal = value.bg_id + '-' + v.le_id;
-                        bg_str += '<option value="' + v.le_id + '">' + v.le_name + '</option>';
-                        bg_flag = v.bg_id;
+            if (ddlUserCategory.val() == 3) {
+                if (v.le_admin == null) {
+                    if (v.bg_id == null) {
+                        if (others_flag)
+                            others_str += '<optgroup label="Others">';
+                        others_str += '<option value="' + v.le_id + '" >' + v.le_name + '</option>';
+                        others_flag = false;
+                    } else {
+                        $.each(businessGroupList, function(key, value) {
+                            if ($.inArray(value.bg_id, sBusinessGroup) >= 0 && v.bg_id == value.bg_id) {
+                                if (bg_flag != v.bg_id)
+                                    bg_str += '<optgroup label="' + value.bg_name + '">';
+                                // var dVal = value.bg_id + '-' + v.le_id;
+                                bg_str += '<option value="' + v.le_id + '">' + v.le_name + '</option>';
+                                bg_flag = v.bg_id;
+                            }
+                        });
                     }
-                });
+                }
+
+            } else {
+                if (v.bg_id == null) {
+                    if (others_flag)
+                        others_str += '<optgroup label="Others">';
+                    others_str += '<option value="' + v.le_id + '" >' + v.le_name + '</option>';
+                    others_flag = false;
+                } else {
+                    $.each(businessGroupList, function(key, value) {
+                        if ($.inArray(value.bg_id, sBusinessGroup) >= 0 && v.bg_id == value.bg_id) {
+                            if (bg_flag != v.bg_id)
+                                bg_str += '<optgroup label="' + value.bg_name + '">';
+                            // var dVal = value.bg_id + '-' + v.le_id;
+                            bg_str += '<option value="' + v.le_id + '">' + v.le_name + '</option>';
+                            bg_flag = v.bg_id;
+                        }
+                    });
+                }
             }
         });
         var str = bg_str + others_str;
@@ -868,7 +890,7 @@ PageControls = function() {
 
     // //Previous Button Click Event
     btnPrevious.click(function() {
-        CURRENT_TAB += 1;
+        CURRENT_TAB = CURRENT_TAB - 1;
         showTab();
         btnNext.show();
     });
