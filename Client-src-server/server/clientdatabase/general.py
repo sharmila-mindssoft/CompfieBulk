@@ -1625,6 +1625,38 @@ def calculate_from_and_to_date_for_domain(db, domain_id):
         from_date = datetime.date(current_year, period_from, 1)
     return from_date, to_date
 
+def get_from_and_to_date_for_domain(db, domain_id):
+    columns = "contract_from, contract_to"
+    rows = db.get_data(tblLegalEntities, columns, "1")
+    if rows:
+        contract_from = rows[0]["contract_from"]
+    else:
+        contract_from = None
+        
+    columns = "month_from, month_to"
+    # condition = "country_id = %s and domain_id = %s"
+    # condition_val = [country_id, domain_id]
+    condition = " domain_id = %s"
+    condition_val = [domain_id]
+    rows = db.get_data(
+        tblClientConfigurations, columns, condition, condition_val
+    )
+    period_from = rows[0]["month_from"]
+
+    to_date = contract_from
+    current_year = to_date.year
+    previous_year = current_year-1
+    from_date = datetime.date(previous_year, period_from, 1)
+    r = relativedelta.relativedelta(
+        convert_datetime_to_date(to_date),
+        convert_datetime_to_date(from_date)
+    )
+    no_of_years = r.years
+    no_of_months = r.months
+    if no_of_years is not 0 or no_of_months >= 12:
+        from_date = datetime.date(current_year, period_from, 1)
+    return from_date, to_date
+
 
 def calculate_due_date(
     db, domain_id, statutory_dates=None, repeat_by=None,

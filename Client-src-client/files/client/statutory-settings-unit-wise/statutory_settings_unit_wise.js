@@ -160,14 +160,12 @@ function PageControls() {
     });
 
     showButton.click(function() {
-        var csv = false;
         on_current_page = 1;
-        processSubmit(csv);
+        processSubmit(false);
     });
 
     exportButton.click(function() {
-        var csv = true;
-        processSubmit(csv);
+        processSubmit(true);
     });
 
     ItemsPerPage.on('change', function(e) {
@@ -175,8 +173,7 @@ function PageControls() {
         f_count = 0;
         on_current_page = 1;
         createPageView(t_this._total_count);
-        var csv = false;
-        processSubmit(csv);
+        processSubmit(false);
     });
 }
 
@@ -237,7 +234,6 @@ onCategoryAutoCompleteSuccess = function(REPORT, val) {
     categoryId.val(val[0]);
     category.focus();
     clearElement([unit, unitId, act, actId, complianceTask, complianceTaskId]);
-    //REPORT.fetchUnitList(val[0], divisionId.val(), domainId.val());
 }
 
 onUnitAutoCompleteSuccess = function(REPORT, val) {
@@ -245,7 +241,6 @@ onUnitAutoCompleteSuccess = function(REPORT, val) {
     unitId.val(val[0]);
     unit.focus();
     clearElement([act, actId, complianceTask, complianceTaskId]);
-    //REPORT.fetchActList(val[0], categoryId.val(), divisionId.val(), domainId.val());
 }
 
 onActAutoCompleteSuccess = function(REPORT, val) {
@@ -253,7 +248,6 @@ onActAutoCompleteSuccess = function(REPORT, val) {
     actId.val(val[0]);
     act.focus();
     clearElement([complianceTask, complianceTaskId]);
-    //REPORT.fetchComplianceaskList(val[0], unitId.val(), categoryId.val(), divisionId.val(), domainId.val());
 }
 
 onComplianceTaskAutoCompleteSuccess = function(REPORT, val) {
@@ -501,9 +495,9 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 else
                     $('.uploaded-document', clonethree).text('-');
                 $(clonethree).on('click', function(e) {
-                    treeShowHide(e, "tree" + v.compliance_id);
+                    treeShowHide(e, "tree" + v.compliance_id+v.unit_id);
                 });
-                $(clonethree).attr("id", "tree" + v.compliance_id);
+                $(clonethree).attr("id", "tree" + v.compliance_id+v.unit_id);
                 reportTableTbody.append(clonethree);
                 complianceId = v.compliance_id;
             } else {
@@ -514,7 +508,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                     $('.tree' + v.compliance_id + ' .tree-body').append(clonefive);
                 } else {
                     var clonefour = $('#template #report-table .row-four').clone();
-                    $(clonefour).addClass("tree" + v.compliance_id);
+                    $(clonefour).addClass("tree" + v.compliance_id+v.unit_id);
                     $('.user-name', clonefour).text(v.user_name);
                     $('.due-date', clonefour).text(v.due_date);
                     reportTableTbody.append(clonefour);
@@ -565,7 +559,7 @@ createPageView = function(total_records) {
             cPage = parseInt(page);
             if (parseInt(on_current_page) != cPage) {
                 on_current_page = cPage;
-                processSubmit();
+                processSubmit(false);
             }
         }
     });

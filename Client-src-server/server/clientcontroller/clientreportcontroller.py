@@ -1046,7 +1046,7 @@ def get_work_flow_score_card(db, request, session_user, session_category):
         domain_id = request.d_id
 
         work_flow_score_card_list = report_work_flow_score_card(
-            db, country_id, legal_entity_id, domain_id, session_user
+            db, country_id, legal_entity_id, domain_id, session_user, session_category
         )
         return clientreportnew.GetWorkFlowScoreCardSuccess(work_flow_score_card_list)
     else:

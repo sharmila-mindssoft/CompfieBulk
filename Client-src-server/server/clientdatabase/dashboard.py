@@ -1567,8 +1567,8 @@ def update_notification_status(
 def notification_detail(
     db, notification_id, session_user
 ):
-    query = "select nl.notification_id, substring_index(com.statutory_mapping,'>>',1) as act_name, " + \
-            "(select concat(unit_code,' - ',unit_name,' - ',substring_index(geography_name,'>>',-1)) from tbl_units where unit_id = nl.unit_id) as unit, " + \
+    query = "select nl.notification_id, SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) - 4),'>>',1) as act_name, " + \
+            "(select concat(unit_code,' - ',unit_name,' - ',SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) - 4),'>>',1)) from tbl_units where unit_id = nl.unit_id) as unit, " + \
             "concat(com.document_name,' - ',com.compliance_task) as compliance_name,date(ch.due_date) as duedate, " + \
             "IF(ch.due_date < now() and ch.approve_status <> 1,concat(abs(datediff(now(),ch.due_date)),' Days'),'-') as delayed_by, " + \
             "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.assignee) as assignee_name, " + \
