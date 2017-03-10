@@ -1220,3 +1220,7 @@ h2.chart-title: hover {
     padding-top: 6px !important;
     padding-bottom: 7px !important;
 }
+
+.table-not-complied-status{
+    border: 1px solid #ededed;
+}

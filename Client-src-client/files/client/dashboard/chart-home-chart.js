@@ -1079,45 +1079,45 @@ function initializeFilters() {
     }
   });
   loadSubFilters(selectall = true, singleSelect = false);
-  $('.btn-country').on('click', function () {
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      chartInput.setCountrySelected(true);
-      $('.country-selection').show();
-    } else {
-      chartInput.setCountrySelected(false);
-      $('.country-selection').hide();
-    }
-  });
-  $('.btn-domain').on('click', function () {
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      chartInput.setDomainSelected(true);
-      $('.domain-selection').show();
-    } else {
-      chartInput.setDomainSelected(false);
-      $('.domain-selection').hide();
-    }
-  });
-  $('.btn-date').on('click', function () {
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      chartInput.setDateSelected(true);
-      $('.date-selection').show();
-    } else {
-      chartInput.setDateSelected(false);
-      $('.date-selection').hide();
-    }
-  });
-  $('.btn-date-filter').on('click', function () {
-    var from_date = $('#fromdate').val();
-    var to_date = $('#todate').val();
-    if (from_date.length > 0 && to_date.length > 0) {
-      chartInput.setFromDate(from_date);
-      chartInput.setToDate(to_date);
-      loadCharts();
-    }
-  });
+  // $('.btn-country').on('click', function () {
+  //   $(this).toggleClass('active');
+  //   if ($(this).hasClass('active')) {
+  //     chartInput.setCountrySelected(true);
+  //     $('.country-selection').show();
+  //   } else {
+  //     chartInput.setCountrySelected(false);
+  //     $('.country-selection').hide();
+  //   }
+  // });
+  // $('.btn-domain').on('click', function () {
+  //   $(this).toggleClass('active');
+  //   if ($(this).hasClass('active')) {
+  //     chartInput.setDomainSelected(true);
+  //     $('.domain-selection').show();
+  //   } else {
+  //     chartInput.setDomainSelected(false);
+  //     $('.domain-selection').hide();
+  //   }
+  // });
+  // $('.btn-date').on('click', function () {
+  //   $(this).toggleClass('active');
+  //   if ($(this).hasClass('active')) {
+  //     chartInput.setDateSelected(true);
+  //     $('.date-selection').show();
+  //   } else {
+  //     chartInput.setDateSelected(false);
+  //     $('.date-selection').hide();
+  //   }
+  // });
+  // $('.btn-date-filter').on('click', function () {
+  //   var from_date = $('#fromdate').val();
+  //   var to_date = $('#todate').val();
+  //   if (from_date.length > 0 && to_date.length > 0) {
+  //     chartInput.setFromDate(from_date);
+  //     chartInput.setToDate(to_date);
+  //     loadCharts();
+  //   }
+  // });
   $('.chart-filter').on('click', function () {
     // if ($(this).hasClass("active"))
     //     return;
@@ -1132,10 +1132,13 @@ function initializeFilters() {
       ])
       return;
     var filter_type_selection = filter_type.replace('_', '-') + '-selection';
-    $(this).toggleClass('active');
-    if ($(this).hasClass('active')) {
-      $('.chart-filter').removeClass('active');
-      $(this).addClass('active');
+    //$(this).toggleClass('active');
+    $(this).prop("checked", true);
+    if ($(this).prop("checked", true)) {
+      $(".selections").hide();
+      $('.chart-filter').prop("checked", false);
+      $(this).prop("checked", true);
+      console.log(filter_type_selection);
       $('.' + filter_type_selection).show();
     } else {
       $('.' + filter_type_selection).hide();
