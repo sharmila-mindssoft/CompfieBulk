@@ -250,7 +250,7 @@ function initClientMirror() {
             contentType: 'application/json',
             data: toJSON(request),
             success: function(data) {
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -771,7 +771,7 @@ function initClientMirror() {
             contentType: 'application/json',
             data: toJSON(body),
             success: function(data) {
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -1900,7 +1900,7 @@ function initClientMirror() {
             processData: false,
             contentType: false,
             success: function(data, textStatus, jqXHR) {
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 if (Object.keys(response).length == 0)
