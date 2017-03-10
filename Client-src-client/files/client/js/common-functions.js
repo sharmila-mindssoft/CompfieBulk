@@ -6,8 +6,11 @@ var pageList = [25, 50, 100];
 var UserTypeString = '[{"id":1,"name":"Assignee"},{"id":2,"name":"Concurrence"},{"id":3,"name":"Approval"}]';
 var UserTypes = jQuery.parseJSON(UserTypeString);
 
-var ComplianceTaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var ComplianceTaskStatusString = '[{"name":"Assigned"},{"name":"Un-Assigned"},{"name":"Not Opted"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
+
+var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var TaskStatuses = jQuery.parseJSON(TaskStatusString);
 
 var LEARRAYS = client_mirror.getSelectedLegalEntity();
 if (LEARRAYS != undefined) {

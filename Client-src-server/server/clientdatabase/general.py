@@ -400,19 +400,20 @@ def get_units_for_user(db, user_id):
     if user_id != admin_id:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
                 "FROM tbl_user_units AS t1 " + \
                 "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
-                "WHERE t1.user_id = %s AND t2.is_closed = 0 ORDER BY unit_name"
+                "WHERE t1.user_id = %s AND t2.is_closed = 0 group by t2.unit_id ORDER BY t2.unit_name"
         rows = db.select_all(query, [user_id])
     else:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
-                "t2.address, GROUP_CONCAT(distinct t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
-                "FROM tbl_units AS t2 " + \
+                "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \
+                "FROM tbl_user_units AS t1 " + \
+                "INNER JOIN tbl_units AS t2 ON t2.unit_id = t1.unit_id  " + \
                 "INNER JOIN tbl_units_organizations AS t3 ON t3.unit_id = t2.unit_id " + \
-                "WHERE t2.is_closed = 0 ORDER BY unit_name"
+                "WHERE t2.is_closed = 0 group by t2.unit_id ORDER BY t2.unit_name"
         rows = db.select_all(query)
     return return_units(rows)
 
@@ -462,18 +463,18 @@ def return_units(units):
 def get_acts_for_user(db, user_id):
     admin_id = get_admin_id(db)
     if user_id != admin_id:
-        query = "SELECT distinct t1.domain_id, SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1) as act " + \
-            "FROM tbl_user_domains AS t1 " + \
-            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
-            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id "
-        rows = db.select_all(query)
-    else:
-        query = "SELECT distinct t1.domain_id, SUBSTRING_INDEX(t3.statutory_mapping, '>>', 1) as act " + \
+        query = "SELECT distinct t1.domain_id, SUBSTRING_INDEX(substring(substring(t3.statutory_mapping,3),1, char_length(t3.statutory_mapping) -4), '>>', 1) as act " + \
             "FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
             "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id " + \
             "where t1.user_id = %s "
         rows = db.select_all(query, [user_id])
+    else:
+        query = "SELECT distinct t1.domain_id, SUBSTRING_INDEX(substring(substring(t3.statutory_mapping,3),1, char_length(t3.statutory_mapping) -4), '>>', 1) as act " + \
+            "FROM tbl_user_domains AS t1 " + \
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
+            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id "
+        rows = db.select_all(query)
     return return_acts(rows)
 
 def return_acts(acts):
@@ -940,15 +941,15 @@ def get_client_compliances(db, user_id):
         query = "SELECT distinct t1.domain_id, t3.compliance_id, t3.compliance_task " + \
             "FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
-            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id "
-        rows = db.select_all(query)
+            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id " + \
+            "where t1.user_id = %s "
+        rows = db.select_all(query, [user_id])
     else:
         query = "SELECT distinct t1.domain_id, t3.compliance_id, t3.compliance_task " + \
             "FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
-            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id " + \
-            "where t1.user_id = %s "
-        rows = db.select_all(query, [user_id])
+            "INNER JOIN tbl_compliances AS t3 ON t3.domain_id = t1.domain_id "
+        rows = db.select_all(query)
     return return_client_compliances(rows)
 
 
