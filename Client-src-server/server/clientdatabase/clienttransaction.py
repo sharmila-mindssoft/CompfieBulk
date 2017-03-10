@@ -1798,12 +1798,14 @@ def approve_compliance(
     db.update(tblComplianceHistory, columns, values, condition)
 
     # Getting compliance details from compliance history
-    query = " SELECT tch.unit_id, tch.compliance_id, " + \
+    query = " SELECT tch.legal_entity_id, tch.unit_id, tch.compliance_id, " + \
         " (SELECT frequency_id FROM tbl_compliances tc " + \
         " WHERE tch.compliance_id = tc.compliance_id ) as frequency_id, " + \
         " due_date, completion_date, " + \
         " (select duration_type_id FROM tbl_compliances tc " + \
-        " where tch.compliance_id=tc.compliance_id) as duration_type_id " + \
+        " where tch.compliance_id=tc.compliance_id) as duration_type_id, " + \
+        " (select compliance_task FROM tbl_compliances tc " + \
+        " where tch.compliance_id=tc.compliance_id) as compliance_task " + \
         " FROM tbl_compliance_history tch " + \
         " WHERE compliance_history_id = %s "
     rows = db.select_all(query, [compliance_history_id])
@@ -1861,6 +1863,11 @@ def approve_compliance(
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, "Approved", remarks)
     notify_compliance_approved(db, compliance_history_id, "Approved")
+
+    # Audit Log Entry
+    action = "Compliance Approved \"%s\"" % (row["compliance_task"])
+    db.save_activity(session_user, 9, action, row["legal_entity_id"], unit_id)
+
     return True
 
 
@@ -2102,9 +2109,11 @@ def concur_compliance(
     values.append(compliance_history_id)
     db.update(tblComplianceHistory, columns, values, condition)
 
-    columns = "unit_id, compliance_id, due_date, completion_date, " + \
+    columns = " legal_entity_id, unit_id, compliance_id, due_date, completion_date, " + \
         " (select duration_type_id from tbl_compliances tc where  " + \
-        " tc.compliance_id = tch.compliance_id ) as duration_type_id"
+        " tc.compliance_id = tch.compliance_id ) as duration_type_id ," + \
+        " (select compliance_task FROM tbl_compliances tc " + \
+        " where tch.compliance_id=tc.compliance_id) as compliance_task"
     condition = "compliance_history_id = %s "
     rows = db.get_data(
         tblComplianceHistory+ " tch", columns, condition,
@@ -2115,6 +2124,8 @@ def concur_compliance(
     due_date = rows[0]["due_date"]
     completion_date = rows[0]["completion_date"]
     duration_type_id = rows[0]["duration_type_id"]
+    compliance_task = rows[0]["compliance_task"]
+    legal_entity_id = rows[0]["legal_entity_id"]
 
     columns = []
     values = []
@@ -2149,6 +2160,10 @@ def concur_compliance(
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, "Concurred", remarks)
     notify_compliance_approved(db, compliance_history_id, "Concurred")
+
+    # Audit Log Entry
+    action = "Compliance Concurred \"%s\"" % (compliance_task)
+    db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
     return True
 
 
