@@ -2043,18 +2043,13 @@ function TrendChart_Export() {
   $.each(final_dict, function(k, v) {
     info = {}
       info['col0'] = k ;
-      console.log(k);
-      console.log(v);
       for (var i=0; i<cols.length; i++) {
-        console.log(v[cols[i]]);
         if (v[cols[i]] == undefined) {
           yearvals = 0;
         }
         else {
           yearvals = (v[cols[i]] / temp_count[k][cols[i]]);
         }
-        console.log(temp_count[k][cols[i]]);
-        console.log(yearvals);
         info['col'+i+1] = yearvals + '%';
       }
     data.push(info);
