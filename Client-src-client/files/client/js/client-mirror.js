@@ -2660,14 +2660,26 @@ function initClientMirror() {
             document.body.appendChild(a);
             a.style = "display: none";
             return function (data, fileName) {
-                var json = JSON.stringify(data),
-                    blob = new Blob([json], {type: "octet/stream"}),
-                    url = window.URL.createObjectURL(blob);
+                // var json = JSON.stringify(data);
+                blob = new Blob([data], {type: "application/octet-stream"});
+                // blob = new Blob([data], {type : "image/svg+xml;charset=utf-8"});
+                // var domURL = self.URL || self.webkitURL || self;
+                url = window.URL.createObjectURL(blob);
                 a.href = url;
                 a.download = fileName;
                 a.click();
                 window.URL.revokeObjectURL(url);
             };
+            // var img = new Image();
+
+            // img.onLoad = function () {
+            //     console.log("image onload");
+            //     ctx.drawImage(this, 0, 0);
+            //     domURL.revokeObjectURL(url);
+            //     callback(this);
+            // };
+
+            // img.src = url;
         }());
 
         $.ajax({
@@ -2695,7 +2707,7 @@ function initClientMirror() {
         });
     }
 
-    function downloadTestFile() {
+    function downloadTaskFile() {
         var request = [
            "DownloadFile",
            {
@@ -2704,7 +2716,7 @@ function initClientMirror() {
                 "d_id": 1,
                 "u_id" : 12,
                 "start_date": "22-Feb-2017",
-                "file_name": "testimagess.txt"
+                "file_name": "images.jpeg"
            }
         ];
         DownloadApiRequest(request);
@@ -2906,7 +2918,7 @@ function initClientMirror() {
         blockServiceProvider: blockServiceProvider,
         getSettingsFormDetails: getSettingsFormDetails,
         saveSettingsFormDetails: saveSettingsFormDetails,
-        downloadTestFile : downloadTestFile
+        downloadTaskFile : downloadTaskFile
     };
 }
 

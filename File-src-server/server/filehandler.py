@@ -53,7 +53,7 @@ def upload_file(request, client_id) :
     is_success = False
 
     for f in file_info :
-        print f
+
         file_name = f.file_name
         file_content = f.file_content
 
@@ -110,13 +110,14 @@ def download_file(request, client_id):
     )
     with open(file_path+"/"+file_name) as f:
         content = f.read()
-    print "File content"
-    content = content.replace("=", ",")
-    print content
+
+    # content = content.replace("=", ",")
+    # print content
     response = make_response(content)
     response.headers["Access-Control-Allow-Origin"] = '*'
     response.headers["Content-Disposition"] = "attachment; filename=%s" % (file_name)
     response.headers["filename"] = file_name
     response.headers["Cache-Control"] = "must-revalidate"
     response.headers["Pragma"] = "must-revalidate"
+    response.headers["Content-Type"] = "octet/stream"
     return response

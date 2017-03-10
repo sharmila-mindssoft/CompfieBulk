@@ -25,13 +25,12 @@ class HandleRequest(object):
         self._connection_closed = False
         self._company_id = 0
         self._legal_entity_id = legal_entity_id
+        self._url = None
 
     def _api_request(self, url, body, callback):
         def client_callback(response):
             code = response.code
             body = response.body
-            print body
-
             headers = response.headers
             if code == 200:
                 callback(None, body, headers)
@@ -54,9 +53,18 @@ class HandleRequest(object):
 
     def _respond(self, response_data, headers):
         assert self._connection_closed is False
-        for k, v in headers.items() :
-            print k, v
-            self._http_response.set_default_header(k, v)
+        # print headers
+        # print self._url
+        if "/api/files" in self._url:
+            for k, v in headers.items() :
+                # print k, v
+                self._http_response.set_default_header(k, v)
+        else :
+            self._http_response.set_default_header(
+                "Content-Type", "application/json"
+            )
+            response_data = json.dumps(response_data)
+
         self._http_response.set_default_header(
             "Access-Control-Allow-Origin", "*"
         )
@@ -65,8 +73,6 @@ class HandleRequest(object):
         self._connection_closed = True
 
     def _respond_error(self, code, response_data):
-        # logger.logWebfront(code)
-        # logger.logWebfront(response_data)
         self._http_response.set_status(code)
         self._http_response.send(response_data)
 
@@ -87,15 +93,13 @@ class HandleRequest(object):
             self._respond_connection_timeout()
         else:
             print "error", code
-            # self._respond(login.ClientDatabaseNotExists().to_inner_structure())
             self._respond_error(code, response_data)
 
     def forward_request(self):
-        # print "====="
         company = self._company_manager.locate_company_server(
             self._security_token
         )
-        # print company
+
         if company is None:
             self._respond_not_found()
             return
@@ -103,7 +107,6 @@ class HandleRequest(object):
         file_server_ip = None
         ip = None
         port = None
-        print self._legal_entity_id
         if self._legal_entity_id is not None :
             for f in company.file_server_info :
                 if f.legal_entity_id == self._legal_entity_id :
@@ -114,7 +117,6 @@ class HandleRequest(object):
                 self._respond_not_found()
                 return
             else :
-                print file_server_ip
                 ip = file_server_ip.ip_address
                 port = file_server_ip.port
         else :
@@ -125,8 +127,7 @@ class HandleRequest(object):
         assert ip is not None
         assert port is not None
         url = self._url_template % (ip, port, self._relative_url)
-        print url
-        # print "---------"
+        self._url = url
         self._api_request(
             url, self._body, self._forward_request_callback
         )

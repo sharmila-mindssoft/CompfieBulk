@@ -58,7 +58,7 @@ def get_trail_log(db, client_id, received_count, is_group):
     query += " LIMIT 100;"
 
     rows = db.select_all(query, [received_count, client_id])
-    print rows
+
     results = rows
     if len(rows) == 0:
         update_client_replication_status(db, client_id, received_count, is_group)
@@ -143,7 +143,6 @@ def get_group_server_info(db, group_id=None):
         " inner join tbl_file_server as t2 on t1.file_server_id = t2.file_server_id " + \
         " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
         " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
-    print query
     param = []
     if group_id is not None :
         query += " WHERE t1.client_id=%s"
@@ -155,7 +154,6 @@ def get_group_server_info(db, group_id=None):
 def get_group_servers(db):
     rows = get_group_server_info(db)
     result = {}
-    print rows
     for r in rows :
         client_id = r["client_id"]
         company_server_ip = IPAddress(r["server_ip"], int(r["server_port"]))
@@ -172,7 +170,7 @@ def get_group_servers(db):
             result[client_id].file_server_info.append(
                 FileServer(file_server_ip, r["legal_entity_id"])
             )
-    print result.values()
+
     return result.values()
 
 
