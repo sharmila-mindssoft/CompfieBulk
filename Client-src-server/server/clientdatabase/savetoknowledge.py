@@ -10,7 +10,8 @@ __all__ = [
     "KnowledgedbConnect",
     "UpdateFileSpace",
     "SaveUsers", "UpdateUsers", "UpdateUserStatus",
-    "UnitClose", "SaveOptedStatus", "IsClientActive"
+    "UnitClose", "SaveOptedStatus", "IsClientActive",
+    "SaveGroupAdminName"
 ]
 
 
@@ -279,3 +280,32 @@ class IsClientActive(KnowledgedbConnect):
             print e
             self._k_db.rollback()
             raise client_process_error("E027")
+
+class SaveGroupAdminName(KnowledgedbConnect):
+    def __init__(self, username, client_id):
+        self.username = username
+        self.client_id = client_id
+        self.process_save_username()
+
+    def _update_groupadmin_uname(self):
+
+        q = "UPDATE tbl_client_groups SET " + \
+            " group_admin_username = %s " + \
+            " WHERE client_id = %s "
+
+        self._k_db.execute(q, [
+            self.username, self.client_id
+        ])
+
+    def process_save_username(self):
+        try :
+            self.get_knowledge_connect()
+            self._k_db._cursor = self._k_db._connection.cursor()
+            self._update_groupadmin_uname()
+            self._k_db._cursor.close()
+            self._k_db._connection.commit()
+        except Exception, e:
+            print e
+            self._k_db._cursor.close()
+            self._k_db._connection.rollback()
+            raise client_process_error("E026")

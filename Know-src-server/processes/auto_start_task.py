@@ -116,7 +116,7 @@ class AutoStart(Database):
             " t1.assignee, t1.concurrence_person, t1.approval_person, " + \
             " t1.compliance_id " + \
             " from tbl_assign_compliances t1 " + \
-            " INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id " + \
+            " INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id and t3.is_closed = 0 " + \
             " INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id " + \
             " LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id " + \
             "     AND t4.compliance_id = t1.compliance_id AND t2.frequency_id = 1)" + \
@@ -427,7 +427,7 @@ class AutoStart(Database):
             " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
             " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
-            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id " + \
+            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
             " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id  " + \
             " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id and ccf.domain_id = com.domain_id " + \
             " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
@@ -479,7 +479,7 @@ class AutoStart(Database):
             " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
             " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
-            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id " + \
+            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
             " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \
             " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
             " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
