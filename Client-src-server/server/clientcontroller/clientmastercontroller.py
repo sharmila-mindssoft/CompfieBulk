@@ -403,9 +403,10 @@ def process_UserManagement_LegalEntity(db):
         legalEntityId = int(row["legal_entity_id"])
         businessGroupId = row["business_group_id"]
         legalEntityName = row["legal_entity_name"]
+        le_admin = row["le_admin"]        
         legalEntityList.append(
             clientcore.ClientUserLegalEntity_UserManagement(legalEntityId,
-                                                            businessGroupId, legalEntityName)
+                                                            businessGroupId, legalEntityName, le_admin)
         )
     return legalEntityList
 ########################################################
