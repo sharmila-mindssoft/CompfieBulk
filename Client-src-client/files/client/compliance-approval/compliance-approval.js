@@ -97,7 +97,6 @@ function loadComplianceApprovalDetails(data) {
             $('.sno-ca', clonelist).html(sno);
             $('.compliance-task span', clonelist).html(val.compliance_name);
             $('.compliance-task i', clonelist).attr('title', val.description);
-            //$('.compliance-task', clonelist).attr("title", val['description']);
             $('.domain', clonelist).html(val.domain_name);
             $('.startdate', clonelist).html(val.start_date);
             $('.duedate', clonelist).html(val.due_date);
@@ -105,10 +104,10 @@ function loadComplianceApprovalDetails(data) {
                 $('.delayedby', clonelist).html('');
             }
             if (val.delayed_by != null) {
-                // if (val.delayed_by.contains('Overdue')) {
-                //     alert(val.delayed_by);
-                // }
                 $('.delayedby', clonelist).html(val.delayed_by);
+                if ((val.delayed_by).indexOf("Overdue") > -1) {
+                    $('.delayedby', clonelist).addClass("text-danger");
+                }
             }
             var compliance_history_id = val.compliance_history_id;
             $(clonelist, '.expand-compliance').on('click', function() {
