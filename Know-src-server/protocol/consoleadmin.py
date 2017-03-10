@@ -455,23 +455,25 @@ class GetIPSettingsReportFilter(Request):
 
 class GetIPSettingsReport(Request):
     def __init__(
-        self, client_id, ip, from_count, page_count
+        self, client_id, ip, from_count, page_count, csv
     ):
         self.client_id = client_id
         self.ip = ip
         self.from_count = from_count
         self.page_count = page_count
+        self.csv = csv
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(
-            data, ["client_id", "ip_optional", "from_count", "page_count"]
+            data, ["client_id", "ip_optional", "from_count", "page_count", "csv"]
         )
         return GetIPSettingsReport(
             data.get("client_id"),
             data.get("ip_optional"),
             data.get("from_count"),
-            data.get("page_count")
+            data.get("page_count"),
+            data.get("csv")
         )
 
     def to_structure(self):
@@ -479,7 +481,8 @@ class GetIPSettingsReport(Request):
             "client_id": self.client_id,
             "ip_optional": self.ip,
             "from_count": self.from_count,
-            "page_count": self.page_count
+            "page_count": self.page_count,
+            "csv": self.csv
         }
 
 def _init_Request_class_map():

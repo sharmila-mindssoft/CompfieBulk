@@ -80,6 +80,9 @@ class ConvertJsonToCSV(object):
                 elif report_type == "AllocateServerReport":
                     self.generate_allocate_server_report(
                         db, request, session_user)
+                elif report_type == "IPSettingReport":
+                    self.generate_ip_setting_report(
+                        db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
         self, db, request, session_user
@@ -232,7 +235,6 @@ class ConvertJsonToCSV(object):
             ]
             j = j + 1
             self.write_csv(None, csv_values)
-
 
     def generate_reassign_user_report(
         self, db, request, session_user
@@ -598,5 +600,34 @@ class ConvertJsonToCSV(object):
                 group_name, business_group_name, legal_entity_name, group_admin_email,
                 legal_entity_admin_email, legal_entity_admin_contactno, contract_from,
                 contract_to, domain_total_unit, domain_used_unit, activation_date
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_ip_setting_report(
+        self, db, request, session_user
+    ):
+        is_header = False
+
+        client_id = request.client_id
+        ip = request.ip
+
+        ip_setting_details_list = db.call_proc(
+            "sp_ip_setting_details_report_export", (client_id, ip)
+        )
+
+        for ip_setting_details in ip_setting_details_list:
+            
+            form_name = ip_setting_details["form_name"]
+            ips=ip_setting_details["ips"]
+            group_name=ip_setting_details["group_name"]
+            
+            if not is_header:
+                csv_headers = [
+                    "Group Name", "Form Name", "IP Details"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+            csv_values = [
+                group_name, form_name, ips
             ]
             self.write_csv(None, csv_values)
