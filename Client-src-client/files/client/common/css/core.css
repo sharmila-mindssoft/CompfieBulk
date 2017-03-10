@@ -390,6 +390,8 @@ a:focus {
   background-clip: padding-box;
   margin-bottom: 20px;
   border: 1px solid #e8e8e8;
+  float: left;
+  width: 100%;
 }
 .card-box .card-drop {
   color: #9a9da0;
@@ -1249,4 +1251,7 @@ pre {
 }
 .waves-effect.waves-inverse .waves-ripple {
   background-color: rgba(96, 102, 122, 0.4);
+}
+.client-login{
+  float: none !important;
 }

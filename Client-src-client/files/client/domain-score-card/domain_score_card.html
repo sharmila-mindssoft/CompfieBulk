@@ -16,10 +16,10 @@
                                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
                                             <p class="form-control-static filter-country-name default-display-none col-sm-6"></p>
                                             <div class="col-sm-6 has-feedback default-display-none">
-                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country">
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="country-id" value="">
                                                 <div id="ac-country" class="ac-textbox default-display-none">
@@ -28,10 +28,10 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: </label>
+                                            <label class="col-sm-4 control-label">Business Group: </label>
                                             <p class="form-control-static filter-business-group-name default-display-none col-sm-6"></p>
                                             <div class="col-sm-6 has-feedback default-display-none">
-                                                <input type="text" class="form-control input-sm" id="business-group" placeholder="Enter Business Group">
+                                                <input type="text" class="form-control input-sm" id="business-group" placeholder="Enter Business Group" tabindex="2">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="business-group-id" value="">
                                                 <div id="ac-business-group" class="ac-textbox default-display-none">
@@ -40,10 +40,10 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
                                             <p class="form-control-static filter-legal-entity-name default-display-none col-sm-6"></p>
                                             <div class="col-sm-6 has-feedback default-display-none">
-                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
+                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="3">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="legal-entity-id" value="">
                                                 <div id="ac-legal-entity" class="ac-textbox default-display-none">
@@ -54,9 +54,9 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Division: </label>
+                                            <label class="col-sm-4 control-label">Division: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="division" placeholder="Enter Division">
+                                                <input type="text" class="form-control input-sm" id="division" placeholder="Enter Division" tabindex="4">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="division-id" value="">
                                                 <div id="ac-division" class="ac-textbox default-display-none">
@@ -65,9 +65,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Category: </label>
+                                            <label class="col-sm-4 control-label">Category: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="category" placeholder="Enter Category">
+                                                <input type="text" class="form-control input-sm" id="category" placeholder="Enter Category" tabindex="5">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="category-id" value="">
                                                 <div id="ac-category" class="ac-textbox default-display-none">
@@ -76,9 +76,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: </label>
+                                            <label class="col-sm-4 control-label">Domain: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain">
+                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain" tabindex="6">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="domain-id" value="">
                                                 <div id="ac-domain" class="ac-textbox default-display-none">
@@ -90,7 +90,7 @@
                                     <div class="col-sm-12">
                                         <center>
                                             <div class="form-group m-b-0">
-                                                <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button"> Show </button>
+                                                <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button" tabindex="7"> Show </button>
                                             </div>
                                         </center>
                                     </div>
@@ -112,6 +112,8 @@
                                         <div class="col-sm-6 text-center">
                                             <h6>Country : <span id="country-name" ></span></h6></div>
                                     </div>
+                                    <div class="clear"></div>
+                                    <div class="table-responsive">
                                     <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0">
                                         <thead>
                                             <tr>
@@ -126,6 +128,7 @@
                                         <tbody id="report-table-tbody">
                                         </tbody>
                                     </table>
+                                    </div>
                                     <div class="domain-table-view" style="display: none;">
                                         <div class="clear"></div>
                                         <br>
