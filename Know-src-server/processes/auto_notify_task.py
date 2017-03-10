@@ -270,6 +270,7 @@ class AutoNotify(Database):
             self.begin()
             self.notify_task_details()
             self.commit()
+            self.close()
         except Exception, e :
             print e
             print (traceback.format_exc())
