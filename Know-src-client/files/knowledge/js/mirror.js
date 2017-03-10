@@ -2750,14 +2750,15 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getIPSettingsReport(clientId, IP, FCount, TCount, callback) {
+    function getIPSettingsReport(clientId, IP, FCount, TCount, csv, callback) {
         callerName = "console_admin";
         var request = [
             "GetIPSettingsReport", {
                 "client_id": clientId,
                 "ip_optional": IP,
                 "from_count": FCount,
-                "page_count": TCount
+                "page_count": TCount,
+                "csv": csv
             }
         ];
         apiRequest(callerName, request, callback);
