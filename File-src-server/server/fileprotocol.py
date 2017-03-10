@@ -1,18 +1,11 @@
+from fileapivalidation import (parse_dictionary, parse_static_list)
 # File Protocol
 #
 # Request
 #
-
-def parse_static_list(x, length=0):
-    if x is None:
-        raise ValueError("null is not allowed")
-    if type(x) is not list:
-        raise ValueError("expected a list, but received:", x)
-    if len(x) == length:
-        return x
-    else:
-        msg = "expected a list with %s items" % (length,)
-        raise ValueError(msg, x)
+__all__ = [
+    "FileList"
+]
 
 class Request(object):
     def to_structure(self):
@@ -40,39 +33,114 @@ class Request(object):
 
 class UploadComplianceTaskFile(Request):
     def __init__(
-        self, client_id, legal_entity_id, country_id, unit_id, domain_id,  start_date, file_content,
-        file_name
+        self, legal_entity_id, country_id,  unit_id, domain_id,
+        start_date, file_info
     ):
-        self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
+        self.unit_id = unit_id
         self.domain_id = domain_id
         self.start_date = start_date
-        self.file_content = file_content
-        self.file_name = file_name
+        self.file_info = file_info
 
     @staticmethod
     def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "c_id", "u_id", "d_id", "start_date", "file_info"])
         return UploadComplianceTaskFile(
-            data.get("ct_id"),
-            data.get("le_id"), data.get("c_id"), data.get("d_id"),
-            data.get("start_date"), data.get("file_content"),
-            data.get("file_name")
+            data.get("le_id"), data.get("c_id"), data.get("u_id"),
+            data.get("d_id"),
+            data.get("start_date"), data.get("file_info")
         )
 
     def to_inner_structure(self):
         return {
-            "ct_id": self.client_id,
             "le_id": self.legal_entity_id,
             "c_id": self.country_id,
+            "u_id": self.unit_id,
             "d_id": self.domain_id,
             "start_date": self.start_date,
-            "file_content": self.file_content,
+            "file_info": self.file_info
+        }
+
+class RemoveFile(Request):
+    def __init__(
+        self, legal_entity_id, country_id,  unit_id, domain_id,
+        start_date, file_name
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.start_date = start_date
+        self.file_name = file_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "c_id", "u_id", "d_id", "start_date", "file_name"])
+        return RemoveFile(
+            data.get("le_id"), data.get("c_id"), data.get("u_id"),
+            data.get("d_id"),
+            data.get("start_date"), data.get("file_name")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "c_id": self.country_id,
+            "u_id": self.unit_id,
+            "d_id": self.domain_id,
+            "start_date": self.start_date,
             "file_name": self.file_name
         }
 
+class DownloadFile(Request):
+    def __init__(
+        self, legal_entity_id, country_id,  unit_id, domain_id,
+        start_date, file_name
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.start_date = start_date
+        self.file_name = file_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "c_id", "u_id", "d_id", "start_date", "file_name"])
+        return DownloadFile(
+            data.get("le_id"), data.get("c_id"), data.get("u_id"),
+            data.get("d_id"),
+            data.get("start_date"), data.get("file_name")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "c_id": self.country_id,
+            "u_id": self.unit_id,
+            "d_id": self.domain_id,
+            "start_date": self.start_date,
+            "file_name": self.file_name
+        }
+
+class FileList(object):
+    def __init__(self, file_name, file_content):
+        self.file_name = file_name
+        self.file_content = file_content
+
+    @staticmethod
+    def parse_structure(data):
+        return FileList(data.get("file_name"), data.get("file_content"))
+
+    def to_structure(self):
+        return {
+            "file_name": self.file_name,
+            "file_content": self.file_content
+        }
+
 def _init_Request_class_map():
-    classes = [UploadComplianceTaskFile]
+    classes = [UploadComplianceTaskFile, RemoveFile, DownloadFile]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -90,6 +158,8 @@ class Response(object):
         name = type(self).__name__
         inner = self.to_inner_structure()
         return [name, inner]
+        # if type(inner) is dict:
+        #     inner = to_structure_dictionary_values(inner)
 
     def to_inner_structure(self):
         raise NotImplementedError
@@ -107,20 +177,55 @@ class Response(object):
     def parse_inner_structure(data):
         raise NotImplementedError
 
-class UploadFileSuccess(Response):
+class FileUploadSuccess(Response):
     def __init__(self):
         pass
 
     @staticmethod
     def parse_inner_structure(data):
-        return UploadFileSuccess()
+        return FileUploadSuccess()
 
     def to_inner_structure(self):
         return {}
 
+
+class FileUploadFailed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return FileUploadFailed()
+
+    def to_inner_structure(self):
+        return {}
+
+class FileRemoved(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return FileRemoved()
+
+    def to_inner_structure(self):
+        return {}
+
+class FileRemoveFailed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return FileRemoveFailed()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
-        UploadFileSuccess
+        FileUploadSuccess, FileUploadFailed, FileRemoved, FileRemoveFailed
 
     ]
     class_map = {}
@@ -141,7 +246,7 @@ class RequestFormat(object):
 
     @staticmethod
     def parse_structure(data):
-        # data = parse_dictionary(data, ["session_token", "request"])
+        data = parse_dictionary(data, ["session_token", "request"])
         session_token = data.get("session_token")
         request = data.get("request")
         request = Request.parse_structure(request)

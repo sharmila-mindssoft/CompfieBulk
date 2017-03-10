@@ -253,7 +253,7 @@ def save_login_details(db, token, username, password):
     user_id = get_user_id_from_token(db, token)
     user_details = get_client_details_from_userid(db, user_id)
     user_category_id = user_details[0]["user_category_id"]
-    is_active = user_details[0]["is_active"]    
+    is_active = user_details[0]["is_active"]
 
     q = " INSERT INTO tbl_user_login_details(user_id, user_category_id, username, " + \
         " password, is_active) VALUES (%s, %s, %s, %s, %s) "

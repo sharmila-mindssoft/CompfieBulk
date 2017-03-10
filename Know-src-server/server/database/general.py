@@ -3,7 +3,7 @@ from replication.protocol import (
 )
 
 from distribution.protocol import (
-    Company, IPAddress
+    Company, IPAddress, Server, FileServer
 )
 
 from server.common import (
@@ -58,7 +58,7 @@ def get_trail_log(db, client_id, received_count, is_group):
     query += " LIMIT 100;"
 
     rows = db.select_all(query, [received_count, client_id])
-    print rows
+
     results = rows
     if len(rows) == 0:
         update_client_replication_status(db, client_id, received_count, is_group)
@@ -136,17 +136,16 @@ def get_servers(db):
     return return_companies(rows)
 
 def get_group_server_info(db, group_id=None):
-    query = "select distinct t2.database_ip, t2.database_port, ct1.database_username, ct1.database_password," + \
-        " ct1.database_name , t1.client_id, t1.legal_entity_id, t4.short_name, " + \
-        " t3.machine_id, t3.machine_name, t3.ip as server_ip, t3.port as server_port, ct1.is_group " + \
+    query = "select distinct t1.client_id, t1.legal_entity_id, t4.short_name, " + \
+        " t2.ip as file_ip, t2.port as file_port, " + \
+        " t3.machine_id, t3.machine_name, t3.ip as server_ip, t3.port as server_port " + \
         " from tbl_client_database as t1 " + \
-        " inner join tbl_client_database_info as ct1 on t1.client_database_id = ct1.client_database_id and ct1.is_group = 1 " + \
-        " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
+        " inner join tbl_file_server as t2 on t1.file_server_id = t2.file_server_id " + \
         " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
         " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
     param = []
     if group_id is not None :
-        query += " WHERE ct1.is_group=1 and t1.client_id=%s"
+        query += " WHERE t1.client_id=%s"
         param = [group_id]
 
     rows = db.select_all(query, param)
@@ -154,8 +153,25 @@ def get_group_server_info(db, group_id=None):
 
 def get_group_servers(db):
     rows = get_group_server_info(db)
-    return return_companies(rows)
+    result = {}
+    for r in rows :
+        client_id = r["client_id"]
+        company_server_ip = IPAddress(r["server_ip"], int(r["server_port"]))
 
+        file_server_ip = IPAddress(r["file_ip"], r["file_port"])
+
+        if result.get(client_id) is None :
+            result[client_id] = Server(
+                client_id, r["short_name"], company_server_ip,
+                [FileServer(file_server_ip, r["legal_entity_id"])],
+                True
+            )
+        else :
+            result[client_id].file_server_info.append(
+                FileServer(file_server_ip, r["legal_entity_id"])
+            )
+
+    return result.values()
 
 
 def return_companies(data):

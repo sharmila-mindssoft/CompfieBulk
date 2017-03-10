@@ -275,28 +275,30 @@ function pageControls() {
             $(".tbody-statutorysettings-list .unit-checkbox").prop('checked', $(this).prop("checked"));
 
             $('.tbody-statutorysettings-list .unit-checkbox').each(function(index, el) {
-                if (SelectAll.prop('checked')) {
-                    var chkid = $(el).val().split(',');
-                    ACTIVE_UNITS.push(parseInt(chkid[0]));
-                    C_COUNT = C_COUNT + parseInt(chkid[2]);
+                if($(el).val() != 0){
+                    if (SelectAll.prop('checked')) {
+                        var chkid = $(el).val().split(',');
+                        ACTIVE_UNITS.push(parseInt(chkid[0]));
+                        C_COUNT = C_COUNT + parseInt(chkid[2]);
 
-                    if(C_COUNT > 5000){
-                        displayMessage(message.maximum_compliance_selection_reached_select_all);
-                        return false;
-                    }
-                    else if (ACTIVE_UNITS.length >= 20) {
-                        displayMessage(message.maximum_units);
-                        return false;
-                    } else {
-                        if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
-                            $(this).prop("checked", true);
-                            DOMAIN_ID = parseInt(chkid[1]);
-                        }else{
-                            $(this).prop("checked", false);
+                        if(C_COUNT > 5000){
+                            displayMessage(message.maximum_compliance_selection_reached_select_all);
+                            return false;
                         }
+                        else if (ACTIVE_UNITS.length >= 20) {
+                            displayMessage(message.maximum_units);
+                            return false;
+                        } else {
+                            if(DOMAIN_ID == null || DOMAIN_ID == chkid[1]){
+                                $(this).prop("checked", true);
+                                DOMAIN_ID = parseInt(chkid[1]);
+                            }else{
+                                $(this).prop("checked", false);
+                            }
+                        }
+                    } else {
+                        $(this).prop("checked", false);
                     }
-                } else {
-                    $(this).prop("checked", false);
                 }
             });
             SelectedUnitCount.text(ACTIVE_UNITS.length);
@@ -552,8 +554,16 @@ function loadUnits() {
             clone.addClass('new_row');
         }
 
-        $('.unit-checkbox', clone).attr('id', 'unit' + key);
-        $('.unit-checkbox', clone).val(value.u_id + ',' + value.d_id + ',' + value.r_count);
+        if(value.is_locked){
+            $('.ck-view', clone).hide();
+            $('.unit-checkbox', clone).attr('id', 'unit' + key);
+            $('.unit-checkbox', clone).val(0);
+
+        }else{
+            $('.ck-view', clone).show();
+            $('.unit-checkbox', clone).attr('id', 'unit' + key);
+            $('.unit-checkbox', clone).val(value.u_id + ',' + value.d_id + ',' + value.r_count);
+        }
 
         $('.tbl_unit', clone).text(value.u_name);
         $('.tbl_address', clone).attr('title', value.address);
@@ -569,15 +579,17 @@ function loadUnits() {
             $('.tbl_lock', clone).find('i').attr('title', 'Click here to Unlock');
         }else{
             $('.tbl_lock', clone).find('i').addClass('fa-unlock');
-            $('.tbl_lock', clone).find('i').attr('title', 'Click here to Lock');
+            //$('.tbl_lock', clone).find('i').attr('title', 'Click here to Lock');
         }
 
         $('.tbl_lock', clone).click(function() {
-            if(value.allow_unlock == true){
-                //displayLockPopUp(value.u_id);
-                displayPopUp(LOCK_API, [value.u_id, value.d_id, value.is_locked]);
-            }else{
-                displayMessage(message.unlock_permission);
+            if(value.is_locked){
+                if(value.allow_unlock == true){
+                    //displayLockPopUp(value.u_id);
+                    displayPopUp(LOCK_API, [value.u_id, value.d_id, value.is_locked]);
+                }else{
+                    displayMessage(message.unlock_permission);
+                }
             }
         });
 
