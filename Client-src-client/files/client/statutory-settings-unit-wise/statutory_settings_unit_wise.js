@@ -165,7 +165,7 @@ function PageControls() {
     });
 
     exportButton.click(function() {
-        processSubmit(true);
+        //processSubmit(true);
     });
 
     ItemsPerPage.on('change', function(e) {
