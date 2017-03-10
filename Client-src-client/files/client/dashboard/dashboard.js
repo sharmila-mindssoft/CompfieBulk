@@ -215,7 +215,7 @@ function showmorerecords() {
       'd_ids': chartInput.getDomains(),
       'filter_type': filterType,
       'filter_ids': filter_ids,
-      'year': parseInt(ES_YEAR),
+      'chart_year': parseInt(ES_YEAR),
       'record_count': SNO,
       'le_ids': chartInput.getLegalEntities()
     };
@@ -240,7 +240,7 @@ function showmorerecords() {
       'le_ids': chartInput.getLegalEntities()
     };
     client_mirror.getNotCompliedDrillDown(requestData, function (status, data) {
-      notCompliedDrilldown('not_complied', data.drill_down_data);
+      notCompliedDrilldown('not_complied', data.n_drill_down_data);
     });
   } else if (getcharttype == 'trend_chart') {
     var filter_type = chartInput.getFilterType();
@@ -304,7 +304,7 @@ function showComplianceApplicabilityDrillDownRecord_headingList() {
 function showComplianceApplicabilityDrillDownRecord_level1List(data) {
   console.log(data.level1_name);
   if (CAS_LEVEL1 != data.level1_name) {
-    var tableLevel1 = $('#templates .compliance-applicable-status .table-row-accordian-unit .table-heading tr');
+    var tableLevel1 = $('#templates .compliance-applicable-status .table-row-accordian-unit .table-heading tbody');
     var cloneLevel1 = tableLevel1.clone();
     $('.level1-heading', cloneLevel1).html(data.level1_name);
     $('.panel-title td', cloneLevel1).attr('href', '#collapse' + ACCORDIONCOUNT);
@@ -353,7 +353,7 @@ function showComplianceApplicabilityDrillDownRecord_complianceList(val) {
     if (statutory_date[j].trigger_before_days != null)
       tBefore = statutory_date[j].trigger_before_days + ' Days';
     if (sMonth != '')
-      sMonth = getMonth_IntegettoString(sMonth);
+      sMonth = getMonth_IntegertoString(sMonth);
     if(sDay != "" && sMonth != ""){
       statutorydate += sDay + ' - ' + sMonth + ', ';  
     }    
@@ -542,7 +542,7 @@ function notCompliedDrilldown(status, data) {
 
     if (NC_UNITNAME != value.u_name) {
       ACCORDIONCOUNT = ACCORDIONCOUNT + 1;
-      var tableUnit = $('#templates .notcomplied-status .table-row-accordian-unit table tr');
+      var tableUnit = $('#templates .notcomplied-status .table-row-accordian-unit table tbody');
       var cloneUnit = tableUnit.clone();
       $('.unit-heading', cloneUnit).html(value.u_name);
       $('.panel-title td', cloneUnit).attr('href', '#collapse' + ACCORDIONCOUNT);
@@ -579,7 +579,7 @@ function notCompliedDrilldown(status, data) {
         $('.businessgroup-name', clone).html(value.bg_name);
         $('.legalentity-name', clone).html(value.le_name);
         $('.division-name', clone).html(value.div_name);
-        $('.industry-type-name', clone).html(value.indus_name);
+        // $('.industry-type-name', clone).html(value.indus_name);
         $('.compliance-name', clone).html(val.comp_name);
         $('.assigned-to', clone).html(val.assignee_name);
         $('.over-due', clone).html(val.ageing);
@@ -590,6 +590,9 @@ function notCompliedDrilldown(status, data) {
   // accordianType('accordion', 'accordion-toggle', 'accordion-content');
   $('.js-filtertable').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter');
+  });
+  $('.js-filtertable_not_c').on('keyup', function () {
+    $(this).filtertable().addFilter('.js-filter_not_c');
   });
 }
 function showEscalationDrillDownRecord(data, year) {
@@ -764,7 +767,7 @@ function escalationDrilldown(status, data) {
       $('.inner-table-delayed-escalation-list .business-group-row .filter-text-box').addClass('js-filter_delayed');
       $('.inner-table-delayed-escalation-list .legal-entity-row .filter-text-box').addClass('js-filter_delayed');
       $('.inner-table-delayed-escalation-list .division-row .filter-text-box').addClass('js-filter_delayed');
-      $('.inner-table-delayed-escalation-list .type-row .filter-text-box').addClass('js-filter_delayed');
+      // $('.inner-table-delayed-escalation-list .type-row .filter-text-box').addClass('js-filter_delayed');
       $('.inner-table-delayed-escalation-list .compliance-row .filter-text-box').addClass('js-filter_delayed');
       $('.inner-table-delayed-escalation-list .assigned-to-row .filter-text-box').addClass('js-filter_delayed');
       $('.inner-table-delayed-escalation-list .delayed-by-row .filter-text-box').addClass('js-filter_delayed');
@@ -783,7 +786,7 @@ function escalationDrilldownnotcomplied(status, data) {
     $.each(data[status], function (key, value) {
       if (ES_NC_UNITNAME != value.u_name) {
         ACCORDIONCOUNTNC = ACCORDIONCOUNTNC + 1;
-        var tableUnit = $('#templates .escalation-status .panel-title');
+        var tableUnit = $('#templates .escalation-status tbody');
         var cloneUnit = tableUnit.clone();
         $('.unit-heading', cloneUnit).html(value.u_name);
         $('.panel-title td', cloneUnit).attr('href', '#collapse' + ACCORDIONCOUNTNC);
@@ -819,7 +822,7 @@ function escalationDrilldownnotcomplied(status, data) {
           $('.businessgroup-name', clone).html(value.bg_name);
           $('.legalentity-name', clone).html(value.le_name);
           $('.division-name', clone).html(value.div_name);
-          $('.industry-type-name', clone).html(value.indus_name);
+          // $('.industry-type-name', clone).html(value.indus_name);
           $('.compliance-name', clone).html(val.comp_name);
           $('.assigned-to', clone).html(val.assignee_name);
           if (val.status == 'Delayed Compliance') {
@@ -839,7 +842,9 @@ function escalationDrilldownnotcomplied(status, data) {
     $('.norecord', clone).html("No Record Found");
     $('.inner-table-notcomplied-escalation-list').append(clone);
   }
-  
+  $('.js-filtertable').on('keyup', function () {
+    $(this).filtertable().addFilter('.js-filter');
+  });
   $('.js-filtertable_not_c').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter_not_c');
   });
@@ -882,7 +887,7 @@ function escalationDrilldowndelayed(status, data) {
           $('.businessgroup-name', clone).html(value.business_group);
           $('.legalentity-name', clone).html(value.legal_entity);
           $('.division-name', clone).html(value.division);
-          $('.industry-type-name', clone).html(value.industry_name);
+          // $('.industry-type-name', clone).html(value.industry_name);
           $('.compliance-name span', clone).html(val.compliance_name);
           $('.assigned-to', clone).html(val.assignee_name);
           if (val.status == 'Delayed Compliance') {
@@ -903,6 +908,9 @@ function escalationDrilldowndelayed(status, data) {
   //     $('.inner-table-delayed-escalation-list').append(clone);
   // }
   //accordianTypedelayed('accordionD', 'accordion-toggle', 'accordion-delayed-content');
+  $('.js-filtertable').on('keyup', function () {
+    $(this).filtertable().addFilter('.js-filter');
+  });
   $('.js-filtertable_delayed').on('keyup', function () {
     $(this).filtertable().addFilter('.js-filter_delayed');
   });
@@ -1111,7 +1119,7 @@ function trendChartDrilldown(status, data) {
   $.each(data, function (key, value) {
     if (TC_UNIT != value.u_name) {
       actCount++;
-      var tableUnit = $('#templates .compliance-status .table-row-accordian-unit table tr');
+      var tableUnit = $('#templates .compliance-status .table-row-accordian-unit table tbody');
       var cloneUnit = tableUnit.clone();
       $('.unit-heading', cloneUnit).html(value.u_name);
       $('.panel-title td', cloneUnit).attr('href', '#collapse' + actCount);
@@ -1161,7 +1169,7 @@ function trendChartDrilldown(status, data) {
         $('.businessgroup-name', clone).html(value.bg_name);
         $('.legalentity-name', clone).html(value.le_name);
         $('.division-name', clone).html(value.div_name);
-        $('.industry-type-name', clone).html(value.i_name);
+        // $('.industry-type-name', clone).html(value.i_name);
         $('.compliance-name', clone).html(val.comp_name);
         $('.assigned-to', clone).html(val.assignee_name);
         
@@ -1410,7 +1418,7 @@ function complianceStatusDrilldown(status, data) {
         $('.businessgroup-name', clone).html(value.bg_name);
         $('.legalentity-name', clone).html(value.le_name);
         $('.division-name', clone).html(value.div_name);
-        $('.industry-type-name', clone).html(value.indus_name);
+        // $('.industry-type-name', clone).html(value.indus_name);
         $('.compliance-name', clone).html(val.comp_name);
         $('.assigned-to', clone).html(val.assignee_name);
         if (val.status == 'Delayed Compliance') {
@@ -2114,9 +2122,9 @@ function loadComplianceApplicabilityDrillDown(type) {
 //
 function initializeChartTabs() {
   $('.chart-tab').on('click', function () {
-    $('.chart-filter').removeClass('active');
+    $('.chart-filter').prop('checked', false);
     $('.filtertable .selections').hide();
-    $('.btn-group').addClass('active');
+    $('.btn-group').prop('checked', true);
     chartInput.setFilterType('group');
     $('.chart-tab').removeClass('active');
 

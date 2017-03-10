@@ -141,7 +141,6 @@ def return_countries(data):
 #     return return_domains(result)
 
 def get_domains_for_user(db, user_id, user_category):
-    print user_category
     if user_category > 3 :
         query = "SELECT distinct t1.domain_id, t1.legal_entity_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
@@ -309,7 +308,7 @@ def return_categories(categories):
     results = []
     for category in categories:
         category_obj = clientcore.ClientCategory(
-            category["category_id"], category["category_name"], category["legal_entity_id"], 
+            category["category_id"], category["category_name"], category["legal_entity_id"],
             category["business_group_id"], category["division_id"]
         )
         results.append(category_obj)
@@ -669,7 +668,6 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "FROM tbl_legal_entities as t1 " + \
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
             "WHERE contract_to >= CURDATE() and is_closed = 0"
-        print q
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :
@@ -694,8 +692,6 @@ def get_legal_entity_info(db, user_id, user_category_id):
 
 
 def verify_password(db, password, user_id):
-    print "inside verify"
-    print user_id
     columns = "count(0) as result"
     encrypted_password = encrypt(password)
     condition = "1"
@@ -1555,7 +1551,6 @@ def get_user_countries(db, user_id):
 
 def get_email_id_for_users(db, user_id):
     q = "SELECT employee_name, email_id from tbl_users where user_id = %s"
-    print q
     row = db.select_one(q, [user_id])
     if row:
         return row["employee_name"], row["email_id"]
@@ -1662,8 +1657,8 @@ def calculate_due_date(
     db, domain_id, statutory_dates=None, repeat_by=None,
     repeat_every=None, due_date=None
 ):
-    # print "domain_id>>>", domain_id 
-    # print"statutory_dates", statutory_dates 
+    # print "domain_id>>>", domain_id
+    # print"statutory_dates", statutory_dates
     # print"repeat_by>>>", statutory_dates
     # print "repeat_every>>>", repeat_every
     # print "due_date>>>", due_date
@@ -1985,7 +1980,6 @@ def get_trail_id(db, type=None):
     else:
         query = "select IFNULL(MAX(domain_trail_id), 0) as audit_trail_id " + \
             " from tbl_audit_log;"
-    print query
     row = db.select_one(query)
 
     trail_id = row.get("audit_trail_id")
@@ -2049,10 +2043,8 @@ def get_widget_list(db, user_id, user_category):
     q = "select form_id, form_name from tbl_widget_forms order by form_id"
     rows = db.select_all(q, [])
     showDashboard, showCalendar, showUserScore, showDomainScore = get_widget_rights(db, user_id, user_category)
-    print showDashboard, showCalendar, showUserScore, showDomainScore
     data = []
     for r in rows :
-        print r["form_id"]
         if showDashboard is True and int(r["form_id"]) in [1, 2, 3, 4, 5] :
             data.append(r)
         elif showUserScore is True and int(r["form_id"]) == 6 :
@@ -2078,21 +2070,16 @@ def get_user_widget_settings(db, user_id, user_category):
 
         for i, d in enumerate(data) :
             w_id = int(d["w_id"])
-            print w_id
             if showDashboard is False and w_id in [1, 2, 3, 4, 5]:
-                print "dashboard"
                 data.pop(i)
 
             elif showUserScore is False and w_id == 6 :
-                print "userscore"
                 data.pop(i)
 
             elif showCalendar is False and w_id == 8 :
-                print "calendar"
                 data.pop(i)
 
             elif showDomainScore is False and w_id == 7 :
-                print "domainscore"
                 data.pop(i)
 
     return data

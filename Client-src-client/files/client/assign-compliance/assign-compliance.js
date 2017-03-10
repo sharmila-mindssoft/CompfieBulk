@@ -42,6 +42,7 @@ var mUnit = 20;
 var mCompliances = 500;
 
 var Filter_List = $('.filter-list');
+var assignCompliance = [];
 
 function convert_month(data) {
   var months = [
@@ -139,12 +140,6 @@ function callAPI(api_type) {
 		var con_Name = null;
 		var app_Name = null;
 
-		var d = new Date();
-		var month = d.getMonth() + 1;
-		var day = d.getDate();
-		var output = d.getFullYear() + '/' + month + '/' + day;
-		var currentDate = new Date(output);
-
 		if ($('.assigneelist.active').attr('id') != undefined) {
 		    ass_Id = parseInt($('.assigneelist.active').attr('id'));
 		    ass_Name = $('.assigneelist.active').text().trim();
@@ -158,9 +153,87 @@ function callAPI(api_type) {
 		    app_Name = $('.approvallist.active').text().trim();
 		}
 		  
-		assignCompliance = [];
+	    /*var unit_names = '';
+	    for (var unit in UNITS) {
+	      if ($.inArray(UNITS[unit].unit_id, ACTIVE_UNITS) >= 0) {
+	        if (unit_names == '') {
+	          unit_names += UNITS[unit].unit_name;
+	        } else {
+	          unit_names += ', ' + UNITS[unit].unit_name;
+	        }
+	      }
+	    }*/
+
+	    function onSuccess(data) {
+	        displaySuccessMessage(message.save_success);
+	        CURRENT_TAB = 1;
+	        initialize();
+	    }
+	    function onFailure(error, response) {
+	        displayMessage(error);
+	        err_message = message.error;
+	        if (err_message == 'undefined')
+	          displayMessage(error);
+	        else if (error == 'InvalidDueDate') {
+	          task = response.compliance_task;
+	          displayMessage(message.invalid_duedate + task);
+	        } else
+	        displayMessage(err_message);
+	        hideLoader();
+	    }
+	    client_mirror.saveAssignedComplianceFormData(ass_Id, ass_Name, con_Id, con_Name, 
+	    	app_Id, app_Name, assignCompliance, parseInt(le_id), parseInt(d_id),  function (error, response) {
+	        if (error == null) {
+	          onSuccess(response);
+	        } else {
+	          onFailure(error, response);
+	        }
+	    });
+			   
+    }
+}
+
+function validateFirstTab() {
+	var le_id = LEList.find("li.active").attr("id");
+    var d_id = DomainList.find("li.active").attr("id");
+
+	if (le_id == undefined) {
+        displayMessage(message.legalentity_required)
+        return false;
+    }
+    else if (d_id == undefined) {
+        displayMessage(message.domain_required)
+        return false;
+    }
+	else if (ACTIVE_UNITS.length == 0) {
+        displayMessage(message.unit_required)
+        return false;
+    }
+    else if (ACTIVE_FREQUENCY.length == 0) {
+        displayMessage(message.compliancefrequency_required)
+        return false;
+    } else {
+    	LastAct = '';
+		SCOUNT = 1;
+		ACOUNT = 1;
+        return true;
+    }
+};
+
+function validateSecondTab() {
+    if ($('.comp-checkbox:checked').length <= 0) {
+        displayMessage(message.nocompliance_selected_forassign)
+        return false;
+    } else {
+    	displayLoader();
+    	var d = new Date();
+		var month = d.getMonth() + 1;
+		var day = d.getDate();
+		var output = d.getFullYear() + '/' + month + '/' + day;
+		var currentDate = new Date(output);
+
+    	assignCompliance = [];
 		var totalCompliance = 1;
-		var selectedStatus = false;
 		var applicableUnitsArray = [];
 		for (var i = 1; i <= ACOUNT - 1; i++) {
 		    var actComplianceCount = $('.a-' + i).length;
@@ -168,7 +241,6 @@ function callAPI(api_type) {
 		      	var complianceApplicable = false;
 		      	if ($('#c-' + totalCompliance).is(':checked')) {
 		        	complianceApplicable = true;
-		        	selectedStatus = true;
 		      	}
 
 		     	if (complianceApplicable) {
@@ -300,11 +372,17 @@ function callAPI(api_type) {
 					                    	minvaliditydate = true;
 					                  	if (daydiff(convertDue, cvaliditydate) <= 90)
 					                    	maxvaliditydate = true;
-					                  	if (minvaliditydate == false || maxvaliditydate == false) {
+					                  	if (minvaliditydate == false) {
+					                    	displayMessage(message.validity_gt_duedate);
+					                    	hideLoader();
+					                    	return false;
+					                  	}
+					                  	if (maxvaliditydate == false) {
 					                    	displayMessage(message.invalid_validitydate);
 					                    	hideLoader();
 					                    	return false;
 					                  	}
+
 					                }
 					            } else {
 					                displayMessage(message.compliance_triggerdate_required);
@@ -326,84 +404,15 @@ function callAPI(api_type) {
 			    totalCompliance++;
 			}
 		}
-		
-		if (selectedStatus) {
-		    var unit_names = '';
-		    for (var unit in UNITS) {
-		      if ($.inArray(UNITS[unit].unit_id, ACTIVE_UNITS) >= 0) {
-		        if (unit_names == '') {
-		          unit_names += UNITS[unit].unit_name;
-		        } else {
-		          unit_names += ', ' + UNITS[unit].unit_name;
-		        }
-		      }
-		    }
 
-		    function onSuccess(data) {
-		        displaySuccessMessage(message.save_success);
-		        CURRENT_TAB = 1;
-		        initialize();
-		    }
-		    function onFailure(error, response) {
-		        displayMessage(error);
-		        err_message = message.error;
-		        if (err_message == 'undefined')
-		          displayMessage(error);
-		        else if (error == 'InvalidDueDate') {
-		          task = response.compliance_task;
-		          displayMessage(message.invalid_duedate + task);
-		        } else
-		        displayMessage(err_message);
-		        hideLoader();
-		    }
-		    client_mirror.saveAssignedComplianceFormData(ass_Id, ass_Name, con_Id, con_Name, 
-		    	app_Id, app_Name, assignCompliance, parseInt(le_id), parseInt(d_id),  function (error, response) {
-		        if (error == null) {
-		          onSuccess(response);
-		        } else {
-		          onFailure(error, response);
-		        }
-		    });
-			    
-		} else {
+		if(assignCompliance.length > 0){
+			hideLoader();
+			return true;
+		}else{
 			hideLoader();
 			displayMessage(message.nocompliance_selected_forassign);
+			return false;
 		}
-    }
-}
-
-function validateFirstTab() {
-	var le_id = LEList.find("li.active").attr("id");
-    var d_id = DomainList.find("li.active").attr("id");
-
-	if (le_id == undefined) {
-        displayMessage(message.legalentity_required)
-        return false;
-    }
-    else if (d_id == undefined) {
-        displayMessage(message.domain_required)
-        return false;
-    }
-	else if (ACTIVE_UNITS.length == 0) {
-        displayMessage(message.unit_required)
-        return false;
-    }
-    else if (ACTIVE_FREQUENCY.length == 0) {
-        displayMessage(message.compliancefrequency_required)
-        return false;
-    } else {
-    	LastAct = '';
-		SCOUNT = 1;
-		ACOUNT = 1;
-        return true;
-    }
-};
-
-function validateSecondTab() {
-    if ($('.comp-checkbox:checked').length <= 0) {
-        displayMessage(message.nocompliance_selected_forassign)
-        return false;
-    } else {
         /*$(".total_count_view").hide();
         LastAct = '';
         LastSubAct = '';
@@ -416,7 +425,6 @@ function validateSecondTab() {
         SingleAssignStatutoryList.empty();
         SELECTED_COMPLIANCE = {};
         ACT_MAP = {};*/
-        return true;
     }
 };
 
@@ -522,10 +530,10 @@ function loadCompliances(){
 			    if (due_date != '' || due_date != null) {
 			        if (due_date.length > 1) {
 			          for (var k = 0; k < due_date.length; k++) {
-			            elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="input-box" value="' + due_date[k] + '"/>';
+			            elementDuedate += '<input type="text" id="duedate' + SCOUNT + '-' + k + '" readonly="readonly" class="form-control input-sm" value="' + due_date[k] + '"/>';
 			          }
 			        } else {
-			          elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="input-box" value="' + due_date[0] + '" style="width:50px;"/>';
+			          elementDuedate += '<input type="text" id="duedate' + SCOUNT + '" readonly="readonly" class="form-control input-sm" value="' + due_date[0] + '"/>';
 			        }
 			        due_date_length = due_date.length;
 			    }
@@ -546,9 +554,9 @@ function loadCompliances(){
 			        }
 			        statutorydate += sMonth + ' ' + sDay + ' ';
 			        if (statutory_date.length > 1) {
-			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '-' + j + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
 			        } else {
-			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="input-box trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
+			          elementTriggerdate += '<input type="text" id="triggerdate' + SCOUNT + '" placeholder="Days" class="form-control input-sm trigger" value="' + tDays + '" maxlength="3" style="width:50px; float:left;" />';
 			        }
 			    }
 
@@ -595,8 +603,8 @@ function loadCompliances(){
 
 			    if (frequency != 'On Occurrence') {
 			        if (triggerdate == '') {
-			          $('.trigger', clone2).html(' <input type="text" value="" class="input-box trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
-			          $('.duedate', clone2).html('<input type="text" value="" class="input-box" readonly="readonly" id="duedate' + SCOUNT + '"/>');
+			          $('.trigger', clone2).html(' <input type="text" value="" class="form-control input-sm trigger" placeholder="Days" id="triggerdate' + SCOUNT + '" maxlength="3"/>');
+			          $('.duedate', clone2).html('<input type="text" value="" class="form-control input-sm" readonly="readonly" id="duedate' + SCOUNT + '"/>');
 			        } else {
 			          $('.trigger', clone2).html('<span style="float:right;padding-right:30px;" class="edittrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/icon-edit.png" width="12"></span> <span style="float:right;display: none;padding-right:30px;" class="closetrigger' + SCOUNT + '" value="' + SCOUNT + '"><img src="/images/delete.png" width="12"></span>' + triggerdate + '<div class="edittriggertextbox' + SCOUNT + '" style="display:none;padding-top:10px;">' + elementTriggerdate + '</div>');
 			          $('.duedate', clone2).html('<div>' + elementDuedate + '</div>');

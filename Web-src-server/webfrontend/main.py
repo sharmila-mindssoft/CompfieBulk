@@ -107,11 +107,62 @@ class Controller(object):
             # logger.logWebfront(traceback.format_exc())
             send_invalid_json_format(response)
             return
+        # print actual_data
+        # print token
+        handle_request = HandleRequest(
+            token, actual_data,
+            request.uri(), response, self._http_client,
+            request.remote_ip(), self._company_manager, None
+        )
+        # logger.logWebfront("forward_request")
+        handle_request.forward_request()
+        request.set_close_callback(
+            handle_request.connection_closed
+        )
+
+    def handle_file_post(self, request, response):
+        data = None
+        actual_data = None
+        try:
+
+            data = request.body()
+            data = json.loads(data)
+            if type(data) is not list:
+                send_bad_request(
+                    response,
+                    expectation_error("a list", type(data))
+                )
+                return
+            if len(data) != 2:
+                send_invalid_json_format(response)
+                return
+            token = data[0]
+            # logger.logWebfront(str(token))
+            actual_data = data[1]
+            if type(token) is unicode:
+                token = token.encode("utf8")
+            elif type(token) is str:
+                pass
+            else:
+                send_bad_request(
+                    response,
+                    expectation_error("a string", type(token))
+                )
+                return
+        except Exception:
+            # logger.logWebfront(request.body())
+            print traceback.format_exc()
+            # logger.logWebfront(traceback.format_exc())
+            send_invalid_json_format(response)
+            return
+
+        # print actual_data
+        legal_entity_id = actual_data["request"][1]["le_id"]
 
         handle_request = HandleRequest(
             token, actual_data,
             request.uri(), response, self._http_client,
-            request.remote_ip(), self._company_manager
+            request.remote_ip(), self._company_manager, legal_entity_id
         )
         # logger.logWebfront("forward_request")
         handle_request.forward_request()
@@ -236,6 +287,7 @@ def run_web_front_end(port, knowledge_server_address):
             }
             web_server.low_level_url(url, TemplateHandler, args)
 
+        web_server.url("/api/files", POST=controller.handle_file_post, OPTIONS=cors_handler)
         web_server.url(
             "/api/(.*)",
             POST=controller.handle_post,

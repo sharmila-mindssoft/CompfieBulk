@@ -4,12 +4,16 @@ from distribution.jsonvalidators import (
 from distribution.parse_structure import (
     parse_structure_VectorType_RecordType_protocol_Company,
     parse_structure_Text, parse_structure_RecordType_protocol_IPAddress,
-    parse_structure_UnsignedIntegerType_32, parse_structure_Bool
+    parse_structure_UnsignedIntegerType_32, parse_structure_Bool,
+    parse_structure_VectorType_RecordType_protocol_FileServer,
+    parse_structure_VectorType_RecordType_protocol_Server
 )
 from distribution.to_structure import (
     to_structure_VectorType_RecordType_protocol_Company,
     to_structure_Text, to_structure_RecordType_protocol_IPAddress,
-    to_structure_UnsignedIntegerType_32, to_structure_Bool
+    to_structure_UnsignedIntegerType_32, to_structure_Bool,
+    to_structure_VectorType_RecordType_protocol_FileServer,
+    to_structure_VectorType_RecordType_protocol_Server
 )
 
 #
@@ -101,6 +105,69 @@ class Company(object):
                 self.company_server_ip
             ),
             "is_group": to_structure_Bool(self.is_group)
+        }
+
+
+class FileServer(object):
+    def __init__(self, file_server_ip, legal_entity_id):
+        self.file_server_ip = file_server_ip
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["file_server_ip", "legal_entity_id"])
+        file_server_ip = data.get("file_server_ip")
+        file_server_ip = parse_structure_RecordType_protocol_IPAddress(file_server_ip)
+        legal_entity_id = data.get("legal_entity_id")
+        legal_entity_id = parse_structure_UnsignedIntegerType_32(legal_entity_id)
+        return FileServer(file_server_ip, legal_entity_id)
+
+    def to_structure(self):
+        return {
+            "file_server_ip": to_structure_RecordType_protocol_IPAddress(self.file_server_ip),
+            "legal_entity_id": to_structure_UnsignedIntegerType_32(self.legal_entity_id)
+        }
+
+
+class Server(object):
+    def __init__(self, company_id, short_url, company_server_ip, file_server_info, is_group) :
+        self. company_id = company_id
+        self.short_url = short_url
+        self.company_server_ip = company_server_ip
+        self.file_server_info = file_server_info
+        self.is_group = is_group
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "company_id", "short_url", "company_server_ip", "is_group",
+                "file_server_info"
+            ]
+        )
+        company_id = data.get("company_id")
+        company_id = parse_structure_UnsignedIntegerType_32(company_id)
+        short_url = data.get("short_url")
+        short_url = parse_structure_Text(short_url)
+        company_server_ip = data.get("company_server_ip")
+        company_server_ip = parse_structure_RecordType_protocol_IPAddress(
+            company_server_ip
+        )
+        file_server_info = data.get("file_server_info")
+        file_server_info = parse_structure_VectorType_RecordType_protocol_FileServer(file_server_info)
+        is_group = data.get("is_group")
+        is_group = parse_structure_Bool(is_group)
+        return Server(
+            company_id, short_url, company_server_ip, file_server_info, is_group
+        )
+
+    def to_structure(self):
+        return {
+            "company_id": to_structure_UnsignedIntegerType_32(self.company_id),
+            "short_url": to_structure_Text(self.short_url),
+            "company_server_ip": to_structure_RecordType_protocol_IPAddress(self.company_server_ip),
+            "is_group": to_structure_Bool(self.is_group),
+            "file_server_info": to_structure_VectorType_RecordType_protocol_FileServer(self.file_server_info)
         }
 
 #
@@ -198,9 +265,28 @@ class CompanyServerDetails(Response):
             ),
         }
 
+class ServerDetails(Response):
+    def __init__(self, servers):
+        self.servers = servers
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["servers"])
+        servers = data.get("servers")
+        servers = parse_structure_VectorType_RecordType_protocol_Server(
+            servers
+        )
+        return ServerDetails(servers)
+
+    def to_inner_structure(self):
+        return {
+            "servers": to_structure_VectorType_RecordType_protocol_Server(
+                self.servers
+            )
+        }
 
 def _init_Response_class_map():
-    classes = [CompanyServerDetails]
+    classes = [CompanyServerDetails, ServerDetails]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
