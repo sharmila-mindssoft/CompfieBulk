@@ -108,7 +108,7 @@ class API(object):
         self._io_loop.add_timeout(
             time.time() + 1080, _with_client_info
         )
-        
+
     def close_connection(self, db):
         try:
             db.close()
@@ -152,7 +152,7 @@ class API(object):
                             try:
                                 # db_cons = self.client_connection_pool(company, company_id, "con_pool_group")
                                 self._group_databases[company_id] = company
-                                print " %s added in connection pool" % company_id
+                                # print " %s added in connection pool" % company_id
                             except Exception, e:
                                 # when db connection failed continue to the next server
                                 logger.logClientApi(ip, port)
@@ -168,7 +168,7 @@ class API(object):
                             try:
                                 # db_cons = self.client_connection_pool(company, company_id, "con_pool_le")
                                 self._le_databases[company_id] = company
-                                print " %s added in le connection pool" % company_id
+                                # print " %s added in le connection pool" % company_id
                             except Exception, e:
                                 # when db connection failed continue to the next server
                                 logger.logClientApi(ip, port)
@@ -178,11 +178,10 @@ class API(object):
                                 logger.logClientApi("LE database not available to connect ", str(company_id) + "-" + str(company.to_structure()))
                                 continue
 
-            print self._le_databases
-            print self._group_databases
+            # print self._le_databases
+            # print self._group_databases
 
             def client_added(clients):
-                print "client added callback"
                 for client in clients:
                     _client_id = client.client_id
                     # print _client_id
@@ -273,11 +272,8 @@ class API(object):
             return
 
     def legal_entity_replication_added(self, group_info, le_infos):
-        # print "le_info"
-        # print "Z" * 10
         for r in le_infos :
             le_id = r["legal_entity_id"]
-            # print "legal_entity_replication_added ", le_id
             le_info = self._le_databases.get(le_id)
             if r["user_data"] == 1 :
                 info = LEntityReplicationUSer(group_info, le_info, le_id)
@@ -292,7 +288,6 @@ class API(object):
     ):
         if type(response_data) is not str :
             data = response_data.to_structure()
-            #print data
             s = json.dumps(data, indent=2)
         else:
             s = response_data
@@ -314,7 +309,6 @@ class API(object):
         self, request_data_type, is_group
     ):
         request_data = None
-        # _db = None
         company_id = None
         try:
             data = request.get_json(force=True)
@@ -326,7 +320,6 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
-            # print company_id
             request_data = request_data_type.parse_structure(
                 actual_data
             )
