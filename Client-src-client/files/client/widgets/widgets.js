@@ -652,6 +652,20 @@ function charticon(){
     }
 }
 
+function charturl(){
+    return {
+      1: "/dashboard",
+      2: "/dashboard",
+      3: "/dashboard",
+      4: "/dashboard",
+      5: "/dashboard",
+      6: "/user-score-card",
+      7: "/work-flow-score-card",
+      8: "/compliance-task"
+    }
+}
+
+
 function loadChart(){
   $.each(widget_list, function(k,v){
     var sidebarli = $("#templates .ul-sidebarmenu ul");
@@ -686,7 +700,7 @@ function loadChart(){
               $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
               $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
               $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
-              cardboxclone.addClass("resizable"+v.w_id);
+              cardboxclone.addClass("resizable"+v.w_id);              
               $(".closewidget", cardboxclone).click(function(e){
                 var divitem = $(this).parent().parent();
                 var getitem = divitem.attr('id');
@@ -762,6 +776,7 @@ function loadChart(){
         cardboxclone.css("height", v.height);
       }
       $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+      $(".chart-title", cardboxclone).attr("href", charturl()[v.w_id]);
       $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
       $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
 
