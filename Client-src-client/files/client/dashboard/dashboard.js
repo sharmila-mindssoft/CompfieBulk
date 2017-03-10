@@ -538,6 +538,7 @@ function notCompliedDrilldown(status, data) {
   if (data == '') {
     $('#pagination').hide();
   }
+  ACCORDIONCOUNT = 0;
   $.each(data, function (key, value) {
 
     if (NC_UNITNAME != value.u_name) {
@@ -550,7 +551,7 @@ function notCompliedDrilldown(status, data) {
       if (ACCORDIONCOUNT == 1) { //For First group open collapse
           $('.panel-title td', cloneUnit).attr('aria-expanded', true);
           $('.panel-title td', cloneUnit).removeClass('collapsed');
-          $('.coll-title', cloneUnit).addClass('in');
+         
       }
       $('.drilldown-container .div-notcomplied-list').append(cloneUnit);
 
@@ -558,6 +559,9 @@ function notCompliedDrilldown(status, data) {
       var cloneActTbody = tableActTbody.clone();
       cloneActTbody.attr('id', 'collapse'+ACCORDIONCOUNT);
       cloneActTbody.attr('aria-labelledb', 'heading'+ACCORDIONCOUNT);
+      if (ACCORDIONCOUNT == 1) {
+         cloneActTbody.addClass('in');
+      }
       $('.drilldown-container .div-notcomplied-list').append(cloneActTbody);
 
       NC_UNITNAME = value.u_name;
@@ -1728,7 +1732,7 @@ function updateComplianceList(country_id, user_id, domain_id, year, unit_id, sta
   // $('.compliance-details-drilldown tr').remove();
   // $('.table-assignee-wise-compliance-list').show();
 
-  $(".div-assignee-wise-compliance").empty();
+  $(".div-assignee-wise-compliance").hide();
   $(".assignee-wise").hide();
 
   $('#pagination-assignee').hide();
@@ -2158,6 +2162,35 @@ function initializeChartTabs() {
 function initializeCharts() {
   initializeFilters();
   initializeChartTabs();
+  //From Widget Url to load charts
+  var wid_to_dash_url = window.sessionStorage.widget_to_dashboard_href;
+  console.log("wid_to_dash_url--"+wid_to_dash_url);
+  if (wid_to_dash_url != null && wid_to_dash_url != undefined && wid_to_dash_url != 'undefined') {
+    $(".chart-tab").removeClass("active");
+    if (wid_to_dash_url == "Compliance Status") {
+      $('.chart-tab.compliance-status-tab').addClass('active');
+      chartInput.setChartType('compliance_status');
+      loadSubFilters(selectall = true, singleSelect = false);
+    } else if (wid_to_dash_url == "Escalations") {
+      $('.chart-tab.escalations-tab').addClass('active');
+      chartInput.setChartType('escalations');
+      loadSubFilters(selectall = false, singleSelect = true);
+    } else if (wid_to_dash_url == "Not Complied") {
+      $('.chart-tab.not-complied-tab').addClass('active');
+      chartInput.setChartType('not_complied');
+      loadSubFilters(selectall = false, singleSelect = true);
+    } else if (wid_to_dash_url == "Trend Chart") {
+      $('.chart-tab.trend-chart-tab').addClass('active');
+      chartInput.setChartType('trend_chart');
+      loadSubFilters(selectall = false, singleSelect = true);
+    } else if (wid_to_dash_url == "Risk Chart") {
+      $('.chart-tab.applicability-status-tab').addClass('active');
+      chartInput.setChartType('applicability_status');
+      loadSubFilters(selectall = false, singleSelect = true);
+    }
+    loadCharts();
+    delete window.sessionStorage.widget_to_dashboard_href;
+  }
 }
 function toDict(target, list, id_key, value_key) {
   //console.log(list);
