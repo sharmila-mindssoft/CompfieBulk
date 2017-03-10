@@ -212,7 +212,7 @@ function initClientMirror() {
             data: toJSON(body),
             success: function(data) {
                 //console.log(data);
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
