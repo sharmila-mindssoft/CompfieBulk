@@ -206,7 +206,7 @@ function initClientMirror() {
         //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
-            headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),
@@ -766,7 +766,7 @@ function initClientMirror() {
             },
 
             url: CLIENT_BASE_URL + 'client_user',
-            headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),
@@ -1199,6 +1199,16 @@ function initClientMirror() {
                 'start_date': start_date,
                 'unit_id': unit_id,
                 'duration': duration
+            }
+        ];
+        callerName = 'client_user';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function complianceFilters(le_id, callback) {
+        var request = [
+            'ComplianceFilters', {
+                'le_id': le_id
             }
         ];
         callerName = 'client_user';
@@ -2533,7 +2543,7 @@ function initClientMirror() {
     }
 
     function getWidgetUserScoreCard(callback) {
-         var request = [
+        var request = [
             "GetUserScoreCard", {
                 "le_ids": getLEids()
             }
@@ -2655,13 +2665,13 @@ function initClientMirror() {
             requestFrame
         ];
 
-        var saveData = (function () {
+        var saveData = (function() {
             var a = document.createElement("a");
             document.body.appendChild(a);
             a.style = "display: none";
-            return function (data, fileName) {
+            return function(data, fileName) {
                 // var json = JSON.stringify(data);
-                blob = new Blob([data], {type: "application/octet-stream"});
+                blob = new Blob([data], { type: "application/octet-stream" });
                 // blob = new Blob([data], {type : "image/svg+xml;charset=utf-8"});
                 // var domURL = self.URL || self.webkitURL || self;
                 url = window.URL.createObjectURL(blob);
@@ -2690,14 +2700,14 @@ function initClientMirror() {
                     // alert(this.status);
                     if (this.readyState == 4 && this.status == 200) {
                         var data = this.response;
-                        var fileName=this.getResponseHeader('filename');
+                        var fileName = this.getResponseHeader('filename');
                         saveData(data, fileName);
                     }
                 }
                 return xhr;
             },
             url: '/api/files',
-            headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             crossDomain: true,
             data: toJSON(body),
@@ -2709,15 +2719,15 @@ function initClientMirror() {
 
     function downloadTaskFile() {
         var request = [
-           "DownloadFile",
-           {
+            "DownloadFile",
+            {
                 "le_id": 10,
                 "c_id": 1,
                 "d_id": 1,
-                "u_id" : 12,
+                "u_id": 12,
                 "start_date": "22-Feb-2017",
                 "file_name": "images.jpeg"
-           }
+            }
         ];
         DownloadApiRequest(request);
     }
@@ -2918,7 +2928,8 @@ function initClientMirror() {
         blockServiceProvider: blockServiceProvider,
         getSettingsFormDetails: getSettingsFormDetails,
         saveSettingsFormDetails: saveSettingsFormDetails,
-        downloadTaskFile : downloadTaskFile
+        downloadTaskFile: downloadTaskFile,
+        complianceFilters: complianceFilters
     };
 }
 
