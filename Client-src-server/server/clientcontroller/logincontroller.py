@@ -242,7 +242,10 @@ def user_login_response(db, data, client_id, ip):
     session_type = 1  # web
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
-    employee = "%s - %s" % (employee_code, employee_name)
+    if employee_code is None :
+        employee = employee_name
+    else :
+        employee = "%s - %s" % (employee_code, employee_name)
     username = data["username"]
     mobile_no = data["mobile_no"]
     session_token = add_session(
