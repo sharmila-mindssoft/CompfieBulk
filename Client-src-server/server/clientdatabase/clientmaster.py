@@ -414,8 +414,15 @@ def userManagement_GetBusinessGroup(db):
 # User Management Add - Legal Entity Prerequisite
 ##############################################################################
 def userManagement_GetLegalEntity(db):
-    q = "SELECT legal_entity_id, business_group_id, legal_entity_name From tbl_legal_entities " + \
-        " WHERE is_closed ='0' order by legal_entity_name, business_group_id"
+    # q = "SELECT legal_entity_id, business_group_id, legal_entity_name From tbl_legal_entities " + \
+    #     " WHERE is_closed ='0' order by legal_entity_name, business_group_id"
+    q = " SELECT T01.legal_entity_id, T01.business_group_id, T01.legal_entity_name, " + \
+        " T04.user_id AS le_admin, T04.user_category_id From tbl_legal_entities AS T01 " + \
+        " LEFT JOIN (SELECT T03.legal_entity_id,T02.user_id, T02.user_category_id " + \
+        " FROM tbl_user_legal_entities AS T03 INNER JOIN  tbl_users AS T02 " + \
+        " ON T02.user_id = T03.user_id WHERE   T02.user_category_id = 3) as T04 " + \
+        " ON T01.legal_entity_id = T04.legal_entity_id AND T01.is_closed ='0' " + \
+        " order by T01.legal_entity_name, T01.business_group_id "
     row = db.select_all(q, None)
     return row
 ##############################################################################
