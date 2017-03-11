@@ -93,6 +93,27 @@ class GetGroupAdminReportData(Request):
         return {
         }
 
+class ExportGroupAdminReportData(Request):
+    def __init__(self, client_id, country_id, csv):
+        self.client_id = client_id
+        self.country_id = country_id
+        self.csv = csv
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["client_id", "country_id", "csv"])
+        client_id = data.get("client_id")
+        country_id = data.get("country_id")
+        csv = data.get("csv")
+        return ExportGroupAdminReportData(client_id, country_id, csv)
+
+    def to_inner_staructure(self):
+        return {
+            "client_id": self.client_id,
+            "country_id": self.country_id,
+            "csv": self.csv
+        }
+
 class GetClientDetailsReportData(Request):
     def __init__(
         self, country_id, group_id, business_group_id, legal_entity_id,
@@ -354,7 +375,7 @@ class GetAssignedStatutoryReportFilters(Request):
         }
 
 class GetAssignedStatutoryReport(Request):
-    def __init__(self, country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, statutory_id, unit_id, compliance_id):
+    def __init__(self, country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, statutory_id, unit_id, compliance_id, csv, from_count, page_count):
         self.country_id = country_id
         self.domain_id_optional = domain_id_optional
         self.group_id = group_id
@@ -363,10 +384,16 @@ class GetAssignedStatutoryReport(Request):
         self.statutory_id = statutory_id
         self.unit_id = unit_id
         self.compliance_id = compliance_id
+        self.csv = csv
+        self.from_count = from_count
+        self.page_count = page_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["c_id", "domain_id_optional", "client_id", "bg_id", "le_id", "statutory_id", "unit_id", "comp_id"])
+        data = parse_dictionary(data, [
+            "c_id", "domain_id_optional", "client_id", "bg_id", "le_id",
+            "statutory_id", "unit_id", "comp_id", "csv", "from_count", "page_count"
+        ])
         country_id = data.get("c_id")
         domain_id_optional = data.get("domain_id_optional")
         group_id = data.get("client_id")
@@ -375,7 +402,14 @@ class GetAssignedStatutoryReport(Request):
         statutory_id = data.get("statutory_id")
         unit_id = data.get("unit_id")
         compliance_id = data.get("comp_id")
-        return GetAssignedStatutoryReport(country_id, domain_id_optional, group_id, business_group_id, legal_entity_id, statutory_id, unit_id, compliance_id)
+        csv = data.get("csv")
+        from_count = data.get("from_count")
+        page_count = data.get("page_count")
+        return GetAssignedStatutoryReport(
+            country_id, domain_id_optional, group_id, business_group_id,
+            legal_entity_id, statutory_id, unit_id, compliance_id, csv,
+            from_count, page_count
+        )
 
     def to_inner_structure(self):
         data = {
@@ -387,6 +421,9 @@ class GetAssignedStatutoryReport(Request):
             "statutory_id": self.statutory_id,
             "unit_id": self.unit_id,
             "comp_id": self.compliance_id,
+            "csv": self.csv,
+            "from_count": self.from_count,
+            "page_count": self.page_count
         }
         return data
 
@@ -706,7 +743,8 @@ def _init_Request_class_map():
         GetAssignedStatutoriesList,
         GetComplianceStatutoriesList,
         ExportClientDetailsReportData,
-        ExportReassignUserReportData
+        ExportReassignUserReportData,
+        ExportGroupAdminReportData
     ]
 
     class_map = {}
@@ -937,24 +975,27 @@ class GetAssignedStatutoryReportFiltersSuccess(Response):
         return data
 
 class GetAssignedStatutoryReportSuccess(Response):
-    def __init__(self, unit_groups, act_groups, compliance_statutories_list):
+    def __init__(self, unit_groups, act_groups, compliance_statutories_list, total_count):
         self.unit_groups = unit_groups
         self.act_groups = act_groups
         self.compliance_statutories_list = compliance_statutories_list
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_groups", "act_groups", "compliance_statutories_list"])
+        data = parse_dictionary(data, ["unit_groups", "act_groups", "compliance_statutories_list", "total_count"])
         unit_groups = data.get("unit_groups")
         act_groups = data.get("act_groups")
         compliance_statutories_list = data.get("compliance_statutories_list")
-        return GetAssignedStatutoryReportSuccess(unit_groups, act_groups, compliance_statutories_list)
+        total_count = data.get("total_count")
+        return GetAssignedStatutoryReportSuccess(unit_groups, act_groups, compliance_statutories_list, total_count)
 
     def to_inner_structure(self):
         data = {
             "unit_groups": self.unit_groups,
             "act_groups": self.act_groups,
             "compliance_statutories_list": self.compliance_statutories_list,
+            "total_count": self.total_count
         }
         return data
 
@@ -2005,7 +2046,7 @@ class GroupAdminCountry(object):
 class GroupAdminClientGroupData(object):
     def __init__(
         self, client_id, legal_entity_id, legal_entity_name, unit_count, country_id,
-        country_name, unit_email_date, statutory_email_date
+        country_name, unit_email_date, statutory_email_date, registration_email_date
     ):
         self.client_id = client_id
         self.legal_entity_id = legal_entity_id
@@ -2015,12 +2056,14 @@ class GroupAdminClientGroupData(object):
         self.country_name = country_name
         self.unit_email_date = unit_email_date
         self.statutory_email_date = statutory_email_date
+        self.registration_email_date = registration_email_date
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "client_id", "legal_entity_id", "legal_entity_name", "unit_count",
-            "country_id", "country_name", "unit_email_date", "statutory_email_date"
+            "country_id", "country_name", "unit_email_date", "statutory_email_date",
+            "registration_email_date"
         ])
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
@@ -2030,10 +2073,12 @@ class GroupAdminClientGroupData(object):
         country_name = data.get("country_name")
         unit_email_date = data.get("unit_email_date")
         statutory_email_date = data.get("statutory_email_date")
+        registration_email_date = data.get("registration_email_date")
 
         return GroupAdminClientGroupData(
             client_id, legal_entity_id, legal_entity_name, unit_count,
-            country_id, country_name, unit_email_date, statutory_email_date
+            country_id, country_name, unit_email_date, statutory_email_date,
+            registration_email_date
         )
 
     def to_structure(self):
@@ -2046,6 +2091,7 @@ class GroupAdminClientGroupData(object):
             "country_name": self.country_name,
             "unit_email_date": self.unit_email_date,
             "statutory_email_date": self.statutory_email_date,
+            "registration_email_date": self.registration_email_date
         }
         return data
 

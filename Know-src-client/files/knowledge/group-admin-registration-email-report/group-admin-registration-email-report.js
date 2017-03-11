@@ -11,6 +11,7 @@ var on_current_page = 1;
 var sno = 0;
 var totalRecord;
 var ReportData;
+var csv = false;
 
 function displayLoader() {
   $('.loading-indicator-spin').show();
@@ -44,7 +45,11 @@ function processGroupAdminReportData()
 
 $('#btn-show').click(function () {
 	totalrecords = 0;
+	csv = false;
+	on_current_page = 1;
+    sno = 0;
 	var client_id = $('#group-id').val();
+
 	totalRecord = groupadminList.length;
 
 	if(client_id > 0 && totalRecord > 0)
@@ -65,6 +70,32 @@ $('#btn-show').click(function () {
 		$('.grid-table-rpt').hide();
 		$('.tbody-client-admin-regn-list').find('tr').remove();
 	}
+});
+
+$('#btn-export').click(function () {
+	csv = true;
+	var client_id = $('#group-id').val();
+	var country_id = $('#country-id').val();
+	if (country_id == "")
+		country_id = 0;
+
+	if(parseInt(client_id) > 0){
+		mirror.exportGroupAdminReportData(parseInt(client_id), parseInt(country_id), csv, function (error, response) {
+			if (error == null) {
+				console.log("response:"+response);
+				if(csv){
+	                document_url = response.link;
+	                window.open(document_url, '_blank');
+	            }
+			} else {
+	  			displayMessage(error);
+			}
+		});
+	}else{
+		displayMessage(message.group_required);
+		groupsval.focus();
+	}
+
 });
 
 function loadGroupAdminReportData()
@@ -100,6 +131,7 @@ function loadGroupAdminReportData()
 		if(client_id == groupadminList[i].client_id && (ctry_check == true || ctry_check == false))
 		{
 			console.log("matched")
+			$('.countrynameval').text(groupadminList[i].registration_email_date);
 			var tablerow = $('#templates .table-row');
 			var clonedata = tablerow.clone();
 			$('.sno', clonedata).text(j);

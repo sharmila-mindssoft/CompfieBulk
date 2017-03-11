@@ -41,6 +41,8 @@ var totalRecord = 0;
 var mUnit = 20;
 var mCompliances = 500;
 
+var isPrevious = false;
+
 var Filter_List = $('.filter-list');
 var assignCompliance = [];
 
@@ -249,8 +251,8 @@ function validateSecondTab() {
 			        var compliance_name = combineidVal[1];
 			        var due_date = parseInt(combineidVal[3]);
 			        var frequency = combineidVal[2];
-			        /*var repeats_type = combineidVal[4];
-			        var repeats_every = combineidVal[5];*/
+			        var repeats_type = combineidVal[4];
+			        var repeats_every = combineidVal[5];
 			        var appl_units = $('#appl_unit' + totalCompliance).val();
 			        if (appl_units != '')
 			          appl_units = appl_units.replace(/,\s*$/, '').split(',');
@@ -341,7 +343,7 @@ function validateSecondTab() {
 					            trigger_before_days = sort_elements[dDates][1];
 					            if (trigger_before_days != '') {
 					                var max_triggerbefore = 0;
-					                /*if (repeats_type != null) {
+					                if (repeats_type != null) {
 					                  if (repeats_type == 1) {
 					                    max_triggerbefore = repeats_every;
 					                  } else if (repeats_type == 2) {
@@ -349,7 +351,7 @@ function validateSecondTab() {
 					                  } else {
 					                    max_triggerbefore = repeats_every * 365;
 					                  }
-					                }*/
+					                }
 					                trigger_before_days = parseInt(trigger_before_days);
 					                if (trigger_before_days > 100) {
 					                  	displayMessage(message.triggerbefore_exceed);
@@ -361,11 +363,11 @@ function validateSecondTab() {
 					                  	hideLoader();
 					                  	return false;
 					                }
-					               /* if (max_triggerbefore > 0 && trigger_before_days > max_triggerbefore) {
+					                if (max_triggerbefore > 0 && trigger_before_days > max_triggerbefore) {
 					                  displayMessage(message.triggerdays_exceeding_repeatsevery);
 					                  hideLoader();
 					                  return false;
-					                }*/
+					                }
 					                if (validitydate != null) {
 					                  	var convertDue = convert_date(sort_elements[dDates][0]);
 					                  	if (cvaliditydate >= convertDue)
@@ -524,8 +526,8 @@ function loadCompliances(){
 			    var elementDuedate = '';
 			    var due_date_length = 0;
 			    var disp_appl_unit = applicable_units.length + '/' + ACTIVE_UNITS.length;
-			    //var repeats_type = value.repeats_by;
-			    //var repeats_every = value.repeats_every;
+			    var repeats_type = value.repeat_by;
+			    var repeats_every = value.r_every;
 
 			    if (due_date != '' || due_date != null) {
 			        if (due_date.length > 1) {
@@ -560,7 +562,7 @@ function loadCompliances(){
 			        }
 			    }
 
-			    var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length;
+			    var combineId = compliance_id + '#' + compliance_name + '#' + frequency + '#' + due_date_length + '#' + repeats_type + '#' + repeats_every;
 			    var COMPRow = $('#compliances .table-compliances .row-compliances');
 			    var clone2 = COMPRow.clone();
 			    $('.comp-checkbox', clone2).attr('id', 'c-' + SCOUNT);
@@ -598,8 +600,8 @@ function loadCompliances(){
 			          statutorydate = summary;
 			        }
 			    }
-			    //$('.summary', clone2).text(statutorydate);
-			    $('.summary', clone2).text(summary);
+			    $('.summary', clone2).text(statutorydate);
+			    //$('.summary', clone2).text(summary);
 
 			    if (frequency != 'On Occurrence') {
 			        if (triggerdate == '') {
@@ -663,9 +665,18 @@ function loadCompliances(){
 			    $('.closetrigger' + SCOUNT).click(function () {
 			        var text = $(this).attr('class');
 			        var clickvalue = text.substring(text.lastIndexOf('r') + 1);
-			        $('.edittriggertextbox' + clickvalue).hide();
-			        $('.edittrigger' + clickvalue).show();
-			        $('.closetrigger' + clickvalue).hide();
+			        var isClosed = true;
+			        $('.edittriggertextbox' + clickvalue +" input").each(function () {
+						if($(this).val().trim() == ''){
+							isClosed = false;
+							return false;
+						}
+					});
+			        if(isClosed){
+			        	$('.edittriggertextbox' + clickvalue).hide();
+				        $('.edittrigger' + clickvalue).show();
+				        $('.closetrigger' + clickvalue).hide();
+			        }
 			    });
 			    $('.trigger').on('input', function (e) {
 			        this.value = isNumbers($(this));
@@ -909,36 +920,49 @@ function showTab() {
         $('#tab1').show();
         NextButton.show();
     } else if (CURRENT_TAB == 2) {
-        if (validateFirstTab() == false) {
-            CURRENT_TAB -= 1;
-            return false;
-        } else {
-            displayLoader();
-            var le_id = LEList.find("li.active").attr("id");
-        	var d_id = DomainList.find("li.active").attr("id");
+    	if(isPrevious){
+    		$(".total_count_view").show();
+    		hideall();
+            enabletabevent(2);
+            $('.tab-step-2').addClass('active')
+            $('#tab2').addClass('active in');
+            $('#tab2').show();
+            PreviousButton.show();
+            NextButton.show();
+            isPrevious = false;
+    	}else{
+    		if (validateFirstTab() == false) {
+	            CURRENT_TAB -= 1;
+	            return false;
+	        } else {
+	            displayLoader();
+	            var le_id = LEList.find("li.active").attr("id");
+	        	var d_id = DomainList.find("li.active").attr("id");
 
-            client_mirror.getComplianceTotalToAssign(
-                parseInt(le_id), ACTIVE_UNITS, parseInt(d_id), ACTIVE_FREQUENCY, 
-                function(error, data) {
-                    if (error == null) {
-                    	totalRecord = data.r_count;
-                    	callAPI(GET_COMPLIANCE);
-                        hideall();
-                        enabletabevent(2);
-                        $('.tab-step-2').addClass('active')
-                        $('#tab2').addClass('active in');
-                        $('#tab2').show();
-                        PreviousButton.show();
-                        NextButton.show();
-                    } else {
-                        displayMessage(error);
-                        hideLoader();
-                        CURRENT_TAB -= 1;
-                        return false;
-                    }
-                }
-            );
-        }
+	            client_mirror.getComplianceTotalToAssign(
+	                parseInt(le_id), ACTIVE_UNITS, parseInt(d_id), ACTIVE_FREQUENCY, 
+	                function(error, data) {
+	                    if (error == null) {
+	                    	totalRecord = data.r_count;
+	                    	callAPI(GET_COMPLIANCE);
+	                        hideall();
+	                        enabletabevent(2);
+	                        $('.tab-step-2').addClass('active')
+	                        $('#tab2').addClass('active in');
+	                        $('#tab2').show();
+	                        PreviousButton.show();
+	                        NextButton.show();
+	                    } else {
+	                        displayMessage(error);
+	                        hideLoader();
+	                        CURRENT_TAB -= 1;
+	                        return false;
+	                    }
+	                }
+	            );
+	        }
+    	}
+        
     } else if (CURRENT_TAB == 3) {
         if (validateSecondTab() == false) {
             CURRENT_TAB -= 1;
@@ -1204,6 +1228,13 @@ function pageControls(){
     PreviousButton.click(function() {
         $(".total_count_view").hide();
         CURRENT_TAB = CURRENT_TAB - 1;
+
+        if(CURRENT_TAB == 2){
+        	isPrevious = true;
+        }else{
+        	isPrevious = false;
+        }
+        
         showTab();
     });
     ShowMore.click(function() {

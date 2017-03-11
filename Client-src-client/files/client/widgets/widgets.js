@@ -659,9 +659,9 @@ function charturl(){
       3: "/dashboard",
       4: "/dashboard",
       5: "/dashboard",
-      6: "/user-score-card",
-      7: "/work-flow-score-card",
-      8: "/compliance-task"
+      6: "/work-flow-score-card",
+      7: "/domain-score-card",
+      8: "/completed-tasks-current-year"
     }
 }
 
@@ -698,6 +698,10 @@ function loadChart(){
               var cardboxclone = cardbox.clone();
               cardboxclone.attr("id", v.w_id);
               $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+              $(".chart-title", cardboxclone).attr("href", charturl()[v.w_id]);
+              $(".chart-title", cardboxclone).on("click", function(){
+                window.sessionStorage.widget_to_dashboard_href = SIDEBAR_MAP[v.w_id];
+              });
               $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
               $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
               cardboxclone.addClass("resizable"+v.w_id);
@@ -777,9 +781,12 @@ function loadChart(){
       }
       $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
       $(".chart-title", cardboxclone).attr("href", charturl()[v.w_id]);
+      $(".chart-title", cardboxclone).on("click", function(){
+        window.sessionStorage.widget_to_dashboard_href = SIDEBAR_MAP[v.w_id];
+      });
       $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
       $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
-
+      //
       $(".dragbox .pins .ti-pin2", cardboxclone).click(function(e){
         var widget_info = [];
         $(".dragdrophandles li").each(function(i, v){
@@ -900,6 +907,7 @@ function loadSidebarMenu(){
 }
 
 $(document).ready(function () {
+  delete window.sessionStorage.widget_to_dashboard_href;
   hideLoader();
   loadSidebarMenu();
   $('.dragdrophandles').sortable({

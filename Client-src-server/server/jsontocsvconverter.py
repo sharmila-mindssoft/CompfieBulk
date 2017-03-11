@@ -9,7 +9,7 @@ import datetime
 from clientprotocol import (clientcore)
 from server.common import (
     string_to_datetime, datetime_to_string,
-    convert_to_dict, datetime_to_string_time
+    convert_to_dict, datetime_to_string_time, get_current_date
 )
 from server.clientdatabase.common import (
     get_country_domain_timelines
@@ -85,10 +85,10 @@ class ConvertJsonToCSV(object):
                         db, request, session_user)
                 elif report_type == "LegalEntityWiseReport":
                     self.generate_legal_entity_wise_report(
-                        db, request, session_user)
+                        db, request, session_user, report_type)
                 elif report_type == "DomainWiseReport":
                     self.generate_legal_entity_wise_report(
-                        db, request, session_user)
+                        db, request, session_user, report_type)
                 elif report_type == "UnitWiseReport":
                     self.generate_unit_wise_report(
                         db, request, session_user)
@@ -1562,7 +1562,7 @@ class ConvertJsonToCSV(object):
             self.write_csv(None, csv_values)
 
     def generate_legal_entity_wise_report(
-        self, db, request, session_user
+        self, db, request, session_user, rpt_type
     ):
         where_clause = None
         condition_val = []
@@ -1598,7 +1598,10 @@ class ConvertJsonToCSV(object):
             "concurred_by, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
             "t1.approved_by) as approved_by, t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
             "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
-            "as duration_type, t1.approve_status "
+            "as duration_type, t1.approve_status, (select country_name from tbl_countries where country_id =  " + \
+            "t3.country_id) as country_name, (select domain_name from tbl_domains where domain_id = " + \
+            "t3.domain_id) as domain_name, (select legal_entity_name from tbl_legal_entities where legal_entity_id = " + \
+            "t1.legal_entity_id) as legal_entity_name "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_history_id = t1.compliance_history_id " + \
             "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -1648,15 +1651,15 @@ class ConvertJsonToCSV(object):
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.due_date >= " + \
+                " date(%s)  and t1.due_date <= " + \
+                " date(%s) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
-            where_clause = where_clause + " and t1.due_date between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.due_date >= " + \
+                " date(%s)  and t1.due_date <= " + \
+                " date(curdate()) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
             due_to = string_to_datetime(due_to).date()
@@ -1682,17 +1685,35 @@ class ConvertJsonToCSV(object):
         result = db.select_all(query, condition_val)
 
         is_header = False
-        if not is_header:
-            csv_headers = [
-                "SNO", "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
-                "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
-                "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
-                "Duration"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
+
         j = 1
         for row in result:
+            if not is_header:
+                if rpt_type == "LegalEntityWiseReport":
+                    text = "Legal Entity Wise Report - (" + row["country_name"] + "-" + row["domain_name"] + "-" + row["legal_entity_name"] + ")"
+                else:
+                    text = "Domain Wise Report - (" + row["country_name"] + "-" + row["domain_name"] + "-" + row["legal_entity_name"] + ")"
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "SNO", "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                    "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
+                    "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
+                    "Duration"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
             if statutory_mapping[0].find(">>") >= 0:
@@ -1763,7 +1784,10 @@ class ConvertJsonToCSV(object):
             "concurred_by, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
             "t1.approved_by) as approved_by, t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
             "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
-            "as duration_type, t1.approve_status "
+            "as duration_type, t1.approve_status, (select country_name from tbl_countries where country_id =  " + \
+            "t3.country_id) as country_name, (select legal_entity_name from tbl_legal_entities where legal_entity_id = " + \
+            "t1.legal_entity_id) as legal_entity_name, (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = " + \
+            "t1.unit_id) as unit_name "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_history_id = t1.compliance_history_id " + \
             "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -1818,15 +1842,15 @@ class ConvertJsonToCSV(object):
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.due_date >= " + \
+                " date(%s)  and t1.due_date <= " + \
+                " date(%s) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
-            where_clause = where_clause + " and t1.due_date between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.due_date >= " + \
+                " date(%s)  and t1.due_date <= " + \
+                " date(curdate()) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
             due_to = string_to_datetime(due_to).date()
@@ -1847,17 +1871,32 @@ class ConvertJsonToCSV(object):
         result = db.select_all(query, condition_val)
 
         is_header = False
-        if not is_header:
-            csv_headers = [
-                "SNO", "Domain Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
-                "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
-                "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
-                "Duration"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
+
         j = 1
         for row in result:
+            if not is_header:
+                text = "Unit Wise Report - (" + row["country_name"] + "-" + row["legal_entity_name"] + "-" + row["unit_name"] + ")"
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "SNO", "Domain Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                    "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
+                    "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
+                    "Duration"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
             if statutory_mapping[0].find(">>") >= 0:
@@ -1923,7 +1962,10 @@ class ConvertJsonToCSV(object):
             "concurred_by, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
             "t1.approved_by) as approved_by, t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
             "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
-            "as duration_type, t1.approve_status "
+            "as duration_type, t1.approve_status, (select country_name from tbl_countries where country_id =  " + \
+            "t3.country_id) as country_name, (select domain_name from tbl_domains where domain_id = " + \
+            "t3.domain_id) as domain_name, (select service_provider_name from tbl_service_providers where " + \
+            "service_provider_id = t4.service_provider_id) as service_provider_name "
         from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
             "on (t1.completed_by=t4.user_id or t1.concurred_by=t4.user_id or t1.approved_by=t4.user_id) " + \
             "left join tbl_compliance_activity_log as t2 " + \
@@ -1948,15 +1990,15 @@ class ConvertJsonToCSV(object):
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.due_date >= " + \
+                " date(%s)  and t1.due_date <= " + \
+                " date(%s) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
-            where_clause = where_clause + " and t1.due_date between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.due_date >= " + \
+                " date(%s)  and t1.due_date <= " + \
+                " date(curdate()) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
             due_to = string_to_datetime(due_to).date()
@@ -1988,17 +2030,32 @@ class ConvertJsonToCSV(object):
         result = db.select_all(query, condition_val)
 
         is_header = False
-        if not is_header:
-            csv_headers = [
-                "SNO", "Legal Entity", "Unit Code", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
-                "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
-                "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
-                "Duration"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
+
         j = 1
         for row in result:
+            if not is_header:
+                text = "Service Provider Wise Report - (" + row["country_name"] + "-" + row["domain_name"] + "-" + row["service_provider_name"] + ")"
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "SNO", "Legal Entity", "Unit Code", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                    "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
+                    "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
+                    "Duration"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
             if statutory_mapping[0].find(">>") >= 0:
@@ -2069,7 +2126,8 @@ class ConvertJsonToCSV(object):
             "concurred_by, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
             "t1.approved_by) as approved_by, t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
             "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
-            "as duration_type, t1.approve_status "
+            "as duration_type, t1.approve_status, (select country_name from tbl_countries where country_id =  " + \
+            "t3.country_id) as country_name "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_history_id = t1.compliance_history_id " + \
             "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -2116,15 +2174,15 @@ class ConvertJsonToCSV(object):
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.due_date between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.due_date >= " + \
+                " date(%s)  and t1.due_date <= " + \
+                " date(%s) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
-            where_clause = where_clause + " and t1.due_date between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.due_date >= " + \
+                " date(%s)  and t1.due_date <= " + \
+                " date(curdate()) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
             due_to = string_to_datetime(due_to).date()
@@ -2150,17 +2208,32 @@ class ConvertJsonToCSV(object):
         result = db.select_all(query, condition_val)
 
         is_header = False
-        if not is_header:
-            csv_headers = [
-                "SNO", "Legal Entity", "Unit Code", "Domain", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
-                "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
-                "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
-                "Duration"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
+
         j = 1
         for row in result:
+            if not is_header:
+                text = "User Wise Report - (" + row["country_name"] + ")"
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "SNO", "Legal Entity", "Unit Code", "Domain", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                    "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
+                    "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
+                    "Duration"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+
             task_status = None
             statutory_mapping = json.loads(row["statutory_mapping"])
             if statutory_mapping[0].find(">>") >= 0:
@@ -2215,7 +2288,8 @@ class ConvertJsonToCSV(object):
         select_qry = "select t1.unit_id, (select business_group_name from tbl_business_groups where business_group_id = " + \
             "t1.business_group_id) as business_group_name, (select legal_entity_name from tbl_legal_entities " + \
             "where legal_entity_id = t1.legal_entity_id) as legal_entity_name, t1.unit_code, t1.unit_name, " + \
-            "t1.address, t1.postal_code, " + \
+            "t1.address, t1.postal_code, (select country_name " + \
+            "from tbl_countries where country_id = t1.country_id) as country_name, " + \
             "t1.geography_name, t1.is_closed, t1.closed_on, t1.division_id, t1.category_id, (select  " + \
             "division_name from tbl_divisions where division_id = t1.division_id) as division_name, " + \
             "(select category_name from tbl_categories where category_id = t1.category_id) as " + \
@@ -2306,15 +2380,30 @@ class ConvertJsonToCSV(object):
         result_1 = db.select_all(query, condition_val)
 
         is_header = False
-        if not is_header:
-            csv_headers = [
-                "SNO", "Business Group", "Legal Entity", "Division Name", "Unit Code", "Unit Name", "Domain",
-                "Organization Type", "Address", "Postal Code",  "Status", "Date"
-            ]
-            self.write_csv(csv_headers, None)
-            is_header = True
+
         j = 1
         for row in result:
+            if not is_header:
+                text = "Unit Details - (" + row["country_name"] + ")"
+                csv_headers = [
+                    "", "", "", "", text, "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "Aparajitha Group", "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", ""
+                ]
+                self.write_csv(csv_headers, None)
+                csv_headers = [
+                    "SNO", "Business Group", "Legal Entity", "Division Name", "Unit Code", "Unit Name", "Domain",
+                    "Organization Type", "Address", "Postal Code",  "Status", "Date"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+
             unit_id = row["unit_id"]
             unit_code = row["unit_code"]
             unit_name = row["unit_name"]
@@ -2385,16 +2474,20 @@ class ConvertJsonToCSV(object):
             condition_val.append(statutory_mapping)
 
         if due_from is not None and due_to is not None:
-            where_clause = where_clause + " and t3.created_on between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            due_from = string_to_datetime(due_from).date()
+            due_to = string_to_datetime(due_to).date()
+            where_clause = where_clause + " and t3.created_on >= " + \
+                " date(%s)  and t3.created_on <= " + \
+                " date(%s) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
-            where_clause = where_clause + " and t3.created_on between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            due_from = string_to_datetime(due_from).date()
+            where_clause = where_clause + " and t3.created_on >= " + \
+                " date(%s)  and t3.created_on <= " + \
+                " date(curdate()) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
+            due_to = string_to_datetime(due_to).date()
             where_clause = where_clause + " and t3.created_on < " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) "
             condition_val.append(due_to)
@@ -2407,6 +2500,18 @@ class ConvertJsonToCSV(object):
         result = db.select_all(query, condition_val)
         is_header = False
         if not is_header:
+            csv_headers = [
+                "", "", "Statutory Notifications List", "", "", ""
+            ]
+            self.write_csv(csv_headers, None)
+            csv_headers = [
+                "", "", "Aparajitha Group", "", "", ""
+            ]
+            self.write_csv(csv_headers, None)
+            csv_headers = [
+                "", "", "as on " + datetime_to_string(get_current_date()), "", "", ""
+            ]
+            self.write_csv(csv_headers, None)
             csv_headers = [
                 "Compliance ID", "Act", "Compliance Task", "Compliance Description",
                 "Date", "Notification Content"
@@ -2440,7 +2545,7 @@ class ConvertJsonToCSV(object):
         select_qry = "select t1.user_id, t1.form_id, t1.action, t1.created_on, (select  " + \
             "employee_code from tbl_users where user_id " + \
             "= t1.user_id) as emp_code, (select  " + \
-            "employee_name) from tbl_users where user_id " + \
+            "employee_name from tbl_users where user_id " + \
             "= t1.user_id) as user_name " + \
             "from tbl_activity_log as t1 where "
         where_clause = "t1.form_id <> 0 and t1.legal_entity_id = %s "
@@ -2455,15 +2560,15 @@ class ConvertJsonToCSV(object):
         if due_from is not None and due_to is not None:
             due_from = string_to_datetime(due_from).date()
             due_to = string_to_datetime(due_to).date()
-            where_clause = where_clause + " and t1.created_on between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(%s, INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.created_on >= " + \
+                " date(%s)  and t1.created_on <= " + \
+                " date(%s) "
             condition_val.extend([due_from, due_to])
         elif due_from is not None and due_to is None:
             due_from = string_to_datetime(due_from).date()
-            where_clause = where_clause + " and t1.created_on between " + \
-                " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-                " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+            where_clause = where_clause + " and t1.created_on >= " + \
+                " date(%s)  and t1.created_on <= " + \
+                " date(curdate()) "
             condition_val.append(due_from)
         elif due_from is None and due_to is not None:
             due_to = string_to_datetime(due_to).date()
@@ -2479,6 +2584,18 @@ class ConvertJsonToCSV(object):
         result = db.select_all(query, condition_val)
         is_header = False
         if not is_header:
+            csv_headers = [
+                "", "Audit Trail Report", ""
+            ]
+            self.write_csv(csv_headers, None)
+            csv_headers = [
+                "", "Aparajitha Group", ""
+            ]
+            self.write_csv(csv_headers, None)
+            csv_headers = [
+                "", "as on " + datetime_to_string(get_current_date()), ""
+            ]
+            self.write_csv(csv_headers, None)
             csv_headers = [
                 "User Name", "Action", "Created On"
             ]
@@ -2541,6 +2658,18 @@ class ConvertJsonToCSV(object):
         is_header = False
         if not is_header:
             csv_headers = [
+                "", "Login Trace Report", ""
+            ]
+            self.write_csv(csv_headers, None)
+            csv_headers = [
+                "", "Aparajitha Group", ""
+            ]
+            self.write_csv(csv_headers, None)
+            csv_headers = [
+                "", "as on " + datetime_to_string(get_current_date()), ""
+            ]
+            self.write_csv(csv_headers, None)
+            csv_headers = [
                 "Action", "Info", "Created On"
             ]
             self.write_csv(csv_headers, None)
@@ -2590,7 +2719,9 @@ class ConvertJsonToCSV(object):
                 "as legal_entity_name, (select concat(unit_code,'-',unit_name,',',address,',', " + \
                 "postal_code) from tbl_units where unit_id = t1.unit_id) as unit_name, t2.statutory_mapping, " + \
                 "t2.compliance_task, (select frequency from tbl_compliance_frequency where frequency_id = " + \
-                "t2.frequency_id) as frequency_name, t2.penal_consequences "
+                "t2.frequency_id) as frequency_name, t2.penal_consequences, (select country_name from tbl_countries " + \
+                "where country_id = t2.country_id) as country_name, (select domain_name from tbl_domains " + \
+                "where domain_id = t2.domain_id) as domain_name "
             union_from_clause = "from tbl_client_compliances as t1 inner join tbl_compliances as t2 " + \
                 "on t2.compliance_id = t1.compliance_id inner join tbl_units as t3 on t3.unit_id = t1.unit_id where "
             union_where_clause = "t2.country_id = %s and t2.domain_id = %s "
@@ -2620,8 +2751,8 @@ class ConvertJsonToCSV(object):
                 condition_val.append(unit_id)
 
             union_where_clause = union_where_clause + "and t1.legal_entity_id = %s and t1.compliance_id not in " + \
-                "(select compliance_id from tbl_assign_compliances) order by t2.compliance_task asc limit %s, %s;"
-            condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
+                "(select compliance_id from tbl_assign_compliances) order by t2.compliance_task asc;"
+            condition_val.extend([legal_entity_id])
 
             query = union_qry + union_from_clause + union_where_clause
             print "qry1"
@@ -2630,17 +2761,31 @@ class ConvertJsonToCSV(object):
 
             risk_report = []
             is_header = False
-            if not is_header:
-                csv_headers = [
-                    "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
-                    "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
-                    "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
-                    "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
+
             j = 1
             for row in result_1:
+                if not is_header:
+                    text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
+                        "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
+                        "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
+                        "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
                 task_status = "Unassigned Compliance"
                 statutory_mapping = json.loads(row["statutory_mapping"])
                 if statutory_mapping[0].find(">>") >= 0:
@@ -2663,7 +2808,7 @@ class ConvertJsonToCSV(object):
                 "',',address,',',postal_code) from tbl_units where unit_id = t1.unit_id) as unit_name, " + \
                 "t3.compliance_task,(select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id) as " + \
                 "frequency_name,(select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-                "t6.assigned_by) as admin_incharge, (select concat(employee_code,'-',employee_name) from tbl_users " + \
+                "t6.assigned_by) as admin_incharge, (select employee_name from tbl_users " + \
                 "where user_id = t1.completed_by) as assignee_name, (select user_category_name from tbl_user_category " + \
                 "where user_category_id = (select user_category_id from tbl_users where user_id = t1.completed_by)) as " + \
                 "assigned_to, t6.assigned_on as assigned_date, t3.penal_consequences, t1.completion_date, t1.due_date, t1.approve_status, " + \
@@ -2673,10 +2818,12 @@ class ConvertJsonToCSV(object):
                 "where user_id = t1.approved_by) as approver_name, t1.remarks, t1.documents, t1.completed_on as " + \
                 "assigned_on, t1.concurred_on, t1.approved_on, t6.validity_date, (select duration_type from tbl_" + \
                 "compliance_duration_type where duration_type_id = (select duration_type_id from tbl_compliances where " + \
-                "compliance_id = t3.compliance_id)) as duration, t1.approve_status "
+                "compliance_id = t3.compliance_id)) as duration, t1.approve_status, (select country_name from tbl_countries " + \
+                "where country_id = t3.country_id) as country_name, (select domain_name from tbl_domains " + \
+                "where domain_id = t3.domain_id) as domain_name "
 
             from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
-                "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id inner join " + \
+                "on t2.compliance_history_id = t1.compliance_history_id inner join " + \
                 "tbl_compliances as t3 on t3.compliance_id = t1.compliance_id inner join tbl_client_compliances as t5 " + \
                 "on t5.compliance_id = t1.compliance_id inner join tbl_assign_compliances as t6 on t6.compliance_id = " + \
                 "t1.compliance_id inner join tbl_units as t4 on t4.unit_id = t1.unit_id where "
@@ -2714,8 +2861,8 @@ class ConvertJsonToCSV(object):
                 where_clause = where_clause + "and t1.unit_id = %s "
                 condition_val.append(unit_id)
 
-            where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.approve_status order by t3.compliance_task asc limit %s, %s;"
-            condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
+            where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id order by t3.compliance_task asc;"
+            condition_val.extend([legal_entity_id])
 
             query = select_qry + from_clause + where_clause
             print "qry"
@@ -2723,17 +2870,32 @@ class ConvertJsonToCSV(object):
 
             result = db.select_all(query, condition_val)
             is_header = False
-            if not is_header:
-                csv_headers = [
-                    "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
-                    "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
-                    "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
-                    "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
+
             j = 1
             for row in result:
+                if not is_header:
+                    text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
+                        "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
+                        "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
+                        "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
+
                 task_status = None
                 statutory_mapping = json.loads(row["statutory_mapping"])
                 if statutory_mapping[0].find(">>") >= 0:
@@ -2769,7 +2931,9 @@ class ConvertJsonToCSV(object):
                 "as legal_entity_name, (select concat(unit_code,'-',unit_name,',',address,',', " + \
                 "postal_code) from tbl_units where unit_id = t1.unit_id) as unit_name, t2.statutory_mapping, " + \
                 "t2.compliance_task, (select frequency from tbl_compliance_frequency where frequency_id = " + \
-                "t2.frequency_id) as frequency_name, t2.penal_consequences "
+                "t2.frequency_id) as frequency_name, t2.penal_consequences, (select country_name from tbl_countries " + \
+                "where country_id = t2.country_id) as country_name, (select domain_name from tbl_domains " + \
+                "where domain_id = t2.domain_id) as domain_name "
             union_from_clause = "from tbl_client_compliances as t1 inner join tbl_compliances as t2 " + \
                 "on t2.compliance_id = t1.compliance_id inner join tbl_units as t3 on t3.unit_id = t1.unit_id where "
             union_where_clause = "t2.country_id = %s and t2.domain_id = %s "
@@ -2799,8 +2963,8 @@ class ConvertJsonToCSV(object):
                 condition_val.append(unit_id)
 
             union_where_clause = union_where_clause + "and t1.legal_entity_id = %s and t1.compliance_id not in " + \
-                "(select compliance_id from tbl_assign_compliances) order by t2.compliance_task asc limit %s, %s;"
-            condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
+                "(select compliance_id from tbl_assign_compliances) order by t2.compliance_task asc;"
+            condition_val.extend([legal_entity_id])
 
             query = union_qry + union_from_clause + union_where_clause
             print "qry1"
@@ -2809,17 +2973,32 @@ class ConvertJsonToCSV(object):
 
             risk_report = []
             is_header = False
-            if not is_header:
-                csv_headers = [
-                    "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
-                    "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
-                    "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
-                    "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
+
             j = 1
             for row in result_1:
+                if not is_header:
+                    text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
+                        "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
+                        "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
+                        "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
+
                 task_status = "Unassigned Compliance"
                 statutory_mapping = json.loads(row["statutory_mapping"])
                 if statutory_mapping[0].find(">>") >= 0:
@@ -2846,7 +3025,7 @@ class ConvertJsonToCSV(object):
                 "',',address,',',postal_code) from tbl_units where unit_id = t1.unit_id) as unit_name, " + \
                 "t3.compliance_task,(select frequency from tbl_compliance_frequency where frequency_id = t3.frequency_id) as " + \
                 "frequency_name,(select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-                "t6.assigned_by) as admin_incharge, (select concat(employee_code,'-',employee_name) from tbl_users " + \
+                "t6.assigned_by) as admin_incharge, (select employee_name from tbl_users " + \
                 "where user_id = t1.completed_by) as assignee_name, (select user_category_name from tbl_user_category " + \
                 "where user_category_id = (select user_category_id from tbl_users where user_id = t1.completed_by)) as " + \
                 "assigned_to, t6.assigned_on as assigned_date, t3.penal_consequences, t1.completion_date, t1.due_date, t1.approve_status, " + \
@@ -2856,10 +3035,12 @@ class ConvertJsonToCSV(object):
                 "where user_id = t1.approved_by) as approver_name, t1.remarks, t1.documents, t1.completed_on as " + \
                 "assigned_on, t1.concurred_on, t1.approved_on, t6.validity_date, (select duration_type from tbl_" + \
                 "compliance_duration_type where duration_type_id = (select duration_type_id from tbl_compliances where " + \
-                "compliance_id = t3.compliance_id)) as duration, t1.approve_status "
+                "compliance_id = t3.compliance_id)) as duration, t1.approve_status, (select country_name from tbl_countries " + \
+                "where country_id = t3.country_id) as country_name, (select domain_name from tbl_domains " + \
+                "where domain_id = t3.domain_id) as domain_name "
 
             from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
-                "on t2.compliance_id = t1.compliance_id and t2.unit_id = t1.unit_id inner join " + \
+                "on t2.compliance_history_id = t1.compliance_history_id inner join " + \
                 "tbl_compliances as t3 on t3.compliance_id = t1.compliance_id inner join tbl_client_compliances as t5 " + \
                 "on t5.compliance_id = t1.compliance_id inner join tbl_assign_compliances as t6 on t6.compliance_id = " + \
                 "t1.compliance_id inner join tbl_units as t4 on t4.unit_id = t1.unit_id where "
@@ -2897,8 +3078,8 @@ class ConvertJsonToCSV(object):
                 where_clause = where_clause + "and t1.unit_id = %s "
                 condition_val.append(unit_id)
 
-            where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.approve_status order by t3.compliance_task asc limit %s, %s;"
-            condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
+            where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id order by t3.compliance_task asc;"
+            condition_val.extend([legal_entity_id])
 
             query = select_qry + from_clause + where_clause
             print "qry"
@@ -2906,17 +3087,32 @@ class ConvertJsonToCSV(object):
 
             result = db.select_all(query, condition_val)
             is_header = False
-            if not is_header:
-                csv_headers = [
-                    "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
-                    "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
-                    "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
-                    "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
-                ]
-                self.write_csv(csv_headers, None)
-                is_header = True
+
             j = 1
             for row in result:
+                if not is_header:
+                    text = "Risk Report - (" + row["country_name"] + "-" + row["domain_name"] + ")"
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", text, "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "Aparajitha Group", "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "", "", "", "", "", "", "", "", "", "", "as on " + datetime_to_string(get_current_date()), "", "", "", "", "", "", "", "", "", "", ""
+                    ]
+                    self.write_csv(csv_headers, None)
+                    csv_headers = [
+                        "SNO", "Legal Entity", "Unit Name", "Act / Rules", "Compliance Task",
+                        "Frequency", "Assigned By", "Assigned To", "Assigned Date", "Assignee", "DOC",
+                        "Concurrer", "DOC", "Approver", "DOC", "Start Date", "Due Date", "Validity Date",
+                        "Compliance Task Status", "Remarks", "Duration", "Penal Consequences"
+                    ]
+                    self.write_csv(csv_headers, None)
+                    is_header = True
+
                 task_status = None
                 statutory_mapping = json.loads(row["statutory_mapping"])
                 if statutory_mapping[0].find(">>") >= 0:

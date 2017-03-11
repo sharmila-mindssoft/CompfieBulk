@@ -1598,3 +1598,7 @@ pre {
 .multiselect-container>li>a>label.checkbox {
     padding-left: 45px;
 }
+
+.custombox-modal-container{
+    width: 700px !important;
+}

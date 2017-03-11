@@ -12,7 +12,7 @@ from server.common import (
 )
 
 from server.clientdatabase.general import (
-    get_user_domains, get_user_unit_ids, is_space_available
+    get_user_domains, get_user_unit_ids, is_space_available, get_units_for_user
     )
 __all__ = [
     "process_client_user_request"
@@ -46,6 +46,11 @@ def process_client_user_request(request, db, session_user):
 
     elif type(request) is clientuser.StartOnOccurrenceCompliance:
         result = process_start_on_occurrence_compliance(
+            db, request, session_user
+        )
+
+    elif type(request) is clientuser.ComplianceFilters:
+        result = process_compliance_filters(
             db, request, session_user
         )
 
@@ -193,3 +198,12 @@ def process_start_on_occurrence_compliance(
         session_user
     )
     return clientuser.StartOnOccurrenceComplianceSuccess()
+########################################################
+# Compliance Filters
+########################################################
+def process_compliance_filters(
+    db, request, session_user
+):    
+    user_units = get_units_for_user(db, session_user)    
+
+    return clientuser.ComplianceFiltersSuccess(user_units=user_units)

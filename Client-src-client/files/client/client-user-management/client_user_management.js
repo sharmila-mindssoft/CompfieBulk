@@ -26,8 +26,8 @@ var txtUserGroup = $('#txtUserGroup');
 var divUserGroup = $('#divUserGroup');
 var txtSeatingUnit = $('#txtSeatingUnit');
 var hdnSeatingUnit = $('#hdnSeatingUnit');
-
 var divSeatingUnit = $('#divSeatingUnit');
+
 var txtServiceProvider = $('#txtServiceProvider');
 var hdnServiceProvider = $('#hdnServiceProvider');
 var divServiceProvider = $('#divServiceProvider');
