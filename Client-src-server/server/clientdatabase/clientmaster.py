@@ -1010,14 +1010,15 @@ def is_already_assigned_units(db, unit_ids, domain_ids):
         " ON T01.unit_id = T05.unit_id AND T01.domain_id = T05.domain_id " + \
         " WHERE find_in_set(T05.unit_id, %s) AND find_in_set(T05.domain_id, %s) "
 
-    print "unit_ids>>", unit_ids
-    print "domain_ids>>", domain_ids
-    row = db.select_one(q, [unit_ids, domain_ids])
+    unitList = ",".join(str(uid.unit_id) for uid in unit_ids)
+    domainList = ",".join(str(uid.domain_id) for uid in domain_ids)
+
+    row = db.select_one(q, [unitList, domainList])
      
-    if int(row[0]) > 0:
-        return False
-    else :
+    if int(row["unit_count"]) > 0:        
         return True
+    else :        
+        return False
     
 ############################################################################
 # To Save User Domains

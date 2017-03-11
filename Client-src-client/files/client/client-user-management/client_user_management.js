@@ -216,7 +216,7 @@ userManagementPage.prototype.submitProcess = function() {
         unit_ids = getUnits();
     } else if (parseInt(ddlUserCategory.val()) == '6') {
         is_sp = true;
-        sp_id = 1;
+        sp_id = parseInt(hdnServiceProvider.val().trim());
         s_unit = null;
         u_level = null;
         Domain_ids = getDomainIds();

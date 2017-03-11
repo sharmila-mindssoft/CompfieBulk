@@ -715,8 +715,9 @@ def process_save_client_user(db, request, session_user, client_id):
         user_id=None
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    # elif is_already_assigned_units (db,request.user_unit_ids, request.user_domain_ids):
-    #     return clientmasters.UnitsAlreadyAssigned()
+    if is_already_assigned_units (db,request.user_unit_ids, request.user_domain_ids):
+        return clientmasters.UnitsAlreadyAssigned()
+        
     if save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
 
