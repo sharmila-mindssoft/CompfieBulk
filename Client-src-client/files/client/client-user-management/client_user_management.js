@@ -246,9 +246,22 @@ userManagementPage.prototype.submitProcess = function() {
         if (error == null) {
             displaySuccessMessage(message.save_success);
             t_this.showList();
+        } else {
+            t_this.possibleFailures(error);
         }
     });
 };
+
+userManagementPage.prototype.possibleFailures = function(error) {
+    if (error == "EmployeeCodeAlreadyExists") {
+        displayMessage(message.employeeid_exists);
+    } else if (error == 'UnitsAlreadyAssigned') {
+        displayMessage(message.units_already_assigned);
+    } else {
+        displayMessage(error);
+    }
+};
+
 
 //User Group Auto Complete
 txtUserGroup.keyup(function(e) {
