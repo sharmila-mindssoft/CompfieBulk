@@ -1224,3 +1224,9 @@ h2.chart-title: hover {
 .table-not-complied-status{
     border: 1px solid #ededed;
 }
+.table-compliance-status {
+    border: 1px solid #ededed;   
+}
+.escalation-drilldown-container{
+    margin-top: 40px;
+}

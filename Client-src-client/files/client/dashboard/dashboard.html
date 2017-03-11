@@ -508,10 +508,12 @@ $(function() {
 
               </tr>
           </thead>
-      </table>
-      <tr class="norecords-list">
-        <td class="norecord" colspan="4"></td>
-      </tr>
+        </table>
+        <table>
+          <tr class="norecords-list">
+            <td class="norecord" colspan="4"></td>
+          </tr>
+        </table>
       </div>
       <div class="table-row-accordian-unit">
         <table>
@@ -520,7 +522,119 @@ $(function() {
           </tr>
         </table>
         <table>
-          <tbody>
+          <tbody class="unit-title">
+            <tr class="panel-title">
+              <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
+            </tr>
+          </tbody>
+        </table>
+        <table class="compliance-list-inner">
+          <tbody class="panel-collapse collapse in coll-title tbody-compliance-list"  role="tabpanel" aria-labelledby="headingOne"></tbody>
+        </table>
+      </div>
+      <div class="table-row-list">
+      <table>
+        <tr class="tr-level1">
+          <td colspan="7" align="left"><span class="heading"></span></td>
+        </tr>
+        <tr class="tr-compliance">
+          <td width="02%" class="sno">1</td>
+          <td width="15%" class="businessgroup-name"></td>
+          <td width="10%" class="legalentity-name"></td>
+          <td width="10%" class="division-name"></td>
+          <!-- <td width="10%" class="industry-type-name"></td> -->
+          <td width="15%" class="compliance-name"></td>
+          <td width="10%" class="assigned-to"></td>
+          <td class="delayed-by-row delayed-by"></td>
+          <td class="over-due-row over-due"></td>
+        </tr>
+      </table>
+      </div>
+    </div>
+    <!-- Delayed Escalation-->
+    <div class="delayed-escalation-status">
+      <div class="table-delayed-escalation-status">
+        <table id="datatable-responsive" class="table dt-responsive nowrap div-delayed-escalation-list js-filtertable" cellspacing="0" width="100%">
+          <thead>
+              <tr>
+                  <th width="3%" >#</th>
+                  <th width="13%" class="business-group-row">Business Group</th>
+                  <th width="13%" class="legal-entity-row">Legal Entity </th>
+                  <th width="15%" class="division-row">Division </th>
+                  <!-- <th width="05%" class="type-row">Type </th> -->
+                  <th width="20%" class="compliance-row" >Compliance </th>
+                  <th width="11%" class="assigned-to-row" >Assigned To </th>
+                  <th width="11%" class="delayed-by-row">Delayed By</th>
+                  <th width="11%" class="over-due-row">Over Due</th>
+              </tr>
+              <tr>
+                <td></td>
+                <td class="business-group-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed" />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  </div>
+                </td>
+                <td class="legal-entity-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  </div>
+                </td>
+                <td class="division-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  </div>
+                </td>
+                <!-- <td class="type-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34 "></i>
+                  </div>
+                </td> -->
+                <td class="compliance-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="assigned-to-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="delayed-by-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+                <td class="over-due-row">
+                  <div class="form-group col-sm-12 no-padding">
+                    <input type="text" class="form-control input-sm js-filter-delayed"  />
+                    <i class="fa fa-filter form-control-feedback l-h-34"></i>
+                  </div>
+                </td>
+
+              </tr>
+          </thead>
+        </table>
+        <table>
+          <tr class="norecords-list">
+            <td class="norecord" colspan="4"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="table-row-accordian-unit">
+        <table>
+          <tr class="tr-h2">
+            <td colspan="7" class="escalation-status-text"><span></span></td>
+          </tr>
+        </table>
+        <table>
+          <tbody class="unit-title">
             <tr class="panel-title">
               <td role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 unit-heading" colspan="7"></td>
             </tr>
