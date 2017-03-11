@@ -196,12 +196,20 @@ function showSideBar(idval, data) {
     if (complianceFrequency == 'On Occurrence') {
         $('.validityAndDueDate', cloneValSide).hide();
     }
-    if (data.delayed_by != null) {
-        $('.sidebar-status', cloneValSide).html('Not Complied');
+    // if (data.delayed_by != null) {
+    //     $('.sidebar-status', cloneValSide).html('Not Complied');
+    // }
+    // if (data.delayed_by == null) {
+    //     $('.sidebar-status', cloneValSide).html('InProgress');
+    // }
+    if (data.action == 'Concur') {
+        $('.sidebar-status', cloneValSide).html('Submitted');
+    } else if (data.action == 'Approve') {
+        $('.sidebar-status', cloneValSide).html('Concurred');
+    } else {
+        $('.sidebar-status', cloneValSide).html(data.action);
     }
-    if (data.delayed_by == null) {
-        $('.sidebar-status', cloneValSide).html('InProgress');
-    }
+
     if (data.remarks != 'None') {
         $('.sidebar-remarks span', cloneValSide).html(data.remarks);
     }
@@ -396,13 +404,13 @@ function showSideBar(idval, data) {
         function onSuccess(data) {
             clearMessage();
             if (approval_status == 'Reject Concurrence') {
-                displayMessage(message.compliance_concur_reject);
+                displaySuccessMessage(message.compliance_concur_reject);
             } else if (approval_status == 'Reject Approval') {
-                displayMessage(message.compliance_app_reject);
+                displaySuccessMessage(message.compliance_app_reject);
             } else if (approval_status == 'Approve') {
-                displayMessage(message.compliance_approval);
+                displaySuccessMessage(message.compliance_approval);
             } else if (approval_status == 'Concur') {
-                displayMessage(message.compliance_concurred);
+                displaySuccessMessage(message.compliance_concurred);
             }
             initialize();
             hideLoader();
