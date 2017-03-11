@@ -471,6 +471,7 @@ function ChartInput() {
   this.business_groups = [];
   this.legal_entities = [];
   this.divisions = [];
+  this.categories = [];
   this.units = [];
   this.chart_year = 0;
   // previous_year = 1, current_year = 0, next_year = -1
@@ -930,7 +931,7 @@ function loadDivisions(isSelectAll) {
   }
 }
 function loadCategories(isSelectAll) {
-  $('.category-filter').empty();
+  // $('.category-filter').empty();
   categories = CHART_FILTERS_DATA.cat_info;
   for (var i = 0; i < categories.length; i++) {
     var catg = categories[i];

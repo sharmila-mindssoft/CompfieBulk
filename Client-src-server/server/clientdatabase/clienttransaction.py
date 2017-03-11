@@ -2724,17 +2724,18 @@ def get_review_settings_units(db, request, session_user):
     d_id = request.domain_id
     cat_id = get_user_category(db, session_user)
 
-    where_qry = "WHERE t1.legal_entity_id = %s "
-    condition_val = [le_id]
+    where_qry = "WHERE t1.legal_entity_id = %s and t2.domain_id = %s "
+    condition_val = [le_id, d_id]
     if cat_id > 2:
-        where_qry += "and t2.domain_id = %s AND t2.user_id = %s "
-        condition_val.extend([d_id, session_user])
+        where_qry += " AND t3.user_id = %s "
+        condition_val.extend([session_user])
     query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.geography_name, " + \
             "(SELECT division_name from tbl_divisions where division_id = t1.division_id) " + \
             "as division_name " + \
             "FROM tbl_units as t1 " + \
-            "LEFT JOIN tbl_user_domains t2 on t2.legal_entity_id = t1.legal_entity_id " + \
-            "LEFT JOIN tbl_user_units t3 on t3.unit_id = t1.unit_id %s " + \
+            "INNER JOIN tbl_units_organizations t2 on t2.unit_id = t1.unit_id " + \
+            "LEFT JOIN tbl_user_domains t3 on t3.legal_entity_id = t1.legal_entity_id " + \
+            "LEFT JOIN tbl_user_units t4 on t4.unit_id = t1.unit_id %s " + \
             "GROUP BY t1.unit_id"
     query = query % (where_qry)
     if condition_val is None:

@@ -300,6 +300,7 @@ function showComplianceApplicabilityDrillDownRecord_headingList() {
   var tableHeading = $('#templates .compliance-applicable-status .div-compliance-applicability-list');
   var cloneHeading = tableHeading.clone();
   $('.drilldown-container').append(cloneHeading);  
+  alert("clone heading");
 }
 function showComplianceApplicabilityDrillDownRecord_level1List(data) {
   console.log(data.level1_name);
@@ -426,6 +427,7 @@ function showComplianceApplicabilityDrillDownRecord(data, type) {
   else{
     $('#pagination').hide();
   }
+  console.log(FULLARRAYLIST.toSource());
   //var sub_array_list = get_sub_array(FULLARRAYLIST, STARTCOUNT, ENDCOUNT);
   for (var y = 0; y < totallist; y++) {
     if (Object.keys(FULLARRAYLIST[y])[0] == 'level1_name') {
