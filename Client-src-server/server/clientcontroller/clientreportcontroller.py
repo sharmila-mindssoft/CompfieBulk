@@ -1474,8 +1474,8 @@ def get_unit_list_report(db, request, session_user):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_unit_list_report(db, request)
-        return clientreport.GetunitListReportSuccess(unit_list_report=result)
+        result, total_record = process_unit_list_report(db, request)
+        return clientreport.GetunitListReportSuccess(unit_list_report=result, total_count=total_record)
 
 ##########################################################################
 # Objective: To get domains and acts under legal entity
@@ -1508,8 +1508,8 @@ def get_statutory_notification_list_report(db, request, session_user):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_statutory_notification_list_report(db, request)
-        return clientreport.GetStatutoryNotificationReportDataSuccess(stat_notf_list_report=result)
+        result, total_record = process_statutory_notification_list_report(db, request)
+        return clientreport.GetStatutoryNotificationReportDataSuccess(stat_notf_list_report=result, total_count=total_record)
 
 ##########################################################################
 # Objective: To get activity log under user and form
@@ -1572,5 +1572,5 @@ def get_risk_report_data(db, request, session_user):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_risk_report(db, request)
-        return clientreport.GetRiskReportSuccess(risk_report=result)
+        result, total_record = process_risk_report(db, request)
+        return clientreport.GetRiskReportSuccess(risk_report=result, total_count=total_record)

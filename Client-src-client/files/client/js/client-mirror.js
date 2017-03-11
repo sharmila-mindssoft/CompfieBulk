@@ -2915,10 +2915,10 @@ function initClientMirror() {
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
         getUserManagement_List: getUserManagement_List,
-        blockServiceProvider: blockServiceProvider,
         getSettingsFormDetails: getSettingsFormDetails,
         saveSettingsFormDetails: saveSettingsFormDetails,
         downloadTaskFile : downloadTaskFile
+        blockServiceProvider: blockServiceProvider,
     };
 }
 

@@ -2618,18 +2618,21 @@ class GetUnitListReportFiltersSuccess(Response):
         }
 
 class GetunitListReportSuccess(Response):
-    def __init__(self, unit_list_report):
+    def __init__(self, unit_list_report, total_count):
         self.unit_list_report = unit_list_report
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["unit_list_report"])
+        data = parse_dictionary(data, ["unit_list_report", "total_count"])
         unit_list_report = data.get("unit_list_report")
-        return GetunitListReportSuccess(unit_list_report)
+        total_count = data.get("total_count")
+        return GetunitListReportSuccess(unit_list_report, total_count)
 
     def to_inner_structure(self):
         return {
-            "unit_list_report" : self.unit_list_report
+            "unit_list_report" : self.unit_list_report,
+            "total_count": self.total_count
         }
 
 class GetStatutoryNotificationsListReportFilterSuccess(Response):
@@ -2653,18 +2656,21 @@ class GetStatutoryNotificationsListReportFilterSuccess(Response):
         }
 
 class GetStatutoryNotificationReportDataSuccess(Response):
-    def __init__(self, stat_notf_list_report):
+    def __init__(self, stat_notf_list_report, total_count):
         self.stat_notf_list_report = stat_notf_list_report
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["stat_notf_list_report"])
+        data = parse_dictionary(data, ["stat_notf_list_report", "total_count"])
         stat_notf_list_report = data.get("stat_notf_list_report")
-        return GetStatutoryNotificationReportDataSuccess(stat_notf_list_report)
+        total_count = data.get("total_count")
+        return GetStatutoryNotificationReportDataSuccess(stat_notf_list_report, total_count)
 
     def to_inner_structure(self):
         return {
-            "stat_notf_list_report" : self.stat_notf_list_report
+            "stat_notf_list_report" : self.stat_notf_list_report,
+            "total_count": self.total_count
         }
 
 class GetAuditTrailReportDataSuccess(Response):
@@ -2728,18 +2734,21 @@ class GetRiskReportFiltersSuccess(Response):
         }
 
 class GetRiskReportSuccess(Response):
-    def __init__(self, risk_report):
+    def __init__(self, risk_report, total_count):
         self.risk_report = risk_report
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["risk_report"])
+        data = parse_dictionary(data, ["risk_report", "total_count"])
         risk_report = data.get("risk_report")
-        return GetRiskReportSuccess(risk_report)
+        total_count = data.get("total_count")
+        return GetRiskReportSuccess(risk_report, total_count)
 
     def to_inner_structure(self):
         return {
-            "risk_report" : self.risk_report
+            "risk_report" : self.risk_report,
+            "total_count": self.total_count
         }
 
 class ExportToCSVSuccess(Response):
@@ -4968,14 +4977,14 @@ def _init_Request_class_map():
         GetServiceProviderWiseReport, GetUserWiseReportFilters, GetUserWiseReport,
         GetUnitListReportFilters, GetUnitListReport, GetStatutoryNotificationsListReportFilters,
         GetStatutoryNotificationsListReportData, GetAuditTrailReportData,
-        
-        GetReassignedHistoryReportFilters, GetReassignedHistoryReport, 
-        GetStatusReportConsolidatedFilters, GetStatusReportConsolidated, 
-        GetStatutorySettingsUnitWiseFilters, GetStatutorySettingsUnitWise, 
-        GetDomainScoreCardFilters, GetDomainScoreCard, 
-        GetLEWiseScoreCardFilters, GetLEWiseScoreCard, 
-        GetWorkFlowScoreCardFilters, GetWorkFlowScoreCard, 
-        
+
+        GetReassignedHistoryReportFilters, GetReassignedHistoryReport,
+        GetStatusReportConsolidatedFilters, GetStatusReportConsolidated,
+        GetStatutorySettingsUnitWiseFilters, GetStatutorySettingsUnitWise,
+        GetDomainScoreCardFilters, GetDomainScoreCard,
+        GetLEWiseScoreCardFilters, GetLEWiseScoreCard,
+        GetWorkFlowScoreCardFilters, GetWorkFlowScoreCard,
+
     ]
     class_map = {}
     for c in classes:
@@ -5017,11 +5026,11 @@ def _init_Response_class_map():
         GetStatutoryNotificationReportDataSuccess,
         GetAuditTrailReportDataSuccess,
         GetRiskReportSuccess,
-        GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess, 
-        GetStatusReportConsolidatedFiltersSuccess, GetStatusReportConsolidatedSuccess, 
-        GetStatutorySettingsUnitWiseFiltersSuccess, GetStatutorySettingsUnitWiseSuccess, 
-        GetDomainScoreCardFiltersSuccess, GetDomainScoreCardSuccess, 
-        GetLEWiseScoreCardFiltersSuccess, GetLEWiseScoreCardSuccess, 
+        GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess,
+        GetStatusReportConsolidatedFiltersSuccess, GetStatusReportConsolidatedSuccess,
+        GetStatutorySettingsUnitWiseFiltersSuccess, GetStatutorySettingsUnitWiseSuccess,
+        GetDomainScoreCardFiltersSuccess, GetDomainScoreCardSuccess,
+        GetLEWiseScoreCardFiltersSuccess, GetLEWiseScoreCardSuccess,
         GetWorkFlowScoreCardFiltersSuccess, GetWorkFlowScoreCardSuccess,
     ]
     class_map = {}

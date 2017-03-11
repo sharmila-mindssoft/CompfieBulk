@@ -78,13 +78,13 @@ __all__ = [
     "process_login_trace_report",
     "get_user_info",
     "update_profile",
+    "get_settings_form_data",
+    "save_settings_form_data",
     "block_service_provider",
     "userManagement_EditView_GetUsers",
     "userManagement_EditView_GetLegalEntities",
     "userManagement_EditView_GetDomains",
-    "userManagement_EditView_GetUnits",
-    "get_settings_form_data",
-    "save_settings_form_data"
+    "userManagement_EditView_GetUnits"
 ]
 
 ############################################################################
@@ -352,7 +352,7 @@ def update_service_provider_status(
 # Parameter(s) - Object of database, Service provider id, block status and
 #                session user
 # Return Type - Boolean
-#             - Returns True on successfull block 
+#             - Returns True on successfull block
 #             - Returns RuntimeError on failure block
 ##############################################################################
 def block_service_provider(
@@ -511,7 +511,7 @@ def userManagement_EditView_GetUsers(db, userID):
         " T01.contact_no, T01.mobile_no, T01.address, T01.is_service_provider, T01.is_active, " + \
         " T01.is_disable FROM Tbl_users AS T01 Where T01.user_id = %s"
 
-    row = db.select_all(q, [userID])    
+    row = db.select_all(q, [userID])
     return row
 
 ##############################################################################
@@ -520,7 +520,7 @@ def userManagement_EditView_GetUsers(db, userID):
 def userManagement_EditView_GetLegalEntities(db, userID):
     q = " SELECT user_id, legal_entity_id from tbl_user_legal_entities where user_id = %s "
 
-    row = db.select_all(q, [userID])    
+    row = db.select_all(q, [userID])
     return row
 
 ##############################################################################
@@ -529,7 +529,7 @@ def userManagement_EditView_GetLegalEntities(db, userID):
 def userManagement_EditView_GetDomains(db, userID):
     q = " SELECT user_id, legal_entity_id, domain_id from tbl_user_domains where user_id = %s "
 
-    row = db.select_all(q, [userID])    
+    row = db.select_all(q, [userID])
     return row
 
 ##############################################################################
@@ -538,7 +538,7 @@ def userManagement_EditView_GetDomains(db, userID):
 def userManagement_EditView_GetUnits(db, userID):
     q = " SELECT user_id, legal_entity_id, unit_id from tbl_user_units where user_id = %s "
 
-    row = db.select_all(q, [userID])    
+    row = db.select_all(q, [userID])
     return row
 
 ##############################################################################
@@ -1744,6 +1744,41 @@ def get_service_provider_details_report_data(db, request):
     print "qry"
     print query
     result_users = db.select_all(query, condition_val)
+
+    where_clause = None
+    where_1 = None
+    where_2 = None
+    condition_val = []
+    select_qry = None
+    select_qry = "select t1.service_provider_id, t1.user_id, t1.employee_name, " + \
+        "t1.contact_no, t1.email_id, t1.is_active, (select count(*) from " + \
+        "tbl_user_units where user_id = t1.user_id) as unit_cnt, t1.status_changed_on from tbl_users as t1 "
+
+    if (int(sp_id) > 0 or int(user_id) > 0):
+        where_clause = "where "
+        if int(sp_id) > 0:
+            where_1 = "t1.service_provider_id = %s "
+            condition_val.append(sp_id)
+
+        if int(user_id) > 0:
+            where_2 = "t1.user_id = %s "
+            condition_val.append(user_id)
+
+        if where_1 is not None and where_2 is not None:
+            where_clause = where_clause + str(where_1)+" and "+str(where_2)
+        elif where_1 is not None:
+            where_clause = where_clause + str(where_1)
+        elif where_2 is not None:
+            where_clause = where_clause + str(where_2)
+
+    if where_clause is None:
+        where_clause = "order by t1.employee_name ASC;"
+    else:
+        where_clause = where_clause + "order by t1.employee_name ASC;"
+
+    query = select_qry + where_clause
+    count = db.select_all(query, condition_val)
+
     print result_users
     sp_details = []
 
@@ -1790,7 +1825,7 @@ def get_service_provider_details_report_data(db, request):
                     sp_id, employee_name, mob_no, user_email_id, None, None,
                     user_status, user_status_date, row_1["unit_cnt"]
                 ))
-    return sp_details
+    return sp_details, len(count)
 
 ###############################################################################################
 # Objective: To get the list of users under legal entity
@@ -1874,18 +1909,19 @@ def process_login_trace_report(db, request, client_id):
     if int(user_id) > 0:
         where_clause = where_clause + "and t1.user_id = %s "
         condition_val.append(user_id)
+        due_to = string_to_datetime(due_to).date()
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t1.created_on between " + \
-            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        where_clause = where_clause + " and t1.created_on >= " + \
+            " date(%s)  and t1.created_on <= " + \
+            " date(%s) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
-        where_clause = where_clause + " and t1.created_on between " + \
-            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-            " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+        where_clause = where_clause + " and t1.created_on >= " + \
+            " date(%s)  and t1.created_on <= " + \
+            " date(curdate()) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
@@ -1899,6 +1935,36 @@ def process_login_trace_report(db, request, client_id):
     print "qry"
     print query
     result = db.select_all(query, condition_val)
+
+    where_clause = None
+    condition_val = []
+    select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
+        "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+        "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+    where_clause = "t1.form_id = 0 "
+
+    if int(user_id) > 0:
+        where_clause = where_clause + "and t1.user_id = %s "
+        condition_val.append(user_id)
+    if due_from is not None and due_to is not None:
+        where_clause = where_clause + " and t1.created_on >= " + \
+            " date(%s)  and t1.created_on <= " + \
+            " date(%s) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        where_clause = where_clause + " and t1.created_on >= " + \
+            " date(%s)  and t1.created_on <= " + \
+            " date(curdate()) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        where_clause = where_clause + " and t1.created_on < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    where_clause = where_clause + "order by t1.created_on desc;"
+    query = select_qry + where_clause
+    count = db.select_all(query, condition_val)
+
     activity_list = []
     for row in result:
         if row["action"].find("Log In") >= 0:
@@ -1911,7 +1977,7 @@ def process_login_trace_report(db, request, client_id):
                 row["form_id"], "Logout",
                 row["action"], datetime_to_string_time(row["created_on"])
             ))
-    return activity_list
+    return activity_list, len(count)
 
 
 ###############################################################################################
