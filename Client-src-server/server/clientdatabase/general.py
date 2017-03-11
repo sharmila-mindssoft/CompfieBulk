@@ -1588,6 +1588,10 @@ def get_user_email_name(db, user_ids):
 
     return email_ids, employee_name
 
+def last_day_of_month(any_day):
+    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
+    return next_month - datetime.timedelta(days=next_month.day)
+
 
 def calculate_from_and_to_date_for_domain(db, domain_id):
     # country_id
@@ -1625,36 +1629,24 @@ def calculate_from_and_to_date_for_domain(db, domain_id):
         from_date = datetime.date(current_year, period_from, 1)
     return from_date, to_date
 
-def get_from_and_to_date_for_domain(db, domain_id):
-    columns = "contract_from, contract_to"
-    rows = db.get_data(tblLegalEntities, columns, "1")
-    if rows:
-        contract_from = rows[0]["contract_from"]
-    else:
-        contract_from = None
-        
+def get_from_and_to_date_for_domain(db, country_id, domain_id):
+    from_date = None
+    to_date = None
     columns = "month_from, month_to"
-    # condition = "country_id = %s and domain_id = %s"
-    # condition_val = [country_id, domain_id]
-    condition = " domain_id = %s"
-    condition_val = [domain_id]
+    condition = " country_id = %s and domain_id = %s"
+    condition_val = [country_id, domain_id]
     rows = db.get_data(
         tblClientConfigurations, columns, condition, condition_val
     )
-    period_from = rows[0]["month_from"]
-
-    to_date = contract_from
-    current_year = to_date.year
-    previous_year = current_year-1
-    from_date = datetime.date(previous_year, period_from, 1)
-    r = relativedelta.relativedelta(
-        convert_datetime_to_date(to_date),
-        convert_datetime_to_date(from_date)
-    )
-    no_of_years = r.years
-    no_of_months = r.months
-    if no_of_years is not 0 or no_of_months >= 12:
-        from_date = datetime.date(current_year, period_from, 1)
+    month_from = rows[0]["month_from"]
+    month_to = rows[0]["month_to"]
+    now = datetime.datetime.now()
+    current_year = now.year
+    from_date = str(current_year) + "-" + str(month_from) + "-1"
+    if month_from == 1:
+        to_date = last_day_of_month(datetime.date(current_year, month_to, 1))
+    else:
+        to_date = last_day_of_month(datetime.date(current_year + 1, month_to, 1))
     return from_date, to_date
 
 

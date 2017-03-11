@@ -274,9 +274,9 @@ def report_statutory_settings_unit_Wise(
     db, country_id, bg_id, legal_entity_id, domain_id, unit_id,
         div_id, cat_id, act, compliance_id, frequency_id, status_name, session_user, f_count, t_count
 ):
-    f_date = "2016-07-01"
-    t_date = "2017-06-30"
-    # f_date, t_date = get_from_and_to_date_for_domain(db, domain_id)
+    # f_date = "2016-07-01"
+    # t_date = "2017-06-30"
+    f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
 
     query = "select t01.num, com.compliance_id, cc.legal_entity_id,cc.domain_id, unt.unit_id, " + \
             "(select logo from tbl_legal_entities where legal_entity_id = cc.legal_entity_id) as logo, " + \
@@ -363,7 +363,7 @@ def report_statutory_settings_unit_Wise_total(
 ):
     # f_date = "2016-07-01"
     # t_date = "2017-06-30"
-    f_date, t_date = get_from_and_to_date_for_domain(db, domain_id)
+    f_date, t_date = get_from_and_to_date_for_domain(db, country_id, domain_id)
 
     query = "select count(distinct t01.num) as total_count from tbl_client_compliances as cc " + \
             "inner join tbl_units as unt on cc.unit_id = unt.unit_id " + \

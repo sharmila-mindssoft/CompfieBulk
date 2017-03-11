@@ -1,6 +1,6 @@
 var from_count = 0;
 var page_count = 50;
-
+var LEIDS = client_mirror.getLEids();
 function loadMessages(data) {
     var isEmpty = true;
     $('.tbody-message-list').find('tr').remove();
@@ -49,7 +49,6 @@ function loadMessages(data) {
 }
 
 function initialize() {
-    var LEIDS = client_mirror.getLEids();
     client_mirror.getNotifications(LEIDS, 4, 0, 50, function(error, response) {
         if (error == null) {
             data = response.messages;
