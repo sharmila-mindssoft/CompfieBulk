@@ -466,3 +466,20 @@ class EmailHandler(Email):
         except Exception, e:
             print e
             print "Email Failed for escalations", message
+
+    def notify_group_admin_toreassign_sp_compliances(
+        self, service_provider_name, receiver, cc_person=[]
+    ):
+        subject = "Service Provider Compliance Reassign Notification"
+        message = '''
+            Dear Administrator, \
+            Reassign %s user's compliances to someother user
+        ''' % (
+               service_provider_name
+        )
+        try:
+            self.send_email(receiver, subject, message, cc_person)
+            pass
+        except Exception, e:
+            print e
+            print "", message
