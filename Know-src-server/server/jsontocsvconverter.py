@@ -82,6 +82,7 @@ class ConvertJsonToCSV(object):
                         db, request, session_user)
                 elif report_type == "IPSettingReport":
                     self.generate_ip_setting_report(
+                        db, request, session_user)
                 elif report_type == "GroupAdminRegistrationEMail":
                     self.generate_group_admin_email_report(
                         db, request, session_user)
