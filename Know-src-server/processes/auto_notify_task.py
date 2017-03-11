@@ -6,7 +6,7 @@ from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
 from server.common import (return_hour_minute, get_current_date)
 
-NOTIFY_TIME = "10:00"
+NOTIFY_TIME = "20:02"
 email = EmailHandler()
 class AutoNotify(Database):
     def __init__(
@@ -114,7 +114,7 @@ class AutoNotify(Database):
                         continue
 
                     if c["due_date"].date() < current_date.date() :
-                        print "skipped due_date", c["due_date"].date()
+                        print "skipped due_date because due_date crossed", c["due_date"].date()
                         logNotifyInfo("skipped due_date", c["due_date"].date())
                         continue
                     days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
@@ -125,7 +125,7 @@ class AutoNotify(Database):
                         compliance_name = c["compliance_task"]
                     date_diff = abs((current_date.date() - c["start_date"].date()).days)
                     if date_diff == 0:
-                        logNotifyInfo("skipped due_date", current_date.date())
+                        logNotifyInfo("skipped due_date reminder days is 0", current_date.date())
                         logNotifyInfo("skipped due_date", c["start_date"].date())
                         logNotifyInfo("skipped date_diff ", 0)
                         continue
@@ -170,7 +170,7 @@ class AutoNotify(Database):
                 compliance_name = c["compliance_task"]
 
             if c["due_date"].date() < current_date.date() :
-                logNotifyInfo("skipped due_date", c["due_date"])
+                logNotifyInfo("skipped due_date crossed current date", c["due_date"])
                 continue
 
             if c["due_date"] is None :
@@ -178,7 +178,7 @@ class AutoNotify(Database):
 
             days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
             if days_left == 0 :
-                logNotifyInfo("skipped days_left", 0)
+                logNotifyInfo("skipped days_left reminder days is 0", 0)
                 continue
 
             notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
@@ -270,6 +270,7 @@ class AutoNotify(Database):
             self.begin()
             self.notify_task_details()
             self.commit()
+            self.close()
         except Exception, e :
             print e
             print (traceback.format_exc())
