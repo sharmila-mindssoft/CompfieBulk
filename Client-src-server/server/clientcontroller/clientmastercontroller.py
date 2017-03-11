@@ -936,9 +936,9 @@ def get_service_provider_details_report_filter_data(db, request, session_user):
 # Result: list of record sets which contains service providers details
 ###############################################################################################
 def get_service_provider_details_report(db, request, session_user):
-    service_providers_status_list = get_service_provider_details_report_data(db, request)
+    service_providers_status_list, total_record = get_service_provider_details_report_data(db, request)
     return clientmasters.GetServiceProviderDetailsReportSuccess(
-        sp_details_list=service_providers_status_list
+        sp_details_list=service_providers_status_list, total_count=total_record
     )
 
 
@@ -980,8 +980,8 @@ def get_login_trace_report_data(db, request, session_user, client_id):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_login_trace_report(db, request, client_id)
-        return clientmasters.GetLoginTraceReportDataSuccess(log_trace_activities=result)
+        result, total_record = process_login_trace_report(db, request, client_id)
+        return clientmasters.GetLoginTraceReportDataSuccess(log_trace_activities=result, total_count=total_record)
 
 
 ###############################################################################################
