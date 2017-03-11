@@ -186,7 +186,7 @@ def save_service_provider(db, service_provider, session_user):
         service_provider.service_provider_name
     )
     # Audit Log Entry
-    db.save_activity(session_user, 2, action)
+    db.save_activity(session_user, 1, action)
     return service_provider_id
 
 
@@ -270,7 +270,7 @@ def update_service_provider(db, service_provider, session_user):
     action = "Updated Service Provider \"%s\"" % (
         service_provider.service_provider_name
     )
-    db.save_activity(session_user, 2, action)
+    db.save_activity(session_user, 1, action)
     return result
 
 

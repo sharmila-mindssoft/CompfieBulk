@@ -1839,12 +1839,14 @@ def approve_compliance(
     db.update(tblComplianceHistory, columns, values, condition)
 
     # Getting compliance details from compliance history
-    query = " SELECT tch.unit_id, tch.compliance_id, " + \
+    query = " SELECT tch.legal_entity_id, tch.unit_id, tch.compliance_id, " + \
         " (SELECT frequency_id FROM tbl_compliances tc " + \
         " WHERE tch.compliance_id = tc.compliance_id ) as frequency_id, " + \
         " due_date, completion_date, " + \
         " (select duration_type_id FROM tbl_compliances tc " + \
-        " where tch.compliance_id=tc.compliance_id) as duration_type_id " + \
+        " where tch.compliance_id=tc.compliance_id) as duration_type_id, " + \
+        " (select compliance_task FROM tbl_compliances tc " + \
+        " where tch.compliance_id=tc.compliance_id) as compliance_task " + \
         " FROM tbl_compliance_history tch " + \
         " WHERE compliance_history_id = %s "
     rows = db.select_all(query, [compliance_history_id])
@@ -1902,6 +1904,11 @@ def approve_compliance(
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, "Approved", remarks)
     notify_compliance_approved(db, compliance_history_id, "Approved")
+
+    # Audit Log Entry
+    action = "Compliance Approved \"%s\"" % (row["compliance_task"])
+    db.save_activity(session_user, 9, action, row["legal_entity_id"], unit_id)
+
     return True
 
 
@@ -2143,9 +2150,11 @@ def concur_compliance(
     values.append(compliance_history_id)
     db.update(tblComplianceHistory, columns, values, condition)
 
-    columns = "unit_id, compliance_id, due_date, completion_date, " + \
+    columns = " legal_entity_id, unit_id, compliance_id, due_date, completion_date, " + \
         " (select duration_type_id from tbl_compliances tc where  " + \
-        " tc.compliance_id = tch.compliance_id ) as duration_type_id"
+        " tc.compliance_id = tch.compliance_id ) as duration_type_id ," + \
+        " (select compliance_task FROM tbl_compliances tc " + \
+        " where tch.compliance_id=tc.compliance_id) as compliance_task"
     condition = "compliance_history_id = %s "
     rows = db.get_data(
         tblComplianceHistory+ " tch", columns, condition,
@@ -2156,6 +2165,8 @@ def concur_compliance(
     due_date = rows[0]["due_date"]
     completion_date = rows[0]["completion_date"]
     duration_type_id = rows[0]["duration_type_id"]
+    compliance_task = rows[0]["compliance_task"]
+    legal_entity_id = rows[0]["legal_entity_id"]
 
     columns = []
     values = []
@@ -2190,6 +2201,10 @@ def concur_compliance(
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, "Concurred", remarks)
     notify_compliance_approved(db, compliance_history_id, "Concurred")
+
+    # Audit Log Entry
+    action = "Compliance Concurred \"%s\"" % (compliance_task)
+    db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
     return True
 
 
@@ -2779,17 +2794,18 @@ def get_review_settings_units(db, request, session_user):
     d_id = request.domain_id
     cat_id = get_user_category(db, session_user)
 
-    where_qry = "WHERE t1.legal_entity_id = %s "
-    condition_val = [le_id]
+    where_qry = "WHERE t1.legal_entity_id = %s and t2.domain_id = %s "
+    condition_val = [le_id, d_id]
     if cat_id > 2:
-        where_qry += "and t2.domain_id = %s AND t2.user_id = %s "
-        condition_val.extend([d_id, session_user])
+        where_qry += " AND t3.user_id = %s "
+        condition_val.extend([session_user])
     query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.geography_name, " + \
             "(SELECT division_name from tbl_divisions where division_id = t1.division_id) " + \
             "as division_name " + \
             "FROM tbl_units as t1 " + \
-            "LEFT JOIN tbl_user_domains t2 on t2.legal_entity_id = t1.legal_entity_id " + \
-            "LEFT JOIN tbl_user_units t3 on t3.unit_id = t1.unit_id %s " + \
+            "INNER JOIN tbl_units_organizations t2 on t2.unit_id = t1.unit_id " + \
+            "LEFT JOIN tbl_user_domains t3 on t3.legal_entity_id = t1.legal_entity_id " + \
+            "LEFT JOIN tbl_user_units t4 on t4.unit_id = t1.unit_id %s " + \
             "GROUP BY t1.unit_id"
     query = query % (where_qry)
     if condition_val is None:
