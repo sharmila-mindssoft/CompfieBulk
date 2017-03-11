@@ -33,10 +33,9 @@ class Request(object):
 
 class UploadComplianceTaskFile(Request):
     def __init__(
-        self, client_id, legal_entity_id, country_id,  unit_id, domain_id,
+        self, legal_entity_id, country_id,  unit_id, domain_id,
         start_date, file_info
     ):
-        self.client_id = client_id
         self.legal_entity_id = legal_entity_id
         self.country_id = country_id
         self.unit_id = unit_id
@@ -46,9 +45,8 @@ class UploadComplianceTaskFile(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["ct_id", "le_id", "c_id", "u_id", "d_id", "start_date", "file_info"])
+        data = parse_dictionary(data, ["le_id", "c_id", "u_id", "d_id", "start_date", "file_info"])
         return UploadComplianceTaskFile(
-            data.get("ct_id"),
             data.get("le_id"), data.get("c_id"), data.get("u_id"),
             data.get("d_id"),
             data.get("start_date"), data.get("file_info")
@@ -56,13 +54,74 @@ class UploadComplianceTaskFile(Request):
 
     def to_inner_structure(self):
         return {
-            "ct_id": self.client_id,
             "le_id": self.legal_entity_id,
             "c_id": self.country_id,
             "u_id": self.unit_id,
             "d_id": self.domain_id,
             "start_date": self.start_date,
             "file_info": self.file_info
+        }
+
+class RemoveFile(Request):
+    def __init__(
+        self, legal_entity_id, country_id,  unit_id, domain_id,
+        start_date, file_name
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.start_date = start_date
+        self.file_name = file_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "c_id", "u_id", "d_id", "start_date", "file_name"])
+        return RemoveFile(
+            data.get("le_id"), data.get("c_id"), data.get("u_id"),
+            data.get("d_id"),
+            data.get("start_date"), data.get("file_name")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "c_id": self.country_id,
+            "u_id": self.unit_id,
+            "d_id": self.domain_id,
+            "start_date": self.start_date,
+            "file_name": self.file_name
+        }
+
+class DownloadFile(Request):
+    def __init__(
+        self, legal_entity_id, country_id,  unit_id, domain_id,
+        start_date, file_name
+    ):
+        self.legal_entity_id = legal_entity_id
+        self.country_id = country_id
+        self.unit_id = unit_id
+        self.domain_id = domain_id
+        self.start_date = start_date
+        self.file_name = file_name
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "c_id", "u_id", "d_id", "start_date", "file_name"])
+        return DownloadFile(
+            data.get("le_id"), data.get("c_id"), data.get("u_id"),
+            data.get("d_id"),
+            data.get("start_date"), data.get("file_name")
+        )
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "c_id": self.country_id,
+            "u_id": self.unit_id,
+            "d_id": self.domain_id,
+            "start_date": self.start_date,
+            "file_name": self.file_name
         }
 
 class FileList(object):
@@ -81,7 +140,7 @@ class FileList(object):
         }
 
 def _init_Request_class_map():
-    classes = [UploadComplianceTaskFile]
+    classes = [UploadComplianceTaskFile, RemoveFile, DownloadFile]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -141,9 +200,32 @@ class FileUploadFailed(Response):
     def to_inner_structure(self):
         return {}
 
+class FileRemoved(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return FileRemoved()
+
+    def to_inner_structure(self):
+        return {}
+
+class FileRemoveFailed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        return FileRemoveFailed()
+
+    def to_inner_structure(self):
+        return {}
+
+
 def _init_Response_class_map():
     classes = [
-        FileUploadSuccess, FileUploadFailed
+        FileUploadSuccess, FileUploadFailed, FileRemoved, FileRemoveFailed
 
     ]
     class_map = {}

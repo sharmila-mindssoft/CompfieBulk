@@ -20,6 +20,7 @@ from server.clientdatabase.general import (
     )
 from server.exceptionmessage import client_process_error
 from server.clientcontroller.corecontroller import process_user_forms
+from server.clientdatabase.savetoknowledge import *
 
 __all__ = [
     "process_login_request",
@@ -75,12 +76,10 @@ def process_login_request(
         result = process_validate_rtoken(db, request)
 
     elif type(request) is clientlogin.SaveRegistration:
-        result = process_save_logindetails(db, request)
+        result = process_save_logindetails(db, request, company_id)
 
     elif type(request) is clientlogin.CheckUsername:
         result = process_check_username(db, request)
-
-    
 
     return result
 
@@ -390,7 +389,7 @@ def process_validate_rtoken(db, request):
 #############################################################################
 # Check Registration Token Valid
 #############################################################################
-def process_save_logindetails(db, request):
+def process_save_logindetails(db, request, company_id):
     username = request.username
     password = request.password
     # duplication username validation
@@ -400,6 +399,7 @@ def process_save_logindetails(db, request):
         encrypt_password = encrypt(password)
         token = request.token
         if save_login_details(db, token, username, encrypt_password):
+            SaveGroupAdminName(username, company_id)
             return clientlogin.SaveRegistrationSuccess()
         else:
             return clientlogin.InvalidSessionToken()

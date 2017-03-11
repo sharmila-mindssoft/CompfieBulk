@@ -417,7 +417,7 @@ def return_statutory_settings(data, session_category):
             d["postal_code"]
         )
         locked_cat = d["locked_user_category"]
-        if locked_cat is not None and locked_cat < session_category:
+        if locked_cat is not None and (locked_cat < session_category or session_category == 1):
             allow_nlock = True
         else :
             allow_nlock = False
@@ -491,7 +491,7 @@ def update_statutory_settings(db, data, session_user):
         action = "Statutory settings updated for unit - %s " % (unit_name)
         db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
 
-        update_new_statutory_settings(db, unit_id, domain_id, session_user)
+        update_new_statutory_settings(db, unit_id, domain_id, session_user, submit_status)
 
     if len(statutories) > 0 :
         execute_bulk_insert(db, value_list, submit_status)
@@ -547,9 +547,13 @@ def execute_bulk_insert(db, value_list, s_status):
         table, ",".join(column), value_list, update_column
     )
 
-def update_new_statutory_settings(db, unit_id, domain_id, user_id):
-    q = "Update tbl_client_statutories set updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"
-    db.execute(q, [user_id, get_date_time(), unit_id, domain_id])
+def update_new_statutory_settings(db, unit_id, domain_id, user_id, submit_status):
+    if submit_status == 2 :
+        q = "Update tbl_client_statutories set is_locked=1, locked_on=%s , locked_by =%s, updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"
+        db.execute(q, [get_date_time(), user_id, user_id, get_date_time(), unit_id, domain_id])
+    else :
+        q = "Update tbl_client_statutories set updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"
+        db.execute(q, [user_id, get_date_time(), unit_id, domain_id])
 
 def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user_id):
     q = "Update tbl_client_statutories set is_locked=%s, locked_on=%s , locked_by =%s where unit_id = %s and domain_id = %s"

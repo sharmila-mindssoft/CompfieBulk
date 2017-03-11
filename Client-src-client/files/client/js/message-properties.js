@@ -409,6 +409,8 @@ var message = {
   "unblock_success": "Unblocked Successfully",
   'block_message': 'You want to block this Service Provider',
   'unblock_message': 'You want to unblock this Service Provider',
+  'validity_gt_duedate': 'Validity Date must be Greater than or equal to Due Date',
+  'units_required': 'Units required'
 };
 
 function clearMessage() {

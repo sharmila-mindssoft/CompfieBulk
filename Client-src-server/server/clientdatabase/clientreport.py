@@ -1384,6 +1384,7 @@ def process_service_provider_wise_report(db, request):
     where_clause = where_clause + "and t4.service_provider_id = %s and t1.legal_entity_id = %s " + \
         "order by t1.due_date, t2.compliance_activity_id desc limit %s, %s;"
     condition_val.extend([sp_id, legal_entity_id, int(request.from_count), int(request.page_count)])
+
     query = select_qry + from_clause + where_clause
     print "qry"
     print query

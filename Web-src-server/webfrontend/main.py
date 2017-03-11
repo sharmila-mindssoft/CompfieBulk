@@ -73,7 +73,6 @@ class Controller(object):
         self._company_manager = company_manager
 
     def handle_post(self, request, response):
-        print "handle post"
         data = None
         actual_data = None
         try:
@@ -108,8 +107,8 @@ class Controller(object):
             # logger.logWebfront(traceback.format_exc())
             send_invalid_json_format(response)
             return
-        print actual_data
-        print token
+        # print actual_data
+        # print token
         handle_request = HandleRequest(
             token, actual_data,
             request.uri(), response, self._http_client,
@@ -122,7 +121,6 @@ class Controller(object):
         )
 
     def handle_file_post(self, request, response):
-        print "handle file post"
         data = None
         actual_data = None
         try:
@@ -158,7 +156,7 @@ class Controller(object):
             send_invalid_json_format(response)
             return
 
-        print actual_data
+        # print actual_data
         legal_entity_id = actual_data["request"][1]["le_id"]
 
         handle_request = HandleRequest(

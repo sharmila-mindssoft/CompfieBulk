@@ -74,7 +74,7 @@ class CompanyManager(object) :
             try:
                 data = response.body[6:]
                 data = str(data).decode('base64')
-                print data
+                # print data
                 r = Response.parse_structure(
                     json.loads(data)
                 )

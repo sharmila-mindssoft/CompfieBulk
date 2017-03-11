@@ -143,7 +143,7 @@ api_params = {
     "c_comp_id": make_int_field(),
     "comp_id": make_int_field(),
     "comp_name": make_text_field(length=500),
-    "doc_name": make_string_field(validfun=allow_specialchar),
+    "doc_name": make_string_field(validfun=allow_specialchar, length=200),
     "descp": make_text_field(length=500),
     "s_prov": make_text_field(length=500),
     "comp_app_status": make_bool_field(),
@@ -662,4 +662,5 @@ api_params = {
     "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
     "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
+    "le_admin": make_int_field(is_optional=True),
 }

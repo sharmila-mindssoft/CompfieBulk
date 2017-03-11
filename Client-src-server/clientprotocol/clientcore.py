@@ -4395,24 +4395,27 @@ class ClientUserBusinessGroup_UserManagement(object):
 # User Management Add - Legal Entity
 ##############################################################################
 class ClientUserLegalEntity_UserManagement(object):
-    def __init__(self, legal_entity_id, business_group_id, legal_entity_name):
+    def __init__(self, legal_entity_id, business_group_id, legal_entity_name, le_admin):
         self.legal_entity_id = legal_entity_id
         self.business_group_id = business_group_id
         self.legal_entity_name = legal_entity_name
+        self.le_admin = le_admin
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["legal_entity_id", "business_group_id", "user_category_id"])
+        data = parse_dictionary(data, ["legal_entity_id", "business_group_id", "legal_entity_name", "le_admin"])
         legal_entity_id = data.get("legal_entity_id")
         business_group_id = data.get("business_group_id")
         legal_entity_name = data.get("legal_entity_name")
-        return ClientUserLegalEntity_UserManagement(legal_entity_id, business_group_id, legal_entity_name)
+        le_admin = data.get("le_admin")
+        return ClientUserLegalEntity_UserManagement(legal_entity_id, business_group_id, legal_entity_name, le_admin)
 
     def to_structure(self):
         return {
             "le_id": self.legal_entity_id,
             "bg_id": self.business_group_id,
-            "le_name": self.legal_entity_name            
+            "le_name": self.legal_entity_name,
+            "le_admin": self.le_admin
         }
 ##############################################################################
 # User Management Add - Division

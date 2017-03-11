@@ -25,12 +25,12 @@ class API(object):
         pass
 
     def _send_response(self, response_data, status_code):
-        if type(response_data) is not str :
-            data = response_data.to_structure()
-            #print data
-            s = json.dumps(data, indent=2)
-        else:
-            s = response_data
+        # if type(response_data) is not str and type(response_data) is not Response:
+        #     data = response_data.to_structure()
+        #     #print data
+        #     s = json.dumps(data, indent=2)
+        # else:
+        s = response_data
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -90,14 +90,18 @@ class API(object):
             response_data = unbound_method(
                 self, request_data
             )
-            print response_data
-            return respond(response_data)
+
+            if type(request_data.request) is not fileprotocol.DownloadFile :
+                return respond(response_data)
+            else :
+                return response_data
         except Exception, e:
             print(traceback.format_exc())
             return self._send_response(str(e), 400)
 
     @api_request(fileprotocol.RequestFormat)
     def handle_file_upload(self, request):
+        print "file_upload"
         return process_file_based_request(request)
 
 def handle_isalive():
