@@ -367,7 +367,9 @@ def process_get_compliance_approval_list(db, request, session_user):
         clientcore.COMPLIANCE_APPROVAL_STATUS("Concur"),
         clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Concurrence"),
         clientcore.COMPLIANCE_APPROVAL_STATUS("Approve"),
-        clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Approval")
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Approval"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Rectify Concurrence"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Rectify Approval")
     ]
     return clienttransactions.GetComplianceApprovalListSuccess(
         approval_list=compliance_approval_list,
