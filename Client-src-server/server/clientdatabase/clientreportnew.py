@@ -19,7 +19,7 @@ from server.clientdatabase.general import (
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 FORMAT_DOWNLOAD_URL = "/client/compliance_format"
 ROOT_PATH = os.path.join(os.path.split(__file__)[0], "..", "..")
-CLIENT_LOGO_PATH = "/clientlogo"
+# CLIENT_LOGO_PATH = "/clientlogo"
 
 __all__ = [
     "report_reassigned_history",
@@ -43,35 +43,35 @@ def report_reassigned_history(
     from_date = string_to_datetime(from_date)
     to_date = string_to_datetime(to_date)
     query = "select t01.num, rc.reassign_history_id, com.domain_id, rc.unit_id,rc.compliance_id, " + \
-        "com.compliance_task, SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
-        "concat((select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_assignee),' / ', " + \
-        "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_concurrer),' / ', " + \
-        "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_approver)) as old_user, " + \
-        "concat((select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.assignee),' / ', " + \
-        "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.concurrer),' / ', " + \
-        "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.approver)) as new_user, " + \
-        "rc.assigned_on,rc.remarks,ch.due_date, " + \
-        "(select concat(unit_code,' - ',unit_name,' - ',address) from tbl_units where unit_id = rc.unit_id) as unit " + \
-            "from  tbl_reassigned_compliances_history as rc " + \
-            "inner join tbl_compliances as com on rc.compliance_id = com.compliance_id " + \
-            "inner join (select compliance_id,unit_id,num from  " + \
-        "(select compliance_id,unit_id,@rownum := @rownum + 1 AS num  " + \
-        "from (select distinct t1.compliance_id,unit_id from tbl_reassigned_compliances_history as t1 " + \
-        "inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id) t, " + \
-        "(SELECT @rownum := 0) r) as cnt " + \
-        "where  cnt.num between %s and %s) as t01 on rc.compliance_id = t01.compliance_id and rc.unit_id = t01.unit_id " + \
-            "left join tbl_compliance_history as ch on rc.compliance_id = ch.compliance_id " + \
-            "where  com.domain_id = %s and rc.unit_id = %s and  " + \
-        "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
-        "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
-        "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
-        "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
-        "or IF(%s IS NOT NULL,rc.old_approver = 1, 1)  " + \
-        "or IF(%s IS NOT NULL,rc.assignee = 1, 1) " + \
-        "or IF(%s IS NOT NULL,rc.concurrer = 1, 1) " + \
-        "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
-        "and rc.assigned_on >= %s and rc.assigned_on <= %s " + \
-            "order by t01.num asc,rc.reassign_history_id desc"
+            "com.compliance_task, SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
+            "concat((select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_assignee),' / ', " + \
+            "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_concurrer),' / ', " + \
+            "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.old_approver)) as old_user, " + \
+            "concat((select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.assignee),' / ', " + \
+            "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.concurrer),' / ', " + \
+            "IF(rc.old_approver = 1,'Administrator',(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = rc.approver))) as new_user, " + \
+            "rc.assigned_on,rc.remarks,ch.due_date, " + \
+            "(select concat(unit_code,' - ',unit_name,' - ',address) from tbl_units where unit_id = rc.unit_id) as unit " + \
+                "from  tbl_reassigned_compliances_history as rc " + \
+                "inner join tbl_compliances as com on rc.compliance_id = com.compliance_id " + \
+                "inner join (select compliance_id,unit_id,num from  " + \
+            "(select compliance_id,unit_id,@rownum := @rownum + 1 AS num  " + \
+            "from (select distinct t1.compliance_id,unit_id from tbl_reassigned_compliances_history as t1 " + \
+            "inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id) t, " + \
+            "(SELECT @rownum := 0) r) as cnt " + \
+            "where  cnt.num between %s and %s) as t01 on rc.compliance_id = t01.compliance_id and rc.unit_id = t01.unit_id " + \
+                "left join tbl_compliance_history as ch on rc.compliance_id = ch.compliance_id " + \
+                "where  com.domain_id = %s and rc.unit_id = %s and  " + \
+            "IF(%s IS NOT NULL,com.statutory_mapping like %s,1) " + \
+            "and IF(%s IS NOT NULL, rc.compliance_id = %s,1) " + \
+            "and (IF(%s IS NOT NULL,rc.old_assignee = 1, 1) " + \
+            "or IF(%s IS NOT NULL,rc.old_concurrer = 1, 1) " + \
+            "or IF(%s IS NOT NULL,rc.old_approver = 1, 1)  " + \
+            "or IF(%s IS NOT NULL,rc.assignee = 1, 1) " + \
+            "or IF(%s IS NOT NULL,rc.concurrer = 1, 1) " + \
+            "or IF(%s IS NOT NULL,rc.approver = 1, 1)) " + \
+            "and rc.assigned_on >= %s and rc.assigned_on <= %s " + \
+                "order by t01.num asc,rc.reassign_history_id desc"
 
     rows = db.select_all(query, [
         f_count, t_count, domain_id, unit_id, act, act, compliance_id,
@@ -274,9 +274,9 @@ def report_statutory_settings_unit_Wise(
     db, country_id, bg_id, legal_entity_id, domain_id, unit_id,
         div_id, cat_id, act, compliance_id, frequency_id, status_name, session_user, f_count, t_count
 ):
-    # f_date = "2016-07-01"
-    # t_date = "2017-06-30"
-    f_date, t_date = get_from_and_to_date_for_domain(db, domain_id)
+    f_date = "2016-07-01"
+    t_date = "2017-06-30"
+    # f_date, t_date = get_from_and_to_date_for_domain(db, domain_id)
 
     query = "select t01.num, com.compliance_id, cc.legal_entity_id,cc.domain_id, unt.unit_id, " + \
             "(select logo from tbl_legal_entities where legal_entity_id = cc.legal_entity_id) as logo, " + \
@@ -350,17 +350,8 @@ def return_statutory_settings_unit_Wise(db, result, country_id, legal_entity_id)
         unit = r["unit"]
         unit_id = r["unit_id"]
 
-        logo = r["logo"]
-        logo_size = r["logo_size"]
-        if logo_size is not None:
-            logo_size = int(logo_size)
-        if logo:
-            logo_url = "%s/%s" % (CLIENT_LOGO_PATH, logo)
-        else:
-            logo_url = None
-
         compliance = clientcore.GetStatutorySettingsUnitWiseSuccess(
-            compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id, logo_url
+            compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id
         )
         compliances.append(compliance)
     return compliances
@@ -498,31 +489,35 @@ def report_domain_score_card(
 def report_le_wise_score_card(
     db, country_id, legal_entity_id, domain_id, session_user
 ):
-    query = "select ifnull(sum(inprogress_count),0) as inprogress_count, ifnull((SUM(complied_count) +sum(delayed_count)),0) as completed_count, " + \
-            "ifnull(sum(overdue_count),0) as overdue_count " + \
-            "from tbl_compliance_status_chart_unitwise " + \
-            "where country_id = %s " + \
-            "and legal_entity_id = %s " + \
-            "and domain_id = %s "
+    query = "select sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status < 3,1,0), " + \
+            "if(date(ch.due_date) >= date(now()) and ch.current_status < 3,1,0))) as inprogress_count, " + \
+            "sum(if(ch.current_status = 3,1,0)) as completed_count, " + \
+            "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status < 3,1,0), " + \
+            "if(date(ch.due_date) < date(now()) and ch.current_status < 3,1,0))) as overdue_count " + \
+            "from tbl_compliance_history as ch " + \
+            "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
+            "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+            "where ch.legal_entity_id = %s and com.domain_id = %s; "
 
     domain_wise_count = db.select_all(
-        query, [country_id, legal_entity_id, domain_id])
+        query, [legal_entity_id, domain_id])
     # print domain_wise_count
 
     def inprogress_unit_wise_count(legal_entity_id, domain_id):
         query = "select ch.unit_id,concat(unt.unit_code,' - ',unt.unit_name) as unitname, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ch.completed_on IS NULL ,1,0), " + \
-                "IF(date(ch.due_date) >= curdate() and ch.completed_on IS NULL ,1,0))) as to_complete, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 ,1,0), " + \
-                "IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1,1,0))) as to_concur, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurrence_status IS NOT NULL and IFNULL(ch.approve_status,0) <> 1,1,0), " + \
-                "IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurrence_status IS NOT NULL and IFNULL(ch.approve_status,0) <> 1,1,0))) as to_approve " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status = 0,1,0), " + \
+                "if(date(ch.due_date) >= date(now()) and ch.current_status = 0,1,0))) as to_complete, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status = 1,1,0), " + \
+                "if(date(ch.due_date) >= date(now()) and ch.current_status = 1,1,0))) as to_concur, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status = 2,1,0), " + \
+                "if(date(ch.due_date) >= date(now()) and ch.current_status = 2,1,0))) as to_approve " + \
                 "from tbl_compliance_history as ch " + \
-                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
+                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                 "where ch.legal_entity_id = %s and com.domain_id = %s " + \
                 "group by ch.unit_id"
         rows = db.select_all(query, [legal_entity_id, domain_id])
+
         # print rows
         inprogress_unit = []
         for r in rows:
@@ -537,20 +532,20 @@ def report_le_wise_score_card(
         return inprogress_unit
 
     def inprogress_user_wise_count(legal_entity_id, domain_id):
-        query = "SELECT t01.user_id,t01.user_name,t01.to_complete,t01.to_concur,t01.to_approve FROM ( " + \
-                "select usr.user_id,concat(employee_code,' - ',employee_name) as user_name, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ch.completed_on IS NULL ,1,0) and ch.completed_by = usr.user_id, " + \
-                "IF(date(ch.due_date) >= curdate() and ch.completed_on IS NULL and ch.completed_by = usr.user_id ,1,0))) as to_complete, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = usr.user_id ,1,0), " + \
-                "IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and IFNULL(ch.concurrence_status,0) <> 1 and ch.concurred_by = usr.user_id,1,0))) as to_concur, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ch.completed_on IS NOT NULL and ch.concurrence_status IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = usr.user_id,1,0), " + \
-                "IF(date(ch.due_date) >= curdate() and ch.completed_on IS NOT NULL and ch.concurrence_status IS NOT NULL and IFNULL(ch.approve_status,0) <> 1 and ch.approved_by = usr.user_id,1,0))) as to_approve " + \
+        query = "select usr.user_id,ifnull(concat(usr.employee_code,' - ',usr.employee_name),'Administrator') as user_name, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+                "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))) as to_complete, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+                "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))) as to_concur, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+                "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))) as to_approve " + \
                 "from tbl_compliance_history as ch " + \
+                "inner join tbl_users as usr on (usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by) " + \
                 "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-                "inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by " + \
                 "where ch.legal_entity_id = %s and com.domain_id = %s " + \
-                "group by usr.user_id) as t01 "
+                "group by usr.user_id"
         rows = db.select_all(query, [legal_entity_id, domain_id])
+
         # print rows
         inprogress_unit = []
         for r in rows:
@@ -566,16 +561,17 @@ def report_le_wise_score_card(
 
     def completed_unit_wise_count(legal_entity_id, domain_id):
         query = "select ch.unit_id,concat(unt.unit_code,' - ',unt.unit_name) as unitname, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-                "IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-                "IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and ch.current_status = 3,1,0), " + \
+                "if(date(ch.due_date) >= date(now()) and ch.current_status = 3,1,0))) as complied_count, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status = 3,1,0), " + \
+                "if(date(ch.due_date) < date(now()) and ch.current_status = 3,1,0))) as delayed_count " + \
                 "from tbl_compliance_history as ch " + \
-                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
+                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                 "where ch.legal_entity_id = %s and com.domain_id = %s " + \
-                "group by ch.unit_id "
+                "group by ch.unit_id"
         rows = db.select_all(query, [legal_entity_id, domain_id])
+
         # print rows
         inprogress_unit = []
         for r in rows:
@@ -589,17 +585,19 @@ def report_le_wise_score_card(
         return inprogress_unit
 
     def completed_user_wise_count(legal_entity_id, domain_id):
-        query = "select usr.user_id,concat(employee_code,' - ',employee_name) as user_name, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1 ,1,0), " + \
-                "IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
-                "IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count " + \
+        query = "select usr.user_id,ifnull(concat(usr.employee_code,' - ',usr.employee_name),'Administrator') as user_name, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date >= now() and usr.user_id = ch.completed_by and ch.current_status = 3,1,0), " + \
+                "if(date(ch.due_date) >= date(now()) and usr.user_id = ch.completed_by and ch.current_status = 3,1,0))) as complied_count, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 3,1,0), " + \
+                "if(date(ch.due_date) < date(now()) and usr.user_id = ch.completed_by and ch.current_status = 3,1,0))) as delayed_count " + \
                 "from tbl_compliance_history as ch " + \
+                "inner join tbl_users as usr on usr.user_id = ch.completed_by  " + \
                 "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-                "inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by " + \
                 "where ch.legal_entity_id = %s and com.domain_id = %s " + \
-                "group by usr.user_id "
+                "group by usr.user_id"
+
         rows = db.select_all(query, [legal_entity_id, domain_id])
+
         # print rows
         inprogress_unit = []
         for r in rows:
@@ -614,43 +612,58 @@ def report_le_wise_score_card(
 
     def overdue_unit_wise_count(legal_entity_id, domain_id):
         query = "select ch.unit_id,concat(unt.unit_code,' - ',unt.unit_name) as unitname, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and IFNULL(ch.approve_status,0) <> 1,1,0), " + \
-                "IF(date(ch.due_date) < curdate() and IFNULL(ch.approve_status,0) <> 1,1,0))) as overdue_count " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status = 0,1,0), " + \
+                "if(date(ch.due_date) < date(now()) and ch.current_status = 0,1,0))) as to_complete, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status = 1,1,0), " + \
+                "if(date(ch.due_date) < date(now()) and ch.current_status = 1,1,0))) as to_concur, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and ch.current_status = 2,1,0), " + \
+                "if(date(ch.due_date) < date(now()) and ch.current_status = 2,1,0))) as to_approve " + \
                 "from tbl_compliance_history as ch " + \
-                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
+                "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
                 "where ch.legal_entity_id = %s and com.domain_id = %s " + \
-                "group by ch.unit_id "
+                "group by ch.unit_id"
         rows = db.select_all(query, [legal_entity_id, domain_id])
+
         # print rows
         inprogress_unit = []
         for r in rows:
             unit_id = int(r["unit_id"])
             unit = r["unitname"]
-            overdue_count = int(r["overdue_count"])
+            to_complete = int(r["to_complete"])
+            to_concur = int(r["to_concur"])
+            to_approve = int(r["to_approve"])
             result = clientcore.GetOverdueUnitWiseCountSuccess(
-                unit_id, unit, overdue_count)
+                unit_id, unit, to_complete, to_concur, to_approve)
             inprogress_unit.append(result)
         return inprogress_unit
 
     def overdue_user_wise_count(legal_entity_id, domain_id):
-        query = "select usr.user_id,concat(employee_code,' - ',employee_name) as user_name, " + \
-                "sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and IFNULL(ch.approve_status,0) <> 1,1,0), " + \
-                "IF(date(ch.due_date) < curdate() and IFNULL(ch.approve_status,0) <> 1,1,0))) as overdue_count " + \
+        query = "select usr.user_id,ifnull(concat(usr.employee_code,' - ',usr.employee_name),'Administrator') as user_name, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.completed_by and ch.current_status = 0,1,0), " + \
+                "if(date(ch.due_date) < date(now()) and usr.user_id = ch.completed_by and ch.current_status = 0,1,0))) as to_complete, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0), " + \
+                "if(date(ch.due_date) < date(now()) and usr.user_id = ch.concurred_by and ch.current_status = 1,1,0))) as to_concur, " + \
+                "sum(if(com.frequency_id = 5,if(ch.due_date < now() and usr.user_id = ch.approved_by and ch.current_status = 2,1,0), " + \
+                "if(date(ch.due_date) < date(now()) and usr.user_id = ch.approved_by and ch.current_status = 2,1,0))) as to_approve " + \
                 "from tbl_compliance_history as ch " + \
+                "inner join tbl_users as usr on (usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by) " + \
                 "inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-                "inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by " + \
                 "where ch.legal_entity_id = %s and com.domain_id = %s " + \
                 "group by usr.user_id"
+
         rows = db.select_all(query, [legal_entity_id, domain_id])
+
         # print rows
         inprogress_unit = []
         for r in rows:
             unit_id = int(r["user_id"])
             unit = r["user_name"]
-            overdue_count = int(r["overdue_count"])
+            to_complete = int(r["to_complete"])
+            to_concur = int(r["to_concur"])
+            to_approve = int(r["to_approve"])
             result = clientcore.GetOverdueUserWiseCountSuccess(
-                unit_id, unit, overdue_count)
+                unit_id, unit, to_complete, to_concur, to_approve)
             inprogress_unit.append(result)
         return inprogress_unit
 

@@ -59,6 +59,7 @@ var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
 var f_count = 0;
+var LOGO = null;
 
 function PageControls() {
     country.keyup(function(e) {
@@ -432,6 +433,7 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv) {
             if (error == null) {
                 t_this._report_data = response.statutory_settings_unit_Wise_list;
                 t_this._total_count = response.total_count;
+                LOGO = response.logo_url;
                 if (csv == false) {
                     reportView.show();
                     showAnimation(reportView);
@@ -450,7 +452,10 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv) {
 StatutorySettingsUnitWise.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
-    clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
+    if(LOGO != null)
+        clientLogo.attr("src", LOGO);
+    else
+        clientLogo.remove();
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     domainName.html(domain.val());

@@ -16,7 +16,7 @@ from server.clientdatabase.general import (
     get_client_users, get_client_level_1_statutoy,
     get_service_providers, get_client_compliances,
     get_compliance_frequency, get_divisions,
-    get_categories
+    get_categories, legal_entity_logo_url
 )
 
 from server.clientdatabase.clientmaster import (
@@ -834,8 +834,11 @@ def get_reassignedhistory_report(db, request, session_user, session_category):
             db, country_id, legal_entity_id, domain_id, unit_id,
             act, compliance_id, usr_id, from_date, to_date, session_user
         )
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
         return clientreportnew.GetReassignedHistoryReportSuccess(
-            reassigned_history_list, total_count
+            reassigned_history_list, total_count, logo_url
         )
     else:
         converter = ConvertJsonToCSV(
@@ -892,8 +895,11 @@ def get_status_report_consolidated(db, request, session_user, session_category):
             db, country_id, legal_entity_id, domain_id, unit_id,
             act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user
         )
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
         return clientreportnew.GetStatusReportConsolidatedSuccess(
-            status_report_consolidated_list, total_count
+            status_report_consolidated_list, total_count, logo_url
         )
     else:
         converter = ConvertJsonToCSV(
@@ -952,8 +958,11 @@ def get_statutory_settings_unit_Wise(db, request, session_user, session_category
             db, country_id, bg_id, legal_entity_id, domain_id, unit_id, div_id, cat_id,
             act, compliance_id, frequency_id, status_name, session_user
         )
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
         return clientreportnew.GetStatutorySettingsUnitWiseSuccess(
-            statutory_settings_unit_Wise_list, total_count
+            statutory_settings_unit_Wise_list, total_count, logo_url
         )
     else:
         converter = ConvertJsonToCSV(
@@ -991,7 +1000,10 @@ def get_domain_score_card(db, request, session_user, session_category):
         domain_score_card_list = report_domain_score_card(
             db, country_id, bg_id, legal_entity_id, domain_id, div_id, cat_id, session_user
         )
-        return clientreportnew.GetDomainScoreCardSuccess(domain_score_card_list)
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
+        return clientreportnew.GetDomainScoreCardSuccess(domain_score_card_list, logo_url)
     else:
         converter = ConvertJsonToCSV(
             db, request, session_user, "Reassign"
@@ -1020,7 +1032,10 @@ def get_le_wise_score_card(db, request, session_user, session_category):
         le_wise_score_card_list = report_le_wise_score_card(
             db, country_id, legal_entity_id, domain_id, session_user
         )
-        return clientreportnew.GetLEWiseScoreCardSuccess(le_wise_score_card_list)
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
+        return clientreportnew.GetLEWiseScoreCardSuccess(le_wise_score_card_list, logo_url)
     else:
         converter = ConvertJsonToCSV(
             db, request, session_user, "Reassign"
@@ -1048,7 +1063,10 @@ def get_work_flow_score_card(db, request, session_user, session_category):
         work_flow_score_card_list = report_work_flow_score_card(
             db, country_id, legal_entity_id, domain_id, session_user, session_category
         )
-        return clientreportnew.GetWorkFlowScoreCardSuccess(work_flow_score_card_list)
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
+        return clientreportnew.GetWorkFlowScoreCardSuccess(work_flow_score_card_list, logo_url)
     else:
         converter = ConvertJsonToCSV(
             db, request, session_user, "Reassign"

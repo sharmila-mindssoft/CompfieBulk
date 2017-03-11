@@ -45,10 +45,10 @@ function loadMessages(data) {
         var clone = no_record_row.clone();
         $(".tbody-message-list").append(clone);
     }
-
 }
 
 function initialize() {
+    var LEIDS = client_mirror.getLEids();
     client_mirror.getNotifications(LEIDS, 3, 0, 50, function(error, response) {
         if (error == null) {
             data = response.escalations;

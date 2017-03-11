@@ -12,6 +12,7 @@ from server.common import (
 )
 from server.exceptionmessage import client_process_error
 from savetoknowledge import UpdateFileSpace
+CLIENT_LOGO_PATH = "/clientlogo"
 
 __all__ = [
     "get_client_user_forms",
@@ -78,7 +79,8 @@ __all__ = [
     "get_themes",
     "get_themes_for_user",
     "save_themes_for_user",
-    "update_themes_for_user"
+    "update_themes_for_user",
+    "legal_entity_logo_url"
     ]
 
 
@@ -623,16 +625,19 @@ def get_forms_by_category(db, category_id):
     rows = db.select_all(q, [category_id])
     return rows
 
-def get_user_forms(db, user_id):
-    # except group admin forms
-    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
-        " tf.form_type " + \
+def get_user_forms(db, user_id, category_id):
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, tf.form_type " + \
         "FROM tbl_forms as t1 " + \
-        " INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
+        "INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
         "INNER JOIN tbl_user_group_forms as t2 on t1.form_id = t2.form_id " + \
         "INNER JOIN tbl_users as t3 on t2.user_group_id = t3.user_group_id " + \
-        " WHERE t3.user_id = %s and t3.is_active = 1 and t3.is_disable = 0 " + \
-        " ORDER BY t1.form_order "
+        "WHERE t3.user_id = %s and t3.is_active = 1 and t3.is_disable = 0 " + \
+        "UNION ALL " + \
+        "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, tf.form_type " + \
+        "FROM tbl_forms as t1 " + \
+        "INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
+        "WHERE t1.form_type_id = 4 " + \
+        "ORDER BY form_order, form_type_id "
 
     rows = db.select_all(q, [user_id])
     return rows
@@ -2120,3 +2125,12 @@ def update_themes_for_user(db, session_user, theme_id, theme_name):
     condition = " user_id = %s " % session_user
     db.update(tblThemes, columns, values, condition)
     return theme_name
+
+def legal_entity_logo_url(db, legal_entity_id):
+    q = "select logo from tbl_legal_entities where legal_entity_id = %s"
+    rows = db.select_one(q, [legal_entity_id])
+    if rows['logo']:
+        logo_url = "%s/%s" % (CLIENT_LOGO_PATH, rows['logo'])
+    else:
+        logo_url = None
+    return logo_url

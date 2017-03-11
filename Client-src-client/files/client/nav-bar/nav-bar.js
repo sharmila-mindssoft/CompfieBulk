@@ -162,6 +162,7 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.reminder-menu').on('click', function(event) {
                 $('.reminder-items-ul').empty();
+                var LEIDS = client_mirror.getLEids();
                 client_mirror.getNotifications(LEIDS, 2, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.reminders;
@@ -188,6 +189,7 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.notification-menu').on('click', function(event) {
                 $('.notification-items-ul').empty();
+                var LEIDS = client_mirror.getLEids();
                 client_mirror.getStatutoryNotifications(LEIDS, 0, 3, function(error, response) {
                     if (error == null) {
                         data = response.statutory;
@@ -214,6 +216,7 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.escalation-menu').on('click', function(event) {
                 $('.escalation-items-ul').empty();
+                var LEIDS = client_mirror.getLEids();
                 client_mirror.getNotifications(LEIDS, 3, 0, 3, function(error, response) {
                     if (error == null) {
                         data = response.escalations;
@@ -240,6 +243,7 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.message-menu').on('click', function(event) {
                 $('.msg-items-ul').empty();
+                var LEIDS = client_mirror.getLEids();
                 client_mirror.getNotifications(LEIDS, 4, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.messages;

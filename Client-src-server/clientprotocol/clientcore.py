@@ -4931,7 +4931,7 @@ class GetStatusReportConsolidatedSuccess(object):
         }
 
 class GetStatutorySettingsUnitWiseSuccess(object):
-    def __init__(self, compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id, logo_url):
+    def __init__(self, compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id):
         self.compliance_id = compliance_id
         self.frequency = frequency
         self.compliance_task = compliance_task
@@ -4942,10 +4942,9 @@ class GetStatutorySettingsUnitWiseSuccess(object):
         self.due_date = due_date
         self.unit = unit
         self.unit_id = unit_id
-        self.logo_url = logo_url
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id","frequency","compliance_task","act_name","task_status","document_name","user_name","due_date","unit","unit_id", "logo_url"])
+        data = parse_dictionary(data, ["compliance_id","frequency","compliance_task","act_name","task_status","document_name","user_name","due_date","unit","unit_id"])
         compliance_id = data.get("compliance_id"),
         frequency = data.get("frequency"),
         compliance_task = data.get("compliance_task"),
@@ -4955,9 +4954,9 @@ class GetStatutorySettingsUnitWiseSuccess(object):
         user_name = data.get("user_name"),
         due_date = data.get("due_date"),
         unit = data.get("unit"),
-        unit_id = data.get("unit_id"),
-        logo_url = data.get("logo_url")
-        return GetStatutorySettingsUnitWiseSuccess(compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id, logo_url)
+        unit_id = data.get("unit_id")
+        return GetStatutorySettingsUnitWiseSuccess(compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id
+)
     def to_structure(self):
         return {
             "compliance_id": self.compliance_id,
@@ -4969,8 +4968,7 @@ class GetStatutorySettingsUnitWiseSuccess(object):
             "user_name": self.user_name,
             "due_date": self.due_date,
             "unit": self.unit,
-            "unit_id": self.unit_id,
-            "logo_url": self.logo_url
+            "unit_id": self.unit_id
         }
 
 
@@ -5178,41 +5176,53 @@ class GetCompletedUserWiseCountSuccess(object):
         }
 
 class GetOverdueUnitWiseCountSuccess(object):
-    def __init__(self, unit_id, unit, overdue_count):
+    def __init__(self, unit_id, unit, to_complete, to_concur, to_approve):
         self.unit_id = unit_id
         self.unit = unit
-        self.overdue_count = overdue_count
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit", "overdue_count"])
+        data = parse_dictionary(data, ["unit_id", "unit", "to_complete", "to_concur", "to_approve"])
         unit_id = data.get("unit_id"), 
         unit = data.get("unit"),
-        overdue_count = data.get("overdue_count")
-        return GetOverdueUnitWiseCountSuccess(unit_id, unit, overdue_count)
+        to_complete = data.get("to_complete")
+        to_concur = data.get("to_concur")
+        to_approve = data.get("to_approve")
+        return GetOverdueUnitWiseCountSuccess(unit_id, unit, to_complete, to_concur, to_approve)
     def to_structure(self):
         return {
             "unit_id": self.unit_id,
             "unit": self.unit,
-            "overdue_count": self.overdue_count
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
         }
 
 class GetOverdueUserWiseCountSuccess(object):
-    def __init__(self, user_id, user_name, overdue_count):
+    def __init__(self, user_id, user_name, to_complete, to_concur, to_approve):
         self.user_id = user_id
         self.user_name = user_name
-        self.overdue_count = overdue_count
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_name", "overdue_count", "delayed_count"])
+        data = parse_dictionary(data, ["user_id", "user_name", "to_complete", "to_concur", "to_approve"])
         user_id = data.get("user_id"), 
         user_name = data.get("user_name"),
-        overdue_count = data.get("overdue_count")
-        return GetOverdueUserWiseCountSuccess(user_id, user_name, overdue_count)
+        to_complete = data.get("to_complete")
+        to_concur = data.get("to_concur")
+        to_approve = data.get("to_approve")
+        return GetOverdueUserWiseCountSuccess(user_id, user_name, to_complete, to_concur, to_approve)
     def to_structure(self):
         return {
             "user_id": self.user_id,
             "user_name": self.user_name,
-            "overdue_count": self.overdue_count
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
         }
 
 # Legal Entity Wise Score Card Start

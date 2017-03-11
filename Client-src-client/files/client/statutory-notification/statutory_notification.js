@@ -49,6 +49,7 @@ function loadMessages(data) {
 }
 
 function initialize() {
+    var LEIDS = client_mirror.getLEids();
     client_mirror.getStatutoryNotifications(LEIDS, 0, 50, function(error, response) {
         if (error == null) {
             data = response.statutory;
