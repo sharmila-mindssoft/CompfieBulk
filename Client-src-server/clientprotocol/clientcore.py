@@ -4931,7 +4931,7 @@ class GetStatusReportConsolidatedSuccess(object):
         }
 
 class GetStatutorySettingsUnitWiseSuccess(object):
-    def __init__(self, compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id):
+    def __init__(self, compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id, logo_url):
         self.compliance_id = compliance_id
         self.frequency = frequency
         self.compliance_task = compliance_task
@@ -4942,9 +4942,10 @@ class GetStatutorySettingsUnitWiseSuccess(object):
         self.due_date = due_date
         self.unit = unit
         self.unit_id = unit_id
+        self.logo_url = logo_url
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["compliance_id","frequency","compliance_task","act_name","task_status","document_name","user_name","due_date","unit","unit_id"])
+        data = parse_dictionary(data, ["compliance_id","frequency","compliance_task","act_name","task_status","document_name","user_name","due_date","unit","unit_id", "logo_url"])
         compliance_id = data.get("compliance_id"),
         frequency = data.get("frequency"),
         compliance_task = data.get("compliance_task"),
@@ -4954,9 +4955,9 @@ class GetStatutorySettingsUnitWiseSuccess(object):
         user_name = data.get("user_name"),
         due_date = data.get("due_date"),
         unit = data.get("unit"),
-        unit_id = data.get("unit_id")
-        return GetStatutorySettingsUnitWiseSuccess(compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id
-)
+        unit_id = data.get("unit_id"),
+        logo_url = data.get("logo_url")
+        return GetStatutorySettingsUnitWiseSuccess(compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id, logo_url)
     def to_structure(self):
         return {
             "compliance_id": self.compliance_id,
@@ -4968,7 +4969,8 @@ class GetStatutorySettingsUnitWiseSuccess(object):
             "user_name": self.user_name,
             "due_date": self.due_date,
             "unit": self.unit,
-            "unit_id": self.unit_id
+            "unit_id": self.unit_id,
+            "logo_url": self.logo_url
         }
 
 

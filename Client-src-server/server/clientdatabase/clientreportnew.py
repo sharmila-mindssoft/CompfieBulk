@@ -279,6 +279,8 @@ def report_statutory_settings_unit_Wise(
     f_date, t_date = get_from_and_to_date_for_domain(db, domain_id)
 
     query = "select t01.num, com.compliance_id, cc.legal_entity_id,cc.domain_id, unt.unit_id, " + \
+            "(select logo from tbl_legal_entities where legal_entity_id = cc.legal_entity_id) as logo, " + \
+            "(select logo_size from tbl_legal_entities where legal_entity_id = cc.legal_entity_id) as logo_size, " + \
             "concat(unt.unit_code,' - ',unt.unit_name,' - ',unt.address,',',unt.postal_code) as unit, " + \
             "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) - 4),'>>',1) as act_name, " + \
             "com.compliance_task,cf.frequency, " + \
@@ -347,8 +349,18 @@ def return_statutory_settings_unit_Wise(db, result, country_id, legal_entity_id)
         due_date = datetime_to_string(r["due_date"])
         unit = r["unit"]
         unit_id = r["unit_id"]
+
+        logo = r["logo"]
+        logo_size = r["logo_size"]
+        if logo_size is not None:
+            logo_size = int(logo_size)
+        if logo:
+            logo_url = "%s/%s" % (CLIENT_LOGO_PATH, logo)
+        else:
+            logo_url = None
+
         compliance = clientcore.GetStatutorySettingsUnitWiseSuccess(
-            compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id
+            compliance_id, frequency, compliance_task, act_name, task_status, document_name, user_name, due_date, unit, unit_id, logo_url
         )
         compliances.append(compliance)
     return compliances
