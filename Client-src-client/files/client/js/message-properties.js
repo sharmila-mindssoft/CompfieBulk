@@ -411,6 +411,7 @@ var message = {
     'unblock_message': 'You want to unblock this Service Provider',
     'validity_gt_duedate': 'Validity Date must be Greater than or equal to Due Date',
     'units_required': 'Units required',
+    'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
 };
 
 function clearMessage() {
