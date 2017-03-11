@@ -26,7 +26,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     elif type(request) is dashboard.GetComplianceStatusDrillDownData:
         result = process_compliance_status_chart_drilldown(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetEscalationsChart:
@@ -34,7 +34,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     elif type(request) is dashboard.GetEscalationsDrillDownData:
         result = process_escalation_chart_drilldown(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetNotCompliedChart:
@@ -44,7 +44,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     elif type(request) is dashboard.GetNotCompliedDrillDown:
         result = process_not_complied_drill_down(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.GetTrendChart:
@@ -155,13 +155,13 @@ def process_get_trend_chart_drilldown(db, request, session_user):
 
 
 def process_compliance_status_chart_drilldown(
-    db, request, session_user
+    db, request, session_user, session_category
 ):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     unit_wise_data = get_compliances_details_for_status_chart(
         db,
-        request, session_user,
+        request, session_user, session_category,
         from_count, to_count
     )
     return dashboard.GetComplianceStatusDrillDownDataSuccess(
@@ -173,12 +173,12 @@ def process_escalation_chart(db, request, session_user, session_category):
     return get_escalation_chart(db, request, session_user, session_category)
 
 
-def process_escalation_chart_drilldown(db, request, session_user):
+def process_escalation_chart_drilldown(db, request, session_user, session_category):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     result_list = get_escalation_drill_down_data(
         db,
-        request, session_user,
+        request, session_user, session_category,
         from_count, to_count
     )
     return dashboard.GetEscalationsDrillDownDataSuccess(
@@ -191,12 +191,12 @@ def process_not_complied_chart(db, request, session_user, session_category):
     return get_not_complied_count(db, request, session_user, session_category)
 
 
-def process_not_complied_drill_down(db, request, session_user):
+def process_not_complied_drill_down(db, request, session_user, session_category):
     from_count = request.record_count
     to_count = RECORD_DISPLAY_COUNT
     result_list = get_not_complied_drill_down(
         db,
-        request, session_user,
+        request, session_user, session_category,
         from_count, to_count
     )
     return dashboard.GetNotCompliedDrillDownSuccess(result_list.values())
