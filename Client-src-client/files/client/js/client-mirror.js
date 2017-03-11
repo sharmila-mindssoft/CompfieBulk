@@ -1215,6 +1215,18 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function onOccurrenceLastTransaction(le_id, compliance_id, unit_id, callback) {
+        var request = [
+            'OnOccurrenceLastTransaction', {
+                'le_id': le_id,
+                'compliance_id': compliance_id,
+                'unit_id': unit_id
+            }
+        ];
+        callerName = 'client_user';
+        clientApiRequest(callerName, request, callback);
+    }
+
     function exportToCSV(jsonResponse, callback) {
         var request = [
             'ExportToCSV',
@@ -2965,7 +2977,8 @@ function initClientMirror() {
         saveSettingsFormDetails: saveSettingsFormDetails,
         downloadTaskFile: downloadTaskFile,
         complianceFilters: complianceFilters,
-        exportJsontoCsv: exportJsontoCsv
+        exportJsontoCsv: exportJsontoCsv,
+        onOccurrenceLastTransaction: onOccurrenceLastTransaction
     };
 }
 
