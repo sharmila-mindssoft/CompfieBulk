@@ -247,7 +247,6 @@ function PageControls() {
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
-            REPORT.renderPageControls();
         }
     });
 
@@ -256,6 +255,15 @@ function PageControls() {
             csv = true;
             REPORT.exportReportValues();
         }
+    });
+
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        this._on_current_page = 1;
+        this._sno = 0;
+        createPageView(t_this._total_record);
+        csv = false;
+        REPORT.fetchReportValues();
     });
 
 }
@@ -467,6 +475,11 @@ UnitListReport.prototype.validate = function() {
         else if (isCommonName(country, message.country_str) == false)
             return false;
     }
+    if (countryId.val() == ""){
+        displayMessage(message.country_required);
+        country.focus();
+        return false;
+    }
     if (BusinessGroupName) {
         if (isNotEmpty(BusinessGroupName, message.businessgroup_required) == false)
             return false;
@@ -475,6 +488,11 @@ UnitListReport.prototype.validate = function() {
         else if (isCommonName(BusinessGroupName, message.businessgroup_str) == false)
             return false;
     }
+    if (BusinessGroupId.val() == "") {
+        displayMessage(message.businessgroup_required);
+        BusinessGroupName.focus();
+        return false;
+    }
     if (LegalEntityName) {
         if (isNotEmpty(LegalEntityName, message.legalentity_required) == false)
             return false;
@@ -482,6 +500,11 @@ UnitListReport.prototype.validate = function() {
             return false;
         else if (isCommonName(LegalEntityName, message.legalentity_str) == false)
             return false;
+    }
+    if (LegalEntityId.val() == "") {
+        displayMessage(message.legalentity_required);
+        LegalEntityName.focus();
+        return false;
     }
     if (DivisionName) {
         if (isLengthMinMax(DivisionName, 0, 50, message.division_max) == false)
@@ -546,7 +569,7 @@ UnitListReport.prototype.fetchReportValues = function() {
     if (org_id == "")
         org_id = 0;
 
-    u_s = $('#unit-status option:selected').text();
+    u_s = $('#unit-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
@@ -563,17 +586,17 @@ UnitListReport.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._UnitList = response.unit_list_report;
+            t_this._total_record = response.total_count;
             if (response.unit_list_report.length == 0) {
-                t_this.hidePageView();
-                t_this.hidePagePan();
+                hidePageView();
+                hidePagePan();
                 //Export_btn.hide();
                 PaginationView.hide();
                 t_this.showReportValues();
             }
             else{
-                t_this._total_record = response.unit_list_report.length;
                 if (t_this._sno == 0) {
-                    t_this.createPageView(t_this, t_this._total_record);
+                    createPageView(t_this._total_record);
                 }
                 //Export_btn.show();
                 PaginationView.show();
@@ -596,7 +619,6 @@ UnitListReport.prototype.showReportValues = function() {
     var divisionname = "";
     var is_null = true;
     showFrom = t_this._sno + 1;
-    t_this._total_record = data.length;
     $.each(data, function(k, v) {
         console.log(data.length)
         is_null = false;
@@ -633,7 +655,7 @@ UnitListReport.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        t_this.showPagePan(showFrom, t_this._sno, t_this._total_record);
+        showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
 
@@ -658,7 +680,7 @@ UnitListReport.prototype.exportReportValues = function() {
     if (org_id == "")
         org_id = 0;
 
-    u_s = $('#unit-status option:selected').text();
+    u_s = $('#unit-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
@@ -693,50 +715,38 @@ UnitListReport.prototype.possibleFailures = function(error) {
 };
 
 // Pagination Functions - begins
-UnitListReport.prototype.hidePageView = function() {
+hidePageView = function() {
     $('#pagination-rpt').empty();
     $('#pagination-rpt').removeData('twbs-pagination');
     $('#pagination-rpt').unbind('page');
 };
 
-UnitListReport.prototype.createPageView = function(a_obj, total_records) {
+createPageView = function(total_records) {
     perPage = parseInt(ItemsPerPage.val());
-    a_obj.hidePageView();
+    hidePageView();
 
     $('#pagination-rpt').twbsPagination({
         totalPages: Math.ceil(total_records/perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            if (parseInt(a_obj._on_current_page) != cPage) {
-                a_obj._on_current_page = cPage;
-                a_obj.fetchReportValues();
+            console.log(cPage, REPORT._on_current_page)
+            if (parseInt(REPORT._on_current_page) != cPage) {
+                REPORT._on_current_page = cPage;
+                REPORT.fetchReportValues();
             }
         }
     });
 };
-UnitListReport.prototype.showPagePan = function(showFrom, showTo, total) {
+showPagePan = function(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
     $('.compliance_count').text(showText);
     $('.pagination-view').show();
 };
-UnitListReport.prototype.hidePagePan = function() {
+hidePagePan = function() {
     $('.compliance_count').text('');
     $('.pagination-view').hide();
 }
-
-UnitListReport.prototype.renderPageControls = function(e) {
-    var t_this = this;
-    ItemsPerPage.on('change', function(e) {
-        t_this.perPage = parseInt($(this).val());
-        t_this._sno = 0;
-        t_this._on_current_page = 1;
-        t_this.createPageView(t_this, t_this._total_record);
-        t_this.fetchReportValues();
-    });
-    t_this._perPage = parseInt(ItemsPerPage.val());
-
-};
 // Pagination Ends
 
 REPORT = new UnitListReport();
