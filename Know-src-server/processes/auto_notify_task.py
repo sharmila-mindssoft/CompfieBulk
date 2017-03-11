@@ -6,7 +6,7 @@ from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
 from server.common import (return_hour_minute, get_current_date)
 
-NOTIFY_TIME = "10:00"
+NOTIFY_TIME = "15:31"
 email = EmailHandler()
 class AutoNotify(Database):
     def __init__(
@@ -31,8 +31,11 @@ class AutoNotify(Database):
             return None, None
 
     def get_client_settings(self):
-        query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder " + \
-            " FROM tbl_reminder_settings where legal_entity_id = %s "
+        query = "SELECT assignee_reminder, escalation_reminder_in_advance, escalation_reminder, reassign_service_provider, " + \
+            " c.email_id " + \
+            " FROM tbl_reminder_settings as r" + \
+            " INNER JOIN tbl_client_groups as c on c.client_id = r.client_id " +\
+            " where legal_entity_id = %s "
         logNotifyInfo("client_settings", query % (self.legal_entity_id))
         rows = self.select_one(query, [self.legal_entity_id])
         if rows :
@@ -114,7 +117,7 @@ class AutoNotify(Database):
                         continue
 
                     if c["due_date"].date() < current_date.date() :
-                        print "skipped due_date", c["due_date"].date()
+                        print "skipped due_date because due_date crossed", c["due_date"].date()
                         logNotifyInfo("skipped due_date", c["due_date"].date())
                         continue
                     days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
@@ -125,7 +128,7 @@ class AutoNotify(Database):
                         compliance_name = c["compliance_task"]
                     date_diff = abs((current_date.date() - c["start_date"].date()).days)
                     if date_diff == 0:
-                        logNotifyInfo("skipped due_date", current_date.date())
+                        logNotifyInfo("skipped due_date reminder days is 0", current_date.date())
                         logNotifyInfo("skipped due_date", c["start_date"].date())
                         logNotifyInfo("skipped date_diff ", 0)
                         continue
@@ -170,7 +173,7 @@ class AutoNotify(Database):
                 compliance_name = c["compliance_task"]
 
             if c["due_date"].date() < current_date.date() :
-                logNotifyInfo("skipped due_date", c["due_date"])
+                logNotifyInfo("skipped due_date crossed current date", c["due_date"])
                 continue
 
             if c["due_date"] is None :
@@ -178,7 +181,7 @@ class AutoNotify(Database):
 
             days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
             if days_left == 0 :
-                logNotifyInfo("skipped days_left", 0)
+                logNotifyInfo("skipped days_left reminder days is 0", 0)
                 continue
 
             notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
@@ -265,11 +268,39 @@ class AutoNotify(Database):
             self.reminder_before_due_date(client_info, compliance_info)
             self.notify_escalation_to_all(client_info, compliance_info)
 
+    # for service providers
+    def get_compliance_count_to_reassign(self):
+        q = "select count(compliance_history_id), t2.service_provider_id, t3.service_provider_name, t3.short_name, t3.blocked_on from tbl_compliance_history as t1 " + \
+            " inner join tbl_users as t2 on t1.completed_by = t2.user_id and t2.is_service_provider = 1 " + \
+            " inner join tbl_service_providers as t3 on t2.service_provider_id = t3.service_provider_id and t3.is_blocked = 1  " + \
+            " group by t2.service_provider_id "
+        rows = self.select_all(q)
+        return rows
+
+    def notify_compliance_to_reassign(self):
+        current_date = get_current_date()
+        client_info = self.get_client_settings()
+        groupadmin_email = client_info.get("email_id")
+        service_provider_reminder = client_info.get("reassign_service_provider")
+
+        service_info = self.get_compliance_count_to_reassign()
+        for r in service_info :
+            sname = "%s - %s" % (r["short_name"], r["service_provider_name"])
+            bdate = r["blocked_on"]
+            if bdate is None :
+                continue
+            if bdate > current_date :
+                continue
+            if abs((current_date.date() - bdate.date()).days) == service_provider_reminder :
+                email.notify_group_admin_toreassign_sp_compliances(sname, groupadmin_email)
+
     def start_process(self):
         try :
             self.begin()
             self.notify_task_details()
+            self.notify_compliance_to_reassign()
             self.commit()
+            self.close()
         except Exception, e :
             print e
             print (traceback.format_exc())

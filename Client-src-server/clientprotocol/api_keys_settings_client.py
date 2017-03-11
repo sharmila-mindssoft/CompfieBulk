@@ -460,7 +460,7 @@ api_params = {
     "compliance_status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "record_count": make_int_field(length="100000"),
     "drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
-    "indus_name": make_text_field(),
+    "indus_name": make_text_field(is_optional=True),
     "drill_compliances": make_map_type_vector_type(module="dashboard", klass_name="Level1Compliance", validfun=allow_specialchar),
     "status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "cat_name": make_text_field(is_optional=True),

@@ -53,9 +53,19 @@ class ServerValidation(object):
             raise RuntimeError("Application server connection failed")
 
     def validate_file_server(self):
-        pass
-        return True
-        # file server connection goes here
+        port = self.fileserver_info.get("port")
+        ip = self.fileserver_info.get("ip")
+        try :
+            r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+            print r
+            print "-" * 50
+            if r.status_code != 200 :
+                return "File server connection failed"
+            else :
+                return True
+
+        except :
+            raise RuntimeError("File server connection failed")
 
     def perform_validation(self):
         machine_result = self.validate_application_server()
@@ -140,17 +150,27 @@ class UpdateServerValidation(object):
             print r
             print "-" * 50
             if r.status_code != 200 :
-                return "Group Application server connection failed"
+                return "Application server connection failed"
             else :
                 return True
 
         except :
-            raise RuntimeError("Group Application server connection failed")
+            raise RuntimeError("Application server connection failed")
 
     def validate_update_file_server(self):
-        pass
-        return True
-        # file server connection goes here
+        port = self.fileserver_info.get("port")
+        ip = self.fileserver_info.get("ip")
+        try :
+            r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+            print r
+            print "-" * 50
+            if r.status_code != 200 :
+                return "File server connection failed"
+            else :
+                return True
+
+        except :
+            raise RuntimeError("File server connection failed")
 
     def perform_update_validation(self):
         machine_result = self.validate_update_application_server()

@@ -2,6 +2,7 @@ import os
 import json
 import time
 import traceback
+import threading
 # import mysql.connector.pooling
 import mysql.connector
 from flask import Flask, request, Response
@@ -84,30 +85,32 @@ class API(object):
         # print "Databases initialize"
 
         self._ip_address = None
-        # self._remove_old_session()
+        self._remove_old_session()
 
     def _remove_old_session(self):
 
-        def on_return():
-            self._remove_old_session()
-
         def _with_client_info():
-            for c_id, c_db in self._databases.iteritems() :
+            for c_id, c_db in self._group_databases.iteritems() :
                 on_session_timeout(c_db)
-            on_return()
 
         def on_session_timeout(c_db):
-            c_db.begin()
+            c_db_con = self.client_connection_pool(c_db)
+            _db = Database(c_db_con)
+            _db.begin()
             try :
-                c_db.clear_session(SESSION_CUTOFF)
-                c_db.commit()
+                _db.clear_session(SESSION_CUTOFF)
+                _db.commit()
+                c_db_con.close()
             except Exception, e :
                 print e
-                c_db.rollback()
+                _db.rollback()
+                c_db_con.close()
 
-        self._io_loop.add_timeout(
-            time.time() + 1080, _with_client_info
-        )
+            t = threading.Timer(500, _with_client_info)
+            t.daemon = True
+            t.start()
+
+        _with_client_info()
 
     def close_connection(self, db):
         try:
@@ -210,6 +213,8 @@ class API(object):
                                 if self._replication_managers_for_group.get(_client_id) is None :
                                     rep_man.start()
                                     self._replication_managers_for_group[_client_id] = rep_man
+                                else :
+                                    self._replication_managers_for_group[_client_id].start()
                     else :
                         db_cons_info = self._le_databases.get(_client_id)
                         if db_cons_info is None :

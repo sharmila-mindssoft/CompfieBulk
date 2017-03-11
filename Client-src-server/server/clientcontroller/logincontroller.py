@@ -242,7 +242,10 @@ def user_login_response(db, data, client_id, ip):
     session_type = 1  # web
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
-    employee = "%s - %s" % (employee_code, employee_name)
+    if employee_code is None :
+        employee = employee_name
+    else :
+        employee = "%s - %s" % (employee_code, employee_name)
     username = data["username"]
     mobile_no = data["mobile_no"]
     session_token = add_session(
@@ -398,8 +401,7 @@ def process_save_logindetails(db, request, company_id):
     else:
         encrypt_password = encrypt(password)
         token = request.token
-        if save_login_details(db, token, username, encrypt_password):
-            SaveGroupAdminName(username, company_id)
+        if save_login_details(db, token, username, encrypt_password, company_id):
             return clientlogin.SaveRegistrationSuccess()
         else:
             return clientlogin.InvalidSessionToken()
