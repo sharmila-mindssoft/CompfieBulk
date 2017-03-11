@@ -41,7 +41,7 @@ function call_api(request, short_name, callback) {
         data: JSON.stringify(requestFrame, null, ''),
         success: function(data, textStatus, jqXHR) {
             // data = atob(data.substring(5));
-            data = JSON.parse(data);
+            // data = JSON.parse(data);
             var status = data[0];
             var response = data[1];
             matchString = 'success';
