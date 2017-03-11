@@ -141,7 +141,7 @@ function processLogin(username, password, shortName, callback) {
     contentType: 'application/json',
     data: JSON.stringify(requestFrame, null, ' '),
     success: function (data, textStatus, jqXHR) {
-      var data = JSON.parse(data);
+      // var data = JSON.parse(data);
       var status = data[0];
       var response = data[1];
       matchString = 'success';

@@ -230,7 +230,7 @@ function updateNotCompliedChart(data, id) {
     tooltip: {
       headerFormat: '',
       pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b> out of ' + total
-    },    
+    },
     legend: {
       enabled: true,
       itemStyle: {
@@ -337,7 +337,7 @@ function updateTrendChart(data, id) {
         }
       }
     },
-    legend: {      
+    legend: {
       itemStyle: {
           fontWeight: 'normal',
           fontSize: '11px'
@@ -399,8 +399,8 @@ function updateComplianceApplicabilityChart(data, id) {
     tooltip: {
       headerFormat: '',
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
-    },    
-    legend: { 
+    },
+    legend: {
       enabled: true     ,
       itemStyle: {
           fontWeight: 'normal',
@@ -675,7 +675,7 @@ function loadChart(){
     $(".menu_widgets a", liclone).attr("data-target", "#item"+v.w_id);
     if(v.active_status = true){
       $(".menu_widgets", liclone).removeClass("active_widgets");
-    }    
+    }
     $(".menu_widgets", liclone).click(function(e){
         var flag = 0;
         $(".dragdrophandles li").each(function(){
@@ -700,7 +700,7 @@ function loadChart(){
               $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
               $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
               $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
-              cardboxclone.addClass("resizable"+v.w_id);              
+              cardboxclone.addClass("resizable"+v.w_id);
               $(".closewidget", cardboxclone).click(function(e){
                 var divitem = $(this).parent().parent();
                 var getitem = divitem.attr('id');
@@ -738,7 +738,7 @@ function loadChart(){
             }else{
               displayMessage(error);
             }
-          });          
+          });
         }
     });
 
@@ -765,7 +765,7 @@ function loadChart(){
   }else{
     $(".page-title").show();
     $(".welcome-title").hide();
-    $.each(widget_info, function(k,v){      
+    $.each(widget_info, function(k,v){
       var status_check = 0;
       settings = widgetSettings();
       var cardbox = $(".chart-card-box li");

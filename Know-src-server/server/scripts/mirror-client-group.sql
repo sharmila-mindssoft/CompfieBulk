@@ -206,7 +206,7 @@ CREATE TABLE `tbl_service_providers` (
 CREATE TABLE `tbl_users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) NOT NULL,
-  `client_id` int(11) DEFAULT NULL,
+  `client_id` int(11) NOT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
   `service_provider_id` int(11) DEFAULT NULL,
   `user_level` int(11) DEFAULT NULL,
