@@ -473,7 +473,7 @@ class EmailHandler(Email):
         subject = "Service Provider Compliance Reassign Notification"
         message = '''
             Dear Administrator, \
-            Reassign %s user's compliances to someother user
+            Reassign %s user's compliances to someother user.
         ''' % (
                service_provider_name
         )
