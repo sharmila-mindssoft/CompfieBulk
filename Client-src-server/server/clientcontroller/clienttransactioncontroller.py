@@ -406,13 +406,8 @@ def process_approve_compliance(db, request, session_user):
         )
     elif status == "Reject Concurrence":
         reject_compliance_concurrence(
-            db, compliance_history_id, remarks, next_due_date
-        )
-    # else:
-    #     concur_compliance(
-    #         db, compliance_history_id, remarks,
-    #         next_due_date, validity_date, session_user
-    #     )
+            db, compliance_history_id, remarks, next_due_date, session_user
+        )    
 
     return clienttransactions.ApproveComplianceSuccess()
 
