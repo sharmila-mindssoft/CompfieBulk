@@ -1769,18 +1769,21 @@ class GetServiceProviderDetailsFilterSuccess(Response):
         }
 
 class GetServiceProviderDetailsReportSuccess(Response):
-    def __init__(self, sp_details_list):
+    def __init__(self, sp_details_list, total_count):
         self.sp_details_list = sp_details_list
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["sp_details_list"])
+        data = parse_dictionary(data, ["sp_details_list", "total_count"])
         sp_details_list = data.get("sp_details_list")
-        return GetServiceProviderDetailsReportSuccess(sp_details_list)
+        total_count = data.get("total_count")
+        return GetServiceProviderDetailsReportSuccess(sp_details_list, total_count)
 
     def to_inner_structure(self):
         return {
-            "sp_details_list" : self.sp_details_list
+            "sp_details_list" : self.sp_details_list,
+            "total_count": self.total_count
         }
 
 class GetAuditTrailFilterSuccess(Response):
@@ -1821,18 +1824,21 @@ class GetLoginTraceFilterSuccess(Response):
         }
 
 class GetLoginTraceReportDataSuccess(Response):
-    def __init__(self, log_trace_activities):
+    def __init__(self, log_trace_activities, total_count):
         self.log_trace_activities = log_trace_activities
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["log_trace_activities"])
+        data = parse_dictionary(data, ["log_trace_activities", "total_count"])
         log_trace_activities = data.get("log_trace_activities")
-        return GetLoginTraceReportDataSuccess(log_trace_activities)
+        total_count = data.get("total_count")
+        return GetLoginTraceReportDataSuccess(log_trace_activities, total_count)
 
     def to_inner_structure(self):
         return {
-            "log_trace_activities" : self.log_trace_activities
+            "log_trace_activities" : self.log_trace_activities,
+            "total_count": self.total_count
         }
 
 class GetUserProfileSuccess(Response):
