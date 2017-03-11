@@ -1459,6 +1459,18 @@ class EmployeeNameAlreadyExists(Response):
         return {
         }
 
+class UnitsAlreadyAssigned(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return UnitsAlreadyAssigned()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 class UpdateClientUserSuccess(Response):
     def __init__(self):
@@ -1920,7 +1932,7 @@ def _init_Response_class_map():
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
         GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess,
         BlockServiceProviderSuccess, UserManagementEditViewSuccess,
-        GetSettingsFormDetailsSuccess, SaveSettingsFormDetailsSuccess
+        GetSettingsFormDetailsSuccess, SaveSettingsFormDetailsSuccess, UnitsAlreadyAssigned
     ]
     class_map = {}
     for c in classes:
