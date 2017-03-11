@@ -559,13 +559,13 @@ def get_risk_chart_count(db, request, user_id, user_category):
         " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
         " from tbl_compliance_history as t1 " + \
         " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
-        " where find_in_set(t2.domain_id, %s)) as ch, " + \
+        " where find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch, " + \
         " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
         " from tbl_client_compliances as t1  " + \
         " left join tbl_assign_compliances as t2 " + \
-        " on t1.compliance_id = t2.compliance_id " + \
-        " where find_in_set(t1.domain_id, %s)) as cc), " + \
+        " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id " + \
+        " where find_in_set(t1.domain_id, %s) group by t1.unit_id ) as cc), " + \
         " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id and t3.is_closed = 0"
 
     param = [d_ids, d_ids]
@@ -580,15 +580,15 @@ def get_risk_chart_count(db, request, user_id, user_category):
             " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
             " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
             " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            "  and find_in_set(t2.domain_id, %s) ) as ch, " + \
+            "  and find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch, " + \
             " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
             " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
             " from tbl_client_compliances as t1  " + \
             " left join tbl_assign_compliances as t2 " + \
-            " on t1.compliance_id = t2.compliance_id  " + \
+            " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id " + \
             " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
             " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            " and find_in_set(t1.domain_id, %s)) as cc)," + \
+            " and find_in_set(t1.domain_id, %s) group by t1.unit_id) as cc)," + \
             " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id and t3.is_closed = 0"
         param = [user_id, d_ids, user_id, d_ids]
 
