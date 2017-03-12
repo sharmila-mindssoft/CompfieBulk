@@ -166,7 +166,7 @@ function PageControls() {
     });
 
     exportButton.click(function() {
-        //processSubmit(true);
+        processSubmit(true);
     });
 
     ItemsPerPage.on('change', function(e) {
@@ -441,7 +441,9 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv) {
                     if (f_count == 0)
                         createPageView(t_this._total_count);
                 } else {
-                    REPORT.exportReportValues();
+                    //REPORT.exportReportValues();
+                    document_url = response.link;
+                    window.open(document_url, '_blank');
                 }
             } else {
                 t_this.possibleFailures(error);

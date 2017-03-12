@@ -903,9 +903,9 @@ def get_status_report_consolidated(db, request, session_user, session_category):
         )
     else:
         converter = ConvertJsonToCSV(
-            db, request, session_user, "Reassign"
+            db, request, session_user, "StatusReportConsolidated"
         )
-        return clientreportnew.ExportToCSVSuccess(
+        return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
 # Status Report Consolidated Report End
@@ -966,9 +966,9 @@ def get_statutory_settings_unit_Wise(db, request, session_user, session_category
         )
     else:
         converter = ConvertJsonToCSV(
-            db, request, session_user, "Reassign"
+            db, request, session_user, "StatutorySettingsUnitWise"
         )
-        return clientreportnew.ExportToCSVSuccess(
+        return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
 # Statutory Settings Unit Wise End
