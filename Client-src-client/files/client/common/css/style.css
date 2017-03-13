@@ -1230,6 +1230,7 @@ h2.chart-title: hover {
 .table-not-complied-status {
     border: 1px solid #ededed;
 }
+<<<<<<< HEAD
 .table-compliance-status {
     border: 1px solid #ededed;
 }
@@ -1257,4 +1258,8 @@ h2.chart-title: hover {
     .card-box {
         padding-bottom: 8em
     }
+}
+
+#ui-datepicker-div {
+    z-index: 100 !important;
 }

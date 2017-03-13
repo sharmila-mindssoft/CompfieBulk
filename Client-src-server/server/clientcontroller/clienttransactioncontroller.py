@@ -367,7 +367,9 @@ def process_get_compliance_approval_list(db, request, session_user):
         clientcore.COMPLIANCE_APPROVAL_STATUS("Concur"),
         clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Concurrence"),
         clientcore.COMPLIANCE_APPROVAL_STATUS("Approve"),
-        clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Approval")
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Reject Approval"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Rectify Concurrence"),
+        clientcore.COMPLIANCE_APPROVAL_STATUS("Rectify Approval")
     ]
     return clienttransactions.GetComplianceApprovalListSuccess(
         approval_list=compliance_approval_list,
@@ -406,13 +408,8 @@ def process_approve_compliance(db, request, session_user):
         )
     elif status == "Reject Concurrence":
         reject_compliance_concurrence(
-            db, compliance_history_id, remarks, next_due_date
-        )
-    # else:
-    #     concur_compliance(
-    #         db, compliance_history_id, remarks,
-    #         next_due_date, validity_date, session_user
-    #     )
+            db, compliance_history_id, remarks, next_due_date, session_user
+        )    
 
     return clienttransactions.ApproveComplianceSuccess()
 

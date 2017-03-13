@@ -2207,9 +2207,11 @@ def concur_compliance(
     db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
     return True
 
-
+#####################################################
+# Reject Compliances
+#####################################################
 def reject_compliance_concurrence(
-    db, compliance_history_id, remarks, next_due_date
+    db, compliance_history_id, remarks, next_due_date, session_user
 ):
     compliance_name_column = " (SELECT concat( " + \
         " IFNULL(document_name,''), '-', compliance_task " + \
@@ -2220,7 +2222,7 @@ def reject_compliance_concurrence(
         " from tbl_compliances tc  " + \
         " where tc.compliance_id=ch.compliance_id) as duration_type_id"
     columns = [
-        "unit_id", "ch.compliance_id as compliance_id",
+        "unit_id", "legal_entity_id", "ch.compliance_id as compliance_id",
         "due_date", "completion_date",
         "completed_by", "concurred_by", "approved_by",
         compliance_name_column, duration_column
@@ -2236,6 +2238,9 @@ def reject_compliance_concurrence(
     due_date = rows[0]["due_date"]
     completion_date = rows[0]["completion_date"]
     duration_type_id = rows[0]["duration_type_id"]
+    legal_entity_id = rows[0]["legal_entity_id"]
+    compliance_task = rows[0]["compliance_task"]    
+    
     status = "Inprogress"
     if due_date < completion_date:
         status = "Not Complied"
@@ -2244,10 +2249,13 @@ def reject_compliance_concurrence(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    save_compliance_activity(
-        db, unit_id, compliance_id, "Rejected", status,
-        ageing_remarks
-    )
+    # save_compliance_activity(
+    #     db, unit_id, compliance_id, "Rejected", status,
+    #     ageing_remarks
+    # )
+    current_time_stamp = get_date_time_in_date()
+    save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
+                             session_user, current_time_stamp, "Rejected", ageing_remarks)
     columns = [
         "concurrence_status", "remarks", "completion_date", "completed_on"
     ]
@@ -2256,6 +2264,11 @@ def reject_compliance_concurrence(
     condition = "compliance_history_id = %s "
     values.append(compliance_history_id)
     db.update(tblComplianceHistory, columns, values, condition)
+
+    # Audit Log Entry
+    action = "Compliance Rejected \"%s\"" % (compliance_task)
+    db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
+
     notify_compliance_rejected(
         db, compliance_history_id, remarks, "RejectConcurrence",
         rows[0]["completed_by"], rows[0]["concurred_by"],

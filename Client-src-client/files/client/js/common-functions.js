@@ -430,11 +430,17 @@ $(function() {
         var tbody = table.find('tbody');
         var col_num = ele.closest("th").index();
         if (ele.hasClass("asc")) {
-            table.find("th span").each(function(i) { $(this).removeClass('desc'); $(this).removeClass('asc'); });
+            table.find("th span").each(function(i) {
+                $(this).removeClass('desc');
+                $(this).removeClass('asc');
+            });
             ele.addClass("desc");
             ele.removeClass("asc");
         } else {
-            table.find("th span").each(function(i) { $(this).removeClass('desc'); $(this).removeClass('asc'); });
+            table.find("th span").each(function(i) {
+                $(this).removeClass('desc');
+                $(this).removeClass('asc');
+            });
             ele.addClass("asc");
             ele.removeClass("desc");
         }
