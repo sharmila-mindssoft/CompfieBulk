@@ -1291,7 +1291,7 @@ def get_statutory_wise_compliances(
         # country_id=country_id,
         if compliance["repeats_type_id"] == 1:  # Days
             due_dates, summary = calculate_due_date(
-                db,                
+                db,
                 repeat_by=1,
                 repeat_every=compliance["repeats_every"],
                 due_date=compliance["due_date"],
@@ -1315,7 +1315,7 @@ def get_statutory_wise_compliances(
                 due_date=compliance["due_date"],
                 domain_id=domain_id
             )
-        print "due_dates>>>", due_dates 
+        print "due_dates>>>", due_dates
         print "summary>>>", summary
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
@@ -2239,8 +2239,8 @@ def reject_compliance_concurrence(
     completion_date = rows[0]["completion_date"]
     duration_type_id = rows[0]["duration_type_id"]
     legal_entity_id = rows[0]["legal_entity_id"]
-    compliance_task = rows[0]["compliance_task"]    
-    
+    compliance_task = rows[0]["compliance_task"]
+
     status = "Inprogress"
     if due_date < completion_date:
         status = "Not Complied"
