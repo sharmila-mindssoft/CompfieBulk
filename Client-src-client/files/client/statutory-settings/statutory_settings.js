@@ -410,7 +410,11 @@ function pageControls() {
     });
 
     SaveButton.click(function() {
-        displayPopUp(SAVE_API, null);
+        //displayPopUp(SAVE_API, null);
+        displayLoader();
+        setTimeout(function() {
+            callAPI(SAVE_API)
+        }, 500);
     });
 
     PasswordSubmitButton.click(function() {
