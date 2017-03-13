@@ -7,6 +7,10 @@ var LegalEntityName = $("#legal_entity_name");
 var LegalEntityId = $("#legal_entity_id");
 var ACLegalEntity = $("#ac-entity");
 
+var txtUnit = $('#txtUnit');
+var hdnUnit = $('#hdnUnit');
+var divUnit = $('#divUnit');
+
 var ShowButton = $(".btn-show");
 
 var currentCompliances;
@@ -24,6 +28,7 @@ var countUpcoming = 0;
 var countInprogress = 0;
 var sno = 0;
 var uploaded_file_list = [];
+var unitList = [];
 
 function displayLoader() {
     $(".loading-indicator-spin").show()
@@ -44,6 +49,7 @@ function initialize() {
     countOverdue = 0;
     countInprogress = 0;
     closeicon();
+    loadCalendar();
 
     function onSuccess(data) {
         closeicon();
@@ -180,6 +186,14 @@ function loadComplianceTaskDetails(data) {
         $("#pagination").show()
     }
     // hideLoader()
+
+    // $(document).find(".js-filtertable").each(function() {
+    //     $(this).filtertable().addFilter(".js-filter")
+    // });
+
+    $('.js-filtertable').each(function() {
+        $(this).filtertable().addFilter('.js-filter');
+    });
 }
 
 $('.upcoming-tab').click(function() {
@@ -310,7 +324,7 @@ function showSideBar(idval, data) {
     $(".half-width-task-details").show();
     $(".full-width-list").attr("width", "60%");
     $(".half-width-task-details").attr("width", "40%");
-    $(".half-width-task-details").css("display", "table-cell");
+    $(".half-width-task-details").css("display", "table");
 
     //SideView append ---------------------------------------------------------------------
     $.each(data, function(key1, value) {
@@ -545,6 +559,88 @@ function showSideBar(idval, data) {
     })
 }
 
+function loadCalendar() {
+    client_mirror.getWidgetCalender(
+        function(error, response) {
+            if (error == null) {
+                loadCalendarData(response);
+                // onSuccess(response);
+                // displaySuccessMessage(message.submit_success);
+            } else {
+                onFailure(error);
+            }
+        }
+    );
+
+}
+
+function loadCalendarData(data) {
+    var wid_data = data.widget_data;
+    // var current_date = new Date("2017-03-01");
+    var current_date = new Date(wid_data[0]['CurrentMonth']);
+    var date = current_date;
+
+    var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    var month_value = current_date.getMonth();
+    var year_value = current_date.getFullYear();
+    var week_day = current_date.getDay();
+    var html = '';
+    var ct = $("#templates .calender-templates .cal");
+    var ctclone = ct.clone();
+    $(".cal-caption", ctclone).html(months[month_value] + " - " + year_value);
+    $(".comp-calendar").append(ctclone);
+
+
+    day = date.getDate();
+    month = date.getMonth();
+    year = date.getFullYear();
+
+    months = new Array('January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
+    this_month = new Date(year, month, 1);
+    next_month = new Date(year, month + 1, 1);
+    // Find out when this month starts and ends.
+    first_week_day = this_month.getDay();
+    days_in_this_month = Math.round((next_month.getTime() - this_month.getTime()) / (1000 * 60 * 60 * 24));
+
+    calendar_html = '';
+    calendar_html += '<tr>';
+    for (week_day = 0; week_day < first_week_day; week_day++) {
+        calendar_html += '<td class="cal-off"> </td>';
+    }
+    week_day = first_week_day;
+    for (day_counter = 1; day_counter <= days_in_this_month; day_counter++) {
+        week_day %= 7;
+        if (week_day == 0)
+            calendar_html += '</tr><tr>';
+        if (day == day_counter)
+            calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
+        else
+            calendar_html += '<td class="dateid' + day_counter + '"><div class="date">' + day_counter + '</div></td>';
+
+        week_day++;
+    }
+
+    calendar_html += '</tr>';
+
+    $(".comp-calendar .cal-body").append(calendar_html);
+
+    var getdata = wid_data[0]['data'];
+    $.each(getdata, function(k, v) {
+        if (v.inprogress > 0) {
+            $(".dateid" + v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="' + v.inprogress + ' Inprogress Compliances"> ' + v.inprogress + ' </div>');
+        }
+        if (v.duedate > 0) {
+            $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Unassinged Compliances"> ' + v.duedate + '</div>');
+        }
+        if (v.upcoming > 0) {
+            $(".dateid" + v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="' + v.upcoming + ' Upcoming Compliances">' + v.upcoming + '</div>');
+        }
+        if (v.overdue > 0) {
+            $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Not Complied">' + v.overdue + '</div>');
+        }
+    });
+}
+
 function showTextbox(complianceStatus) {
     $(".duedate1_textbox").show();
     $(".duedate1_label").hide();
@@ -605,10 +701,39 @@ ShowButton.click(function() {
     }
 });
 
+function loadUnits(le_id) {
+    client_mirror.complianceFilters(le_id,
+        function(error, response) {
+            if (error == null) {
+                unitList = response.user_units;
+            } else {}
+        }
+    );
+}
+
 function onAutoCompleteSuccess(value_element, id_element, val) {
     value_element.val(val[1]);
     id_element.val(val[0]);
+    if (id_element[0].id == 'LegalEntityId') {
+        loadUnits(parseInt(LegalEntityId.val()));
+    }
 }
+
+//Unit Auto Complete
+txtUnit.keyup(function(e) {
+    var condition_fields = [];
+    var condition_values = [];
+    // if (ddlUserCategory.val() != '') {
+    var text_val = $(this).val();
+    commonAutoComplete(
+        e, divUnit, hdnUnit, text_val,
+        unitList, "unit_name", "unit_id",
+        function(val) {
+            onAutoCompleteSuccess(txtUnit, hdnUnit, val);
+        }, condition_fields, condition_values);
+
+    // }
+});
 
 LegalEntityName.keyup(function(e) {
     var text_val = $(this).val();
@@ -639,6 +764,7 @@ function loadEntityDetails() {
         LegalEntityNameAC.hide();
         LegalEntityNameLabel.text(LE_NAME);
         LegalEntityId.val(LE_ID);
+        loadUnits(parseInt(LegalEntityId.val()));
         ShowButton.trigger("click");
     }
 }
@@ -647,22 +773,26 @@ $(function() {
     loadEntityDetails();
 });
 
-$(document).find(".js-filtertable").each(function() {
-    $(this).filtertable().addFilter(".js-filter")
+// $(document).find(".js-filtertable").each(function() {
+//     $(this).filtertable().addFilter(".js-filter")
+// });
+$('.js-filtertable').each(function() {
+    $(this).filtertable().addFilter('.js-filter');
 });
+
 $(document).find(".js-filtertable-upcoming").each(function() {
     $(this).filtertable().addFilter(".js-filter-upcoming")
 });
-$(document).tooltip({
-    position: {
-        my: "center bottom-20",
-        at: "center top",
-        using: function(a, b) {
-            $(this).css(a);
-            $("<div>").addClass("arrow").addClass(b.vertical).addClass(b.horizontal).appendTo(this)
-        }
-    }
-});
+// $(document).tooltip({
+//     position: {
+//         my: "center bottom-20",
+//         at: "center top",
+//         using: function(a, b) {
+//             $(this).css(a);
+//             $("<div>").addClass("arrow").addClass(b.vertical).addClass(b.horizontal).appendTo(this)
+//         }
+//     }
+// });
 $(document).ready(function() {
     $(".current-tab").click(function() {
         $(".current-tab").addClass("active");

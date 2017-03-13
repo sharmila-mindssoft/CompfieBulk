@@ -300,6 +300,8 @@ class Database(object):
 
     def select_one(self, query, param=None):
         cursor = self.cursor()
+        print "query>>>", query
+        print "param>>", param
         assert cursor is not None
 
         try:
@@ -719,7 +721,7 @@ class Database(object):
         print '-------------'
         print rows
         client_id = rows[0]["client_id"]
-        category_id = rows[0]["user_category_id"]
+        category_id = rows[0]["user_category_id"]        
         query = " INSERT INTO tbl_activity_log " + \
             " (client_id, legal_entity_id, unit_id, user_category_id, " + \
             " user_id, form_id, action, created_on) " + \

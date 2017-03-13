@@ -206,13 +206,13 @@ function initClientMirror() {
         //alert(body.toSource());
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
-            headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),
             success: function(data) {
                 //console.log(data);
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -250,7 +250,7 @@ function initClientMirror() {
             contentType: 'application/json',
             data: toJSON(request),
             success: function(data) {
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -766,12 +766,12 @@ function initClientMirror() {
             },
 
             url: CLIENT_BASE_URL + 'client_user',
-            headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             contentType: 'application/json',
             data: toJSON(body),
             success: function(data) {
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -1199,6 +1199,28 @@ function initClientMirror() {
                 'start_date': start_date,
                 'unit_id': unit_id,
                 'duration': duration
+            }
+        ];
+        callerName = 'client_user';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function complianceFilters(le_id, callback) {
+        var request = [
+            'ComplianceFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_user';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function onOccurrenceLastTransaction(le_id, compliance_id, unit_id, callback) {
+        var request = [
+            'OnOccurrenceLastTransaction', {
+                'le_id': le_id,
+                'compliance_id': compliance_id,
+                'unit_id': unit_id
             }
         ];
         callerName = 'client_user';
@@ -1900,7 +1922,7 @@ function initClientMirror() {
             processData: false,
             contentType: false,
             success: function(data, textStatus, jqXHR) {
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 if (Object.keys(response).length == 0)
@@ -2533,7 +2555,7 @@ function initClientMirror() {
     }
 
     function getWidgetUserScoreCard(callback) {
-         var request = [
+        var request = [
             "GetUserScoreCard", {
                 "le_ids": getLEids()
             }
@@ -2655,31 +2677,17 @@ function initClientMirror() {
             requestFrame
         ];
 
-        var saveData = (function () {
+        var saveData = (function() {
             var a = document.createElement("a");
             document.body.appendChild(a);
             a.style = "display: none";
-            return function (data, fileName) {
-                // var json = JSON.stringify(data);
-                blob = new Blob([data], {type: "application/octet-stream"});
-                // blob = new Blob([data], {type : "image/svg+xml;charset=utf-8"});
-                // var domURL = self.URL || self.webkitURL || self;
-                url = window.URL.createObjectURL(blob);
+            return function(data, fileName) {
+                url = 'data:application/octet-stream;base64,' + data;
                 a.href = url;
                 a.download = fileName;
                 a.click();
                 window.URL.revokeObjectURL(url);
             };
-            // var img = new Image();
-
-            // img.onLoad = function () {
-            //     console.log("image onload");
-            //     ctx.drawImage(this, 0, 0);
-            //     domURL.revokeObjectURL(url);
-            //     callback(this);
-            // };
-
-            // img.src = url;
         }());
 
         $.ajax({
@@ -2690,14 +2698,15 @@ function initClientMirror() {
                     // alert(this.status);
                     if (this.readyState == 4 && this.status == 200) {
                         var data = this.response;
-                        var fileName=this.getResponseHeader('filename');
+                        // data = atob(data);
+                        var fileName = this.getResponseHeader('filename');
                         saveData(data, fileName);
                     }
                 }
                 return xhr;
             },
             url: '/api/files',
-            headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             crossDomain: true,
             data: toJSON(body),
@@ -2709,17 +2718,65 @@ function initClientMirror() {
 
     function downloadTaskFile() {
         var request = [
-           "DownloadFile",
-           {
+            "DownloadFile",
+            {
                 "le_id": 10,
                 "c_id": 1,
                 "d_id": 1,
-                "u_id" : 12,
+                "u_id": 12,
                 "start_date": "22-Feb-2017",
-                "file_name": "images.jpeg"
-           }
+                // "file_name": "images.jpeg"
+                // "file_name": "test.txt"
+                // "file_name": "img-png.png",
+                // "file_name": "Compfie_Phase II_Development_Days_version 1.1.xls",
+                // "file_name": "ComplianceDetails-08-Apr-2016.zip",
+                // "file_name": "download.jpg",
+                // "file_name": "O'Reilly - Introduction to Tornado - 2012.pdf",
+                "file_name": "Process Diagram Version 3.0.pptx",
+            }
         ];
         DownloadApiRequest(request);
+    }
+
+    function ConvertToCSV(objArray) {
+        var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+        // var lblarray = typeof lblsArray != 'object' ? JSON.parse(lblsArray) : lblsArray;
+
+        var str = '';
+
+        function makecsv(objContent) {
+            for (var i = 0; i < objContent.length; i++) {
+                var line = '';
+                for (var index in objContent[i]) {
+                    if (line != '') line += ','
+
+                    line += objContent[i][index];
+                }
+                str += line + '\r\n';
+            }
+            return str;
+        }
+        // str += makecsv(lblarray);
+        str += makecsv(array);
+
+        console.log(str);
+        return str;
+    }
+
+    function exportJsontoCsv(data, fileName) {
+
+        var jsonObject = JSON.stringify(data);
+
+        csv_data = ConvertToCSV(jsonObject);
+        csv_data = btoa(csv_data);
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        url = 'data:application/octet-stream;base64,' + csv_data;
+        a["href"] = url;
+        a.download = fileName + ".csv";
+        a.click();
+        window.URL.revokeObjectURL(url);
     }
 
     return {
@@ -2914,11 +2971,15 @@ function initClientMirror() {
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
+        getLEids:getLEids,
         getUserManagement_List: getUserManagement_List,
         getSettingsFormDetails: getSettingsFormDetails,
         saveSettingsFormDetails: saveSettingsFormDetails,
         blockServiceProvider: blockServiceProvider,
-        downloadTaskFile : downloadTaskFile
+        downloadTaskFile: downloadTaskFile,
+        complianceFilters: complianceFilters,
+        exportJsontoCsv: exportJsontoCsv,
+        onOccurrenceLastTransaction: onOccurrenceLastTransaction
     };
 }
 

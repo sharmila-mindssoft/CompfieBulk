@@ -41,8 +41,12 @@
                                         <div class="form-group">
                                             <label class="col-sm-4 control-label">Unit:</label>
                                             <div class="col-sm-8 has-feedback">
-                                                <input class="form-control input-sm" placeholder="Enter Unit" type="text">
+                                                <input class="form-control input-sm" placeholder="Enter Unit" type="text" id="txtUnit">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                <input type="hidden" id="hdnUnit" value="">
+                                                <div id="divUnit" class="ac-textbox default-display-none">
+                                                    <ul class="width85Percent"></ul>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -66,8 +70,9 @@
                                             <div class="col-md-12">
                                                 <div class="clearfix"></div>
                                                 <center>
-                                                    <div class="cal table-responsive p-t-0 m-t-15">
-                                                        <table class="cal-table" style="border-left: none;">
+                                                    <div class="cal table-responsive p-t-0 m-t-15 comp-calendar">
+
+                                                        <!--<table class="cal-table" style="border-left: none;">
                                                             <caption class="cal-caption">
                                                                 <a href="##" class="prev"><i class="ti-angle-double-left text-info"></i></a>
                                                                 <a href="##" class="next"><i class="ti-angle-double-right text-info"></i></a> October - 2016
@@ -211,7 +216,7 @@
                                                                     <td class="cal-off">&nbsp;</td>
                                                                 </tr>
                                                             </tbody>
-                                                        </table>
+                                                        </table>-->
                                                     </div>
                                                     <div style="font-size:12px; font-weight: bold;" class="m-b-10 m-t-5">
                                                         <div style="display: inline-block; margin-right: 15px; ">
@@ -242,7 +247,7 @@
                                                     <tr>
                                                         <!--style="display: table"-->
                                                         <td>
-                                                            <table id="datatable-responsive js-filtertable" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                                            <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable" cellspacing="0" width="100%">
                                                                 <thead>
                                                                     <tr>
                                                                         <th width="3%"><span>#</span></th>
@@ -299,7 +304,7 @@
                                                                 <tbody class="tbody-compliances-task-list-inprogress"></tbody>
                                                             </table>
                                                         </td>
-                                                        <td width="40%" class="half-width-task-details td_inprogress" style="display: none;">
+                                                        <td width="40%" class="half-width-task-details td_inprogress" style="display: none;width: 100%">
                                                             <table id="datatable-responsive" class="table dt-responsive borderless inprogress_bg" cellspacing="0" width="100%">
                                                                 <tbody>
                                                                     <tr>
@@ -519,6 +524,49 @@
         </tr>
     </table>
 
+    <div class="calender-templates">
+        <div class="cal table-responsive">
+            <table class="cal-table">
+                <caption class="cal-caption">
+                </caption>
+                <tbody class="cal-body">
+                    <tr>
+                        <th><span>SUN</span></th>
+                        <th><span>MON</span></th>
+                        <th><span>TUE</span></th>
+                        <th><span>WED</span></th>
+                        <th><span>THU</span></th>
+                        <th><span>FRI</span></th>
+                        <th><span>SAT</span></th>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <div class="f-s-10">
+                <div class="cal-label-div">
+                    <div class="cal-label-duedate"></div>
+                    <div class="pull-left">Due Date</div>
+                </div>
+                <div class="cal-label-div">
+                    <div class="cal-label-inprogress"></div>
+                    <div class="pull-left">Inprogress</div>
+                </div>
+                <div class="cal-label-div">
+                    <div class="cal-label-overdue"></div>
+                    <div class="pull-left">Over Due</div>
+                </div>
+                <div class="cal-label-div">
+                    <div class="cal-label-upcoming"></div>
+                    <div class="pull-left">Upcoming</div>
+                </div> &nbsp;
+            </div>
+        </div>
+        <table>
+            <tr>
+                <td class="cal-off">&nbsp;</td>
+            </tr>
+        </table>
+    </div>
 </div>
 <script>
     $(document).ready(function() {

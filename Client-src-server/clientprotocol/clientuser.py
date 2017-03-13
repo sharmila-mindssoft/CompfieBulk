@@ -247,13 +247,56 @@ class StartOnOccurrenceCompliance(Request):
             "unit_id": self.unit_id,
             "duration": self.duration
         }
+######################################################################
+# Compliance Filters
+######################################################################
+class ComplianceFilters(Request):
+    def __init__(self, legal_entity_id):
+        self.legal_entity_id = legal_entity_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id"])
+        legal_entity_id = data.get("le_id")        
+        
+        return ComplianceFilters(legal_entity_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id
+        }
+
+######################################################################
+# OnOccurrence Last Transactions
+######################################################################
+class OnOccurrenceLastTransaction(Request):
+    def __init__(self, legal_entity_id, compliance_id, unit_id):
+        self.legal_entity_id = legal_entity_id
+        self.compliance_id = compliance_id
+        self.unit_id = unit_id
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "compliance_id", "unit_id"])
+        legal_entity_id = data.get("le_id")
+        compliance_id = data.get("compliance_id")
+        unit_id = data.get("unit_id")
+        
+        return OnOccurrenceLastTransaction(legal_entity_id, compliance_id, unit_id)
+
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "compliance_id": self.compliance_id,
+            "unit_id": self.unit_id
+        }
 
 
 def _init_Request_class_map():
     classes = [
         GetCurrentComplianceDetail, GetUpcomingComplianceDetail, CheckDiskSpace,
         UpdateComplianceDetail, GetOnOccurrenceCompliances,
-        StartOnOccurrenceCompliance
+        StartOnOccurrenceCompliance, ComplianceFilters, OnOccurrenceLastTransaction
     ]
     class_map = {}
     for c in classes:
@@ -478,6 +521,36 @@ class StartOnOccurrenceComplianceSuccess(Response):
         return {
         }
 
+class ComplianceFiltersSuccess(Response):
+    def __init__(self, user_units):
+        self.user_units = user_units
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["user_units"])        
+        user_units = data.get("user_units")        
+        return ComplianceFiltersSuccess(user_units)
+
+    def to_inner_structure(self):
+        return {            
+            "user_units": self.user_units
+        }
+
+class OnOccurrenceLastTransactionSuccess(Response):
+    def __init__(self, onoccurrence_transactions):
+        self.onoccurrence_transactions = onoccurrence_transactions
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["onoccurrence_transactions"])        
+        onoccurrence_transactions = data.get("onoccurrence_transactions")  
+
+        return OnOccurrenceLastTransactionSuccess(onoccurrence_transactions)
+
+    def to_inner_structure(self):
+        return {            
+            "onoccurrence_transactions": self.onoccurrence_transactions            
+        }
 
 def _init_Response_class_map():
     classes = [
@@ -485,7 +558,8 @@ def _init_Response_class_map():
         CheckDiskSpaceSuccess, UpdateComplianceDetailSuccess,
         NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess,
         StartOnOccurrenceComplianceSuccess, UnSupportedFile,
-        NextDueDateMustBeWithIn90DaysBeforeValidityDate, FileSizeExceedsLimit
+        NextDueDateMustBeWithIn90DaysBeforeValidityDate, FileSizeExceedsLimit,
+        ComplianceFiltersSuccess, OnOccurrenceLastTransactionSuccess
     ]
     class_map = {}
     for c in classes:

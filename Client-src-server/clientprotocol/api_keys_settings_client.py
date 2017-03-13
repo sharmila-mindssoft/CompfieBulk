@@ -460,7 +460,7 @@ api_params = {
     "compliance_status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "record_count": make_int_field(length="100000"),
     "drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
-    "indus_name": make_text_field(),
+    "indus_name": make_text_field(is_optional=True),
     "drill_compliances": make_map_type_vector_type(module="dashboard", klass_name="Level1Compliance", validfun=allow_specialchar),
     "status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "cat_name": make_text_field(is_optional=True),
@@ -663,4 +663,9 @@ api_params = {
     "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "le_admin": make_int_field(is_optional=True),
+    "user_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
+    "on_statutory": make_text_field(length=500),    
+    "on_unit": make_text_field(length=100),
+    "on_compliance_status": make_text_field(length=500),
+    "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),    
 }

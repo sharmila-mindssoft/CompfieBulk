@@ -553,6 +553,9 @@ def resave_registraion_token(db, client_id, email_id, user_id):
     notify_user_thread.start()
     if short_name:
         SaveRegistrationData(db, registration_token, expiry_date, email_id, client_id, current_time_stamp, user_id)
+        q = "insert into tbl_group_admin_email_notification(client_id, group_admin_email_id, " + \
+            " registration_sent_by, registration_sent_on ) values(%s, %s, %s, %s)"
+        db.execute(q, [client_id, email_id, user_id, current_time_stamp])
         return True
     else :
         return False

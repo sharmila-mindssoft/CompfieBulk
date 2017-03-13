@@ -589,7 +589,7 @@ CREATE TABLE `tbl_legal_entities` (
 
 DROP TABLE IF EXISTS `tbl_legal_entity_domains`;
 CREATE TABLE `tbl_legal_entity_domains` (
-  `le_domain_id` int(11) NOT NULL AUTO_INCREMENT,
+  `le_domain_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `legal_entity_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `activation_date` timestamp NULL DEFAULT NULL,
@@ -685,6 +685,7 @@ CREATE TABLE `tbl_categories` (
 
 DROP TABLE IF EXISTS `tbl_client_configuration`;
 CREATE TABLE `tbl_client_configuration` (
+  `cn_config_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
@@ -734,7 +735,7 @@ CREATE TABLE `tbl_units` (
 
 DROP TABLE IF EXISTS `tbl_units_organizations`;
 CREATE TABLE `tbl_units_organizations` (
-  `unit_org_id` int(11) NOT NULL AUTO_INCREMENT,
+  `unit_org_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `unit_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
   `organisation_id` int(11) DEFAULT NULL,
@@ -1076,7 +1077,7 @@ CREATE TABLE `tbl_group_admin_email_notification` (
   `legal_entity_id` int(11) DEFAULT NULL,
   `group_admin_email_id` varchar(50) NOT NULL,
   `registration_sent_by` int(11) DEFAULT NULL,
-  `registration_sent_on` timestamp NULL DEFAULT NULL 0,
+  `registration_sent_on` timestamp NULL DEFAULT NULL,
   `unit_creation_informed` tinyint(1) DEFAULT 0,
   `unit_sent_by` int(11) DEFAULT NULL,
   `unit_sent_on` timestamp NULL DEFAULT NULL,

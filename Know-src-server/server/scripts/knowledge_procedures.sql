@@ -9048,6 +9048,29 @@ END //
 DELIMITER ;
 
 -- --------------------------------------------------------------------------------
+-- To Get data for Client IP Details Export
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_ip_setting_details_report_export`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_setting_details_report_export`(
+    IN c_id INT(11), IN ip_ VARCHAR(50)
+)
+BEGIN
+    SELECT t2.form_name, t1.ips, t3.group_name FROM tbl_ip_settings t1
+    inner join tbl_client_forms t2 on t1.form_id = t2.form_id
+    inner join tbl_client_groups t3 on t1.client_id = t3.client_id
+    where
+    IF(c_id IS NOT NULL, t1.client_id = c_id, 1) and
+    IF(ip_ IS NOT NULL, t1.ips = ip_, 1)
+    order by t1.client_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
 -- Routine DDL
 -- Note: comments before and after the routine body will not be stored by the server
 -- --------------------------------------------------------------------------------

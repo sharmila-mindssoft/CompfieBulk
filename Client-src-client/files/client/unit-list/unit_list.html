@@ -24,7 +24,8 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+
+                            <label class="col-sm-4 control-label">Country: </label>
                             <div class="col-sm-6 has-feedback">
                                 <p class="form-control-static country-name default-display-none"></p>
                                 <div class="country-name-ac default-display-none">
@@ -39,7 +40,8 @@
 
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group: <span class="mandatory">*</span></label>
+
+                            <label class="col-sm-4 control-label">Business Group: </label>
                                 <div class="col-sm-6 has-feedback">
                                     <p class="form-control-static business-group-name default-display-none"></p>
 
@@ -54,7 +56,7 @@
                                 </div>
                         </div>
                        <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                            <label class="col-sm-4 control-label">Legal Entity: </label>
                             <div class="col-sm-6 has-feedback">
                                 <p class="form-control-static legal-entity-name default-display-none"></p>
                                 <div class="legal-entity-name-ac default-display-none">
@@ -70,7 +72,7 @@
                         </div>
 
                         <div class="form-group">
-                        <label class=" col-sm-offset-1 col-sm-3 control-label">Division: </label>
+                        <label class="col-sm-4 control-label">Division: </label>
                          <div class="col-sm-6 has-feedback">
                             <input type="text" class="form-control input-sm" id="division" placeholder="Enter Division" tabindex="4">
                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -81,7 +83,7 @@
                         </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Category: </label>
+                            <label class="col-sm-4 control-label">Category: </label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" class="form-control input-sm" id="category" placeholder="Enter Category" tabindex="5">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -94,7 +96,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Unit: </label>
+                            <label class="col-sm-4 control-label">Unit: </label>
                              <div class="col-sm-6 has-feedback">
                                 <input type="text" id="unit" class="form-control input-sm"  placeholder="Enter Unit" tabindex="6">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -105,7 +107,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: </label>
+                            <label class="col-sm-4 control-label">Domain: </label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" class="form-control input-sm" placeholder="Enter Domain Name" id="domain" tabindex="7">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -117,7 +119,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Organization Type: </label>
+                            <label class="col-sm-4 control-label">Organization Type: </label>
                              <div class="col-sm-6 has-feedback">
                                 <input type="text" class="form-control input-sm" id="orgtype" placeholder="Enter Organization Type" tabindex="8">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -129,10 +131,9 @@
 
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Status:</label>
+                            <label class="col-sm-4 control-label">Status:</label>
                             <div class="col-sm-6">
                                 <select class="form-control input-sm" id="unit-status" tabindex="9">
-
                                 </select>
                             </div>
                         </div>
@@ -140,8 +141,8 @@
                     <div class="col-sm-12">
                         <center>
                             <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="13"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button" tabindex="14"> Export </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="10"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button" tabindex="11"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -164,6 +165,8 @@
                         <div class="col-sm-4 text-center"><h6>Country : <span class="ctry-header"></span></h6></div>
                         <div class="col-sm-4 text-center"><h6>Domain : <span class="dom-header"></span></h6></div>
                     </div>
+                    <div class="clear"></div>
+                    <div class="table-responsive">
                     <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -181,6 +184,7 @@
 
                         </tbody>
                     </table>
+                    </div>
                     <table class="pagination-view default-display-none">
                       <tr>
                         <td>

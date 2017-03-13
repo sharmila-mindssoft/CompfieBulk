@@ -8,7 +8,7 @@ from server.constants import SESSION_CUTOFF
 from server.clientdatabase.general import (
     is_service_proivder_user, is_service_provider_in_contract
 )
-from server.clientdatabase.savetoknowledge import IsClientActive
+from server.clientdatabase.savetoknowledge import IsClientActive, SaveGroupAdminName
 from dateutil import relativedelta
 
 __all__ = [
@@ -249,7 +249,7 @@ def delete_emailverification_token(db, token):
 #################################################################
 # Save login Details
 #################################################################
-def save_login_details(db, token, username, password):
+def save_login_details(db, token, username, password, client_id):
     user_id = get_user_id_from_token(db, token)
     user_details = get_client_details_from_userid(db, user_id)
     user_category_id = user_details[0]["user_category_id"]
@@ -260,7 +260,8 @@ def save_login_details(db, token, username, password):
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
     delete_emailverification_token(db, token)
-
+    if user_category_id == 1 :
+        SaveGroupAdminName(username, client_id)
     return True
 #################################################################
 # Check User Name Duplication

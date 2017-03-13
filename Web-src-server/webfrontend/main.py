@@ -215,7 +215,11 @@ class TemplateHandler(RequestHandler):
         return data
 
     def get(self, url=None, token=None):
-        if url is not None:
+        print self.request.remote_ip
+        print self.request.uri
+        if url is not None :
+            print url.decode('base64')
+        if url is not None and "userregistration" in self.request.uri :
             print 'GOT URL %s' % (url,)
             company = self._company_manager.locate_company(
                 url
@@ -226,7 +230,9 @@ class TemplateHandler(RequestHandler):
                 self.set_status(404)
                 self.write(temp.render())
                 return
+
         path = self.__path_desktop
+        print path
         if self.__path_mobile is not None:
             useragent = self.request.headers.get("User-Agent")
             if useragent is None:

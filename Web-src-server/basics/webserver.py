@@ -62,7 +62,7 @@ class RequestHandler(tornado.web.RequestHandler) :
             not self.request.path.startswith("/api/login") and
             not self.request.path.startswith("/api/files")
         ):
-            print self.request.path
+            # print self.request.path
             pass
             # tornado.web.RequestHandler.check_xsrf_cookie(self)
         else :

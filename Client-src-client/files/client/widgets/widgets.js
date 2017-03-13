@@ -230,7 +230,7 @@ function updateNotCompliedChart(data, id) {
     tooltip: {
       headerFormat: '',
       pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b> out of ' + total
-    },    
+    },
     legend: {
       enabled: true,
       itemStyle: {
@@ -337,7 +337,7 @@ function updateTrendChart(data, id) {
         }
       }
     },
-    legend: {      
+    legend: {
       itemStyle: {
           fontWeight: 'normal',
           fontSize: '11px'
@@ -399,8 +399,8 @@ function updateComplianceApplicabilityChart(data, id) {
     tooltip: {
       headerFormat: '',
       pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
-    },    
-    legend: { 
+    },
+    legend: {
       enabled: true     ,
       itemStyle: {
           fontWeight: 'normal',
@@ -659,9 +659,9 @@ function charturl(){
       3: "/dashboard",
       4: "/dashboard",
       5: "/dashboard",
-      6: "/user-score-card",
-      7: "/work-flow-score-card",
-      8: "/compliance-task"
+      6: "/work-flow-score-card",
+      7: "/domain-score-card",
+      8: "/completed-tasks-current-year"
     }
 }
 
@@ -675,7 +675,7 @@ function loadChart(){
     $(".menu_widgets a", liclone).attr("data-target", "#item"+v.w_id);
     if(v.active_status = true){
       $(".menu_widgets", liclone).removeClass("active_widgets");
-    }    
+    }
     $(".menu_widgets", liclone).click(function(e){
         var flag = 0;
         $(".dragdrophandles li").each(function(){
@@ -698,9 +698,13 @@ function loadChart(){
               var cardboxclone = cardbox.clone();
               cardboxclone.attr("id", v.w_id);
               $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
+              $(".chart-title", cardboxclone).attr("href", charturl()[v.w_id]);
+              $(".chart-title", cardboxclone).on("click", function(){
+                window.sessionStorage.widget_to_dashboard_href = SIDEBAR_MAP[v.w_id];
+              });
               $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
               $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
-              cardboxclone.addClass("resizable"+v.w_id);              
+              cardboxclone.addClass("resizable"+v.w_id);
               $(".closewidget", cardboxclone).click(function(e){
                 var divitem = $(this).parent().parent();
                 var getitem = divitem.attr('id');
@@ -738,7 +742,7 @@ function loadChart(){
             }else{
               displayMessage(error);
             }
-          });          
+          });
         }
     });
 
@@ -765,7 +769,7 @@ function loadChart(){
   }else{
     $(".page-title").show();
     $(".welcome-title").hide();
-    $.each(widget_info, function(k,v){      
+    $.each(widget_info, function(k,v){
       var status_check = 0;
       settings = widgetSettings();
       var cardbox = $(".chart-card-box li");
@@ -777,9 +781,12 @@ function loadChart(){
       }
       $(".chart-title", cardboxclone).html(SIDEBAR_MAP[v.w_id]);
       $(".chart-title", cardboxclone).attr("href", charturl()[v.w_id]);
+      $(".chart-title", cardboxclone).on("click", function(){
+        window.sessionStorage.widget_to_dashboard_href = SIDEBAR_MAP[v.w_id];
+      });
       $(".dragbox", cardboxclone).attr("id", "item"+v.w_id);
       $(".dragbox-content div", cardboxclone).attr("id", "cardbox"+v.w_id);
-
+      //
       $(".dragbox .pins .ti-pin2", cardboxclone).click(function(e){
         var widget_info = [];
         $(".dragdrophandles li").each(function(i, v){
@@ -900,10 +907,10 @@ function loadSidebarMenu(){
 }
 
 $(document).ready(function () {
+  delete window.sessionStorage.widget_to_dashboard_href;
   hideLoader();
   loadSidebarMenu();
   $('.dragdrophandles').sortable({
       handle: 'h2'
   });
-
 });
