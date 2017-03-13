@@ -1254,13 +1254,13 @@ def get_statutory_wise_compliances(
         param.extend(condition_val)
 
     rows = db.select_all(query, param)
-    columns = [
-        "compliance_id", "statutory_dates", "due_date", "assignee",
-        "employee_code", "employee_name", "statutory_mapping",
-        "document_name", "compliance_task", "compliance_description",
-        "repeats_type_id",  "repeat_type", "repeats_every", "frequency",
-        "frequency_id"
-    ]
+    # columns = [
+    #     "compliance_id", "statutory_dates", "due_date", "assignee",
+    #     "employee_code", "employee_name", "statutory_mapping",
+    #     "document_name", "compliance_task", "compliance_description",
+    #     "repeats_type_id",  "repeat_type", "repeats_every", "frequency",
+    #     "frequency_id"
+    # ]
     # client_compliance_rows = convert_to_dict(rows, columns)
     level_1_statutory_wise_compliances = {}
     total_count = 0
@@ -1333,7 +1333,7 @@ def get_statutory_wise_compliances(
                 due_date = datetime.date(int(year), int(month), int(day))
                 level_1_statutory_wise_compliances[
                     # statutories[0].strip()
-                    statutories[0]
+                    statutories[0].strip()
                 ].append(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                         compliance["compliance_id"], compliance_name,
@@ -1862,6 +1862,7 @@ def approve_compliance(
     completion_date = rows[0]["completion_date"]
     frequency_id = rows[0]["frequency_id"]
     duration_type_id = rows[0]["duration_type_id"]
+    compliance_task = rows[0]["compliance_task"]
 
     # Updating next due date validity dates in assign compliance table
     as_columns = []
@@ -1906,7 +1907,7 @@ def approve_compliance(
     notify_compliance_approved(db, compliance_history_id, "Approved")
 
     # Audit Log Entry
-    action = "Compliance Approved \"%s\"" % (row["compliance_task"])
+    action = "Compliance Approved \"%s\"" % compliance_task
     db.save_activity(session_user, 9, action, row["legal_entity_id"], unit_id)
 
     return True
