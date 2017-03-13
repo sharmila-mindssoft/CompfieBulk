@@ -505,6 +505,29 @@ loadCompliances = function(){
                     $(".trigger", clone2).show();
                     $(".repeat-every", clone2).val(value.r_every);
                     $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).attr('selected','selected');
+                    if(FType.find("option:selected").val() == 3){
+                        if(value.repeats_type_id == 1){
+                            $('.repeat-every-type option[value="2"]', clone2).remove();
+                            $('.repeat-every-type option[value="3"]', clone2).remove();                        
+                            $(".repeat-every", clone2).keyup(function(){
+                                if($(this).val() > value.r_every){
+                                    $(this).val(value.r_every);
+                                    displayMessage(message.repeats_type_not_exceed_actual_value);
+                                }
+                            });
+                        }
+                        if(value.repeats_type_id == 2){           
+                            $('.repeat-every-type option[value="3"]', clone2).remove();
+                            $(".repeat-every", clone2).keyup(function(){             
+                                if($(this).val() > value.r_every && $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).val() == 2){
+                                     $(this).val(value.r_every);
+                                     displayMessage(message.repeats_type_not_exceed_actual_value);
+                                }                        
+                            });
+                            
+                        }    
+                    }
+                    
                     var sdates= value.s_dates;
                     for(var i = 0; i<sdates.length; i++ ){
                         // $(".due-date", clone2).val(value.due_date);

@@ -123,7 +123,6 @@ def remove_trail_log(db, client_id, received_count):
 
 
 def get_servers(db):
-
     query = "select t2.database_ip, t2.database_port, ct1.database_username, ct1.database_password," + \
         " ct1.database_name , t1.client_id, t1.legal_entity_id, t4.short_name, " + \
         " t3.machine_id, t3.machine_name, t3.ip as server_ip, t3.port as server_port, ct1.is_group " + \
@@ -202,6 +201,9 @@ def return_companies(data):
             is_group
         ))
     return results
+
+def get_ip_details(db):
+    pass
 
 
 def get_client_replication_list(db):
