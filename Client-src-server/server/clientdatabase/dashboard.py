@@ -928,7 +928,7 @@ def get_client_domain_configuration(
     year_condition = []
     cond = "(T3.country_id = %s " + \
         "  AND T2.domain_id = %s " + \
-        " AND find_in_set(YEAR(T1.due_date),%s))"
+        " AND find_in_set(YEAR(T1.due_date), '%s'))"
     for d in rows:
 
         info = {}
