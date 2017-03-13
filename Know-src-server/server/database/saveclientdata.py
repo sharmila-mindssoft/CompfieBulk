@@ -21,13 +21,15 @@ class ClientdbConect(object):
         self._k_db = Database(conn)
 
 class SaveRegistrationData(ClientdbConect):
-    def __init__(self, know_db, token, expiry, email_id, client_id):
+    def __init__(self, know_db, token, expiry, email_id, client_id, email_date, u_id):
         super(SaveRegistrationData, self).__init__()
         self.know_db = know_db
         self.token = token
         self.expiry = expiry
         self.email_id = email_id
         self.client_id = client_id
+        self.email_date = email_date
+        self.u_id = u_id
         self.is_group = True
 
         self._host = None
@@ -65,6 +67,9 @@ class SaveRegistrationData(ClientdbConect):
                 q = "insert into tbl_email_verification(user_id, verification_code, " + \
                     " verification_type_id, expiry_date ) values(%s, %s, %s, %s)"
                 self._k_db.execute(q, [user_id, self.token, 1, self.expiry])
+                q = "insert into tbl_group_admin_email_notification(client_id, group_admin_email_id, " + \
+                    " registration_sent_by, registration_sent_on ) values(%s, %s, %s, %s)"
+                self._k_db.execute(q, [self.client_id, self.email_id, self.u_id, self.email_date])
 
         except Exception, e :
             print e

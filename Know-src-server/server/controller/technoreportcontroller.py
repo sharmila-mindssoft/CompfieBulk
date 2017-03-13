@@ -143,6 +143,9 @@ def process_techno_report_request(request, db):
     elif type(request_frame) is technoreports.GetGroupAdminReportData:
         result = process_get_GroupAdminReportData(db, user_id)
 
+    elif type(request_frame) is technoreports.ExportGroupAdminReportData:
+        result = process_export_GroupAdminReportData(db, request_frame, user_id)
+
     elif type(request_frame) is technoreports.GetAssignedUserClientGroups:
         result = process_get_AssignedUserClientGroups(db, user_id)
 
@@ -186,11 +189,19 @@ def process_get_assigned_statutory_report_filters(db, user_id):
 # Return Type : Return list of assigned statutories
 ######################################################################################
 def process_get_assigned_statutory_report_data(db, request_frame, user_id):
-    result = get_assigned_statutories_report_data(db, request_frame, user_id)
-    unit_groups = result[0]
-    act_groups = result[1]
-    compliance_statutories_list = result[2]
-    return technoreports.GetAssignedStatutoryReportSuccess(unit_groups, act_groups, compliance_statutories_list)
+    if request_frame.csv:
+        converter = ConvertJsonToCSV(
+            db, request_frame, user_id, "StatutorySettingsReport"
+        )
+        return technoreports.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        result = get_assigned_statutories_report_data(db, request_frame, user_id)
+        unit_groups = result[0]
+        act_groups = result[1]
+        compliance_statutories_list = result[2]
+        return technoreports.GetAssignedStatutoryReportSuccess(unit_groups, act_groups, compliance_statutories_list, total_count=result[3])
 
 ######################################################################################
 # To get the statutory notifications list filters data
@@ -524,7 +535,8 @@ def process_get_GroupAdminReportData(db, user_id):
                 groupadmin.get("client_id"), groupadmin.get("legal_entity_id"),
                 groupadmin.get("legal_entity_name"), groupadmin.get("unit_count"),
                 groupadmin.get("country_id"), groupadmin.get("country_name"),
-                groupadmin.get("unit_email_date"), groupadmin.get("statutory_email_date")
+                groupadmin.get("unit_email_date"), groupadmin.get("statutory_email_date"),
+                groupadmin.get("registration_email_date")
             ))
     return technoreports.GetGroupAdminReportDataSuccess(
         groupadmin_clients=groupList,
@@ -618,3 +630,18 @@ def process_get_ComplianceStatutoriesList(db, request_frame, user_id):
     unit_id = request_frame.unit_id
     domain_id = request_frame.domain_id
     result = get_ComplianceStatutoriesList(db, unit_id, domain_id, user_id)
+
+
+##################################################################################################################
+# To export the group admin registration email report data
+# Parameter(s) : Object of the database, user id
+# Return Type : export list of group admin registered list
+##################################################################################################################
+def process_export_GroupAdminReportData(db, request, user_id):
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, user_id, "GroupAdminRegistrationEMail"
+        )
+        return technoreports.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )

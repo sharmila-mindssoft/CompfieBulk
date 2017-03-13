@@ -1252,3 +1252,11 @@ h2.chart-title: hover {
         padding-bottom: 8em
     }
 }
+
+.table-compliance-status {
+    border: 1px solid #ededed;
+}
+
+.escalation-drilldown-container {
+    margin-top: 40px;
+}

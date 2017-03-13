@@ -460,7 +460,7 @@ api_params = {
     "compliance_status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "record_count": make_int_field(length="100000"),
     "drill_down_data": make_vector_type_field(module="dashboard", klass_name="DrillDownData"),
-    "indus_name": make_text_field(),
+    "indus_name": make_text_field(is_optional=True),
     "drill_compliances": make_map_type_vector_type(module="dashboard", klass_name="Level1Compliance", validfun=allow_specialchar),
     "status": make_enum_type(module="clientcore", klass_name="COMPLIANCE_STATUS"),
     "cat_name": make_text_field(is_optional=True),
@@ -636,10 +636,14 @@ api_params = {
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
     "location": make_text_field(is_optional=True),
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
+    "compliance_file_name":  make_vector_type_string(is_optional=True),
+    "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
+    "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
+    "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
     "compliance_file_name":  make_vector_type_string(is_optional=True),
     "in_units":make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
-    "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),    
+    "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
     "pr_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
     "statutory_wise_compliances": make_vector_type_field(module="clienttransactions", klass_name="STATUTORY_WISE_COMPLIANCES"),
     "pr_users": make_vector_type_field(module="clientcore", klass_name="User"),
@@ -651,12 +655,13 @@ api_params = {
     "user_legal_entities": make_vector_type_string(),
     "seating_unit_id": make_int_field(is_optional=True),
     "ul_userDetails": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Users"),  # User Management
-    "ul_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_LegalEntities"),  # User Management   
-    "ul_user_domains": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Domains"),  # User Management   
+    "ul_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_LegalEntities"),  # User Management
+    "ul_user_domains": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Domains"),  # User Management
     "ul_user_units": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagement_EditView_Units"),  # User Management
     # "level_1_statutories": make_text_field(),
     "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
     "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
-    "le_admin": make_int_field(is_optional=True),
+    "le_admin": make_int_field(is_optional=True),    
+    "user_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
 }

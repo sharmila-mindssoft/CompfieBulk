@@ -796,7 +796,8 @@ function mactstatus(element) {
 
         var sname = $(this).attr('id');
         var sid = sname.substr(sname.lastIndexOf('p') + 1);
-        //$('#save' + sid).addClass('fa-square');
+        $('#save' + sid).addClass('fa-square');
+        
         var C_REMARK = $(this).attr("data-remark");
         var C_A_STATUS = 1;
         if($(this).attr("data-applicable") == 'false') C_A_STATUS = 2;
@@ -839,6 +840,8 @@ function mcompliancestatus(element) {
 
     var sname1 = $(element).attr('id');
     var sid1 = sname1.substr(sname1.lastIndexOf('p') + 1);
+
+    $('#save' + sid1).addClass('fa-square');
 
     var combine_ids = $('#combineid' + sid1).val().split('#');
     var C_ID = combine_ids[0];
@@ -1237,6 +1240,11 @@ function loadMultipleUnitCompliances() {
                 $('.opted', clone4).html('<img src="images/deletebold.png">').attr('for', '2');
                 /*$('#remark' + actCount).val(value.remarks);
                 $('#r-view' + actCount).show();*/
+            }
+
+            $('.saved', clone4).attr('id', 'save' + statutoriesCount);
+            if (value1.is_saved) {
+                $('.saved', clone4).addClass('fa-square');
             }
 
             $('.remarks').on('input', function(e) {

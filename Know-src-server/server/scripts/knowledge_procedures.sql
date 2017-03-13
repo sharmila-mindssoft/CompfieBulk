@@ -5942,7 +5942,7 @@ DELIMITER //
 
 CREATE PROCEDURE `sp_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
-_cl_id int(11), _st_id varchar(11), _cp_id varchar(11))
+_cl_id int(11), _st_id varchar(11), _cp_id varchar(11), _frm_cnt int(11), _pg_cnt int(11))
 BEGIN
     select t1.unit_id, t1.unit_code, t1.unit_name, t1.address
     from
@@ -5989,6 +5989,28 @@ BEGIN
     coalesce(t1.domain_id,'%') like _d_id and
     coalesce(t1.unit_id,'%') like _u_id and
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
+    group by t1.client_compliance_id limit _frm_cnt, _pg_cnt;
+
+    select t1.unit_id, t1.statutory_id, t2.statutory_provision, t2.compliance_task as c_task,
+    t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
+    t1.statutory_opted_status, 'user@compfie.com'  as compfie_admin,
+    DATE_FORMAT(t1.updated_on, '%d/%m/%Y') as admin_update,
+    (select email_id from tbl_users where user_id = t1.client_opted_by) as client_admin,
+    DATE_FORMAT(t1.client_opted_on, '%d/%m/%Y') as client_update,
+    (select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
+    where tsn.statutory_nature_id = tsm.statutory_nature_id and
+    tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
+    from
+    tbl_client_compliances as t1 left join tbl_compliances as t2 on
+    t2.compliance_id = t1.compliance_id
+    where
+    t2.country_id = _c_id and
+    t1.is_approved = 5 and
+    coalesce(t1.statutory_id,'%') like _st_id and
+    coalesce(t1.compliance_id,'%') like _cp_id and
+    coalesce(t1.domain_id,'%') like _d_id and
+    coalesce(t1.unit_id,'%') like _u_id and
+    t1.legal_entity_id = _le_id and t1.client_id = _cl_id
     group by t1.client_compliance_id;
 END //
 
@@ -6010,7 +6032,10 @@ BEGIN
         (select email_id from tbl_client_groups where client_id = t3.client_id) as email_id,
         (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
         (select concat(employee_name,'-',(case when employee_code is null then
-            '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name
+            '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name,
+        (select registration_sent_on from tbl_group_admin_email_notification where
+        client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
+        from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date
         from
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
         where
@@ -6065,9 +6090,8 @@ SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id =
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
         -- tbl_units as t4
         where
-
-
         t3.client_id = t2.client_id and
+        t2.is_created = 1 and
         t2.client_id = t1.client_id order by t2.legal_entity_name;
 
     end if;
@@ -6292,12 +6316,15 @@ BEGIN
         unit_count, t2.country_id, (select country_name from tbl_countries where country_id =
         t2.country_id) as country_name, (select date_format(unit_sent_on, '%d/%m/%y %h:%i')
         from tbl_group_admin_email_notification where client_informed_id = (select max(client_informed_id)
-        from tbl_group_admin_email_notification where client_id = 1 and
-        legal_entity_id = 1 and unit_creation_informed=1)) as unit_email_date,
+        from tbl_group_admin_email_notification where client_id = t1.client_id and
+        legal_entity_id = t2.legal_entity_id and unit_creation_informed=1)) as unit_email_date,
         (select date_format(statu_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
-        from tbl_group_admin_email_notification where client_id = 1 and
-        legal_entity_id = 1 and assign_statutory_informed=1)) as statutory_email_date
+        from tbl_group_admin_email_notification where client_id = t1.client_id and
+        legal_entity_id = t2.legal_entity_id and assign_statutory_informed=1)) as statutory_email_date,
+        (select date_format(registration_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
+        where client_informed_id = (select max(client_informed_id)
+        from tbl_group_admin_email_notification where client_id = t1.client_id)) as registration_email_date
         from
         tbl_user_clients as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id left join tbl_units as t4 on
@@ -9016,6 +9043,115 @@ BEGIN
     UPDATE tbl_business_groups SET
     business_group_name = bg_name
     WHERE business_group_id = bg_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- To Get data for Client IP Details Export
+-- --------------------------------------------------------------------------------
+
+DROP PROCEDURE IF EXISTS `sp_ip_setting_details_report_export`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_ip_setting_details_report_export`(
+    IN c_id INT(11), IN ip_ VARCHAR(50)
+)
+BEGIN
+    SELECT t2.form_name, t1.ips, t3.group_name FROM tbl_ip_settings t1
+    inner join tbl_client_forms t2 on t1.form_id = t2.form_id
+    inner join tbl_client_groups t3 on t1.client_id = t3.client_id
+    where
+    IF(c_id IS NOT NULL, t1.client_id = c_id, 1) and
+    IF(ip_ IS NOT NULL, t1.ips = ip_, 1)
+    order by t1.client_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_export_statutory_setting_report_recordset`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_export_statutory_setting_report_recordset`(
+in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
+_cl_id int(11), _st_id varchar(11), _cp_id varchar(11))
+BEGIN
+    select t1.unit_id, (select concat(unit_code,'-',unit_name) from tbl_units where unit_id =
+    t1.unit_id) as unit_name, t1.statutory_id, (select statutory_name from tbl_statutories
+    where statutory_id = t1.statutory_id) as statutory_name, (select country_name from tbl_countries
+    where country_id=_c_id) as country_name, (select domain_name from tbl_domains where
+    domain_id = _d_id) as domain_name, (select legal_entity_name from tbl_legal_entities
+    where legal_entity_id = _le_id) as legal_entity_name, (select group_name from tbl_client_groups
+    where client_id=_cl_id) as group_name,
+    t2.statutory_provision, t2.compliance_task as c_task,
+    t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
+    t1.statutory_opted_status, 'user@compfie.com'  as compfie_admin,
+    DATE_FORMAT(t1.updated_on, '%d/%m/%Y') as admin_update,
+    (select email_id from tbl_users where user_id = t1.client_opted_by) as client_admin,
+    DATE_FORMAT(t1.client_opted_on, '%d/%m/%Y') as client_update,
+    (select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
+    where tsn.statutory_nature_id = tsm.statutory_nature_id and
+    tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
+    from
+    tbl_client_compliances as t1 left join tbl_compliances as t2 on
+    t2.compliance_id = t1.compliance_id
+    where
+    t2.country_id = _c_id and
+    t1.is_approved = 5 and
+    coalesce(t1.statutory_id,'%') like _st_id and
+    coalesce(t1.compliance_id,'%') like _cp_id and
+    coalesce(t1.domain_id,'%') like _d_id and
+    coalesce(t1.unit_id,'%') like _u_id and
+    t1.legal_entity_id = _le_id and t1.client_id = _cl_id
+    group by t1.client_compliance_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_group_admin_registration_email_export_report_data`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_group_admin_registration_email_export_report_data`(
+in _u_id int(11), _cl_id int(11), _c_id varchar(10))
+BEGIN
+    SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id = _u_id;
+    if @u_cat_id = 1 then
+        select t2.client_id, (select group_name from tbl_client_groups where client_id =
+        _cl_id) as client_name, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
+        unit_count, t2.country_id, (select country_name from tbl_countries where country_id =
+        t2.country_id) as country_name, (select date_format(unit_sent_on, '%d/%m/%y %h:%i')
+        from tbl_group_admin_email_notification where client_informed_id = (select max(client_informed_id)
+        from tbl_group_admin_email_notification where client_id = t1.client_id and
+        legal_entity_id = t2.legal_entity_id and unit_creation_informed=1)) as unit_email_date,
+        (select date_format(statu_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
+        where client_informed_id = (select max(client_informed_id)
+        from tbl_group_admin_email_notification where client_id = t1.client_id and
+        legal_entity_id = t2.legal_entity_id and assign_statutory_informed=1)) as statutory_email_date,
+        (select date_format(registration_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
+        where client_informed_id = (select max(client_informed_id)
+        from tbl_group_admin_email_notification where client_id = t1.client_id)) as registration_email_date
+        from
+        tbl_user_clients as t1 inner join tbl_legal_entities as t2 on
+        t2.client_id = t1.client_id left join tbl_units as t4 on
+        t4.legal_entity_id = t2.legal_entity_id and
+        t4.client_id = t2.client_id
+        where t1.client_id = _cl_id and
+        coalesce(t2.country_id, '%') like _c_id
+        group by t1.client_id, t2.legal_entity_id
+        order by t2.legal_entity_name;
+    end if;
+
 END //
 
 DELIMITER ;

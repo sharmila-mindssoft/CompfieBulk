@@ -497,7 +497,7 @@ a:focus {
 /* Card Box */
 
 .card-box {
-    <<<<<<< HEAD padding: 20px;
+    padding: 20px;
     background-color: #ffffff;
     -webkit-border-radius: 5px;
     border-radius: 5px;
@@ -508,17 +508,6 @@ a:focus {
     min-height: 140px;
     float: left;
     width: 100%;
-    =======padding: 20px;
-    background-color: #ffffff;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    background-clip: padding-box;
-    margin-bottom: 20px;
-    border: 1px solid #e8e8e8;
-    float: left;
-    width: 100%;
-    >>>>>>> Vinoth/phase2
 }
 
 .card-box .card-drop {
@@ -1608,4 +1597,8 @@ pre {
 .multiselect-container>li>a>label.radio,
 .multiselect-container>li>a>label.checkbox {
     padding-left: 45px;
+}
+
+.custombox-modal-container {
+    width: 700px !important;
 }
