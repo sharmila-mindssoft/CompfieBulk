@@ -215,10 +215,22 @@ class TemplateHandler(RequestHandler):
         return data
 
     def get(self, url=None, token=None):
-        print self.request.remote_ip
-        print self.request.uri
-        if url is not None :
-            print url.decode('base64')
+        request_ip = self.request.remote_ip
+        if url is not None and "userregistration" not in self.request.uri  :
+            request_url = self.request.uri.strip().split('/')[1]
+            short_name = url.decode('base64')
+            ips = self._company_manager.lookup_form_ips(short_name)
+            for i in ips :
+                if request_url in i.form_name :
+                    if request_ip not in i.ip :
+                        path = "files/client/common/html/accessdenied.html"
+                        temp = template_env.get_template(path)
+                        self.set_status(404)
+                        self.write(temp.render())
+                        return
+                    else :
+                        break
+
         if url is not None and "userregistration" in self.request.uri :
             print 'GOT URL %s' % (url,)
             company = self._company_manager.locate_company(
@@ -232,7 +244,6 @@ class TemplateHandler(RequestHandler):
                 return
 
         path = self.__path_desktop
-        print path
         if self.__path_mobile is not None:
             useragent = self.request.headers.get("User-Agent")
             if useragent is None:

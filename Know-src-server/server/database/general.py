@@ -3,7 +3,7 @@ from replication.protocol import (
 )
 
 from distribution.protocol import (
-    Company, IPAddress, Server, FileServer
+    Company, IPAddress, Server, FileServer, IPInfo
 )
 
 from server.common import (
@@ -52,11 +52,12 @@ def get_trail_log(db, client_id, received_count, is_group):
     query += "  column_name, value, client_id, action, legal_entity_id"
     query += " from tbl_audit_log WHERE audit_trail_id > %s "
     if is_group :
-        query += " AND (client_id= %s) "
+        query += " AND client_id= %s"
         param = [received_count, client_id]
     else :
-        query += " AND (legal_entity_id=0 or legal_entity_id= %s) "
-        query += " AND client_id = (select client_id from tbl_legal_entities where legal_entity_id = %s)"
+        query += " AND (legal_entity_id=0 or legal_entity_id= %s"
+        query += " or client_id = (select client_id from tbl_legal_entities where legal_entity_id = %s) )"
+
         param = [received_count, client_id, client_id]
 
     query += " LIMIT 100;"
@@ -225,8 +226,22 @@ def return_companies(data):
     return results
 
 def get_ip_details(db):
-    pass
+    q = "select t1.client_id, t3.short_name, t1.form_id, t2.form_url, t1.ips " + \
+        "from tbl_ip_settings as t1 " + \
+        "inner join tbl_client_forms as t2 " + \
+        "on t1.form_id = t2.form_id " + \
+        "inner join tbl_client_groups as t3 on t1.client_id = t3.client_id"
+    rows = db.select_all(q)
+    data = {}
+    for r in rows :
+        short_name = r["short_name"]
+        ips = r["ips"].split(',')
+        form_url = r["form_url"]
+        if data.get(short_name) is None :
+            data[short_name] = []
 
+        data[short_name].append(IPInfo(form_url, ips))
+    return data
 
 def get_client_replication_list(db):
     q = "select client_id, is_new_data, is_new_domain, " + \

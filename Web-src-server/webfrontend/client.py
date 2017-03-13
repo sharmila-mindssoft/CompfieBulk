@@ -33,6 +33,7 @@ class CompanyManager(object) :
         self._timeout_seconds = timeout_seconds
         self._server_added_callback = server_added_callback
         self._servers = {}
+        self._ip_config = {}
         ip, port = self._knowledge_server_address
         self._first_time = True
         self._token = None
@@ -84,6 +85,7 @@ class CompanyManager(object) :
                 return
             assert r is not None
             self._servers = {}
+            self._ip_config = r.infos
             for company in r.servers:
                 if company.is_group is False:
                     continue
@@ -133,3 +135,8 @@ class CompanyManager(object) :
 
     def servers(self):
         return self._servers
+
+    def lookup_form_ips(self, short_name):
+        print self._ip_config
+
+        return self._ip_config.get(short_name)
