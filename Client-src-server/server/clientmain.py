@@ -203,14 +203,13 @@ class API(object):
                         if client_db is not None :
                             if is_new_data is True and is_new_domain is False :
                                 # replication for group db only master data
-                                rep_man = ReplicationManagerWithBase(
-                                    self._knowledge_server_address,
-                                    client_db,
-                                    _client_id,
-                                    client.is_group
-                                )
-
                                 if self._replication_managers_for_group.get(_client_id) is None :
+                                    rep_man = ReplicationManagerWithBase(
+                                        self._knowledge_server_address,
+                                        client_db,
+                                        _client_id,
+                                        client.is_group
+                                    )
                                     rep_man.start()
                                     self._replication_managers_for_group[_client_id] = rep_man
                                 else :
@@ -226,14 +225,14 @@ class API(object):
                             if is_new_data is True and is_new_domain is False :
                                 # replication for group db only master data
                                 if self._replication_managers_for_le.get(_client_id) is None :
-                                    rep_man = ReplicationManagerWithBase(
+                                    rep_le_man = ReplicationManagerWithBase(
                                         self._knowledge_server_address,
                                         le_db,
                                         _client_id,
                                         client.is_group
                                     )
-                                    rep_man.start()
-                                    self._replication_managers_for_le[_client_id] = rep_man
+                                    rep_le_man.start()
+                                    self._replication_managers_for_le[_client_id] = rep_le_man
                                 else :
                                     self._replication_managers_for_le[_client_id].start()
 
