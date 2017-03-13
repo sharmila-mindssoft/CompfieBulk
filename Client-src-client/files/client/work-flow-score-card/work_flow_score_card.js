@@ -27,6 +27,7 @@ var reportTableTbody = $("#report-table-tbody");
 var template = $("#template");
 var reportTable = $("#report-table");
 var REPORT = null;
+var LOGO = null;
 
 WorkFlowScoreCard = function() {
     this._entities = [];
@@ -192,6 +193,7 @@ WorkFlowScoreCard.prototype.fetchReportValues = function(csv) {
     client_mirror.getWorkFlowScoreCard(c_id, le_id, d_id, csv, function(error, response) {
         if (error == null) {
             t_this._report_data = response.work_flow_score_card_list;
+            LOGO = response.logo_url;
             if (csv == false) {
                 reportView.show();
                 showAnimation(reportView);
@@ -208,7 +210,10 @@ WorkFlowScoreCard.prototype.fetchReportValues = function(csv) {
 WorkFlowScoreCard.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
-    clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
+    if(LOGO != null)
+        clientLogo.attr("src", LOGO);
+    else
+        clientLogo.remove();
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     domainName.html(domain.val());

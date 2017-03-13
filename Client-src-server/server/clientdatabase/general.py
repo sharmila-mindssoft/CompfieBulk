@@ -12,6 +12,7 @@ from server.common import (
 )
 from server.exceptionmessage import client_process_error
 from savetoknowledge import UpdateFileSpace
+CLIENT_LOGO_PATH = "/clientlogo"
 
 __all__ = [
     "get_client_user_forms",
@@ -78,7 +79,8 @@ __all__ = [
     "get_themes",
     "get_themes_for_user",
     "save_themes_for_user",
-    "update_themes_for_user"
+    "update_themes_for_user",
+    "legal_entity_logo_url"
     ]
 
 
@@ -623,16 +625,19 @@ def get_forms_by_category(db, category_id):
     rows = db.select_all(q, [category_id])
     return rows
 
-def get_user_forms(db, user_id):
-    # except group admin forms
-    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, " + \
-        " tf.form_type " + \
+def get_user_forms(db, user_id, category_id):
+    q = "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, tf.form_type " + \
         "FROM tbl_forms as t1 " + \
-        " INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
+        "INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
         "INNER JOIN tbl_user_group_forms as t2 on t1.form_id = t2.form_id " + \
         "INNER JOIN tbl_users as t3 on t2.user_group_id = t3.user_group_id " + \
-        " WHERE t3.user_id = %s and t3.is_active = 1 and t3.is_disable = 0 " + \
-        " ORDER BY t1.form_order "
+        "WHERE t3.user_id = %s and t3.is_active = 1 and t3.is_disable = 0 " + \
+        "UNION ALL " + \
+        "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, tf.form_type " + \
+        "FROM tbl_forms as t1 " + \
+        "INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
+        "WHERE t1.form_type_id = 4 " + \
+        "ORDER BY form_order, form_type_id "
 
     rows = db.select_all(q, [user_id])
     return rows
@@ -1583,6 +1588,10 @@ def get_user_email_name(db, user_ids):
 
     return email_ids, employee_name
 
+def last_day_of_month(any_day):
+    next_month = any_day.replace(day=28) + datetime.timedelta(days=4)
+    return next_month - datetime.timedelta(days=next_month.day)
+
 
 def calculate_from_and_to_date_for_domain(db, domain_id):
     # country_id
@@ -1618,6 +1627,26 @@ def calculate_from_and_to_date_for_domain(db, domain_id):
     no_of_months = r.months
     if no_of_years is not 0 or no_of_months >= 12:
         from_date = datetime.date(current_year, period_from, 1)
+    return from_date, to_date
+
+def get_from_and_to_date_for_domain(db, country_id, domain_id):
+    from_date = None
+    to_date = None
+    columns = "month_from, month_to"
+    condition = " country_id = %s and domain_id = %s"
+    condition_val = [country_id, domain_id]
+    rows = db.get_data(
+        tblClientConfigurations, columns, condition, condition_val
+    )
+    month_from = rows[0]["month_from"]
+    month_to = rows[0]["month_to"]
+    now = datetime.datetime.now()
+    current_year = now.year
+    from_date = str(current_year) + "-" + str(month_from) + "-1"
+    if month_from == 1:
+        to_date = last_day_of_month(datetime.date(current_year, month_to, 1))
+    else:
+        to_date = last_day_of_month(datetime.date(current_year + 1, month_to, 1))
     return from_date, to_date
 
 
@@ -2088,3 +2117,12 @@ def update_themes_for_user(db, session_user, theme_id, theme_name):
     condition = " user_id = %s " % session_user
     db.update(tblThemes, columns, values, condition)
     return theme_name
+
+def legal_entity_logo_url(db, legal_entity_id):
+    q = "select logo from tbl_legal_entities where legal_entity_id = %s"
+    rows = db.select_one(q, [legal_entity_id])
+    if rows['logo']:
+        logo_url = "%s/%s" % (CLIENT_LOGO_PATH, rows['logo'])
+    else:
+        logo_url = None
+    return logo_url

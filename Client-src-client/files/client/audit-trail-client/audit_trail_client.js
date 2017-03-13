@@ -100,7 +100,6 @@ function PageControls() {
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
-            REPORT.renderPageControls();
         }
     });
 
@@ -109,6 +108,15 @@ function PageControls() {
             csv = true;
             REPORT.exportReportValues();
         }
+    });
+
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        this._on_current_page = 1;
+        this._sno = 0;
+        createPageView(t_this._total_record);
+        csv = false;
+        REPORT.fetchReportValues();
     });
 }
 
@@ -167,7 +175,6 @@ AuditTrailReport.prototype.loadSearch = function() {
     userId.val('');
     FormName.val('');
     FormId.val('');
-    this.renderPageControls();
     this.fetchSearchList();
 };
 
@@ -247,7 +254,6 @@ showAnimation = function(element) {
 }
 
 AuditTrailReport.prototype.fetchReportValues = function() {
-    alert("2");
     t_this = this;
     le_id = LegalEntityId.val();
     user_id = userId.val();
@@ -275,16 +281,15 @@ AuditTrailReport.prototype.fetchReportValues = function() {
             t_this._AuditTrailList = response.audit_activities;
             t_this._total_record = response.total_count;
             if (response.audit_activities.length == 0) {
-                t_this.hidePageView();
-                t_this.hidePagePan();
+                hidePageView();
+                hidePagePan();
                 //Export_btn.hide();
                 PaginationView.hide();
                 t_this.showReportValues();
             }
             else{
-                t_this._total_record = response.total_count;
                 if (t_this._sno == 0) {
-                    t_this.createPageView(t_this, t_this._total_record);
+                    createPageView(t_this._total_record);
                 }
                 //Export_btn.show();
                 PaginationView.show();
@@ -297,9 +302,7 @@ AuditTrailReport.prototype.fetchReportValues = function() {
 };
 
 AuditTrailReport.prototype.showReportValues = function() {
-    alert("3");
     t_this = this;
-    alert(t_this._sno)
     var data = t_this._AuditTrailList;
     $('.le-header').text(LegalEntityName.val());
     $('.from-header').text(fromDate.val());
@@ -308,7 +311,6 @@ AuditTrailReport.prototype.showReportValues = function() {
     reportTableTbody.find('tr').remove();
     var is_null = true;
     showFrom = t_this._sno + 1;
-    t_this._total_record = data.length;
     $.each(data, function(k, v) {
         console.log(data.length);
         is_null = false;
@@ -345,7 +347,7 @@ AuditTrailReport.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        t_this.showPagePan(showFrom, t_this._sno, t_this._total_record);
+        showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
 
@@ -393,51 +395,38 @@ AuditTrailReport.prototype.possibleFailures = function(error) {
 };
 
 // Pagination Functions - begins
-AuditTrailReport.prototype.hidePageView = function() {
+hidePageView = function() {
     $('#pagination-rpt').empty();
     $('#pagination-rpt').removeData('twbs-pagination');
     $('#pagination-rpt').unbind('page');
 };
 
-AuditTrailReport.prototype.createPageView = function(a_obj, total_records) {
+createPageView = function(total_records) {
     perPage = parseInt(ItemsPerPage.val());
-    a_obj.hidePageView();
+    hidePageView();
 
     $('#pagination-rpt').twbsPagination({
         totalPages: Math.ceil(total_records/perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            if (parseInt(a_obj._on_current_page) != cPage) {
-                a_obj._on_current_page = cPage;
-                a_obj.fetchReportValues();
+            console.log(cPage, REPORT._on_current_page)
+            if (parseInt(REPORT._on_current_page) != cPage) {
+                REPORT._on_current_page = cPage;
+                REPORT.fetchReportValues();
             }
         }
     });
 };
-AuditTrailReport.prototype.showPagePan = function(showFrom, showTo, total) {
+showPagePan = function(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
     $('.compliance_count').text(showText);
     $('.pagination-view').show();
 };
-AuditTrailReport.prototype.hidePagePan = function() {
+hidePagePan = function() {
     $('.compliance_count').text('');
     $('.pagination-view').hide();
 }
-
-AuditTrailReport.prototype.renderPageControls = function(e) {
-    var t_this = this;
-    ItemsPerPage.on('change', function(e) {
-        alert("1")
-        t_this.perPage = parseInt($(this).val());
-        t_this._sno = 0;
-        t_this._on_current_page = 1;
-        t_this.createPageView(t_this, t_this._total_record);
-        t_this.fetchReportValues();
-    });
-    t_this._perPage = parseInt(ItemsPerPage.val());
-
-};
 // Pagination Ends
 
 REPORT = new AuditTrailReport();

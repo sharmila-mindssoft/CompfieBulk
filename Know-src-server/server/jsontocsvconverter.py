@@ -80,6 +80,15 @@ class ConvertJsonToCSV(object):
                 elif report_type == "AllocateServerReport":
                     self.generate_allocate_server_report(
                         db, request, session_user)
+                elif report_type == "IPSettingReport":
+                    self.generate_ip_setting_report(
+                        db, request, session_user)
+                elif report_type == "GroupAdminRegistrationEMail":
+                    self.generate_group_admin_email_report(
+                        db, request, session_user)
+                elif report_type == "StatutorySettingsReport":
+                    self.generate_statutory_setting_report(
+                        db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
         self, db, request, session_user
@@ -232,7 +241,6 @@ class ConvertJsonToCSV(object):
             ]
             j = j + 1
             self.write_csv(None, csv_values)
-
 
     def generate_reassign_user_report(
         self, db, request, session_user
@@ -599,4 +607,119 @@ class ConvertJsonToCSV(object):
                 legal_entity_admin_email, legal_entity_admin_contactno, contract_from,
                 contract_to, domain_total_unit, domain_used_unit, activation_date
             ]
+            self.write_csv(None, csv_values)
+
+    def generate_ip_setting_report(
+        self, db, request, session_user
+    ):
+        is_header = False
+
+        client_id = request.client_id
+        ip = request.ip
+
+        ip_setting_details_list = db.call_proc(
+            "sp_ip_setting_details_report_export", (client_id, ip)
+        )
+
+        for ip_setting_details in ip_setting_details_list:
+            
+            form_name = ip_setting_details["form_name"]
+            ips=ip_setting_details["ips"]
+            group_name=ip_setting_details["group_name"]
+            
+            if not is_header:
+                csv_headers = [
+                    "Group Name", "Form Name", "IP Details"
+                ]
+                self.write_csv(csv_headers, None)
+                is_header = True
+            csv_values = [
+                group_name, form_name, ips
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_group_admin_email_report(
+        self, db, request, session_user
+    ):
+        cl_id = request.client_id
+        c_id = request.country_id
+        if c_id == 0:
+            c_id = '%'
+
+        result = db.call_proc_with_multiresult_set("sp_group_admin_registration_email_export_report_data", (session_user, cl_id, c_id), 2)
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "SNO", "Group Name", "Registration Email Date", "Country", "Legal Entity",
+                "No. of Units", "Unit Email Date", "Statutory Email Date"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        j = 1
+
+        for row in result[1]:
+            print "a"
+            print row.get("client_name")
+            client_name = row.get("client_name")
+            csv_values = [
+                j, client_name, row.get("registration_email_date"), row.get("country_name"),
+                row.get("legal_entity_name"), row.get("unit_count"), row.get("unit_email_date"),
+                row.get("statutory_email_date")
+            ]
+            self.write_csv(None, csv_values)
+
+    def generate_statutory_setting_report(
+        self, db, request_data, session_user
+    ):
+        country_id = request_data.country_id
+        group_id = request_data.group_id
+        business_group_id = request_data.business_group_id
+        if business_group_id == 0:
+            business_group_id = '%'
+        legal_entity_id = request_data.legal_entity_id
+        unit_id = request_data.unit_id
+        if unit_id == 0:
+            unit_id = '%'
+        domain_id = request_data.domain_id_optional
+        if domain_id is None:
+            domain_id = '%'
+        statutory_id = request_data.statutory_id
+        if statutory_id == 0:
+            statutory_id = '%'
+        compliance_id = request_data.compliance_id
+        if compliance_id == 0:
+            compliance_id = '%'
+        param_list = [
+            country_id, domain_id, business_group_id, legal_entity_id,
+            unit_id, group_id, statutory_id, compliance_id
+        ]
+        print param_list
+        result = db.call_proc("sp_export_statutory_setting_report_recordset", param_list)
+        is_header = False
+        if not is_header:
+            csv_headers = [
+                "SNO", "Group Name", "Legal Entity", "Country", "Domain",
+                "Statutory Name", "Statutory Provision", "Compliance Task",
+                "Document Name", "Remarks", "Statutory Applicability", "Statutory Opted",
+                "Compfie Admin", "Admin Update", "Client Admin", "Client Update",
+                "Statutory Nature"
+            ]
+            self.write_csv(csv_headers, None)
+            is_header = True
+        j = 1
+        for row in result:
+            stat_app_status = "No"
+            if row.get("statutory_applicability_status") == 1:
+                stat_app_status = "Yes"
+            stat_opt_status = "No"
+            if row.get("statutory_opted_status") == 1:
+                stat_opt_status = "Yes"
+            csv_values = [
+                j, row.get("group_name"), row.get("legal_entity_name"), row.get("country_name"),
+                row.get("domain_name"), row.get("statutory_name"), row.get("statutory_provision"),
+                row.get("c_task"), row.get("document_name"), row.get("remarks"),
+                stat_app_status, stat_opt_status, row.get("compfie_admin"), row.get("admin_update"),
+                row.get("client_admin"), row.get("client_update"), row.get("statutory_nature_name")
+            ]
+            j = j + 1
             self.write_csv(None, csv_values)

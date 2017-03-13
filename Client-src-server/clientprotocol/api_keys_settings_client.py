@@ -636,6 +636,10 @@ api_params = {
     "ul_users": make_vector_type_field(module="clientcore", klass_name="ClientUsers_UserManagementList"),  # User Management
     "location": make_text_field(is_optional=True),
     "pr_legal_entities": make_vector_type_field(module="clientcore", klass_name="ClientLegalEntity"),
+    "compliance_file_name":  make_vector_type_string(is_optional=True),
+    "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
+    "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
+    "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
     "compliance_file_name":  make_vector_type_string(is_optional=True),
     "in_units":make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
@@ -658,6 +662,10 @@ api_params = {
     "settings_details": make_vector_type_field(module="clientmasters", klass_name="SettingsInfo"),  # Settings
     "settings_domains": make_vector_type_field(module="clientmasters", klass_name="LegalEntityDomains"),  # Settings
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
-    "le_admin": make_int_field(is_optional=True),    
+    "le_admin": make_int_field(is_optional=True),
     "user_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
+    "on_statutory": make_text_field(length=500),    
+    "on_unit": make_text_field(length=100),
+    "on_compliance_status": make_text_field(length=500),
+    "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),    
 }

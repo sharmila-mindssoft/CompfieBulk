@@ -40,6 +40,7 @@ var reportTableTbodyNew = $("#report-table-tbody-new");
 var template = $("#template");
 var reportTable = $("#report-table");
 var REPORT = null;
+var LOGO = null;
 
 DomainScoreCard = function() {
     this._entities = [];
@@ -276,6 +277,7 @@ DomainScoreCard.prototype.fetchReportValues = function(csv) {
     client_mirror.getDomainScoreCard(c_id, bg_id, le_id, d_id, div_id, cat_id, csv, function(error, response) {
         if (error == null) {
             t_this._report_data = response.domain_score_card_list;
+            LOGO = response.logo_url;
             if (csv == false) {
                 reportView.show();
                 showAnimation(reportView);
@@ -293,7 +295,10 @@ DomainScoreCard.prototype.fetchReportValues = function(csv) {
 DomainScoreCard.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
-    clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
+    if(LOGO != null)
+        clientLogo.attr("src", LOGO);
+    else
+        clientLogo.remove();
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     var j = 1;

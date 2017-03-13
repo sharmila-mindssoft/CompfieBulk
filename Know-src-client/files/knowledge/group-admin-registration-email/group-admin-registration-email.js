@@ -85,14 +85,23 @@ function fillGroupAdmingroupData(groupAdminList)
         $('.Country', rowClone).text(v.c_names);
         $('.Group',rowClone).html(v.group_name);
         $('.No-of-legalentity', rowClone).html(v.no_of_legal_entities);
-        if (v.ug_name == null){
-          $('#btnResend', rowClone).show();
-          $('#btnResend', rowClone).on('click', function() {
-            sendCredentials(v.client_id, v.email_id);
-          });
+        if (v.ug_name == null && v.registration_email_date == null){
+        	$('.btn-send', rowClone).show();
+        	$('.btn-resend', rowClone).hide();
+          	$('.btn-send', rowClone).on('click', function() {
+            	sendCredentials(v.client_id, v.email_id);
+          	});
         }
-        else {
-          $('#btnResend', rowClone).hide();
+        else if(v.ug_name == null && v.registration_email_date != null){
+        	$('.btn-send', rowClone).hide();
+        	$('.btn-resend', rowClone).show();
+          	$('.btn-resend', rowClone).on('click', function() {
+            	sendCredentials(v.client_id, v.email_id);
+          	});
+        }
+        else if(v.ug_name != null && v.registration_email_date != null){
+        	$('.btn-send', rowClone).hide();
+          	$('#btnResend', rowClone).hide();
         }
         $('#btnView', rowClone).on('click', function() {
             displayLegalEntityList(v.client_id, v.group_name);
@@ -252,7 +261,6 @@ function displayLegalEntityList(client_id, group_name)
 	});
 }
 function sendmail(_mode, _u_name, _e_id, _cl_id, _cl_name, _le_id, _le_name) {
-	alert(_e_id)
 	req_dict = {
 		'grp_mode': _mode,
 	    'username': _u_name,

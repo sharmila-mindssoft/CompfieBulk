@@ -229,6 +229,11 @@ class API(object):
 
     @csrf.exempt
     @api_request(DistributionRequest)
+    def handle_ip_list(self, request, db):
+        pass
+
+    @csrf.exempt
+    @api_request(DistributionRequest)
     def handle_server_list(self, request, db):
         return CompanyServerDetails(gen.get_servers(db))
 
@@ -454,6 +459,7 @@ def run_server(port):
 
         # post urls
         api_urls_and_handlers = [
+            ("/knowledge/ip-list", api.handle_ip_list),
             ("/knowledge/server-list", api.handle_server_list),
             ("/knowledge/group-server-list", api.handle_group_server_list),
             ("/knowledge/client-list", api.handle_client_list),

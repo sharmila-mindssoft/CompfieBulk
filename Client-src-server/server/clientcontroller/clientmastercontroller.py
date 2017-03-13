@@ -149,7 +149,7 @@ def process_client_master_requests(request, db, session_user, client_id, session
 
     elif type(request) is clientmasters.UserManagementList:
         result = process_UserManagement_list(db, request, session_user)
-    
+
     elif type(request) is clientmasters.UserManagementEditView:
         result = process_UserManagement_EditView(db, request, session_user)
 
@@ -240,7 +240,7 @@ def process_block_service_provider(
     db, request, session_user
 ):
     password = request.password
-    is_blocked = 0 if request.is_blocked is False else 1 
+    is_blocked = 0 if request.is_blocked is False else 1
     if verify_password_user_privilege(db, session_user, password):
         return clientmasters.InvalidPassword()
     if block_service_provider(
@@ -312,7 +312,7 @@ def process_UserManagement_EditView(db, request, session_user):
     users = process_UserManagement_EditView_users(db, request, session_user)
     domains = process_UserManagement_EditView_Domains(db, request, session_user)
     units = process_UserManagement_EditView_Units(db, request, session_user)
-    
+
     return clientmasters.UserManagementEditViewSuccess(
         users = users,
         legal_entities = legalEntities,
@@ -532,7 +532,7 @@ def process_UserManagement_list_users(db, request, session_user):
         username = row["username"]
         email_id = row["email_id"]
         mobile_no = row["mobile_no"]
-        legal_entity_id = row["legal_entity_id"]     
+        legal_entity_id = row["legal_entity_id"]
         userList.append(
             clientcore.ClientUsers_UserManagementList(user_id, user_category_id,
                                                       employee_code, employee_name,
@@ -584,7 +584,7 @@ def process_UserManagement_EditView_LegalEntities(db, request, session_user):
     for row in resultRows:
         user_id = row["user_id"]
         legal_entity_id = row["legal_entity_id"]
-        
+
         legalEntityList.append(
             clientcore.ClientUsers_UserManagement_EditView_LegalEntities(user_id, legal_entity_id)
         )
@@ -603,7 +603,7 @@ def process_UserManagement_EditView_Domains(db, request, session_user):
         user_id = row["user_id"]
         legal_entity_id = row["legal_entity_id"]
         domain_id = row["domain_id"]
-        
+
         domainList.append(
             clientcore.ClientUsers_UserManagement_EditView_Domains(user_id, legal_entity_id, domain_id)
         )
@@ -622,7 +622,7 @@ def process_UserManagement_EditView_Units(db, request, session_user):
         user_id = row["user_id"]
         legal_entity_id = row["legal_entity_id"]
         unit_id = row["unit_id"]
-        
+
         unitList.append(
             clientcore.ClientUsers_UserManagement_EditView_Units(user_id, legal_entity_id, unit_id)
         )
@@ -709,12 +709,15 @@ def process_save_client_user(db, request, session_user, client_id):
     # user_id = db.get_new_id("user_id", tblUsers)
     # if (get_no_of_remaining_licence(db) <= 0):
     #     return clientmasters.UserLimitExceeds()
-    # elif is_duplicate_employee_code(
-    #     db,
-    #     request.employee_code.replace(" ", ""),
-    #     user_id=None
-    # ):
-    #     return clientmasters.EmployeeCodeAlreadyExists()
+    if is_duplicate_employee_code(
+        db,
+        request.employee_code.replace(" ", ""),
+        user_id=None
+    ):
+        return clientmasters.EmployeeCodeAlreadyExists()
+    if is_already_assigned_units (db,request.user_unit_ids, request.user_domain_ids):
+        return clientmasters.UnitsAlreadyAssigned()
+        
     if save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
 
@@ -730,10 +733,10 @@ def process_update_client_user(db, request, session_user, client_id):
         request.employee_code.replace(" ", "")
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    elif is_duplicate_employee_name(
-        db, request.employee_name, user_id=request.user_id
-    ):
-        return clientmasters.EmployeeNameAlreadyExists()
+    # elif is_duplicate_employee_name(
+    #     db, request.employee_name, user_id=request.user_id
+    # ):
+    #     return clientmasters.EmployeeNameAlreadyExists()
     elif update_user(db, request, session_user, client_id):
         return clientmasters.UpdateClientUserSuccess()
 
@@ -937,9 +940,9 @@ def get_service_provider_details_report_filter_data(db, request, session_user):
 # Result: list of record sets which contains service providers details
 ###############################################################################################
 def get_service_provider_details_report(db, request, session_user):
-    service_providers_status_list = get_service_provider_details_report_data(db, request)
+    service_providers_status_list, total_record = get_service_provider_details_report_data(db, request)
     return clientmasters.GetServiceProviderDetailsReportSuccess(
-        sp_details_list=service_providers_status_list
+        sp_details_list=service_providers_status_list, total_count=total_record
     )
 
 
@@ -981,8 +984,8 @@ def get_login_trace_report_data(db, request, session_user, client_id):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_login_trace_report(db, request, client_id)
-        return clientmasters.GetLoginTraceReportDataSuccess(log_trace_activities=result)
+        result, total_record = process_login_trace_report(db, request, client_id)
+        return clientmasters.GetLoginTraceReportDataSuccess(log_trace_activities=result, total_count=total_record)
 
 
 ###############################################################################################

@@ -186,13 +186,15 @@ class COMPLIANCE_APPROVAL_STATUS(object):
     # RejectConcurrence = "Reject Concurrence"
     # Approve = "Approve"
     # RejectApproval = "Reject Approval"
+    # RectifyConcurrence = Rectify Concurrence
+    # Rectify Approval = Rectify Approval
 
     def __init__(self, value):
         self._value = value
 
     @staticmethod
     def values():
-        return ["Concur", "Reject Concurrence", "Approve", "Reject Approval"]
+        return ["Concur", "Reject Concurrence", "Approve", "Reject Approval", "Rectify Concurrence", "Rectify Approval"]
 
     def value(self):
         return self._value
@@ -5176,41 +5178,53 @@ class GetCompletedUserWiseCountSuccess(object):
         }
 
 class GetOverdueUnitWiseCountSuccess(object):
-    def __init__(self, unit_id, unit, overdue_count):
+    def __init__(self, unit_id, unit, to_complete, to_concur, to_approve):
         self.unit_id = unit_id
         self.unit = unit
-        self.overdue_count = overdue_count
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit", "overdue_count"])
+        data = parse_dictionary(data, ["unit_id", "unit", "to_complete", "to_concur", "to_approve"])
         unit_id = data.get("unit_id"), 
         unit = data.get("unit"),
-        overdue_count = data.get("overdue_count")
-        return GetOverdueUnitWiseCountSuccess(unit_id, unit, overdue_count)
+        to_complete = data.get("to_complete")
+        to_concur = data.get("to_concur")
+        to_approve = data.get("to_approve")
+        return GetOverdueUnitWiseCountSuccess(unit_id, unit, to_complete, to_concur, to_approve)
     def to_structure(self):
         return {
             "unit_id": self.unit_id,
             "unit": self.unit,
-            "overdue_count": self.overdue_count
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
         }
 
 class GetOverdueUserWiseCountSuccess(object):
-    def __init__(self, user_id, user_name, overdue_count):
+    def __init__(self, user_id, user_name, to_complete, to_concur, to_approve):
         self.user_id = user_id
         self.user_name = user_name
-        self.overdue_count = overdue_count
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_name", "overdue_count", "delayed_count"])
+        data = parse_dictionary(data, ["user_id", "user_name", "to_complete", "to_concur", "to_approve"])
         user_id = data.get("user_id"), 
         user_name = data.get("user_name"),
-        overdue_count = data.get("overdue_count")
-        return GetOverdueUserWiseCountSuccess(user_id, user_name, overdue_count)
+        to_complete = data.get("to_complete")
+        to_concur = data.get("to_concur")
+        to_approve = data.get("to_approve")
+        return GetOverdueUserWiseCountSuccess(user_id, user_name, to_complete, to_concur, to_approve)
     def to_structure(self):
         return {
             "user_id": self.user_id,
             "user_name": self.user_name,
-            "overdue_count": self.overdue_count
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
         }
 
 # Legal Entity Wise Score Card Start
@@ -5372,7 +5386,7 @@ class GetUserManagement_List_Success(object):
         used_licences = data.get("used_licences"),        
         le_id = data.get("le_id"),
         completed_task_count = data.get("completed_task_count")        
-        return GetWorkFlowScoreCardSuccess(c_name, b_g_name, le_name, cont_from, cont_to, total_licences, 
+        return GetUserManagement_List_Success(c_name, b_g_name, le_name, cont_from, cont_to, total_licences, 
             used_licences, le_id, completed_task_count, inprogress_within_duedate_task_count, over_due_task_count)
     def to_structure(self):
         return {
@@ -5385,4 +5399,64 @@ class GetUserManagement_List_Success(object):
             "used_licences": self.used_licences,
             "le_id": self.le_id,            
             "users_list": self.users_list,            
+        }
+###########################################################################
+# OnOccurrence Last Transaction
+###########################################################################
+class GetOnoccurrencce_Last_Transaction(object):
+    def __init__(self, compliance_history_id, compliance_id, compliance_task, on_statutory, on_unit,
+                 compliance_description, start_date, assignee_name, completion_date, concurrer_name,
+                 concurred_on, approver_name, approved_on, on_compliance_status):
+        self.compliance_history_id = compliance_history_id
+        self.compliance_id = compliance_id
+        self.compliance_task = compliance_task
+        self.on_statutory = on_statutory
+        self.on_unit = on_unit
+        self.compliance_description = compliance_description
+        self.start_date = start_date
+        self.assignee_name = assignee_name
+        self.completion_date = completion_date
+        self.concurrer_name = concurrer_name
+        self.concurred_on = concurred_on
+        self.approver_name = approver_name
+        self.approved_on = approved_on
+        self.on_compliance_status = on_compliance_status
+        
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["compliance_history_id", "compliance_id", "compliance_task", "on_statutory", "on_unit", "compliance_description", 
+            "start_date", "assignee_name", "completion_date", "concurrer_name", "concurred_on", "approver_name", "approved_on", "on_compliance_status"])
+        compliance_hisory_id = data.get("compliance_history_id")
+        compliance_id = data.get("compliance_id")
+        compliance_task = data.get("compliance_task")
+        on_statutory = data.get("on_statutory")
+        on_unit = data.get("on_unit")
+        compliance_description = data.get("compliance_description")
+        start_date = data.get("start_date")
+        assignee_name = data.get("assignee_name")
+        completion_date = data.get("completion_date")
+        concurrer_name = data.get("concurrer_name")
+        concurred_on = data.get("concurred_on")
+        approver_name = data.get("approver_name")
+        approved_on = data.get("approved_on")
+        on_compliance_status = data.get("on_compliance_status")
+        return GetOnoccurrencce_Last_Transaction(compliance_history_id, compliance_id, compliance_task, on_statutory, on_unit, compliance_description, 
+            start_date, assignee_name, completion_date, concurrer_name, concurred_on, approver_name, approved_on, on_compliance_status)
+
+    def to_structure(self):
+        return {
+            "compliance_history_id": self.compliance_history_id,
+            "compliance_id": self.compliance_id,
+            "compliance_task": self.compliance_task,
+            "on_statutory": self.on_statutory,
+            "on_unit": self.on_unit,
+            "compliance_description": self.compliance_description,
+            "start_date": self.start_date,
+            "assignee_name": self.assignee_name,            
+            "completion_date": self.completion_date,
+            "concurrer_name": self.concurrer_name,
+            "concurred_on": self.concurred_on,
+            "approver_name": self.approver_name,
+            "approved_on": self.approved_on,
+            "on_compliance_status": self.on_compliance_status,
         }

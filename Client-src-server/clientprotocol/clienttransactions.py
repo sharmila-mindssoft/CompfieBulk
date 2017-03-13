@@ -2112,7 +2112,7 @@ class UNIT_WISE_STATUTORIES(object):
     def __init__(
         self, compliance_id, compliance_name, description,
         frequency, statutory_date, due_date, applicable_units,
-        summary
+        summary, r_every, repeat_by
     ):
         self.compliance_id = compliance_id
         self.compliance_name = compliance_name
@@ -2122,13 +2122,16 @@ class UNIT_WISE_STATUTORIES(object):
         self.due_date = due_date
         self.applicable_units = applicable_units
         self.summary = summary
+        self.r_every = r_every
+        self.repeat_by = repeat_by
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
             "comp_id", "comp_name", "descp"
             "freq", "statu_dates", "due_date_list",
-            "applicable_units", "summary",
+            "applicable_units", "summary", "r_every",
+            "repeat_by"
         ])
         compliance_id = data.get("comp_id")
         compliance_name = data.get("comp_name")
@@ -2138,10 +2141,13 @@ class UNIT_WISE_STATUTORIES(object):
         due_date = data.get("due_date_list")
         applicable_units = data.get("applicable_units")
         summary = data.get("summary")
+        r_every = data.get("r_every")
+        repeat_by = data.get("repeat_by")
+
         return UNIT_WISE_STATUTORIES(
             compliance_id, compliance_name, description,
             frequency, statutory_date, due_date, applicable_units,
-            summary,
+            summary, r_every, repeat_by
         )
 
     def to_structure(self):
@@ -2153,7 +2159,9 @@ class UNIT_WISE_STATUTORIES(object):
             "statu_dates": self.statutory_date,
             "due_date_list": self.due_date,
             "applicable_units": self.applicable_units,
-            "summary": self.summary
+            "summary": self.summary,
+            "r_every": self.r_every,
+            "repeat_by": self.repeat_by
         }
 
 #

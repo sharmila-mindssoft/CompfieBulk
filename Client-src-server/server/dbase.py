@@ -300,6 +300,8 @@ class Database(object):
 
     def select_one(self, query, param=None):
         cursor = self.cursor()
+        print "query>>>", query
+        print "param>>", param
         assert cursor is not None
 
         try:

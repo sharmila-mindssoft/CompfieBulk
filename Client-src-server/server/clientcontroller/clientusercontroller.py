@@ -1,5 +1,5 @@
 import time
-from clientprotocol import (clientuser, clientlogin)
+from clientprotocol import (clientuser, clientcore, clientlogin)
 from server import logger
 from server.constants import (
     RECORD_DISPLAY_COUNT, FILE_MAX_LIMIT
@@ -8,7 +8,7 @@ from server.clientdatabase.clientuser import *
 
 from server.common import (
     datetime_to_string_time,
-    get_date_time_in_date
+    get_date_time_in_date, datetime_to_string
 )
 
 from server.clientdatabase.general import (
@@ -51,6 +51,10 @@ def process_client_user_request(request, db, session_user):
 
     elif type(request) is clientuser.ComplianceFilters:
         result = process_compliance_filters(
+            db, request, session_user
+        )
+    elif type(request) is clientuser.OnOccurrenceLastTransaction:
+        result = process_onoccurrence_last_transaction(
             db, request, session_user
         )
 
@@ -207,3 +211,48 @@ def process_compliance_filters(
     user_units = get_units_for_user(db, session_user)    
 
     return clientuser.ComplianceFiltersSuccess(user_units=user_units)
+
+########################################################
+# OnOccurrence Last Transactions
+########################################################
+def process_onoccurrence_last_transaction(
+    db, request, session_user
+):
+    onOccurrenceTransactions = {}
+
+    onOccurrenceTransactions = process_onoccurrence_transaction_list(db, request, session_user)
+        
+    return clientuser.OnOccurrenceLastTransactionSuccess(onoccurrence_transactions = onOccurrenceTransactions)
+########################################################
+# OnOccurrence Last Transactions
+########################################################
+def process_onoccurrence_transaction_list(db, request, session_user):
+    
+    compliance_id = request.compliance_id
+    unit_id = request.unit_id
+
+    resultRows  = getLastTransaction_Onoccurrence(db, compliance_id, unit_id)
+    transactionList = []
+
+    for row in resultRows:
+        compliance_hisory_id = int(row["compliance_history_id"])
+        compliance_id = int(row["compliance_id"])
+        compliance_task = row["compliance_task"]
+        on_statutory = row["statutory"]
+        on_unit = row["unit"]
+        compliance_description = row["compliance_description"]
+        start_date = datetime_to_string(row["start_date"])
+        assignee_name = row["assignee"]
+        completion_date = row["completion_date"]
+        concurrer_name = row["concurr"]
+        concurred_on = row["concurred_on"]
+        approver_name = row["approver"]
+        approver_on = row["approved_on"]
+        on_compliance_status = row["compliance_status"]
+
+        transactionList.append(
+            clientcore.GetOnoccurrencce_Last_Transaction(compliance_hisory_id, compliance_id, compliance_task, on_statutory, on_unit, compliance_description, start_date, assignee_name, completion_date, concurrer_name, concurred_on, approver_name, approver_on, on_compliance_status)
+        )
+
+    return transactionList
+    

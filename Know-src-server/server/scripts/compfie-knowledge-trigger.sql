@@ -6,7 +6,7 @@
 DROP TRIGGER IF EXISTS `after_tbl_client_groups_update`;
 
 DELIMITER //
-CREATE TRIGGER `after_tbl_client_groups_update` AFTER INSERT ON `tbl_client_groups`
+CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_groups`
  FOR EACH ROW BEGIN
    SET @action = 1;
    SET @save = 0;

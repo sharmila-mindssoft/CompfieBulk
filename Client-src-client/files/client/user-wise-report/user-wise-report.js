@@ -617,6 +617,7 @@ UserWiseReport.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._UserCompliances = response.user_compliances;
+            t_this._total_record = response.total_count;
             if (response.user_compliances.length == 0) {
                 hidePageView();
                 hidePagePan();
@@ -625,7 +626,6 @@ UserWiseReport.prototype.fetchReportValues = function() {
                 t_this.showReportValues();
             }
             else{
-                t_this._total_record = response.user_compliances.length;
                 if (t_this._sno == 0) {
                     createPageView(t_this._total_record);
                 }
@@ -742,8 +742,8 @@ UserWiseReport.prototype.showReportValues = function() {
                                 $('.due-date', clonethree).text(v.due_date);
                                 $('.compliance-task-status', clonethree).text(v.task_status);
                                 $('.user-name', clonethree).html(v.assignee_name);
-                                $('.user-name', clonethree).addClass("-"+v.compliance_id);
-                                $('.user-name', clonethree).on('click', function() { tree_open_close(this); });
+                                // $('.user-name', clonethree).addClass("-"+v.compliance_id);
+                                // $('.user-name', clonethree).on('click', function() { tree_open_close(this); });
                                 $('.activity-status', clonethree).text(v.activity_status);
                                 if (v.activity_date != "")
                                     $('.activity-date', clonethree).text(v.activity_date);
@@ -763,6 +763,10 @@ UserWiseReport.prototype.showReportValues = function() {
                                     $('.completion-date', clonethree).text(v.completion_date);
                                 else
                                     $('.completion-date', clonethree).text('-');
+                                $(clonethree).on('click', function(e) {
+                                    treeShowHide(e, "tree" + v.compliance_history_id);
+                                });
+                                $(clonethree).attr("id", "tree" + v.compliance_history_id);
                                 reportTableTbody.append(clonethree);
                                 j = j + 1;
                                 complianceHistoryId = v.compliance_history_id;
@@ -770,6 +774,7 @@ UserWiseReport.prototype.showReportValues = function() {
                             else {
                                 console.log("2:"+unit_names[i], domainname, actname, complianceHistoryId)
                                 var clonefour = $('#template #report-table .row-four').clone();
+                                $(clonefour).addClass("tree" + v.compliance_id);
                                 $('.user-name-new', clonefour).text(v.assignee_name);
                                 $('.activity-status-new', clonefour).text(v.activity_status);
                                 if (v.activity_date != "")
@@ -810,16 +815,19 @@ UserWiseReport.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        t_this._total_record = t_this._total_record - sub_cnt;
+        //t_this._total_record = t_this._total_record - sub_cnt;
         showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
 
-function tree_open_close(e) {
-    var len = e.className.split("-").length;
-    id = e.className.split("-")[len-1];
-    $('.tree' + id).toggle("slow");
-}
+treeShowHide = function(e, tree) {
+    if ($('.' + tree)) {
+        if ($('.' + tree).is(":visible") == true)
+            $('.' + tree).hide();
+        else
+            $('.' + tree).show();
+    }
+};
 
 function download_url(doc_url) {
     if(doc_url != null){
