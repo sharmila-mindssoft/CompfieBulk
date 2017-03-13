@@ -1822,6 +1822,7 @@ def approve_compliance(
     frequency_id = rows[0]["frequency_id"]
     duration_type_id = rows[0]["duration_type_id"]
     compliance_task = rows[0]["compliance_task"]
+    legal_entity_id = rows[0]["legal_entity_id"]
 
     # Updating next due date validity dates in assign compliance table
     as_columns = []
@@ -1867,7 +1868,7 @@ def approve_compliance(
 
     # Audit Log Entry
     action = "Compliance Approved \"%s\"" % compliance_task
-    db.save_activity(session_user, 9, action, row["legal_entity_id"], unit_id)
+    db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
 
     return True
 
