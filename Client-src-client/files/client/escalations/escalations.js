@@ -1,6 +1,6 @@
 var from_count = 0;
 var page_count = 50;
-
+var LEIDS = client_mirror.getLEids();
 function loadMessages(data) {
     var isEmpty = true;
     $('.tbody-message-list').find('tr').remove();
@@ -45,7 +45,6 @@ function loadMessages(data) {
         var clone = no_record_row.clone();
         $(".tbody-message-list").append(clone);
     }
-
 }
 
 function initialize() {

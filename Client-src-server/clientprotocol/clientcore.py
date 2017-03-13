@@ -5176,41 +5176,53 @@ class GetCompletedUserWiseCountSuccess(object):
         }
 
 class GetOverdueUnitWiseCountSuccess(object):
-    def __init__(self, unit_id, unit, overdue_count):
+    def __init__(self, unit_id, unit, to_complete, to_concur, to_approve):
         self.unit_id = unit_id
         self.unit = unit
-        self.overdue_count = overdue_count
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["unit_id", "unit", "overdue_count"])
+        data = parse_dictionary(data, ["unit_id", "unit", "to_complete", "to_concur", "to_approve"])
         unit_id = data.get("unit_id"), 
         unit = data.get("unit"),
-        overdue_count = data.get("overdue_count")
-        return GetOverdueUnitWiseCountSuccess(unit_id, unit, overdue_count)
+        to_complete = data.get("to_complete")
+        to_concur = data.get("to_concur")
+        to_approve = data.get("to_approve")
+        return GetOverdueUnitWiseCountSuccess(unit_id, unit, to_complete, to_concur, to_approve)
     def to_structure(self):
         return {
             "unit_id": self.unit_id,
             "unit": self.unit,
-            "overdue_count": self.overdue_count
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
         }
 
 class GetOverdueUserWiseCountSuccess(object):
-    def __init__(self, user_id, user_name, overdue_count):
+    def __init__(self, user_id, user_name, to_complete, to_concur, to_approve):
         self.user_id = user_id
         self.user_name = user_name
-        self.overdue_count = overdue_count
+        self.to_complete = to_complete
+        self.to_concur = to_concur
+        self.to_approve = to_approve
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "user_name", "overdue_count", "delayed_count"])
+        data = parse_dictionary(data, ["user_id", "user_name", "to_complete", "to_concur", "to_approve"])
         user_id = data.get("user_id"), 
         user_name = data.get("user_name"),
-        overdue_count = data.get("overdue_count")
-        return GetOverdueUserWiseCountSuccess(user_id, user_name, overdue_count)
+        to_complete = data.get("to_complete")
+        to_concur = data.get("to_concur")
+        to_approve = data.get("to_approve")
+        return GetOverdueUserWiseCountSuccess(user_id, user_name, to_complete, to_concur, to_approve)
     def to_structure(self):
         return {
             "user_id": self.user_id,
             "user_name": self.user_name,
-            "overdue_count": self.overdue_count
+            "to_complete": self.to_complete,
+            "to_concur": self.to_concur,
+            "to_approve": self.to_approve
         }
 
 # Legal Entity Wise Score Card Start

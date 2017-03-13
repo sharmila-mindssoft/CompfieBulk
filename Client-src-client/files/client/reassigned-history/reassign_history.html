@@ -15,10 +15,10 @@
                                 <form class="form-horizontal group-border-dashed">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
                                             <p class="form-control-static filter-country-name default-display-none col-sm-6"></p>
                                             <div class="col-sm-6 has-feedback default-display-none">
-                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country">
+                                                <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="country-id" value="">
                                                 <div id="ac-country" class="ac-textbox default-display-none">
@@ -27,10 +27,10 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
                                             <p class="form-control-static filter-legal-entity-name default-display-none col-sm-6"></p>
                                             <div class="col-sm-6 has-feedback default-display-none">
-                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
+                                                <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="2">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="legal-entity-id" value="">
                                                 <div id="ac-legal-entity" class="ac-textbox default-display-none">
@@ -39,9 +39,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain Name" tabindex="5">
+                                                <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain Name" tabindex="3">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="domain-id" value="">
                                                 <div id="ac-domain" class="ac-textbox default-display-none">
@@ -50,9 +50,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Unit: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">Unit: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" id="unit" class="form-control input-sm" placeholder="Enter Unit">
+                                                <input type="text" id="unit" class="form-control input-sm" placeholder="Enter Unit" tabindex="4">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="unit-id" value="">
                                                 <div id="ac-unit" class="ac-textbox default-display-none">
@@ -61,9 +61,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
+                                            <label class="col-sm-4 control-label">Act: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act">
+                                                <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act" tabindex="5">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="act-id" value="">
                                                 <div id="ac-act" class="ac-textbox default-display-none">
@@ -74,9 +74,9 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
+                                            <label class="col-sm-4 control-label">Compliance Task: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" id="compliance-task" class="form-control input-sm" placeholder="Enter Compliance Task">
+                                                <input type="text" id="compliance-task" class="form-control input-sm" placeholder="Enter Compliance Task" tabindex="6">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="compliance-task-id" value="">
                                                 <div id="ac-compliance-task" class="ac-textbox default-display-none">
@@ -85,9 +85,9 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
+                                            <label class="col-sm-4 control-label">User: </label>
                                             <div class="col-sm-6 has-feedback">
-                                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User">
+                                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="7">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                                 <input type="hidden" id="user-id" value="">
                                                 <div id="ac-user" class="ac-textbox default-display-none">
@@ -96,16 +96,16 @@
                                             </div>
                                         </div>
                                         <div class="form-group has-feedback">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">From Date: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control input-sm from-date" readonly="readonly" id="from-date" placeholder="DD-MM-YYYY">
+                                                <input type="text" class="form-control input-sm from-date" readonly="readonly" id="from-date" placeholder="DD-MM-YYYY" tabindex="8">
                                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                             </div>
                                         </div>
                                         <div class="form-group has-feedback">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label ">To Date: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label ">To Date: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control input-sm to-date" readonly="readonly" id="to-date" placeholder="DD-MM-YYYY">
+                                                <input type="text" class="form-control input-sm to-date" readonly="readonly" id="to-date" placeholder="DD-MM-YYYY" tabindex="9">
                                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                             </div>
                                         </div>
@@ -113,7 +113,7 @@
                                     <div class="col-sm-12">
                                         <center>
                                             <div class="form-group m-b-0">
-                                                <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button"> Show </button>
+                                                <button class="btn btn-primary waves-effect waves-light" id="show-button" type="button" tabindex="10"> Show </button>
                                             </div>
                                         </center>
                                     </div>
@@ -137,20 +137,23 @@
                                         <div class="col-sm-4 text-center">
                                             <h6>Domain : <span id="domain-name" ></span></h6></div>
                                     </div>
-                                    <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                                        <thead>
-                                            <tr>
-                                                <th width="01%">#</th>
-                                                <th width="15%">Compliance Task</th>
-                                                <th width="08%">Due Date</th>
-                                                <th width="08%">Assigned Date</th>
-                                                <th width="27%">Assigned</th>
-                                                <th width="10%">Reason</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="report-table-tbody">
-                                        </tbody>
-                                    </table>
+                                    <div class="clear"></div>
+                                    <div class="table-responsive">
+                                        <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
+                                            <thead>
+                                                <tr>
+                                                    <th width="01%">#</th>
+                                                    <th width="15%">Compliance Task</th>
+                                                    <th width="08%">Due Date</th>
+                                                    <th width="08%">Assigned Date</th>
+                                                    <th width="27%">Assigned</th>
+                                                    <th width="10%">Reason</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="report-table-tbody">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     <table class="pagination-view">
                                         <tr>
                                             <td>

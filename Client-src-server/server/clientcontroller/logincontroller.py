@@ -263,7 +263,7 @@ def user_login_response(db, data, client_id, ip, short_name):
     if cat_id == 1 :
         forms = get_forms_by_category(db, cat_id)
     else :
-        forms = get_user_forms(db, user_id)
+        forms = get_user_forms(db, user_id, cat_id)
     print forms
     menu = process_user_forms(
         db, forms, short_name

@@ -509,6 +509,9 @@ class API(object):
                     p_response.rejected_count += data.rejected_count
                     p_response.not_complied_count += data.not_complied_count
 
+                elif type(request_data.request) is dashboard.GetStatutoryNotifications :
+                    p_response.statutory.extend(data.statutory)
+
                 # merge drilldown from the processed LE database
                 elif type(request_data.request) is dashboard.GetComplianceStatusDrillDownData :
                     p_response.drill_down_data.extend(data.drill_down_data)

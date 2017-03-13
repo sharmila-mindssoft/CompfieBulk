@@ -2959,6 +2959,7 @@ function initClientMirror() {
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
+        getLEids:getLEids,
         getUserManagement_List: getUserManagement_List,
         getSettingsFormDetails: getSettingsFormDetails,
         saveSettingsFormDetails: saveSettingsFormDetails,
