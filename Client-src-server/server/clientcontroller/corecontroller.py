@@ -44,9 +44,10 @@ def process_user_forms(
     for f in forms:
         form_id = int(f["form_id"])
         form_name = f["form_name"]
-        form_url = f["form_url"] + "/" + base64.b64encode(short_name)
-        print form_url
         form_type = f["form_type"]
+        form_url = f["form_url"]
+        if form_type == "Transaction" :
+            form_url += "/" + base64.b64encode(short_name)
         parent_menu = f["parent_menu"]
         form = clientcore.Form(form_id, form_name, form_url, parent_menu, form_type)
         form_list.append(form)
