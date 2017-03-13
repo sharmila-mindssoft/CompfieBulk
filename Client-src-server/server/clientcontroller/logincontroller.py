@@ -101,6 +101,7 @@ def process_login(db, request, client_id, session_user_ip):
     login_type = request.login_type
     username = request.username
     password = request.password
+    short_name = request.short_name
     encrypt_password = encrypt(password)
     user_ip = session_user_ip
     logger.logLogin("info", user_ip, username, "Login process begin")
@@ -121,7 +122,7 @@ def process_login(db, request, client_id, session_user_ip):
             print "user_login_response"
             logger.logLogin("info", user_ip, username, "Login process end")
             delete_login_failure_history(db, user_id)
-            return user_login_response(db, response, client_id, user_ip)
+            return user_login_response(db, response, client_id, user_ip, short_name)
 
     else:
         if response is True:
@@ -234,7 +235,7 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
     )
 
 
-def user_login_response(db, data, client_id, ip):
+def user_login_response(db, data, client_id, ip, short_name):
     cat_id = data["user_category_id"]
     user_id = data["user_id"]
     email_id = data["email_id"]
@@ -265,7 +266,7 @@ def user_login_response(db, data, client_id, ip):
         forms = get_user_forms(db, user_id)
     print forms
     menu = process_user_forms(
-        db, forms
+        db, forms, short_name
     )
 
     return clientlogin.UserLoginSuccess(
