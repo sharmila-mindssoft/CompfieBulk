@@ -6,7 +6,7 @@ from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
 from server.common import (return_hour_minute, get_current_date)
 
-NOTIFY_TIME = "15:31"
+NOTIFY_TIME = "18:23"
 email = EmailHandler()
 class AutoNotify(Database):
     def __init__(
@@ -109,48 +109,48 @@ class AutoNotify(Database):
             # print "begin process to remind inprogress compliance task %s " % (current_date)
             # client_info = get_client_settings(db)
             if client_info :
-                reminder_interval = int(client_info["assignee_reminder"])
-                logNotifyInfo("reminder_to_assignee", reminder_interval)
+                # reminder_interval = int(client_info["assignee_reminder"])
+                # logNotifyInfo("reminder_to_assignee", reminder_interval)
                 count = 0
                 for c in compliance_info:
                     if c["due_date"] is None :
                         continue
 
-                    if c["due_date"].date() < current_date.date() :
-                        print "skipped due_date because due_date crossed", c["due_date"].date()
-                        logNotifyInfo("skipped due_date", c["due_date"].date())
-                        continue
+                    # if c["due_date"].date() < current_date.date() :
+                    #     print "skipped due_date because due_date crossed", c["due_date"].date()
+                    #     logNotifyInfo("skipped due_date", c["due_date"].date())
+                    #     continue
                     days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
 
                     if c["document_name"] not in (None, "None", "") :
                         compliance_name = c["document_name"] + " - " + c["compliance_task"]
                     else :
                         compliance_name = c["compliance_task"]
-                    date_diff = abs((current_date.date() - c["start_date"].date()).days)
-                    if date_diff == 0:
-                        logNotifyInfo("skipped due_date reminder days is 0", current_date.date())
-                        logNotifyInfo("skipped due_date", c["start_date"].date())
-                        logNotifyInfo("skipped date_diff ", 0)
-                        continue
+                    # date_diff = abs((current_date.date() - c["start_date"].date()).days)
+                    # if date_diff == 0:
+                    #     logNotifyInfo("skipped due_date reminder days is 0", current_date.date())
+                    #     logNotifyInfo("skipped due_date", c["start_date"].date())
+                    #     logNotifyInfo("skipped date_diff ", 0)
+                    #     continue
 
                     # print date_diff
                     # print (date_diff % reminder_interval)
 
                     notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
                     extra_details = " %s - Reminder" % (c["compliance_history_id"])
-                    if (date_diff % reminder_interval) == 0 :
-                        self.save_in_notification(
-                            c["country_id"], c["domain_id"], c["business_group_id"], c["legal_entity_id"],
-                            c["division_id"], c["unit_id"], c["compliance_id"], c["assignee"],
-                            c["concurrence_person"], c["approval_person"],
-                            notification_text, extra_details, notification_type_id=2, notify_to_all=False
-                        )
-                        a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
-                        email.notify_to_assignee(
-                            a_name, days_left, compliance_name,
-                            c["unit_name"], assignee_email
-                        )
-                        count += 1
+                    # if (date_diff % reminder_interval) == 0 :
+                    self.save_in_notification(
+                        c["country_id"], c["domain_id"], c["business_group_id"], c["legal_entity_id"],
+                        c["division_id"], c["unit_id"], c["compliance_id"], c["assignee"],
+                        c["concurrence_person"], c["approval_person"],
+                        notification_text, extra_details, notification_type_id=2, notify_to_all=False
+                    )
+                    a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
+                    email.notify_to_assignee(
+                        a_name, days_left, compliance_name,
+                        c["unit_name"], assignee_email
+                    )
+                    count += 1
 
                 logNotifyInfo("reminder_to_assignee ", "%s compliances remind to assignee" % (count))
         except Exception, e:
@@ -161,7 +161,7 @@ class AutoNotify(Database):
         current_date = get_current_date()
         logNotifyInfo("before_due_date", "begin process to remind inprogress compliance task to all %s " % (current_date))
 
-        reminder_interval = int(client_info["escalation_reminder_in_advance"])
+        # reminder_interval = int(client_info["escalation_reminder_in_advance"])
         cnt = 0
         for c in compliance_info:
             if c["due_date"] is None :
@@ -172,101 +172,144 @@ class AutoNotify(Database):
             else :
                 compliance_name = c["compliance_task"]
 
-            if c["due_date"].date() < current_date.date() :
-                logNotifyInfo("skipped due_date crossed current date", c["due_date"])
-                continue
-
-            if c["due_date"] is None :
-                continue
+            # if c["due_date"].date() < current_date.date() :
+            #     logNotifyInfo("skipped due_date crossed current date", c["due_date"])
+            #     continue
 
             days_left = abs((c["due_date"].date() - current_date.date()).days) + 1
-            if days_left == 0 :
-                logNotifyInfo("skipped days_left reminder days is 0", 0)
-                continue
 
             notification_text = "%s day(s) left to complete %s task" % (days_left, compliance_name)
             extra_details = " %s - Reminder" % (c["compliance_history_id"])
-            if days_left == reminder_interval:
-                self.save_in_notification(
-                    c["country_id"], c["domain_id"], c["business_group_id"],
-                    c["legal_entity_id"], c["division_id"], c["unit_id"], c["compliance_id"],
-                    c["assignee"], c["concurrence_person"], c["approval_person"], notification_text,
-                    extra_details, notification_type_id=2
-                )
-                a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
-                cc_person = []
-                concurrence_person = c["concurrence_person"]
-                if concurrence_person == 0 :
-                    concurrence_person = None
-                if concurrence_person is not None :
-                    c_name, concurrence_email = self.get_email_id_for_users(concurrence_person)
-                    cc_person.append(concurrence_email)
-                ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
-                cc_person.append(approval_email)
-                email.notify_before_due_date(
-                    a_name, days_left, compliance_name,
-                    c["unit_name"],
-                    assignee_email, cc_person
-                )
-                cnt += 1
+            # if days_left == reminder_interval:
+            self.save_in_notification(
+                c["country_id"], c["domain_id"], c["business_group_id"],
+                c["legal_entity_id"], c["division_id"], c["unit_id"], c["compliance_id"],
+                c["assignee"], c["concurrence_person"], c["approval_person"], notification_text,
+                extra_details, notification_type_id=2
+            )
+            a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
+            cc_person = []
+            concurrence_person = c["concurrence_person"]
+            if concurrence_person == 0 :
+                concurrence_person = None
+            if concurrence_person is not None :
+                c_name, concurrence_email = self.get_email_id_for_users(concurrence_person)
+                cc_person.append(concurrence_email)
+            ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
+            cc_person.append(approval_email)
+            email.notify_before_due_date(
+                a_name, days_left, compliance_name,
+                c["unit_name"],
+                assignee_email, cc_person
+            )
+            cnt += 1
         logNotifyInfo("before_due_date", "%s compliance remind before due date" % cnt)
 
     def notify_escalation_to_all(self, client_info, compliance_info):
         current_date = get_current_date()
         logNotifyInfo("escalation_to_all", "begin process to notify escalations to all %s" % (current_date))
-        escalation_interval = int(client_info["escalation_reminder"])
+        # escalation_interval = int(client_info["escalation_reminder"])
         cnt = 0
         for c in compliance_info :
             if c["due_date"] is None :
                 continue
 
-            if c["due_date"].date() > current_date.date() :
-                logNotifyInfo("skipped due_date ", c["due_date"])
-                continue
+            # if c["due_date"].date() > current_date.date() :
+            #     logNotifyInfo("skipped due_date ", c["due_date"])
+            #     continue
 
             if c["document_name"] not in (None, "None", "") :
                 compliance_name = c["document_name"] + " - " + c["compliance_task"]
             else :
                 compliance_name = c["compliance_task"]
+
             over_due_days = abs((current_date.date() - c["due_date"].date()).days) + 1
-            if over_due_days == 0 :
-                logNotifyInfo("over_due_days", 0)
-                continue
 
             notification_text = "%s overdue by %s day(s)" % (compliance_name, over_due_days)
             extra_details = " %s - Escalation" % (c["compliance_history_id"])
-            if (over_due_days % escalation_interval) == 0 :
-                self.save_in_notification(
-                    c["country_id"], c["domain_id"], c["business_group_id"],
-                    c["legal_entity_id"], c["division_id"], c["unit_id"], c["compliance_id"],
-                    c["assignee"], c["concurrence_person"], c["approval_person"], notification_text,
-                    extra_details, notification_type_id=3
-                )
-                a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
-                cc_person = []
-                concurrence_person = c["concurrence_person"]
-                if concurrence_person == 0 :
-                    concurrence_person = None
-                if concurrence_person is not None :
-                    c_name, concurrence_email = self.get_email_id_for_users(concurrence_person)
-                    cc_person.append(concurrence_email)
-                ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
-                cc_person.append(approval_email)
-                email.notify_before_due_date(
-                    a_name, over_due_days, compliance_name,
-                    c["unit_name"],
-                    assignee_email, cc_person
-                )
-                cnt += 1
+            # if (over_due_days % escalation_interval) == 0 :
+            self.save_in_notification(
+                c["country_id"], c["domain_id"], c["business_group_id"],
+                c["legal_entity_id"], c["division_id"], c["unit_id"], c["compliance_id"],
+                c["assignee"], c["concurrence_person"], c["approval_person"], notification_text,
+                extra_details, notification_type_id=3
+            )
+            a_name, assignee_email = self.get_email_id_for_users(c["assignee"])
+            cc_person = []
+            concurrence_person = c["concurrence_person"]
+            if concurrence_person == 0 :
+                concurrence_person = None
+            if concurrence_person is not None :
+                c_name, concurrence_email = self.get_email_id_for_users(concurrence_person)
+                cc_person.append(concurrence_email)
+            ap_name, approval_email = self.get_email_id_for_users(c["approval_person"])
+            cc_person.append(approval_email)
+            email.notify_before_due_date(
+                a_name, over_due_days, compliance_name,
+                c["unit_name"],
+                assignee_email, cc_person
+            )
+            cnt += 1
         logNotifyInfo("escalation count", cnt)
+
+    def get_reminder_to_assignee_compliance(self):
+        q = "select ch.compliance_history_id, ch.unit_id, ch.compliance_id, ch.start_date, " + \
+            "ch.due_date, c.document_name, c.compliance_task," + \
+            " ch.completed_by as assignee, ch.concurred_by as concurrence_person, ch.approved_by as approval_person, " + \
+            " u.unit_code, u.unit_name, u.business_group_id, u.legal_entity_id, " + \
+            " u.division_id, u.country_id, c.domain_id, c.frequency_id " + \
+            " from tbl_compliance_history as ch " + \
+            " inner join tbl_compliances as c on ch.compliance_id = c.compliance_id " + \
+            " inner join tbl_units as u on ch.unit_id = u.unit_id " + \
+            " left join tbl_reminder_settings as rs on ch.legal_entity_id = rs.legal_entity_id " + \
+            " Where ch.current_status < 3 and" + \
+            " date(ch.due_date) > date(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30')) " + \
+            " AND MOD(datediff(ch.due_date,CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30')),rs.assignee_reminder) = 0 "
+
+        logNotifyInfo("get_inprogress_compliances", q)
+        rows = self.select_all(q)
+        return rows
+
+    def escalation_reminder_in_advance(self):
+        q = "select ch.compliance_history_id, ch.unit_id, ch.compliance_id, ch.start_date, " + \
+            "ch.due_date, c.document_name, c.compliance_task, " + \
+            " ch.completed_by as assignee, ch.concurred_by as concurrence_person, ch.approved_by as approval_person, " + \
+            " u.unit_code, u.unit_name, u.business_group_id, u.legal_entity_id, " + \
+            " u.division_id, u.country_id, c.domain_id, c.frequency_id " + \
+            " from tbl_compliance_history as ch " + \
+            " inner join tbl_compliances as c on ch.compliance_id = c.compliance_id " + \
+            " inner join tbl_units as u on ch.unit_id = u.unit_id " + \
+            " left join tbl_reminder_settings as rs on ch.legal_entity_id = rs.legal_entity_id " + \
+            " Where ch.current_status < 3 and" + \
+            " date_sub(ch.due_date, INTERVAL rs.escalation_reminder_in_advance DAY) = date(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30'));"
+        logNotifyInfo("get_inprogress_compliances", q)
+        rows = self.select_all(q)
+        return rows
+
+    def escalation_reminder_after_due_date(self):
+        q = "select ch.compliance_history_id, ch.unit_id, ch.compliance_id, ch.start_date, " + \
+            "ch.due_date, c.document_name, c.compliance_task, " + \
+            "ch.completed_by as assignee, ch.concurred_by as concurrence_person, ch.approved_by as approval_person, " + \
+            " u.unit_code, u.unit_name, u.business_group_id, u.legal_entity_id, " + \
+            " u.division_id, u.country_id, c.domain_id, c.frequency_id " + \
+            " from tbl_compliance_history as ch " + \
+            " inner join tbl_compliances as c on ch.compliance_id = c.compliance_id " + \
+            " inner join tbl_units as u on ch.unit_id = u.unit_id " + \
+            " left join tbl_reminder_settings as rs on ch.legal_entity_id = rs.legal_entity_id " + \
+            " Where ch.current_status < 3 and" + \
+            " date(ch.due_date) < date(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30')) " + \
+            " AND MOD(datediff(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30'),ch.due_date),rs.escalation_reminder) = 0 "
+
+        logNotifyInfo("get_inprogress_compliances", q)
+        rows = self.select_all(q)
+        return rows
 
     def notify_task_details(self):
         client_info = self.get_client_settings()
-        compliance_info = self.get_inprogress_compliances()
-        if compliance_info :
-            self.reminder_to_assignee(client_info, compliance_info)
-            self.reminder_before_due_date(client_info, compliance_info)
-            self.notify_escalation_to_all(client_info, compliance_info)
+
+        self.reminder_to_assignee(client_info, self.get_reminder_to_assignee_compliance())
+        self.reminder_before_due_date(client_info, self.escalation_reminder_in_advance())
+        self.notify_escalation_to_all(client_info, self.escalation_reminder_after_due_date())
 
     # for service providers
     def get_compliance_count_to_reassign(self):

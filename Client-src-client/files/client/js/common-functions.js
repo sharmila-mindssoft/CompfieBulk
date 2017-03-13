@@ -12,17 +12,6 @@ var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
 var TaskStatuses = jQuery.parseJSON(TaskStatusString);
 
-var LEARRAYS = client_mirror.getSelectedLegalEntity();
-if (LEARRAYS != undefined) {
-    var LEIDS = [];
-    if (LEARRAYS.length > 0) {
-        $.each(LEARRAYS, function(key, value) {
-            LEIDS.push(value.le_id);
-        });
-    }
-}
-
-
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
         var Id = pageList[i];
@@ -441,11 +430,17 @@ $(function() {
         var tbody = table.find('tbody');
         var col_num = ele.closest("th").index();
         if (ele.hasClass("asc")) {
-            table.find("th span").each(function(i) { $(this).removeClass('desc'); $(this).removeClass('asc'); });
+            table.find("th span").each(function(i) {
+                $(this).removeClass('desc');
+                $(this).removeClass('asc');
+            });
             ele.addClass("desc");
             ele.removeClass("asc");
         } else {
-            table.find("th span").each(function(i) { $(this).removeClass('desc'); $(this).removeClass('asc'); });
+            table.find("th span").each(function(i) {
+                $(this).removeClass('desc');
+                $(this).removeClass('asc');
+            });
             ele.addClass("asc");
             ele.removeClass("desc");
         }

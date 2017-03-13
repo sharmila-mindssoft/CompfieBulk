@@ -709,12 +709,15 @@ def process_save_client_user(db, request, session_user, client_id):
     # user_id = db.get_new_id("user_id", tblUsers)
     # if (get_no_of_remaining_licence(db) <= 0):
     #     return clientmasters.UserLimitExceeds()
-    # elif is_duplicate_employee_code(
-    #     db,
-    #     request.employee_code.replace(" ", ""),
-    #     user_id=None
-    # ):
-    #     return clientmasters.EmployeeCodeAlreadyExists()
+    if is_duplicate_employee_code(
+        db,
+        request.employee_code.replace(" ", ""),
+        user_id=None
+    ):
+        return clientmasters.EmployeeCodeAlreadyExists()
+    if is_already_assigned_units (db,request.user_unit_ids, request.user_domain_ids):
+        return clientmasters.UnitsAlreadyAssigned()
+        
     if save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
 
@@ -730,10 +733,10 @@ def process_update_client_user(db, request, session_user, client_id):
         request.employee_code.replace(" ", "")
     ):
         return clientmasters.EmployeeCodeAlreadyExists()
-    elif is_duplicate_employee_name(
-        db, request.employee_name, user_id=request.user_id
-    ):
-        return clientmasters.EmployeeNameAlreadyExists()
+    # elif is_duplicate_employee_name(
+    #     db, request.employee_name, user_id=request.user_id
+    # ):
+    #     return clientmasters.EmployeeNameAlreadyExists()
     elif update_user(db, request, session_user, client_id):
         return clientmasters.UpdateClientUserSuccess()
 

@@ -24,19 +24,19 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Service Provider: </label>
+                            <label class="col-sm-4 control-label">Service Provider: </label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" class="form-control input-sm" placeholder="Enter Service Provider"
                                 id="service-provider" tabindex="1">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
-                                <input type="hidden" id="service-provider-id" value="">
+                                <input type="hidden" id="service-provider-id" value="" tabindex="1">
                                 <div id="ac-service-provider" class="ac-textbox default-display-none">
                                     <ul class="hidemenu"></ul>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
+                            <label class="col-sm-4 control-label">User: </label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="2">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -49,7 +49,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Status:</label>
+                            <label class="col-sm-4 control-label">Status:</label>
                             <div class="col-sm-6">
                                 <select class="form-control input-sm" id="sp-status" tabindex="3">
 
@@ -60,7 +60,7 @@
                     <div class="col-sm-12">
                         <center>
                             <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="12"> Show </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="4"> Show </button>
 
                             </div>
                         </center>
@@ -79,6 +79,8 @@
                         <div class="col-sm-12 text-center"><img class="rpt-logo m-t-0 client-logo"></div>
                         <div class="col-sm-12 text-center"><h4>Service Provider Details</h4></div>
                     </div>
+                    <div class="clear"></div>
+                     <div class="table-responsive">
                     <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -97,6 +99,8 @@
 
                         </tbody>
                     </table>
+                    </div>
+
                     <table class="pagination-view default-display-none">
                       <tr>
                         <td>

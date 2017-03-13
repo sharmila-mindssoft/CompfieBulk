@@ -21,7 +21,7 @@ __all__ = [
     "get_trail_log",
     "get_trail_log_for_domain",
     "remove_trail_log", "get_servers", "get_group_servers",
-    "get_group_server_info",
+    "get_group_server_info", "get_group_servers_db_info",
     "get_client_replication_list",
     "update_client_replication_status",
     "update_client_domain_status", "get_user_forms",
@@ -53,11 +53,15 @@ def get_trail_log(db, client_id, received_count, is_group):
     query += " from tbl_audit_log WHERE audit_trail_id > %s "
     if is_group :
         query += " AND (client_id= %s) "
+        param = [received_count, client_id]
     else :
         query += " AND (legal_entity_id=0 or legal_entity_id= %s) "
+        query += " AND client_id = (select client_id from tbl_legal_entities where legal_entity_id = %s)"
+        param = [received_count, client_id, client_id]
+
     query += " LIMIT 100;"
 
-    rows = db.select_all(query, [received_count, client_id])
+    rows = db.select_all(query, param)
 
     results = rows
     if len(rows) == 0:
@@ -123,7 +127,6 @@ def remove_trail_log(db, client_id, received_count):
 
 
 def get_servers(db):
-
     query = "select t2.database_ip, t2.database_port, ct1.database_username, ct1.database_password," + \
         " ct1.database_name , t1.client_id, t1.legal_entity_id, t4.short_name, " + \
         " t3.machine_id, t3.machine_name, t3.ip as server_ip, t3.port as server_port, ct1.is_group " + \
@@ -134,6 +137,24 @@ def get_servers(db):
         " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
     rows = db.select_all(query)
     return return_companies(rows)
+
+def get_group_servers_db_info(db, group_id=None):
+    query = "select t2.database_ip, t2.database_port, ct1.database_username, ct1.database_password," + \
+        " ct1.database_name , t1.client_id, t1.legal_entity_id, t4.short_name, " + \
+        " t3.machine_id, t3.machine_name, t3.ip as server_ip, t3.port as server_port, ct1.is_group " + \
+        " from tbl_client_database as t1 " + \
+        " inner join tbl_client_database_info as ct1 on t1.client_database_id = ct1.client_database_id and is_group = 1 " + \
+        " inner join tbl_database_server as t2 on t1.database_server_id = t2.database_server_id " + \
+        " inner join tbl_application_server as t3 on t1.machine_id = t3.machine_id " + \
+        " inner join tbl_client_groups as t4 on t1.client_id = t4.client_id "
+
+    param = []
+    if group_id is not None :
+        query += " WHERE t1.client_id=%s"
+        param = [group_id]
+
+    rows = db.select_all(query, param)
+    return rows
 
 def get_group_server_info(db, group_id=None):
     query = "select distinct t1.client_id, t1.legal_entity_id, t4.short_name, " + \
@@ -202,6 +223,9 @@ def return_companies(data):
             is_group
         ))
     return results
+
+def get_ip_details(db):
+    pass
 
 
 def get_client_replication_list(db):

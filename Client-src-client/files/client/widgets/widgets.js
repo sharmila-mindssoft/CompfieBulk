@@ -913,5 +913,4 @@ $(document).ready(function () {
   $('.dragdrophandles').sortable({
       handle: 'h2'
   });
-
 });

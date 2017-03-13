@@ -1,7 +1,7 @@
 import MySQLdb as mysql
 from server.dbase import Database
 from server.exceptionmessage import client_process_error
-from server.database.general import get_group_server_info
+from server.database.general import get_group_servers_db_info
 __all__ = [
     "ClientdbConect",
     "SaveRegistrationData"
@@ -41,7 +41,7 @@ class SaveRegistrationData(ClientdbConect):
         self.process_save_token()
 
     def get_client_info(self):
-        rows = get_group_server_info(self.know_db, self.client_id)
+        rows = get_group_servers_db_info(self.know_db, self.client_id)
         if rows :
             r = rows[0]
             print r
@@ -67,9 +67,6 @@ class SaveRegistrationData(ClientdbConect):
                 q = "insert into tbl_email_verification(user_id, verification_code, " + \
                     " verification_type_id, expiry_date ) values(%s, %s, %s, %s)"
                 self._k_db.execute(q, [user_id, self.token, 1, self.expiry])
-                q = "insert into tbl_group_admin_email_notification(client_id, group_admin_email_id, " + \
-                    " registration_sent_by, registration_sent_on ) values(%s, %s, %s, %s)"
-                self._k_db.execute(q, [self.client_id, self.email_id, self.u_id, self.email_date])
 
         except Exception, e :
             print e

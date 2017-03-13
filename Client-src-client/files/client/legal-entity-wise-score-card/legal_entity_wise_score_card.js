@@ -27,6 +27,7 @@ var statusDetails = $("#status-details");
 var template = $("#template");
 var reportTable = $("#report-table");
 var REPORT = null;
+var LOGO = null;
 
 LEWiseScoreCard = function() {
     this._entities = [];
@@ -184,9 +185,6 @@ showAnimation = function(element) {
 
 LEWiseScoreCard.prototype.fetchReportValues = function(csv) {
     t_this = this;
-    /*var jsondata = '{"data_lists":[{"c_id":1,"le_id":1,"dom_id":1,"inprogress_count":25,"inprogress_unit_wise":[{"unit_name":"RG1001 - Corporate Office","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"unit_name":"RG1002 - Regional Office","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"unit_name":"RG1004 - Branch Office","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"inprogress_user_wise":[{"user_name":"Sathish","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"user_name":"Arun","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"user_name":"Mani","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"completed_count":10,"completed_unit_wise":[{"unit_name":"RG1001 - Corporate Office","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"unit_name":"RG1002 - Regional Office","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"unit_name":"RG1004 - Branch Office","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"completed_user_wise":[{"user_name":"Sathish","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"user_name":"Arun","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"user_name":"Mani","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"overdue_count":15,"overdue_unit_wise":[{"unit_name":"RG1001 - Corporate Office","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"unit_name":"RG1002 - Regional Office","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"unit_name":"RG1004 - Branch Office","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}],"overdue_user_wise":[{"user_name":"Sathish","to_complete":1,"to_concur":2,"to_approve":4,"total_task":7},{"user_name":"Arun","to_complete":2,"to_concur":5,"to_approve":2,"total_task":9},{"user_name":"Mani","to_complete":5,"to_concur":3,"to_approve":1,"total_task":9}]}]}';
-    var object = jQuery.parseJSON(jsondata);
-    t_this._report_data = object.data_lists;*/
 
     var c_id = parseInt(countryId.val());
     var le_id = parseInt(legalEntityId.val());
@@ -195,6 +193,7 @@ LEWiseScoreCard.prototype.fetchReportValues = function(csv) {
     client_mirror.getLEWiseScoreCard(c_id, le_id, d_id, csv, function(error, response) {
         if (error == null) {
             t_this._report_data = response.le_wise_score_card_list;
+            LOGO = response.logo_url;
             if (csv == false) {
                 reportView.show();
                 showAnimation(reportView);
@@ -211,7 +210,11 @@ LEWiseScoreCard.prototype.fetchReportValues = function(csv) {
 LEWiseScoreCard.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
-    clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
+    taskDetails.hide();
+    if(LOGO != null)
+        clientLogo.attr("src", LOGO);
+    else
+        clientLogo.remove();
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     domainName.html(domain.val());
@@ -445,28 +448,38 @@ LEWiseScoreCard.prototype.overdueUnitView = function(data) {
     statusDetails.empty();
     taskDetails.show();
     $('.task-name').html("Unit wise Overdue Task Count");
-    var overdue_total = 0;
+    var to_complete_total = 0;
+    var to_concur_total = 0;
+    var to_approve_total = 0;
     var j =0;
     var clone = $('#template #overdue-unit-table').clone();
     var name = "";
     if(data.length > 0) {
-        $.each(data, function(k, v) {
+        $.each(data, function(k, v) { // to-complete to-concur to-approve
             if(name != "") {
                 var cloneone = $('.report-row', clone).last().clone();
                 $('.task-row-title', cloneone).text(v.unit);
-                $('.overdue-count', cloneone).text(v.overdue_count);
+                $('.to-complete', cloneone).text(v.to_complete);
+                $('.to-concur', cloneone).text(v.to_concur);
+                $('.to-approve', cloneone).text(v.to_approve);
                 $('.table-body', clone).append(cloneone);
                 name = name + v.unit;
             } else {
                 $('.task-row-title', clone).text(v.unit);
-                $('.overdue-count', clone).text(v.overdue_count);
+                $('.to-complete', clone).text(v.to_complete);
+                $('.to-concur', clone).text(v.to_concur);
+                $('.to-approve', clone).text(v.to_approve);
                 name = name + v.unit;
             }
-            overdue_total = overdue_total + parseInt(v.overdue_count);
+            to_complete_total = to_complete_total + parseInt(v.to_complete);
+            to_concur_total = to_concur_total + parseInt(v.to_concur);
+            to_approve_total = to_approve_total + parseInt(v.to_approve);
             j = j + 1;
         });
         if(j > 1) {
-            $('.overdue-count-total', clone).text(overdue_total);
+            $('.to-complete-count-total', clone).text(to_complete_total);
+            $('.to-concur-count-total', clone).text(to_concur_total);
+            $('.to-approve-count-total', clone).text(to_approve_total);
             $('.report-total-row', clone).attr("style", "");
         }
         statusDetails.append(clone);
@@ -480,7 +493,9 @@ LEWiseScoreCard.prototype.overdueUserView = function(data) {
     statusDetails.empty();
     taskDetails.show();
     $('.task-name').html("User wise Overdue Task Count");
-    var overdue_total = 0;
+    var to_complete_total = 0;
+    var to_concur_total = 0;
+    var to_approve_total = 0;
     var j =0;
     var clone = $('#template #overdue-user-table').clone();
     var name = "";
@@ -489,19 +504,27 @@ LEWiseScoreCard.prototype.overdueUserView = function(data) {
             if(name != "") {
                 var cloneone = $('.report-row', clone).last().clone();
                 $('.task-row-title', cloneone).text(v.user_name);
-                $('.overdue-count', cloneone).text(v.overdue_count);
+                $('.to-complete', cloneone).text(v.to_complete);
+                $('.to-concur', cloneone).text(v.to_concur);
+                $('.to-approve', cloneone).text(v.to_approve);
                 $('.table-body', clone).append(cloneone);
                 name = name + v.user_name;
             } else {
                 $('.task-row-title', clone).text(v.user_name);
-                $('.overdue-count', clone).text(v.overdue_count);
+                $('.to-complete', clone).text(v.to_complete);
+                $('.to-concur', clone).text(v.to_concur);
+                $('.to-approve', clone).text(v.to_approve);
                 name = name + v.user_name;
             }
-            overdue_total = overdue_total + parseInt(v.overdue_count);
+            to_complete_total = to_complete_total + parseInt(v.to_complete);
+            to_concur_total = to_concur_total + parseInt(v.to_concur);
+            to_approve_total = to_approve_total + parseInt(v.to_approve);
             j = j + 1;
         });
         if(j > 1) {
-            $('.overdue-count-total', clone).text(overdue_total);
+            $('.to-complete-count-total', clone).text(to_complete_total);
+            $('.to-concur-count-total', clone).text(to_concur_total);
+            $('.to-approve-count-total', clone).text(to_approve_total);
             $('.report-total-row', clone).attr("style", "");
         }
         statusDetails.append(clone);

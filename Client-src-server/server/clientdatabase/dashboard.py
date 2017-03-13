@@ -11,7 +11,8 @@ from server.clientdatabase.common import (
 )
 from server.common import (
     get_date_time_in_date,
-    datetime_to_string
+    datetime_to_string,
+    make_summary
 )
 from server.clientdatabase.general import (
     get_user_unit_ids, get_admin_id,
@@ -1578,8 +1579,8 @@ def update_notification_status(
 def notification_detail(
     db, notification_id, session_user
 ):
-    query = "select nl.notification_id, substring_index(com.statutory_mapping,'>>',1) as act_name, " + \
-            "(select concat(unit_code,' - ',unit_name,' - ',substring_index(geography_name,'>>',-1)) from tbl_units where unit_id = nl.unit_id) as unit, " + \
+    query = "select nl.notification_id, SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) - 4),'>>',1) as act_name, " + \
+            "(select concat(unit_code,' - ',unit_name,' - ',SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) - 4),'>>',1)) from tbl_units where unit_id = nl.unit_id) as unit, " + \
             "concat(com.document_name,' - ',com.compliance_task) as compliance_name,date(ch.due_date) as duedate, " + \
             "IF(ch.due_date < now() and ch.approve_status <> 1,concat(abs(datediff(now(),ch.due_date)),' Days'),'-') as delayed_by, " + \
             "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.assignee) as assignee_name, " + \
@@ -1610,15 +1611,18 @@ def notification_detail(
 
 
 def get_statutory(
-    db, start_count, to_count, session_user, session_category
+    db, start_count, to_count, session_user, session_category, le_ids
 ):
+    le_ids_str = ','.join(str(v) for v in le_ids)
     query = "SELECT s.notification_id, s.compliance_id, s.notification_text, s.created_on, " + \
             "su.user_id, CONCAT(ifnull(u.employee_code,''), ' - ', u.employee_name) as user_name " + \
             "from tbl_statutory_notifications s " + \
             "INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id AND su.user_id = %s AND su.is_read = 0 " + \
             "INNER JOIN tbl_users u ON u.user_id = su.user_id " + \
+            "INNER JOIN tbl_user_legal_entities ul ON ul.user_id = su.user_id AND ul.legal_entity_id IN (%s)" + \
             "order by s.created_on DESC Limit %s, %s"
-    rows = db.select_all(query, [session_user, start_count, to_count])
+
+    rows = db.select_all(query, [session_user, le_ids_str, start_count, to_count])
     #print rows
     notifications = []
     for r in rows :

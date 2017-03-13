@@ -41,6 +41,7 @@ __all__ = [
     "update_user_privilege_status",
     "get_user_details",
     "get_service_providers",
+    "get_no_of_remaining_licence_Viewonly",
     "get_no_of_remaining_licence",
     "is_duplicate_user_email",
     "is_duplicate_employee_code",
@@ -52,6 +53,7 @@ __all__ = [
     "close_unit",
     "get_audit_trails",
     "is_duplicate_employee_name",
+    "is_already_assigned_units",
     "get_unit_closure_legal_entities",
     "get_unit_closure_units_list",
     "save_unit_closure_data",
@@ -918,6 +920,17 @@ def return_service_providers(service_providers):
 # Parameter(s) - Object of database
 # Return Type - int
 ############################################################################
+def get_no_of_remaining_licence_Viewonly(db):   
+    q = " SELECT (total_view_licence - licence_used) As remaining_licence from tbl_Client_Groups"
+
+    row = db.select_one(q, None)
+    return row
+
+############################################################################
+# Returns Remaining number of  licences
+# Parameter(s) - Object of database
+# Return Type - int
+############################################################################
 def get_no_of_remaining_licence(db):
     columns = ["count(0) as licence"]
     condition = "1"
@@ -980,6 +993,33 @@ def is_duplicate_employee_name(db, employee_name, user_id=None):
         condition_val.append(user_id)
     return db.is_already_exists(tblUsers, condition, condition_val)
 
+############################################################################
+# To check Units are already assinged
+# Parameter(s) - Object of database, employee code, userid
+# Return Type - Boolean
+#             - Returns Records if units are already assigned             
+############################################################################
+def is_already_assigned_units(db, unit_ids, domain_ids):
+    #  q = "SELECT T01.domain_id,T01.unit_id,T05.legal_entity_id,T05.user_id,T05.unit_id,T05.domain_id " + \
+    q = " SELECT Count(T01.unit_id) as unit_count " + \
+        " FROM tbl_units_organizations AS T01 " + \
+        " LEFT JOIN (SELECT T02.legal_entity_id,T02.user_id,T02.unit_id,T03.domain_id " +\
+        " FROM tbl_user_units AS T02 " + \
+        " INNER JOIN tbl_user_domains AS T03 ON T02.user_id = T03.user_id " + \
+        " INNER JOIN tbl_users AS T04 ON T02.user_id = T04.user_id AND T04.user_category_id = 5) AS T05 " +\
+        " ON T01.unit_id = T05.unit_id AND T01.domain_id = T05.domain_id " + \
+        " WHERE find_in_set(T05.unit_id, %s) AND find_in_set(T05.domain_id, %s) "
+
+    unitList = ",".join(str(uid.unit_id) for uid in unit_ids)
+    domainList = ",".join(str(uid.domain_id) for uid in domain_ids)
+
+    row = db.select_one(q, [unitList, domainList])
+     
+    if int(row["unit_count"]) > 0:        
+        return True
+    else :        
+        return False
+    
 ############################################################################
 # To Save User Domains
 # Parameter(s) - Object of database, domain ids, user id
@@ -1073,14 +1113,14 @@ def save_user(db, user, session_user, client_id):
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
     columns = [
-        "user_category_id", "user_group_id", "email_id", "employee_name",
+        "client_id", "user_category_id", "user_group_id", "email_id", "employee_name",
         "employee_code", "contact_no", "mobile_no", "user_level",
         "is_service_provider", "created_by", "created_on",
         "updated_by", "updated_on"
     ]
 
     values = [
-        user.user_category, user.user_group_id, user.email_id,
+        client_id, user.user_category, user.user_group_id, user.email_id,
         user.employee_name, user.employee_code.replace(" ", ""),
         user.contact_no, user.mobile_no, user.user_level,
         user.is_service_provider, session_user, current_time_stamp,

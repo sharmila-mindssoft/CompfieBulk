@@ -248,7 +248,7 @@ def process_update_notification_status(db, request, session_user):
 
 
 def process_get_statutory_notifications(db, request, session_user, session_category):
-    statutory = get_statutory(db, request.start_count, request.end_count, session_user, session_category)
+    statutory = get_statutory(db, request.start_count, request.end_count, session_user, session_category, request.legal_entity_ids)
     return dashboard.GetStatutorySuccess(statutory)
 
 def process_update_statutory_notification_status(db, request, session_user):

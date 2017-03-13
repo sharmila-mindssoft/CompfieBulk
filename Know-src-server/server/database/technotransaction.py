@@ -4,7 +4,7 @@ from server.exceptionmessage import process_error
 from server.database.tables import *
 from server.common import (
     get_date_time, get_current_date,
-    addHours, new_uuid
+    addHours, new_uuid, datetime_to_string
 )
 
 from server.database.general import get_short_name
@@ -473,7 +473,7 @@ def return_groupadmin_registration_grouplist(groupslist):
         email_id = groups.get("email_id")
         user_id_search = groups.get("user_id")
         emp_code_name = groups.get("emp_code_name")
-        registration_email_date = groups.get("registration_email_date")
+        registration_email_date = datetime_to_string(groups.get("registration_email_date"))
         c_names = []
         occur = -1
         for countries in groupslist[1]:
@@ -553,6 +553,9 @@ def resave_registraion_token(db, client_id, email_id, user_id):
     notify_user_thread.start()
     if short_name:
         SaveRegistrationData(db, registration_token, expiry_date, email_id, client_id, current_time_stamp, user_id)
+        q = "insert into tbl_group_admin_email_notification(client_id, group_admin_email_id, " + \
+            " registration_sent_by, registration_sent_on ) values(%s, %s, %s, %s)"
+        db.execute(q, [client_id, email_id, user_id, current_time_stamp])
         return True
     else :
         return False
