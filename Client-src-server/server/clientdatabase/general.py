@@ -80,7 +80,8 @@ __all__ = [
     "get_themes_for_user",
     "save_themes_for_user",
     "update_themes_for_user",
-    "legal_entity_logo_url"
+    "legal_entity_logo_url",
+    "verify_username_forgotpassword",
     ]
 
 
@@ -2126,3 +2127,27 @@ def legal_entity_logo_url(db, legal_entity_id):
     else:
         logo_url = None
     return logo_url
+
+def verify_username_forgotpassword(db, username):
+    # columns = "user_id, email_id, "
+    # condition = "username=%s and is_active = 1"
+    # condition_val = [username]
+    # rows = db.get_data(
+    #     tblUserLoginDetails, columns, condition, condition_val
+    # )
+    # count = rows[0]["result"]
+    # if count == 1:
+    #     return rows[0]["user_id"]
+    # else:
+    #     return None
+
+    #     u.user_id, u.email_id, us.employee_name
+    q = "select u.user_id, u.username, us.email_id, us.employee_name " + \
+        "FROM tbl_user_login_details u " + \
+        "inner join  tbl_users us on u.user_id = us.user_id " + \
+        "where u.username = %s "
+    rows = db.select_one(q, [username])
+    if rows:
+        return rows
+    else:
+        return None
