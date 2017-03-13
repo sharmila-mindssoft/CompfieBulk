@@ -191,7 +191,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "t1.user_id = t3.user_id and t5.legal_entity_id = t3.legal_entity_id " + \
         "left join tbl_service_providers as t4 " + \
         "on t1.service_provider_id = t4.service_provider_id " + \
-        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t3.legal_entity_id = %s; "
+        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t5.legal_entity_id = %s; "
 
     print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
