@@ -191,7 +191,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "t1.user_id = t3.user_id and t5.legal_entity_id = t3.legal_entity_id " + \
         "left join tbl_service_providers as t4 " + \
         "on t1.service_provider_id = t4.service_provider_id " + \
-        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t3.legal_entity_id = %s; "
+        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t5.legal_entity_id = %s; "
 
     print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
@@ -1291,7 +1291,7 @@ def get_statutory_wise_compliances(
         # country_id=country_id,
         if compliance["repeats_type_id"] == 1:  # Days
             due_dates, summary = calculate_due_date(
-                db,                
+                db,
                 repeat_by=1,
                 repeat_every=compliance["repeats_every"],
                 due_date=compliance["due_date"],
@@ -1315,7 +1315,7 @@ def get_statutory_wise_compliances(
                 due_date=compliance["due_date"],
                 domain_id=domain_id
             )
-        print "due_dates>>>", due_dates 
+        print "due_dates>>>", due_dates
         print "summary>>>", summary
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
@@ -2239,8 +2239,8 @@ def reject_compliance_concurrence(
     completion_date = rows[0]["completion_date"]
     duration_type_id = rows[0]["duration_type_id"]
     legal_entity_id = rows[0]["legal_entity_id"]
-    compliance_task = rows[0]["compliance_task"]    
-    
+    compliance_task = rows[0]["compliance_task"]
+
     status = "Inprogress"
     if due_date < completion_date:
         status = "Not Complied"

@@ -163,8 +163,7 @@ function processLogin(username, password, shortName, callback) {
       var status = data[0];
       var response = data[1];
 
-      console.log(status)
-      console.log(response)
+
       matchString = 'success';
       if (status.toLowerCase().indexOf(matchString) != -1) {
         initSession(response, shortName);
