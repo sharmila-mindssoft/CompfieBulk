@@ -261,10 +261,9 @@ class ReplicationBase(object):
                 val
             )
 
-        if tbl_name == "tbl_compliances" :
-            query += " ON DUPLICATE KEY UPDATE compliance_id = values(compliance_id) ;"
-        elif tbl_name == "tbl_client_groups" :
-            query += " ON DUPLICATE KEY UPDATE client_id = values(client_id) ;"
+        if tbl_name == "tbl_client_groups" :
+            query += " ON DUPLICATE KEY UPDATE email_id = values(email_id), total_view_licence = values(total_view_licence) ;"
+
         elif tbl_name == "tbl_legal_entities" :
             query += " ON DUPLICATE KEY UPDATE legal_entity_name = values(legal_entity_name), " + \
                 " contract_from = values(contract_from), contract_to = values(contract_to), " + \
@@ -272,11 +271,13 @@ class ReplicationBase(object):
                 " used_file_space = values(used_file_space), total_licence = values(total_licence), " + \
                 " used_licence = values(used_licence), is_closed = values(is_closed), closed_on = values(closed_on), " + \
                 " closed_by = values(closed_by), closed_remarks = values(closed_remarks)"
+
         elif tbl_name == "tbl_units":
             query += " ON DUPLICATE KEY UPDATE unit_name = values(unit_name), " + \
                 " unit_code = values(unit_code), geography_name = values(geography_name), " + \
                 " address = values(address), postal_code = values(postal_code), is_closed = values(is_closed), " + \
                 " closed_on = values(closed_on), closed_by = values(closed_by), closed_remarks = values(closed_remarks) "
+
         elif tbl_name == "tbl_compliances" :
             query += " ON DUPLICATE KEY UPDATE statutory_provision = values(statutory_provision), " + \
                 " compliance_task = values(compliance_task), document_name = values(document_name), " + \
