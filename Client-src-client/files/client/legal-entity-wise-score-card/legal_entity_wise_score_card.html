@@ -16,7 +16,7 @@
                                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
                                             <p class="form-control-static filter-country-name default-display-none col-sm-6"></p>
                                             <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country">
@@ -28,7 +28,7 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
                                             <p class="form-control-static filter-legal-entity-name default-display-none col-sm-6"></p>
                                             <div class="col-sm-6 has-feedback default-display-none">
                                                 <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity">
@@ -42,7 +42,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: <span class="mandatory">*</span></label>
+                                            <label class="col-sm-4 control-label">Domain: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6 has-feedback">
                                                 <input type="text" class="form-control input-sm" id="domain" placeholder="Enter Domain">
                                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -80,6 +80,8 @@
                                         <div class="col-sm-4 text-center">
                                             <h6>Domain : <span id="domain-name" ></span></h6></div>
                                     </div>
+                                    <div class="clear"></div>
+                                    <div class="table-responsive">
                                     <table id="datatable-responsive" class="table dt-responsive nowrap m-b-0" cellspacing="0">
                                         <thead>
                                             <tr>
@@ -134,12 +136,14 @@
                                             <tr class="record-not-found " style="display: none;"><td colspan="100%"><br><center>Record Not Found!</center><br></td></tr>
                                         </tbody>
                                     </table>
+                                    </div>
                                     <div id="task-details" style="display: none;">
                                         <div class="clear"></div>
                                         <br>
                                         <div class="col-sm-12">
                                             <h6 class="task-name"></h6>
                                         </div>
+                                        <div class="clear"></div>
                                         <div id="status-details">
 
                                         </div>
@@ -153,7 +157,10 @@
         </div>
     </div>
 </div>
+<div class="clear"></div>
 <div id="template">
+<div class="clear"></div>
+<div class="table-responsive">
     <table id="inprogress-unit-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
         <thead>
             <tr class="bg-lightdark">
@@ -183,7 +190,9 @@
             </tr>
         </tfoot>
     </table>
-
+</div>
+<div class="clear"></div>
+<div class="table-responsive">
     <table id="inprogress-user-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
         <thead>
             <tr class="bg-lightdark">
@@ -213,7 +222,9 @@
             </tr>
         </tfoot>
     </table>
-
+    </div>
+<div class="clear"></div>
+<div class="table-responsive">
     <table id="completed-unit-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
         <thead>
             <tr class="bg-lightdark">
@@ -240,8 +251,9 @@
             </tr>
         </tfoot>
     </table>
-
-
+</div>
+<div class="clear"></div>
+<div class="table-responsive">
     <table id="completed-user-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
         <thead>
             <tr class="bg-lightdark">
@@ -268,49 +280,65 @@
             </tr>
         </tfoot>
     </table>
-
+    </div>
+    <div class="clear"></div>
+<div class="table-responsive">
     <table id="overdue-unit-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
         <thead>
             <tr class="bg-lightdark">
                 <th width="15%" class="task-title">Units</th>
-                <th width="10%" class="text-center">Overdue Count</th>
+                <th width="10%" class="text-center">To Complete</th>
+                <th width="10%" class="text-center">To Concur</th>
+                <th width="10%" class="text-center">To Approve</th>
             </tr>
         </thead>
         <tbody class="table-body">
             <tr class="report-row">
                 <td class="task-row-title"></td>
-                <td class="text-center overdue-count"></td>
+                <td class="text-center to-complete"></td>
+                <td class="text-center to-concur"></td>
+                <td class="text-center to-approve"></td>
             </tr>
         </tbody>
         <tfoot>
             <tr class="report-total-row" style="display: none;">
                 <td  width="15%" class="font-bold">Total</td>
-                <td  width="10%" class="text-center font-bold overdue-count-total"></td>
+                <td  width="10%" class="text-center font-bold to-complete-count-total"></td>
+                <td  width="10%" class="text-center font-bold to-concur-count-total"></td>
+                <td  width="10%" class="text-center font-bold to-approve-count-total"></td>
             </tr>
         </tfoot>
     </table>
-
+</div>
+<div class="clear"></div>
+<div class="table-responsive">
     <table id="overdue-user-table" class="table table-list dt-responsive nowrap m-b-0" cellspacing="0" width="100%">
         <thead>
             <tr class="bg-lightdark">
                 <th width="15%" class="task-title">Users</th>
-                <th width="10%" class="text-center">Overdue Count</th>
+                <th width="10%" class="text-center">To Complete</th>
+                <th width="10%" class="text-center">To Concur</th>
+                <th width="10%" class="text-center">To Approve</th>
             </tr>
         </thead>
         <tbody class="table-body">
             <tr class="report-row">
                 <td class="task-row-title"></td>
-                <td class="text-center overdue-count"></td>
+                <td class="text-center to-complete"></td>
+                <td class="text-center to-concur"></td>
+                <td class="text-center to-approve"></td>
             </tr>
         </tbody>
         <tfoot>
             <tr class="report-total-row" style="display: none;">
                 <td  width="15%" class="font-bold">Total</td>
-                <td  width="10%" class="text-center font-bold overdue-count-total"></td>
+                <td  width="10%" class="text-center font-bold to-complete-count-total"></td>
+                <td  width="10%" class="text-center font-bold to-concur-count-total"></td>
+                <td  width="10%" class="text-center font-bold to-approve-count-total"></td>
             </tr>
         </tfoot>
     </table>
-
+</div>
 </div>
 <script src="/script/legal-entity-wise-score-card/legal_entity_wise_score_card.js"></script>
 {% endblock %}

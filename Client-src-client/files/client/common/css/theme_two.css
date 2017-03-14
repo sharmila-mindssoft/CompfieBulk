@@ -1383,7 +1383,7 @@ div.DTS tbody tr.even {
 .nav-tabs > li > a {
   padding: 8px 15px;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   font-weight: 700;
   /*line-height: 18px;*/
   margin-right: 5px !important;
@@ -1392,7 +1392,7 @@ div.DTS tbody tr.even {
   /*background-color: #47A1EF !important;
   color: #ffffff !important;*/
   background-color: #F5F5F5 !important;
-  color: #555555 !important;
+  color: #a3a1a1 !important;
 }
 .nav-tabs > li:last-child > a {
   margin-right: 0px !important;

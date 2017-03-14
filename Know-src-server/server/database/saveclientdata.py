@@ -1,7 +1,7 @@
 import MySQLdb as mysql
 from server.dbase import Database
 from server.exceptionmessage import client_process_error
-from server.database.general import get_group_server_info
+from server.database.general import get_group_servers_db_info
 __all__ = [
     "ClientdbConect",
     "SaveRegistrationData"
@@ -21,13 +21,15 @@ class ClientdbConect(object):
         self._k_db = Database(conn)
 
 class SaveRegistrationData(ClientdbConect):
-    def __init__(self, know_db, token, expiry, email_id, client_id):
+    def __init__(self, know_db, token, expiry, email_id, client_id, email_date, u_id):
         super(SaveRegistrationData, self).__init__()
         self.know_db = know_db
         self.token = token
         self.expiry = expiry
         self.email_id = email_id
         self.client_id = client_id
+        self.email_date = email_date
+        self.u_id = u_id
         self.is_group = True
 
         self._host = None
@@ -39,7 +41,7 @@ class SaveRegistrationData(ClientdbConect):
         self.process_save_token()
 
     def get_client_info(self):
-        rows = get_group_server_info(self.know_db, self.client_id)
+        rows = get_group_servers_db_info(self.know_db, self.client_id)
         if rows :
             r = rows[0]
             print r

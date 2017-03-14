@@ -409,19 +409,31 @@ function loadUser(userType) {
             var isConcurrence = USERS[user].is_approver;
             var isApprover = USERS[user].is_approver;
             var userPermission;
+            
+            var checkOldUser = true;
             if (userType == 'assignee') {
                 userPermission = isAssignee;
+                if(UTYPE == 1 && userId == UserId.val()){
+                    checkOldUser = false;
+                }
             } else if (userType == 'concurrence') {
                 userPermission = isConcurrence;
+                if(UTYPE == 2 && userId == UserId.val()){
+                    checkOldUser = false;
+                }
             } else if (userType == 'approval') {
                 userPermission = isApprover;
+                if(UTYPE == 3 && userId == UserId.val()){
+                    checkOldUser = false;
+                }
             }
 
+        
             var concurrenceStatus = true;
             if(userType == 'concurrence' && USERS[user].usr_cat_id == 1){
                 concurrenceStatus = false;
             }
-            if (userPermission && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus) {
+            if (userPermission && (assigneeUserId == null || assigneeUserId != userId) && (approvalUserId == null || approvalUserId != userId) && (concurrenceUserId == null || concurrenceUserId != userId) && (serviceProviderId == 0 || sId == serviceProviderId || sId == 0) && concurrenceStatus && checkOldUser) {
                 str += '<li id="' + combine + '" class="' + userClass + '" >' + userName + ' <i></i> </li>';
             }
         }
@@ -591,7 +603,6 @@ function showTab() {
                 parseInt(val_domain_id), ACTIVE_UNITS, parseInt(val_legal_entity_id), 
                 function(error, data) {
                     if (error == null) {
-                        $('.c_assignee').text(UserName.val());
                         two_level_approve = data.t_l_approve;
                         USERS = data.assign_users;
                         $.each(USERS, function(key, value) {
@@ -881,6 +892,14 @@ function getCompliance(e, type){
         ReassignAdd.show();
         UTYPE = type;
 
+        if(UTYPE == 1){
+            $('.c_assignee').text('Current Assignee: ' + UserName.val());
+        }else if(UTYPE == 2){
+            $('.c_assignee').text('Current Concurrence: ' + UserName.val());
+        }else{
+            $('.c_assignee').text('Current Approver: ' + UserName.val());
+        }
+
         CURRENT_TAB = 1;
         showTab();
         callAPI(GET_COMPLIANCE);
@@ -1115,14 +1134,8 @@ function pageControls(){
 
 //validation on third wizard
 function validate_thirdtab() {
-    if ($('.assigneelist.active').text() == '') {
-        displayMessage(message.assignee_required);
-        return false;
-    } else if ($('.concurrencelist.active').text() == '' && two_level_approve) {
-        displayMessage(message.concurrence_required);
-        return false;
-    } else if ($('.approvallist.active').text() == '') {
-        displayMessage(message.approval_required);
+    if ($('.assigneelist.active').text() == '' && $('.concurrencelist.active').text() && $('.approvallist.active').text()) {
+        displayMessage(message.atleast_one_user_required_reassign);
         return false;
     } else if (Reason.val() == '') {
         displayMessage(message.reason_required);

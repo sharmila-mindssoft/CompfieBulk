@@ -341,6 +341,7 @@ validateFirstTab = function()  {
         return false;
     } else {
         TbodyComplianceList.empty();
+        actCount = 1;
         callAPI(API_Wizard2);
         isShowMore = true;
         return true;
@@ -363,7 +364,7 @@ showTab = function(){
         $('.tab-pane').removeClass('active in');
         $('#tab1').hide();
         $('#tab2').hide();
-        $(".UnitList").empty();
+        //UnitList.empty();
         //clearElement(Domain, DomainId);
         // Domain.val('');
         // DomainId.val('');
@@ -390,7 +391,7 @@ showTab = function(){
         enabletabevent(1);
         $('.tab-step-1').addClass('active')
         $('#tab1').addClass("active in");
-        $('#tab1').show();
+        $('#tab1').show();        
         NextButton.show();
     }
     else if (CURRENT_TAB == 2) {
@@ -464,17 +465,18 @@ loadCompliances = function(){
 
                 $('.coll-title', clone).attr('id', 'collapse'+actCount);
                 $('.coll-title', clone).attr('aria-labelledb', 'heading'+actCount);
+                // $('#collapse'+actCount+' tbody', clone).addClass("welcome");
                 $('.all-comp-checkbox', clone).on("click", function(){
                     var tableelement = $(this).closest(".table").find("tbody");
-                    //var tabletbody = tableelement;
                     console.log(tableelement);
                     if($(this).prop("checked") == true){
-                        console.log("welcomet 1")
-                        console.log(tableelement.find("td .checkbox .comp_checkbox"));
-                        var tdchecklist = tableelement.find(".comp_checkbox").prop("selected", true);
+                        $.each(tableelement.find('input:checkbox.comp-checkbox'), function(){
+                            var tdcheckbox = $(this).prop("checked", true).triggerHandler('click');
+                            //tdcheckbox.trigger('click');
+                            // $('.comp-checkbox', clone2);
+                        });                        
                     }else{
-                        console.log("welcomet 2")
-                        var tdchecklist = tableelement.find(".comp_checkbox").prop("selected", false);
+                        var tdchecklist = tableelement.find("input:checkbox.comp-checkbox").prop("checked", false);
                     }
                 });
                 $('.accordion-div').append(clone);
@@ -493,7 +495,7 @@ loadCompliances = function(){
             var complianceDetailtableRow = $('#templates .div-compliance-list .compliance-details');
             var clone2 = complianceDetailtableRow.clone();
             $('.comp-checkbox').addClass("comp-checkbox-"+actCount);
-            $('.comp-checkbox', clone2).on("click", function(){
+            $('.comp-checkbox', clone2).click(function(){
                 if($(this).prop("checked") == true){
                     selectedcompliance += 1;
                     var sdates = value.s_dates;
@@ -503,6 +505,29 @@ loadCompliances = function(){
                     $(".trigger", clone2).show();
                     $(".repeat-every", clone2).val(value.r_every);
                     $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).attr('selected','selected');
+                    if(FType.find("option:selected").val() == 3){
+                        if(value.repeats_type_id == 1){
+                            $('.repeat-every-type option[value="2"]', clone2).remove();
+                            $('.repeat-every-type option[value="3"]', clone2).remove();                        
+                            $(".repeat-every", clone2).keyup(function(){
+                                if($(this).val() > value.r_every){
+                                    $(this).val(value.r_every);
+                                    displayMessage(message.repeats_type_not_exceed_actual_value);
+                                }
+                            });
+                        }
+                        if(value.repeats_type_id == 2){           
+                            $('.repeat-every-type option[value="3"]', clone2).remove();
+                            $(".repeat-every", clone2).keyup(function(){             
+                                if($(this).val() > value.r_every && $('.repeat-every-type option[value='+value.repeats_type_id+']', clone2).val() == 2){
+                                     $(this).val(value.r_every);
+                                     displayMessage(message.repeats_type_not_exceed_actual_value);
+                                }                        
+                            });
+                            
+                        }    
+                    }
+                    
                     var sdates= value.s_dates;
                     for(var i = 0; i<sdates.length; i++ ){
                         // $(".due-date", clone2).val(value.due_date);
@@ -535,7 +560,6 @@ loadCompliances = function(){
                     $(".review", clone2).hide();
                     $(".due-date", clone2).hide();
                     $(".trigger", clone2).hide();
-
                 }
             });
             $('.compliance-id', clone2).val(value.comp_id)
@@ -681,6 +705,7 @@ SubmitButton.on("click", function(){
                     displaySuccessMessage(message.save_success);
                     CURRENT_TAB = 1;
                     showTab();
+                    SelectAll.prop("checked", false);
                     r_s_page.showLegalEntity();
                     hideLoader();
                 } else {

@@ -471,6 +471,7 @@ function ChartInput() {
   this.business_groups = [];
   this.legal_entities = [];
   this.divisions = [];
+  this.categories = [];
   this.units = [];
   this.chart_year = 0;
   // previous_year = 1, current_year = 0, next_year = -1
@@ -930,7 +931,7 @@ function loadDivisions(isSelectAll) {
   }
 }
 function loadCategories(isSelectAll) {
-  $('.category-filter').empty();
+  // $('.category-filter').empty();
   categories = CHART_FILTERS_DATA.cat_info;
   for (var i = 0; i < categories.length; i++) {
     var catg = categories[i];
@@ -1308,6 +1309,34 @@ function parseComplianceStatusApiInput() {
 function prepareComplianceStatusChartData(chart_data) {
   // var currentYear = (new Date()).getFullYear();
   // var yearInput = chartInput.getCurrentYear()
+  function sortJSON(data, key, way) {
+      return data.sort(function(a, b) {
+          var x = a[key]; var y = b[key];
+          if (way === '123' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+          if (way === '321') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+      });
+  }
+  chart_data = sortJSON(chart_data,'filter_type_id', '123');  //asc order by filter_type_id
+
+  var temp = {};
+  var obj = null;
+  for(var i=0; i < chart_data.length; i++) {
+     obj=chart_data[i];
+
+     if(!temp[obj.filter_type_id]) {
+         temp[obj.filter_type_id] = obj;
+     } else {
+         //temp[obj.key].val += obj.val;
+         temp[obj.filter_type_id].c_data[0]["inprogress_compliance_count"]  += obj.c_data[0]["inprogress_compliance_count"];
+         temp[obj.filter_type_id].c_data[0]["not_complied_count"]  += obj.c_data[0]["not_complied_count"];
+         temp[obj.filter_type_id].c_data[0]["delayed_compliance_count"]  += obj.c_data[0]["delayed_compliance_count"];
+         temp[obj.filter_type_id].c_data[0]["complied_count"]  += obj.c_data[0]["complied_count"];         
+     }
+  }
+  var chart_data = [];
+  for (var prop in temp)
+    chart_data.push(temp[prop]);
+
   chartYear = chartInput.getChartYear();
   if (chartYear == 0)
     yearInput = chartInput.getCurrentYear();
@@ -1843,7 +1872,7 @@ function loadCharts() {
   } else if (chartType == 'compliance_report') {
     PageTitle.text("Assignee Wise Compliances");
     $(".drilldown-container").empty();
-    $(".div-assignee-wise-compliance").empty();
+    $(".div-assignee-wise-compliance").hide();
     loadAssigneeWiseCompliance();
   } else if (chartType == 'trend_chart') {
     PageTitle.text("Trend Chart");
@@ -2043,18 +2072,13 @@ function TrendChart_Export() {
   $.each(final_dict, function(k, v) {
     info = {}
       info['col0'] = k ;
-      console.log(k);
-      console.log(v);
       for (var i=0; i<cols.length; i++) {
-        console.log(v[cols[i]]);
         if (v[cols[i]] == undefined) {
           yearvals = 0;
         }
         else {
           yearvals = (v[cols[i]] / temp_count[k][cols[i]]);
         }
-        console.log(temp_count[k][cols[i]]);
-        console.log(yearvals);
         info['col'+i+1] = yearvals + '%';
       }
     data.push(info);

@@ -25,7 +25,7 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Country: <span class="mandatory">*</span></label>
+                            <label class="col-sm-4 control-label">Country: <span class="mandatory">*</span></label>
                             <div class="col-sm-6 has-feedback">
                                 <p class="form-control-static country-name default-display-none"></p>
                                 <div class="country-name-ac default-display-none">
@@ -40,7 +40,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity:
+                            <label class="col-sm-4 control-label">Legal Entity:
                             <span class="mandatory">*</span></label>
 
                             <div class="col-sm-6 has-feedback">
@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">User: <span class="mandatory">*</span></label>
+                            <label class="col-sm-4 control-label">User: <span class="mandatory">*</span></label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="3">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -67,7 +67,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Domain: </label>
+                            <label class="col-sm-4 control-label">Domain: </label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" class="form-control input-sm" placeholder="Enter Domain Name" id="domain" tabindex="4">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -78,7 +78,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Unit:</label>
+                            <label class="col-sm-4 control-label">Unit:</label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" id="unit" class="form-control input-sm"  placeholder="Enter Unit" tabindex="5">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -89,7 +89,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Act: </label>
+                            <label class="col-sm-4 control-label">Act: </label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" id="act" class="form-control input-sm" placeholder="Enter Act" tabindex="6">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -102,7 +102,7 @@
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Task: </label>
+                            <label class="col-sm-4 control-label">Compliance Task: </label>
                             <div class="col-sm-6 has-feedback">
                                 <input type="text" id="compliance-task" class="form-control input-sm" placeholder="Enter Compliance Task" tabindex="7">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -113,7 +113,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">Compliance Frequency:</label>
+                            <label class="col-sm-4 control-label">Compliance Frequency:</label>
                             <div class="col-sm-6">
                                 <select class="form-control input-sm" id="compliance-frequency" tabindex="8">
                                     <option>Select</option>
@@ -121,21 +121,21 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">User Type:</label>
+                            <label class="col-sm-4 control-label">User Type:</label>
                             <div class="col-sm-6">
                                 <select class="form-control input-sm" id="user-type" tabindex="9">
                                 </select>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
+                            <label class="col-sm-4 control-label">From Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control input-sm from-date" id="from_date" placeholder="DD-MM-YYYY" tabindex="10" readonly="readonly">
                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
+                            <label class="col-sm-4 control-label">To Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
                                 <input type="text" class="form-control input-sm to-date" id="to_date" placeholder="DD-MM-YYYY" tabindex="11" readonly="readonly">
                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
@@ -174,6 +174,8 @@
                         <div class="col-sm-4 text-center"><h6>Country : <span class="ctry-header"></span></h6></div>
                         <div class="col-sm-4 text-center"><h6>User Name : <span class="usr-header"></span></h6></div>
                     </div>
+<div class="clear"></div>
+<div class="table-responsive">
                     <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -193,6 +195,7 @@
 
                             </tbody>
                     </table>
+</div>
                     <table class="pagination-view default-display-none">
                       <tr>
                         <td>
@@ -248,7 +251,7 @@
             <td><a class="uploaded-document c-pointer"></a></td>
             <td class="completion-date"></td>
         </tr>
-        <tr class="row-four">
+        <tr class="row-four" style="display: none;">
             <td colspan="5">&nbsp;</td>
             <td colspan="100%">
                 <ul class="tree">

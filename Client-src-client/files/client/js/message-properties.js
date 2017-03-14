@@ -411,7 +411,10 @@ var message = {
     'unblock_message': 'You want to unblock this Service Provider',
     'validity_gt_duedate': 'Validity Date must be Greater than or equal to Due Date',
     'units_required': 'Units required',
+    "atleast_one_user_required_reassign": "Select atleast one user for reassign",
+    'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
     'units_already_assigned': 'Some of the Units are already assigned'
+
 };
 
 function clearMessage() {

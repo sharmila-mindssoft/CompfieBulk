@@ -25,25 +25,25 @@
                 <form class="form-horizontal group-border-dashed" action="#" novalidate="">
                     <div class="col-sm-6">
                         <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
+                            <label class="col-sm-4 control-label">From Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm from-date" id="from_date" placeholder="DD-MM-YYYY" tabindex="10" readonly="readonly">
+                                <input type="text" class="form-control input-sm from-date" id="from_date" placeholder="DD-MM-YYYY" tabindex="1" readonly="readonly">
                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                         <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
+                            <label class="col-sm-4 control-label">To Date: <span class="mandatory">*</span></label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm to-date" id="to_date" placeholder="DD-MM-YYYY" tabindex="11" readonly="readonly">
+                                <input type="text" class="form-control input-sm to-date" id="to_date" placeholder="DD-MM-YYYY" tabindex="2" readonly="readonly">
                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                             </div>
                         </div>
                     </div>
                     <div class="col-sm-6">
                         <div class="form-group has-feedback">
-                            <label class=" col-sm-offset-1 col-sm-3 control-label">User: </label>
+                            <label class="col-sm-4 control-label">User: </label>
                             <div class="col-sm-6">
-                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="4">
+                                <input type="text" class="form-control input-sm" id="user" placeholder="Enter User" tabindex="3">
                                 <i class="fa-1-2x form-control-feedback fa fa-search"></i>
                                  <input type="hidden" id="user-id" value="">
                                  <div id="ac-user" class="ac-textbox default-display-none">
@@ -55,8 +55,8 @@
                     <div class="col-sm-12">
                         <center>
                             <div class="form-group m-b-0">
-                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="6"> Show </button>
-                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button" tabindex="7"> Export </button>
+                                <button class="btn btn-primary waves-effect waves-light" type="button" id="show-button" tabindex="4"> Show </button>
+                                <button class="btn btn-info waves-effect waves-light" id="export-button" type="button" tabindex="5"> Export </button>
                             </div>
                         </center>
                     </div>
@@ -76,6 +76,8 @@
                         <div class="col-sm-4 text-center"><h6>From Date : <span class="from-header"></span></h6></div>
                         <div class="col-sm-4 text-center"><h6>To Date : <span class="to-header"></span></h6></div>
                     </div>
+<div class="clear"></div>
+                    <div class="table-responsive ">
                     <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
                             <tr>
@@ -89,6 +91,7 @@
 
                             </tbody>
                     </table>
+                    </div>
                     <table class="pagination-view default-display-none">
                       <tr>
                         <td>

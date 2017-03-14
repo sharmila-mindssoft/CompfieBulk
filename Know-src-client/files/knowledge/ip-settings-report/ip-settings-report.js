@@ -73,7 +73,7 @@ function createPageView(total_records) {
             cPage = parseInt(page);
             if (parseInt(on_current_page) != cPage) {
                 on_current_page = cPage;
-                getResult();
+                getResult(false);
             }
         }
     });
@@ -95,7 +95,7 @@ function generateMaps(){
     });
 }
 
-function getResult(){
+function getResult(csv){
     displayLoader();
     var g_id = null;
     var ip_address = null;
@@ -116,29 +116,36 @@ function getResult(){
     }
 
     t_count = sno + t_count;
-    mirror.getIPSettingsReport(g_id, ip_address, (sno + 1), t_count, function (error, response) {
+    mirror.getIPSettingsReport(g_id, ip_address, (sno + 1), t_count, csv, function (error, response) {
         if (error == null) {
-            GROUP_IPS_LIST = response.group_ips_list;
-            totalRecord = response.total_records;
 
-            if (totalRecord == 0) {
-                var g_row = $("#templates .table-form-list .table-row-head");
-                var clone = g_row.clone();
-                $(".sno", clone).text('');
-                $(".group-name", clone).text("No Records Found");
-                $(".tbody-form-list").append(clone);    
-                PaginationView.hide();
-                ReportView.show();
+            if (csv) {
                 hideLoader();
-              } else {
-                hideLoader();
-                if(sno==0){
-                  createPageView(totalRecord);
+                var download_url = response.link;
+                window.open(download_url, '_blank');
+            } else {
+                GROUP_IPS_LIST = response.group_ips_list;
+                totalRecord = response.total_records;
+
+                if (totalRecord == 0) {
+                    var g_row = $("#templates .table-form-list .table-row-head");
+                    var clone = g_row.clone();
+                    $(".sno", clone).text('');
+                    $(".group-name", clone).text("No Records Found");
+                    $(".tbody-form-list").append(clone);    
+                    PaginationView.hide();
+                    ReportView.show();
+                    hideLoader();
+                } else {
+                    hideLoader();
+                    if(sno==0){
+                      createPageView(totalRecord);
+                    }
+                    PaginationView.show();
+                    ReportView.show();
+                    loadForms();
                 }
-                PaginationView.show();
-                ReportView.show();
-                loadForms();
-              }
+            }
 
         } else {
             displayMessage(error);
@@ -165,10 +172,11 @@ function pageControls() {
           $(this).removeClass();
         });
 
-        getResult();
+        getResult(false);
     });
 
     btnExport.click(function(){
+        getResult(true);
         //saveIPSettings();
     });
 
@@ -188,7 +196,7 @@ function pageControls() {
         sno = 0;
         on_current_page = 1;
         createPageView(totalRecord);
-        getResult();
+        getResult(false);
     });
 }
 

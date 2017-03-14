@@ -43,7 +43,6 @@ var domainName = $("#domain-name");
 var reportTableTbody = $("#report-table-tbody");
 var template = $("#template");
 var reportTable = $("#report-table");
-var REPORT = null;
 
 var ItemsPerPage = $('#items_per_page');
 var PaginationView = $('.pagination-view');
@@ -51,6 +50,8 @@ var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
 var f_count = 0;
+var REPORT = null;
+var LOGO = null;
 
 function PageControls() {
     // To call date picker function. assign to date field
@@ -371,6 +372,7 @@ ReassignHistory.prototype.fetchReportValues = function(csv) {
         if (error == null) {
             t_this._report_data = response.reassigned_history_list;
             t_this._total_count = response.total_count;
+            LOGO = response.logo_url;
             if (csv == false) {
                 reportView.show();
                 showAnimation(reportView);
@@ -389,7 +391,10 @@ ReassignHistory.prototype.fetchReportValues = function(csv) {
 ReassignHistory.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
-    clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
+    if(LOGO != null)
+        clientLogo.attr("src", LOGO);
+    else
+        clientLogo.remove();
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     domainName.html(domain.val());

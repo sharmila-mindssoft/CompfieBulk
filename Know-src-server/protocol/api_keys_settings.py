@@ -587,6 +587,7 @@ api_params = {
     "created_on": {'type': 'TEXT', 'length': 200, 'validation_method': None, 'is_optional': True},
     "unit_email_date": {'type': 'TEXT', 'length': 15, 'validation_method': None, 'is_optional': True},
     "statutory_email_date": {'type': 'TEXT', 'length': 15, 'validation_method': None, 'is_optional': True},
+    "registration_email_date": {'type': 'TEXT', 'length': 15, 'validation_method': None, 'is_optional': True},
     "groupadmin_clients": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'technoreports', "class_name": "GroupAdminClientGroup"},
     "group_admin_countries": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'technoreports', "class_name": "GroupAdminCountry"},
     "group_admin_list": {'type': 'VECTOR_TYPE', 'is_optional': False, 'module_name': 'technoreports', "class_name": "GroupAdminClientGroupData"},

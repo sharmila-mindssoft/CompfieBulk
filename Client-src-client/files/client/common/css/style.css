@@ -1230,6 +1230,35 @@ h2.chart-title: hover {
 .table-not-complied-status {
     border: 1px solid #ededed;
 }
+<<<<<<< HEAD
+.table-compliance-status {
+    border: 1px solid #ededed;
+}
+.escalation-drilldown-container{
+    margin-top: 40px;
+}
+
+@media only screen and (max-width:991px) {
+    .mob-p-r-0 {
+        padding-right: 0
+    }
+    .mob-p-b-15 {
+        padding-bottom: 15px
+    }
+    .dropdown-menu {
+        right: 0;
+        left: auto;
+        height: 115px;
+        overflow-y: auto
+    }
+    .navbar-right .dropdown-menu {
+        height: auto;
+        overflow: visible
+    }
+    .card-box {
+        padding-bottom: 8em
+    }
+}
 
 #ui-datepicker-div {
     z-index: 100 !important;

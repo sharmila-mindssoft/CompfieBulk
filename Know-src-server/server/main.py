@@ -36,7 +36,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    IS_DEVELOPMENT, SESSION_CUTOFF, KNOWLEDGE_DB_POOL_SIZE
+    IS_DEVELOPMENT, SESSION_CUTOFF
 )
 
 from server.templatepath import (
@@ -78,25 +78,7 @@ def api_request(request_data_type):
         return wrapped
     return wrapper
 
-def make_pool(pool_name, db_conf):
-    pass
-    # pooling.CNX_POOL_MAXSIZE = KNOWLEDGE_DB_POOL_SIZE
-    # return pooling.MySQLConnectionPool(
-    #     pool_name=pool_name,
-    #     pool_reset_session=True,
-    #     pool_size=32,
-    #     **db_conf
-    # )
-
 def before_first_request():
-    # db_conf = {
-    #     "user": KNOWLEDGE_DB_USERNAME,
-    #     "password": KNOWLEDGE_DB_PASSWORD,
-    #     "host": KNOWLEDGE_DB_HOST,
-    #     "database": KNOWLEDGE_DATABASE_NAME,
-    #     "port": KNOWLEDGE_DB_PORT,
-    #     "autocommit": False,
-    # }
     cnx_pool = mysql.connector.connect(
         user=KNOWLEDGE_DB_USERNAME,
         password=KNOWLEDGE_DB_PASSWORD,
@@ -105,8 +87,6 @@ def before_first_request():
         port=KNOWLEDGE_DB_PORT,
         autocommit=False,
     )
-    # cnx_pool = make_pool("con_pool", db_conf)
-    # cnx_pool.set_config(**db_conf)
     return cnx_pool
 
 
@@ -255,7 +235,10 @@ class API(object):
     @csrf.exempt
     @api_request(DistributionRequest)
     def handle_group_server_list(self, request, db):
-        return ServerDetails(gen.get_group_servers(db))
+        return ServerDetails(
+            gen.get_group_servers(db),
+            gen.get_ip_details(db)
+        )
 
     @csrf.exempt
     @api_request(GetClientChanges)
@@ -380,14 +363,6 @@ class API(object):
 
     @api_request("knowledgeformat")
     def handle_format_file(self, request, db):
-        # def validate_session_from_body(content):
-        #     content_list = content.split("\r\n\r\n")
-        #     session = content_list[-1].split("\r\n")[0]
-        #     user_id = db.validate_session_token(str(session))
-        #     if user_id is None:
-        #         return False
-        #     else:
-        #         return True
 
         info = request.files
         response_data = controller.process_uploaded_file(info, "knowledge")

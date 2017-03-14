@@ -337,11 +337,19 @@ def process_ip_setting_report_filter(db, request, session_user):
 # return type : Returns success response
 ###############################################################################
 def process_ip_setting_report(db, request, session_user):
-    (
-        total_records, group_ips_list
-    ) = ip_setting_report_data(db, request, session_user)
-    return consoleadmin.GetIPSettingsReportSuccess(
-        total_records=total_records, group_ips_list=group_ips_list)
+    if request.csv:
+        converter = ConvertJsonToCSV(
+            db, request, session_user, "IPSettingReport"
+        )
+        return consoleadmin.ExportToCSVSuccess(
+            link=converter.FILE_DOWNLOAD_PATH
+        )
+    else:
+        (
+            total_records, group_ips_list
+        ) = ip_setting_report_data(db, request, session_user)
+        return consoleadmin.GetIPSettingsReportSuccess(
+            total_records=total_records, group_ips_list=group_ips_list)
 
 
 ###############################################################################

@@ -196,7 +196,7 @@ class UpdateServiceProvider(Request):
 ##################################################
 # Change Service Provider Status
 ##################################################
-class ChangeServiceProviderStatus(Request):    
+class ChangeServiceProviderStatus(Request):
     def __init__(self, service_provider_id, is_active, password):
         self.service_provider_id = service_provider_id
         self.is_active = is_active
@@ -272,7 +272,7 @@ class UserManagementList(Request):
         }
 
 ########################################################
-# User Management - Edit View 
+# User Management - Edit View
 ########################################################
 class UserManagementEditView(Request):
     def __init__(self, user_id):
@@ -968,8 +968,8 @@ def _init_Request_class_map():
         UserManagementPrerequisite,
         GetServiceProviderDetailsReportFilters, GetServiceProviderDetailsReport,
         GetAuditTrailReportFilters, GetLogintraceReportFilters, GetLoginTraceReportData,
-        BlockServiceProvider, UserManagementEditView, GetUserProfile, UpdateUserProfile, 
-        UserManagementList, GetSettingsFormDetails, SaveSettingsFormDetails
+        GetUserProfile, UpdateUserProfile, UserManagementList, GetSettingsFormDetails,
+        SaveSettingsFormDetails, BlockServiceProvider, UserManagementEditView
     ]
     class_map = {}
     for c in classes:
@@ -1213,7 +1213,7 @@ class UserManagementEditViewSuccess(Response):
         return UserManagementEditViewSuccess(users, legal_entities, domains, units)
 
     def to_inner_structure(self):
-        return {            
+        return {
             "ul_userDetails": self.users,
             "ul_legal_entities": self.legal_entities,
             "ul_user_domains": self.domains,
@@ -1781,18 +1781,21 @@ class GetServiceProviderDetailsFilterSuccess(Response):
         }
 
 class GetServiceProviderDetailsReportSuccess(Response):
-    def __init__(self, sp_details_list):
+    def __init__(self, sp_details_list, total_count):
         self.sp_details_list = sp_details_list
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["sp_details_list"])
+        data = parse_dictionary(data, ["sp_details_list", "total_count"])
         sp_details_list = data.get("sp_details_list")
-        return GetServiceProviderDetailsReportSuccess(sp_details_list)
+        total_count = data.get("total_count")
+        return GetServiceProviderDetailsReportSuccess(sp_details_list, total_count)
 
     def to_inner_structure(self):
         return {
-            "sp_details_list" : self.sp_details_list
+            "sp_details_list" : self.sp_details_list,
+            "total_count": self.total_count
         }
 
 class GetAuditTrailFilterSuccess(Response):
@@ -1833,18 +1836,21 @@ class GetLoginTraceFilterSuccess(Response):
         }
 
 class GetLoginTraceReportDataSuccess(Response):
-    def __init__(self, log_trace_activities):
+    def __init__(self, log_trace_activities, total_count):
         self.log_trace_activities = log_trace_activities
+        self.total_count = total_count
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["log_trace_activities"])
+        data = parse_dictionary(data, ["log_trace_activities", "total_count"])
         log_trace_activities = data.get("log_trace_activities")
-        return GetLoginTraceReportDataSuccess(log_trace_activities)
+        total_count = data.get("total_count")
+        return GetLoginTraceReportDataSuccess(log_trace_activities, total_count)
 
     def to_inner_structure(self):
         return {
-            "log_trace_activities" : self.log_trace_activities
+            "log_trace_activities" : self.log_trace_activities,
+            "total_count": self.total_count
         }
 
 class GetUserProfileSuccess(Response):
@@ -1931,6 +1937,7 @@ def _init_Response_class_map():
         GetServiceProviderDetailsReportSuccess, GetAuditTrailFilterSuccess,
         GetLoginTraceFilterSuccess, GetLoginTraceReportDataSuccess,
         GetUserProfileSuccess, UpdateUserProfileSuccess, UserManagementListSuccess,
+
         BlockServiceProviderSuccess, UserManagementEditViewSuccess,
         GetSettingsFormDetailsSuccess, SaveSettingsFormDetailsSuccess, UnitsAlreadyAssigned
     ]
