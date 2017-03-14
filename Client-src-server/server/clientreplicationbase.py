@@ -222,6 +222,14 @@ class ReplicationBase(object):
             self._db.rollback()
         # assert self._domains is not None
 
+    def check_compliance_available_for_statutory_notification(self, compliance_id):
+        q = "select count(0) as cnt from tbl_compliances where compliance_id = %s "
+        rows = self._db.select_one(q, [compliance_id])
+        if rows.get("cnt") is None :
+            return False
+        else :
+            return True
+
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
         # print changes
@@ -242,6 +250,7 @@ class ReplicationBase(object):
         i_column = []
         values = []
         domain_id = None
+        compliance_id = None
         for x in changes:
             if x.value is None:
                 # values.append('')
@@ -251,6 +260,8 @@ class ReplicationBase(object):
                 values.append(str(x.value))
                 if tbl_name == "tbl_compliances" and x.column_name == "domain_id" :
                     domain_id = int(x.value)
+                if tbl_name == "tbl_statutory_notifications" and x.column_name == "compliance_id":
+                    compliance_id = int(x.value)
             val = str(values)[1:-1]
 
         query = "INSERT INTO %s (%s, %s) VALUES(%s, %s)" % (
@@ -299,16 +310,21 @@ class ReplicationBase(object):
                 print "Replication for legal entity ", self._client_id
             print tbl_name
             print query
-            if tbl_name != "tbl_compliances" :
-                self._db.execute(query)
-            elif tbl_name == "tbl_compliances" and domain_id in self._domains :
+
+            if tbl_name == "tbl_compliances" and domain_id in self._domains :
                 self._db.execute(query)
 
-            if tbl_name == "tbl_legal_entities" :
+            elif tbl_name == "tbl_statutory_notifications" and self.check_compliance_available_for_statutory_notification(compliance_id) is True :
+                self._db.execute(query)
+
+            elif tbl_name == "tbl_legal_entities" :
                 self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [auto_id])
                 self._db.execute("delete from tbl_client_configuration")
             elif tbl_name == "tbl_units" :
                 self._db.execute("delete from tbl_units_organizations where unit_id = %s", [auto_id])
+
+            else :
+                self._db.execute(query)
 
         except Exception, e:
             pass
