@@ -346,7 +346,7 @@ class ReplicationManagerWithBase(ReplicationBase):
     def _poll(self) :
         assert self._stop is False
         assert self._received_count is not None
-        print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
+        # print "ReplicationManager poll for client_id = %s, _received_count = %s " % (self._client_id, self._received_count)
 
         def on_timeout():
             print time.time()
