@@ -1748,10 +1748,13 @@ function initClientMirror() {
         };
     }
 
-    function savePastRecords(compliances_list, callback) {
+    function savePastRecords(legalEntityId, compliances_list, callback) {
         var request = [
             'SavePastRecords',
-            { 'compliances': compliances_list }
+            {
+                'le_id': legalEntityId,
+                'pr_compliances': compliances_list
+            }
         ];
         clientApiRequest('client_transaction', request, callback);
     }
