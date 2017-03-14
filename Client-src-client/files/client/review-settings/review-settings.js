@@ -497,6 +497,8 @@ loadCompliances = function(){
             $('.comp-checkbox').addClass("comp-checkbox-"+actCount);
             $('.comp-checkbox', clone2).click(function(){
                 if($(this).prop("checked") == true){
+                    $(".due-date-div", clone2).empty();
+                    $(".trigger-div", clone2).empty();
                     selectedcompliance += 1;
                     var sdates = value.s_dates;
                     $(".repeat-every", clone2).show();
