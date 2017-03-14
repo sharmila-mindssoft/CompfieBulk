@@ -435,6 +435,7 @@ function getStatutories(){
 
   if(pastRecordsUnitId != null && pastRecordsDomainId != null){
     function onSuccess(data){
+      console.log(JSON.stringify(data["statutory_wise_compliances"]));
       statutoriesList = data["statutory_wise_compliances"];
       usersList = data["users"];
       totalRecord = data["total_count"];
@@ -1075,7 +1076,7 @@ function clearValues(levelvalue) {
   else if (levelvalue == 'division') {  
     categoryul.empty();
   }
-  else if (levelvalue == 'categoryul') {
+  else if (levelvalue == 'category') {
     ACTIVE_UNITS = [];
     unitul.empty();
   }else if (levelvalue == 'unit') {
