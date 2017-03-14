@@ -288,6 +288,7 @@ def process_get_statutories_by_unit(
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
     compliance_frequency = request.compliance_frequency
+    print "compliance_frequency>>", compliance_frequency
     # country_id = request.country_id
     start_count = request.start_count
     # country_id
@@ -310,6 +311,8 @@ def process_save_past_records(
         db, request, session_user
 ):
     compliance_list = request.compliances
+    legal_entity_id = request.legal_entity_id
+    print "legal_entity_id>>>", legal_entity_id
     error = ""
     for compliance in compliance_list:
         if validate_before_save(
@@ -323,6 +326,7 @@ def process_save_past_records(
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
+            print "validate_before_save>>>>327"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous compliance " + \
@@ -330,18 +334,20 @@ def process_save_past_records(
                 " entered due date "
             error = error % (compliance_name, compliance.due_date)
             return clienttransactions.SavePastRecordsFailed(error=error)
+    print "compliance.documents>>>>", compliance.documents
     for compliance in compliance_list:
         if save_past_record(
             db, compliance.unit_id, compliance.compliance_id,
             compliance.due_date, compliance.completion_date,
             compliance.documents,
-            compliance.completed_by
+            compliance.completed_by, legal_entity_id
         ):
             continue
         else:
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
+            print "save_past_record>>>>347"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous " + \

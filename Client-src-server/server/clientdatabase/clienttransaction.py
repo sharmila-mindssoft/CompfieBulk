@@ -1337,6 +1337,7 @@ def get_statutory_wise_compliances(
                 print "statutories[0]>>>>", statutories[0]
                 print "statutories[0].strip()>>", statutories[0].strip()
                 statutories_strip = statutories[0].strip()
+                print "level_1>>", level_1
                 level_1_statutory_wise_compliances[level_1].append(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                         compliance["compliance_id"], compliance_name,
@@ -1357,6 +1358,7 @@ def get_statutory_wise_compliances(
     for (
         level_1_statutory_name, compliances
     ) in level_1_statutory_wise_compliances.iteritems():
+        print "Line 1320>>>>>"
         if len(compliances) > 0:
             statutory_wise_compliances.append(
                 clienttransactions.STATUTORY_WISE_COMPLIANCES(
@@ -1426,7 +1428,7 @@ def validate_before_save(
 
 def save_past_record(
         db, unit_id, compliance_id, due_date, completion_date, documents,
-        completed_by
+        completed_by, legal_entity_id
 ):
     is_uploading_file = False
 
@@ -1440,34 +1442,33 @@ def save_past_record(
 
     # Handling upload
     document_names = []
-    file_size = 0
-    if documents != None:
-        if len(documents) > 0:
-            for doc in documents:
-                file_size += doc.file_size
+    file_size = 0    
+    if len(documents) > 0:
+        for doc in documents:
+            file_size += doc.file_size
 
-            if is_space_available(db, file_size):
-                is_uploading_file = True
-                for doc in documents:
-                    file_name_parts = doc.file_name.split('.')
-                    name = None
-                    exten = None
-                    for index, file_name_part in enumerate(file_name_parts):
-                        if index == len(file_name_parts) - 1:
-                            exten = file_name_part
+        if is_space_available(db, file_size):
+            is_uploading_file = True
+            for doc in documents:
+                file_name_parts = doc.file_name.split('.')
+                name = None
+                exten = None
+                for index, file_name_part in enumerate(file_name_parts):
+                    if index == len(file_name_parts) - 1:
+                        exten = file_name_part
+                    else:
+                        if name is None:
+                            name = file_name_part
                         else:
-                            if name is None:
-                                name = file_name_part
-                            else:
-                                name += file_name_part
-                    auto_code = new_uuid()
-                    file_name = "%s-%s.%s" % (name, auto_code, exten)
-                    document_names.append(file_name)
-                    convert_base64_to_file(file_name, doc.file_content, 2)
-                    # convert_base64_to_file(file_name, doc.file_content, client_id)
-                update_used_space(db, file_size)
-            else:
-                return clienttransactions.NotEnoughSpaceAvailable()
+                            name += file_name_part
+                auto_code = new_uuid()
+                file_name = "%s-%s.%s" % (name, auto_code, exten)
+                document_names.append(file_name)
+                convert_base64_to_file(file_name, doc.file_content, 2)
+                # convert_base64_to_file(file_name, doc.file_content, client_id)
+            update_used_space(db, file_size)
+        else:
+            return clienttransactions.NotEnoughSpaceAvailable()
 
     # Checking Settings for two levels of approval
     is_two_level = is_two_levels_of_approval(db)
@@ -1499,13 +1500,15 @@ def save_past_record(
         "unit_id", "compliance_id",
         "due_date", "completion_date",
         "completed_by", "completed_on",
-        "approve_status", "approved_by", "approved_on"
+        "approve_status", "approved_by", "approved_on", "legal_entity_id",
+        "current_status", "start_date"
     ]
     values = [
         unit_id, compliance_id,
         string_to_datetime(due_date).date(),
         completion_date,
-        completed_by, completion_date, 1, approved_by, completion_date
+        completed_by, completion_date, 1, approved_by, completion_date, 
+        legal_entity_id, 3, get_date_time()
     ]
     # if validity_date is not None and validity_date != "":
     #     validity_date = string_to_datetime(validity_date).date()

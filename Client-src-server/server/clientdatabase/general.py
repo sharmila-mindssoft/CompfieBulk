@@ -1755,7 +1755,7 @@ def calculate_due_date(
 
 
 def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
-    # Checking same due date already exists
+    # Checking same due date already exists    
     if due_dates_list is not None and len(due_dates_list) > 0:
         formated_date_list = []
         for x in due_dates_list:
@@ -1775,6 +1775,11 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             " AND compliance_id = %s) THEN DATE(due_date) " + \
             " ELSE 'NotExists' END ) as " + \
             " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
+        # print "query>>", query
+        # print "unit_id>>", unit_id
+        # print "due_date_condition>>", due_date_condition
+        # print "due_date_condition_val>>", due_date_condition_val
+        # print "compliance_id>>", compliance_id
         rows = db.select_all(
             query, [unit_id, due_date_condition_val, compliance_id]
         )

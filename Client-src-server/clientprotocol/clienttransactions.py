@@ -670,16 +670,16 @@ class SavePastRecords(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "pr_compliances"])
+        data = parse_dictionary(data, ["le_id", "pr_compliances_1"])
         legal_entity_id = data.get("le_id")
-        compliances = data.get("pr_compliances")
+        compliances = data.get("pr_compliances_1")
         # compliances = parse_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE(compliances)
         return SavePastRecords(legal_entity_id, compliances)
 
     def to_inner_structure(self):
         return {
             "le_id": self.legal_entity_id,
-            "pr_compliances": self.compliances
+            "pr_compliances_1": self.compliances
         }
 
 
@@ -2181,13 +2181,13 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_id", "compliance_name", "description", "compliance_task_frequency",
             "pr_statutory_date", "due_date", "assignee_name", "assignee_id"])
-        compliance_id = data.get("compliance_id")        
-        compliance_name = data.get("compliance_name")        
-        description = data.get("description")        
-        frequency = data.get("compliance_task_frequency")        
-        statutory_date = data.get("pr_statutory_date")        
-        due_date = data.get("due_date")        
-        assignee_name = data.get("assignee_name")        
+        compliance_id = data.get("compliance_id")
+        compliance_name = data.get("compliance_name")
+        description = data.get("description")
+        frequency = data.get("compliance_task_frequency")
+        statutory_date = data.get("pr_statutory_date")
+        due_date = data.get("due_date")
+        assignee_name = data.get("assignee_name")
         assignee_id = data.get("assignee_id")        
         return UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(compliance_id, compliance_name, description, frequency,
             statutory_date, due_date, assignee_name, assignee_id)
@@ -2621,6 +2621,8 @@ class STATUTORY_WISE_COMPLIANCES(object):
     def __init__(self, level_1_statutory_name, compliances):
         self.level_1_statutory_name = level_1_statutory_name
         self.compliances = compliances
+        print "level_1_statutory_name>>>", level_1_statutory_name
+        print "compliances>>>>", compliances
 
     @staticmethod
     def parse_structure(data):
@@ -2628,6 +2630,7 @@ class STATUTORY_WISE_COMPLIANCES(object):
         level_1_statutory_name = data.get("level_1_statutory_name")
         # level_1_statutory_name = parse_structure_CustomTextType_500(level_1_statutory_name)
         compliances = data.get("pr_compliances")
+        print "Line 2625>>>"
         # compliances = parse_structure_VectorType_RecordType_clienttransactions_UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(compliances)
         return STATUTORY_WISE_COMPLIANCES(
             level_1_statutory_name, compliances
