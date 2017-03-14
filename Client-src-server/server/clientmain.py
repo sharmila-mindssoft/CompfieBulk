@@ -95,20 +95,21 @@ class API(object):
 
         def on_session_timeout(c_db):
             c_db_con = self.client_connection_pool(c_db)
-            _db = Database(c_db_con)
-            _db.begin()
             try :
-                _db.clear_session(SESSION_CUTOFF)
-                _db.commit()
-                c_db_con.close()
-            except Exception, e :
-                print e
-                _db.rollback()
+                _db_clr = Database(c_db_con)
+                _db_clr.begin()
+                _db_clr.clear_session(SESSION_CUTOFF)
+                _db_clr.commit()
                 c_db_con.close()
 
-            t = threading.Timer(500, _with_client_info)
-            t.daemon = True
-            t.start()
+                t = threading.Timer(500, _with_client_info)
+                t.daemon = True
+                t.start()
+
+            except Exception, e :
+                print e
+                _db_clr.rollback()
+                c_db_con.close()
 
         _with_client_info()
 
