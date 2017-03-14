@@ -663,5 +663,9 @@ api_params = {
     "on_statutory": make_text_field(length=500),    
     "on_unit": make_text_field(length=100),
     "on_compliance_status": make_text_field(length=500),
-    "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),    
+    "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),
+    "pr_statutory_date": make_text_field(length=500, is_optional=True),
+    "pr_compliances": make_vector_type_field(module="clienttransactions", klass_name="PAST_RECORD_COMPLIANCE"),
+    "pr_completed_by": make_int_field(is_optional=True),
+    "field_name": make_text_field(length=100),    
 }

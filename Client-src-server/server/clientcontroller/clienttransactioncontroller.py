@@ -96,7 +96,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
 
     elif type(request) is clienttransactions.SavePastRecords:
         result = process_save_past_records(
-            db, request, session_user, client_id
+            db, request, session_user
         )
 
     elif type(request) is clienttransactions.GetComplianceApprovalList:
@@ -307,7 +307,7 @@ def process_get_statutories_by_unit(
 # To validate and save a past record entry
 ########################################################
 def process_save_past_records(
-        db, request, session_user, client_id
+        db, request, session_user
 ):
     compliance_list = request.compliances
     error = ""
@@ -315,8 +315,7 @@ def process_save_past_records(
         if validate_before_save(
             db, compliance.unit_id, compliance.compliance_id,
             compliance.due_date,
-            compliance.completion_date, compliance.documents,
-            compliance.validity_date,
+            compliance.completion_date, compliance.documents,            
             compliance.completed_by
         ):
             continue
@@ -335,8 +334,8 @@ def process_save_past_records(
         if save_past_record(
             db, compliance.unit_id, compliance.compliance_id,
             compliance.due_date, compliance.completion_date,
-            compliance.documents, compliance.validity_date,
-            compliance.completed_by, client_id
+            compliance.documents,
+            compliance.completed_by
         ):
             continue
         else:

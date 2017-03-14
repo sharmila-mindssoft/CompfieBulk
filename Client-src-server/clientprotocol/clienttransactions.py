@@ -664,19 +664,22 @@ class GetStatutoriesByUnit(Request):
 
 
 class SavePastRecords(Request):
-    def __init__(self, compliances):
+    def __init__(self, legal_entity_id, compliances):
+        self.legal_entity_id = legal_entity_id
         self.compliances = compliances
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["compliances"])
-        compliances = data.get("compliances")
-        compliances = parse_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE(compliances)
-        return SavePastRecords(compliances)
+        data = parse_dictionary(data, ["le_id", "pr_compliances"])
+        legal_entity_id = data.get("le_id")
+        compliances = data.get("pr_compliances")
+        # compliances = parse_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE(compliances)
+        return SavePastRecords(legal_entity_id, compliances)
 
     def to_inner_structure(self):
         return {
-            "compliances": to_structure_VectorType_RecordType_clienttransactions_PAST_RECORD_COMPLIANCE(self.compliances),
+            "le_id": self.legal_entity_id,
+            "pr_compliances": self.compliances
         }
 
 
@@ -2056,13 +2059,12 @@ class REASSIGNED_COMPLIANCE(object):
 class PAST_RECORD_COMPLIANCE(object):
     def __init__(
             self, unit_id, compliance_id, due_date, completion_date, documents,
-            validity_date, completed_by
+            completed_by
         ):
         self.unit_id = unit_id
         self.compliance_id = compliance_id
         self.due_date = due_date
         self.completion_date = completion_date
-        self.validity_date = validity_date
         self.documents = documents
         self.completed_by = completed_by
 
@@ -2071,37 +2073,30 @@ class PAST_RECORD_COMPLIANCE(object):
         data = parse_dictionary(
             data, [
                     "unit_id", "compliance_id", "due_date", "completion_date",
-                    "documents", "validity_date", "completed_by"
+                    "documents", "pr_completed_by"
                 ]
         )
-        unit_id = data.get("unit_id")
-        unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
-        compliance_id = data.get("compliance_id")
-        compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
-        due_date = data.get("due_date")
-        due_date = parse_structure_CustomTextType_20(due_date)
+        unit_id = data.get("unit_id")        
+        compliance_id = data.get("compliance_id")        
+        due_date = data.get("due_date")        
         completion_date = data.get("completion_date")
-        completion_date = parse_structure_CustomTextType_20(completion_date)
-        validity_date = data.get("validity_date")
-        validity_date = parse_structure_CustomTextType_20(validity_date)
         documents = data.get("documents")
-        documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(documents)
-        completed_by = data.get("completed_by")
-        completed_by = parse_structure_UnsignedIntegerType_32(completed_by)
+        # documents = parse_structure_OptionalType_VectorType_RecordType_core_FileList(documents)
+        completed_by = data.get("pr_completed_by")
+        # completed_by = parse_structure_UnsignedIntegerType_32(completed_by)
         return PAST_RECORD_COMPLIANCE(
             unit_id, compliance_id, due_date, completion_date, documents,
-            validity_date, completed_by
+            completed_by
         )
 
     def to_structure(self):
         return {
-            "unit_id": to_structure_SignedIntegerType_8(self.unit_id),
-            "compliance_id": to_structure_SignedIntegerType_8(self.compliance_id),
-            "due_date": to_structure_CustomTextType_20(self.due_date),
-            "completion_date": to_structure_CustomTextType_20(self.completion_date),
-            "validity_date": to_structure_CustomTextType_20(self.validity_date),
-            "documents": to_structure_OptionalType_VectorType_RecordType_core_FileList(self.documents),
-            "completed_by": to_structure_SignedIntegerType_8(self.completed_by)
+            "unit_id": self.unit_id,
+            "compliance_id": self.compliance_id,
+            "due_date": self.due_date,
+            "completion_date": self.completion_date,            
+            "documents": self.documents,
+            "pr_completed_by": self.completed_by
         }
 
 #
@@ -2177,23 +2172,15 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["compliance_id", "compliance_name", "description", "compliance_task_frequency",
-            "statutory_date", "due_date", "assignee_name", "assignee_id"])
-        compliance_id = data.get("compliance_id")
-        # compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
-        compliance_name = data.get("compliance_name")
-        # compliance_name = parse_structure_CustomTextType_250(compliance_name)
-        description = data.get("description")
-        # description = parse_structure_Text(description)
-        frequency = data.get("compliance_task_frequency")
-        # frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(frequency)
-        statutory_date = data.get("statutory_date")
-        # statutory_date = parse_structure_Text(statutory_date)
-        due_date = data.get("due_date")
-        # due_date = parse_structure_OptionalType_CustomTextType_20(due_date)
-        assignee_name = data.get("assignee_name")
-        # assignee_name = parse_structure_CustomTextType_50(assignee_name)
-        assignee_id = data.get("assignee_id")
-        # assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
+            "pr_statutory_date", "due_date", "assignee_name", "assignee_id"])
+        compliance_id = data.get("compliance_id")        
+        compliance_name = data.get("compliance_name")        
+        description = data.get("description")        
+        frequency = data.get("compliance_task_frequency")        
+        statutory_date = data.get("pr_statutory_date")        
+        due_date = data.get("due_date")        
+        assignee_name = data.get("assignee_name")        
+        assignee_id = data.get("assignee_id")        
         return UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(compliance_id, compliance_name, description, frequency,
             statutory_date, due_date, assignee_name, assignee_id)
 
@@ -2203,7 +2190,7 @@ class UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(object):
             "compliance_name": self.compliance_name,
             "description": self.description,
             "compliance_task_frequency": self.frequency,
-            "statutory_date": self.statutory_date,
+            "pr_statutory_date": self.statutory_date,
             "due_date": self.due_date,
             "assignee_name" : self.assignee_name,
             "assignee_id": self.assignee_id
@@ -2541,44 +2528,25 @@ class APPROVALCOMPLIANCE(object):
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
-        # compliance_history_id = parse_structure_UnsignedIntegerType_32(compliance_history_id)
         compliance_name = data.get("compliance_name")
-        # compliance_name = parse_structure_CustomTextType_250(compliance_name)
         description = data.get("description")
-        # description = parse_structure_Text(description)
         domain_name = data.get("domain_name")
-        # domain_name = parse_structure_CustomTextType_500(domain_name)
         file_names = data.get("file_names")
-        # file_names = parse_structure_OptionalType_VectorType_CustomTextType_500(file_names)
         start_date = data.get("start_date")
-        # start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
-        # due_date = parse_structure_CustomTextType_20(due_date)
         delayed_by = data.get("delayed_by")
-        # delayed_by = parse_structure_OptionalType_UnsignedIntegerType_32(delayed_by)
         compliance_frequency = data.get("compliance_task_frequency")
-        # compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         documents = data.get("uploaded_documents")
-        # documents = data.get("documents")
-        # documents = parse_structure_OptionalType_VectorType_CustomTextType_500(documents)
         upload_date = data.get("upload_date")
-        # upload_date = parse_structure_OptionalType_CustomTextType_20(upload_date)
         completion_date = data.get("completion_date")
-        # completion_date = parse_structure_CustomTextType_20(completion_date)
         next_due_date = data.get("next_due_date")
-        # next_due_date = parse_structure_OptionalType_CustomTextType_20(next_due_date)
         concurrenced_by = data.get("concurrenced_by")
-        # concurrenced_by = parse_structure_OptionalType_CustomTextType_500(concurrenced_by)
         remarks = data.get("remarks")
-        # remarks = parse_structure_OptionalType_CustomTextType_500(remarks)
         action = data.get("action")
-        # action = parse_structure_CustomTextType_20(remarks)
         statutory_dates = data.get("statutory_dates")
-        # statutory_dates = parse_structure_VectorType_RecordType_core_StatutoryDate(statutory_dates)
         validity_date = data.get("validity_date")
-        # validity_date = parse_structure_OptionalType_CustomTextType_20(validity_date)
         unit_name = data.get("unit_name")
-        # unit_name = parse_structure_CustomTextType_250(unit_name)
+        
         return APPROVALCOMPLIANCE(
             compliance_history_id, compliance_name, description,
             domain_name, start_date, due_date, delayed_by, compliance_frequency,
