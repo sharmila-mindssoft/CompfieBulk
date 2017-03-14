@@ -1658,7 +1658,7 @@ def calculate_due_date(
     # print"statutory_dates", statutory_dates
     # print"repeat_by>>>", statutory_dates
     # print "repeat_every>>>", repeat_every
-    # print "due_date>>>", due_date
+    print "due_date1632>>>", due_date
     def is_future_date(test_date):
         result = False
         current_date = datetime.date.today()
@@ -1672,7 +1672,7 @@ def calculate_due_date(
     )
     # print "from_date>>>", from_date
     # print "to_date>>>", to_date
-    # print "statutory_dates>>>", statutory_dates
+    print "statutory_dates>>>", statutory_dates
     # country_id
     due_dates = []
     summary = ""
