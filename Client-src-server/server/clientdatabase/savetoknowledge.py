@@ -243,6 +243,8 @@ class SaveOptedStatus(KnowledgedbConnect):
                 not_applicable_remarks,
                 opted_status,
                 remarks,
+                self._updated_by,
+                self._updated_on,
                 client_compliance_id,
                 compliance_id
             ])
