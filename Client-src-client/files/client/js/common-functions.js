@@ -6,19 +6,11 @@ var pageList = [25, 50, 100];
 var UserTypeString = '[{"id":1,"name":"Assignee"},{"id":2,"name":"Concurrence"},{"id":3,"name":"Approval"}]';
 var UserTypes = jQuery.parseJSON(UserTypeString);
 
-var ComplianceTaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var ComplianceTaskStatusString = '[{"name":"Assigned"},{"name":"Un-Assigned"},{"name":"Not Opted"}]';
 var ComplianceTaskStatuses = jQuery.parseJSON(ComplianceTaskStatusString);
 
-var LEARRAYS = client_mirror.getSelectedLegalEntity();
-if(LEARRAYS != undefined){
-    var LEIDS = [];
-    if(LEARRAYS.length > 0) {
-        $.each(LEARRAYS, function(key, value) {
-            LEIDS.push(value.le_id);
-        });
-    }
-}
-
+var TaskStatusString = '[{"name":"Complied"},{"name":"Delayed Compliances"},{"name":"Inprogress"},{"name":"Not Complied"}]';
+var TaskStatuses = jQuery.parseJSON(TaskStatusString);
 
 function loadItemsPerPage() {
     for (var i = 0; i < pageList.length; i++) {
@@ -135,17 +127,24 @@ function isCommon(inputElm) {
     return inputElm.val().replace(/[^ 0-9A-Za-z_.,-]/gi, '');
 }
 
-/*function isAlphabetic(inputElm) {
-  //allowed => alphabetic
-  return inputElm.val().replace(/[^ A-Za-z]/gi, '');
+function isAlphabetic(inputElm) {
+    //allowed => alphabetic
+    return inputElm.val().replace(/[^ A-Za-z]/gi, '');
 }
+
 function isAlphanumeric(inputElm) {
-  //allowed => alphanumeric
-  return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
-}*/
+    //allowed => alphanumeric
+    return inputElm.val().replace(/[^ 0-9A-Za-z]/gi, '');
+}
+
 function isNumbers(inputElm) {
     //allowed => only numbers
     return inputElm.val().replace(/[^0-9]/gi, '');
+}
+
+function isNumbersWithDot(inputElm) {
+    //allowed => only numbers
+    return inputElm.val().replace(/[^0-9.]/gi, '');
 }
 
 function isNonZeroNumbers(inputElm) {
@@ -177,6 +176,13 @@ function isCommon_Unitcode(inputElm) {
     //allowed => alphanumeric
     return inputElm.val().replace(/[^0-9A-Za-z]/gi, '');
 }
+
+function isCommon_Email(inputElm) {
+    //allowed => alphanumeric, dot, comma, Hyphen, @, hash
+    return inputElm.val().replace(/[^A-Za-z_.,-@#]/gi, '');
+    // return inputElm.val().replace(/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/gi, '');
+}
+
 //move to top function
 jQuery(document).ready(function() {
     var offset = 220;
@@ -419,15 +425,24 @@ $(function() {
 
     //sort
     $('.sort').click(function(event) {
-        var table = $(this).closest("table");
+        var ele = $(this);
+        var table = ele.closest("table");
         var tbody = table.find('tbody');
-        var col_num = $(this).closest("th").index();
-        if ($(this).hasClass("asc")) {
-            $(this).addClass("desc");
-            $(this).removeClass("asc");
+        var col_num = ele.closest("th").index();
+        if (ele.hasClass("asc")) {
+            table.find("th span").each(function(i) {
+                $(this).removeClass('desc');
+                $(this).removeClass('asc');
+            });
+            ele.addClass("desc");
+            ele.removeClass("asc");
         } else {
-            $(this).addClass("asc");
-            $(this).removeClass("desc");
+            table.find("th span").each(function(i) {
+                $(this).removeClass('desc');
+                $(this).removeClass('asc');
+            });
+            ele.addClass("asc");
+            ele.removeClass("desc");
         }
 
         function extract_value(tr) {
@@ -455,7 +470,7 @@ $(function() {
             }
         });
 
-        if ($(this).hasClass("asc")) {
+        if (ele.hasClass("asc")) {
             for (var i = allTrs.length - 1; i >= 0; i--) {
                 $(allTrs[i]).appendTo(tbody);
             };

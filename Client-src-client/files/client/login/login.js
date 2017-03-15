@@ -112,6 +112,10 @@ function resetLoginUI(e_button, e_email, e_password) {
   e_email.focus();
   loadCaptcha();
 }
+function parseJSON(data) {
+  // data = JSON.stringify(data);
+  return JSON.parse(data);
+}
 function processLogin(username, password, shortName, callback) {
   var request = [
     'Login',
@@ -132,16 +136,27 @@ function processLogin(username, password, shortName, callback) {
     var r = document.cookie.match('\\b' + name + '=([^;]*)\\b');
     return r ? r[1] : undefined;
   }
+  function makekey()
+  {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      for( var i=0; i < 5; i++ )
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+      return text;
+  }
   // console.log(getCookie('_xsrf'));
   // url = BASE_URL + "login";
+  actula_data = JSON.stringify(requestFrame, null, ' ');
   $.ajax({
     url: BASE_URL + 'login',
     headers: { 'X-Xsrftoken': getCookie('_xsrf') },
     type: 'POST',
     contentType: 'application/json',
-    data: JSON.stringify(requestFrame, null, ' '),
+    data: makekey() + btoa(actula_data),
     success: function (data, textStatus, jqXHR) {
-      var data = JSON.parse(data);
+      data = atob(data.substring(5));
+      data = parseJSON(data);
       var status = data[0];
       var response = data[1];
       matchString = 'success';
@@ -153,7 +168,9 @@ function processLogin(username, password, shortName, callback) {
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      callback(jqXHR.responseText, errorThrown);
+      rdata = parseJSON(jqXHR.responseText);
+      rdata = atob(rdata.substring(5));
+      callback(rdata, errorThrown);
     }
   });
 }

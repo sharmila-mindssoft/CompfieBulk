@@ -69,7 +69,6 @@ function PageControls() {
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
-            REPORT.renderPageControls();
         }
     });
 
@@ -78,6 +77,15 @@ function PageControls() {
             csv = true;
             REPORT.exportReportValues();
         }
+    });
+
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        this._on_current_page = 1;
+        this._sno = 0;
+        createPageView(t_this._total_record);
+        csv = false;
+        REPORT.fetchReportValues();
     });
 }
 
@@ -109,7 +117,6 @@ LoginTraceReport.prototype.loadSearch = function() {
     reportView.hide();
     users.val('');
     userId.val('');
-    this.renderPageControls();
     this.fetchUserList();
 };
 
@@ -173,17 +180,17 @@ LoginTraceReport.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._LoginTraceList = response.log_trace_activities;
+            t_this._total_record = response.total_count
             if (response.log_trace_activities.length == 0) {
-                t_this.hidePageView();
-                t_this.hidePagePan();
+                hidePageView();
+                hidePagePan();
                 //Export_btn.hide();
                 PaginationView.hide();
                 t_this.showReportValues();
             }
             else{
-                t_this._total_record = response.log_trace_activities.length;
                 if (t_this._sno == 0) {
-                    t_this.createPageView(t_this, t_this._total_record);
+                    createPageView(t_this._total_record);
                 }
                 //Export_btn.show();
                 PaginationView.show();
@@ -204,7 +211,6 @@ LoginTraceReport.prototype.showReportValues = function() {
     reportTableTbody.find('tr').remove();
     var is_null = true;
     showFrom = t_this._sno + 1;
-    t_this._total_record = data.length;
     $.each(data, function(k, v) {
         console.log(data.length)
         is_null = false;
@@ -233,7 +239,7 @@ LoginTraceReport.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        t_this.showPagePan(showFrom, t_this._sno, t_this._total_record);
+        showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
 
@@ -278,50 +284,38 @@ LoginTraceReport.prototype.possibleFailures = function(error) {
 };
 
 // Pagination Functions - begins
-LoginTraceReport.prototype.hidePageView = function() {
+hidePageView = function() {
     $('#pagination-rpt').empty();
     $('#pagination-rpt').removeData('twbs-pagination');
     $('#pagination-rpt').unbind('page');
 };
 
-LoginTraceReport.prototype.createPageView = function(a_obj, total_records) {
+createPageView = function(total_records) {
     perPage = parseInt(ItemsPerPage.val());
-    a_obj.hidePageView();
+    hidePageView();
 
     $('#pagination-rpt').twbsPagination({
         totalPages: Math.ceil(total_records/perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            if (parseInt(a_obj._on_current_page) != cPage) {
-                a_obj._on_current_page = cPage;
-                a_obj.fetchReportValues();
+            console.log(cPage, REPORT._on_current_page)
+            if (parseInt(REPORT._on_current_page) != cPage) {
+                REPORT._on_current_page = cPage;
+                REPORT.fetchReportValues();
             }
         }
     });
 };
-LoginTraceReport.prototype.showPagePan = function(showFrom, showTo, total) {
+showPagePan = function(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
     $('.compliance_count').text(showText);
     $('.pagination-view').show();
 };
-LoginTraceReport.prototype.hidePagePan = function() {
+hidePagePan = function() {
     $('.compliance_count').text('');
     $('.pagination-view').hide();
 }
-
-LoginTraceReport.prototype.renderPageControls = function(e) {
-    var t_this = this;
-    ItemsPerPage.on('change', function(e) {
-        t_this.perPage = parseInt($(this).val());
-        t_this._sno = 0;
-        t_this._on_current_page = 1;
-        t_this.createPageView(t_this, t_this._total_record);
-        t_this.fetchReportValues();
-    });
-    t_this._perPage = parseInt(ItemsPerPage.val());
-
-};
 // Pagination Ends
 
 REPORT = new LoginTraceReport();

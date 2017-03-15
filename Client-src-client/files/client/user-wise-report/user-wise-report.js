@@ -73,16 +73,18 @@ function PageControls() {
         dateFormat: "dd-M-yy",
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
-                var dateMin = $('.from-date').datepicker("getDate");
-                var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
-                $('.to-date').datepicker("option", "minDate", rMin);
+                var dateMax = $('.from-date').datepicker('getDate');
+                var dateMax = new Date(dateMax.getFullYear(), dateMax.getMonth()+3, dateMax.getDate()-1);
+                $('.to-date').datepicker('setDate', dateMax);
                 var event = arguments.callee.caller.caller.arguments[0];
                 if ($(event.delegateTarget).hasClass('ui-datepicker-close')) {
                     $(this).val('');
                 }
             }
             if ($(this).hasClass("to-date") == true) {
-                var dateMin = $('.to-date').datepicker("getDate");
+                var dateMin = $('.to-date').datepicker('getDate');
+                var dateMin = new Date(dateMin.getFullYear(), dateMin.getMonth()-3, dateMin.getDate()+1);
+                $('.from-date').datepicker('setDate', dateMin);
             }
         }
     });
@@ -100,8 +102,6 @@ function PageControls() {
     LegalEntityName.keyup(function(e) {
         var text_val = LegalEntityName.val().trim();
         var legalEntityList = REPORT._entities;
-        if (legalEntityList.length == 0 && text_val != '')
-            displayMessage(message.domainname_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
         commonAutoComplete(e, ACLegalEntity, LegalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
@@ -193,8 +193,6 @@ function PageControls() {
             condition_fields.push("unit_id");
             condition_values.push(unitId.val())
         }
-        if (actList.length == 0)
-            displayMessage(message.act_required);
         commonAutoComplete(e, acAct, actId, text_val, newActList, "statutory_mapping", "compliance_id", function(val) {
             onActAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
@@ -203,8 +201,6 @@ function PageControls() {
     complianceTask.keyup(function(e) {
         var text_val = complianceTask.val().trim();
         var complianceTaskList = REPORT._compliance_task;
-        if (complianceTaskList.length == 0)
-            displayMessage(message.complianceTask_required);
         var newTaskList = [];
         var u_id = userId.val();
         for(var i=0;i<complianceTaskList.length;i++){
@@ -269,7 +265,6 @@ function PageControls() {
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
-            REPORT.renderPageControls();
         }
     });
 
@@ -278,6 +273,15 @@ function PageControls() {
             csv = true;
             REPORT.exportReportValues();
         }
+    });
+
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        this._on_current_page = 1;
+        this._sno = 0;
+        createPageView(t_this._total_record);
+        csv = false;
+        REPORT.fetchReportValues();
     });
 
 }
@@ -380,7 +384,6 @@ UserWiseReport.prototype.loadSearch = function() {
     fromDate.val('');
     toDate.val('');
     complianceTaskStatus.empty();
-    this.renderPageControls();
     this.fetchSearchList();
 };
 
@@ -500,6 +503,11 @@ UserWiseReport.prototype.validate = function() {
         else if (isCommonName(country, message.country_str) == false)
             return false;
     }
+    if (countryId.val() == ""){
+        displayMessage(message.country_required);
+        country.focus();
+        return false;
+    }
     if (LegalEntityName) {
         if (isNotEmpty(LegalEntityName, message.legalentity_required) == false)
             return false;
@@ -508,12 +516,31 @@ UserWiseReport.prototype.validate = function() {
         else if (isCommonName(LegalEntityName, message.legalentity_str) == false)
             return false;
     }
+    if (LegalEntityId.val() == "") {
+        displayMessage(message.legalentity_required);
+        LegalEntityName.focus();
+        return false;
+    }
+    if (users) {
+        if (isNotEmpty(users, message.user_required) == false)
+            return false;
+        else if (isLengthMinMax(users, 0, 50, message.user_max) == false)
+            return false;
+        else if (isCommonName(users, message.user_str) == false)
+            return false;
+    }
+    if (userId.val() == ""){
+        displayMessage(message.user_required);
+        users.focus();
+        return false;
+    }
     if (domain) {
         if (isLengthMinMax(domain, 0, 50, message.domain_max) == false)
             return false;
         else if (isCommonName(domain, message.domain_str) == false)
             return false;
     }
+
     if (unit) {
         if (isLengthMinMax(unit, 0, 50, message.unit_max) == false)
             return false;
@@ -530,12 +557,6 @@ UserWiseReport.prototype.validate = function() {
         if (isLengthMinMax(complianceTask, 0, 50, message.complianceTask_max) == false)
             return false;
         else if (isCommonName(complianceTask, message.complianceTask_str) == false)
-            return false;
-    }
-    if (users) {
-        if (isLengthMinMax(users, 0, 50, message.user_max) == false)
-            return false;
-        else if (isCommonName(users, message.user_str) == false)
             return false;
     }
     if (fromDate) {
@@ -567,7 +588,7 @@ UserWiseReport.prototype.fetchReportValues = function() {
     unit_id = unitId.val();
     if (unit_id == "")
         unit_id = 0;
-    stat_map = $('#act option:selected').text();
+    stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
     compl_id = complianceTaskId.val();
@@ -576,10 +597,10 @@ UserWiseReport.prototype.fetchReportValues = function() {
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
-    u_t = $('#user-type option:selected').text();
+    u_t = $('#user-type option:selected').text().trim();
     f_date = fromDate.val();
     t_date = toDate.val();
-    c_t_s = $('#compliance-task-status option:selected').text();
+    c_t_s = $('#compliance-task-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
@@ -596,17 +617,17 @@ UserWiseReport.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._UserCompliances = response.user_compliances;
+            t_this._total_record = response.total_count;
             if (response.user_compliances.length == 0) {
-                t_this.hidePageView();
-                t_this.hidePagePan();
+                hidePageView();
+                hidePagePan();
                 //Export_btn.hide();
                 PaginationView.hide();
                 t_this.showReportValues();
             }
             else{
-                t_this._total_record = response.user_compliances.length;
                 if (t_this._sno == 0) {
-                    t_this.createPageView(t_this, t_this._total_record);
+                    createPageView(t_this._total_record);
                 }
                 //Export_btn.show();
                 PaginationView.show();
@@ -627,92 +648,163 @@ UserWiseReport.prototype.showReportValues = function() {
     var j = 1;
     reportTableTbody.find('tr').remove();
     var unitname = "";
-    var domainname = "";
+    var domainname = ""
     var actname = "";
-    var complianceTask = "";
+    var complianceHistoryId = null;
     var is_null = true;
     showFrom = t_this._sno + 1;
-    t_this._total_record = data.length;
-    $.each(data, function(k, v) {
-        console.log(data.length)
-        is_null = false;
-        $('.client-logo').attr("src", v.logo_url);
-
-        if (unitname != v.unit_name && domainname != v.domain_name) {
-            var cloneone = $('#template #report-table .row-one').clone();
-            $('.domain-name', cloneone).text("Domain : "+v.domain_name);
-            $('.unit-name', cloneone).text("Unit : "+v.unit_name);
-            reportTableTbody.append(cloneone);
-            unitname = v.unit_name;
-            domainname = v.domain_name;
-        }
-
-        if (actname != v.statutory_mapping) {
-            var clonetwo = $('#template #report-table .row-two').clone();
-            $('.act-name', clonetwo).text(v.statutory_mapping);
-            reportTableTbody.append(clonetwo);
-            actname = v.statutory_mapping;
-        }
-
-        if (complianceTask != v.compliance_task) {
-            var clonethree = $('#template #report-table .row-three').clone();
-            t_this._sno += 1;
-            $('.sno', clonethree).text(t_this._sno);
-            $('.compliance-task', clonethree).text(v.compliance_task);
-            $('.frequency', clonethree).text(v.frequency_name);
-            $('.due-date', clonethree).text(v.due_date);
-            $('.compliance-task-status', clonethree).text(v.task_status);
-            $('.user-name', clonethree).html(v.assignee_name);
-            $('.user-name', clonethree).addClass("-"+v.compliance_id);
-            $('.user-name', clonethree).on('click', function() { tree_open_close(this); });
-            $('.activity-status', clonethree).text(v.activity_status);
-            if (v.activity_date != "")
-                $('.activity-date', clonethree).text(v.activity_date);
-            else
-                $('.activity-date', clonethree).text('-');
-            if (v.document_name.length > 0) {
-                //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                $('.uploaded-document', clonethree).html(v.document_name);
-                $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
-                $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
-
-            } else {
-                $('.uploaded-document', clonethree).text('-');
+    unit_names = [];
+    act_names = [];
+    domain_names = [];
+    for (var i=0;i<data.length;i++){
+        var occur = -1;
+        for(var j=0;j<unit_names.length;j++){
+            if(data[i].unit_id == unit_names[j]){
+                occur = 1;
+                break;
             }
-
-            if (v.completion_date != "")
-                $('.completion-date', clonethree).text(v.completion_date);
-            else
-                $('.completion-date', clonethree).text('-');
-            reportTableTbody.append(clonethree);
-            j = j + 1;
-            complianceTask = v.compliance_task;
-        } else {
-            var clonefour = $('#template #report-table .row-four').clone();
-            $('.user-name-new', clonefour).text(v.assignee_name);
-            $('.activity-status-new', clonefour).text(v.activity_status);
-            if (v.activity_date != "")
-                $('.activity-date-new', clonefour).text(v.activity_date);
-            else
-                $('.activity-date-new', clonefour).text('-');
-            if (v.document_name.length > 0) {
-                //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
-                $('.uploaded-document', clonethree).html(v.document_name);
-                $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
-                $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
-            } else {
-                $('.uploaded-document', clonethree).text('-');
-            }
-
-            if (v.completion_date != "")
-                $('.completion-date-new', clonefour).text(v.completion_date);
-            else
-                $('.completion-date-new', clonefour).text('-');
-            reportTableTbody.append(clonefour);
-            j = j + 1;
-            complianceTask = v.compliance_task;
         }
-    });
+        if(occur < 0){
+            unit_names.push(data[i].unit_id);
+        }
+    }
+    for (var i=0;i<data.length;i++){
+        var occur = -1;
+        for(var j=0;j<domain_names.length;j++){
+            if(data[i].domain_id == domain_names[j]){
+                occur = 1;
+                break;
+            }
+        }
+        if(occur < 0){
+            domain_names.push(data[i].domain_id);
+        }
+    }
+    for (var i=0;i<data.length;i++){
+        var occur = -1;
+        for(var j=0;j<act_names.length;j++){
+            if(data[i].statutory_mapping == act_names[j]){
+                occur = 1;
+                break;
+            }
+        }
+        if(occur < 0){
+            act_names.push(data[i].statutory_mapping);
+        }
+    }
+    console.log(unit_names);
+    console.log(domain_names);
+    console.log(act_names);
+    var u_count = 1;
+    var d_count = 1;
+    var sub_cnt = 0;
+    for(var i=0;i<unit_names.length;i++){
+        u_count = 1;
+        domainname = ""
+        for(var d=0;d<domain_names.length;d++){
+            d_count = 1;
+            domainname = domain_names[d];
+            var actname = "";
+            for (var sm=0;sm<act_names.length;sm++){
+                s_count = 1;
+                actname = act_names[sm];
+                $.each(data, function(k, v) {
+                    console.log("A:"+unit_names[i], domainname, actname, complianceHistoryId)
+                    is_null = false;
+                    $('.client-logo').attr("src", v.logo_url);
+                    if(v.unit_id == unit_names[i] && domainname == v.domain_id){
+                        if (u_count == 1){
+                            var cloneone = $('#template #report-table .row-one').clone();
+                            $('.domain-name', cloneone).text("Domain : "+v.domain_name);
+                            $('.unit-name', cloneone).text("Unit : "+v.unit_name);
+                            reportTableTbody.append(cloneone);
+                            unitname = v.unit_id;
+                            domainname = v.domain_id;
+                            u_count = u_count + 1;
+                        }
+
+                        if (actname == v.statutory_mapping) {
+                            if(s_count == 1){
+                                var clonetwo = $('#template #report-table .row-two').clone();
+                                $('.act-name', clonetwo).text(v.statutory_mapping);
+                                reportTableTbody.append(clonetwo);
+                                actname = v.statutory_mapping;
+                                s_count = s_count + 1;
+                            }
+
+                            if (complianceHistoryId != v.compliance_history_id){
+                                console.log("1:"+unit_names[i], domainname, actname, complianceHistoryId)
+                                var clonethree = $('#template #report-table .row-three').clone();
+                                t_this._sno += 1;
+                                $('.sno', clonethree).text(t_this._sno);
+                                $('.compliance-task', clonethree).text(v.compliance_task);
+                                $('.frequency', clonethree).text(v.frequency_name);
+                                $('.due-date', clonethree).text(v.due_date);
+                                $('.compliance-task-status', clonethree).text(v.task_status);
+                                $('.user-name', clonethree).html(v.assignee_name);
+                                // $('.user-name', clonethree).addClass("-"+v.compliance_id);
+                                // $('.user-name', clonethree).on('click', function() { tree_open_close(this); });
+                                $('.activity-status', clonethree).text(v.activity_status);
+                                if (v.activity_date != "")
+                                    $('.activity-date', clonethree).text(v.activity_date);
+                                else
+                                    $('.activity-date', clonethree).text('-');
+                                if (v.document_name.length > 0) {
+                                    //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
+                                    $('.uploaded-document', clonethree).html(v.document_name);
+                                    $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
+                                    $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
+
+                                } else {
+                                    $('.uploaded-document', clonethree).text('-');
+                                }
+
+                                if (v.completion_date != "")
+                                    $('.completion-date', clonethree).text(v.completion_date);
+                                else
+                                    $('.completion-date', clonethree).text('-');
+                                $(clonethree).on('click', function(e) {
+                                    treeShowHide(e, "tree" + v.compliance_history_id);
+                                });
+                                $(clonethree).attr("id", "tree" + v.compliance_history_id);
+                                reportTableTbody.append(clonethree);
+                                j = j + 1;
+                                complianceHistoryId = v.compliance_history_id;
+                            }
+                            else {
+                                console.log("2:"+unit_names[i], domainname, actname, complianceHistoryId)
+                                var clonefour = $('#template #report-table .row-four').clone();
+                                $(clonefour).addClass("tree" + v.compliance_id);
+                                $('.user-name-new', clonefour).text(v.assignee_name);
+                                $('.activity-status-new', clonefour).text(v.activity_status);
+                                if (v.activity_date != "")
+                                    $('.activity-date-new', clonefour).text(v.activity_date);
+                                else
+                                    $('.activity-date-new', clonefour).text('-');
+                                if (v.document_name.length > 0) {
+                                    //$('.uploaded-document a', clonethree).text(v.documents).attr("href", v.url);
+                                    $('.uploaded-document', clonethree).html(v.document_name);
+                                    $('.uploaded-document', clonethree).addClass("-"+v.compliance_id);
+                                    $('.uploaded-document', clonethree).on('click', function() { download_url(v.url); });
+                                } else {
+                                    $('.uploaded-document', clonethree).text('-');
+                                }
+
+                                if (v.completion_date != "")
+                                    $('.completion-date-new', clonefour).text(v.completion_date);
+                                else
+                                    $('.completion-date-new', clonefour).text('-');
+                                reportTableTbody.append(clonefour);
+                                j = j + 1;
+                                sub_cnt = sub_cnt + 1;
+                                complianceHistoryId = v.compliance_history_id;
+                            }
+                        } //act checking
+                    } // unit & domain checking
+                }); // data loop
+            } // act loop
+        } // domain loop
+    } // unit loop
 
     if (is_null == true) {
         //a_page.hidePagePan();
@@ -723,15 +815,19 @@ UserWiseReport.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        t_this.showPagePan(showFrom, t_this._sno, t_this._total_record);
+        //t_this._total_record = t_this._total_record - sub_cnt;
+        showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
 
-function tree_open_close(e) {
-    var len = e.className.split("-").length;
-    id = e.className.split("-")[len-1];
-    $('.tree' + id).toggle("slow");
-}
+treeShowHide = function(e, tree) {
+    if ($('.' + tree)) {
+        if ($('.' + tree).is(":visible") == true)
+            $('.' + tree).hide();
+        else
+            $('.' + tree).show();
+    }
+};
 
 function download_url(doc_url) {
     if(doc_url != null){
@@ -750,7 +846,7 @@ UserWiseReport.prototype.exportReportValues = function() {
     unit_id = unitId.val();
     if (unit_id == "")
         unit_id = 0;
-    stat_map = $('#act option:selected').text();
+    stat_map = act.val();
     if (stat_map == "")
         stat_map = null;
     compl_id = complianceTaskId.val();
@@ -759,10 +855,10 @@ UserWiseReport.prototype.exportReportValues = function() {
     c_f_id = complianceFrequency.val();
     if (c_f_id == "")
         c_f_id = 0;
-    u_t = $('#user-type option:selected').text();
+    u_t = $('#user-type option:selected').text().trim();
     f_date = fromDate.val();
     t_date = toDate.val();
-    c_t_s = $('#compliance-task-status option:selected').text();
+    c_t_s = $('#compliance-task-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
@@ -797,50 +893,40 @@ UserWiseReport.prototype.possibleFailures = function(error) {
 };
 
 // Pagination Functions - begins
-UserWiseReport.prototype.hidePageView = function() {
+
+hidePageView = function() {
     $('#pagination-rpt').empty();
     $('#pagination-rpt').removeData('twbs-pagination');
     $('#pagination-rpt').unbind('page');
 };
 
-UserWiseReport.prototype.createPageView = function(a_obj, total_records) {
+createPageView = function(total_records) {
     perPage = parseInt(ItemsPerPage.val());
-    a_obj.hidePageView();
+    hidePageView();
 
     $('#pagination-rpt').twbsPagination({
         totalPages: Math.ceil(total_records/perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            if (parseInt(a_obj._on_current_page) != cPage) {
-                a_obj._on_current_page = cPage;
-                a_obj.fetchReportValues();
+            console.log(cPage, REPORT._on_current_page)
+            if (parseInt(REPORT._on_current_page) != cPage) {
+                REPORT._on_current_page = cPage;
+                REPORT.fetchReportValues();
             }
         }
     });
 };
-UserWiseReport.prototype.showPagePan = function(showFrom, showTo, total) {
+showPagePan = function(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
     $('.compliance_count').text(showText);
     $('.pagination-view').show();
 };
-UserWiseReport.prototype.hidePagePan = function() {
+hidePagePan = function() {
     $('.compliance_count').text('');
     $('.pagination-view').hide();
 }
 
-UserWiseReport.prototype.renderPageControls = function(e) {
-    var t_this = this;
-    ItemsPerPage.on('change', function(e) {
-        t_this.perPage = parseInt($(this).val());
-        t_this._sno = 0;
-        t_this._on_current_page = 1;
-        t_this.createPageView(t_this, t_this._total_record);
-        t_this.fetchReportValues();
-    });
-    t_this._perPage = parseInt(ItemsPerPage.val());
-
-};
 // Pagination Ends
 
 REPORT = new UserWiseReport();

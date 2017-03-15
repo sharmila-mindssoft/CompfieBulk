@@ -110,6 +110,8 @@ function initClientMirror() {
         return info.entity_info;
     }
 
+
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -186,6 +188,21 @@ function initClientMirror() {
         window.location.href = login_url;
     }
 
+    function getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+    }
+
+    function makekey()
+    {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for( var i=0; i < 5; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+    }
+
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -196,16 +213,17 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        //alert(body.toSource());
+        actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
-            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             contentType: 'application/json',
-            data: toJSON(body),
+            data: makekey() + btoa(actula_data),
             success: function(data) {
                 //console.log(data);
-                var data = parseJSON(data);
+                data = atob(data.substring(5));
+                data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -225,25 +243,31 @@ function initClientMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if (errorThrown == 'Not Found') {
-                    // alert('Server connection not found');
-                    redirect_login();
-                } else {
-                    callback(jqXHR.responseText, errorThrown);
-                }
+                rdata = parseJSON(jqXHR.responseText);
+                rdata = atob(rdata.substring(5));
+                callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
+                // if (errorThrown == 'Not Found') {
+                //     // alert('Server connection not found');
+                //     redirect_login();
+                // } else {
+                //     callback(jqXHR.responseText, errorThrown);
+                // }
             }
         });
     }
 
     function LoginApiRequest(callerName, request, callback) {
+        actula_data = toJSON(request);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
 
             type: 'POST',
             contentType: 'application/json',
-            data: toJSON(request),
+            data: makekey() + btoa(actula_data),
             success: function(data) {
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
+                data = atob(data.substring(5));
+                data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -255,7 +279,9 @@ function initClientMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                callback(jqXHR.responseText, null);
+                rdata = parseJSON(jqXHR.responseText);
+                rdata = atob(rdata.substring(5));
+                callback(rdata, null);
             }
         });
     }
@@ -759,12 +785,13 @@ function initClientMirror() {
             },
 
             url: CLIENT_BASE_URL + 'client_user',
-            // headers: {'X-Xsrftoken': getCookie('_xsrf')},
+            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             contentType: 'application/json',
-            data: toJSON(body),
+            data: makekey() + btoa(toJSON(body)),
             success: function(data) {
-                var data = parseJSON(data);
+                data = atob(data.substring(5));
+                data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -784,12 +811,9 @@ function initClientMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if (errorThrown == 'Not Found') {
-                    // alert('Server connection not found');
-                    redirect_login();
-                } else {
-                    callback(jqXHR.responseText, errorThrown);
-                }
+                rdata = parseJSON(jqXHR.responseText);
+                rdata = atob(rdata.substring(5));
+                callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
             }
         });
     }
@@ -1198,6 +1222,28 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function complianceFilters(le_id, callback) {
+        var request = [
+            'ComplianceFilters', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_user';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function onOccurrenceLastTransaction(le_id, compliance_id, unit_id, callback) {
+        var request = [
+            'OnOccurrenceLastTransaction', {
+                'le_id': le_id,
+                'compliance_id': compliance_id,
+                'unit_id': unit_id
+            }
+        ];
+        callerName = 'client_user';
+        clientApiRequest(callerName, request, callback);
+    }
+
     function exportToCSV(jsonResponse, callback) {
         var request = [
             'ExportToCSV',
@@ -1344,23 +1390,25 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeServiceProviderStatus(sId, active, callback) {
+    function changeServiceProviderStatus(sId, active, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeServiceProviderStatus', {
                 'sp_id': sId,
-                'active': active
+                'active_status': active,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
 
-    function blockServiceProvider(sId, block, callback) {
+    function blockServiceProvider(sId, block, password, callback) {
         callerName = 'client_masters';
         var request = [
             'BlockServiceProvider', {
                 'sp_id': sId,
-                'is_blocked': block
+                'is_blocked': block,
+                "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -1691,15 +1739,14 @@ function initClientMirror() {
         clientApiRequest('client_transaction', request, callback);
     }
 
-    function getStatutoriesByUnit(legalEntityId, unit_id, domain_id, level_1_statutory_name, compliance_frequency, country_id, start_count, callback) {
+    function getStatutoriesByUnit(legalEntityId, unit_id, domain_id, level_1_statutory_name, compliance_frequency, start_count, callback) {
         var request = [
             'GetStatutoriesByUnit', {
                 'le_id': legalEntityId,
                 'unit_id': unit_id,
                 'domain_id': domain_id,
                 'level_1_statutory_name': level_1_statutory_name,
-                'compliance_frequency': compliance_frequency,
-                'country_id': country_id,
+                'compliance_task_frequency': compliance_frequency,
                 'start_count': start_count
             }
         ];
@@ -1892,7 +1939,7 @@ function initClientMirror() {
             processData: false,
             contentType: false,
             success: function(data, textStatus, jqXHR) {
-                var data = parseJSON(data);
+                // var data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 if (Object.keys(response).length == 0)
@@ -2610,7 +2657,144 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function getSettingsFormDetails(le_id, callback) {
+        var request = [
+            'GetSettingsFormDetails', {
+                'le_id': le_id
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
 
+    function saveSettingsFormDetails(le_id, le_name, app_opt, ass_rem, esc_rem_adv, esc_rem, reassign_sp, callback) {
+        var request = [
+            'SaveSettingsFormDetails', {
+                'le_id': le_id,
+                'legal_entity_name': le_name,
+                'two_level_approve': app_opt,
+                'assignee_reminder': ass_rem,
+                'advance_escalation_reminder': esc_rem_adv,
+                'escalation_reminder': esc_rem,
+                'reassign_sp': reassign_sp
+            }
+        ];
+        callerName = 'client_masters';
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function DownloadApiRequest(request) {
+        var sessionToken = getSessionToken();
+        var requestFrame = {
+            'session_token': sessionToken,
+            'request': request
+        };
+        var body = [
+            sessionToken,
+            requestFrame
+        ];
+
+        var saveData = (function() {
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none";
+            return function(data, fileName) {
+                url = 'data:application/octet-stream;base64,' + data;
+                a.href = url;
+                a.download = fileName;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            };
+        }());
+
+        $.ajax({
+            xhr: function() {
+                var xhr = new window.XMLHttpRequest();
+
+                xhr.onreadystatechange = function() {
+                    // alert(this.status);
+                    if (this.readyState == 4 && this.status == 200) {
+                        var data = this.response;
+                        // data = atob(data);
+                        var fileName = this.getResponseHeader('filename');
+                        saveData(data, fileName);
+                    }
+                }
+                return xhr;
+            },
+            url: '/api/files',
+            headers: { 'X-Xsrftoken': getCookie('_xsrf') },
+            type: 'POST',
+            crossDomain: true,
+            data: toJSON(body),
+            processData: false,
+            contentType: false,
+
+        });
+    }
+
+    function downloadTaskFile() {
+        var request = [
+            "DownloadFile",
+            {
+                "le_id": 10,
+                "c_id": 1,
+                "d_id": 1,
+                "u_id": 12,
+                "start_date": "22-Feb-2017",
+                // "file_name": "images.jpeg"
+                // "file_name": "test.txt"
+                // "file_name": "img-png.png",
+                // "file_name": "Compfie_Phase II_Development_Days_version 1.1.xls",
+                // "file_name": "ComplianceDetails-08-Apr-2016.zip",
+                // "file_name": "download.jpg",
+                // "file_name": "O'Reilly - Introduction to Tornado - 2012.pdf",
+                "file_name": "Process Diagram Version 3.0.pptx",
+            }
+        ];
+        DownloadApiRequest(request);
+    }
+
+    function ConvertToCSV(objArray) {
+        var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+        // var lblarray = typeof lblsArray != 'object' ? JSON.parse(lblsArray) : lblsArray;
+
+        var str = '';
+
+        function makecsv(objContent) {
+            for (var i = 0; i < objContent.length; i++) {
+                var line = '';
+                for (var index in objContent[i]) {
+                    if (line != '') line += ','
+
+                    line += objContent[i][index];
+                }
+                str += line + '\r\n';
+            }
+            return str;
+        }
+        // str += makecsv(lblarray);
+        str += makecsv(array);
+
+        console.log(str);
+        return str;
+    }
+
+    function exportJsontoCsv(data, fileName) {
+
+        var jsonObject = JSON.stringify(data);
+
+        csv_data = ConvertToCSV(jsonObject);
+        csv_data = btoa(csv_data);
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.style = "display: none";
+        url = 'data:application/octet-stream;base64,' + csv_data;
+        a["href"] = url;
+        a.download = fileName + ".csv";
+        a.click();
+        window.URL.revokeObjectURL(url);
+    }
 
     return {
         log: log,
@@ -2804,7 +2988,15 @@ function initClientMirror() {
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
+        getLEids:getLEids,
         getUserManagement_List: getUserManagement_List,
+        getSettingsFormDetails: getSettingsFormDetails,
+        saveSettingsFormDetails: saveSettingsFormDetails,
+        blockServiceProvider: blockServiceProvider,
+        downloadTaskFile: downloadTaskFile,
+        complianceFilters: complianceFilters,
+        exportJsontoCsv: exportJsontoCsv,
+        onOccurrenceLastTransaction: onOccurrenceLastTransaction
     };
 }
 

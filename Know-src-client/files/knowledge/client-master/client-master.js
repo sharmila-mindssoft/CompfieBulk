@@ -578,8 +578,11 @@ function saveClient() {
                 }
                 var inner_is_valid = false;
                 var domain_ids = [];
+                console.log("domain_count--"+domain_count);
                 for (var j = 1; j <= domain_count; j++) {
-
+                    console.log("o++"+organization_details.toSource());
+                    console.log("i++"+organization_details[i].toSource());
+                    console.log("j++"+organization_details[i][j].length+"--"+j);
                     var domain_id = $(".domain-" + i + "-" + j + " option:selected").val();                    
                     if(domain_id){
                         var activationdate = $(".activationdate-" + i + "-" + j).val();
@@ -983,6 +986,7 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
     $(".add-domain").hide();
     $('.' + domain_list_class).empty();
     $("." + domain_count_class).val(0);
+    organization_details[le_count] = {};
     for (var i = 1; i <= domain_details.length; i++) {
         var domain_class = "domain-" + le_count + "-" + i
         addDomain(domain_list_class, domain_count_class, le_count)
@@ -990,10 +994,10 @@ function showNonEditableEntityDetails(le_count, value, domain_details, push_in_a
             $("." + domain_class), value.domain_details[i - 1].d_id,
             domain_name_map[value.domain_details[i - 1].d_id]
         );
-        orgs = value.domain_details[i - 1].org
-        organization_details[le_count] = {}
-        organization_details[le_count][i] = orgs
-        organization_text = ""
+        orgs = value.domain_details[i - 1].org;     
+        organization_details[le_count][i] = orgs;
+         
+        organization_text = "";
         $.each(orgs, function(key, value) {
             organization_text += industry_name_map[key] + " - " + value + " Units\n <br />";
         });

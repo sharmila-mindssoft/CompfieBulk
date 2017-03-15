@@ -6,7 +6,7 @@
 DROP TRIGGER IF EXISTS `after_tbl_client_groups_update`;
 
 DELIMITER //
-CREATE TRIGGER `after_tbl_client_groups_update` AFTER INSERT ON `tbl_client_groups`
+CREATE TRIGGER `after_tbl_client_groups_update` AFTER UPDATE ON `tbl_client_groups`
  FOR EACH ROW BEGIN
    SET @action = 1;
    SET @save = 0;
@@ -146,7 +146,7 @@ CREATE TRIGGER `after_tbl_client_configuration_insert` AFTER INSERT ON `tbl_clie
         select @action, NEW.client_id, 0, cn_config_id, 'month_from' col_name, month_from value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
         union all
-        select @action, NEW.client_id, 0, cn_config_id, 'month_to' col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
+        select @action, NEW.client_id, 0, cn_config_id, 'month_to' col_name, month_to value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
 
         order by cn_config_id, col_name;
@@ -408,7 +408,7 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
         select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'month_from' col_name, month_from value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
         union all
-        select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'month_to' col_name, client_id value, 'tbl_client_configuration' from tbl_client_configuration
+        select @action, NEW.client_id, NEW.legal_entity_id, cn_config_id, 'month_to' col_name, month_to value, 'tbl_client_configuration' from tbl_client_configuration
         where client_id = NEW.client_id
 
         order by cn_config_id, col_name;
@@ -1562,6 +1562,37 @@ DELIMITER ;
 -- Trigger after_tbl_countries_update
 --
 
+
+DROP TRIGGER IF EXISTS `after_tbl_countries_insert`;
+DELIMITER //
+CREATE TRIGGER `after_tbl_countries_insert` AFTER INSERT ON `tbl_countries`
+ FOR EACH ROW BEGIN
+   SET @action = 0;
+
+   INSERT INTO tbl_audit_log(action,
+                            client_id,
+                            legal_entity_id,
+                            tbl_auto_id,
+                            column_name,
+                            value,
+                            tbl_name)
+        VALUES (@action,
+                0, 0,
+                NEW.country_id,
+                'country_name',
+                NEW.country_name,
+                "tbl_countries"
+                );
+
+    UPDATE tbl_client_replication_status set is_new_data = 1 where
+    client_id in (select distinct legal_entity_id from tbl_legal_entities where country_id = NEW.country_id) or
+    client_id in (select distinct client_id from tbl_legal_entities where country_id = NEW.country_id);
+
+END
+//
+DELIMITER ;
+
+
 DROP TRIGGER IF EXISTS `after_tbl_countries_update`;
 DELIMITER //
 CREATE TRIGGER `after_tbl_countries_update` AFTER UPDATE ON `tbl_countries`
@@ -1585,7 +1616,9 @@ CREATE TRIGGER `after_tbl_countries_update` AFTER UPDATE ON `tbl_countries`
                 );
     END IF;
     UPDATE tbl_client_replication_status set is_new_data = 1 where
-    client_id in (select distinct legal_entity_id from tbl_legal_entities where country_id = NEW.country_id);
+    client_id in (select distinct legal_entity_id from tbl_legal_entities where country_id = NEW.country_id) or
+    client_id in (select distinct client_id from tbl_legal_entities where country_id = NEW.country_id);
+
 END
 //
 DELIMITER ;

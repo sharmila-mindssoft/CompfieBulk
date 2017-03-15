@@ -206,7 +206,7 @@ CREATE TABLE `tbl_service_providers` (
 CREATE TABLE `tbl_users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_category_id` int(11) NOT NULL,
-  `client_id` int(11) DEFAULT NULL,
+  `client_id` int(11) NOT NULL,
   `seating_unit_id` int(11) DEFAULT NULL,
   `service_provider_id` int(11) DEFAULT NULL,
   `user_level` int(11) DEFAULT NULL,
@@ -388,7 +388,7 @@ INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 31, n
 INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 32, null);
 INSERT INTO tbl_forms VALUES(33, 4, 'Themes', "/themes", 33, null);
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
-INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-details", 35, null);
+INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-task-details", 35, null);
 INSERT INTO tbl_forms VALUES(36, 4, 'Reminders', "/reminders", 36, null);
 INSERT INTO tbl_forms VALUES(37, 4, 'Statutory Notifications', "/statutory-notifications", 37, null);
 INSERT INTO tbl_forms VALUES(38, 4, 'Escalations', "/escalations", 38, null);

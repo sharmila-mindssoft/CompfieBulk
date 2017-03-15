@@ -58,7 +58,6 @@ function PageControls() {
             reportView.show();
             showAnimation(reportView);
             REPORT.fetchReportValues();
-            REPORT.renderPageControls();
         }
     });
 
@@ -67,6 +66,15 @@ function PageControls() {
             csv = true;
             REPORT.exportReportValues();
         }
+    });
+
+    ItemsPerPage.on('change', function(e) {
+        perPage = parseInt($(this).val());
+        this._on_current_page = 1;
+        this._sno = 0;
+        createPageView(t_this._total_record);
+        csv = false;
+        REPORT.fetchReportValues();
     });
 
 }
@@ -111,7 +119,6 @@ ServiceProviderDetails.prototype.loadSearch = function() {
     users.val('');
     userId.val('');
     ServiceProviderStatus.empty();
-    this.renderPageControls();
     this.fetchSearchList();
 };
 
@@ -172,7 +179,7 @@ ServiceProviderDetails.prototype.fetchReportValues = function() {
     user_id = userId.val();
     if (user_id == "")
         user_id = 0;
-    sp_s = $('#sp-status option:selected').text();
+    sp_s = $('#sp-status option:selected').text().trim();
 
     _page_limit = parseInt(ItemsPerPage.val());
     if (this._on_current_page == 1) {
@@ -188,17 +195,18 @@ ServiceProviderDetails.prototype.fetchReportValues = function() {
         console.log(error, response)
         if (error == null) {
             t_this._ServiceProviderUsers = response.sp_details_list;
+            t_this._total_record = response.total_count;
             if (response.sp_details_list.length == 0) {
-                t_this.hidePageView();
-                t_this.hidePagePan();
+                hidePageView();
+                hidePagePan();
                 //Export_btn.hide();
                 PaginationView.hide();
                 t_this.showReportValues();
             }
             else{
-                t_this._total_record = response.sp_details_list.length;
+
                 if (t_this._sno == 0) {
-                    t_this.createPageView(t_this, t_this._total_record);
+                    createPageView(t_this._total_record);
                 }
                 //Export_btn.show();
                 PaginationView.show();
@@ -217,7 +225,6 @@ ServiceProviderDetails.prototype.showReportValues = function() {
     var spid = "";
     var is_null = true;
     showFrom = t_this._sno + 1;
-    t_this._total_record = data.length;
     $.each(data, function(k, v) {
         console.log(data.length)
         is_null = false;
@@ -267,64 +274,52 @@ ServiceProviderDetails.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        t_this.showPagePan(showFrom, t_this._sno, t_this._total_record);
+        showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
 
 ServiceProviderDetails.prototype.possibleFailures = function(error) {
     t_this = this;
     if (error == 'DomainNameAlreadyExists') {
-        t_this.displayMessage("Domain name exists");
+        displayMessage("Domain name exists");
     } else {
-        t_this.displayMessage(error);
+        displayMessage(error);
     }
 };
 
 // Pagination Functions - begins
-ServiceProviderDetails.prototype.hidePageView = function() {
+hidePageView = function() {
     $('#pagination-rpt').empty();
     $('#pagination-rpt').removeData('twbs-pagination');
     $('#pagination-rpt').unbind('page');
 };
 
-ServiceProviderDetails.prototype.createPageView = function(a_obj, total_records) {
+createPageView = function(total_records) {
     perPage = parseInt(ItemsPerPage.val());
-    a_obj.hidePageView();
+    hidePageView();
 
     $('#pagination-rpt').twbsPagination({
         totalPages: Math.ceil(total_records/perPage),
         visiblePages: visiblePageCount,
         onPageClick: function(event, page) {
             cPage = parseInt(page);
-            if (parseInt(a_obj._on_current_page) != cPage) {
-                a_obj._on_current_page = cPage;
-                a_obj.fetchReportValues();
+            console.log(cPage, REPORT._on_current_page)
+            if (parseInt(REPORT._on_current_page) != cPage) {
+                REPORT._on_current_page = cPage;
+                REPORT.fetchReportValues();
             }
         }
     });
 };
-ServiceProviderDetails.prototype.showPagePan = function(showFrom, showTo, total) {
+showPagePan = function(showFrom, showTo, total) {
     var showText = 'Showing ' + showFrom + ' to ' + showTo +  ' of ' + total + ' entries ';
     $('.compliance_count').text(showText);
     $('.pagination-view').show();
 };
-ServiceProviderDetails.prototype.hidePagePan = function() {
+hidePagePan = function() {
     $('.compliance_count').text('');
     $('.pagination-view').hide();
 }
-
-ServiceProviderDetails.prototype.renderPageControls = function(e) {
-    var t_this = this;
-    ItemsPerPage.on('change', function(e) {
-        t_this.perPage = parseInt($(this).val());
-        t_this._sno = 0;
-        t_this._on_current_page = 1;
-        t_this.createPageView(t_this, t_this._total_record);
-        t_this.fetchReportValues();
-    });
-    t_this._perPage = parseInt(ItemsPerPage.val());
-
-};
 // Pagination Ends
 
 REPORT = new ServiceProviderDetails();

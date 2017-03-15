@@ -116,7 +116,7 @@ class AutoStart(Database):
             " t1.assignee, t1.concurrence_person, t1.approval_person, " + \
             " t1.compliance_id " + \
             " from tbl_assign_compliances t1 " + \
-            " INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id " + \
+            " INNER JOIN tbl_units t3 on t1.unit_id = t3.unit_id and t3.is_closed = 0 " + \
             " INNER JOIN tbl_compliances t2 on t1.compliance_id = t2.compliance_id " + \
             " LEFT JOIN tbl_compliance_history t4 ON (t4.unit_id = t1.unit_id " + \
             "     AND t4.compliance_id = t1.compliance_id AND t2.frequency_id = 1)" + \
@@ -285,10 +285,48 @@ class AutoStart(Database):
         else :
             return None
 
+    def is_this_first_task_of_year(self, unit_id, country_id, domain_id, compliance_id):
+        q = "select month_from, month_to from tbl_client_configuration where country_id = %s and domain_id = %s"
+        c_row = self.select_one(q, [country_id, domain_id])
+        years = []
+        if c_row["month_from"] == 1 and c_row["month_to"] == 12 :
+            years = [getCurrentYear(), 1, getCurrentYear(), 2]
+        else :
+            years = [getCurrentYear(), c_row["month_from"], getCurrentYear()+1, c_row["month_to"]]
+
+        q1 = "select count(0) comp_count from tbl_compliance_history where unit_id = %s and compliance_id = %s " + \
+            " and due_date >= date(concat_ws('-',%s,%s,1))  " + \
+            " and due_date <= last_day(date(concat_ws('-',%s,%s,1))) "
+        param = [unit_id, compliance_id]
+        param.extend(years)
+        rows = self.select_one(q1, param)
+        if rows :
+            cnt = rows["comp_count"]
+        else :
+            cnt = 0
+
+        statutory_date = None
+        repeats_every = None
+        repeats_type_id = None
+        if cnt > 0 :
+            q1 = "select repeats_type_id, repeats_every, statutory_date, trigger_before_days, due_date from tbl_compliance_dates where " + \
+                "compliance_id = %s and unit_id = %s "
+            d_rows = self.select_one(q1, [compliance_id, unit_id])
+            if d_rows :
+                statutory_date = d_rows["repeats_type_id"]
+                repeats_every = d_rows["repeats_every"]
+                repeats_type_id = d_rows["statutory_date"]
+                due_date = d_rows["due_date"]
+                trigger_days = d_rows["trigger_before_days"]
+                if statutory_date is not None :
+                    qq = "update tbl_assign_compliances set statutory_dates = %s, trigger_before_days = %s, due_date = %s, " + \
+                        " where compliance_id = %s and unit_id = %s"
+                    self.execute(qq, [statutory_date, trigger_days, due_date, compliance_id, unit_id])
+
+        return cnt, statutory_date, repeats_every, repeats_type_id
+
     def start_new_task(self):
         def notify(d, due_date, next_due_date, approval_person, trigger_before):
-            print d
-            print "\n"
             start_date = self.actual_start_date(due_date, trigger_before)
 
             compliance_history_id = self.save_in_compliance_history(
@@ -360,6 +398,10 @@ class AutoStart(Database):
                         # compliance history id is false so continue further
                         continue
                 else:
+                    if d["frequency_id"] in [3, 4] :
+                        cnt, statutory_date, repeats_every, repeats_type_id = self.is_this_first_task_of_year(d["unit_id"], d["country_id"], d["domain_id"], d["compliance_id"])
+                        if cnt == 0 :
+                            continue
                     next_due_date = trigger_before = None
                     due_date = d["due_date"]
                     next_due_date, trigger_before = start_next_due_date_task(d, due_date, approval_person)
@@ -392,20 +434,27 @@ class AutoStart(Database):
             logProcessError("check_service_provider_contract_period %s" % self.client_id, str(e))
 
     def get_year_to_update_chart(self):
-        q = "select chart_year from tbl_compliance_status_chart_unitwise where inprogress_count > 0"
+        q = "select distinct t1.country_id, t1.domain_id, t1.chart_year, t1.month_from, t1.month_to from tbl_compliance_status_chart_unitwise as t1" + \
+            " inner join tbl_client_configuration as t2 on t1.country_id = t2.country_id and t1.domain_id = t2.domain_id " + \
+            " and t1.month_from = t2.month_from and t1.month_to = t2.month_to " + \
+            " where t1.inprogress_count > 0 or t1.overdue_count > 0"
         rows = self.select_all(q)
         years = []
         for r in rows :
             years.append(r["chart_year"])
         return years
 
+    def get_client_date_configuration(self):
+        q = "select country_id, domain_id, month_from, month_to from tbl_client_configuration "
+        rows = self.select_all(q)
+        return rows
+
     def update_unit_wise_task_status(self):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
+        dat_conf = self.get_client_date_configuration()
         year = self.get_year_to_update_chart()
-        year.append(getCurrentYear())
-        years = ",".join([str(x) for x in year])
-
-        q_delete = "delete from tbl_compliance_status_chart_unitwise where find_in_set(chart_year, %s)"
+        if getCurrentYear() not in year :
+            year.append(getCurrentYear())
 
         q = "insert into tbl_compliance_status_chart_unitwise( " + \
             "     legal_entity_id, country_id, domain_id, unit_id,  " + \
@@ -415,34 +464,49 @@ class AutoStart(Database):
             " ch.unit_id,ccf.month_from,ccf.month_to, %s, " + \
             " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
             " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
-            " sum(IF(com.frequency_id = 5,IF(ch.due_date <= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+            " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
             " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
             " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
             " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
             " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
             " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
-            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id " + \
+            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
             " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id  " + \
             " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id and ccf.domain_id = com.domain_id " + \
             " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
             " where ch.due_date >= date(concat_ws('-',%s,ccf.month_from,1))  " + \
             " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
-            " group by ccf.country_id,ccf.domain_id,ccf.month_from,ccf.month_to,ch.unit_id"
+            " and ccf.country_id = %s and ccf.domain_id = %s " + \
+            " group by ccf.country_id,ccf.domain_id,ccf.month_from,ccf.month_to,ch.unit_id " + \
+            " on duplicate key update complied_count = values(complied_count), " + \
+            " delayed_count = values(delayed_count), inprogress_count = values(inprogress_count), " + \
+            " overdue_count = values(overdue_count) "
 
-        if len(self.started_unit_id) > 0 :
-            self.execute(q_delete, [years])
-            for y in year :
-                self.execute(q, [y, y, y])
+        # self.execute(q_delete, [years])
+        for y in year :
+            for d in dat_conf :
+                c_id = d["country_id"]
+                d_id = d["domain_id"]
+
+                from_year = y
+                if d["month_from"] == 1 and d["month_to"] == 12 :
+                    to_year = y
+                else :
+                    to_year = y+1
+                self.execute(q, [y, from_year, to_year, c_id, d_id])
+                # if c_id == y["country_id"] and d_id == y["domain_id"] :
+                #     self.execute(q, [y, from_year, to_year, c_id, d_id])
+                # else :
+                #     continue
 
     def update_user_wise_task_status(self):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
         # user_ids = ",".join([str(y) for y in self.started_user_id])
+        dat_conf = self.get_client_date_configuration()
         year = self.get_year_to_update_chart()
+        year.append(getCurrentYear() - 1)
         year.append(getCurrentYear())
-        years = ",".join([str(x) for x in year])
-
-        q_delete = "delete from tbl_compliance_status_chart_userwise where find_in_set(chart_year, %s)"
 
         q = "insert into tbl_compliance_status_chart_userwise( " + \
             "     legal_entity_id, country_id, domain_id, unit_id, user_id, " + \
@@ -459,19 +523,35 @@ class AutoStart(Database):
             " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
             " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
-            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id " + \
+            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
             " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \
             " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
             " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
             " inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by " + \
             " where ch.due_date >= date(concat_ws('-',%s,ccf.month_from,1))  " + \
             " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
-            " group by ccf.country_id,ccf.domain_id, ch.unit_id, ccf.month_from,ccf.month_to,usr.user_id "
+            " and ccf.country_id = %s and ccf.domain_id = %s " + \
+            " group by ccf.country_id,ccf.domain_id, ch.unit_id, ccf.month_from,ccf.month_to,usr.user_id " + \
+            " on duplicate key update complied_count = values(complied_count), " + \
+            " delayed_count = values(delayed_count), inprogress_count = values(inprogress_count), " + \
+            " overdue_count = values(overdue_count) "
 
-        if len(self.started_unit_id) > 0 :
-            self.execute(q_delete, [years])
-            for y in year :
-                self.execute(q, [y, y, y])
+        # if len(self.started_unit_id) > 0 :
+        # self.execute(q_delete, [years])
+        for y in year :
+            for d in dat_conf :
+                c_id = d["country_id"]
+                d_id = d["domain_id"]
+                from_year = y
+                if d["month_from"] == 1 and d["month_to"] == 12 :
+                    to_year = y
+                else :
+                    to_year = y+1
+                self.execute(q, [y, from_year, to_year, c_id, d_id])
+                # if c_id == y["country_id"] and d_id == y["domain_id"] :
+                #     self.execute(q, [y, from_year, to_year, c_id, d_id])
+                # else :
+                #     continue
 
     def update_duedate_in_calendar_view(self):
         q = "insert into tbl_calendar_view(legal_entity_id, user_id, year, month, date, due_date_count) " + \
@@ -516,6 +596,7 @@ class AutoStart(Database):
             return
         try :
             self.begin()
+            self.start_new_task()
             self.start_new_task()
             # self.check_service_provider_contract_period()
             self.update_unit_wise_task_status()

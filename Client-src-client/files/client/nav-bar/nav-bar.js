@@ -162,6 +162,7 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.reminder-menu').on('click', function(event) {
                 $('.reminder-items-ul').empty();
+                var LEIDS = client_mirror.getLEids();
                 client_mirror.getNotifications(LEIDS, 2, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.reminders;
@@ -171,8 +172,15 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/reminders');
                             $('.reminder-items-ul').append(msgObject);
+                            if(k == 1) return false;
                         });
-                        $('.reminder-items-ul').find(".divider:last").remove();
+                        if(data.length >= 2) {
+                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
+                            $('.mlink').attr('href', '/reminders');
+                            $('.reminder-items-ul').append(msgObject1);
+                        } else {
+                            $('.reminder-items-ul').find(".divider:last").remove();
+                        }
                     }
                 });
             });
@@ -181,7 +189,8 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.notification-menu').on('click', function(event) {
                 $('.notification-items-ul').empty();
-                client_mirror.getStatutoryNotifications(LEIDS, 0, 2, function(error, response) {
+                var LEIDS = client_mirror.getLEids();
+                client_mirror.getStatutoryNotifications(LEIDS, 0, 3, function(error, response) {
                     if (error == null) {
                         data = response.statutory;
                         $.each(data, function(k, v) {
@@ -190,8 +199,15 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/notifications');
                             $('.notification-items-ul').append(msgObject);
+                            if(k == 1) return false;
                         });
-                        $('.notification-items-ul').find(".divider:last").remove();
+                        if(data.length >= 2) {
+                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
+                            $('.mlink').attr('href', '/notifications');
+                            $('.notification-items-ul').append(msgObject1);
+                        } else {
+                            $('.notification-items-ul').find(".divider:last").remove();
+                        }
                     }
                 });
             });
@@ -200,7 +216,8 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.escalation-menu').on('click', function(event) {
                 $('.escalation-items-ul').empty();
-                client_mirror.getNotifications(LEIDS, 3, 0, 2, function(error, response) {
+                var LEIDS = client_mirror.getLEids();
+                client_mirror.getNotifications(LEIDS, 3, 0, 3, function(error, response) {
                     if (error == null) {
                         data = response.escalations;
                         $.each(data, function(k, v) {
@@ -209,8 +226,15 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/escalations');
                             $('.escalation-items-ul').append(msgObject);
+                            if(k == 1) return false;
                         });
-                        $('.escalation-items-ul').find(".divider:last").remove();
+                        if(data.length >= 2) {
+                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
+                            $('.mlink').attr('href', '/escalations');
+                            $('.escalation-items-ul').append(msgObject1);
+                        } else {
+                            $('.escalation-items-ul').find(".divider:last").remove();
+                        }
                     }
                 });
             });
@@ -219,6 +243,7 @@ function initializeNavBar() {
             $('.cssmenu .menu-ul').append(liObject);
             $('.message-menu').on('click', function(event) {
                 $('.msg-items-ul').empty();
+                var LEIDS = client_mirror.getLEids();
                 client_mirror.getNotifications(LEIDS, 4, 0, 2, function(error, response) {
                     if (error == null) {
                         data = response.messages;
@@ -228,8 +253,15 @@ function initializeNavBar() {
                             $('.statu-content', msgObject).text(v.created_on);
                             $('.slink', msgObject).attr('href', '/message');
                             $('.msg-items-ul').append(msgObject);
+                            if(k == 1) return false;
                         });
-                        $('.msg-items-ul').find(".divider:last").remove();
+                        if(data.length >= 2) {
+                            var msgObject1 = $('#nav-bar-templates .messages-read-all li').clone();
+                            $('.mlink').attr('href', '/message');
+                            $('.msg-items-ul').append(msgObject1);
+                        } else {
+                            $('.msg-items-ul').find(".divider:last").remove();
+                        }
                     }
                 });
             });

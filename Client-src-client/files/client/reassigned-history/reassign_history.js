@@ -43,29 +43,32 @@ var domainName = $("#domain-name");
 var reportTableTbody = $("#report-table-tbody");
 var template = $("#template");
 var reportTable = $("#report-table");
-var REPORT = null;
 
 var ItemsPerPage = $('#items_per_page');
 var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
-var f_count = 0;
+var f_count = 1;
+var REPORT = null;
+var LOGO = null;
 
 function PageControls() {
-    // To call date picker function. assign to date field 
+    // To call date picker function. assign to date field
     $(".from-date, .to-date").datepicker({
         changeMonth: true,
         changeYear: true,
         dateFormat: "dd-M-yy",
         onSelect: function(selectedDate) {
             if ($(this).hasClass("from-date") == true) {
-                var dateMin = $('.from-date').datepicker("getDate");
-                var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate()); // +1
-                $('.to-date').datepicker("option", "minDate", rMin);
+                var dateMax = $('.from-date').datepicker('getDate');
+                var dateMax = new Date(dateMax.getFullYear(), dateMax.getMonth()+3, dateMax.getDate()-1);
+                $('.to-date').datepicker('setDate', dateMax);
             }
             if ($(this).hasClass("to-date") == true) {
-                var dateMin = $('.to-date').datepicker("getDate");
+                var dateMin = $('.to-date').datepicker('getDate');
+                var dateMin = new Date(dateMin.getFullYear(), dateMin.getMonth()-3, dateMin.getDate()+1);
+                $('.from-date').datepicker('setDate', dateMin);
             }
         }
     });
@@ -152,23 +155,20 @@ function PageControls() {
     });
 
     showButton.click(function() {
-        var csv = false;
         on_current_page = 1;
-        processSubmit(csv);
+        processSubmit(false);
     });
 
     exportButton.click(function() {
-        var csv = true;
-        processSubmit(csv);
+        processSubmit(true);
     });
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        f_count = 0;
+        f_count = 1;
         on_current_page = 1;
         createPageView(t_this._total_count);
-        var csv = false;
-        processSubmit(csv);
+        processSubmit(false);
     });
 }
 
@@ -362,21 +362,20 @@ ReassignHistory.prototype.fetchReportValues = function(csv) {
     var from_date = fromDate.val();
     var to_date = toDate.val();
 
-    var t_count = parseInt(ItemsPerPage.val());
-    if (on_current_page == 1) { f_count = 0 } else { f_count = (on_current_page - 1) * t_count; }
+    var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
+    if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
 
     client_mirror.getReassignedHistoryReport(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, from_date, to_date, f_count, t_count, csv, function(error, response) {
         if (error == null) {
             t_this._report_data = response.reassigned_history_list;
             t_this._total_count = response.total_count;
+            LOGO = response.logo_url;
             if (csv == false) {
                 reportView.show();
                 showAnimation(reportView);
                 REPORT.showReportValues();
-                if (f_count == 0)
+                if (f_count == 1)
                     createPageView(t_this._total_count);
-            } else {
-                REPORT.exportReportValues();
             }
         } else {
             t_this.possibleFailures(error);
@@ -387,16 +386,20 @@ ReassignHistory.prototype.fetchReportValues = function(csv) {
 ReassignHistory.prototype.showReportValues = function() {
     t_this = this;
     var data = t_this._report_data;
-    clientLogo.attr("src", "/files/client/common/images/yourlogo.png");
+    if(LOGO != null)
+        clientLogo.attr("src", LOGO);
+    else
+        clientLogo.remove();
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     domainName.html(domain.val());
-    var j = 0;
     reportTableTbody.find('tr').remove();
     var unitid = "";
     var actname = "";
     var complianceid = "";
     var tree = "";
+    var j = f_count;
+    var i = 0;
     if(data.length > 0) {
         $.each(data, function(k, v) {
             if (unitid != v.unit_id) {
@@ -414,7 +417,7 @@ ReassignHistory.prototype.showReportValues = function() {
             }
 
             if (complianceid != v.compliance_id) {
-                j = j + 1;
+                i = i + 1;
                 var clonethree = $('#template #report-table .row-three').clone();
                 $('.sno', clonethree).text(j);
                 $('.compliance-task', clonethree).text(v.compliance_task);
@@ -422,12 +425,11 @@ ReassignHistory.prototype.showReportValues = function() {
                 $('.assigned-date', clonethree).text(v.assigned_on);
                 $('.assigned', clonethree).text(v.new_user);
                 if (v.reason != "") { $('.reason', clonethree).text(v.remarks); } else { $('.reason', clonethree).text('-'); }
-                $(clonethree).on('click', function(e) {
-                    treeShowHide(e, "tree" + v.compliance_id);
-                });
-                $(clonethree).attr("id", "tree" + v.compliance_id);
+                $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
+                $(clonethree).attr("id", "tree" + i);
                 reportTableTbody.append(clonethree);
                 complianceid = v.compliance_id;
+                j = j + 1;
             } else {
                 if (tree == v.compliance_id) {
                     var clonefive = $('#template #report-table .row-five').clone();
@@ -435,10 +437,10 @@ ReassignHistory.prototype.showReportValues = function() {
                     $('.assigned-new', clonefive).text(v.new_user);
                     $('.reason-new', clonefive).text(v.remarks);
                     if (v.reason != "") { $('.reason-new', clonefive).text(v.remarks); } else { $('.reason-new', clonefive).text('-'); }
-                    $('.tree' + v.compliance_id + ' .tree-body').append(clonefive);
+                    $('.tree' + i + ' .tree-body').append(clonefive);
                 } else {
                     var clonefour = $('#template #report-table .row-four').clone();
-                    $(clonefour).addClass("tree" + v.compliance_id);
+                    $(clonefour).addClass("tree" + i);
                     $('.assigned-date-new', clonefour).text(v.assigned_on);
                     $('.assigned-new', clonefour).text(v.new_user);
                     $('.reason-new', clonefour).text(v.remarks);
@@ -456,7 +458,7 @@ ReassignHistory.prototype.showReportValues = function() {
     }
 };
 
-treeShowHide = function(e, tree) {
+treeShowHide = function(tree) {
     if ($('.' + tree)) {
         if ($('.' + tree).is(":visible") == true)
             $('.' + tree).hide();
@@ -466,8 +468,7 @@ treeShowHide = function(e, tree) {
 };
 
 showPagePan = function(start, end, total) {
-    var firstCount = parseInt(start) + 1;
-    var showText = 'Showing ' + firstCount + ' to ' + end + ' of ' + total + ' entries ';
+    var showText = 'Showing ' + start + ' to ' + (end - 1) + ' of ' + total + ' entries ';
     CompliacneCount.text(showText);
     PaginationView.show();
 };
@@ -490,7 +491,7 @@ createPageView = function(total_records) {
             cPage = parseInt(page);
             if (parseInt(on_current_page) != cPage) {
                 on_current_page = cPage;
-                processSubmit();
+                processSubmit(false);
             }
         }
     });

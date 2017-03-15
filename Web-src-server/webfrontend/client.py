@@ -33,12 +33,11 @@ class CompanyManager(object) :
         self._timeout_seconds = timeout_seconds
         self._server_added_callback = server_added_callback
         self._servers = {}
+        self._ip_config = {}
         ip, port = self._knowledge_server_address
         self._first_time = True
         self._token = None
-        # self.get_token(ip, port)
         self._poll_url = "http://%s:%s/knowledge/group-server-list" % (ip, port)
-        # print self._poll_url
         body = json.dumps(
             GetCompanyServerDetails().to_structure(), indent=2
         )
@@ -49,42 +48,11 @@ class CompanyManager(object) :
             self._poll_url, method="POST", body=body,
             headers={
                 "Content-Type": "application/json",
-                # "X-Xsrftoken": self._token
             },
             request_timeout=10
         )
         self._request_body = request
         self._io_loop.add_callback(self._poll)
-
-    def get_token(self, ip, port):
-        # print "Token called"
-
-        def token_response(response):
-            # print response
-            self._token = response.body
-            # print self._token
-            # # # server list call after token success
-            body = json.dumps(
-                GetCompanyServerDetails().to_structure()
-            )
-            request = HTTPRequest(
-                self._poll_url, method="POST", body=body,
-                # headers={
-                #     "Content-Type": "application/json",
-                #     "X-Xsrftoken": self._token
-                # },
-                request_timeout=10
-            )
-            self._request_body = request
-            # print request.body
-            self._io_loop.add_callback(self._poll)
-
-        url = "http://%s:%s/knowledge/token" % (ip, port)
-        request = HTTPRequest(
-            url, method="GET", request_timeout=10
-        )
-        if self._first_time :
-            self._http_client.fetch(request, token_response)
 
     def _poll(self) :
         def on_timeout():
@@ -107,6 +75,7 @@ class CompanyManager(object) :
             try:
                 data = response.body[6:]
                 data = str(data).decode('base64')
+                # print data
                 r = Response.parse_structure(
                     json.loads(data)
                 )
@@ -116,7 +85,8 @@ class CompanyManager(object) :
                 return
             assert r is not None
             self._servers = {}
-            for company in r.companies:
+            self._ip_config = r.infos
+            for company in r.servers:
                 if company.is_group is False:
                     continue
                 self._servers[company.company_id] = company
@@ -165,3 +135,8 @@ class CompanyManager(object) :
 
     def servers(self):
         return self._servers
+
+    def lookup_form_ips(self, short_name):
+        print self._ip_config
+
+        return self._ip_config.get(short_name)

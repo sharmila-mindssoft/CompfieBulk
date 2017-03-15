@@ -269,6 +269,7 @@ def parse_values(field_name, param, val, type="To"):
         assert _length is not None
         assert _validation_method is not None
         if _is_optional is False:
+            # print field_name, param, val
             if len(val) == 0:
                 raise expectation_error(
                     "a string with max length(%s) for %s" % (
@@ -330,7 +331,6 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         if param is None:
             raise ValueError('%s is not configured in settings' % (field_name))
 
-        print field_name, param, val
         _type = param.get('type')
         _module_name = param.get('module_name')
         _class_name = param.get('class_name')

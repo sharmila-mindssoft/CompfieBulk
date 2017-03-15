@@ -47,7 +47,7 @@ def is_address(value):
 
 
 def is_url(value):
-    r = re.compile("^[a-z/-]*$")  # a-z with space
+    r = re.compile("^[a-zA-Z0-9=/-]*$")  # a-z with space
     if r.match(value):
         return value
     else:

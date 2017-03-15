@@ -66,7 +66,7 @@ function processForgotpassword(username, shortName, callback) {
       request
     ];
     BASE_URL = '/api/';
-    
+
 
   // jQuery.post(BASE_URL + 'login', JSON.stringify(requestFrame, null, ' '), function (data) {
   //   var data = JSON.parse(data);
@@ -87,15 +87,16 @@ function processForgotpassword(username, shortName, callback) {
     var r = document.cookie.match('\\b' + name + '=([^;]*)\\b');
     return r ? r[1] : undefined;
   }
-  
+
   $.ajax({
     url: BASE_URL + 'login',
     headers: { 'X-Xsrftoken': getCookie('_xsrf') },
     type: 'POST',
     contentType: 'application/json',
-    data: JSON.stringify(requestFrame, null, ' '),
+    data: makekey() + btoa(JSON.stringify(requestFrame, null, ' ')),
     success: function (data, textStatus, jqXHR) {
-      var data = JSON.parse(data);
+      data = atob(data.substring(5));
+      data = JSON.parse(data);
       var status = data[0];
       var response = data[1];
       matchString = 'success';
@@ -107,7 +108,9 @@ function processForgotpassword(username, shortName, callback) {
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      callback(jqXHR.responseText, errorThrown);
+      rdata = JSON.parse(jqXHR.responseText);
+      rdata = atob(rdata.substring(5));
+      callback(rdata, null);
     }
   });
 

@@ -16,10 +16,12 @@ from server.clientdatabase.general import (
     verify_username,
     validate_reset_token, update_password, delete_used_token,
     remove_session, update_profile, verify_password, get_user_name_by_id,
-    get_user_forms, get_forms_by_category, get_legal_entity_info, get_country_info, get_themes
+    get_user_forms, get_forms_by_category, get_legal_entity_info, get_country_info, get_themes,
+    verify_username_forgotpassword
     )
 from server.exceptionmessage import client_process_error
 from server.clientcontroller.corecontroller import process_user_forms
+from server.clientdatabase.savetoknowledge import *
 
 __all__ = [
     "process_login_request",
@@ -75,12 +77,10 @@ def process_login_request(
         result = process_validate_rtoken(db, request)
 
     elif type(request) is clientlogin.SaveRegistration:
-        result = process_save_logindetails(db, request)
+        result = process_save_logindetails(db, request, company_id)
 
     elif type(request) is clientlogin.CheckUsername:
         result = process_check_username(db, request)
-
-    
 
     return result
 
@@ -102,6 +102,7 @@ def process_login(db, request, client_id, session_user_ip):
     login_type = request.login_type
     username = request.username
     password = request.password
+    short_name = request.short_name
     encrypt_password = encrypt(password)
     user_ip = session_user_ip
     logger.logLogin("info", user_ip, username, "Login process begin")
@@ -122,7 +123,7 @@ def process_login(db, request, client_id, session_user_ip):
             print "user_login_response"
             logger.logLogin("info", user_ip, username, "Login process end")
             delete_login_failure_history(db, user_id)
-            return user_login_response(db, response, client_id, user_ip)
+            return user_login_response(db, response, client_id, user_ip, short_name)
 
     else:
         if response is True:
@@ -235,7 +236,7 @@ def mobile_user_login_respone(db, data, login_type, client_id, ip):
     )
 
 
-def user_login_response(db, data, client_id, ip):
+def user_login_response(db, data, client_id, ip, short_name):
     cat_id = data["user_category_id"]
     user_id = data["user_id"]
     email_id = data["email_id"]
@@ -243,7 +244,10 @@ def user_login_response(db, data, client_id, ip):
     session_type = 1  # web
     employee_name = data["employee_name"]
     employee_code = data["employee_code"]
-    employee = "%s - %s" % (employee_code, employee_name)
+    if employee_code is None :
+        employee = employee_name
+    else :
+        employee = "%s - %s" % (employee_code, employee_name)
     username = data["username"]
     mobile_no = data["mobile_no"]
     session_token = add_session(
@@ -260,10 +264,10 @@ def user_login_response(db, data, client_id, ip):
     if cat_id == 1 :
         forms = get_forms_by_category(db, cat_id)
     else :
-        forms = get_user_forms(db, user_id)
+        forms = get_user_forms(db, user_id, cat_id)
     print forms
     menu = process_user_forms(
-        db, forms
+        db, forms, short_name
     )
 
     return clientlogin.UserLoginSuccess(
@@ -292,13 +296,12 @@ def admin_login_response(db, client_id, ip):
 
 
 def process_forgot_password(db, request):
-    user_id = verify_username(db, request.username)
-    if user_id is not None:
-        send_reset_link(db, user_id, request.username, request.short_name)
+    rows = verify_username_forgotpassword(db, request.username)
+    if rows:
+        send_reset_link(db, rows['user_id'], rows['email_id'], request.short_name)
         return clientlogin.ForgotPasswordSuccess()
     else:
         return clientlogin.InvalidUserName()
-
 
 def send_reset_link(db, user_id, username, short_name):
     reset_token = new_uuid()
@@ -390,7 +393,7 @@ def process_validate_rtoken(db, request):
 #############################################################################
 # Check Registration Token Valid
 #############################################################################
-def process_save_logindetails(db, request):
+def process_save_logindetails(db, request, company_id):
     username = request.username
     password = request.password
     # duplication username validation
@@ -399,7 +402,7 @@ def process_save_logindetails(db, request):
     else:
         encrypt_password = encrypt(password)
         token = request.token
-        if save_login_details(db, token, username, encrypt_password):
+        if save_login_details(db, token, username, encrypt_password, company_id):
             return clientlogin.SaveRegistrationSuccess()
         else:
             return clientlogin.InvalidSessionToken()

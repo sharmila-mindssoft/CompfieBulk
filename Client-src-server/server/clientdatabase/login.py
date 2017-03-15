@@ -8,7 +8,7 @@ from server.constants import SESSION_CUTOFF
 from server.clientdatabase.general import (
     is_service_proivder_user, is_service_provider_in_contract
 )
-from server.clientdatabase.savetoknowledge import IsClientActive
+from server.clientdatabase.savetoknowledge import IsClientActive, SaveGroupAdminName
 from dateutil import relativedelta
 
 __all__ = [
@@ -78,7 +78,7 @@ def verify_login(db, username, password):
         " (select user_group_name from tbl_user_groups where user_group_id = t1.user_group_id) as user_group_name" + \
         " FROM tbl_user_login_details as ul  " + \
         " INNER JOIN tbl_users t1 on t1.user_id = ul.user_id " + \
-        " WHERE ul.password= %s and ul.username = %s and ul.is_active=1 "
+        " WHERE ul.password= %s and ul.username = %s and t1.is_active=1 "
     #print q
     data_list = db.select_one(q, [password, username])
     if data_list is None:
@@ -249,18 +249,19 @@ def delete_emailverification_token(db, token):
 #################################################################
 # Save login Details
 #################################################################
-def save_login_details(db, token, username, password):
+def save_login_details(db, token, username, password, client_id):
     user_id = get_user_id_from_token(db, token)
     user_details = get_client_details_from_userid(db, user_id)
     user_category_id = user_details[0]["user_category_id"]
-    is_active = user_details[0]["is_active"]    
+    is_active = user_details[0]["is_active"]
 
     q = " INSERT INTO tbl_user_login_details(user_id, user_category_id, username, " + \
         " password, is_active) VALUES (%s, %s, %s, %s, %s) "
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
     delete_emailverification_token(db, token)
-
+    if user_category_id == 1 :
+        SaveGroupAdminName(username, client_id)
     return True
 #################################################################
 # Check User Name Duplication

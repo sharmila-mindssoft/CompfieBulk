@@ -41,6 +41,7 @@ __all__ = [
     "update_user_privilege_status",
     "get_user_details",
     "get_service_providers",
+    "get_no_of_remaining_licence_Viewonly",
     "get_no_of_remaining_licence",
     "is_duplicate_user_email",
     "is_duplicate_employee_code",
@@ -52,6 +53,7 @@ __all__ = [
     "close_unit",
     "get_audit_trails",
     "is_duplicate_employee_name",
+    "is_already_assigned_units",
     "get_unit_closure_legal_entities",
     "get_unit_closure_units_list",
     "save_unit_closure_data",
@@ -78,7 +80,13 @@ __all__ = [
     "process_login_trace_report",
     "get_user_info",
     "update_profile",
-    "block_service_provider"
+    "get_settings_form_data",
+    "save_settings_form_data",
+    "block_service_provider",
+    "userManagement_EditView_GetUsers",
+    "userManagement_EditView_GetLegalEntities",
+    "userManagement_EditView_GetDomains",
+    "userManagement_EditView_GetUnits"
 ]
 
 ############################################################################
@@ -180,7 +188,7 @@ def save_service_provider(db, service_provider, session_user):
         service_provider.service_provider_name
     )
     # Audit Log Entry
-    db.save_activity(session_user, 2, action)
+    db.save_activity(session_user, 1, action)
     return service_provider_id
 
 
@@ -264,7 +272,7 @@ def update_service_provider(db, service_provider, session_user):
     action = "Updated Service Provider \"%s\"" % (
         service_provider.service_provider_name
     )
-    db.save_activity(session_user, 2, action)
+    db.save_activity(session_user, 1, action)
     return result
 
 
@@ -346,7 +354,7 @@ def update_service_provider_status(
 # Parameter(s) - Object of database, Service provider id, block status and
 #                session user
 # Return Type - Boolean
-#             - Returns True on successfull block 
+#             - Returns True on successfull block
 #             - Returns RuntimeError on failure block
 ##############################################################################
 def block_service_provider(
@@ -375,9 +383,15 @@ def block_service_provider(
 ##############################################################################
 # User Management Add - Category Prerequisite
 ##############################################################################
-def userManagement_GetUserCategory(db):
-    q = "SELECT user_category_id, user_category_name From tbl_user_category " + \
-        " WHERE user_category_id <> '1'"
+def userManagement_GetUserCategory(db, session_category):    
+    if session_category == 1: #Group Admin
+        condition = " WHERE user_category_id NOT IN (1)"
+    elif session_category == 3: #Legal Entity Admin        
+        condition = " WHERE user_category_id NOT IN (1,2,3)"
+    elif session_category == 4: #Domain Admin        
+        condition = " WHERE user_category_id NOT IN (1,2,3,4)"
+    
+    q = "SELECT user_category_id, user_category_name From tbl_user_category " + condition    
     row = db.select_all(q, None)
     return row
 
@@ -402,15 +416,23 @@ def userManagement_GetBusinessGroup(db):
 # User Management Add - Legal Entity Prerequisite
 ##############################################################################
 def userManagement_GetLegalEntity(db):
-    q = "SELECT legal_entity_id, business_group_id, legal_entity_name From tbl_legal_entities " + \
-        " WHERE is_closed ='0'"
+    # q = "SELECT legal_entity_id, business_group_id, legal_entity_name From tbl_legal_entities " + \
+    #     " WHERE is_closed ='0' order by legal_entity_name, business_group_id"
+    q = " SELECT T01.legal_entity_id, T01.business_group_id, T01.legal_entity_name, " + \
+        " T04.user_id AS le_admin, T04.user_category_id From tbl_legal_entities AS T01 " + \
+        " LEFT JOIN (SELECT T03.legal_entity_id,T02.user_id, T02.user_category_id " + \
+        " FROM tbl_user_legal_entities AS T03 INNER JOIN  tbl_users AS T02 " + \
+        " ON T02.user_id = T03.user_id WHERE   T02.user_category_id = 3) as T04 " + \
+        " ON T01.legal_entity_id = T04.legal_entity_id AND T01.is_closed ='0' " + \
+        " order by T01.legal_entity_name, T01.business_group_id "
     row = db.select_all(q, None)
     return row
 ##############################################################################
 # User Management Add - Division Prerequisite
 ##############################################################################
 def userManagement_GetDivision(db):
-    q = "SELECT division_id, division_name, legal_entity_id, business_group_id From tbl_divisions "
+    q = "SELECT division_id, division_name, legal_entity_id, business_group_id From tbl_divisions " + \
+        " order by division_name, legal_entity_id "
     row = db.select_all(q, None)
     return row
 ##############################################################################
@@ -418,7 +440,8 @@ def userManagement_GetDivision(db):
 ##############################################################################
 def userManagement_GetGroupCategory(db):
     q = "SELECT category_id, category_name, legal_entity_id, "+ \
-        " business_group_id, division_id From tbl_categories "
+        " business_group_id, division_id From tbl_categories " + \
+        " order by category_name, legal_entity_id "
     row = db.select_all(q, None)
     return row
 ##############################################################################
@@ -427,7 +450,8 @@ def userManagement_GetGroupCategory(db):
 def userManagement_GetLegalEntity_Domain(db):
     q = "SELECT  T01.legal_entity_id, T01.domain_id, T02.domain_name " + \
         " From tbl_legal_entity_domains AS T01 INNER JOIN tbl_domains as T02" + \
-        " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 "
+        " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 " + \
+        " order by domain_name, legal_entity_id "
     row = db.select_all(q, None)
     return row
 ##############################################################################
@@ -444,7 +468,9 @@ def userManagement_GetLegalEntity_Units(db):
 ##############################################################################
 def userManagement_GetServiceProviders(db):
     q = "SELECT service_provider_id, service_provider_name, short_name " + \
-        " From tbl_service_providers where is_active = '1' and is_blocked = '0' "
+        " From tbl_service_providers where is_active = '1' and is_blocked = '0' " + \
+        " and now() between DATE_ADD(contract_from, INTERVAL 1 DAY) " + \
+        " and DATE_ADD(contract_to, INTERVAL 1 DAY) "
     row = db.select_all(q, None)
     return row
 ##############################################################################
@@ -452,13 +478,14 @@ def userManagement_GetServiceProviders(db):
 ##############################################################################
 def userManagement_list_GetLegalEntities(db):
     le_ids = "%"
-    q = " SELECT T01.country_id, T02.country_name, T01.business_group_id, " + \
-        " T03.business_group_name, T01.legal_entity_id, T01. legal_entity_name, " + \
-       " T01.contract_from, T01.contract_to, T01.total_licence, T01.used_licence " + \
-       " From  tbl_legal_entities AS T01 INNER JOIN tbl_countries AS T02 " + \
-       " ON T01.country_id = T02.country_id LEFT JOIN tbl_business_groups AS T03 " + \
-       " ON T01.business_group_id = T03.business_group_id Where " + \
-       " T01.legal_entity_id like '%' "
+    q = " SELECT Distinct T01.legal_entity_id, T01.legal_entity_name, T01.country_id, " + \
+        " T02.country_name, T01.business_group_id, T03.business_group_name, " + \
+        " T01.contract_from, T01.contract_to, T01.total_licence, T01.used_licence " + \
+        " From tbl_legal_entities AS T01 INNER JOIN tbl_countries AS T02 " + \
+        " ON T01.country_id = T02.country_id LEFT JOIN tbl_business_groups AS T03 " + \
+        " ON T01.business_group_id = T03.business_group_id  " + \
+        " INNER JOIN tbl_user_legal_entities AS T04 ON T01.legal_entity_id = T04.legal_entity_id" + \
+        " Where T01.legal_entity_id like '%' "
     # " FIND_IN_SET(T01.legal_entity_id, %s) "
     # row = db.select_all(q, [le_ids])
     row = db.select_all(q, None)
@@ -476,6 +503,46 @@ def userManagement_list_GetUsers(db):
     # row = db.select_all(q, [le_ids])
     row = db.select_all(q, None)
     return row
+
+##############################################################################
+# User Management - Edit View Get User Details
+##############################################################################
+def userManagement_EditView_GetUsers(db, userID):
+    q = " SELECT  T01.user_id, T01.user_category_id, T01. seating_unit_id, T01.service_provider_id, " + \
+        " T01.user_level, T01.user_group_id, T01.email_id, T01.employee_name, T01.employee_code, " + \
+        " T01.contact_no, T01.mobile_no, T01.address, T01.is_service_provider, T01.is_active, " + \
+        " T01.is_disable FROM Tbl_users AS T01 Where T01.user_id = %s"
+
+    row = db.select_all(q, [userID])
+    return row
+
+##############################################################################
+# User Management - Edit View Get Users - Legal Entities
+##############################################################################
+def userManagement_EditView_GetLegalEntities(db, userID):
+    q = " SELECT user_id, legal_entity_id from tbl_user_legal_entities where user_id = %s "
+
+    row = db.select_all(q, [userID])
+    return row
+
+##############################################################################
+# User Management - Edit View Get Users - Domains
+##############################################################################
+def userManagement_EditView_GetDomains(db, userID):
+    q = " SELECT user_id, legal_entity_id, domain_id from tbl_user_domains where user_id = %s "
+
+    row = db.select_all(q, [userID])
+    return row
+
+##############################################################################
+# User Management - Edit View Get Users - Units
+##############################################################################
+def userManagement_EditView_GetUnits(db, userID):
+    q = " SELECT user_id, legal_entity_id, unit_id from tbl_user_units where user_id = %s "
+
+    row = db.select_all(q, [userID])
+    return row
+
 ##############################################################################
 # To Get list of all forms
 # Parameter(s) - Object of database
@@ -853,6 +920,17 @@ def return_service_providers(service_providers):
 # Parameter(s) - Object of database
 # Return Type - int
 ############################################################################
+def get_no_of_remaining_licence_Viewonly(db):   
+    q = " SELECT (total_view_licence - licence_used) As remaining_licence from tbl_Client_Groups"
+
+    row = db.select_one(q, None)
+    return row
+
+############################################################################
+# Returns Remaining number of  licences
+# Parameter(s) - Object of database
+# Return Type - int
+############################################################################
 def get_no_of_remaining_licence(db):
     columns = ["count(0) as licence"]
     condition = "1"
@@ -915,6 +993,33 @@ def is_duplicate_employee_name(db, employee_name, user_id=None):
         condition_val.append(user_id)
     return db.is_already_exists(tblUsers, condition, condition_val)
 
+############################################################################
+# To check Units are already assinged
+# Parameter(s) - Object of database, employee code, userid
+# Return Type - Boolean
+#             - Returns Records if units are already assigned             
+############################################################################
+def is_already_assigned_units(db, unit_ids, domain_ids):
+    #  q = "SELECT T01.domain_id,T01.unit_id,T05.legal_entity_id,T05.user_id,T05.unit_id,T05.domain_id " + \
+    q = " SELECT Count(T01.unit_id) as unit_count " + \
+        " FROM tbl_units_organizations AS T01 " + \
+        " LEFT JOIN (SELECT T02.legal_entity_id,T02.user_id,T02.unit_id,T03.domain_id " +\
+        " FROM tbl_user_units AS T02 " + \
+        " INNER JOIN tbl_user_domains AS T03 ON T02.user_id = T03.user_id " + \
+        " INNER JOIN tbl_users AS T04 ON T02.user_id = T04.user_id AND T04.user_category_id = 5) AS T05 " +\
+        " ON T01.unit_id = T05.unit_id AND T01.domain_id = T05.domain_id " + \
+        " WHERE find_in_set(T05.unit_id, %s) AND find_in_set(T05.domain_id, %s) "
+
+    unitList = ",".join(str(uid.unit_id) for uid in unit_ids)
+    domainList = ",".join(str(uid.domain_id) for uid in domain_ids)
+
+    row = db.select_one(q, [unitList, domainList])
+     
+    if int(row["unit_count"]) > 0:        
+        return True
+    else :        
+        return False
+    
 ############################################################################
 # To Save User Domains
 # Parameter(s) - Object of database, domain ids, user id
@@ -1008,14 +1113,14 @@ def save_user(db, user, session_user, client_id):
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
     columns = [
-        "user_category_id", "user_group_id", "email_id", "employee_name",
+        "client_id", "user_category_id", "user_group_id", "email_id", "employee_name",
         "employee_code", "contact_no", "mobile_no", "user_level",
         "is_service_provider", "created_by", "created_on",
         "updated_by", "updated_on"
     ]
 
     values = [
-        user.user_category, user.user_group_id, user.email_id,
+        client_id, user.user_category, user.user_group_id, user.email_id,
         user.employee_name, user.employee_code.replace(" ", ""),
         user.contact_no, user.mobile_no, user.user_level,
         user.is_service_provider, session_user, current_time_stamp,
@@ -1604,7 +1709,7 @@ def get_service_provider_details_report_data(db, request):
     sp_id = request.sp_id
     user_id = request.user_id
     s_p_status = request.s_p_status
-
+    print s_p_status
     select_qry = "select t1.service_provider_id, t1.short_name, t1.service_provider_name, " + \
         "t1.contact_no, t1.email_id, t1.address, t1.contract_from, t1.contract_to, t1.is_active, " + \
         "t1.status_changed_on, t1.is_blocked, t1.blocked_on from tbl_service_providers as t1 "
@@ -1679,6 +1784,41 @@ def get_service_provider_details_report_data(db, request):
     print "qry"
     print query
     result_users = db.select_all(query, condition_val)
+
+    where_clause = None
+    where_1 = None
+    where_2 = None
+    condition_val = []
+    select_qry = None
+    select_qry = "select t1.service_provider_id, t1.user_id, t1.employee_name, " + \
+        "t1.contact_no, t1.email_id, t1.is_active, (select count(*) from " + \
+        "tbl_user_units where user_id = t1.user_id) as unit_cnt, t1.status_changed_on from tbl_users as t1 "
+
+    if (int(sp_id) > 0 or int(user_id) > 0):
+        where_clause = "where "
+        if int(sp_id) > 0:
+            where_1 = "t1.service_provider_id = %s "
+            condition_val.append(sp_id)
+
+        if int(user_id) > 0:
+            where_2 = "t1.user_id = %s "
+            condition_val.append(user_id)
+
+        if where_1 is not None and where_2 is not None:
+            where_clause = where_clause + str(where_1)+" and "+str(where_2)
+        elif where_1 is not None:
+            where_clause = where_clause + str(where_1)
+        elif where_2 is not None:
+            where_clause = where_clause + str(where_2)
+
+    if where_clause is None:
+        where_clause = "order by t1.employee_name ASC;"
+    else:
+        where_clause = where_clause + "order by t1.employee_name ASC;"
+
+    query = select_qry + where_clause
+    count = db.select_all(query, condition_val)
+
     print result_users
     sp_details = []
 
@@ -1725,7 +1865,7 @@ def get_service_provider_details_report_data(db, request):
                     sp_id, employee_name, mob_no, user_email_id, None, None,
                     user_status, user_status_date, row_1["unit_cnt"]
                 ))
-    return sp_details
+    return sp_details, len(count)
 
 ###############################################################################################
 # Objective: To get the list of users under legal entity
@@ -1809,18 +1949,19 @@ def process_login_trace_report(db, request, client_id):
     if int(user_id) > 0:
         where_clause = where_clause + "and t1.user_id = %s "
         condition_val.append(user_id)
+        due_to = string_to_datetime(due_to).date()
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
-        where_clause = where_clause + " and t1.created_on between " + \
-            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        where_clause = where_clause + " and t1.created_on >= " + \
+            " date(%s)  and t1.created_on <= " + \
+            " date(%s) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
-        where_clause = where_clause + " and t1.created_on between " + \
-            " DATE_SUB(%s, INTERVAL 1 DAY)  and " + \
-            " DATE_ADD(curdate(), INTERVAL 1 DAY) "
+        where_clause = where_clause + " and t1.created_on >= " + \
+            " date(%s)  and t1.created_on <= " + \
+            " date(curdate()) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
@@ -1834,6 +1975,36 @@ def process_login_trace_report(db, request, client_id):
     print "qry"
     print query
     result = db.select_all(query, condition_val)
+
+    where_clause = None
+    condition_val = []
+    select_qry = "select t1.form_id, t1.action, t1.created_on, (select  " + \
+        "concat(employee_code,' - ',employee_name) from tbl_users where user_id " + \
+        "= t1.user_id) as user_name from tbl_activity_log as t1 where "
+    where_clause = "t1.form_id = 0 "
+
+    if int(user_id) > 0:
+        where_clause = where_clause + "and t1.user_id = %s "
+        condition_val.append(user_id)
+    if due_from is not None and due_to is not None:
+        where_clause = where_clause + " and t1.created_on >= " + \
+            " date(%s)  and t1.created_on <= " + \
+            " date(%s) "
+        condition_val.extend([due_from, due_to])
+    elif due_from is not None and due_to is None:
+        where_clause = where_clause + " and t1.created_on >= " + \
+            " date(%s)  and t1.created_on <= " + \
+            " date(curdate()) "
+        condition_val.append(due_from)
+    elif due_from is None and due_to is not None:
+        where_clause = where_clause + " and t1.created_on < " + \
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
+        condition_val.append(due_to)
+
+    where_clause = where_clause + "order by t1.created_on desc;"
+    query = select_qry + where_clause
+    count = db.select_all(query, condition_val)
+
     activity_list = []
     for row in result:
         if row["action"].find("Log In") >= 0:
@@ -1846,7 +2017,7 @@ def process_login_trace_report(db, request, client_id):
                 row["form_id"], "Logout",
                 row["action"], datetime_to_string_time(row["created_on"])
             ))
-    return activity_list
+    return activity_list, len(count)
 
 
 ###############################################################################################
@@ -1906,6 +2077,107 @@ def update_profile(db, session_user, request):
 
     action = "Updated user \"%s - %s\"" % (
         request.emp_code, request.emp_name
+    )
+    db.save_activity(session_user, 4, action)
+
+    return True
+
+###############################################################################################
+# Objective: To get reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return list of legal entity details, domains and organization
+###############################################################################################
+def get_settings_form_data(db, request):
+    le_id = request.le_id
+    query = "select t1.legal_entity_id, t1.legal_entity_name, (select business_group_name " + \
+        "from tbl_business_groups where business_group_id = t1.business_group_id) as business_group_name, " + \
+        "t1.contract_from, t1.contract_to, (select country_name from tbl_countries where country_id = " + \
+        "t1.country_id) as country_name, (select two_levels_of_approval from tbl_reminder_settings where " + \
+        "legal_entity_id = t1.legal_entity_id) as two_level_approve, (select assignee_reminder from " + \
+        "tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) as assignee_reminder, (select " + \
+        "escalation_reminder_in_advance from tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) " + \
+        "as advance_escalation_reminder, (select escalation_reminder from tbl_reminder_settings where " + \
+        "legal_entity_id = t1.legal_entity_id) as escalation_reminder, (select reassign_service_provider from " + \
+        "tbl_reminder_settings where legal_entity_id = t1.legal_entity_id) as reassign_sp, t1.file_space_limit, " + \
+        "t1.used_file_space, t1.total_licence, t1.used_licence from tbl_legal_entities as t1 where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    settings_info = []
+    for row in result:
+        settings_info.append(clientmasters.SettingsInfo(
+            row["legal_entity_name"], row["business_group_name"], row["country_name"],
+            datetime_to_string(row["contract_from"]), datetime_to_string(row["contract_to"]),
+            bool(row["two_level_approve"]), row["assignee_reminder"], row["advance_escalation_reminder"],
+            row["escalation_reminder"], row["reassign_sp"], str(row["file_space_limit"]),
+            str(row["used_file_space"]), str(row["total_licence"]), str(row["used_licence"])
+        ))
+
+    # legal entity domains
+    query = "select t1.activation_date, t1.count as org_count, (select domain_name from tbl_domains where " + \
+        "domain_id = t1.domain_id) as domain_name, (select organisation_name from tbl_organisation " + \
+        "where organisation_id = t1.organisation_id) as organisation_name from tbl_legal_entity_domains as t1 " + \
+        "where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    le_domains_info = []
+    for row in result:
+        le_domains_info.append(clientmasters.LegalEntityDomains(
+            row["domain_name"], row["organisation_name"], row["org_count"],
+            activity_date=datetime_to_string(row["activation_date"])
+        ))
+
+    # legal entity users
+    query = "select concat(t2.employee_code,'-',t2.employee_name) as employee_name, (select username " + \
+        "from tbl_user_login_details where user_id = t1.user_id) as user_name ," + \
+        "(select user_category_name from tbl_user_category where user_category_id = " + \
+        "t2.user_category_id) as category_name, t2.user_level, (select concat(unit_code,'-',unit_name) " + \
+        "as unit_name from tbl_units where unit_id = t2.seating_unit_id) as unit_code_name, (select concat(address,',', " + \
+        "postal_code) from tbl_units where unit_id = t2.seating_unit_id) as address from " + \
+        "tbl_user_legal_entities as t1 inner join tbl_users as t2 on t2.user_id = t1.user_id " + \
+        "where t1.legal_entity_id = %s"
+    result = db.select_all(query, [le_id])
+    le_users_info = []
+    for row in result:
+        if row["user_level"] is not None:
+            user_level_name = "Level "+str(row["user_level"])
+        else:
+            user_level_name = None
+        le_users_info.append(clientmasters.LegalEntityUsers(
+            row["employee_name"], row["user_name"], user_level_name,
+            row["category_name"], row["unit_code_name"], row["address"]
+        ))
+    return settings_info, le_domains_info, le_users_info
+
+###############################################################################################
+# Objective: To save reminder settings details
+# Parameter: request object and the client id, legal entity id
+# Result: return success/failure of the transaction
+###############################################################################################
+def save_settings_form_data(db, request, session_user):
+    le_id = request.le_id
+    legal_entity_name = request.legal_entity_name
+    two_level_approve = int(request.two_level_approve)
+    assignee_reminder = request.assignee_reminder
+    escalation_reminder_in_advance = request.advance_escalation_reminder
+    escalation_reminder = request.escalation_reminder
+    reassign_sp = request.reassign_sp
+    current_time_stamp = get_date_time()
+
+    columns = [
+        "two_levels_of_approval", "assignee_reminder", "escalation_reminder_in_advance",
+        "escalation_reminder", "reassign_service_provider", "updated_on", "updated_by"
+    ]
+    values = [
+        two_level_approve, assignee_reminder, escalation_reminder_in_advance, escalation_reminder,
+        reassign_sp, current_time_stamp, session_user
+    ]
+    condition = "legal_entity_id= %s "
+
+    values.append(le_id)
+    result1 = db.update(tblReminderSettings, columns, values, condition)
+    if result1 is False:
+        raise client_process_error("E015")
+
+    action = "Updated reminder settings for \"%s - %s\"" % (
+        le_id, legal_entity_name
     )
     db.save_activity(session_user, 4, action)
 

@@ -16,27 +16,12 @@ from server.clientdatabase.general import (
     get_client_users, get_client_level_1_statutoy,
     get_service_providers, get_client_compliances,
     get_compliance_frequency, get_divisions,
-    get_categories
+    get_categories, legal_entity_logo_url
 )
 
 from server.clientdatabase.clientmaster import (
     get_service_providers_list
 )
-
-# from clientprotocol.clientreportnew import ( 
-#     GetReassignedHistoryReportFilters, GetReassignedHistoryReport, 
-#     GetStatusReportConsolidatedFilters, GetStatusReportConsolidated, 
-#     GetStatutorySettingsUnitWiseFilters, GetStatutorySettingsUnitWise, 
-#     GetDomainScoreCardFilters, GetDomainScoreCard, 
-#     GetLEWiseScoreCardFilters, GetLEWiseScoreCard, 
-#     GetWorkFlowScoreCardFilters, GetWorkFlowScoreCard, 
-#     GetReassignedHistoryReportFiltersSuccess, GetReassignedHistoryReportSuccess, 
-#     GetStatusReportConsolidatedFiltersSuccess, GetStatusReportConsolidatedSuccess, 
-#     GetStatutorySettingsUnitWiseFiltersSuccess, GetStatutorySettingsUnitWiseSuccess, 
-#     GetDomainScoreCardFiltersSuccess, GetDomainScoreCardSuccess, 
-#     GetLEWiseScoreCardFiltersSuccess, GetLEWiseScoreCardSuccess, 
-#     GetWorkFlowScoreCardFiltersSuccess, GetWorkFlowScoreCardSuccess
-# )
 
 __all__ = [
     "process_client_report_requests"
@@ -849,8 +834,11 @@ def get_reassignedhistory_report(db, request, session_user, session_category):
             db, country_id, legal_entity_id, domain_id, unit_id,
             act, compliance_id, usr_id, from_date, to_date, session_user
         )
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
         return clientreportnew.GetReassignedHistoryReportSuccess(
-            reassigned_history_list, total_count
+            reassigned_history_list, total_count, logo_url
         )
     else:
         converter = ConvertJsonToCSV(
@@ -863,7 +851,6 @@ def get_reassignedhistory_report(db, request, session_user, session_category):
 
 # Status Report Consolidated Report Start
 
-
 def get_status_report_consolidated_filters(db, request, session_user, session_category):
     domain_list = get_domains_for_user(db, session_user, session_category)
 
@@ -872,7 +859,6 @@ def get_status_report_consolidated_filters(db, request, session_user, session_ca
     compliances_list = get_client_compliances(db, session_user)
     compliance_frequency_list = get_compliance_frequency(db)
     users_list = get_client_users(db)
-
     return clientreportnew.GetStatusReportConsolidatedFiltersSuccess(
         domains=domain_list,
         units=unit_list,
@@ -909,14 +895,17 @@ def get_status_report_consolidated(db, request, session_user, session_category):
             db, country_id, legal_entity_id, domain_id, unit_id,
             act, compliance_id, frequency_id, user_type_id, status_name, usr_id, from_date, to_date, session_user
         )
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
         return clientreportnew.GetStatusReportConsolidatedSuccess(
-            status_report_consolidated_list, total_count
+            status_report_consolidated_list, total_count, logo_url
         )
     else:
         converter = ConvertJsonToCSV(
-            db, request, session_user, "Reassign"
+            db, request, session_user, "StatusReportConsolidated"
         )
-        return clientreportnew.ExportToCSVSuccess(
+        return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
 # Status Report Consolidated Report End
@@ -969,14 +958,17 @@ def get_statutory_settings_unit_Wise(db, request, session_user, session_category
             db, country_id, bg_id, legal_entity_id, domain_id, unit_id, div_id, cat_id,
             act, compliance_id, frequency_id, status_name, session_user
         )
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
         return clientreportnew.GetStatutorySettingsUnitWiseSuccess(
-            statutory_settings_unit_Wise_list, total_count
+            statutory_settings_unit_Wise_list, total_count, logo_url
         )
     else:
         converter = ConvertJsonToCSV(
-            db, request, session_user, "Reassign"
+            db, request, session_user, "StatutorySettingsUnitWise"
         )
-        return clientreportnew.ExportToCSVSuccess(
+        return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
 # Statutory Settings Unit Wise End
@@ -1008,7 +1000,10 @@ def get_domain_score_card(db, request, session_user, session_category):
         domain_score_card_list = report_domain_score_card(
             db, country_id, bg_id, legal_entity_id, domain_id, div_id, cat_id, session_user
         )
-        return clientreportnew.GetDomainScoreCardSuccess(domain_score_card_list)
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
+        return clientreportnew.GetDomainScoreCardSuccess(domain_score_card_list, logo_url)
     else:
         converter = ConvertJsonToCSV(
             db, request, session_user, "Reassign"
@@ -1037,7 +1032,10 @@ def get_le_wise_score_card(db, request, session_user, session_category):
         le_wise_score_card_list = report_le_wise_score_card(
             db, country_id, legal_entity_id, domain_id, session_user
         )
-        return clientreportnew.GetLEWiseScoreCardSuccess(le_wise_score_card_list)
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
+        return clientreportnew.GetLEWiseScoreCardSuccess(le_wise_score_card_list, logo_url)
     else:
         converter = ConvertJsonToCSV(
             db, request, session_user, "Reassign"
@@ -1063,9 +1061,12 @@ def get_work_flow_score_card(db, request, session_user, session_category):
         domain_id = request.d_id
 
         work_flow_score_card_list = report_work_flow_score_card(
-            db, country_id, legal_entity_id, domain_id, session_user
+            db, country_id, legal_entity_id, domain_id, session_user, session_category
         )
-        return clientreportnew.GetWorkFlowScoreCardSuccess(work_flow_score_card_list)
+        logo_url = legal_entity_logo_url(
+            db, legal_entity_id
+        )
+        return clientreportnew.GetWorkFlowScoreCardSuccess(work_flow_score_card_list, logo_url)
     else:
         converter = ConvertJsonToCSV(
             db, request, session_user, "Reassign"
@@ -1273,8 +1274,8 @@ def get_legal_entity_wise_report(db, request, session_user, session_category):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_legal_entity_wise_report(db, request)
-        return clientreport.GetLegalEntityWiseReportSuccess(legal_entities_compliances=result)
+        result, total_record = process_legal_entity_wise_report(db, request)
+        return clientreport.GetLegalEntityWiseReportSuccess(legal_entities_compliances=result, total_count=total_record)
 
 ##########################################################################
 # Objective: To get the filters data under selected legal entity
@@ -1318,8 +1319,8 @@ def get_domain_wise_report(db, request, session_user, session_category):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_domain_wise_report(db, request)
-        return clientreport.GetDomainWiseReportSuccess(legal_entities_compliances=result)
+        result, total_record = process_domain_wise_report(db, request)
+        return clientreport.GetDomainWiseReportSuccess(legal_entities_compliances=result, total_count=total_record)
 
 
 ##########################################################################
@@ -1363,8 +1364,8 @@ def get_unit_wise_report(db, request, session_user, session_category):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_unit_wise_report(db, request)
-        return clientreport.GetUnitWiseReportSuccess(unit_compliances=result)
+        result, total_record = process_unit_wise_report(db, request)
+        return clientreport.GetUnitWiseReportSuccess(unit_compliances=result, total_count=total_record)
 
 
 ##########################################################################
@@ -1404,8 +1405,8 @@ def get_service_provider_wise_report(db, request, session_user, session_category
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_service_provider_wise_report(db, request)
-        return clientreport.GetServiceProviderWiseReportSuccess(sp_compliances=result)
+        result, total_record = process_service_provider_wise_report(db, request)
+        return clientreport.GetServiceProviderWiseReportSuccess(sp_compliances=result, total_count=total_record)
 
 
 ##########################################################################
@@ -1448,8 +1449,8 @@ def get_user_wise_report(db, request, session_user, session_category):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_user_wise_report(db, request)
-        return clientreport.GetUserWiseReportSuccess(user_compliances=result)
+        result, total_record = process_user_wise_report(db, request)
+        return clientreport.GetUserWiseReportSuccess(user_compliances=result, total_count=total_record)
 
 
 ##########################################################################
@@ -1491,8 +1492,8 @@ def get_unit_list_report(db, request, session_user):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_unit_list_report(db, request)
-        return clientreport.GetunitListReportSuccess(unit_list_report=result)
+        result, total_record = process_unit_list_report(db, request)
+        return clientreport.GetunitListReportSuccess(unit_list_report=result, total_count=total_record)
 
 ##########################################################################
 # Objective: To get domains and acts under legal entity
@@ -1525,8 +1526,8 @@ def get_statutory_notification_list_report(db, request, session_user):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_statutory_notification_list_report(db, request)
-        return clientreport.GetStatutoryNotificationReportDataSuccess(stat_notf_list_report=result)
+        result, total_record = process_statutory_notification_list_report(db, request)
+        return clientreport.GetStatutoryNotificationReportDataSuccess(stat_notf_list_report=result, total_count=total_record)
 
 ##########################################################################
 # Objective: To get activity log under user and form
@@ -1544,8 +1545,8 @@ def get_audit_trail_report_data(db, request, session_user):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_audit_trail_report(db, request)
-        return clientreport.GetAuditTrailReportDataSuccess(audit_activities=result)
+        result, total_record = process_audit_trail_report(db, request)
+        return clientreport.GetAuditTrailReportDataSuccess(audit_activities=result, total_count=total_record)
 
 ##########################################################################
 # Objective: To get risk report filters
@@ -1589,5 +1590,5 @@ def get_risk_report_data(db, request, session_user):
             link=converter.FILE_DOWNLOAD_PATH
         )
     else:
-        result = process_risk_report(db, request)
-        return clientreport.GetRiskReportSuccess(risk_report=result)
+        result, total_record = process_risk_report(db, request)
+        return clientreport.GetRiskReportSuccess(risk_report=result, total_count=total_record)

@@ -287,7 +287,6 @@ def remove_uploaded_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
 
-
 def convert_base64_to_file(file_name, file_content, file_path=None):
     if file_path is None:
         file_path = "%s/%s" % (KNOWLEDGE_FORMAT_PATH, file_name)

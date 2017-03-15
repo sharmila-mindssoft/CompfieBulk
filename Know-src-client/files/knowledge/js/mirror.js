@@ -239,7 +239,7 @@ function initMirror() {
       callerName = 'techno_report';
       apiRequest(callerName, request, callback);
     }
-    function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statId, uId, complId, callback) {
+    function getAssignedStatutoryReport(cId, dId, clientId, bGroupId, lEntityId, statId, uId, complId, csv, from_count, page_count, callback) {
       var request = [
         'GetAssignedStatutoryReport',
         {
@@ -250,7 +250,10 @@ function initMirror() {
           'le_id': lEntityId,
           'statutory_id': statId,
           'unit_id': uId,
-          'comp_id': complId
+          'comp_id': complId,
+          'csv': csv,
+          'from_count': from_count,
+          'page_count': page_count
         }
       ];
       callerName = 'techno_report';
@@ -720,6 +723,20 @@ function initMirror() {
       var request = [
         'GetGroupAdminReportData',
         {}
+      ];
+      apiRequest(callerName, request, callback);
+    }
+
+    function exportGroupAdminReportData(cl_id, c_id, csv, callback){
+      console.log("mirror")
+      callerName = 'techno_report';
+      var request = [
+        'ExportGroupAdminReportData',
+        {
+          "client_id": cl_id,
+          "country_id": c_id,
+          "csv": csv
+        }
       ];
       apiRequest(callerName, request, callback);
     }
@@ -2750,14 +2767,15 @@ function initMirror() {
         apiRequest(callerName, request, callback);
     }
 
-    function getIPSettingsReport(clientId, IP, FCount, TCount, callback) {
+    function getIPSettingsReport(clientId, IP, FCount, TCount, csv, callback) {
         callerName = "console_admin";
         var request = [
             "GetIPSettingsReport", {
                 "client_id": clientId,
                 "ip_optional": IP,
                 "from_count": FCount,
-                "page_count": TCount
+                "page_count": TCount,
+                "csv": csv
             }
         ];
         apiRequest(callerName, request, callback);
@@ -3009,7 +3027,8 @@ function initMirror() {
         exportClientDetailsReportData: exportClientDetailsReportData,
         exportAuditTrail: exportAuditTrail,
         exportReassignUserReportData: exportReassignUserReportData,
-        exportAllocateServerReportData: exportAllocateServerReportData
+        exportAllocateServerReportData: exportAllocateServerReportData,
+        exportGroupAdminReportData: exportGroupAdminReportData
     };
 }
 var mirror = initMirror();

@@ -29,7 +29,8 @@ __all__ = [
     "update_compliances",
     "get_on_occurrence_compliance_count",
     "get_on_occurrence_compliances_for_user",
-    "start_on_occurrence_task"
+    "start_on_occurrence_task",
+    "getLastTransaction_Onoccurrence"
 ]
 
 email = EmailHandler()
@@ -403,7 +404,7 @@ def update_compliances(
     session_user
 ):
     current_time_stamp = get_date_time_in_date()
-    query = " SELECT unit_id, tch.compliance_id,  completed_by, " + \
+    query = " SELECT legal_entity_id, unit_id, tch.compliance_id,  completed_by, " + \
         " ifnull(concurred_by, 0) as concurred, approved_by, " + \
         " compliance_task, document_name, " + \
         " due_date, frequency_id, duration_type_id, documents " + \
@@ -420,6 +421,7 @@ def update_compliances(
     ]
     # result = convert_to_dict(rows, columns)
     # row = result[0]
+    compliance_task = row["compliance_task"]
 
     if not is_diff_greater_than_90_days(validity_date, next_due_date):
         return False
@@ -497,8 +499,12 @@ def update_compliances(
     update_status = db.update(
         tblComplianceHistory, history_columns, history_values,
         history_condition
-    )
-    print "update_status>>>>>", update_status
+    )    
+
+    # Audit Log Entry
+    action = "Upload Compliances \"%s\"" % (compliance_task)
+    db.save_activity(session_user, 35, action, row["legal_entity_id"], row["unit_id"])
+
     if(update_status is False):
         return clienttransactions.ComplianceUpdateFailed()
     if row["completed_by"] == row["approved_by"]:
@@ -507,6 +513,8 @@ def update_compliances(
             row["completed_by"],  row["approved_by"]
         )
     return True
+
+    
 
 
 def notify_users(
@@ -684,7 +692,7 @@ def start_on_occurrence_task(
     if compliance_history_id is False:
         raise client_process_error("E017")
 
-    history = get_compliance_history_details(db, compliance_history_id)
+    history = get_compliance_history_details(db, compliance_history_id)    
     assignee_id = history["completed_by"]
     concurrence_id = history["concurred"]
     approver_id = history["approved_by"]
@@ -693,6 +701,10 @@ def start_on_occurrence_task(
     compliance_name = history["compliance_name"]
     document_name = history["doc_name"]
     due_date = history["due_date"]
+
+    # Audit Log Entry
+    action = "Compliances started \"%s\"" % (compliance_name)
+    db.save_activity(session_user, 35, action, legal_entity_id, unit_id)
 
     # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
     assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
@@ -720,12 +732,11 @@ def start_on_occurrence_task(
                 due_date, "Start"
             ]
         )
-        notify_on_occur_thread.start()
+        notify_on_occur_thread.start()    
     except Exception, e:
         logger.logClient("error", "clientdatabase.py-start-on-occurance", e)
         print "Error sending email: %s" % (e)
     return True
-
 
 def remove_uploaded_file(file_path):
     if os.path.exists(file_path):
@@ -734,8 +745,7 @@ def remove_uploaded_file(file_path):
 
 def get_compliance_history_details(
     db, compliance_history_id
-):
-    print "compliance_history_id>>>", compliance_history_id
+):    
     compliance_column = "(select compliance_task from %s c " + \
         " where c.compliance_id = ch.compliance_id ) " + \
         " as compliance_name "
@@ -753,8 +763,7 @@ def get_compliance_history_details(
     rows = db.get_data(
         tblComplianceHistory + " ch", columns, condition,
         condition_val
-    )
-    print "rows>>>>>", rows
+    )    
     if rows:
         return rows[0]
 
@@ -780,3 +789,31 @@ def is_onOccurrence_with_hours(db, compliance_history_id):
         return True
     else:
         return False
+
+#####################################################
+# Onoccurrence Compliances - Get Last 5 Transactions
+#####################################################
+def getLastTransaction_Onoccurrence(db, compliance_id, unit_id):
+    q = " SELECT ch.compliance_history_id,ch.compliance_id,com.compliance_task, " + \
+        " substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) -4) as statutory, " + \
+        " (SELECT concat(unit_code,' - ',unit_name) FROM tbl_units where unit_id = ch.unit_id) as unit, " + \
+        " com.compliance_description,ch.start_date, " + \
+        " (SELECT concat(employee_code,' - ',employee_name) FROM tbl_users where user_id = ch.completed_by) as assignee,ch.completion_date, " + \
+        " (SELECT concat(employee_code,' - ',employee_name) FROM tbl_users where user_id = ch.concurred_by) as concurr,ch.concurred_on, " + \
+        " (SELECT concat(employee_code,' - ',employee_name) FROM tbl_users where user_id = ch.approved_by) as approver,ch.approved_on, " + \
+        " (CASE WHEN (IF(com.frequency_id = 5,ch.due_date >= ch.completion_date,date(ch.due_date) >= date(ch.completion_date)) " + \
+        " and (ifnull(ch.approve_status,0) = 1 OR ifnull(ch.approve_status,0) = 3)) THEN 'Complied' " + \
+        " WHEN (IF(com.frequency_id = 5,ch.due_date < ch.completion_date,date(ch.due_date) < date(ch.completion_date)) " +\
+        " and (ifnull(ch.approve_status,0) = 1 OR ifnull(ch.approve_status,0) = 3)) THEN 'Delayed Compliance' " + \
+        " WHEN (IF(com.frequency_id = 5,ch.due_date < ch.completion_date, date(ch.due_date) < date(ch.completion_date))) THEN 'Over due' " + \
+        " WHEN (IF(com.frequency_id = 5,ch.due_date >= ch.completion_date, date(ch.due_date) >= date(ch.completion_date))) THEN 'In Progress' " + \
+        " WHEN (IF(com.frequency_id = 5,ch.start_date < now(), date(ch.start_date) < curdate())) THEN 'In progress' " + \
+        " ELSE 'Pending' END) as compliance_status " + \
+        " FROM tbl_compliance_history as ch " + \
+        " LEFT JOIN tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+        " WHERE ch.compliance_id = %s and ch.unit_id = %s " + \
+        " ORDER BY ch.compliance_history_id desc limit 5" ;
+
+    row = db.select_all(q, [compliance_id, unit_id])
+    print "row>>>>", row
+    return row

@@ -27,16 +27,11 @@ class RequestHandler(tornado.web.RequestHandler) :
     def initialize(self, handler_map) :
         self.__handler_map = handler_map
         self.__close_callback = None
-        print '-----' * 10
-        print self.__handler_map
         for method, handler in self.__handler_map.items() :
             assert method in METHODS
             obj_method = self.__make_object_method(handler)
-            print method, handler
-            print obj_method
 
             setattr(self, method.lower(), obj_method)
-        print '-----' * 10
 
     def set_default_headers(self) :
         for name, value in self.__default_headers.items() :
@@ -60,6 +55,18 @@ class RequestHandler(tornado.web.RequestHandler) :
         if self.__close_callback is not None :
             self.__close_callback()
 
+    def check_xsrf_cookie(self):
+
+        if (
+            not self.request.path.startswith("/api/mobile") and
+            not self.request.path.startswith("/api/login") and
+            not self.request.path.startswith("/api/files")
+        ):
+            # print self.request.path
+            pass
+            # tornado.web.RequestHandler.check_xsrf_cookie(self)
+        else :
+            pass
 
 #
 # WebRequest
@@ -229,9 +236,10 @@ class WebServer(object) :
                 self.low_level_url(*entry)
 
         settings = {
-            # "xsrf_cookies": True,
-            # "cookie_secret": "61oETzKXQAG9zayoKe0YdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
-            "gzip": True
+            "xsrf_cookies": True,
+            "cookie_secret": "61oETzKXQAG9zayoKe0YdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
+            "gzip": True,
+            "login_url": "/login"
         }
         self._application = tornado.web.Application(
             self._application_urls,

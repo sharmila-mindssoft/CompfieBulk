@@ -159,13 +159,29 @@ def get_assigned_statutories_report_data(db, request_data, user_id):
     country_id = request_data.country_id
     group_id = request_data.group_id
     business_group_id = request_data.business_group_id
+    if business_group_id == 0:
+        business_group_id = '%'
     legal_entity_id = request_data.legal_entity_id
     unit_id = request_data.unit_id
+    if unit_id == 0:
+        unit_id = '%'
     domain_id = request_data.domain_id_optional
+    if domain_id is None:
+        domain_id = '%'
     statutory_id = request_data.statutory_id
+    if statutory_id == 0:
+        statutory_id = '%'
     compliance_id = request_data.compliance_id
-    param_list = [country_id, domain_id, business_group_id, legal_entity_id, unit_id, group_id, statutory_id, compliance_id]
-    result = db.call_proc_with_multiresult_set("sp_statutory_setting_report_recordset", param_list, 3)
+    if compliance_id == 0:
+        compliance_id = '%'
+    from_count = request_data.from_count
+    page_count = request_data.page_count
+    param_list = [
+        country_id, domain_id, business_group_id, legal_entity_id,
+        unit_id, group_id, statutory_id, compliance_id, from_count, page_count
+    ]
+    print param_list
+    result = db.call_proc_with_multiresult_set("sp_statutory_setting_report_recordset", param_list, 4)
     return return_assigned_statutories_report_data(db, result)
 
 ######################################################################################
@@ -194,10 +210,7 @@ def return_assigned_statutories_report_data(db, result):
             r.get("compfie_admin"), r.get("admin_update"), r.get("client_admin"),
             r.get("client_update"), r.get("statutory_nature_name")
         ))
-    return (unit_grp, act_grp, stat_compl_list)
-
-
-
+    return (unit_grp, act_grp, stat_compl_list, len(result[3]))
 
 
 # old code starts for statutory setting report--------------------------------------------
@@ -1143,6 +1156,7 @@ def get_usermapping_report_dataset(
 def get_GroupAdminReportData(db, user_id):
     result = db.call_proc_with_multiresult_set("sp_group_admin_registration_email_report_data", (user_id,), 4)
     return result
+
 ######################################################################################
 # To get reassigned user group user category and filter data
 # Parameter(s) : Object of the database, user id

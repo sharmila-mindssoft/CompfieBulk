@@ -112,14 +112,14 @@
                                         <div class="form-group has-feedback">
                                             <label class="col-sm-4 control-label">From Date: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control input-sm from-date" id="from-date" placeholder="DD-MM-YYYY" tabindex="10">
+                                                <input type="text" class="form-control input-sm from-date" id="from-date" readonly="" placeholder="DD-MM-YYYY" tabindex="10">
                                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                             </div>
                                         </div>
                                         <div class="form-group has-feedback">
                                             <label class="col-sm-4 control-label ">To Date: <span class="mandatory">*</span></label>
                                             <div class="col-sm-6">
-                                                <input type="text" class="form-control input-sm to-date" id="to-date" placeholder="DD-MM-YYYY" tabindex="11">
+                                                <input type="text" class="form-control input-sm to-date" id="to-date" readonly="" placeholder="DD-MM-YYYY" tabindex="11">
                                                 <i class="form-control-feedback fa fa-calendar-check-o"></i>
                                             </div>
                                         </div>
@@ -230,19 +230,17 @@
             <td class="user-name"></td>
             <td class="activity-status"></td>
             <td class="activity-date"></td>
-            <td class="uploaded-document">
-                <a></a>
-            </td>
+            <td class="uploaded-document"><a></a></td>
             <td class="completion-date"></td>
         </tr>
-        <tr class="row-four">
+        <tr class="row-four" style="display: none;">
             <td colspan="5">&nbsp;</td>
             <td colspan="100%">
                 <ul class="tree">
                     <li>
                         <table width="100%">
-                            <tbody>
-                                <tr class="smallfont">
+                            <tbody class="tree-body">
+                                <tr class="smallfont row-five">
                                     <td width="27%" class="user-name-new"></td>
                                     <td width="19%" class="activity-status-new"></td>
                                     <td width="20%" class="activity-date-new"></td>

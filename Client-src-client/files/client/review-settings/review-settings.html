@@ -30,27 +30,33 @@
                                                 <label class="col-sm-4 control-label">Business Group:</label>
                                                 <div class="col-sm-6">
                                                     <p class="form-control-static business-group-name"></p>
-                                                     <select class="form-control business-group-select default-display-none">                                                      
+                                                     <select class="form-control business-group-select default-display-none input-sm" onchange="loadLegalEntity();">                                                      
                                                     </select>
                                                 </div>
                                             </div>
+                                          </div>
+                                          <div class="col-lg-6">
+                                            <div class="form-group has-feedback">
+                                                <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span> </label>
+                                                <div class="col-sm-6">
+                                                    <p class="form-control-static legal-entity-name"></p>
+                                                    <select class="form-control legal-entity-select default-display-none input-sm" >                                                      
+                                                    </select>
+                                                </div>
+                                            </div>
+                                          </div>
+                                          <div class="col-lg-6">
                                             <div class="form-group ">
                                                 <label class="col-md-4 control-label">Type: <span class="mandatory">*</span></label>
                                                 <div class="col-md-6">
-                                                    <select class="form-control input-sm frequency-type">                                                      
+                                                    <select class="form-control input-sm frequency-type">     
+                                                      <option value="">Select</option>                                                 
                                                     </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-lg-6">
-                                            <div class="form-group has-feedback">
-                                                <label class="col-sm-4 control-label">Legal Entity: </label>
-                                                <div class="col-sm-6">
-                                                    <p class="form-control-static legal-entity-name"></p>
-                                                    <select class="form-control legal-entity-select default-display-none">                                                      
-                                                    </select>
-                                                </div>
-                                            </div>
+                                          </div>
+
+                                          <div class="col-lg-6">
                                             <div class="form-group has-feedback">
                                                 <label class="col-md-4 control-label">Domain: <span class="mandatory">*</span></label>
                                                 <div class="col-md-6">
