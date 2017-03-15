@@ -1602,3 +1602,7 @@ pre {
 .custombox-modal-container-slit {
     width: 700px !important;
 }
+
+.user-reg-card {
+    width: 50%;
+}

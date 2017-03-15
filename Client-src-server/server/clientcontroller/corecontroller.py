@@ -1,3 +1,4 @@
+import base64
 import collections
 
 from clientprotocol import clientcore
@@ -37,14 +38,16 @@ def get_user_forms(db, form_ids):
     return rows
 
 def process_user_forms(
-    db, forms
+    db, forms, short_name
 ):
     form_list = []
     for f in forms:
         form_id = int(f["form_id"])
         form_name = f["form_name"]
-        form_url = f["form_url"]
         form_type = f["form_type"]
+        form_url = f["form_url"]
+        if form_type == "Transaction" :
+            form_url += "/" + base64.b64encode(short_name)
         parent_menu = f["parent_menu"]
         form = clientcore.Form(form_id, form_name, form_url, parent_menu, form_type)
         form_list.append(form)

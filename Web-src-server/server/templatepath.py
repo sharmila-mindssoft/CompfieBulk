@@ -16,7 +16,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         r"/reset_password/([a-zA-Z-0-9]+)/([a-zA-Z-0-9]+)",
-        "files/client/resetpassword.html",
+        "files/client/reset-password/resetpassword.html",
         None, {}
     ),
     (
@@ -24,25 +24,25 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     # Widgets ---------------------------------------------------------------------
     (
-        "/home",
+        r"/home",
         "files/client/widgets/widgets.html",
         None, {}
     ),
     # Welcome ---------------------------------------------------------------------
     (
-        "/welcome",
+        r"/welcome",
         "files/client/home/welcome.html",
         None, {}
     ),
     # Dashboard ---------------------------------------------------------------------
     (
-        "/dashboard",
+        r"/dashboard",
         "files/client/dashboard/dashboard.html",
         None, {}
     ),
     # Master ---------------------------------------------------------------------
     (
-        "/service-provider",
+        r"/service-provider",
         "files/client/service-provider/service_provider.html",
         None, {}
     ),
@@ -68,43 +68,43 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     # transactions ---------------------------------------------------------------------
     (
-        "/statutory-settings",
+        r"/statutory-settings/([a-zA-Z-0-9=]+)",
         "files/client/statutory-settings/statutory_settings.html",
         None, {}
     ),
     (
-        "/review-settings",
+        r"/review-settings/([a-zA-Z-0-9=]+)",
         "files/client/review-settings/review-settings.html",
         None, {}
     ),
     (
-        "/assign-compliance",
+        r"/assign-compliance/([a-zA-Z-0-9=]+)",
         "files/client/assign-compliance/assign-compliance.html",
         None, {}
     ),
     (
-        "/reassign-compliance",
+        r"/reassign-compliance/([a-zA-Z-0-9=]+)",
         "files/client/reassign-compliance/reassign-compliance.html",
         None, {}
     ),
     (
-        "/compliance-approval",
+        r"/compliance-approval/([a-zA-Z-0-9=]+)",
         "files/client/compliance-approval/compliance-approval.html",
 
         None, {}
     ),
     (
-        "/completed-tasks-current-year",
+        r"/completed-tasks-current-year/([a-zA-Z-0-9=]+)",
         "files/client/completed-task-current-year/completed-task-current-year.html",
         None, {}
     ),
     (
-        "/on-occurrence-compliances",
+        r"/on-occurrence-compliances/([a-zA-Z-0-9=]+)",
         "files/client/on-occurrence-compliances/on_occurrence_compliances.html",
         None, {}
     ),
     (
-        "/compliance-task-details",
+        r"/compliance-task-details/([a-zA-Z-0-9=]+)",
         "files/client/compliance-task-details/compliance_task_details.html",
         None, {}
     ),

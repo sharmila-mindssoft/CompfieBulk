@@ -79,3 +79,24 @@ def to_structure_VectorType_RecordType_protocol_Server(data):
     for item in data:
         lst.append(to_structure_RecordType_protocol_Server(item))
     return lst
+
+
+def to_structure_RecordType_protocol_IPInfo(data):
+    from distribution import protocol
+    return protocol.IPInfo.to_structure(data)
+
+
+def to_structure_VectorType_RecordType_protocol_IPInfo(data):
+    data = parse_list(data, 0)
+    lst = []
+    for item in data:
+        lst.append(to_structure_RecordType_protocol_IPInfo(item))
+    return lst
+
+def to_structure_MapType_CustomeText_VectorType_RecordType_protocol_IPInfo(data):
+    map = {}
+    for key, value in data.iteritems() :
+        val = to_structure_VectorType_RecordType_protocol_IPInfo(value)
+        map[key] = val
+
+    return map

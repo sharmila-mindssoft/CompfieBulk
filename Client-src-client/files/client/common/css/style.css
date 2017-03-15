@@ -1231,7 +1231,15 @@ h2.chart-title: hover {
     border: 1px solid #ededed;
 }
 
-@media only screen and (max-width:991px) {
+<<<<<<< HEAD=======<<<<<<< HEAD .table-compliance-status {
+    border: 1px solid #ededed;
+}
+
+.escalation-drilldown-container {
+    margin-top: 40px;
+}
+
+>>>>>>> Siva/phase2 @media only screen and (max-width:991px) {
     .mob-p-r-0 {
         padding-right: 0
     }
@@ -1259,4 +1267,8 @@ h2.chart-title: hover {
 
 .escalation-drilldown-container {
     margin-top: 40px;
+}
+
+#ui-datepicker-div {
+    z-index: 100 !important;
 }

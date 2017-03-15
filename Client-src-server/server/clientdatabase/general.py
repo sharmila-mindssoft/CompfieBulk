@@ -80,7 +80,8 @@ __all__ = [
     "get_themes_for_user",
     "save_themes_for_user",
     "update_themes_for_user",
-    "legal_entity_logo_url"
+    "legal_entity_logo_url",
+    "verify_username_forgotpassword",
     ]
 
 
@@ -673,7 +674,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
-            "WHERE contract_to >= CURDATE() and is_closed = 0"
+            "WHERE contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0"
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :
@@ -684,7 +685,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "inner join tbl_user_legal_entities as t2 on " + \
             "t1.legal_entity_id = t2.legal_entity_id " + \
             "inner join tbl_countries t3 on t1.country_id = t3.country_id " + \
-            "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
+            "where contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
 
         rows = db.select_all(q, [user_id])
         # print "------------------ User ---------------"
@@ -2127,3 +2128,27 @@ def legal_entity_logo_url(db, legal_entity_id):
     else:
         logo_url = None
     return logo_url
+
+def verify_username_forgotpassword(db, username):
+    # columns = "user_id, email_id, "
+    # condition = "username=%s and is_active = 1"
+    # condition_val = [username]
+    # rows = db.get_data(
+    #     tblUserLoginDetails, columns, condition, condition_val
+    # )
+    # count = rows[0]["result"]
+    # if count == 1:
+    #     return rows[0]["user_id"]
+    # else:
+    #     return None
+
+    #     u.user_id, u.email_id, us.employee_name
+    q = "select u.user_id, u.username, us.email_id, us.employee_name " + \
+        "FROM tbl_user_login_details u " + \
+        "inner join  tbl_users us on u.user_id = us.user_id " + \
+        "where u.username = %s "
+    rows = db.select_one(q, [username])
+    if rows:
+        return rows
+    else:
+        return None

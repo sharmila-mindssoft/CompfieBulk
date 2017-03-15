@@ -6,14 +6,16 @@ from distribution.parse_structure import (
     parse_structure_Text, parse_structure_RecordType_protocol_IPAddress,
     parse_structure_UnsignedIntegerType_32, parse_structure_Bool,
     parse_structure_VectorType_RecordType_protocol_FileServer,
-    parse_structure_VectorType_RecordType_protocol_Server
+    parse_structure_VectorType_RecordType_protocol_Server,
+    parse_structure_MapType_CustomeText_VectorType_RecordType_protocol_IPInfo
 )
 from distribution.to_structure import (
     to_structure_VectorType_RecordType_protocol_Company,
     to_structure_Text, to_structure_RecordType_protocol_IPAddress,
     to_structure_UnsignedIntegerType_32, to_structure_Bool,
     to_structure_VectorType_RecordType_protocol_FileServer,
-    to_structure_VectorType_RecordType_protocol_Server
+    to_structure_VectorType_RecordType_protocol_Server,
+    to_structure_MapType_CustomeText_VectorType_RecordType_protocol_IPInfo
 )
 
 #
@@ -170,6 +172,25 @@ class Server(object):
             "file_server_info": to_structure_VectorType_RecordType_protocol_FileServer(self.file_server_info)
         }
 
+class IPInfo(object):
+    def __init__(self, form_name, ip):
+        self.form_name = form_name
+        self.ip = ip
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["form_name", "ip"])
+        form_name = parse_structure_Text(data.get("form_name"))
+        # ip = parse_structure_Text(data.get("ip"))
+        ip = data.get("ip")
+        return IPInfo(form_name, ip)
+
+    def to_structure(self):
+        return {
+            "form_name": to_structure_Text(self.form_name),
+            "ip": self.ip
+        }
+
 #
 # Request
 #
@@ -209,9 +230,22 @@ class GetCompanyServerDetails(Request):
         return {
         }
 
+class GetIPDetails(Request):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return GetIPDetails()
+
+    def to_inner_structure(self):
+        return {
+        }
+
 
 def _init_Request_class_map():
-    classes = [GetCompanyServerDetails]
+    classes = [GetCompanyServerDetails, GetIPDetails]
     class_map = {}
     for c in classes:
         class_map[c.__name__] = c
@@ -266,23 +300,28 @@ class CompanyServerDetails(Response):
         }
 
 class ServerDetails(Response):
-    def __init__(self, servers):
+    def __init__(self, servers, infos):
         self.servers = servers
+        self.infos = infos
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["servers"])
+        data = parse_dictionary(data, ["servers", "infos"])
         servers = data.get("servers")
         servers = parse_structure_VectorType_RecordType_protocol_Server(
             servers
         )
+        infos = data.get("infos")
+        infos = parse_structure_MapType_CustomeText_VectorType_RecordType_protocol_IPInfo(infos)
         return ServerDetails(servers)
 
     def to_inner_structure(self):
         return {
             "servers": to_structure_VectorType_RecordType_protocol_Server(
                 self.servers
-            )
+            ),
+            "infos": to_structure_MapType_CustomeText_VectorType_RecordType_protocol_IPInfo(self.infos)
+
         }
 
 def _init_Response_class_map():
