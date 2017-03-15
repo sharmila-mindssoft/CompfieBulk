@@ -683,7 +683,6 @@ function loadCompliances(){
 		                  	displayMessage(message.triggerbefore_iszero);
 		                  	return false;
 		                }
-						
 					});
 			        if(isClosed){
 			        	$('.edittriggertextbox' + clickvalue).hide();
