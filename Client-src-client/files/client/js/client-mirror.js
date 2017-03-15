@@ -193,12 +193,11 @@ function initClientMirror() {
         return r ? r[1] : undefined;
     }
 
-    function makekey()
-    {
+    function makekey() {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        for( var i=0; i < 5; i++ )
+        for (var i = 0; i < 5; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     }
@@ -2758,6 +2757,23 @@ function initClientMirror() {
         DownloadApiRequest(request);
     }
 
+
+    function uploadComplianceTaskFile(le_id, c_id, d_id, u_id, start_date, file_info, callback) {
+        var request = [
+            'UploadComplianceTaskFile', {
+                "le_id": le_id,
+                "c_id": c_id,
+                "d_id": d_id,
+                "u_id": u_id,
+                "start_date": start_date,
+                "file_info": file_info
+            }
+        ];
+        callerName = 'files';
+        clientApiRequest(callerName, request, callback);
+    }
+
+
     function ConvertToCSV(objArray) {
         var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         // var lblarray = typeof lblsArray != 'object' ? JSON.parse(lblsArray) : lblsArray;
@@ -2991,7 +3007,7 @@ function initClientMirror() {
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
-        getLEids:getLEids,
+        getLEids: getLEids,
         getUserManagement_List: getUserManagement_List,
         getSettingsFormDetails: getSettingsFormDetails,
         saveSettingsFormDetails: saveSettingsFormDetails,
