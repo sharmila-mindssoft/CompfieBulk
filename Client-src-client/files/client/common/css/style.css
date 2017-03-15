@@ -805,7 +805,7 @@ li.sortable-placeholder {
 }
 
 .table .zmdi {
-    color: #797979;
+    color: #797979 !important;
 }
 
 .table .fa {
