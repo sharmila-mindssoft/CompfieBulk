@@ -31,6 +31,7 @@ class API(object):
         #     s = json.dumps(data, indent=2)
         # else:
         s = response_data
+        print s
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -61,10 +62,12 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
-            # print company_id
+            print company_id
+            print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
             )
+            print request_data
 
         except Exception, e:
             print e
@@ -92,6 +95,7 @@ class API(object):
             )
 
             if type(request_data.request) is not fileprotocol.DownloadFile :
+                print "send response"
                 return respond(response_data)
             else :
                 return response_data

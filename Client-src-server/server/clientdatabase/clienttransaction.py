@@ -71,11 +71,11 @@ __all__ = [
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
 def get_user_based_countries(db, user_id, user_category):
-    query = "SELECT distinct t1.country_name, t1.country_id, t1.is_active FROM tbl_countries as t1"
+    query = "SELECT distinct t1.country_name, t1.country_id, t1.is_active FROM tbl_countries as t1 " + \
+        " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id "
     param = []
     if user_category > 1 :
-        query += " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id " + \
-            " INNER JOIN tbl_user_legal_entities as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
+        query += " INNER JOIN tbl_user_legal_entities as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
             " where t3.user_id = %s Order by t1.country_name"
         param = [user_id]
 
@@ -513,7 +513,7 @@ def update_statutory_settings(db, data, session_user):
         for u in unit_ids :
             db.execute(q, [session_user, updated_on, u, domain_id])
 
-    SaveOptedStatus(data)
+    SaveOptedStatus(data, session_user, updated_on)
 
     return clienttransactions.UpdateStatutorySettingsSuccess()
 
@@ -1254,13 +1254,13 @@ def get_statutory_wise_compliances(
         param.extend(condition_val)
 
     rows = db.select_all(query, param)
-    columns = [
-        "compliance_id", "statutory_dates", "due_date", "assignee",
-        "employee_code", "employee_name", "statutory_mapping",
-        "document_name", "compliance_task", "compliance_description",
-        "repeats_type_id",  "repeat_type", "repeats_every", "frequency",
-        "frequency_id"
-    ]
+    # columns = [
+    #     "compliance_id", "statutory_dates", "due_date", "assignee",
+    #     "employee_code", "employee_name", "statutory_mapping",
+    #     "document_name", "compliance_task", "compliance_description",
+    #     "repeats_type_id",  "repeat_type", "repeats_every", "frequency",
+    #     "frequency_id"
+    # ]
     # client_compliance_rows = convert_to_dict(rows, columns)
     level_1_statutory_wise_compliances = {}
     total_count = 0
@@ -1333,7 +1333,7 @@ def get_statutory_wise_compliances(
                 due_date = datetime.date(int(year), int(month), int(day))
                 level_1_statutory_wise_compliances[
                     # statutories[0].strip()
-                    statutories[0]
+                    statutories[0].strip()
                 ].append(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                         compliance["compliance_id"], compliance_name,
@@ -1862,6 +1862,8 @@ def approve_compliance(
     completion_date = rows[0]["completion_date"]
     frequency_id = rows[0]["frequency_id"]
     duration_type_id = rows[0]["duration_type_id"]
+    compliance_task = rows[0]["compliance_task"]
+    legal_entity_id = rows[0]["legal_entity_id"]
 
     # Updating next due date validity dates in assign compliance table
     as_columns = []
@@ -1906,8 +1908,8 @@ def approve_compliance(
     notify_compliance_approved(db, compliance_history_id, "Approved")
 
     # Audit Log Entry
-    action = "Compliance Approved \"%s\"" % (row["compliance_task"])
-    db.save_activity(session_user, 9, action, row["legal_entity_id"], unit_id)
+    action = "Compliance Approved \"%s\"" % compliance_task
+    db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
 
     return True
 

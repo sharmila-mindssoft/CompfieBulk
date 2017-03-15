@@ -2,15 +2,13 @@
 {% block content %}
         <style type="text/css">
             .bg-notfound{
-                /*background-image: url('/images/redirect-404.png');*/
-
-                align: center;
-                position: absolute;
-                top: 50%;
-                bottom: 0;
-                left: 40%;
-                right: 0;
+                background-image: url('/images/access_denied.png');
+                position: fixed;
+                top: 15%;
+                left: 25%;
                 margin: auto;
+                height: 315px;
+                width: 637px;
             }
             .bg-div {
                 width: 100%;
@@ -27,8 +25,8 @@
         <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" property="icon">
         8:   <link rel="icon" href="/images/favicon.ico" type="image/x-icon" property="icon">
 
-        <div >
-            <div class="bg-notfound"> Access restricted. Please open from authorized location.</div>
+        <div class="bg-div">
+            <div class="bg-notfound"></div>
         </div>
 
 {% endblock %}

@@ -173,7 +173,7 @@ class ReplicationBase(object):
             "tbl_client_groups": 5,
             "tbl_client_configuration": 6,
             "tbl_business_groups": 2,
-            "tbl_legal_entities": 10,
+            "tbl_legal_entities": 14,
             "tbl_legal_entity_domains": 6,
             "tbl_divisions": 4,
             "tbl_categories": 5,
@@ -222,6 +222,14 @@ class ReplicationBase(object):
             self._db.rollback()
         # assert self._domains is not None
 
+    def check_compliance_available_for_statutory_notification(self, compliance_id):
+        q = "select count(0) as cnt from tbl_compliances where compliance_id = %s "
+        rows = self._db.select_one(q, [compliance_id])
+        if rows.get("cnt") is None :
+            return False
+        else :
+            return True
+
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
         # print changes
@@ -242,6 +250,7 @@ class ReplicationBase(object):
         i_column = []
         values = []
         domain_id = None
+        compliance_id = None
         for x in changes:
             if x.value is None:
                 # values.append('')
@@ -251,6 +260,8 @@ class ReplicationBase(object):
                 values.append(str(x.value))
                 if tbl_name == "tbl_compliances" and x.column_name == "domain_id" :
                     domain_id = int(x.value)
+                if tbl_name == "tbl_statutory_notifications" and x.column_name == "compliance_id":
+                    compliance_id = int(x.value)
             val = str(values)[1:-1]
 
         query = "INSERT INTO %s (%s, %s) VALUES(%s, %s)" % (
@@ -261,10 +272,9 @@ class ReplicationBase(object):
                 val
             )
 
-        if tbl_name == "tbl_compliances" :
-            query += " ON DUPLICATE KEY UPDATE compliance_id = values(compliance_id) ;"
-        elif tbl_name == "tbl_client_groups" :
-            query += " ON DUPLICATE KEY UPDATE client_id = values(client_id) ;"
+        if tbl_name == "tbl_client_groups" :
+            query += " ON DUPLICATE KEY UPDATE email_id = values(email_id), total_view_licence = values(total_view_licence) ;"
+
         elif tbl_name == "tbl_legal_entities" :
             query += " ON DUPLICATE KEY UPDATE legal_entity_name = values(legal_entity_name), " + \
                 " contract_from = values(contract_from), contract_to = values(contract_to), " + \
@@ -272,11 +282,13 @@ class ReplicationBase(object):
                 " used_file_space = values(used_file_space), total_licence = values(total_licence), " + \
                 " used_licence = values(used_licence), is_closed = values(is_closed), closed_on = values(closed_on), " + \
                 " closed_by = values(closed_by), closed_remarks = values(closed_remarks)"
+
         elif tbl_name == "tbl_units":
             query += " ON DUPLICATE KEY UPDATE unit_name = values(unit_name), " + \
                 " unit_code = values(unit_code), geography_name = values(geography_name), " + \
                 " address = values(address), postal_code = values(postal_code), is_closed = values(is_closed), " + \
                 " closed_on = values(closed_on), closed_by = values(closed_by), closed_remarks = values(closed_remarks) "
+
         elif tbl_name == "tbl_compliances" :
             query += " ON DUPLICATE KEY UPDATE statutory_provision = values(statutory_provision), " + \
                 " compliance_task = values(compliance_task), document_name = values(document_name), " + \
@@ -298,16 +310,23 @@ class ReplicationBase(object):
                 print "Replication for legal entity ", self._client_id
             print tbl_name
             print query
-            if tbl_name != "tbl_compliances" :
-                self._db.execute(query)
-            elif tbl_name == "tbl_compliances" and domain_id in self._domains :
+
+            if tbl_name == "tbl_compliances" and domain_id in self._domains :
                 self._db.execute(query)
 
-            if tbl_name == "tbl_legal_entities" :
+            elif tbl_name == "tbl_statutory_notifications" and self.check_compliance_available_for_statutory_notification(compliance_id) is True :
+                self._db.execute(query)
+
+            elif tbl_name == "tbl_legal_entities" :
                 self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [auto_id])
                 self._db.execute("delete from tbl_client_configuration")
+                self._db.execute(query)
             elif tbl_name == "tbl_units" :
                 self._db.execute("delete from tbl_units_organizations where unit_id = %s", [auto_id])
+                self._db.execute(query)
+
+            else :
+                self._db.execute(query)
 
         except Exception, e:
             pass
@@ -472,7 +491,7 @@ class ReplicationManagerWithBase(ReplicationBase):
                 )
 
             except Exception, e:
-                # print err, e
+                print err, e
                 self._poll()
                 return
             if type(r) is InvalidReceivedCount:
@@ -491,46 +510,14 @@ class ReplicationManagerWithBase(ReplicationBase):
         else :
             pass
             # print err, response.error
-    #
-    # poll for delete
-    #
-
-    def _poll_for_del(self):
-        # print "poll for dell"
-        assert self._stop is False
-        assert self._received_count is not None
-
-        def on_timeout():
-            if self._stop :
-                return
-            body = json.dumps(
-                GetChanges(
-                    self._client_id,
-                    self._received_count
-                ).to_structure()
-            )
-            request = HTTPRequest(
-                self._poll_old_data_url, method="POST",
-                body=body,
-                headers={"Content-Type": "application/json"},
-                request_timeout=10
-            )
-            self._http_client.fetch(request, self._poll_del_response)
-        self._io_loop.add_timeout(time.time() + 43200, on_timeout)
-
-    def _poll_del_response(self, response) :
-        if self._stop :
-            return
-        self._poll_for_del()
 
     def stop(self):
         self._stop = True
+        self._db.close()
 
     def start(self):
         self._stop = False
-        # print "poll started for ----------- ", self._client_id
         self._poll()
-        # self._io_loop.add_callback(self._poll_for_del)
 
 
 class DomainReplicationManager(ReplicationBase):

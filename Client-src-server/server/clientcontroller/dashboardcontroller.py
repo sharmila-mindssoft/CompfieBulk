@@ -264,32 +264,6 @@ def process_update_statutory_notification_status(db, request, session_user):
     statutory_notification_details = statutory_notification_detail(db, request.notification_id, session_user)
     return dashboard.StatutoryUpdateNotificationStatusSuccess(statutory_notification_details)
 
-########################################################
-# To get data to populate in assignee wise compliance
-# chart filters
-########################################################
-# def process_assigneewise_compliances_filters(
-#     db, request, session_user, session_category
-# ):
-#     countries = get_user_based_countries(db, session_user, session_category)
-#     user_company_info = get_user_company_details(db, session_user)
-#     unit_ids = user_company_info[0]
-#     division_ids = user_company_info[1]
-#     legal_entity_ids = user_company_info[2]
-#     business_group_ids = user_company_info[3]
-#     country_list = get_countries_for_user(db, session_user)
-#     domain_list = get_domains_for_user(db, session_user)
-#     business_group_list = get_business_groups_for_user(db, business_group_ids)
-#     legal_entity_list = get_legal_entities_for_user(db, legal_entity_ids)
-#     division_list = get_divisions_for_user(db, division_ids)
-#     unit_list = get_units_for_user(db, unit_ids)
-#     users_list = get_assignees(db, unit_ids)
-#     return dashboard.GetAssigneewiseComplianesFiltersSuccess(
-#         countries=country_list, business_groups=business_group_list,
-#         legal_entities=legal_entity_list, divisions=division_list,
-#         units=unit_list, users=users_list, domains=domain_list
-#     )
-
 
 ########################################################
 # To retrieve data for assignee wise compliances chart
@@ -298,7 +272,7 @@ def process_update_statutory_notification_status(db, request, session_user):
 def process_assigneewise_compliances(db, request, session_user, session_category):
     if request.csv:
         converter = ConvertJsonToCSV(
-            db, request, session_user, "AssigneeWise"
+            db, request, session_user, "AssigneeWise", session_category
         )
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH

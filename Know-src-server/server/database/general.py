@@ -123,7 +123,7 @@ def return_changes(data):
 
 def remove_trail_log(db, client_id, received_count):
     q = "delete from tbl_audit_log where audit_trail_id <= %s " + \
-        " and client_id = %s"
+        " and legal_entity_id = %s"
     db.execute(q, [received_count, client_id])
 
 
@@ -270,11 +270,12 @@ def update_client_replication_status(
     if type is None:
         q = "update tbl_client_replication_status set is_new_data = 0 " + \
             " where client_id = %s and is_group = %s"
-        # remove_trail_log(db, client_id, received_count)
+        if is_group is False :
+            remove_trail_log(db, client_id, received_count)
     else:
         q = "update tbl_client_replication_status set is_new_domain = 0, " + \
             " domain_id = '' where client_id = %s and is_group = %s"
-    db.execute(q, [client_id, is_group])
+    db.execute(q, [client_id, int(is_group)])
 
 
 def update_client_domain_status(db, client_id, domain_ids):
