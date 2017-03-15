@@ -489,7 +489,7 @@ class ReplicationManagerWithBase(ReplicationBase):
                 )
 
             except Exception, e:
-                # print err, e
+                print err, e
                 self._poll()
                 return
             if type(r) is InvalidReceivedCount:
@@ -508,46 +508,14 @@ class ReplicationManagerWithBase(ReplicationBase):
         else :
             pass
             # print err, response.error
-    #
-    # poll for delete
-    #
-
-    def _poll_for_del(self):
-        # print "poll for dell"
-        assert self._stop is False
-        assert self._received_count is not None
-
-        def on_timeout():
-            if self._stop :
-                return
-            body = json.dumps(
-                GetChanges(
-                    self._client_id,
-                    self._received_count
-                ).to_structure()
-            )
-            request = HTTPRequest(
-                self._poll_old_data_url, method="POST",
-                body=body,
-                headers={"Content-Type": "application/json"},
-                request_timeout=10
-            )
-            self._http_client.fetch(request, self._poll_del_response)
-        self._io_loop.add_timeout(time.time() + 43200, on_timeout)
-
-    def _poll_del_response(self, response) :
-        if self._stop :
-            return
-        self._poll_for_del()
 
     def stop(self):
         self._stop = True
+        self._db.close()
 
     def start(self):
         self._stop = False
-        # print "poll started for ----------- ", self._client_id
         self._poll()
-        # self._io_loop.add_callback(self._poll_for_del)
 
 
 class DomainReplicationManager(ReplicationBase):
