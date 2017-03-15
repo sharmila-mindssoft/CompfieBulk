@@ -559,14 +559,23 @@ def return_client_users(users):
     return results
 
 
-def get_user_domains(db, user_id):
-    q = "select domain_id from tbl_domains"
-    param = None
+def get_user_domains(db, user_id, user_category_id=None):
     condition = ""
-    # if is_primary_admin(db, user_id) is not True:
-    q = "select domain_id from tbl_user_domains"
-    condition = " WHERE user_id = %s"
-    param = [user_id]
+
+    param = []
+    if user_category_id is not None :
+        if user_category_id <= 3 :
+            q = "select domain_id from tbl_domains"
+
+        else :
+            q = "select domain_id from tbl_user_domains"
+            condition = " WHERE user_id = %s"
+            param.append(user_id)
+
+    else :
+        q = "select domain_id from tbl_user_domains"
+        condition = " WHERE user_id = %s"
+        param.append(user_id)
 
     rows = db.select_all(q + condition, param)
     d_ids = []
@@ -809,17 +818,23 @@ def is_admin(db, user_id):
             return False
 
 
-def get_user_unit_ids(db, user_id):
-    q = "select distinct unit_id from tbl_units"
-    param = None
-    condition = ""
-    # if is_primary_admin(db, user_id) is not True:
-    condition = " WHERE unit_id in (select unit_id " + \
-        " from tbl_user_units " + \
-        " where user_id = %s )"
-    param = [user_id]
+def get_user_unit_ids(db, user_id, user_category_id=None):
+    if user_category_id is None:
+        q = "select distinct t1.unit_id from tbl_units as t1 " + \
+            "left join tbl_user_units as t2 on t1.unit_id = t2.unit_id " + \
+            " where t2.user_id = %s "
+        param = [user_id]
+    else :
+        if user_category_id > 3 :
+            q = "select distinct t1.unit_id from tbl_units as t1 " + \
+                "left join tbl_user_units as t2 on t1.unit_id = t2.unit_id " + \
+                " where t2.user_id = %s "
+            param = [user_id]
+        else :
+            q = "select unit_id from tbl_units "
+            param = []
 
-    rows = db.select_all(q + condition, param)
+    rows = db.select_all(q, param)
     u_ids = []
     for r in rows:
         u_ids.append(int(r["unit_id"]))

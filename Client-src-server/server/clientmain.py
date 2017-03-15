@@ -94,9 +94,9 @@ class API(object):
                 on_session_timeout(c_db)
 
         def on_session_timeout(c_db):
+            c_db_con = self.client_connection_pool(c_db)
+            _db_clr = Database(c_db_con)
             try :
-                c_db_con = self.client_connection_pool(c_db)
-                _db_clr = Database(c_db_con)
                 _db_clr.begin()
                 _db_clr.clear_session(SESSION_CUTOFF)
                 _db_clr.commit()
