@@ -466,8 +466,9 @@ class AutoStart(Database):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
         dat_conf = self.get_client_date_configuration()
         year = self.get_year_to_update_chart()
-        if getCurrentYear() not in year :
-            year.append(getCurrentYear())
+
+        year.append(getCurrentYear() - 1)
+        year.append(getCurrentYear())
 
         q = "insert into tbl_compliance_status_chart_unitwise( " + \
             "     legal_entity_id, country_id, domain_id, unit_id,  " + \
