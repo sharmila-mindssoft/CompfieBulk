@@ -867,6 +867,7 @@ CREATE TABLE `tbl_client_users` (
   `status_changed_on` timestamp NULL DEFAULT NULL,
   `is_disable` tinyint(4) DEFAULT '0',
   `disabled_on` timestamp NULL DEFAULT NULL,
+  `legal_entity_ids` text DEFAULT NULL,
   KEY `fk_tbl_client_users_cg` (`client_id`),
   CONSTRAINT `fk_tbl_client_users_cg` FOREIGN KEY (`client_id`) REFERENCES `tbl_client_groups` (`client_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
