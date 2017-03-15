@@ -144,7 +144,11 @@ function loadComplianceTaskDetails(data) {
         }
         $(".status", cloneval).html(data[key].compliance_status);
         if (data[key].format_file_name != null) {
-            $(".format-file", cloneval).attr("href", data[key].format_file_name)
+            // $(".format-file", cloneval).attr("href", data[key].format_file_name);
+            $(".format-file", cloneval).on("click", function(e, val) {
+                client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].format_file_name});
+
+            });
         } else {
             $(".format-file", cloneval).hide()
         }
