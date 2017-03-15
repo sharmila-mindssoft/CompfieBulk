@@ -71,11 +71,11 @@ __all__ = [
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
 def get_user_based_countries(db, user_id, user_category):
-    query = "SELECT distinct t1.country_name, t1.country_id, t1.is_active FROM tbl_countries as t1"
+    query = "SELECT distinct t1.country_name, t1.country_id, t1.is_active FROM tbl_countries as t1 " + \
+        " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id "
     param = []
     if user_category > 1 :
-        query += " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id " + \
-            " INNER JOIN tbl_user_legal_entities as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
+        query += " INNER JOIN tbl_user_legal_entities as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
             " where t3.user_id = %s Order by t1.country_name"
         param = [user_id]
 
@@ -513,7 +513,7 @@ def update_statutory_settings(db, data, session_user):
         for u in unit_ids :
             db.execute(q, [session_user, updated_on, u, domain_id])
 
-    SaveOptedStatus(data)
+    SaveOptedStatus(data, session_user, updated_on)
 
     return clienttransactions.UpdateStatutorySettingsSuccess()
 

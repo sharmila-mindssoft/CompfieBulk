@@ -1768,12 +1768,14 @@ def get_assigneewise_compliances_list(
     if division_id is not None:
         condition += " AND tu.division_id = %s"
         condition_val.append(division_id)
+
     if unit_id is not None:
         condition += " AND tu.unit_id = %s"
         condition_val.append(unit_id)
     else:
 
-        units = get_user_unit_ids(db, session_user)
+        units = get_user_unit_ids(db, session_user, session_category)
+        print units
         condition += " AND find_in_set(tu.unit_id, %s)"
         condition_val.append(",".join([str(x) for x in units]))
         # unit_condition, unit_condition_val = db.generate_tuple_condition(
@@ -1784,9 +1786,10 @@ def get_assigneewise_compliances_list(
     if assignee_id is not None:
         condition += " AND tch.completed_by = %s"
         condition_val.append(assignee_id)
-    domain_ids_list = get_user_domains(db, session_user)
+    domain_ids_list = get_user_domains(db, session_user, session_category)
     current_date = get_date_time_in_date()
     result = {}
+    print domain_ids_list
     for domain_id in domain_ids_list:
         timelines = get_country_domain_timelines(
             db, [country_id], [domain_id], [current_date.year]
@@ -1844,6 +1847,10 @@ def get_assigneewise_compliances_list(
             " group by completed_by, tch.unit_id; "
         param = [domain_id, from_date, to_date]
         parameter_list = condition_val + param
+        print "\n"
+
+        print query % tuple(parameter_list)
+        print "\n"
         assignee_wise_compliances = db.select_all(query, parameter_list)
         for compliance in assignee_wise_compliances:
             unit_name = compliance["unit_name"]

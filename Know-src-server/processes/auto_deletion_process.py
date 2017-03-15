@@ -51,7 +51,6 @@ class AutoDeletionStart(Database):
         self.current_date = current_date
         self.country_id = country_id
 
-
     def get_new_id(self, table_name, column_name):
         query = "SELECT MAX(%s)+1 as msx_id FROM %s" % (column_name, table_name)
         row = self.select_one(query)
@@ -92,7 +91,7 @@ class AutoDeletionStart(Database):
             return False
 
     def delete_data(self, domain_id):
-        deletion_year = 1
+        deletion_year = 7
         query = "DELETE FROM tbl_compliance_history WHERE  compliance_id in ( " + \
             " SELECT count(0) FROM tbl_compliance_history as t1 " + \
             "INNER JOIN tbl_client_compliances as t2 on t1.unit_id = t2.unit_id and " + \
@@ -107,7 +106,7 @@ class AutoDeletionStart(Database):
         # self.execute(query, [deletion_year, deletion_year, domain_id, self.country_id])
 
     def is_seven_years_before_data_available(self, domain_id):
-        deletion_year = 1
+        deletion_year = 7
 
         query = "SELECT count(0) cnt FROM tbl_compliance_history as t1 " + \
             "INNER JOIN tbl_client_compliances as t2 on t1.unit_id = t2.unit_id and " + \

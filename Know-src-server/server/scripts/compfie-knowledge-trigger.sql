@@ -370,6 +370,66 @@ CREATE TRIGGER `after_tbl_legal_entities_update` AFTER UPDATE ON `tbl_legal_enti
                     'tbl_legal_entities');
 
 
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    NEW.legal_entity_id,
+                    NEW.legal_entity_id,
+                    'is_closed',
+                    NEW.is_closed,
+                    'tbl_legal_entities');
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    NEW.legal_entity_id,
+                    NEW.legal_entity_id,
+                    'closed_on',
+                    NEW.closed_on,
+                    'tbl_legal_entities');
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    NEW.legal_entity_id,
+                    NEW.legal_entity_id,
+                    'closed_by',
+                    NEW.closed_by,
+                    'tbl_legal_entities');
+
+        INSERT INTO tbl_audit_log(action,
+                                 client_id,
+                                 legal_entity_id,
+                                 tbl_auto_id,
+                                 column_name,
+                                 value,
+                                 tbl_name)
+            VALUES (@action,
+                    NEW.client_id,
+                    NEW.legal_entity_id,
+                    NEW.legal_entity_id,
+                    'closed_remarks',
+                    NEW.closed_remarks,
+                    'tbl_legal_entities');
+
         UPDATE tbl_client_replication_status set is_new_data = 1
         WHERE client_id = NEW.client_id and is_group = 1;
 
