@@ -700,7 +700,11 @@ function loadCompliances(){
 	}
 
 	if (SCOUNT == 1) {
+		NextButton.hide();
         $(".total_count_view").hide();
+        var no_record_row = $("#templates .table-no-record tr");
+	    var noclone = no_record_row.clone();
+	    $('.tbody-accordion-list').append(noclone);
     } else {
         if (totalRecord == (SCOUNT - 1)) {
             ShowMore.hide();
