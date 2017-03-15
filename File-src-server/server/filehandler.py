@@ -73,6 +73,8 @@ def upload_file(request, client_id) :
             is_success = True
 
     if is_success :
+        print is_success
+        print fileprotocol.FileUploadSuccess()
         return fileprotocol.FileUploadSuccess()
     else :
         return fileprotocol.FileUploadFailed()

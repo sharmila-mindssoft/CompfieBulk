@@ -93,9 +93,10 @@ function processForgotpassword(username, shortName, callback) {
     headers: { 'X-Xsrftoken': getCookie('_xsrf') },
     type: 'POST',
     contentType: 'application/json',
-    data: JSON.stringify(requestFrame, null, ' '),
+    data: makekey() + btoa(JSON.stringify(requestFrame, null, ' ')),
     success: function (data, textStatus, jqXHR) {
-      // var data = JSON.parse(data);
+      data = atob(data.substring(5));
+      data = JSON.parse(data);
       var status = data[0];
       var response = data[1];
       matchString = 'success';
@@ -107,7 +108,9 @@ function processForgotpassword(username, shortName, callback) {
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      callback(jqXHR.responseText, errorThrown);
+      rdata = JSON.parse(jqXHR.responseText);
+      rdata = atob(rdata.substring(5));
+      callback(rdata, null);
     }
   });
 

@@ -3,8 +3,10 @@ import json
 import traceback
 import mimetypes
 import jinja2
-
+import base64
 import time
+import string
+import random
 from tornado.httpclient import AsyncHTTPClient
 from tornado.web import (
     StaticFileHandler, RequestHandler
@@ -53,12 +55,16 @@ def send_bad_request(response, custom_text=None):
     # logger.logWebfront(400)
     if custom_text is None:
         # logger.logWebfront("invalid json format")
-        response.send("invalid json format")
+        msg = "invalid json format"
     else:
         # logger.logWebfront(response)
         # logger.logWebfront(custom_text)
-        response.send(custom_text)
+        msg = custom_text
 
+    key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+    s = base64.b64encode(msg)
+    s = json.dumps(key+s)
+    response.send(s)
 
 def send_invalid_json_format(response):
     send_bad_request(response, "invalid json format")
@@ -77,7 +83,10 @@ class Controller(object):
         actual_data = None
         try:
 
-            data = request.body()
+            data = request.body()[5:]
+            print data
+            data = data.decode('base64')
+            print data
             data = json.loads(data)
             if type(data) is not list:
                 send_bad_request(
@@ -125,7 +134,8 @@ class Controller(object):
         actual_data = None
         try:
 
-            data = request.body()
+            data = request.body()[5:]
+            data = data.decode('base64')
             data = json.loads(data)
             if type(data) is not list:
                 send_bad_request(
@@ -215,11 +225,26 @@ class TemplateHandler(RequestHandler):
         return data
 
     def get(self, url=None, token=None):
-        print self.request.remote_ip
-        print self.request.uri
-        if url is not None :
-            print url.decode('base64')
-        if url is not None and "userregistration" in self.request.uri :
+        request_ip = self.request.remote_ip
+        print request_ip
+        if url is not None and ("userregistration" not in self.request.uri or "/reset_password" not in self.request.uri)  :
+            print "url not in"
+            request_url = self.request.uri.strip().split('/')[1]
+            short_name = url.decode('base64')
+            ips = self._company_manager.lookup_form_ips(short_name)
+            if ips is not None:
+                for i in ips :
+                    if request_url in i.form_name :
+                        if request_ip not in i.ip :
+                            path = "files/client/common/html/accessdenied.html"
+                            temp = template_env.get_template(path)
+                            self.set_status(403)
+                            self.write(temp.render())
+                            return
+                        else :
+                            break
+
+        if url is not None and ("userregistration" in self.request.uri or "/reset_password" in self.request.uri):
             print 'GOT URL %s' % (url,)
             company = self._company_manager.locate_company(
                 url
@@ -232,7 +257,6 @@ class TemplateHandler(RequestHandler):
                 return
 
         path = self.__path_desktop
-        print path
         if self.__path_mobile is not None:
             useragent = self.request.headers.get("User-Agent")
             if useragent is None:
@@ -275,7 +299,7 @@ def run_web_front_end(port, knowledge_server_address):
             io_loop,
             knowledge_server_address,
             http_client,
-            800,
+            200,
             server_added
         )
         controller = Controller(

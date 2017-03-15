@@ -193,6 +193,15 @@ function initClientMirror() {
         return r ? r[1] : undefined;
     }
 
+    function makekey() {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        return text;
+    }
+
     function clientApiRequest(callerName, request, callback) {
         var sessionToken = getSessionToken();
         var requestFrame = {
@@ -203,16 +212,17 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        //alert(body.toSource());
+        actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
             headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             contentType: 'application/json',
-            data: toJSON(body),
+            data: makekey() + btoa(actula_data),
             success: function(data) {
                 //console.log(data);
-                // var data = parseJSON(data);
+                data = atob(data.substring(5));
+                data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -232,25 +242,31 @@ function initClientMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if (errorThrown == 'Not Found') {
-                    // alert('Server connection not found');
-                    redirect_login();
-                } else {
-                    callback(jqXHR.responseText, errorThrown);
-                }
+                rdata = parseJSON(jqXHR.responseText);
+                rdata = atob(rdata.substring(5));
+                callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
+                // if (errorThrown == 'Not Found') {
+                //     // alert('Server connection not found');
+                //     redirect_login();
+                // } else {
+                //     callback(jqXHR.responseText, errorThrown);
+                // }
             }
         });
     }
 
     function LoginApiRequest(callerName, request, callback) {
+        actula_data = toJSON(request);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
 
             type: 'POST',
             contentType: 'application/json',
-            data: toJSON(request),
+            data: makekey() + btoa(actula_data),
             success: function(data) {
                 // var data = parseJSON(data);
+                data = atob(data.substring(5));
+                data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -262,7 +278,9 @@ function initClientMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                callback(jqXHR.responseText, null);
+                rdata = parseJSON(jqXHR.responseText);
+                rdata = atob(rdata.substring(5));
+                callback(rdata, null);
             }
         });
     }
@@ -769,9 +787,10 @@ function initClientMirror() {
             headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             contentType: 'application/json',
-            data: toJSON(body),
+            data: makekey() + btoa(toJSON(body)),
             success: function(data) {
-                // var data = parseJSON(data);
+                data = atob(data.substring(5));
+                data = parseJSON(data);
                 var status = data[0];
                 var response = data[1];
                 matchString = 'success';
@@ -791,12 +810,9 @@ function initClientMirror() {
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                if (errorThrown == 'Not Found') {
-                    // alert('Server connection not found');
-                    redirect_login();
-                } else {
-                    callback(jqXHR.responseText, errorThrown);
-                }
+                rdata = parseJSON(jqXHR.responseText);
+                rdata = atob(rdata.substring(5));
+                callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
             }
         });
     }
@@ -2741,6 +2757,23 @@ function initClientMirror() {
         DownloadApiRequest(request);
     }
 
+
+    function uploadComplianceTaskFile(le_id, c_id, d_id, u_id, start_date, file_info, callback) {
+        var request = [
+            'UploadComplianceTaskFile', {
+                "le_id": le_id,
+                "c_id": c_id,
+                "d_id": d_id,
+                "u_id": u_id,
+                "start_date": start_date,
+                "file_info": file_info
+            }
+        ];
+        callerName = 'files';
+        clientApiRequest(callerName, request, callback);
+    }
+
+
     function ConvertToCSV(objArray) {
         var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         // var lblarray = typeof lblsArray != 'object' ? JSON.parse(lblsArray) : lblsArray;
@@ -2974,7 +3007,7 @@ function initClientMirror() {
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
-        getLEids:getLEids,
+        getLEids: getLEids,
         getUserManagement_List: getUserManagement_List,
         getSettingsFormDetails: getSettingsFormDetails,
         saveSettingsFormDetails: saveSettingsFormDetails,

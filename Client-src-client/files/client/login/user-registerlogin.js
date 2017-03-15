@@ -25,6 +25,10 @@ function makekey() {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
+function getCookie(name) {
+    var r = document.cookie.match('\\b' + name + '=([^;]*)\\b');
+    return r ? r[1] : undefined;
+  }
 
 function call_api(request, short_name, callback) {
     var requestFrame = [
@@ -36,12 +40,12 @@ function call_api(request, short_name, callback) {
         url: '/api/login',
         type: 'POST',
         contentType: 'application/json',
-        // headers: { 'X-CSRFToken': csrf_token },
-        // data: makekey() + btoa(JSON.stringify(request, null, '')),
+        headers: { 'X-Xsrftoken': getCookie('_xsrf') },
+        data: makekey() + btoa(JSON.stringify(request, null, '')),
         data: JSON.stringify(requestFrame, null, ''),
         success: function(data, textStatus, jqXHR) {
-            // data = atob(data.substring(5));
-            // data = JSON.parse(data);
+            data = atob(data.substring(5));
+            data = JSON.parse(data);
             var status = data[0];
             var response = data[1];
             matchString = 'success';

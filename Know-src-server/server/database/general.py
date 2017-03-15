@@ -3,7 +3,7 @@ from replication.protocol import (
 )
 
 from distribution.protocol import (
-    Company, IPAddress, Server, FileServer
+    Company, IPAddress, Server, FileServer, IPInfo
 )
 
 from server.common import (
@@ -52,12 +52,17 @@ def get_trail_log(db, client_id, received_count, is_group):
     query += "  column_name, value, client_id, action, legal_entity_id"
     query += " from tbl_audit_log WHERE audit_trail_id > %s "
     if is_group :
-        query += " AND (client_id= %s) "
+        query += " AND client_id= %s"
+        param = [received_count, client_id]
     else :
-        query += " AND (legal_entity_id=0 or legal_entity_id= %s) "
+        query += " AND (legal_entity_id=0 or legal_entity_id= %s"
+        query += " or client_id = (select client_id from tbl_legal_entities where legal_entity_id = %s) )"
+
+        param = [received_count, client_id, client_id]
+
     query += " LIMIT 100;"
 
-    rows = db.select_all(query, [received_count, client_id])
+    rows = db.select_all(query, param)
 
     results = rows
     if len(rows) == 0:
@@ -118,7 +123,7 @@ def return_changes(data):
 
 def remove_trail_log(db, client_id, received_count):
     q = "delete from tbl_audit_log where audit_trail_id <= %s " + \
-        " and client_id = %s"
+        " and legal_entity_id = %s"
     db.execute(q, [received_count, client_id])
 
 
@@ -221,8 +226,22 @@ def return_companies(data):
     return results
 
 def get_ip_details(db):
-    pass
+    q = "select t1.client_id, t3.short_name, t1.form_id, t2.form_url, t1.ips " + \
+        "from tbl_ip_settings as t1 " + \
+        "inner join tbl_client_forms as t2 " + \
+        "on t1.form_id = t2.form_id " + \
+        "inner join tbl_client_groups as t3 on t1.client_id = t3.client_id"
+    rows = db.select_all(q)
+    data = {}
+    for r in rows :
+        short_name = r["short_name"]
+        ips = r["ips"].split(',')
+        form_url = r["form_url"]
+        if data.get(short_name) is None :
+            data[short_name] = []
 
+        data[short_name].append(IPInfo(form_url, ips))
+    return data
 
 def get_client_replication_list(db):
     q = "select client_id, is_new_data, is_new_domain, " + \
@@ -251,11 +270,12 @@ def update_client_replication_status(
     if type is None:
         q = "update tbl_client_replication_status set is_new_data = 0 " + \
             " where client_id = %s and is_group = %s"
-        # remove_trail_log(db, client_id, received_count)
+        if is_group is False :
+            remove_trail_log(db, client_id, received_count)
     else:
         q = "update tbl_client_replication_status set is_new_domain = 0, " + \
             " domain_id = '' where client_id = %s and is_group = %s"
-    db.execute(q, [client_id, is_group])
+    db.execute(q, [client_id, int(is_group)])
 
 
 def update_client_domain_status(db, client_id, domain_ids):

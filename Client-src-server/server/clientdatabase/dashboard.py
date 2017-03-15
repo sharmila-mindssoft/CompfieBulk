@@ -118,10 +118,11 @@ def get_compliance_status_count(db, request, user_id, user_category):
             " chart_year " + \
             " from tbl_compliance_status_chart_unitwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
-            " where chart_year = %s and t1.domain_id = %s and t1.country_id = %s"
+            " where chart_year = %s and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            chart_year, ",".join([str(x) for x in country_ids]),
-            ",".join([str(x) for x in domain_ids])
+            chart_year,
+            ",".join([str(x) for x in domain_ids]),
+            ",".join([str(x) for x in country_ids])
         ]
     else :
         q = "select " + group_by_name + " as filter_name, t1.country_id, t1.domain_id, " + \
@@ -131,16 +132,18 @@ def get_compliance_status_count(db, request, user_id, user_category):
             " from tbl_compliance_status_chart_userwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " where chart_year = %s and user_id = %s " + \
-            " and t1.domain_id = %s and t1.country_id = %s"
+            " and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            chart_year, user_id, ",".join([str(x) for x in country_ids]),
-            ",".join([str(x) for x in domain_ids])
+            chart_year, user_id,
+            ",".join([str(x) for x in domain_ids]),
+            ",".join([str(x) for x in country_ids])
         ]
     if filter_type_ids is not None :
         q += filter_type_ids
         param.append(filter_ids)
 
     q += " group by " + group_by_name
+    print q % tuple(param)
     rows = db.select_all(q, param)
 
     return frame_compliance_status(rows)
@@ -245,6 +248,7 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         param.append(filter_ids)
 
     q += " group by " + group_by_name
+    print q % tuple(param)
     rows = db.select_all(q, param)
 
     return frame_compliance_status(rows)
@@ -398,10 +402,11 @@ def get_escalation_chart(db, request, user_id, user_category):
             " chart_year " + \
             " from tbl_compliance_status_chart_unitwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
-            " where find_in_set(chart_year, %s) and t1.domain_id = %s and t1.country_id = %s"
+            " where find_in_set(chart_year, %s) and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            years, ",".join([str(x) for x in country_ids]),
-            ",".join([str(x) for x in domain_ids])
+            years,
+            ",".join([str(x) for x in domain_ids]),
+            ",".join([str(x) for x in country_ids]),
         ]
     else :
         q = "select t1.country_id, t1.domain_id, " + \
@@ -411,10 +416,11 @@ def get_escalation_chart(db, request, user_id, user_category):
             " from tbl_compliance_status_chart_userwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " where find_in_set(chart_year, %s) and user_id = %s " + \
-            " and t1.domain_id = %s and t1.country_id = %s"
+            " and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            years, user_id, ",".join([str(x) for x in country_ids]),
-            ",".join([str(x) for x in domain_ids])
+            years, user_id,
+            ",".join([str(x) for x in domain_ids]),
+            ",".join([str(x) for x in country_ids]),
         ]
     if filter_type_ids is not None :
         q += filter_type_ids
@@ -928,7 +934,7 @@ def get_client_domain_configuration(
     year_condition = []
     cond = "(T3.country_id = %s " + \
         "  AND T2.domain_id = %s " + \
-        " AND find_in_set(YEAR(T1.due_date),%s))"
+        " AND find_in_set(YEAR(T1.due_date), '%s'))"
     for d in rows:
 
         info = {}

@@ -685,6 +685,7 @@ CREATE TABLE `tbl_categories` (
 
 DROP TABLE IF EXISTS `tbl_client_configuration`;
 CREATE TABLE `tbl_client_configuration` (
+  `cn_config_id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
   `client_id` int(11) NOT NULL,
   `country_id` int(11) NOT NULL,
   `domain_id` int(11) NOT NULL,
