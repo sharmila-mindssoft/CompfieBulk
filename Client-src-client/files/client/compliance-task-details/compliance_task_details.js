@@ -277,7 +277,8 @@ function loadUpcomingCompliancesDetails(data) {
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
         $('.uc-duedate', cloneval).html(data[k]['due_date']);
         if (data[k]['upcoming_format_file_name'] != null) {
-            $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);
+            // $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);
+            client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].format_file_name);
         } else {
             $('.format-file', cloneval).hide();
         }
@@ -301,6 +302,7 @@ function loadUpcomingCompliancesDetails(data) {
 function remove_uploaded_temp_file(a) {
     $(".uploaded" + a).remove();
     uploaded_file_list.splice(parseInt(a), 1)
+
 }
 // $(".expand_inprogress ").click(function() {
 //     $('.expand_inprogress').removeClass('info');
@@ -420,9 +422,9 @@ function showSideBar(idval, data) {
                 }
 
                 documents = file_list;
-                //if (documents.length == 0) {
+                if (documents.length == 0) {
                     documents = null
-                //}
+                }
 
                 uploaded_documents = uploaded_file_list;
                 if (uploaded_documents.length == 0) {

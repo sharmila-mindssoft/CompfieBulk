@@ -642,12 +642,12 @@ api_params = {
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "level_1_statutories": make_map_type_vector_type_string(is_optional=True),
     "compliance_file_name":  make_vector_type_string(is_optional=True),
-    "in_units":make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
-    "pr_units":make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
+    "in_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
+    "pr_units": make_vector_type_field(module="clienttransactions", klass_name="PastRecordUnits"),
     "pr_categories": make_vector_type_field(module="clientcore", klass_name="ClientCategory"),
     "statutory_wise_compliances": make_vector_type_field(module="clienttransactions", klass_name="STATUTORY_WISE_COMPLIANCES"),
     "pr_users": make_vector_type_field(module="clientcore", klass_name="User"),
-    "level_1_statutory_name":make_text_field(length=500, is_optional=True),
+    "level_1_statutory_name": make_text_field(length=500, is_optional=True),
     "pr_compliances" : make_vector_type_field(module="clienttransactions", klass_name="UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS"),
     "upcoming_start_count": make_int_field(),
     "upcoming_compliances": make_vector_type_field(module="clientcore", klass_name="UpcomingCompliance"),
@@ -664,7 +664,7 @@ api_params = {
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "le_admin": make_int_field(is_optional=True),
     "user_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
-    "on_statutory": make_text_field(length=500),    
+    "on_statutory": make_text_field(length=500),
     "on_unit": make_text_field(length=100),
     "on_compliance_status": make_text_field(length=500),
     "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),
@@ -673,4 +673,8 @@ api_params = {
     "pr_completed_by": make_int_field(is_optional=True),
     "field_name": make_text_field(length=100),
     "error": make_text_field(length=500),
+    "file_size": make_int_field(is_optional=True),
+    "file_name": make_text_field(length=500),
+    "file_content": make_text_field(),
+
 }
