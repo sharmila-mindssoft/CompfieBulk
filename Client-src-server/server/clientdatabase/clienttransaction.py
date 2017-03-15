@@ -513,7 +513,7 @@ def update_statutory_settings(db, data, session_user):
         for u in unit_ids :
             db.execute(q, [session_user, updated_on, u, domain_id])
 
-    SaveOptedStatus(data)
+    SaveOptedStatus(data, session_user, updated_on)
 
     return clienttransactions.UpdateStatutorySettingsSuccess()
 

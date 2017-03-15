@@ -209,9 +209,11 @@ class UnitClose(KnowledgedbConnect):
 
 
 class SaveOptedStatus(KnowledgedbConnect):
-    def __init__(self, statu_data):
+    def __init__(self, statu_data, updated_by, updated_on):
         super(SaveOptedStatus, self).__init__()
         self._statu_data = statu_data
+        self._updated_by = updated_by
+        self._updated_on = updated_on
         self.process_opted_status()
 
     def _update_opted_status(self):
@@ -231,7 +233,9 @@ class SaveOptedStatus(KnowledgedbConnect):
                 " statutory_opted_status = %s, " + \
                 " remarks = %s, " + \
                 " compliance_opted_status = %s, " + \
-                " not_opted_remarks = %s " + \
+                " not_opted_remarks = %s, " + \
+                " client_opted_by = %s, " + \
+                " client_opted_on = %s " + \
                 " WHERE client_compliance_id = %s AND " + \
                 " compliance_id = %s"
             self._k_db.execute(q, [
