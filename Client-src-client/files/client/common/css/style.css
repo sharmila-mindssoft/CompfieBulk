@@ -1230,7 +1230,6 @@ h2.chart-title: hover {
 .table-not-complied-status {
     border: 1px solid #ededed;
 }
-<<<<<<< HEAD
 .table-compliance-status {
     border: 1px solid #ededed;
 }
@@ -1266,4 +1265,15 @@ h2.chart-title: hover {
 
 .accordian-past-records{
     margin-top: 30px;
+}
+.uploaded-filename .removeicon {
+    padding-left: 10px;
+    cursor: pointer;
+}
+.uploaded-filename span {
+    display: inline-table;
+    line-height: 25px;
+    margin-bottom: 3px !important;
+    text-indent: 5px;
+    /*width: 85%;*/
 }
