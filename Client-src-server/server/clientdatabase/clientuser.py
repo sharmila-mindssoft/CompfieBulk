@@ -123,6 +123,8 @@ def get_current_compliances_list(
         " WHERE tu.unit_id = ch.unit_id) as unit, " + \
         " (SELECT  domain_name FROM tbl_domains td WHERE " + \
         " td.domain_id = c.domain_id) as domain_name, " + \
+        " (SELECT domain_id FROM tbl_domains td WHERE " + \
+        " td.domain_id = c.domain_id) as domain_id, " + \
         " (SELECT frequency FROM tbl_compliance_frequency " + \
         " WHERE frequency_id = c.frequency_id) as frequency, ch.remarks, " + \
         " ch.compliance_id, " + \
@@ -201,6 +203,7 @@ def get_current_compliances_list(
                     compliance["frequency"]
                 ),
                 domain_name=compliance["domain_name"],
+                domain_id=compliance["domain_id"],
                 start_date=datetime_to_string(compliance["start_date"]),
                 due_date=datetime_to_string(compliance["due_date"]),
                 compliance_status=compliance_status,

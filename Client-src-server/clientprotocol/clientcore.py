@@ -2386,7 +2386,7 @@ class AssignedStatutory(object):
 class ActiveCompliance(object):
     def __init__(
         self, compliance_history_id, compliance_name, compliance_frequency,
-        domain_name, start_date, due_date, compliance_status, validity_date,
+        domain_name, domain_id, start_date, due_date, compliance_status, validity_date,
         next_due_date, ageing, format_file_name, unit_name, address,
         compliance_description, remarks, compliance_id, file_names, download_url
     ):
@@ -2394,6 +2394,7 @@ class ActiveCompliance(object):
         self.compliance_name = compliance_name
         self.compliance_frequency = compliance_frequency
         self.domain_name = domain_name
+        self.domain_id = domain_id        
         self.start_date = start_date
         self.due_date = due_date
         self.compliance_status = compliance_status
@@ -2414,7 +2415,7 @@ class ActiveCompliance(object):
         data = parse_dictionary(
             data, [
                 "compliance_history_id", "compliance_name",
-                "compliance_task_frequency", "domain_name", "start_date", "due_date",
+                "compliance_task_frequency", "domain_name", domain_id, "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
                 "compliance_file_name", "unit_name", "address", "compliance_description",
                 "remarks", "compliance_id", "file_names", "compliance_download_url"
@@ -2428,6 +2429,7 @@ class ActiveCompliance(object):
         # compliance_frequency = parse_structure_EnumType_core_COMPLIANCE_FREQUENCY(compliance_frequency)
         domain_name = data.get("domain_name")
         # domain_name = parse_structure_CustomTextType_50(domain_name)
+        domain_id  = data.get("domain_id")
         start_date = data.get("start_date")
         # start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
@@ -2458,7 +2460,7 @@ class ActiveCompliance(object):
         # download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
         return ActiveCompliance(
             compliance_history_id, compliance_name,
-            compliance_frequency, domain_name, start_date, due_date,
+            compliance_frequency, domain_name, domain_id, start_date, due_date,
             compliance_status, validity_date, next_due_date, ageing,
             format_file_name, unit_name, address, compliance_description,
             remarks, compliance_id, file_names, download_url
@@ -2470,6 +2472,7 @@ class ActiveCompliance(object):
             "compliance_name": self.compliance_name,
             "compliance_task_frequency": self.compliance_frequency,
             "domain_name": self.domain_name,
+            "domain_id": self.domain_id,            
             "start_date": self.start_date,
             "due_date": self.due_date,
             "compliance_status": self.compliance_status,
