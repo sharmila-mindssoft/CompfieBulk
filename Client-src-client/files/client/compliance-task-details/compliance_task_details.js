@@ -310,11 +310,14 @@ function remove_uploaded_temp_file(a) {
 // });
 
 function getCountryId(le_id){
+    var c_id = null;
     $.each(LEGAL_ENTITIES, function(k, v){
-        if(v.le_id == le_id){
-            return v.c_id;
+        if(v.le_id == parseInt(le_id)){
+            console.log("parseInt--"+v.c_id);
+            c_id = v.c_id;
         }
     });
+    return c_id;
 }
 
 function showSideBar(idval, data) {
@@ -543,7 +546,7 @@ function showSideBar(idval, data) {
                 );
                 function saveUploadedFile(){
                     if(uploaded_documents != ''){
-                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], parseInt(hdnUnit.val()), data[key1]['start_date'], file_list, 
+                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], file_list, 
                             function(error, response) {                                
                                 if (error == null) {
                                     console.log(response);                                    
