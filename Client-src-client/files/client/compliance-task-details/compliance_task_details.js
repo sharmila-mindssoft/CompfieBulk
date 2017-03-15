@@ -414,9 +414,9 @@ function showSideBar(idval, data) {
                 }
 
                 documents = file_list;
-                if (documents.length == 0) {
+                //if (documents.length == 0) {
                     documents = null
-                }
+                //}
 
                 uploaded_documents = uploaded_file_list;
                 if (uploaded_documents.length == 0) {
@@ -543,7 +543,7 @@ function showSideBar(idval, data) {
                 );
                 function saveUploadedFile(){
                     if(uploaded_documents != ''){
-                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], parseInt(hdnUnit.val()), data[key1]['start_date'], file_info, 
+                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], parseInt(hdnUnit.val()), data[key1]['start_date'], file_list, 
                             function(error, response) {                                
                                 if (error == null) {
                                     console.log(response);                                    
@@ -692,6 +692,8 @@ function uploadedfile(e) {
         } else if (data != 'File max limit exceeded' || data != 'File content is empty') {
             uploadFile = data;
             file_list = data
+
+            console.log(JSON.stringify(file_list));
             var result = ""
             for (i = 0; i < data.length; i++) {
                 var fileclassname;

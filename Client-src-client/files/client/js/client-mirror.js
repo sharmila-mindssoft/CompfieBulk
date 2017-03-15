@@ -3015,7 +3015,11 @@ function initClientMirror() {
         downloadTaskFile: downloadTaskFile,
         complianceFilters: complianceFilters,
         exportJsontoCsv: exportJsontoCsv,
-        onOccurrenceLastTransaction: onOccurrenceLastTransaction
+        onOccurrenceLastTransaction: onOccurrenceLastTransaction,
+        uploadComplianceTaskFile: uploadComplianceTaskFile,
+        downloadTaskFile: downloadTaskFile,
+
+
     };
 }
 
