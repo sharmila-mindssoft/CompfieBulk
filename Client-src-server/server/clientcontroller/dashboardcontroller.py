@@ -66,6 +66,13 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
             db, request, session_user
         )
 
+    elif type(request) is dashboard.GetNotificationsCount:
+        logger.logClientApi("GetNotifications", "process begin")
+        result = process_get_notifications_count(
+            db, request, session_user, session_category
+        )
+        logger.logClientApi("GetNotifications", "process end")
+
     elif type(request) is dashboard.GetNotifications:
         logger.logClientApi("GetNotifications", "process begin")
         result = process_get_notifications(
@@ -224,9 +231,12 @@ def process_compliance_applicability_drill_down(
         result_list
     )
 
+def process_get_notifications_count(db, request, session_user, session_category):
+    notification_count = get_notification_counts(db, session_user, session_category, request.legal_entity_ids)
+    return dashboard.GetNotificationsCountSuccess(notification_count)
+
 def process_get_notifications(db, request, session_user, session_category):
     notification_type = request.notification_type
-    # total_count = get_dashboard_notification_counts(db, session_user, notification_type, session_category)
     if request.notification_type == 2: # Reminders
         reminders = get_reminders(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
         return dashboard.GetRemindersSuccess(reminders)
@@ -236,9 +246,6 @@ def process_get_notifications(db, request, session_user, session_category):
     elif request.notification_type == 4: # Messages
         messages = get_messages(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
         return dashboard.GetMessagesSuccess(messages)
-    # elif request.notification_type == 1: # statutory
-    #     statutory = get_statutory(db, request.notification_type, request.start_count, request.end_count, session_user, session_category)
-    #     return dashboard.GetStatutorySuccess(statutory)
 
 def process_update_notification_status(db, request, session_user):
     if request.has_read == True:

@@ -664,8 +664,9 @@ api_params = {
     "settings_users": make_vector_type_field(module="clientmasters", klass_name="LegalEntityUsers"),  # Settings
     "le_admin": make_int_field(is_optional=True),
     "user_units": make_vector_type_field(module="clientcore", klass_name="ClientUnit"),
-    "on_statutory": make_text_field(length=500),    
+    "on_statutory": make_text_field(length=500),
     "on_unit": make_text_field(length=100),
     "on_compliance_status": make_text_field(length=500),
-    "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),    
+    "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),
+    "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
 }

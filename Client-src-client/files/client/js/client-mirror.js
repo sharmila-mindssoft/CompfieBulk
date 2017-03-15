@@ -213,6 +213,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
+        alert(body.toSource())
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -659,6 +660,17 @@ function initClientMirror() {
     }
 
     /* Notifications */
+    function getNotificationsCount(le_ids, notification_type, start_count, end_count, callback) {
+        callerName = 'client_dashboard';
+        var request = [
+            'GetNotificationsCount', {
+                'le_ids': le_ids
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+
     function getNotifications(le_ids, notification_type, start_count, end_count, callback) {
         callerName = 'client_dashboard';
         var request = [
@@ -2889,6 +2901,7 @@ function initClientMirror() {
         getComplianceApplicabilityDrillDown: getComplianceApplicabilityDrillDown,
         getSettings: getSettings,
         updateSettings: updateSettings,
+        getNotificationsCount: getNotificationsCount,
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
         getStatutoryNotifications: getStatutoryNotifications,
