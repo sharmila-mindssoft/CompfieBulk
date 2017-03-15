@@ -30,7 +30,9 @@ class API(object):
         #     #print data
         #     s = json.dumps(data, indent=2)
         # else:
-        s = response_data
+        # s = response_data
+        data = response_data.to_structure()
+        s = json.dumps(data, indent=2)
         print s
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp

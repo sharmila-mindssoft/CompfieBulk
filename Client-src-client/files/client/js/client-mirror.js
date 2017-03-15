@@ -2767,6 +2767,22 @@ function initClientMirror() {
     }
 
 
+    function removeUploadedTaskFile(le_id, c_id, d_id, u_id, start_date, file_info) {
+        var request = [
+            'RemoveFile', {
+                "le_id": le_id,
+                "c_id": c_id,
+                "d_id": d_id,
+                "u_id": u_id,
+                "start_date": start_date,
+                "file_info": file_info
+            }
+        ];
+        callerName = 'files';
+        clientApiRequest(callerName, request, callback);
+    }
+
+
     function ConvertToCSV(objArray) {
         var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
         // var lblarray = typeof lblsArray != 'object' ? JSON.parse(lblsArray) : lblsArray;
