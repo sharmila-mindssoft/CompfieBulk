@@ -231,16 +231,17 @@ class TemplateHandler(RequestHandler):
             request_url = self.request.uri.strip().split('/')[1]
             short_name = url.decode('base64')
             ips = self._company_manager.lookup_form_ips(short_name)
-            for i in ips :
-                if request_url in i.form_name :
-                    if request_ip not in i.ip :
-                        path = "files/client/common/html/accessdenied.html"
-                        temp = template_env.get_template(path)
-                        self.set_status(403)
-                        self.write(temp.render())
-                        return
-                    else :
-                        break
+            if ips is not None:
+                for i in ips :
+                    if request_url in i.form_name :
+                        if request_ip not in i.ip :
+                            path = "files/client/common/html/accessdenied.html"
+                            temp = template_env.get_template(path)
+                            self.set_status(403)
+                            self.write(temp.render())
+                            return
+                        else :
+                            break
 
         if url is not None and ("userregistration" in self.request.uri or "/reset_password" in self.request.uri):
             print 'GOT URL %s' % (url,)
