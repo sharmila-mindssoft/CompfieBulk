@@ -717,8 +717,10 @@ class GetUnitClosureUnitData(Request):
 
 class SaveUnitClosureData(Request):
     def __init__(
-        self, password, closed_remarks, unit_id, grp_mode
+        self, password, closed_remarks, unit_id, grp_mode,
+        legal_entity_id
     ):
+        self.legal_entity_id = legal_entity_id
         self.password = password
         self.closed_remarks = closed_remarks
         self.unit_id = unit_id
@@ -727,15 +729,17 @@ class SaveUnitClosureData(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "password", "closed_remarks", "unit_id", "grp_mode"
+            "password", "closed_remarks", "unit_id", "grp_mode",
+            "legal_entity_id"
         ])
         password = data.get("password")
         closed_remarks = data.get("closed_remarks")
         unit_id = data.get("unit_id")
         grp_mode = data.get("grp_mode")
-
+        legal_entity_id = data.get("legal_entity_id")
         return SaveUnitClosureData(
-            password, closed_remarks, unit_id, grp_mode
+            password, closed_remarks, unit_id, grp_mode,
+            legal_entity_id
         )
 
     def to_inner_structure(self):
@@ -744,6 +748,7 @@ class SaveUnitClosureData(Request):
             "closed_remarks": self.closed_remarks,
             "unit_id": self.unit_id,
             "grp_mode": self.grp_mode,
+            "legal_entity_id": self.legal_entity_id
         }
         return data
 

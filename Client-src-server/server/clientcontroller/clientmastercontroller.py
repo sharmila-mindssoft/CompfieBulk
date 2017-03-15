@@ -264,7 +264,7 @@ def process_UserManagementAddPrerequisite(db, request, session_user, session_cat
     legalUnits = {}
     serviceProviders = {}
 
-    userCategory = process_UserManagement_category(db, session_category)    
+    userCategory = process_UserManagement_category(db, session_category)
     userGroup = process_UserManagement_UserGroup(db)
     businessGroup = process_UserManagement_BusinessGroup(db)
     legalEntity = process_UserManagement_LegalEntity(db)
@@ -403,7 +403,7 @@ def process_UserManagement_LegalEntity(db):
         legalEntityId = int(row["legal_entity_id"])
         businessGroupId = row["business_group_id"]
         legalEntityName = row["legal_entity_name"]
-        le_admin = row["le_admin"]        
+        le_admin = row["le_admin"]
         legalEntityList.append(
             clientcore.ClientUserLegalEntity_UserManagement(legalEntityId,
                                                             businessGroupId, legalEntityName, le_admin)
@@ -717,7 +717,7 @@ def process_save_client_user(db, request, session_user, client_id):
         return clientmasters.EmployeeCodeAlreadyExists()
     # if is_already_assigned_units (db,request.user_unit_ids, request.user_domain_ids):
     #     return clientmasters.UnitsAlreadyAssigned()
-        
+
     if save_user(db, request, session_user, client_id):
         return clientmasters.SaveClientUserSuccess()
 

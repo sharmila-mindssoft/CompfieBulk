@@ -1919,14 +1919,15 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function saveUnitClosureData(password, remarks, unit_id, action_mode, callback) {
+    function saveUnitClosureData(legal_entity_id, password, remarks, unit_id, action_mode, callback) {
         callerName = 'client_masters';
         var request = [
             'SaveUnitClosureData', {
                 "password": password,
                 "closed_remarks": remarks,
                 "unit_id": unit_id,
-                "grp_mode": action_mode
+                "grp_mode": action_mode,
+                "legal_entity_id": legal_entity_id
             }
         ];
         clientApiRequest(callerName, request, callback);
