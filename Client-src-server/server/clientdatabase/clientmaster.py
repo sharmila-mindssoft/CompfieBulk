@@ -383,15 +383,15 @@ def block_service_provider(
 ##############################################################################
 # User Management Add - Category Prerequisite
 ##############################################################################
-def userManagement_GetUserCategory(db, session_category):    
+def userManagement_GetUserCategory(db, session_category):
     if session_category == 1: #Group Admin
         condition = " WHERE user_category_id NOT IN (1)"
-    elif session_category == 3: #Legal Entity Admin        
+    elif session_category == 3: #Legal Entity Admin
         condition = " WHERE user_category_id NOT IN (1,2,3)"
-    elif session_category == 4: #Domain Admin        
+    elif session_category == 4: #Domain Admin
         condition = " WHERE user_category_id NOT IN (1,2,3,4)"
-    
-    q = "SELECT user_category_id, user_category_name From tbl_user_category " + condition    
+
+    q = "SELECT user_category_id, user_category_name From tbl_user_category " + condition
     row = db.select_all(q, None)
     return row
 
@@ -920,7 +920,7 @@ def return_service_providers(service_providers):
 # Parameter(s) - Object of database
 # Return Type - int
 ############################################################################
-def get_no_of_remaining_licence_Viewonly(db):   
+def get_no_of_remaining_licence_Viewonly(db):
     q = " SELECT (total_view_licence - licence_used) As remaining_licence from tbl_Client_Groups"
 
     row = db.select_one(q, None)
@@ -997,7 +997,7 @@ def is_duplicate_employee_name(db, employee_name, user_id=None):
 # To check Units are already assinged
 # Parameter(s) - Object of database, employee code, userid
 # Return Type - Boolean
-#             - Returns Records if units are already assigned             
+#             - Returns Records if units are already assigned
 ############################################################################
 def is_already_assigned_units(db, unit_ids, domain_ids):
     #  q = "SELECT T01.domain_id,T01.unit_id,T05.legal_entity_id,T05.user_id,T05.unit_id,T05.domain_id " + \
@@ -1014,12 +1014,12 @@ def is_already_assigned_units(db, unit_ids, domain_ids):
     domainList = ",".join(str(uid.domain_id) for uid in domain_ids)
 
     row = db.select_one(q, [unitList, domainList])
-     
-    if int(row["unit_count"]) > 0:        
+
+    if int(row["unit_count"]) > 0:
         return True
-    else :        
+    else :
         return False
-    
+
 ############################################################################
 # To Save User Domains
 # Parameter(s) - Object of database, domain ids, user id

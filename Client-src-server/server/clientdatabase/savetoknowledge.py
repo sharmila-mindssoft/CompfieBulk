@@ -66,42 +66,42 @@ class SaveUsers(KnowledgedbConnect):
         self.process_save_user()
 
     def _save_user(self):
-        if self._user_info.seating_unit_id is None:
-            s_unit_id = 0
-        else:
-            s_unit_id = self._user_info.seating_unit_id
 
-        q = "INSERT INTO tbl_client_users (client_id, user_id, " + \
-            " email_id, employee_name, employee_code, " + \
-            " contact_no, created_on, " + \
-            " is_admin, is_active, seating_unit_id) " + \
-            " VALUES (%s, %s, %s, %s, %s, %s, now(), 0, 1, %s) "
+        q = "INSERT INTO tbl_client_users(user_id, user_category_id, client_id, " + \
+            "seating_unit_id, service_provider_id, user_level, email_id, " + \
+            "employee_name, employee_code, contact_no, mobile_no, address, " + \
+            "is_service_provider, is_active, status_changed_on, is_disable, disabled_on " + \
+            "values(%s, %s, %s, %s, %s, %s, %s, %s, %s , %s, %s, %s, %s, %s, %s, %s, %s)"
         values = [
-            self._client_id, self._user_id, self._user_info.email_id,
-            self._user_info.employee_name,
-            self._user_info.employee_code, self._user_info.contact_no,
-            s_unit_id
+            self.user_id, self._user_info["user_category_id"],
+            self._user_info["client_id"], self._user_info["seating_unit_id"],
+            self._user_info["service_provider_id"], self._user_info["user_level"],
+            self._user_info["email_id"], self._user_info["employee_name"],
+            self._user_info["employee_code"], self._user_info["contact_no"],
+            self._user_info["mobile_no"], self._user_info["address"],
+            self._user_info["is_service_provider"], self._user_info["is_active"],
+            self._user_info["status_changed_on"], self._user_info["is_disable"],
+            self._user_info["disabled_on"]
         ]
         self._k_db.execute(q, values)
 
     def process_save_user(self):
         try:
             self.get_knowledge_connect()
-            self._k_db.begin()
+            self._k_db._cursor = self._k_db._connection.cursor()
             self._save_user()
-            self._k_db.commit()
-            self._k_db.close()
-            return True
+            self._k_db._cursor.close()
+            self._k_db._connection.commit()
         except Exception, e:
             print e
-            self._k_db.rollback()
+            self._k_db._cursor.close()
+            self._k_db._connection.rollback()
             raise client_process_error("E022")
 
 
 class UpdateUsers(KnowledgedbConnect):
-    def __init__(self, user_info, user_id, client_id):
+    def __init__(self, user_info, client_id):
         super(UpdateUsers, self).__init__()
-        self._user_id = user_id
         self._user_info = user_info
         self._client_id = client_id
         self.process_update_user()
@@ -112,28 +112,37 @@ class UpdateUsers(KnowledgedbConnect):
         else:
             s_unit_id = self._user_info.seating_unit_id
 
+        # if int(self._user_info.is_service_provider) == 1 :
+        #     spid = self._user_info.service_provider_id
+        # else :
+        #     spid = 0
+
         q = "UPDATE tbl_client_users set employee_name = %s, " + \
-            " employee_code = %s, contact_no = %s, seating_unit_id = %s " + \
+            " employee_code = %s, contact_no = %s, mobile_no = %s, seating_unit_id = %s, " + \
+            " email_id = %s, is_service_provider = %s, user_level = %s  " + \
             " Where client_id = %s and user_id = %s "
         values = [
             self._user_info.employee_name,
             self._user_info.employee_code, self._user_info.contact_no,
-            s_unit_id,
-            self._client_id, self._user_id,
+            self._user_info.mobile_no, s_unit_id,
+            self._user_info.email_id,
+            int(self._user_info.is_service_provider),
+            self._user_info.user_level, self._client_id, self._user_info.user_id
         ]
         self._k_db.execute(q, values)
 
     def process_update_user(self):
         try:
             self.get_knowledge_connect()
-            self._k_db.begin()
+            # self._k_db.begin()
+            self._k_db._cursor = self._k_db._connection.cursor()
             self._update_user()
-            self._k_db.commit()
-            self._k_db.close()
-            return True
+            self._k_db._cursor.close()
+            self._k_db._connection.commit()
         except Exception, e:
             print e
-            self._k_db.rollback()
+            self._k_db._cursor.close()
+            self._k_db._connection.rollback()
             raise client_process_error("E023")
 
 
