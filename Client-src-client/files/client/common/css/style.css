@@ -1263,3 +1263,7 @@ h2.chart-title: hover {
 #ui-datepicker-div {
     z-index: 100 !important;
 }
+
+.accordian-past-records{
+    margin-top: 30px;
+}
