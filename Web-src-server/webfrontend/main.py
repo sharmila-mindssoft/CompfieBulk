@@ -134,7 +134,8 @@ class Controller(object):
         actual_data = None
         try:
 
-            data = request.body()
+            data = request.body()[5:]
+            data = data.decode('base64')
             data = json.loads(data)
             if type(data) is not list:
                 send_bad_request(
