@@ -115,7 +115,7 @@ def get_current_compliances_list(
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
         " ch.due_date as due_date, documents, " + \
-        " ch.validity_date, ch.next_due_date, document_name, " + \
+        " ch.validity_date, ch.next_due_date, ch.unit_id, document_name, " + \
         " compliance_task, compliance_description, format_file, " + \
         " (SELECT " + \
         " concat(unit_code, '-', unit_name, ',', address) " + \
@@ -204,6 +204,7 @@ def get_current_compliances_list(
                 ),
                 domain_name=compliance["domain_name"],
                 domain_id=compliance["domain_id"],
+                unit_id=compliance["unit_id"],
                 start_date=datetime_to_string(compliance["start_date"]),
                 due_date=datetime_to_string(compliance["due_date"]),
                 compliance_status=compliance_status,

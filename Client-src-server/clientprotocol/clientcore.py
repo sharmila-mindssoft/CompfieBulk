@@ -2386,7 +2386,7 @@ class AssignedStatutory(object):
 class ActiveCompliance(object):
     def __init__(
         self, compliance_history_id, compliance_name, compliance_frequency,
-        domain_name, domain_id, start_date, due_date, compliance_status, validity_date,
+        domain_name, domain_id, unit_id, start_date, due_date, compliance_status, validity_date,
         next_due_date, ageing, format_file_name, unit_name, address,
         compliance_description, remarks, compliance_id, file_names, download_url
     ):
@@ -2394,7 +2394,8 @@ class ActiveCompliance(object):
         self.compliance_name = compliance_name
         self.compliance_frequency = compliance_frequency
         self.domain_name = domain_name
-        self.domain_id = domain_id        
+        self.domain_id = domain_id
+        self.unit_id = unit_id
         self.start_date = start_date
         self.due_date = due_date
         self.compliance_status = compliance_status
@@ -2415,7 +2416,7 @@ class ActiveCompliance(object):
         data = parse_dictionary(
             data, [
                 "compliance_history_id", "compliance_name",
-                "compliance_task_frequency", "domain_name", domain_id, "start_date", "due_date",
+                "compliance_task_frequency", "domain_name", "domain_id", "unit_id", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
                 "compliance_file_name", "unit_name", "address", "compliance_description",
                 "remarks", "compliance_id", "file_names", "compliance_download_url"
@@ -2430,6 +2431,7 @@ class ActiveCompliance(object):
         domain_name = data.get("domain_name")
         # domain_name = parse_structure_CustomTextType_50(domain_name)
         domain_id  = data.get("domain_id")
+        unit_id  = data.get("unit_id")        
         start_date = data.get("start_date")
         # start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
@@ -2460,7 +2462,7 @@ class ActiveCompliance(object):
         # download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
         return ActiveCompliance(
             compliance_history_id, compliance_name,
-            compliance_frequency, domain_name, domain_id, start_date, due_date,
+            compliance_frequency, domain_name, domain_id, unit_id, start_date, due_date,
             compliance_status, validity_date, next_due_date, ageing,
             format_file_name, unit_name, address, compliance_description,
             remarks, compliance_id, file_names, download_url
@@ -2472,7 +2474,8 @@ class ActiveCompliance(object):
             "compliance_name": self.compliance_name,
             "compliance_task_frequency": self.compliance_frequency,
             "domain_name": self.domain_name,
-            "domain_id": self.domain_id,            
+            "domain_id": self.domain_id,
+            "unit_id": self.unit_id,                    
             "start_date": self.start_date,
             "due_date": self.due_date,
             "compliance_status": self.compliance_status,
@@ -4748,23 +4751,27 @@ class ClientUsers_UserManagement_EditView_Users(object):
 # User Management Edit - Get Legal Entities for Edit View
 ##############################################################################
 class ClientUsers_UserManagement_EditView_LegalEntities(object):
-    def __init__(self, user_id, legal_entity_id):
+    def __init__(self, user_id, legal_entity_id, business_group_id):
         self.user_id = user_id
         self.legal_entity_id = legal_entity_id
+        self.business_group_id = business_group_id
+        
 
     @staticmethod
     def parse_structure(data):
-        data = parse_dictionary(data, ["user_id", "le_id"])
+        data = parse_dictionary(data, ["user_id", "le_id", "bg_id"])
 
         user_id = data.get("user_id")
-        legal_entity_id = data.get("le_id")        
+        legal_entity_id = data.get("le_id")
+        business_group_id = data.get("bg_id")
         
-        return ClientUsers_UserManagement_EditView_LegalEntities(user_id, legal_entity_id)
+        return ClientUsers_UserManagement_EditView_LegalEntities(user_id, legal_entity_id, business_group_id)
 
     def to_structure(self):
         return {
             "user_id": self.user_id,
-            "le_id": self.legal_entity_id            
+            "le_id": self.legal_entity_id,
+            "bg_id": self.business_group_id
         }
 ##############################################################################
 # User Management Edit - Get Domains for Edit View
