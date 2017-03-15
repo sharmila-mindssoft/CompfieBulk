@@ -551,7 +551,12 @@ class API(object):
                 elif type(request_data.request) is widgetprotocol.GetCalendarView :
                     p_response = controller.merge_calendar_view(p_response, data)
 
+                elif type(request_data.request) is widgetprotocol.GetRiskChart :
+                    print "----------------------------------------------"
+                    p_response = controller.merge_risk_chart_widget(p_response, data)
+
                 else :
+                    print "Else --------------"
                     pass
             return p_response
 
