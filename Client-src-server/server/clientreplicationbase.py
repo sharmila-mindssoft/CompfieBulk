@@ -173,7 +173,7 @@ class ReplicationBase(object):
             "tbl_client_groups": 5,
             "tbl_client_configuration": 6,
             "tbl_business_groups": 2,
-            "tbl_legal_entities": 10,
+            "tbl_legal_entities": 14,
             "tbl_legal_entity_domains": 6,
             "tbl_divisions": 4,
             "tbl_categories": 5,
