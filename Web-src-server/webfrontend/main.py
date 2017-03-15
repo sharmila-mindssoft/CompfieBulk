@@ -232,7 +232,7 @@ class TemplateHandler(RequestHandler):
             request_url = self.request.uri.strip().split('/')[1]
             short_name = url.decode('base64')
             ips = self._company_manager.lookup_form_ips(short_name)
-            if ips is not None :
+            if ips is not None:
                 for i in ips :
                     if request_url in i.form_name :
                         if request_ip not in i.ip :
