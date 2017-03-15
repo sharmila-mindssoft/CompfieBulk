@@ -567,6 +567,10 @@ class API(object):
             request_data, company_id = self._parse_request(request_data_type, is_group)
             session = request_data.session_token
             session_user, client_id, session_category = self._validate_user_session(session)
+
+            if session_user is False :
+                return respond(clientlogin.InvalidSessionToken())
+
             if hasattr(request_data.request, "legal_entity_ids") :
                 le_ids = request_data.request.legal_entity_ids
                 performed_les = []
