@@ -669,4 +669,8 @@ api_params = {
     "on_compliance_status": make_text_field(length=500),
     "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),
     "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
+    "statutory_count": make_int_field(is_optional=True),
+    "reminder_count": make_int_field(is_optional=True),
+    "escalation_count": make_int_field(is_optional=True),
+    "messages_count": make_int_field(is_optional=True),
 }

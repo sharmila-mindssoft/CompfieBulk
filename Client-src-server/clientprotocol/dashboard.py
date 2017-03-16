@@ -1095,30 +1095,6 @@ class GetTrendChartDrillDownDataSuccess(Response):
             "t_drill_down_data": self.drill_down_data,
         }
 
-class NotificationsCountSuccess(Response):
-    def __init__(self, statutory, reminder, escalation, messages):
-        self.statutory = statutory
-        self.reminder = reminder
-        self.escalation = escalation
-        self.messages = messages
-
-    @staticmethod
-    def parse_inner_structure(data):
-        data = parse_dictionary(data, ["statutory_count", "reminder_count", "escalation_count", "messages_count"])
-        statutory = data.get("statutory_count")
-        reminder = data.get("reminder_count")
-        escalation = data.get("escalation_count")
-        messages = data.get("messages_count")
-        return NotificationsCountSuccess(statutory, reminder, escalation, messages)
-
-    def to_inner_structure(self):
-        return {
-            "statutory_count": self.statutory,
-            "reminder_count": self.reminder,
-            "escalation_count": self.escalation,
-            "messages_count": self.messages
-        }
-
 class GetNotificationsCountSuccess(Response):
     def __init__(self, notification_count):
         self.notification_count = notification_count
@@ -1238,7 +1214,6 @@ def _init_Response_class_map():
         GetComplianceApplicabilityStatusDrillDownSuccess,
         GetNotCompliedDrillDownSuccess,
         GetTrendChartDrillDownDataSuccess,
-        NotificationsCountSuccess,
         GetNotificationsCountSuccess,
         GetRemindersSuccess,
         GetEscalationsSuccess,
@@ -1904,6 +1879,30 @@ class DrillDownData(object):
 #             "penal_consequences" : to_structure_OptionalType_CustomTextType_500(self.penal_consequences)
 #         }
 
+class NotificationsCountSuccess(object):
+    def __init__(self, statutory, reminder, escalation, messages):
+        self.statutory = statutory
+        self.reminder = reminder
+        self.escalation = escalation
+        self.messages = messages
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, ["statutory_count", "reminder_count", "escalation_count", "messages_count"])
+        statutory = data.get("statutory_count")
+        reminder = data.get("reminder_count")
+        escalation = data.get("escalation_count")
+        messages = data.get("messages_count")
+        return NotificationsCountSuccess(statutory, reminder, escalation, messages)
+
+    def to_structure(self):
+        return {
+            "statutory_count": self.statutory,
+            "reminder_count": self.reminder,
+            "escalation_count": self.escalation,
+            "messages_count": self.messages
+        }
+        
 class RemindersSuccess(object):
     def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
         self.legal_entity_id = legal_entity_id
