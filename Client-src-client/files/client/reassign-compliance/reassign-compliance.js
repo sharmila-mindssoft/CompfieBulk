@@ -403,7 +403,13 @@ function loadUser(userType) {
         }
         if (selectedUnit == 'all' || parseInt(selectedUnit) == USERS[user].s_u_id || (serviceProviderId > 0 && selectedUnit != '')) {
             var userId = USERS[user].usr_id;
-            var userName = USERS[user].emp_code + ' - ' +USERS[user].emp_name;
+            var empCode = USERS[user].emp_code;
+            var userName = '';
+            if(empCode != null && empCode != ''){
+                userName = USERS[user].emp_code + ' - ' +USERS[user].emp_name;
+            }else{
+                userName = USERS[user].emp_name;
+            }
             var combine = userId + '-' + serviceProviderId;
             var isAssignee = USERS[user].is_assignee;
             var isConcurrence = USERS[user].is_approver;
@@ -1134,14 +1140,14 @@ function pageControls(){
 
 //validation on third wizard
 function validate_thirdtab() {
-    if ($('.assigneelist.active').text() == '' && $('.concurrencelist.active').text() && $('.approvallist.active').text()) {
+    if ($('.assigneelist.active').text() == '' && $('.concurrencelist.active').text() == '' && $('.approvallist.active').text() == '' ) {
         displayMessage(message.atleast_one_user_required_reassign);
         return false;
     } else if (Reason.val() == '') {
         displayMessage(message.reason_required);
         return false;
     } else {
-        return true;
+        return false;
     }
 }
 

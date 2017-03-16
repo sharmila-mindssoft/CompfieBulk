@@ -377,20 +377,20 @@ function pageControls() {
 
     CategoryName.keyup(function(e) {
         if (LegalEntityId.val() != '') {
-            var condition_fields = ["legal_entity_id"];
+            var condition_fields = ["le_id"];
             var condition_values = [LegalEntityId.val()];
             if (BusinessGroupId.val() != '') {
-                condition_fields.push("business_group_id");
+                condition_fields.push("bg_id");
                 condition_values.push(BusinessGroupId.val());
             }
             if (DivisionId.val() != '') {
-                condition_fields.push("division_id");
+                condition_fields.push("div_id");
                 condition_values.push(DivisionId.val());
             }
             var text_val = $(this).val();
             commonAutoComplete(
                 e, ACCategory, CategoryId, text_val,
-                CATEGORIES, "category_name", "category_id",
+                CATEGORIES, "cat_name", "cat_id",
                 function(val) {
                     onAutoCompleteSuccess(CategoryName, CategoryId, val);
                 }, condition_fields, condition_values);
@@ -410,7 +410,11 @@ function pageControls() {
     });
 
     SaveButton.click(function() {
-        displayPopUp(SAVE_API, null);
+        //displayPopUp(SAVE_API, null);
+        displayLoader();
+        setTimeout(function() {
+            callAPI(SAVE_API)
+        }, 500);
     });
 
     PasswordSubmitButton.click(function() {

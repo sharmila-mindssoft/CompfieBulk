@@ -173,7 +173,7 @@ class ReplicationBase(object):
             "tbl_client_groups": 5,
             "tbl_client_configuration": 6,
             "tbl_business_groups": 2,
-            "tbl_legal_entities": 10,
+            "tbl_legal_entities": 14,
             "tbl_legal_entity_domains": 6,
             "tbl_divisions": 4,
             "tbl_categories": 5,
@@ -320,8 +320,10 @@ class ReplicationBase(object):
             elif tbl_name == "tbl_legal_entities" :
                 self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [auto_id])
                 self._db.execute("delete from tbl_client_configuration")
+                self._db.execute(query)
             elif tbl_name == "tbl_units" :
                 self._db.execute("delete from tbl_units_organizations where unit_id = %s", [auto_id])
+                self._db.execute(query)
 
             else :
                 self._db.execute(query)
@@ -489,7 +491,7 @@ class ReplicationManagerWithBase(ReplicationBase):
                 )
 
             except Exception, e:
-                # print err, e
+                print err, e
                 self._poll()
                 return
             if type(r) is InvalidReceivedCount:
@@ -508,46 +510,14 @@ class ReplicationManagerWithBase(ReplicationBase):
         else :
             pass
             # print err, response.error
-    #
-    # poll for delete
-    #
-
-    def _poll_for_del(self):
-        # print "poll for dell"
-        assert self._stop is False
-        assert self._received_count is not None
-
-        def on_timeout():
-            if self._stop :
-                return
-            body = json.dumps(
-                GetChanges(
-                    self._client_id,
-                    self._received_count
-                ).to_structure()
-            )
-            request = HTTPRequest(
-                self._poll_old_data_url, method="POST",
-                body=body,
-                headers={"Content-Type": "application/json"},
-                request_timeout=10
-            )
-            self._http_client.fetch(request, self._poll_del_response)
-        self._io_loop.add_timeout(time.time() + 43200, on_timeout)
-
-    def _poll_del_response(self, response) :
-        if self._stop :
-            return
-        self._poll_for_del()
 
     def stop(self):
         self._stop = True
+        self._db.close()
 
     def start(self):
         self._stop = False
-        # print "poll started for ----------- ", self._client_id
         self._poll()
-        # self._io_loop.add_callback(self._poll_for_del)
 
 
 class DomainReplicationManager(ReplicationBase):

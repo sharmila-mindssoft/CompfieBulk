@@ -377,7 +377,10 @@ function updateComplianceApplicabilityChart(data, id) {
   //data = prepareComplianceApplicability(data);
   chartTitle = data['chart_title'];
   chartDataSeries = data['widget_data'];
-  total = data[2];
+  total = 0
+  $.each(chartDataSeries, function(k ,v) {
+    total += v["y"];
+  });
   highchart_ca = new Highcharts.Chart({
     colors: [
       '#FB4739',

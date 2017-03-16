@@ -3,6 +3,8 @@ var LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 var LegalEntityNameLabel = $(".legal-entity-name");
 var LegalEntityNameAC = $(".legal-entity-name-ac");
 
+var CountryId = $("#country_id");
+
 var LegalEntityName = $("#legal_entity_name");
 var LegalEntityId = $("#legal_entity_id");
 var ACLegalEntity = $("#ac-entity");
@@ -142,7 +144,10 @@ function loadComplianceTaskDetails(data) {
         }
         $(".status", cloneval).html(data[key].compliance_status);
         if (data[key].format_file_name != null) {
-            $(".format-file", cloneval).attr("href", data[key].format_file_name)
+            // $(".format-file", cloneval).attr("href", data[key].format_file_name);
+            $(".format-file", cloneval).on("click", function(e, val) {
+                client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].format_file_name);
+            });
         } else {
             $(".format-file", cloneval).hide()
         }
@@ -272,7 +277,8 @@ function loadUpcomingCompliancesDetails(data) {
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
         $('.uc-duedate', cloneval).html(data[k]['due_date']);
         if (data[k]['upcoming_format_file_name'] != null) {
-            $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);
+            // $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);
+            client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].format_file_name);
         } else {
             $('.format-file', cloneval).hide();
         }
@@ -293,10 +299,11 @@ function loadUpcomingCompliancesDetails(data) {
     }
 }
 
-// function remove_uploaded_temp_file(a) {
-//     $(".uploaded" + a).remove();
-//     uploaded_file_list.splice(parseInt(a), 1)
-// }
+function remove_uploaded_temp_file(a) {
+    $(".uploaded" + a).remove();
+    uploaded_file_list.splice(parseInt(a), 1)
+
+}
 // $(".expand_inprogress ").click(function() {
 //     $('.expand_inprogress').removeClass('info');
 //     $(".td_inprogress ").show();
@@ -306,6 +313,17 @@ function loadUpcomingCompliancesDetails(data) {
 //     else
 //         $(".val-date ").hide();
 // });
+
+function getCountryId(le_id){
+    var c_id = null;
+    $.each(LEGAL_ENTITIES, function(k, v){
+        if(v.le_id == parseInt(le_id)){
+            console.log("parseInt--"+v.c_id);
+            c_id = v.c_id;
+        }
+    });
+    return c_id;
+}
 
 function showSideBar(idval, data) {
     $(".half-width-task-details").empty();
@@ -357,7 +375,7 @@ function showSideBar(idval, data) {
                 if (e.originalEvent.defaultPrevented) {
                     return
                 }
-                // uploadedfile(e)
+                uploadedfile(e)
             });
             uploaded_file_list = data[key1].file_names;
             l = data[key1].download_url;
@@ -406,6 +424,11 @@ function showSideBar(idval, data) {
                 documents = file_list;
                 if (documents.length == 0) {
                     documents = null
+                }
+
+                uploaded_documents = uploaded_file_list;
+                if (uploaded_documents.length == 0) {
+                  uploaded_documents = null;
                 }
 
                 // validity_date = uploaded_file_list;
@@ -514,17 +537,31 @@ function showSideBar(idval, data) {
                 //     $(".upload-progress-count").html("");
                 //     $(".upload-progress-count").show()
                 // }
-                uploaded_documents = []; //Temp
+                // uploaded_documents = []; //Temp
                 client_mirror.updateComplianceDetail(parseInt(LegalEntityId.val()), compliance_history_id, documents, uploaded_documents, completion_date, validity_date, next_due_date, remarks,
                     function(error, response) {
                         if (error == null) {
-                            onSuccess(response);
+                            saveUploadedFile();                            
+                            onSuccess(response);                            
                             displaySuccessMessage(message.submit_success);
                         } else {
                             onFailure(error);
                         }
                     }
                 );
+                function saveUploadedFile(){
+                    if(uploaded_documents != ''){
+                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], file_list, 
+                            function(error, response) {                                
+                                if (error == null) {
+                                    console.log(response);                                    
+                                } else {
+                                    console.log(error);
+                                }
+                            });
+                        }                   
+                    }
+                //}
             });
             $(".half-width-task-details").append(cloneValSide);
             $(".datepick").datepicker({
@@ -663,13 +700,15 @@ function uploadedfile(e) {
         } else if (data != 'File max limit exceeded' || data != 'File content is empty') {
             uploadFile = data;
             file_list = data
+
+            console.log(JSON.stringify(file_list));
             var result = ""
             for (i = 0; i < data.length; i++) {
                 var fileclassname;
                 var filename = data[i]['file_name']
                 fileclassname = filename.replace(/[^\w\s]/gi, "");
                 fileclassname = fileclassname.replace(/\s/g, "");
-                result += "<span class='" + fileclassname + "'>" + filename + "<img src='/images/delete.png' class='removeicon' style='width:16px;height:16px;' onclick='remove_temp_file(\"" + fileclassname + "\")' /></span>";
+                result += "<span class='" + fileclassname + "'>" + filename + "<i class='fa fa-times text-primary removeicon' onclick='remove_temp_file(\"" + fileclassname + "\")' ></i></span>";
             }
             $(".uploaded-filename").html(result);
         } else {

@@ -51,7 +51,6 @@ class AutoDeletionStart(Database):
         self.current_date = current_date
         self.country_id = country_id
 
-
     def get_new_id(self, table_name, column_name):
         query = "SELECT MAX(%s)+1 as msx_id FROM %s" % (column_name, table_name)
         row = self.select_one(query)
@@ -92,7 +91,7 @@ class AutoDeletionStart(Database):
             return False
 
     def delete_data(self, domain_id):
-        deletion_year = 1
+        deletion_year = 7
         query = "DELETE FROM tbl_compliance_history WHERE  compliance_id in ( " + \
             " SELECT count(0) FROM tbl_compliance_history as t1 " + \
             "INNER JOIN tbl_client_compliances as t2 on t1.unit_id = t2.unit_id and " + \
@@ -107,7 +106,7 @@ class AutoDeletionStart(Database):
         # self.execute(query, [deletion_year, deletion_year, domain_id, self.country_id])
 
     def is_seven_years_before_data_available(self, domain_id):
-        deletion_year = 1
+        deletion_year = 7
 
         query = "SELECT count(0) cnt FROM tbl_compliance_history as t1 " + \
             "INNER JOIN tbl_client_compliances as t2 on t1.unit_id = t2.unit_id and " + \
@@ -130,21 +129,21 @@ class AutoDeletionStart(Database):
             return False
 
     def generate_seven_years_before_report(self, domain_id, country_id):
-        query_columns = "c.compliance_task, c.document_name, " + \
-            " c.compliance_description, " + \
+        query_columns = "c.compliance_task as compliance_name, c.document_name, " + \
+            " c.compliance_description as description, " + \
             " ch.start_date, ch.due_date, ch.completion_date, " + \
             " ch.validity_date, ch.remarks, ch.completed_on, " + \
             " ch.concurred_on, ch.approved_on, " + \
             " (SELECT concat(unit_code, '-', unit_name) " + \
-            " FROM tbl_units un WHERE un.unit_id = ch.unit_id), " + \
+            " FROM tbl_units un WHERE un.unit_id = ch.unit_id) as unit_name, " + \
             " (SELECT concat(employee_code, '-', employee_name) " + \
-            " FROM tbl_users us WHERE us.user_id = ch.completed_by), " + \
+            " FROM tbl_users us WHERE us.user_id = ch.completed_by) as assignee, " + \
             " (SELECT concat(employee_code, '-', employee_name) " + \
-            " FROM tbl_users us WHERE us.user_id = ch.concurred_by), " + \
+            " FROM tbl_users us WHERE us.user_id = ch.concurred_by) as concurrence_person, " + \
             " (SELECT concat(employee_code, '-', employee_name) " + \
-            " FROM tbl_users us WHERE us.user_id = ch.approved_by), " + \
+            " FROM tbl_users us WHERE us.user_id = ch.approved_by) as approval_person, " + \
             " ch.documents"
-        query = "SELECT %s FROM tbl_compliance_history ch " + \
+        query = "SELECT " + query_columns + " FROM tbl_compliance_history ch " + \
             " INNER JOIN tbl_compliances c ON " + \
             " (c.compliance_id = ch.compliance_id) " + \
             " WHERE  c.compliance_id in ( " + \
@@ -156,20 +155,10 @@ class AutoDeletionStart(Database):
             " now(), INTERVAL 7 YEAR) " + \
             " or validity_date = 0 or validity_date is null) " + \
             " AND due_date <  " + \
-            " DATE_SUB(now(), INTERVAL 7 YEAR)" % (
-                query_columns, country_id, domain_id
-            )
-        cursor = self.db.cursor()
-        cursor.execute(query)
-        rows = cursor.fetchall()
+            " DATE_SUB(now(), INTERVAL 7 YEAR)"
 
-        columns = [
-            "compliance_name", "document_name", "description", "start_date",
-            "due_date", "completion_date", "validity_date", "remarks",
-            "completed_on", "concurred_on", "approved_on", "unit_name",
-            "assignee", "concurrence_person", "approval_person", "documents"
-        ]
-        results = self.convert_to_dict(rows, columns)
+        results = self.select_all(query, [country_id, domain_id])
+
         # Paths
         self.folder_path = "./seven_years_before_data/%s/" % str(
             self.client_id)

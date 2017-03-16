@@ -326,8 +326,8 @@ DomainScoreCard.prototype.showReportValues = function() {
             assigned_count = assigned_count + v.assigned_count;
             un_assigned_count = un_assigned_count + v.unassigned_count;
             not_opted_count = not_opted_count + v.not_opted_count;
-            row_total = row_total_count + v.unassigned_count + v.not_opted_count;
-            row_total_count = row_total_count = row_total;
+            row_total = v.assigned_count + v.unassigned_count + v.not_opted_count;
+            row_total_count = row_total_count + row_total;
             $('.row-total', cloneone).text(row_total);
             reportTableTbody.append(cloneone);
             j = j + 1;
@@ -358,7 +358,7 @@ DomainScoreCard.prototype.showReportValues = function() {
                 un_assigned_new_count = un_assigned_new_count + v1.unassigned_count;
                 not_opted_new_count = not_opted_new_count + v1.not_opted_count;
                 row_total_new = v1.inprogress_count + v1.complied_count + v1.delayed_count + v1.overdue_count + v1.unassigned_count + v1.not_opted_count;
-                row_total_new_count = row_total_new_count = row_total_new;
+                row_total_new_count = row_total_new_count + row_total_new;
                 $('.row-total', clonetwo).text(row_total_new);
                 reportTableTbodyNew.append(clonetwo);
                 i = i + 1;

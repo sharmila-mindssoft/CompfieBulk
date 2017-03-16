@@ -8063,7 +8063,7 @@ BEGIN
     SELECT client_id, group_name FROM tbl_client_groups;
 
     SELECT form_id, form_name
-    FROM tbl_client_forms order by form_order;
+    FROM tbl_client_forms where form_type_id = 2 order by form_order;
 
     SELECT ips.client_id, ips.form_id,
     (select group_name from tbl_client_groups where client_id = ips.client_id) as group_name
@@ -8251,7 +8251,7 @@ BEGIN
     SELECT client_id, group_name FROM tbl_client_groups;
 
     SELECT form_id, form_name
-    FROM tbl_client_forms order by form_order;
+    FROM tbl_client_forms where form_type_id = 2 order by form_order;
 END //
 
 DELIMITER ;

@@ -511,7 +511,7 @@ def userManagement_EditView_GetUsers(db, userID):
     q = " SELECT  T01.user_id, T01.user_category_id, T01. seating_unit_id, T01.service_provider_id, " + \
         " T01.user_level, T01.user_group_id, T01.email_id, T01.employee_name, T01.employee_code, " + \
         " T01.contact_no, T01.mobile_no, T01.address, T01.is_service_provider, T01.is_active, " + \
-        " T01.is_disable FROM Tbl_users AS T01 Where T01.user_id = %s"
+        " T01.is_disable FROM tbl_users AS T01 Where T01.user_id = %s"
 
     row = db.select_all(q, [userID])
     return row
@@ -936,7 +936,7 @@ def get_no_of_remaining_licence_Viewonly(db):
 ############################################################################
 def get_no_of_remaining_licence(db):
     columns = ["count(0) as licence"]
-    
+
     condition = "1"
     rows = db.get_data(tblUsers, columns, condition)
     no_of_licence_holders = rows[0]["licence"]
@@ -1208,7 +1208,7 @@ def update_user(db, user, session_user, client_id):
     else:
         columns.append("seating_unit_id")
         values.append(user.seating_unit_id)
-        
+
     values.append(user_id)
     result1 = db.update(tblUsers, columns, values, condition)
     if result1 is False:
@@ -1220,7 +1220,7 @@ def update_user(db, user, session_user, client_id):
     save_user_units(db, user.user_unit_ids, user_id)
     save_user_legal_entities(db, user.user_entity_ids, user_id)
 
-    # UpdateUsers(user, user.user_id, client_id)
+    UpdateUsers(user, client_id)
 
     action = "Updated user \"%s - %s\"" % (
         user.employee_code, user.employee_name
@@ -1649,17 +1649,20 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
     print action_mode
     columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
     values = []
+    is_closed = 1
     if action_mode == "close":
         print "save"
-        values = [1, current_time_stamp, user_id, remarks]
+        values = [is_closed, current_time_stamp, user_id, remarks]
         condition_val = "unit_id= %s"
         values.append(unit_id)
         result = db.update(tblUnits, columns, values, condition_val)
     elif action_mode == "reactive":
-        values = [0, current_time_stamp, user_id, remarks]
+        is_closed = 0
+        values = [is_closed, current_time_stamp, user_id, remarks]
         condition_val = "unit_id= %s"
         values.append(unit_id)
         result = db.update(tblUnits, columns, values, condition_val)
+    UnitClose(unit_id, is_closed, current_time_stamp, user_id, remarks)
     print "result"
     print result
     return result

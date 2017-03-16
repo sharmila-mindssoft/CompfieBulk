@@ -8,7 +8,7 @@ from server.constants import SESSION_CUTOFF
 from server.clientdatabase.general import (
     is_service_proivder_user, is_service_provider_in_contract
 )
-from server.clientdatabase.savetoknowledge import IsClientActive, SaveGroupAdminName
+from server.clientdatabase.savetoknowledge import IsClientActive, SaveGroupAdminName, SaveUsers
 from dateutil import relativedelta
 
 __all__ = [
@@ -232,10 +232,18 @@ def get_user_id_from_token(db, token):
 # Get User category ID, is_active
 #################################################################
 def get_client_details_from_userid(db, user_id):
-    columns = "user_category_id, is_active"
+    columns = [
+        "user_id", "user_category_id", "client_id", "seating_unit_id",
+        "service_provider_id", "user_level", "email_id", "employee_name",
+        "employee_code", "contact_no", "mobile_no", "address",
+        "is_service_provider", "is_disable", "disabled_on",
+        "is_active", "status_changed_on"
+    ]
     condition = "user_id = %s"
     condition_val = [user_id]
     rows = db.get_data(tblUsers, columns, condition, condition_val)
+    if rows :
+        rows = rows[0]
     return rows
 
 #################################################################
@@ -252,14 +260,15 @@ def delete_emailverification_token(db, token):
 def save_login_details(db, token, username, password, client_id):
     user_id = get_user_id_from_token(db, token)
     user_details = get_client_details_from_userid(db, user_id)
-    user_category_id = user_details[0]["user_category_id"]
-    is_active = user_details[0]["is_active"]
+    user_category_id = user_details["user_category_id"]
+    is_active = user_details["is_active"]
 
     q = " INSERT INTO tbl_user_login_details(user_id, user_category_id, username, " + \
         " password, is_active) VALUES (%s, %s, %s, %s, %s) "
     db.execute(q, [user_id, user_category_id, username, password, is_active])
 
     delete_emailverification_token(db, token)
+    SaveUsers(user_details, user_id, client_id)
     if user_category_id == 1 :
         SaveGroupAdminName(username, client_id)
     return True

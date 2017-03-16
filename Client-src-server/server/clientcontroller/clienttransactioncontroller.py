@@ -318,7 +318,7 @@ def process_save_past_records(
         if validate_before_save(
             db, compliance.unit_id, compliance.compliance_id,
             compliance.due_date,
-            compliance.completion_date, compliance.documents,            
+            compliance.completion_date, compliance.documents,
             compliance.completed_by
         ):
             continue
@@ -398,23 +398,42 @@ def process_approve_compliance(db, request, session_user):
     status = status[0]
 
     if status == "Approve":
+        approve_status = 1
         approve_compliance(
-            db, compliance_history_id, remarks,
+            db, approve_status, compliance_history_id, remarks,
             next_due_date, validity_date, session_user
         )
-    elif status == "Reject Approval":
+
+    elif status == "Rectify Approval":
         reject_compliance_approval(
             db, compliance_history_id, remarks,  next_due_date
         )
+
     elif status == "Concur":
+        concurrence_status = 1
         concur_compliance(
-            db, compliance_history_id, remarks,
+            db, concurrence_status, compliance_history_id, remarks,
             next_due_date, validity_date, session_user
         )
-    elif status == "Reject Concurrence":
+
+    elif status == "Rectify Concurrence":
         reject_compliance_concurrence(
             db, compliance_history_id, remarks, next_due_date, session_user
-        )    
+        )
+
+    elif status == "Reject Concurrence" :
+        concurrence_status = 3
+        concur_compliance(
+            db, concurrence_status, compliance_history_id, remarks,
+            next_due_date, validity_date, session_user
+        )
+
+    elif status == "Reject Approval" :
+        approve_status = 3
+        approve_compliance(
+            db, approve_status, compliance_history_id, remarks,
+            next_due_date, validity_date, session_user
+        )
 
     return clienttransactions.ApproveComplianceSuccess()
 
