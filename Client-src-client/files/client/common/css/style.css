@@ -1239,7 +1239,7 @@ h2.chart-title: hover {
     margin-top: 40px;
 }
 
->>>>>>> Siva/phase2 @media only screen and (max-width:991px) {
+@media only screen and (max-width:991px) {
     .mob-p-r-0 {
         padding-right: 0
     }
