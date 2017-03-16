@@ -1442,7 +1442,7 @@ def save_past_record(
 
     # Handling upload
     document_names = []
-    file_size = 0    
+    file_size = 0
     if len(documents) > 0:
         for doc in documents:
             file_size += doc.file_size
@@ -1507,7 +1507,7 @@ def save_past_record(
         unit_id, compliance_id,
         string_to_datetime(due_date).date(),
         completion_date,
-        completed_by, completion_date, 1, approved_by, completion_date, 
+        completed_by, completion_date, 1, approved_by, completion_date,
         legal_entity_id, 3, get_date_time()
     ]
     # if validity_date is not None and validity_date != "":
@@ -1829,13 +1829,13 @@ def save_compliance_activity(
 # Approve Compliances
 ############################################################
 def approve_compliance(
-    db, compliance_history_id, remarks, next_due_date,
+    db, approve_status, compliance_history_id, remarks, next_due_date,
     validity_date, session_user
 ):
     # Updating approval in compliance history
     columns = ["approve_status", "approved_on", "current_status"]
 
-    values = [1, get_date_time(),"3"]
+    values = [approve_status, get_date_time(), "3"]
     if remarks is not None:
         columns.append("remarks")
         values.append(remarks)
@@ -2141,12 +2141,12 @@ def notify_compliance_rejected(
 # Concurr Compliances
 #####################################################
 def concur_compliance(
-    db, compliance_history_id, remarks,
+    db, concurrence_status, compliance_history_id, remarks,
     next_due_date, validity_date, session_user
 ):
-    columns = ["concurrence_status", "concurred_on","current_status"]
+    columns = ["concurrence_status", "concurred_on", "current_status"]
 
-    values = [1, get_date_time(),"2"]
+    values = [concurrence_status, get_date_time(), "2"]
     if validity_date is not None:
         columns.append("validity_date")
         values.append(string_to_datetime(validity_date))
@@ -2167,7 +2167,7 @@ def concur_compliance(
         " where tch.compliance_id=tc.compliance_id) as compliance_task"
     condition = "compliance_history_id = %s "
     rows = db.get_data(
-        tblComplianceHistory+ " tch", columns, condition,
+        tblComplianceHistory + " tch", columns, condition,
         [compliance_history_id]
     )
     unit_id = rows[0]["unit_id"]
