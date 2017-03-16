@@ -49,32 +49,26 @@ function loadMessages(data) {
 }
 
 function initialize() {
-    client_mirror.getNotifications(LEIDS, 4, 0, 50, function(error, response) {
-        if (error == null) {
-            data = response.messages;
-            loadMessages(data);
-        } else {
-            displayMessage(error);
-        }
-    });
-
-    // client_mirror.getNotificationsCount(LEIDS, function(error, response) {
+    // client_mirror.getNotifications(LEIDS, 4, 0, 50, function(error, response) {
     //     if (error == null) {
-    //         var i=0;
-    //         $.each(response.notification_count, function(k, v) {
-    //             window.localStorage.statutory_count = v.statutory_count
-    //             window.localStorage.reminder_count = v.reminder_count
-    //             window.localStorage.messages_count = v.messages_count
-    //             window.localStorage.escalation_count = v.escalation_count
-    //             //alert(window.localStorage.statutory_count +' - '+ window.localStorage.reminder_count +' - '+ window.localStorage.messages_count +' - '+ window.localStorage.escalation_count);
-    //             i=1;
-    //         });
-    //         if(i==1) 
-    //         //loadMessages(data);
+    //         data = response.messages;
+    //         loadMessages(data);
     //     } else {
     //         displayMessage(error);
     //     }
     // });
+
+    client_mirror.getNotificationsCount(LEIDS, function(error, response) {
+        if (error == null) {
+            $.each(response.notification_count, function(k, v) {
+                window.localStorage.statutory_count = v.statutory_count
+                window.localStorage.reminder_count = v.reminder_count
+                window.localStorage.messages_count = v.messages_count
+                window.localStorage.escalation_count = v.escalation_count
+                alert(window.localStorage.statutory_count +' - '+ window.localStorage.reminder_count +' - '+ window.localStorage.messages_count +' - '+ window.localStorage.escalation_count);
+            });
+        }
+    });
 }
 
 $(document).ready(function() {

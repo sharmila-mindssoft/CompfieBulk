@@ -109,7 +109,7 @@ function initClientMirror() {
         var info = getUserInfo();
         return info.entity_info;
     }
-    
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -210,7 +210,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        alert(body.toSource())
+        //alert(body.toSource())
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
