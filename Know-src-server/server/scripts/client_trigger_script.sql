@@ -54,14 +54,18 @@ CREATE TRIGGER `after_tbl_user_legal_entities_delete` AFTER DELETE ON `tbl_user_
  //
  DELIMITER ;
 
-delimiter //
+
+DROP TRIGGER IF EXISTS `after_tbl_reminder_settings_update`;
+DELIMITER //
+
 CREATE TRIGGER `after_tbl_reminder_settings_update` AFTER UPDATE ON `tbl_reminder_settings`
  FOR EACH ROW BEGIN
- insert into tbl_le_settings_replication_status(legal_entity_id, provider_id, s_action)
+ insert into tbl_le_settings_replication_status(legal_entity_id, s_action)
  values(new.legal_entity_id, 1) on duplicate key update s_action = 1;
- UPDATE tbl_le_replication_status set settings_data = 1 ;
- END ;
- delimiter ;
+ UPDATE tbl_le_replication_status set settings_data = 1 where legal_entity_id = new.legal_entity_id;
+ END
+//
+ DELIMITER ;
 
 DROP TRIGGER IF EXISTS `after_tbl_units_insert`;
 DELIMITER //
