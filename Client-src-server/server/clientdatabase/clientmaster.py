@@ -383,15 +383,15 @@ def block_service_provider(
 ##############################################################################
 # User Management Add - Category Prerequisite
 ##############################################################################
-def userManagement_GetUserCategory(db, session_category):    
+def userManagement_GetUserCategory(db, session_category):
     if session_category == 1: #Group Admin
         condition = " WHERE user_category_id NOT IN (1)"
-    elif session_category == 3: #Legal Entity Admin        
+    elif session_category == 3: #Legal Entity Admin
         condition = " WHERE user_category_id NOT IN (1,2,3)"
-    elif session_category == 4: #Domain Admin        
+    elif session_category == 4: #Domain Admin
         condition = " WHERE user_category_id NOT IN (1,2,3,4)"
-    
-    q = "SELECT user_category_id, user_category_name From tbl_user_category " + condition    
+
+    q = "SELECT user_category_id, user_category_name From tbl_user_category " + condition
     row = db.select_all(q, None)
     return row
 
@@ -520,7 +520,9 @@ def userManagement_EditView_GetUsers(db, userID):
 # User Management - Edit View Get Users - Legal Entities
 ##############################################################################
 def userManagement_EditView_GetLegalEntities(db, userID):
-    q = " SELECT user_id, legal_entity_id from tbl_user_legal_entities where user_id = %s "
+    q = "SELECT T01.user_id, T01.legal_entity_id, T02.business_group_id " + \
+        " FROM tbl_user_legal_entities As T01 INNER JOIN tbl_legal_entities As T02 " + \
+        " ON T01.legal_entity_id = T02.legal_entity_id WHERE user_id = %s"
 
     row = db.select_all(q, [userID])
     return row
@@ -538,8 +540,9 @@ def userManagement_EditView_GetDomains(db, userID):
 # User Management - Edit View Get Users - Units
 ##############################################################################
 def userManagement_EditView_GetUnits(db, userID):
-    q = " SELECT user_id, legal_entity_id, unit_id from tbl_user_units where user_id = %s "
-
+    q = " SELECT T01.user_id, T01.legal_entity_id, T01.unit_id, T02.business_group_id, " + \
+        " T02.division_id, T02.category_id FROM tbl_user_units As T01 " + \
+        " INNER JOIN tbl_units AS T02 ON T01.unit_id = T02.unit_id where user_id = %s "
     row = db.select_all(q, [userID])
     return row
 
@@ -920,7 +923,7 @@ def return_service_providers(service_providers):
 # Parameter(s) - Object of database
 # Return Type - int
 ############################################################################
-def get_no_of_remaining_licence_Viewonly(db):   
+def get_no_of_remaining_licence_Viewonly(db):
     q = " SELECT (total_view_licence - licence_used) As remaining_licence from tbl_Client_Groups"
 
     row = db.select_one(q, None)
@@ -933,6 +936,7 @@ def get_no_of_remaining_licence_Viewonly(db):
 ############################################################################
 def get_no_of_remaining_licence(db):
     columns = ["count(0) as licence"]
+    
     condition = "1"
     rows = db.get_data(tblUsers, columns, condition)
     no_of_licence_holders = rows[0]["licence"]
@@ -997,7 +1001,7 @@ def is_duplicate_employee_name(db, employee_name, user_id=None):
 # To check Units are already assinged
 # Parameter(s) - Object of database, employee code, userid
 # Return Type - Boolean
-#             - Returns Records if units are already assigned             
+#             - Returns Records if units are already assigned
 ############################################################################
 def is_already_assigned_units(db, unit_ids, domain_ids):
     #  q = "SELECT T01.domain_id,T01.unit_id,T05.legal_entity_id,T05.user_id,T05.unit_id,T05.domain_id " + \
@@ -1014,12 +1018,12 @@ def is_already_assigned_units(db, unit_ids, domain_ids):
     domainList = ",".join(str(uid.domain_id) for uid in domain_ids)
 
     row = db.select_one(q, [unitList, domainList])
-     
-    if int(row["unit_count"]) > 0:        
+
+    if int(row["unit_count"]) > 0:
         return True
-    else :        
+    else :
         return False
-    
+
 ############################################################################
 # To Save User Domains
 # Parameter(s) - Object of database, domain ids, user id
@@ -1167,20 +1171,34 @@ def save_user(db, user, session_user, client_id):
 #             - Returns RuntimeError if Updation fails
 ############################################################################
 def update_user(db, user, session_user, client_id):
+    current_time_stamp = get_date_time()
     user_id = user.user_id
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
+    # columns = [
+    #     "user_group_id", "employee_name", "employee_code",
+    #     "contact_no", "seating_unit_id", "user_level",
+    #     "is_service_provider", "updated_on", "updated_by"
+    # ]
     columns = [
-        "user_group_id", "employee_name", "employee_code",
-        "contact_no", "seating_unit_id", "user_level",
-        "is_service_provider", "updated_on", "updated_by"
+        "user_group_id", "email_id", "employee_name",
+        "employee_code", "contact_no", "mobile_no", "user_level",
+        "is_service_provider",
+        "updated_by", "updated_on"
     ]
+    # values = [
+    #     user.user_group_id, user.employee_name,
+    #     user.employee_code.replace(" ", ""),
+    #     user.contact_no, user.seating_unit_id, user.user_level,
+    #     user.is_service_provider, current_time_stamp,
+    #     session_user
+    # ]
     values = [
-        user.user_group_id, user.employee_name,
-        user.employee_code.replace(" ", ""),
-        user.contact_no, user.seating_unit_id, user.user_level,
-        user.is_service_provider, current_time_stamp,
-        session_user
+        user.user_group_id, user.email_id,
+        user.employee_name, user.employee_code.replace(" ", ""),
+        user.contact_no, user.mobile_no, user.user_level,
+        user.is_service_provider,
+        session_user, current_time_stamp
     ]
     condition = "user_id= %s "
 
@@ -1190,14 +1208,19 @@ def update_user(db, user, session_user, client_id):
     else:
         columns.append("seating_unit_id")
         values.append(user.seating_unit_id)
+        
     values.append(user_id)
     result1 = db.update(tblUsers, columns, values, condition)
     if result1 is False:
         raise client_process_error("E011")
 
-    save_user_domains(db, user.domain_ids, user_id)
-    save_user_units(db, user.unit_ids, user_id)
-    UpdateUsers(user, user.user_id, client_id)
+    # save_user_domains(db, user.domain_ids, user_id)
+    # save_user_units(db, user.unit_ids, user_id)
+    save_user_domains(db, user.user_domain_ids, user_id)
+    save_user_units(db, user.user_unit_ids, user_id)
+    save_user_legal_entities(db, user.user_entity_ids, user_id)
+
+    # UpdateUsers(user, user.user_id, client_id)
 
     action = "Updated user \"%s - %s\"" % (
         user.employee_code, user.employee_name
