@@ -220,7 +220,7 @@ function initClientMirror() {
             contentType: 'application/json',
             data: makekey() + btoa(actula_data),
             success: function(data) {
-                //console.log(data);
+                // console.log(data);
                 data = atob(data.substring(5));
                 data = parseJSON(data);
                 var status = data[0];
@@ -2435,6 +2435,18 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    // User Management Edit View
+    function userManagementEditView(user_id, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'UserManagementEditView',
+            {
+                'user_id': user_id
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     function getReAssignComplianceUnits(legalEntityId, domainId, userId, userType, unitId, callback) {
         var request = [
             'GetReAssignComplianceUnits', {
@@ -3027,8 +3039,7 @@ function initClientMirror() {
         exportJsontoCsv: exportJsontoCsv,
         onOccurrenceLastTransaction: onOccurrenceLastTransaction,
         uploadComplianceTaskFile: uploadComplianceTaskFile,
-
-
+        userManagementEditView: userManagementEditView
     };
 }
 
