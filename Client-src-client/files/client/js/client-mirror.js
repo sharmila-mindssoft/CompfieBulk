@@ -109,9 +109,7 @@ function initClientMirror() {
         var info = getUserInfo();
         return info.entity_info;
     }
-
-
-
+    
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
