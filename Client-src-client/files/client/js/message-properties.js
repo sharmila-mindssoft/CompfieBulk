@@ -414,6 +414,7 @@ var message = {
     "atleast_one_user_required_reassign": "Select atleast one user for reassign",
     'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
     'units_already_assigned': 'Some of the Units are already assigned'
+    'select_atleast_one_compliance': 'Select atleast one completed compliance'
 
 };
 

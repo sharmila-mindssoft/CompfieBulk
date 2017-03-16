@@ -314,10 +314,10 @@ def process_UserManagement_EditView(db, request, session_user):
     units = process_UserManagement_EditView_Units(db, request, session_user)
 
     return clientmasters.UserManagementEditViewSuccess(
-        users = users,
-        legal_entities = legalEntities,
-        domains = domains,
-        units = units)
+        users=users,
+        legal_entities=legalEntities,
+        domains=domains,
+        units=units)
 
 ########################################################
 # To get all client forms to load in User privilege form
@@ -553,6 +553,7 @@ def process_UserManagement_EditView_users(db, request, session_user):
         user_id = row["user_id"]
         user_category_id = row["user_category_id"]
         seating_unit_id = row["seating_unit_id"]
+        service_provider_id = row["service_provider_id"]
         user_level  = row["user_level"]
         user_group_id = row["user_group_id"]
         email_id = row["email_id"]
@@ -565,10 +566,10 @@ def process_UserManagement_EditView_users(db, request, session_user):
         is_active = bool(row["is_active"])
         is_disable = bool(row["is_disable"])
         userList.append(
-            clientcore.ClientUsers_UserManagement_EditView_Users(user_id, user_category_id, seating_unit_id, user_level,
-                                                      user_group_id, email_id, employee_code, employee_name,
-                                                      contact_no, mobile_no, address, is_service_provider,
-                                                      is_active, is_disable)
+            clientcore.ClientUsers_UserManagement_EditView_Users(user_id, user_category_id, seating_unit_id, service_provider_id,
+                                                                 user_level,user_group_id, email_id, employee_code, employee_name,
+                                                                 contact_no, mobile_no, address, is_service_provider,
+                                                                 is_active, is_disable)
         )
     return userList
 
@@ -584,9 +585,12 @@ def process_UserManagement_EditView_LegalEntities(db, request, session_user):
     for row in resultRows:
         user_id = row["user_id"]
         legal_entity_id = row["legal_entity_id"]
+        business_group_id = row["business_group_id"]
 
         legalEntityList.append(
-            clientcore.ClientUsers_UserManagement_EditView_LegalEntities(user_id, legal_entity_id)
+            clientcore.ClientUsers_UserManagement_EditView_LegalEntities(user_id,
+                                                                         legal_entity_id,
+                                                                         business_group_id)
         )
     return legalEntityList
 
@@ -622,9 +626,13 @@ def process_UserManagement_EditView_Units(db, request, session_user):
         user_id = row["user_id"]
         legal_entity_id = row["legal_entity_id"]
         unit_id = row["unit_id"]
+        business_group_id = row["business_group_id"]
+        division_id = row["division_id"]
+        category_id = row["category_id"]
 
         unitList.append(
-            clientcore.ClientUsers_UserManagement_EditView_Units(user_id, legal_entity_id, unit_id)
+            clientcore.ClientUsers_UserManagement_EditView_Units(user_id, legal_entity_id, unit_id,
+                                                                 business_group_id, division_id, category_id)
         )
     return unitList
 

@@ -1493,8 +1493,7 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     reminder = 0
     escalation = 0
     messages = 0
-
-    # statutory_query = 
+    # statutory_query =
 
     reminder_query = "SELECT SUM(reminder_count) as reminder_count FROM ( " + \
                     "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as reminder_count  " + \
@@ -1522,9 +1521,10 @@ def get_notification_counts(db, session_user, session_category, le_ids):
     row = db.select_one(messages_query, [session_user])
     if row['messages_count'] > 0:
         messages = row['messages_count']
-    
+    notification_count = []
     notification = dashboard.NotificationsCountSuccess(statutory, reminder, escalation, messages)
-    return notification
+    notification_count.append(notification)
+    return notification_count
 
 def get_reminders(
     db, notification_type, start_count, to_count, session_user, session_category

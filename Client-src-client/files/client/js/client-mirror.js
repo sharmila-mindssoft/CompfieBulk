@@ -109,9 +109,7 @@ function initClientMirror() {
         var info = getUserInfo();
         return info.entity_info;
     }
-
-
-
+    
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -221,7 +219,7 @@ function initClientMirror() {
             contentType: 'application/json',
             data: makekey() + btoa(actula_data),
             success: function(data) {
-                //console.log(data);
+                // console.log(data);
                 data = atob(data.substring(5));
                 data = parseJSON(data);
                 var status = data[0];
@@ -403,8 +401,7 @@ function initClientMirror() {
     /* Compliance Approal */
     function getComplianceApprovalList(le_id, start_count, callback) {
         var request = [
-            'GetComplianceApprovalList',
-            {
+            'GetComplianceApprovalList', {
                 'le_id': le_id,
                 'start_count': start_count
             }
@@ -659,7 +656,7 @@ function initClientMirror() {
     }
 
     /* Notifications */
-    function getNotificationsCount(le_ids, notification_type, start_count, end_count, callback) {
+    function getNotificationsCount(le_ids, callback) {
         callerName = 'client_dashboard';
         var request = [
             'GetNotificationsCount', {
@@ -668,7 +665,6 @@ function initClientMirror() {
         ];
         clientApiRequest(callerName, request, callback);
     }
-
 
     function getNotifications(le_ids, notification_type, start_count, end_count, callback) {
         callerName = 'client_dashboard';
@@ -724,8 +720,7 @@ function initClientMirror() {
     function getCurrentComplianceDetail(le_id, current_start_count, callback) {
         callerName = 'client_user';
         var request = [
-            'GetCurrentComplianceDetail',
-            {
+            'GetCurrentComplianceDetail', {
                 'le_id': le_id,
                 'current_start_count': current_start_count
             }
@@ -736,8 +731,7 @@ function initClientMirror() {
     function getUpcomingComplianceDetail(le_id, upcoming_start_count, callback) {
         callerName = 'client_user';
         var request = [
-            'GetUpcomingComplianceDetail',
-            {
+            'GetUpcomingComplianceDetail', {
                 'le_id': le_id,
                 'upcoming_start_count': upcoming_start_count
             }
@@ -1209,8 +1203,7 @@ function initClientMirror() {
 
     function getOnOccurrenceCompliances(le_id, start_count, callback) {
         var request = [
-            'GetOnOccurrenceCompliances',
-            {
+            'GetOnOccurrenceCompliances', {
                 'le_id': le_id,
                 'start_count': start_count
             }
@@ -1764,24 +1757,23 @@ function initClientMirror() {
         clientApiRequest('client_transaction', request, callback);
     }
 
-    function getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, documents, validity_date, completed_by) {
+    function getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, documents, completed_by) {
         return {
             'unit_id': unit_id,
             'compliance_id': compliance_id,
             'due_date': due_date,
             'completion_date': completion_date,
             'documents': documents,
-            'validity_date': validity_date,
-            'completed_by': completed_by
+            'validity_date': null,
+            'pr_completed_by': completed_by
         };
     }
 
     function savePastRecords(legalEntityId, compliances_list, callback) {
         var request = [
-            'SavePastRecords',
-            {
+            'SavePastRecords', {
                 'le_id': legalEntityId,
-                'pr_compliances': compliances_list
+                'pr_compliances_1': compliances_list
             }
         ];
         clientApiRequest('client_transaction', request, callback);
@@ -2447,6 +2439,17 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    // User Management Edit View
+    function userManagementEditView(user_id, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'UserManagementEditView', {
+                'user_id': user_id
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     function getReAssignComplianceUnits(legalEntityId, domainId, userId, userType, unitId, callback) {
         var request = [
             'GetReAssignComplianceUnits', {
@@ -2750,8 +2753,7 @@ function initClientMirror() {
 
     function downloadTaskFile(le_id, c_id, d_id, u_id, start_date, file_name) {
         var request = [
-            "DownloadFile",
-            {
+            "DownloadFile", {
                 "le_id": le_id,
                 "c_id": c_id,
                 "d_id": d_id,
@@ -3040,8 +3042,7 @@ function initClientMirror() {
         exportJsontoCsv: exportJsontoCsv,
         onOccurrenceLastTransaction: onOccurrenceLastTransaction,
         uploadComplianceTaskFile: uploadComplianceTaskFile,
-
-
+        userManagementEditView: userManagementEditView
     };
 }
 

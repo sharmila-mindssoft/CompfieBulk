@@ -104,7 +104,7 @@ def get_overdue_count(db, session_user):
 #################################################################
 def get_current_compliances_list(
     db, current_start_count, to_count, session_user
-):    
+):
     columns = [
         "compliance_history_id", "start_date", "due_date", "documents",
         "validity_date", "next_due_date",
@@ -415,7 +415,7 @@ def update_compliances(
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tc.compliance_id=tch.compliance_id) " + \
-        " WHERE compliance_history_id=%s "        
+        " WHERE compliance_history_id=%s "
     param = [compliance_history_id]
     row = db.select_one(query, param)
     columns = [
@@ -497,13 +497,13 @@ def update_compliances(
     #         db, row["unit_id"], row["compliance_id"], compliance_history_id,
     #         session_user, current_time_stamp, "Submitted", assignee_remarks
     #     )
-    
+
     history_values.extend(history_condition_val)
-        
+
     update_status = db.update(
         tblComplianceHistory, history_columns, history_values,
         history_condition
-    )    
+    )
 
     # Audit Log Entry
     action = "Upload Compliances \"%s\"" % (compliance_task)
@@ -518,7 +518,7 @@ def update_compliances(
         )
     return True
 
-    
+
 
 
 def notify_users(
@@ -592,7 +592,7 @@ def get_on_occurrence_compliance_count(
     ])
     print "query>>>>>>>>>>>>", query
     print "user_domain_ids>>>>>>>>>>>>", user_domain_ids
-    print "user_unit_ids>>>>>>>>>>>>", user_unit_ids    
+    print "user_unit_ids>>>>>>>>>>>>", user_unit_ids
     return rows["total_count"]
 
 ##########################################################
@@ -642,7 +642,7 @@ def get_on_occurrence_compliances_for_user(
             )
         unit_name = row["unit_name"]
         if unit_name not in unit_wise_compliances:
-            unit_wise_compliances[unit_name] = []        
+            unit_wise_compliances[unit_name] = []
         unit_wise_compliances[unit_name].append(
             clientuser.ComplianceOnOccurrence(
                 row["compliance_id"], row["statutory_provision"],
@@ -696,7 +696,7 @@ def start_on_occurrence_task(
     if compliance_history_id is False:
         raise client_process_error("E017")
 
-    history = get_compliance_history_details(db, compliance_history_id)    
+    history = get_compliance_history_details(db, compliance_history_id)
     assignee_id = history["completed_by"]
     concurrence_id = history["concurred"]
     approver_id = history["approved_by"]
@@ -736,7 +736,7 @@ def start_on_occurrence_task(
                 due_date, "Start"
             ]
         )
-        notify_on_occur_thread.start()    
+        notify_on_occur_thread.start()
     except Exception, e:
         logger.logClient("error", "clientdatabase.py-start-on-occurance", e)
         print "Error sending email: %s" % (e)
@@ -749,7 +749,7 @@ def remove_uploaded_file(file_path):
 
 def get_compliance_history_details(
     db, compliance_history_id
-):    
+):
     compliance_column = "(select compliance_task from %s c " + \
         " where c.compliance_id = ch.compliance_id ) " + \
         " as compliance_name "
@@ -767,7 +767,7 @@ def get_compliance_history_details(
     rows = db.get_data(
         tblComplianceHistory + " ch", columns, condition,
         condition_val
-    )    
+    )
     if rows:
         return rows[0]
 

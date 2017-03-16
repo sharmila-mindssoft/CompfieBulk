@@ -6,7 +6,8 @@ __all__ = [
     "LegalEntityReplicationManager",
     "LEntityReplicationUSer",
     "LEntityReplicationServiceProvider",
-    "LEntityUnitClosure"
+    "LEntityUnitClosure",
+    "LEntitySettingsData"
 ]
 
 class LegalEntityReplicationManager(object):
@@ -396,3 +397,95 @@ class LEntityUnitClosure(object):
 
     def _start(self):
         self.perform_closure()
+
+class LEntitySettingsData(object):
+    def __init__(self, group_info, le_info, le_id):
+        self._group_info = group_info
+        self._le_info = le_info
+        self._le_id = le_id
+
+    def _initiate_connection(self, connection_param):
+        con = Database.make_connection(connection_param)
+        _db = Database(con)
+        return _db
+
+    def reset_repliation_status(self, _db):
+        q = "update tbl_le_replication_status set settings_data=0 where legal_entity_id = %s"
+        _db.execute(q, [self._le_id])
+
+    def fetch_data_to_save(self):
+        _db = self._initiate_connection(self._group_info)
+        q = "select client_id, legal_entity_id, two_levels_of_approval, assignee_reminder, " + \
+            " escalation_reminder_in_advance, escalation_reminder, reassign_service_provider, " + \
+            "created_by, created_on, updated_by, updated_on " + \
+            " from tbl_reminder_settings where legal_entity_id = %s"
+        try :
+            _db.begin()
+            rows = _db.select_all(q, [self._le_id])
+
+            if len(rows) == 0 :
+                self.reset_repliation_status(_db)
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+            return rows
+
+    def delete_fetched_data(self):
+        _db = self._initiate_connection(self._group_info)
+        q = " delete from tbl_le_settings_replication_status where legal_entity_id = %s "
+        try :
+            _db.begin()
+            _db.execute(q, [self._le_id])
+            self.reset_repliation_status(_db)
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+
+    def save_settings(self, _db, settings_info):
+        s = settings_info
+        q = "insert into tbl_reminder_settings (client_id, legal_entity_id, two_levels_of_approval, assignee_reminder, " + \
+            " escalation_reminder_in_advance, escalation_reminder, reassign_service_provider, " + \
+            "created_by, created_on, updated_by, updated_on )" + \
+            "values(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) " + \
+            "on duplicate key update two_levels_of_approval = values(two_levels_of_approval), " + \
+            "assignee_reminder = values(assignee_reminder), escalation_reminder_in_advance = values(escalation_reminder_in_advance), " + \
+            "escalation_reminder = values(escalation_reminder), reassign_service_provider = values(reassign_service_provider), " + \
+            "created_by = values(created_by), created_on = values(created_on), updated_by = values(updated_by), " + \
+            "updated_on = values(updated_on)"
+        try :
+            _db.execute(q, [
+                s.get("client_id"), s.get("legal_entity_id"), s.get("two_levels_of_approval"),
+                s.get("assignee_reminder"), s.get("escalation_reminder_in_advance"),
+                s.get("escalation_reminder"), s.get("reassign_service_provider"),
+                s.get("created_by"), s.get("created_on"), s.get("updated_by"),
+                s.get("updated_on")
+            ])
+        except Exception, e :
+            print e
+
+    def perform_save(self):
+        save_rows = self.fetch_data_to_save()
+        _db = self._initiate_connection(self._le_info)
+        try:
+            _db.begin()
+            if save_rows :
+                self.save_settings(_db, save_rows[0])
+            _db.commit()
+
+        except Exception, e:
+            print e
+            _db.rollback()
+        finally:
+            _db.close()
+        self.delete_fetched_data()
+
+    def _start(self):
+        self.perform_save()

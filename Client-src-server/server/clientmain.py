@@ -25,7 +25,8 @@ from server.clientreplicationbase import (
 )
 from server.clientdatabase.savelegalentitydata import(
     LegalEntityReplicationManager, LEntityReplicationUSer,
-    LEntityReplicationServiceProvider, LEntityUnitClosure
+    LEntityReplicationServiceProvider, LEntityUnitClosure,
+    LEntitySettingsData
 )
 from server.constants import SESSION_CUTOFF
 import logger
@@ -291,6 +292,10 @@ class API(object):
 
             if r["provider_data"] == 1 :
                 info = LEntityReplicationServiceProvider(group_info, le_info, le_id)
+                info._start()
+
+            if r["settings_data"] == 1 :
+                info = LEntitySettingsData(group_info, le_info, le_id)
                 info._start()
 
     def _send_response(
