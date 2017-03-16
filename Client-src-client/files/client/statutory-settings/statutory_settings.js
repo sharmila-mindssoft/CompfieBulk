@@ -536,6 +536,9 @@ function activateUnit(element) {
         ACTIVE_UNITS.splice(index, 1);
         C_COUNT = C_COUNT - parseInt(chkid[2]);
     }
+    if(ACTIVE_UNITS.length == 0){
+        SelectAll.prop('checked', false);
+    }
     SelectedUnitCount.text(ACTIVE_UNITS.length);
 }
 
