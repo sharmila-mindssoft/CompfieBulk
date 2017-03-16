@@ -434,6 +434,21 @@ class LEntitySettingsData(object):
             _db.close()
             return rows
 
+    def delete_fetched_data(self):
+        _db = self._initiate_connection(self._group_info)
+        q = " delete from tbl_le_settings_replication_status where legal_entity_id = %s "
+        try :
+            _db.begin()
+            _db.execute(q, [self._le_id])
+            self.reset_repliation_status(_db)
+            _db.commit()
+        except Exception, e :
+            print e
+            _db.rollback()
+
+        finally :
+            _db.close()
+
     def save_settings(self, _db, settings_info):
         s = settings_info
         q = "insert into tbl_reminder_settings (client_id, legal_entity_id, two_levels_of_approval, assignee_reminder, " + \
@@ -470,6 +485,7 @@ class LEntitySettingsData(object):
             _db.rollback()
         finally:
             _db.close()
+        self.delete_fetched_data()
 
     def _start(self):
         self.perform_save()
