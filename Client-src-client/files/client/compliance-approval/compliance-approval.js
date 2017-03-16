@@ -70,6 +70,7 @@ $('#pagination').click(function() {
         displayMessage(error);
         hideLoader();
     }
+
     client_mirror.getComplianceApprovalList(parseInt(LegalEntityId.val()), sno, function(error, response) {
         if (error == null) {
             onSuccess(response);
@@ -80,17 +81,26 @@ $('#pagination').click(function() {
 });
 
 function loadComplianceApprovalDetails(data) {
+    var unitName = "";
     $.each(data, function(key, value) {
-        if (lastAssignee != value.assignee_name) {
-            var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
-            var clone = tableRowHeading.clone();
-            $('.heading', clone).html(value.assignee_name);
-            $('.tbody-compliance-approval-list').append(clone);
-            lastAssignee = value.assignee_name;
-        }
         complianceList = value.approval_compliances;
         //Full Width list append ---------------------------------------------------------------
         $.each(complianceList, function(k, val) {
+            if (unitName != val.unit_name) {
+                var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
+                $('.unit-name', cloneunit).html(val.unit_name);
+                $('.tbody-compliance-approval-list').append(cloneunit);
+                unitName = val.unit_name;
+            }
+
+            if (lastAssignee != value.assignee_name) {
+                var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
+                var clone = tableRowHeading.clone();
+                $('.user-name', clone).html(value.assignee_name);
+                $('.tbody-compliance-approval-list').append(clone);
+                lastAssignee = value.assignee_name;
+            }
+
             var tableRowvalues = $('#templates .table-compliance-approval-list .table-row-list');
             var clonelist = tableRowvalues.clone();
             sno = sno + 1;
@@ -121,6 +131,7 @@ function loadComplianceApprovalDetails(data) {
             $('.full-width-list .tbody-compliance-approval-list').append(clonelist);
         });
     });
+    $('[data-toggle="tooltip"]').tooltip();
     // if(totalRecord == 0){
     if (data.length == 0) {
         var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
