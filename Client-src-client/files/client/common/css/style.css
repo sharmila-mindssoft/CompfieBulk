@@ -1230,13 +1230,14 @@ h2.chart-title: hover {
 .table-not-complied-status {
     border: 1px solid #ededed;
 }
+
 .table-compliance-status {
     border: 1px solid #ededed;
 }
-.escalation-drilldown-container{
+
+.escalation-drilldown-container {
     margin-top: 40px;
 }
-
 @media only screen and (max-width:991px) {
     .mob-p-r-0 {
         padding-right: 0
@@ -1257,6 +1258,14 @@ h2.chart-title: hover {
     .card-box {
         padding-bottom: 8em
     }
+}
+
+.table-compliance-status {
+    border: 1px solid #ededed;
+}
+
+.escalation-drilldown-container {
+    margin-top: 40px;
 }
 
 #ui-datepicker-div {

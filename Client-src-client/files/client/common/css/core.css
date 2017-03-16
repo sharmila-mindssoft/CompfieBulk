@@ -1598,9 +1598,11 @@ pre {
 .multiselect-container>li>a>label.checkbox {
     padding-left: 45px;
 }
-.custombox-modal-container{
+
+.custombox-modal-container-slit {
     width: 700px !important;
 }
+
 .user-reg-card {
     width: 50%;
 }

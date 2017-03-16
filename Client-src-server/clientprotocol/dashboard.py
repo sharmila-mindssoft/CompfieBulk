@@ -585,6 +585,21 @@ class GetTrendChartDrillDownData(Request):
             "le_ids": self.legal_entity_ids
         }
 
+class GetNotificationsCount(Request):
+    def __init__(self, legal_entity_ids):
+        self.legal_entity_ids = legal_entity_ids
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_ids"])
+        legal_entity_ids = data.get("le_ids")
+        return GetNotificationsCount(legal_entity_ids)
+
+    def to_inner_structure(self):
+        return {
+            "le_ids": self.legal_entity_ids
+        }
+
 class GetNotifications(Request):
     def __init__(self, legal_entity_ids, notification_type, start_count, end_count):
         self.legal_entity_ids = legal_entity_ids
@@ -679,7 +694,7 @@ def _init_Request_class_map():
         GetAssigneeWiseCompliancesChart, GetAssigneeWiseComplianceDrillDown,
         GetComplianceStatusDrillDownData, GetEscalationsDrillDownData,
         GetComplianceApplicabilityStatusDrillDown, GetNotCompliedDrillDown,
-        GetTrendChartDrillDownData, GetNotifications, UpdateNotificationStatus,
+        GetTrendChartDrillDownData, GetNotificationsCount, GetNotifications, UpdateNotificationStatus,
         CheckContractExpiration,
         GetAssigneewiseYearwiseCompliances, GetAssigneewiseReassignedComplianes,
         GetStatutoryNotifications, UpdateStatutoryNotificationsStatus
@@ -1080,6 +1095,45 @@ class GetTrendChartDrillDownDataSuccess(Response):
             "t_drill_down_data": self.drill_down_data,
         }
 
+class NotificationsCountSuccess(Response):
+    def __init__(self, statutory, reminder, escalation, messages):
+        self.statutory = statutory
+        self.reminder = reminder
+        self.escalation = escalation
+        self.messages = messages
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["statutory_count", "reminder_count", "escalation_count", "messages_count"])
+        statutory = data.get("statutory_count")
+        reminder = data.get("reminder_count")
+        escalation = data.get("escalation_count")
+        messages = data.get("messages_count")
+        return NotificationsCountSuccess(statutory, reminder, escalation, messages)
+
+    def to_inner_structure(self):
+        return {
+            "statutory_count": self.statutory,
+            "reminder_count": self.reminder,
+            "escalation_count": self.escalation,
+            "messages_count": self.messages
+        }
+
+class GetNotificationsCountSuccess(Response):
+    def __init__(self, notification_count):
+        self.notification_count = notification_count
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["notification_count"])
+        statutory = data.get("notification_count")
+        return GetNotificationsCountSuccess(notification_count)
+
+    def to_inner_structure(self):
+        return {
+            "notification_count": self.notification_count
+        }
+
 class GetRemindersSuccess(Response):
     def __init__(self, reminders):
         self.reminders = reminders
@@ -1184,6 +1238,8 @@ def _init_Response_class_map():
         GetComplianceApplicabilityStatusDrillDownSuccess,
         GetNotCompliedDrillDownSuccess,
         GetTrendChartDrillDownDataSuccess,
+        NotificationsCountSuccess,
+        GetNotificationsCountSuccess,
         GetRemindersSuccess,
         GetEscalationsSuccess,
         GetMessagesSuccess,

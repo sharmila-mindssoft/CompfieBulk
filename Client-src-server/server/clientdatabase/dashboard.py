@@ -30,7 +30,7 @@ __all__ = [
     "get_risk_chart_count", "get_escalation_chart",
     "get_units_for_dashboard_filters", "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
-    "get_reminders", "get_escalations", "get_messages", "get_statutory",
+    "get_notification_counts", "get_reminders", "get_escalations", "get_messages", "get_statutory", 
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
     "notification_detail", "get_user_company_details", "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances", "get_assigneewise_reassigned_compliances",
@@ -1488,6 +1488,44 @@ def get_compliance_applicability_drill_down(
 
     return level_1_wise_compliance.values()
 
+def get_notification_counts(db, session_user, session_category, le_ids):
+    statutory = 0
+    reminder = 0
+    escalation = 0
+    messages = 0
+
+    # statutory_query = 
+
+    reminder_query = "SELECT SUM(reminder_count) as reminder_count FROM ( " + \
+                    "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as reminder_count  " + \
+                    "from tbl_legal_entities as le  " + \
+                    "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id  " + \
+                    "where %s = 1 OR %s = 3 AND ule.user_id = %s " + \
+                    "UNION ALL  " + \
+                    "Select count(*) as reminder_count from tbl_notifications_log as nl  " + \
+                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 2  " + \
+                    "Where nlu.user_id = @user_id and nlu.read_status = 0 ) x"
+    row = db.select_one(reminder_query, [session_category, session_category, session_user])
+    if row['reminder_count'] > 0:
+        reminder = row['reminder_count']
+
+    escalation_query = "Select count(*) as escalation_count from tbl_notifications_log as nl " + \
+                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \
+                    "Where nlu.user_id = %s and nlu.read_status = 0"
+    row = db.select_one(escalation_query, [session_user])
+    if row['escalation_count'] > 0:
+        escalation = row['escalation_count']
+
+    messages_query = "Select count(*) as messages_count from tbl_notifications_log as nl " + \
+                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 4 " + \
+                    "Where nlu.user_id = %s and nlu.read_status = 0"
+    row = db.select_one(messages_query, [session_user])
+    if row['messages_count'] > 0:
+        messages = row['messages_count']
+    
+    notification = dashboard.NotificationsCountSuccess(statutory, reminder, escalation, messages)
+    return notification
+
 def get_reminders(
     db, notification_type, start_count, to_count, session_user, session_category
 ):
@@ -1495,14 +1533,14 @@ def get_reminders(
     qry = "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as expire_count " + \
         "from tbl_legal_entities as le " + \
         "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-        "where %s = 1 OR %s = 2 AND %s = 1 AND ule.user_id = %s "
+        "where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s "
     row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
 
     if row["expire_count"] > 0:
         query = "(Select legal_entity_id, '0' as row_number,'0' as notification_id, " + \
                 "IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),concat('Your contract with Compfie for the legal entity ',legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
                 "Before contract expiration you can download documents <a href=#>here</a>'),'') as notification_text, " + \
-                "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg Where %s = 1 OR %s = 2 AND %s = 1 ) " + \
+                "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg Where %s = 1 OR %s = 2 AND %s = 2 ) " + \
                 "UNION ALL " + \
                 "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \

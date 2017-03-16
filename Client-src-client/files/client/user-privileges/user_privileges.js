@@ -90,11 +90,11 @@ UserPrivilegesPage.prototype.renderList = function(u_g_data) {
         if (v.is_active == true) {
             $('.status i', cloneRow).removeClass('fa-times text-danger');
             $('.status i', cloneRow).addClass('fa-check text-success');
-            $('.status i', cloneRow).attr('title','Click here to Deactivate');
+            $('.status i', cloneRow).attr('title', 'Click here to Deactivate');
         } else {
             $('.status i', cloneRow).removeClass('fa-check text-success');
             $('.status i', cloneRow).addClass('fa-times text-danger');
-            $('.status i', cloneRow).attr('title','Click here to Activate');
+            $('.status i', cloneRow).attr('title', 'Click here to Activate');
         }
         $('.status i', cloneRow).on('click', function(e) {
             t_this.showModalDialog(e, v.u_g_id, v.is_active);
@@ -256,13 +256,13 @@ UserPrivilegesPage.prototype.changeStatus = function(userGroupId, status) {
         return false;
     } else {
         var password = CurrentPassword.val();
-        if(status == "false") { status = false; }
-        if(status == "true") { status = true; }
+        if (status == "false") { status = false; }
+        if (status == "true") { status = true; }
         client_mirror.changeClientUserGroupStatus(userGroupId, status, password, function(error, response) {
             console.log(error, response)
             if (error == null) {
                 Custombox.close();
-                displayMessage(message.status_success);
+                displaySuccessMessage(message.status_success);
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
