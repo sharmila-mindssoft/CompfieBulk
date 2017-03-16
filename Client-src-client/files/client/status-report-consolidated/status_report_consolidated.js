@@ -51,8 +51,9 @@ var ItemsPerPage = $('#items_per_page');
 var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
+
 var on_current_page = 1;
-var f_count = 0;
+var f_count = 1;
 var LOGO = null;
 
 function PageControls() {
@@ -166,7 +167,7 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        f_count = 0;
+        f_count = 1;
         on_current_page = 1;
         createPageView(t_this._total_count);
         processSubmit(false);
@@ -278,7 +279,7 @@ StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this._entities = client_mirror.getSelectedLegalEntity();
     //alert(t_this._entities.toSource())
     t_this._userType = UserTypes; // common-functions.js
-    t_this._complianceTaskStatus = ComplianceTaskStatuses; // common-functions.js
+    t_this._complianceTaskStatus = TaskStatuses; // common-functions.js
     t_this.renderUserTypeList(t_this._userType);
     t_this.renderComplianceTaskStatusList(t_this._complianceTaskStatus);
 };
@@ -421,8 +422,8 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
     var user_type_id = parseInt(userType.val());
     var comp_task_status_id = complianceTaskStatus.val();
 
-    var t_count = parseInt(ItemsPerPage.val());
-    if (on_current_page == 1) { f_count = 0 } else { f_count = (on_current_page - 1) * t_count; }
+    var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
+    if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
 
     client_mirror.getStatusReportConsolidated(c_id, le_id, d_id, u_id, act, compliance_task_id, usr_id, comp_fre_id, user_type_id, comp_task_status_id, from_date, to_date, f_count, t_count, csv, function(error, response) {
         if (error == null) {
@@ -433,10 +434,9 @@ StatusReportConsolidated.prototype.fetchReportValues = function(csv) {
                 reportView.show();
                 showAnimation(reportView);
                 REPORT.showReportValues();
-                if (f_count == 0)
+                if (f_count == 1)
                     createPageView(t_this._total_count);
             } else {
-                //REPORT.exportReportValues();
                 document_url = response.link;
                 window.open(document_url, '_blank');
             }
@@ -456,11 +456,14 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     domainName.html(domain.val());
-    var j = 0;
+    
     reportTableTbody.find('tr').remove();
     var unitId = ""; //unit
     var actname = "";
     var complianceHistoryId = ""; //compliance_history_id
+    var tree = "";
+    var j = f_count;
+    var i = 0;
     if (data.length > 0) {
         $.each(data, function(k, v) {
             if (unitId != v.unit_id) {
@@ -478,7 +481,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
             }
 
             if (complianceHistoryId != v.compliance_history_id) {
-                j = j + 1;
+                i = i + 1;
                 var clonethree = $('#template #report-table .row-three').clone();
                 $('.sno', clonethree).text(j);
                 $('.compliance-task', clonethree).text(v.compliance_name);
@@ -501,32 +504,54 @@ StatusReportConsolidated.prototype.showReportValues = function() {
                     $('.completion-date', clonethree).text(v.completion_date);
                 else
                     $('.completion-date', clonethree).text('-');
-                $(clonethree).attr("onClick", "treeShowHide('tree" + j + "')");
-                $(clonethree).attr("id", "tree" + j);
+                $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
+                $(clonethree).attr("id", "tree" + i);
                 reportTableTbody.append(clonethree);
                 complianceHistoryId = v.compliance_history_id;
-
+                j = j + 1;
             } else {
-                var clonefour = $('#template #report-table .row-four').clone();
-                $(clonefour).addClass("tree" + j);
-                $('.user-name-new', clonefour).text(v.user_name);
-                $('.activity-status-new', clonefour).text(v.activity_status);
-                if (v.activity_on != "")
-                    $('.activity-date-new', clonefour).text(v.activity_on);
-                else
-                    $('.activity-date-new', clonefour).text('-');
 
-                if (v.uploaded_document != "")
-                    $('.uploaded-document', clonethree).text(v.uploaded_document);
-                else
-                    $('.uploaded-document', clonethree).text('-');
+                if (tree == v.compliance_history_id) {
+                    var clonefive = $('#template #report-table .row-five').clone();
+                    $('.user-name-new', clonefive).text(v.user_name);
+                    $('.activity-status-new', clonefive).text(v.activity_status);
+                    if (v.activity_on != "")
+                        $('.activity-date-new', clonefive).text(v.activity_on);
+                    else
+                        $('.activity-date-new', clonefive).text('-');
 
-                if (v.completion_date != "")
-                    $('.completion-date-new', clonefour).text(v.completion_date);
-                else
-                    $('.completion-date-new', clonefour).text('-');
-                reportTableTbody.append(clonefour);
+                    if (v.uploaded_document != "")
+                        $('.uploaded-document', clonefive).text(v.uploaded_document);
+                    else
+                        $('.uploaded-document', clonefive).text('-');
 
+                    if (v.completion_date != "")
+                        $('.completion-date-new', clonefive).text(v.completion_date);
+                    else
+                        $('.completion-date-new', clonefive).text('-');
+                    $('.tree' + i + ' .tree-body').append(clonefive);
+                } else {
+                    var clonefour = $('#template #report-table .row-four').clone();
+                    $(clonefour).addClass("tree" + i);
+                    $('.user-name-new', clonefour).text(v.user_name);
+                    $('.activity-status-new', clonefour).text(v.activity_status);
+                    if (v.activity_on != "")
+                        $('.activity-date-new', clonefour).text(v.activity_on);
+                    else
+                        $('.activity-date-new', clonefour).text('-');
+
+                    if (v.uploaded_document != "")
+                        $('.uploaded-document', clonethree).text(v.uploaded_document);
+                    else
+                        $('.uploaded-document', clonethree).text('-');
+
+                    if (v.completion_date != "")
+                        $('.completion-date-new', clonefour).text(v.completion_date);
+                    else
+                        $('.completion-date-new', clonefour).text('-');
+                    reportTableTbody.append(clonefour);
+                    tree = v.compliance_history_id
+                }
                 complianceHistoryId = v.compliance_history_id;
             }
         });
@@ -547,8 +572,7 @@ treeShowHide = function(tree) {
 };
 
 showPagePan = function(start, end, total) {
-    var firstCount = parseInt(start) + 1;
-    var showText = 'Showing ' + firstCount + ' to ' + end + ' of ' + total + ' entries ';
+    var showText = 'Showing ' + start + ' to ' + (end-1) + ' of ' + total + ' entries ';
     CompliacneCount.text(showText);
     PaginationView.show();
 };

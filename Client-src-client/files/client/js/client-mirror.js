@@ -109,9 +109,7 @@ function initClientMirror() {
         var info = getUserInfo();
         return info.entity_info;
     }
-
-
-
+    
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -212,6 +210,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
+        alert(body.toSource())
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -402,8 +401,7 @@ function initClientMirror() {
     /* Compliance Approal */
     function getComplianceApprovalList(le_id, start_count, callback) {
         var request = [
-            'GetComplianceApprovalList',
-            {
+            'GetComplianceApprovalList', {
                 'le_id': le_id,
                 'start_count': start_count
             }
@@ -658,6 +656,16 @@ function initClientMirror() {
     }
 
     /* Notifications */
+    function getNotificationsCount(le_ids, callback) {
+        callerName = 'client_dashboard';
+        var request = [
+            'GetNotificationsCount', {
+                'le_ids': le_ids
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
     function getNotifications(le_ids, notification_type, start_count, end_count, callback) {
         callerName = 'client_dashboard';
         var request = [
@@ -712,8 +720,7 @@ function initClientMirror() {
     function getCurrentComplianceDetail(le_id, current_start_count, callback) {
         callerName = 'client_user';
         var request = [
-            'GetCurrentComplianceDetail',
-            {
+            'GetCurrentComplianceDetail', {
                 'le_id': le_id,
                 'current_start_count': current_start_count
             }
@@ -724,8 +731,7 @@ function initClientMirror() {
     function getUpcomingComplianceDetail(le_id, upcoming_start_count, callback) {
         callerName = 'client_user';
         var request = [
-            'GetUpcomingComplianceDetail',
-            {
+            'GetUpcomingComplianceDetail', {
                 'le_id': le_id,
                 'upcoming_start_count': upcoming_start_count
             }
@@ -1197,8 +1203,7 @@ function initClientMirror() {
 
     function getOnOccurrenceCompliances(le_id, start_count, callback) {
         var request = [
-            'GetOnOccurrenceCompliances',
-            {
+            'GetOnOccurrenceCompliances', {
                 'le_id': le_id,
                 'start_count': start_count
             }
@@ -1766,8 +1771,7 @@ function initClientMirror() {
 
     function savePastRecords(legalEntityId, compliances_list, callback) {
         var request = [
-            'SavePastRecords',
-            {
+            'SavePastRecords', {
                 'le_id': legalEntityId,
                 'pr_compliances': compliances_list
             }
@@ -2439,8 +2443,7 @@ function initClientMirror() {
     function userManagementEditView(user_id, callback) {
         callerName = 'client_masters';
         var request = [
-            'UserManagementEditView',
-            {
+            'UserManagementEditView', {
                 'user_id': user_id
             }
         ];
@@ -2750,8 +2753,7 @@ function initClientMirror() {
 
     function downloadTaskFile(le_id, c_id, d_id, u_id, start_date, file_name) {
         var request = [
-            "DownloadFile",
-            {
+            "DownloadFile", {
                 "le_id": le_id,
                 "c_id": c_id,
                 "d_id": d_id,
@@ -2930,6 +2932,7 @@ function initClientMirror() {
         getComplianceApplicabilityDrillDown: getComplianceApplicabilityDrillDown,
         getSettings: getSettings,
         updateSettings: updateSettings,
+        getNotificationsCount: getNotificationsCount,
         getNotifications: getNotifications,
         updateNotificationStatus: updateNotificationStatus,
         getStatutoryNotifications: getStatutoryNotifications,

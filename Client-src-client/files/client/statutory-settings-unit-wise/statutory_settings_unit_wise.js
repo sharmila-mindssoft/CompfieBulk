@@ -58,7 +58,7 @@ var PaginationView = $('.pagination-view');
 var Pagination = $('#pagination-rpt');
 var CompliacneCount = $('.compliance_count');
 var on_current_page = 1;
-var f_count = 0;
+var f_count = 1;
 var LOGO = null;
 
 function PageControls() {
@@ -171,7 +171,7 @@ function PageControls() {
 
     ItemsPerPage.on('change', function(e) {
         perPage = parseInt($(this).val());
-        f_count = 0;
+        f_count = 1;
         on_current_page = 1;
         createPageView(t_this._total_count);
         processSubmit(false);
@@ -424,8 +424,8 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv) {
     var comp_fre_id = parseInt(complianceFrequency.val());
     var comp_task_status_id = complianceTaskStatus.val();
 
-    var t_count = parseInt(ItemsPerPage.val());
-    if (on_current_page == 1) { f_count = 0 } else { f_count = (on_current_page - 1) * t_count; }
+    var t_count = parseInt(on_current_page) * parseInt(ItemsPerPage.val());
+    if (on_current_page == 1) { f_count = 1 } else { f_count = ((parseInt(on_current_page) - 1) * parseInt(ItemsPerPage.val())) + 1; }
 
     client_mirror.getStatutorySettingsUnitWise(c_id, bg_id, le_id, d_id, u_id, div_id, cat_id, act, compliance_task_id,
         comp_fre_id, comp_task_status_id, f_count, t_count, csv,
@@ -438,7 +438,7 @@ StatutorySettingsUnitWise.prototype.fetchReportValues = function(csv) {
                     reportView.show();
                     showAnimation(reportView);
                     REPORT.showReportValues();
-                    if (f_count == 0)
+                    if (f_count == 1)
                         createPageView(t_this._total_count);
                 } else {
                     //REPORT.exportReportValues();
@@ -461,12 +461,13 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     domainName.html(domain.val());
-    var j = 0;
+    var j = f_count;
     reportTableTbody.find('tr').remove();
     var unitId = "";
     var actname = "";
     var complianceId = "";
     var tree = "";
+    var i = 0;
     if(data.length > 0) {
         $.each(data, function(k, v) {
             if (unitId != v.unit_id) {
@@ -483,7 +484,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                 actname = v.act_name;
             }
             if (complianceId != v.compliance_id) {
-                j = j + 1;
+                i = i + 1;
                 var clonethree = $('#template #report-table .row-three').clone();
                 $('.sno', clonethree).text(j);
                 $('.compliance-task', clonethree).text(v.compliance_task);
@@ -501,21 +502,20 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
                     $('.uploaded-document', clonethree).text(v.document_name);
                 else
                     $('.uploaded-document', clonethree).text('-');
-                $(clonethree).on('click', function(e) {
-                    treeShowHide(e, "tree" + v.compliance_id+v.unit_id);
-                });
-                $(clonethree).attr("id", "tree" + v.compliance_id+v.unit_id);
+                $(clonethree).attr("onClick", "treeShowHide('tree" + i + "')");
+                $(clonethree).attr("id", "tree" + i);
                 reportTableTbody.append(clonethree);
                 complianceId = v.compliance_id;
+                j = j + 1;
             } else {
                 if (tree == v.compliance_id) {
                     var clonefive = $('#template #report-table .row-five').clone();
                     $('.user-name', clonefive).text(v.user_name);
                     $('.due-date', clonefive).text(v.due_date);
-                    $('.tree' + v.compliance_id + ' .tree-body').append(clonefive);
+                    $('.tree' + i + ' .tree-body').append(clonefive);
                 } else {
                     var clonefour = $('#template #report-table .row-four').clone();
-                    $(clonefour).addClass("tree" + v.compliance_id+v.unit_id);
+                    $(clonefour).addClass("tree" + i);
                     $('.user-name', clonefour).text(v.user_name);
                     $('.due-date', clonefour).text(v.due_date);
                     reportTableTbody.append(clonefour);
@@ -532,7 +532,7 @@ StatutorySettingsUnitWise.prototype.showReportValues = function() {
     }
 };
 
-treeShowHide = function(e, tree) {
+treeShowHide = function(tree) {
     if ($('.' + tree)) {
         if ($('.' + tree).is(":visible") == true)
             $('.' + tree).hide();
@@ -542,8 +542,7 @@ treeShowHide = function(e, tree) {
 };
 
 showPagePan = function(start, end, total) {
-    var firstCount = parseInt(start) + 1;
-    var showText = 'Showing ' + firstCount + ' to ' + end + ' of ' + total + ' entries ';
+    var showText = 'Showing ' + start + ' to ' + (end-1) + ' of ' + total + ' entries ';
     CompliacneCount.text(showText);
     PaginationView.show();
 };
