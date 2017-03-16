@@ -30,7 +30,7 @@ __all__ = [
     "get_risk_chart_count", "get_escalation_chart",
     "get_units_for_dashboard_filters", "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
-    "get_notification_counts", "get_reminders", "get_escalations", "get_messages", "get_statutory", 
+    "get_notification_counts", "get_reminders", "get_escalations", "get_messages", "get_statutory",
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
     "notification_detail", "get_user_company_details", "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances", "get_assigneewise_reassigned_compliances",
@@ -370,6 +370,7 @@ def get_escalation_chart(db, request, user_id, user_category):
     years = get_last_7_years()
     years.append(getCurrentYear())
     years = ",".join([str(x) for x in years])
+    filter_ids = request.filter_ids
 
     if filter_type == "Group":
         filter_type_ids = None
