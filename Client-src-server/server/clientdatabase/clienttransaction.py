@@ -1910,13 +1910,20 @@ def approve_compliance(
     #     db, unit_id, compliance_id, "Approved", status,
     #     remarks
     # )
+    if approve_status == 1 :
+        action = "Compliance Approved \"%s\"" % compliance_task
+        sts = "Approved"
+    else :
+        action = "Compliance Rejected \"%s\"" % compliance_task
+        sts = "Approval Rejected"
+
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
-                             session_user, current_time_stamp, "Approved", remarks)
-    notify_compliance_approved(db, compliance_history_id, "Approved")
+                             session_user, current_time_stamp, sts, remarks)
+    notify_compliance_approved(db, compliance_history_id, sts)
 
     # Audit Log Entry
-    action = "Compliance Approved \"%s\"" % compliance_task
+
     db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
 
     return True
@@ -2207,13 +2214,20 @@ def concur_compliance(
     #     db, unit_id, compliance_id, "Concurred", status,
     #     remarks
     # )
+    if concurrence_status == 1 :
+        action = "Compliance Concurred \"%s\"" % compliance_task
+        sts = "Concurred"
+    else :
+        action = "Compliance Concurrence Rejected \"%s\"" % compliance_task
+        sts = "Concurrence Rejected"
+
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
-                             session_user, current_time_stamp, "Concurred", remarks)
-    notify_compliance_approved(db, compliance_history_id, "Concurred")
+                             session_user, current_time_stamp, sts, remarks)
+    notify_compliance_approved(db, compliance_history_id, sts)
 
     # Audit Log Entry
-    action = "Compliance Concurred \"%s\"" % (compliance_task)
+
     db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
     return True
 
