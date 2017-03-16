@@ -1,8 +1,8 @@
 import os
 import json
-import time
 import traceback
 import threading
+import datetime
 # import mysql.connector.pooling
 import mysql.connector
 from flask import Flask, request, Response
@@ -25,7 +25,8 @@ from server.clientreplicationbase import (
 )
 from server.clientdatabase.savelegalentitydata import(
     LegalEntityReplicationManager, LEntityReplicationUSer,
-    LEntityReplicationServiceProvider
+    LEntityReplicationServiceProvider, LEntityUnitClosure,
+    LEntitySettingsData
 )
 from server.constants import SESSION_CUTOFF
 import logger
@@ -93,7 +94,13 @@ class API(object):
             for c_id, c_db in self._group_databases.iteritems() :
                 on_session_timeout(c_db)
 
+            t = threading.Timer(500, _with_client_info)
+            t.daemon = True
+            t.start()
+
         def on_session_timeout(c_db):
+            print "session called "
+            print datetime.datetime.now()
             c_db_con = self.client_connection_pool(c_db)
             _db_clr = Database(c_db_con)
             try :
@@ -101,10 +108,6 @@ class API(object):
                 _db_clr.clear_session(SESSION_CUTOFF)
                 _db_clr.commit()
                 c_db_con.close()
-
-                t = threading.Timer(500, _with_client_info)
-                t.daemon = True
-                t.start()
 
             except Exception, e :
                 print e
@@ -289,6 +292,10 @@ class API(object):
 
             if r["provider_data"] == 1 :
                 info = LEntityReplicationServiceProvider(group_info, le_info, le_id)
+                info._start()
+
+            if r["settings_data"] == 1 :
+                info = LEntitySettingsData(group_info, le_info, le_id)
                 info._start()
 
     def _send_response(
@@ -565,6 +572,10 @@ class API(object):
             request_data, company_id = self._parse_request(request_data_type, is_group)
             session = request_data.session_token
             session_user, client_id, session_category = self._validate_user_session(session)
+
+            if session_user is False :
+                return respond(clientlogin.InvalidSessionToken())
+
             if hasattr(request_data.request, "legal_entity_ids") :
                 le_ids = request_data.request.legal_entity_ids
                 performed_les = []
@@ -629,7 +640,13 @@ class API(object):
 
     @api_request(clientmasters.RequestFormat, is_group=True, need_category=True)
     def handle_client_masters(self, request, db, session_user, client_id, session_category):
-        return controller.process_client_master_requests(request, db, session_user, client_id, session_category)
+        res = controller.process_client_master_requests(request, db, session_user, client_id, session_category)
+        if type(res) is clientmasters.SaveUnitClosureSuccess :
+            data = request.request
+            le_id = data.legal_entity_id
+            le_db_info = self._le_databases.get(le_id)
+            LEntityUnitClosure(le_db_info, le_id, data, session_user)._start()
+        return res
 
     @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
     def handle_client_master_filters(self, request, db, session_user, client_id, session_category):

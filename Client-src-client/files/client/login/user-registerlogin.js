@@ -41,13 +41,12 @@ function call_api(request, short_name, callback) {
         type: 'POST',
         contentType: 'application/json',
         headers: { 'X-Xsrftoken': getCookie('_xsrf') },
-        data: makekey() + btoa(JSON.stringify(request, null, '')),
-        data: JSON.stringify(requestFrame, null, ''),
-        success: function(data, textStatus, jqXHR) {
-            data = atob(data.substring(5));
-            data = JSON.parse(data);
-            var status = data[0];
-            var response = data[1];
+        data: makekey() + btoa(JSON.stringify(requestFrame, null, '')),
+        success: function(rsdata, textStatus, jqXHR) {
+            rsdata = atob(rsdata.substring(5));
+            rsdata = JSON.parse(rsdata);
+            var status = rsdata[0];
+            var response = rsdata[1];
             matchString = 'success';
             if (status.toLowerCase().indexOf(matchString) != -1) {
                 callback(null, response);

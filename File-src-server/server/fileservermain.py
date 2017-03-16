@@ -1,3 +1,6 @@
+import base64
+import string
+import random
 import traceback
 import json
 from flask import Flask, Response, request
@@ -30,10 +33,12 @@ class API(object):
         #     #print data
         #     s = json.dumps(data, indent=2)
         # else:
-        # s = response_data
-        data = response_data.to_structure()
-        s = json.dumps(data, indent=2)
-        print s
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        data = json.dumps(response_data.to_structure(), indent=2)
+        print data
+        s = base64.b64encode(data)
+        s = json.dumps(key+s)
+
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 

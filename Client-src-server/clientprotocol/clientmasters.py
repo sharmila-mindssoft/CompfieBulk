@@ -477,68 +477,65 @@ class SaveClientUser(Request):
         }
 # --------------------------------------------------------------------------------------------------
 class UpdateClientUser(Request):
-    def __init__(self, user_id, user_group_id, employee_name,
-        employee_code, contact_no, seating_unit_id,
-        user_level, country_ids, domain_ids, unit_ids, is_service_provider,
-        service_provider_id):
-        self.user_id = user_id
+    def __init__(self, user_id, user_group_id, 
+        email_id, employee_name, employee_code, contact_no, mobile_no, user_level, seating_unit_id,is_service_provider, service_provider_id, user_domain_ids, user_unit_ids , user_entity_ids
+        ):
+        self.user_id = user_id        
         self.user_group_id = user_group_id
+        self.email_id = email_id
         self.employee_name = employee_name
         self.employee_code = employee_code
         self.contact_no = contact_no
-        self.seating_unit_id = seating_unit_id
+        self.mobile_no = mobile_no
         self.user_level = user_level
-        self.country_ids = country_ids
-        self.domain_ids = domain_ids
-        self.unit_ids = unit_ids
+        self.seating_unit_id = seating_unit_id
         self.is_service_provider = is_service_provider
         self.service_provider_id = service_provider_id
+        self.user_domain_ids = user_domain_ids
+        self.user_unit_ids =user_unit_ids
+        self.user_entity_ids =user_entity_ids
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["u_id", "ug_id",
-            "emp_n", "emp_c", "cn", "s_u_id", "ul", "c_ids", "d_ids", "u_ids",
-            "sp", "sp_id"])
-        user_id = data.get("u_id")
-        user_id = parse_structure_UnsignedIntegerType_32(user_id)
-        user_group_id = data.get("ug_id")
-        user_group_id = parse_structure_UnsignedIntegerType_32(user_group_id)
-        employee_name = data.get("emp_n")
-        employee_name = parse_structure_CustomTextType_50(employee_name)
-        employee_code = data.get("emp_c")
-        employee_code = parse_structure_OptionalType_CustomTextType_50(employee_code)
-        contact_no = data.get("cn")
-        contact_no = parse_structure_CustomTextType_20(contact_no)
-        seating_unit_id = data.get("s_u_id")
-        seating_unit_id = parse_structure_OptionalType_UnsignedIntegerType_32(seating_unit_id)
-        user_level = data.get("ul")
-        user_level = parse_structure_CustomIntegerType_1_10(user_level)
-        country_ids = data.get("c_ids")
-        country_ids = parse_structure_VectorType_SignedIntegerType_8(country_ids)
-        domain_ids = data.get("d_ids")
-        domain_ids = parse_structure_VectorType_SignedIntegerType_8(domain_ids)
-        unit_ids = data.get("u_ids")
-        unit_ids = parse_structure_VectorType_SignedIntegerType_8(unit_ids)
-        is_service_provider = data.get("sp")
-        is_service_provider = parse_structure_Bool(is_service_provider)
+        data = parse_dictionary(data, ["u_id", "u_g_id", "email_id", "emp_name", "emp_code",
+        "cont_no", "mob_no", "u_level", "s_unit", "is_sp", "sp_id", "user_domain_ids", "user_unit_ids", "user_entity_ids"])
+
+        user_id = data.get("u_id")        
+        user_group_id = data.get("u_g_id")
+        email_id = data.get("email_id")
+        employee_name = data.get("emp_name")
+        employee_code = data.get("emp_code")
+        contact_no = data.get("cont_no")
+        mobile_no = data.get("mob_no")
+        user_level = data.get("u_level")
+        seating_unit_id = data.get("s_unit")
+        is_service_provider = data.get("is_sp")
         service_provider_id = data.get("sp_id")
-        service_provider_id = parse_structure_OptionalType_UnsignedIntegerType_32(service_provider_id)
-        return UpdateClientUser(user_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, user_level, country_ids, domain_ids, unit_ids, is_service_provider, service_provider_id)
+        user_domain_ids = data.get("user_domain_ids")
+        user_unit_ids = data.get("user_unit_ids")
+        user_entity_ids = data.get("user_entity_ids")
+
+        # return UpdateClientUser(user_id, user_group_id, employee_name, employee_code, contact_no, seating_unit_id, user_level, country_ids, domain_ids, unit_ids, is_service_provider, service_provider_id)
+
+        return UpdateClientUser(user_id, user_group_id, email_id, employee_name, employee_code, contact_no, mobile_no, user_level,
+                              seating_unit_id, is_service_provider, service_provider_id, user_domain_ids, user_unit_ids, user_entity_ids)
 
     def to_inner_structure(self):
         return {
-            "user_id": to_structure_SignedIntegerType_8(self.user_id),
-            "user_group_id": to_structure_SignedIntegerType_8(self.user_group_id),
-            "employee_name": to_structure_CustomTextType_50(self.employee_name),
-            "employee_code": to_structure_OptionalType_CustomTextType_50(self.employee_code),
-            "contact_no": to_structure_CustomTextType_20(self.contact_no),
-            "seating_unit_id": to_structure_OptionalType_UnsignedIntegerType_32(self.seating_unit_id),
-            "user_level": to_structure_CustomIntegerType_1_10(self.user_level),
-            "country_ids": to_structure_VectorType_SignedIntegerType_8(self.country_ids),
-            "domain_ids": to_structure_VectorType_SignedIntegerType_8(self.domain_ids),
-            "unit_ids": to_structure_VectorType_SignedIntegerType_8(self.unit_ids),
-            "is_service_provider": to_structure_Bool(self.is_service_provider),
-            "service_provider_id": to_structure_OptionalType_UnsignedIntegerType_32(self.service_provider_id),
+            "u_id": self.user_id,            
+            "user_group_id" : self.user_group_id,
+            "email_id" : self.email_id,
+            "employee_name" : self.employee_name,
+            "employee_code" : self.employee_code,
+            "contact_no" : self.contact_no,
+            "mobile_no" : self.mobile_no,
+            "user_level" : self.user_level,
+            "seating_unit_id" : self.seating_unit_id,
+            "is_service_provider" : self.is_service_provider,
+            "service_provider_id" : self.service_provider_id,
+            "user_domain_ids" : self.user_domain_ids,
+            "user_unit_ids" : self.user_unit_ids,
+            "user_entity_ids" : self.user_entity_ids,
         }
 
 class UpdateClientUserStatus(Request):
@@ -717,8 +714,10 @@ class GetUnitClosureUnitData(Request):
 
 class SaveUnitClosureData(Request):
     def __init__(
-        self, password, closed_remarks, unit_id, grp_mode
+        self, password, closed_remarks, unit_id, grp_mode,
+        legal_entity_id
     ):
+        self.legal_entity_id = legal_entity_id
         self.password = password
         self.closed_remarks = closed_remarks
         self.unit_id = unit_id
@@ -727,15 +726,17 @@ class SaveUnitClosureData(Request):
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
-            "password", "closed_remarks", "unit_id", "grp_mode"
+            "password", "closed_remarks", "unit_id", "grp_mode",
+            "legal_entity_id"
         ])
         password = data.get("password")
         closed_remarks = data.get("closed_remarks")
         unit_id = data.get("unit_id")
         grp_mode = data.get("grp_mode")
-
+        legal_entity_id = data.get("legal_entity_id")
         return SaveUnitClosureData(
-            password, closed_remarks, unit_id, grp_mode
+            password, closed_remarks, unit_id, grp_mode,
+            legal_entity_id
         )
 
     def to_inner_structure(self):
@@ -744,6 +745,7 @@ class SaveUnitClosureData(Request):
             "closed_remarks": self.closed_remarks,
             "unit_id": self.unit_id,
             "grp_mode": self.grp_mode,
+            "legal_entity_id": self.legal_entity_id
         }
         return data
 

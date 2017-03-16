@@ -227,7 +227,7 @@ class TemplateHandler(RequestHandler):
     def get(self, url=None, token=None):
         request_ip = self.request.remote_ip
         print request_ip
-        if url is not None and ("userregistration" not in self.request.uri or "/reset_password" not in self.request.uri)  :
+        if url is not None and ("userregistration" not in self.request.uri and "reset_password" not in self.request.uri)  :
             print "url not in"
             request_url = self.request.uri.strip().split('/')[1]
             short_name = url.decode('base64')
@@ -244,7 +244,7 @@ class TemplateHandler(RequestHandler):
                         else :
                             break
 
-        if url is not None and ("userregistration" in self.request.uri or "/reset_password" in self.request.uri):
+        if url is not None and ("userregistration" in self.request.uri and "reset_password" in self.request.uri):
             print 'GOT URL %s' % (url,)
             company = self._company_manager.locate_company(
                 url
