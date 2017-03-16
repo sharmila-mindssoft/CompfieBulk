@@ -192,28 +192,35 @@ class UpdateUserStatus(KnowledgedbConnect):
 
 
 class UnitClose(KnowledgedbConnect):
-    def __init__(self, unit_id):
+    def __init__(self, unit_id, is_closed, closed_on, closed_by, remarks):
         super(UnitClose, self).__init__()
         self._unit_id = unit_id
+        self._is_closed = is_closed
+        self._closed_on = closed_on
+        self._closed_by = closed_by
+        self._remarks = remarks
         self.process_close_unit()
 
     def _close_unit(self):
-        q = "UPDATE tbl_units set is_active = 0 " + \
+        q = "UPDATE tbl_units set is_closed = %s, closed_on = %s, closed_by = %s, closed_remarks = %s " + \
             " Where unit_id = %s"
-        values = [self._unit_id]
+        values = [
+            self._is_closed, self._closed_on, self._closed_by, self._remarks, self._unit_id
+        ]
         self._k_db.execute(q, values)
 
     def process_close_unit(self):
         try:
             self.get_knowledge_connect()
-            self._k_db.begin()
+            self._k_db._cursor = self._k_db._connection.cursor()
             self._close_unit()
-            self._k_db.commit()
-            self._k_db.close()
+            self._k_db._cursor.close()
+            self._k_db._connection.commit()
             return True
         except Exception, e:
             print e
-            self._k_db.rollback()
+            self._k_db._cursor.close()
+            self._k_db._connection.rollback()
             raise client_process_error("E025")
 
 

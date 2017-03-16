@@ -1626,17 +1626,20 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
     print action_mode
     columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
     values = []
+    is_closed = 1
     if action_mode == "close":
         print "save"
-        values = [1, current_time_stamp, user_id, remarks]
+        values = [is_closed, current_time_stamp, user_id, remarks]
         condition_val = "unit_id= %s"
         values.append(unit_id)
         result = db.update(tblUnits, columns, values, condition_val)
     elif action_mode == "reactive":
-        values = [0, current_time_stamp, user_id, remarks]
+        is_closed = 0
+        values = [is_closed, current_time_stamp, user_id, remarks]
         condition_val = "unit_id= %s"
         values.append(unit_id)
         result = db.update(tblUnits, columns, values, condition_val)
+    UnitClose(unit_id, is_closed, current_time_stamp, user_id, remarks)
     print "result"
     print result
     return result
