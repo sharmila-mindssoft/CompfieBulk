@@ -1140,14 +1140,14 @@ function pageControls(){
 
 //validation on third wizard
 function validate_thirdtab() {
-    if ($('.assigneelist.active').text() == '' && $('.concurrencelist.active').text() && $('.approvallist.active').text()) {
+    if ($('.assigneelist.active').text() == '' && $('.concurrencelist.active').text() == '' && $('.approvallist.active').text() == '' ) {
         displayMessage(message.atleast_one_user_required_reassign);
         return false;
     } else if (Reason.val() == '') {
         displayMessage(message.reason_required);
         return false;
     } else {
-        return true;
+        return false;
     }
 }
 

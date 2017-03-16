@@ -96,7 +96,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
 
     elif type(request) is clienttransactions.SavePastRecords:
         result = process_save_past_records(
-            db, request, session_user, client_id
+            db, request, session_user
         )
 
     elif type(request) is clienttransactions.GetComplianceApprovalList:
@@ -288,6 +288,7 @@ def process_get_statutories_by_unit(
     domain_id = request.domain_id
     level_1_statutory_name = request.level_1_statutory_name
     compliance_frequency = request.compliance_frequency
+    print "compliance_frequency>>", compliance_frequency
     # country_id = request.country_id
     start_count = request.start_count
     # country_id
@@ -307,16 +308,17 @@ def process_get_statutories_by_unit(
 # To validate and save a past record entry
 ########################################################
 def process_save_past_records(
-        db, request, session_user, client_id
+        db, request, session_user
 ):
     compliance_list = request.compliances
+    legal_entity_id = request.legal_entity_id
+    print "legal_entity_id>>>", legal_entity_id
     error = ""
     for compliance in compliance_list:
         if validate_before_save(
             db, compliance.unit_id, compliance.compliance_id,
             compliance.due_date,
             compliance.completion_date, compliance.documents,
-            compliance.validity_date,
             compliance.completed_by
         ):
             continue
@@ -324,6 +326,7 @@ def process_save_past_records(
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
+            print "validate_before_save>>>>327"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous compliance " + \
@@ -331,18 +334,20 @@ def process_save_past_records(
                 " entered due date "
             error = error % (compliance_name, compliance.due_date)
             return clienttransactions.SavePastRecordsFailed(error=error)
+    print "compliance.documents>>>>", compliance.documents
     for compliance in compliance_list:
         if save_past_record(
             db, compliance.unit_id, compliance.compliance_id,
             compliance.due_date, compliance.completion_date,
-            compliance.documents, compliance.validity_date,
-            compliance.completed_by, client_id
+            compliance.documents,
+            compliance.completed_by, legal_entity_id
         ):
             continue
         else:
             compliance_name = get_compliance_name_by_id(
                 db, compliance.compliance_id
             )
+            print "save_past_record>>>>347"
             error = "Cannot Submit compliance task %s, " + \
                 " Because a compliance has already submited " + \
                 " for the entered due date %s, or previous " + \
@@ -393,23 +398,42 @@ def process_approve_compliance(db, request, session_user):
     status = status[0]
 
     if status == "Approve":
+        approve_status = 1
         approve_compliance(
-            db, compliance_history_id, remarks,
+            db, approve_status, compliance_history_id, remarks,
             next_due_date, validity_date, session_user
         )
-    elif status == "Reject Approval":
+
+    elif status == "Rectify Approval":
         reject_compliance_approval(
             db, compliance_history_id, remarks,  next_due_date
         )
+
     elif status == "Concur":
+        concurrence_status = 1
         concur_compliance(
-            db, compliance_history_id, remarks,
+            db, concurrence_status, compliance_history_id, remarks,
             next_due_date, validity_date, session_user
         )
-    elif status == "Reject Concurrence":
+
+    elif status == "Rectify Concurrence":
         reject_compliance_concurrence(
             db, compliance_history_id, remarks, next_due_date, session_user
-        )    
+        )
+
+    elif status == "Reject Concurrence" :
+        concurrence_status = 3
+        concur_compliance(
+            db, concurrence_status, compliance_history_id, remarks,
+            next_due_date, validity_date, session_user
+        )
+
+    elif status == "Reject Approval" :
+        approve_status = 3
+        approve_compliance(
+            db, approve_status, compliance_history_id, remarks,
+            next_due_date, validity_date, session_user
+        )
 
     return clienttransactions.ApproveComplianceSuccess()
 

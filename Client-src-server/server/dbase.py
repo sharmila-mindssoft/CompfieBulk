@@ -505,8 +505,8 @@ class Database(object):
         except Exception, e:
             print e
             # print query, values
-            logger.logKnowledgeApi("insert", query + " -- " + values)
-            logger.logKnowledgeApi("insert", e)
+            logger.logClientApi("insert", query + " -- " + values)
+            logger.logClientApi("insert", e)
             return False
 
     ########################################################
@@ -530,8 +530,8 @@ class Database(object):
             return True
         except Exception, e:
             print e
-            logger.logKnowledgeApi("bulk_insert", query)
-            logger.logKnowledgeApi("bulk_insert", e)
+            logger.logClientApi("bulk_insert", query)
+            logger.logClientApi("bulk_insert", e)
             return False
 
     ########################################################
@@ -558,8 +558,8 @@ class Database(object):
             return True
         except Exception, e:
             print e
-            logger.logKnowledgeApi("bulk_update", query)
-            logger.logKnowledgeApi("bulk_update", e)
+            logger.logClientApi("bulk_update", query)
+            logger.logClientApi("bulk_update", e)
             return False
 
     ########################################################
@@ -581,8 +581,8 @@ class Database(object):
         except Exception, e:
             print query, values
             print e
-            logger.logKnowledgeApi("update", query + " , " + values)
-            logger.logKnowledgeApi("update", e)
+            logger.logClientApi("update", query + " , " + values)
+            logger.logClientApi("update", e)
             return False
 
     ########################################################
@@ -721,7 +721,7 @@ class Database(object):
         print '-------------'
         print rows
         client_id = rows[0]["client_id"]
-        category_id = rows[0]["user_category_id"]        
+        category_id = rows[0]["user_category_id"]
         query = " INSERT INTO tbl_activity_log " + \
             " (client_id, legal_entity_id, unit_id, user_category_id, " + \
             " user_id, form_id, action, created_on) " + \

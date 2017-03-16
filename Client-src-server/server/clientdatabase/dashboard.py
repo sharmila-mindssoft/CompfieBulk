@@ -559,45 +559,48 @@ def get_risk_chart_count(db, request, user_id, user_category):
         filter_type_ids = " AND find_in_set(t3.unit_id, %s) "
         filter_ids = ",".join([str(x) for x in filter_ids])
 
-    q = "select ifnull(ch.not_complied,0) as not_comp, ifnull(ch.rejected,0) as reject, ifnull(cc.not_opted,0) as not_opt, ifnull(cc.unassigned,0) as unassign from ( " + \
-        " (select t1.unit_id," + \
-        " sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
+    q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, " + \
+        " ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from " + \
+        " (select t3.unit_id, sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
         " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
         " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-        " from tbl_compliance_history as t1 " + \
-        " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
-        " where find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch, " + \
+        " from tbl_client_compliances as t3 " + \
+        " inner join tbl_compliances as t2 on t3.compliance_id = t2.compliance_id " + \
+        " left join tbl_compliance_history as t1 on t3.unit_id = t1.unit_id and t3.compliance_id = t1.compliance_id " + \
+        " where find_in_set(t2.domain_id, %s) " + \
+        " group by t1.unit_id ) as ch, " + \
         " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-        " from tbl_client_compliances as t1  " + \
-        " left join tbl_assign_compliances as t2 " + \
-        " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id " + \
-        " where find_in_set(t1.domain_id, %s) group by t1.unit_id ) as cc), " + \
-        " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id and t3.is_closed = 0"
+        " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id " + \
+        " and t1.unit_id = t2.unit_id  where find_in_set(t1.domain_id, %s) group by t1.unit_id ) as cc, " + \
+        " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id and t3.is_closed = 0 "
 
     param = [d_ids, d_ids]
 
     if user_category > 3 :
-        q = "select ifnull(ch.not_complied,0) as not_comp, ifnull(ch.rejected,0) as reject, ifnull(cc.not_opted,0) as not_opt, ifnull(cc.unassigned,0) as unassign from ( " + \
-            " (select t1.unit_id, " + \
-            " sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
-            " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
-            " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-            " from tbl_compliance_history as t1 " + \
-            " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
-            " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            "  and find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch, " + \
-            " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
-            " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-            " from tbl_client_compliances as t1  " + \
-            " left join tbl_assign_compliances as t2 " + \
-            " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id " + \
-            " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            " and find_in_set(t1.domain_id, %s) group by t1.unit_id) as cc)," + \
-            " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id and t3.is_closed = 0"
+        q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, " + \
+            " ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from (   " + \
+            " (select cc.unit_id,  sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0),   " + \
+            " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied,   " + \
+            " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected   " + \
+            " from tbl_client_compliances as cc " + \
+            " left join tbl_compliance_history as t1 on cc.unit_id = t1.unit_id and cc.compliance_id = t1.compliance_id " + \
+            " inner join tbl_compliances as t2 on cc.compliance_id = t2.compliance_id   " + \
+            " inner join tbl_user_units as t3 on cc.unit_id = t3.unit_id   " + \
+            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s  " + \
+            " and find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch,   " + \
+            " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted,   " + \
+            " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned   " + \
+            " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id  " + \
+            " and t1.unit_id = t2.unit_id  inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id   " + \
+            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s and find_in_set(t1.domain_id, %s)  " + \
+            " group by t1.unit_id) as cc),  " + \
+            " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id  " + \
+            " and t3.is_closed = 0 "
+
         param = [user_id, d_ids, user_id, d_ids]
+
+        print q % (user_id, d_ids, user_id, d_ids)
 
     if filter_type_ids is not None :
         q += filter_type_ids

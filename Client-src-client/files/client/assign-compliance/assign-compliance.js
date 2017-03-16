@@ -190,8 +190,7 @@ function callAPI(api_type) {
 	        } else {
 	          onFailure(error, response);
 	        }
-	    });
-			   
+	    });	   
     }
 }
 
@@ -667,10 +666,23 @@ function loadCompliances(){
 			        var clickvalue = text.substring(text.lastIndexOf('r') + 1);
 			        var isClosed = true;
 			        $('.edittriggertextbox' + clickvalue +" input").each(function () {
-						if($(this).val().trim() == ''){
+
+			        	if($(this).val().trim() == ''){
 							isClosed = false;
+							displayMessage(message.compliance_triggerdate_required)
 							return false;
 						}
+
+			        	 if ($(this).val().trim() > 100) {
+			        	 	isClosed = false;
+		                  	displayMessage(message.triggerbefore_exceed);
+		                  	return false;
+		                }
+		                if ($(this).val().trim() == 0) {
+		                	isClosed = false;
+		                  	displayMessage(message.triggerbefore_iszero);
+		                  	return false;
+		                }
 					});
 			        if(isClosed){
 			        	$('.edittriggertextbox' + clickvalue).hide();
@@ -687,7 +699,11 @@ function loadCompliances(){
 	}
 
 	if (SCOUNT == 1) {
+		NextButton.hide();
         $(".total_count_view").hide();
+        var no_record_row = $("#templates .table-no-record tr");
+	    var noclone = no_record_row.clone();
+	    $('.tbody-accordion-list').append(noclone);
     } else {
         if (totalRecord == (SCOUNT - 1)) {
             ShowMore.hide();
@@ -857,6 +873,10 @@ $('#approval').click(function (event) {
 });
 
 function loadSeatingUnits(){
+	$('#assignee').empty();
+	$('#concurrence').empty();
+	$('#approval').empty();
+
 	$('#assignee_unit').empty();
 	$('#assignee_unit').append('<option value=""> Select </option>');
 	$('#assignee_unit').append('<option value="all"> All </option>');
@@ -1269,18 +1289,16 @@ function pageControls(){
 
 }
 
-
-
 function initialize() {
-	showTab();
 	LEList.empty();
+	showTab();
 	clearValues('legalentity')
 	LEGAL_ENTITIES = client_mirror.getSelectedLegalEntity();
 	callAPI(WIZARD_ONE_FILTER);
-    pageControls();
     hideLoader();
 }
 
 $(function() {
     initialize();
+    pageControls();
 });

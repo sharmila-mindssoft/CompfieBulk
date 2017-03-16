@@ -70,10 +70,10 @@ class SaveUsers(KnowledgedbConnect):
         q = "INSERT INTO tbl_client_users(user_id, user_category_id, client_id, " + \
             "seating_unit_id, service_provider_id, user_level, email_id, " + \
             "employee_name, employee_code, contact_no, mobile_no, address, " + \
-            "is_service_provider, is_active, status_changed_on, is_disable, disabled_on " + \
+            "is_service_provider, is_active, status_changed_on, is_disable, disabled_on) " + \
             "values(%s, %s, %s, %s, %s, %s, %s, %s, %s , %s, %s, %s, %s, %s, %s, %s, %s)"
         values = [
-            self.user_id, self._user_info["user_category_id"],
+            self._user_id, self._user_info["user_category_id"],
             self._user_info["client_id"], self._user_info["seating_unit_id"],
             self._user_info["service_provider_id"], self._user_info["user_level"],
             self._user_info["email_id"], self._user_info["employee_name"],
@@ -192,28 +192,35 @@ class UpdateUserStatus(KnowledgedbConnect):
 
 
 class UnitClose(KnowledgedbConnect):
-    def __init__(self, unit_id):
+    def __init__(self, unit_id, is_closed, closed_on, closed_by, remarks):
         super(UnitClose, self).__init__()
         self._unit_id = unit_id
+        self._is_closed = is_closed
+        self._closed_on = closed_on
+        self._closed_by = closed_by
+        self._remarks = remarks
         self.process_close_unit()
 
     def _close_unit(self):
-        q = "UPDATE tbl_units set is_active = 0 " + \
+        q = "UPDATE tbl_units set is_closed = %s, closed_on = %s, closed_by = %s, closed_remarks = %s " + \
             " Where unit_id = %s"
-        values = [self._unit_id]
+        values = [
+            self._is_closed, self._closed_on, self._closed_by, self._remarks, self._unit_id
+        ]
         self._k_db.execute(q, values)
 
     def process_close_unit(self):
         try:
             self.get_knowledge_connect()
-            self._k_db.begin()
+            self._k_db._cursor = self._k_db._connection.cursor()
             self._close_unit()
-            self._k_db.commit()
-            self._k_db.close()
+            self._k_db._cursor.close()
+            self._k_db._connection.commit()
             return True
         except Exception, e:
             print e
-            self._k_db.rollback()
+            self._k_db._cursor.close()
+            self._k_db._connection.rollback()
             raise client_process_error("E025")
 
 

@@ -1268,12 +1268,13 @@ def get_statutory_wise_compliances(
     for compliance in rows:
         statutories = compliance["statutory_mapping"].split(">>")
         if level_1_statutory_name is None:
-
             level_1 = statutories[0]
         else:
             level_1 = level_1_statutory_name
+        print "level_1>>>", level_1
         if level_1 not in level_1_statutory_wise_compliances:
             level_1_statutory_wise_compliances[level_1] = []
+            print "1235"
         compliance_name = compliance["compliance_task"]
         if compliance["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % (
@@ -1321,6 +1322,7 @@ def get_statutory_wise_compliances(
             db, unit_id, compliance["compliance_id"], due_dates
         )
         total_count += len(final_due_dates)
+        print "final_due_dates>>>", final_due_dates
         for due_date in final_due_dates:
             if (
                 int(start_count) <= compliance_count and
@@ -1331,10 +1333,12 @@ def get_statutory_wise_compliances(
                 month = due_date_parts[1]
                 day = due_date_parts[2]
                 due_date = datetime.date(int(year), int(month), int(day))
-                level_1_statutory_wise_compliances[
-                    # statutories[0].strip()
-                    statutories[0].strip()
-                ].append(
+                print "statutories>>>>", statutories
+                print "statutories[0]>>>>", statutories[0]
+                print "statutories[0].strip()>>", statutories[0].strip()
+                statutories_strip = statutories[0].strip()
+                print "level_1>>", level_1
+                level_1_statutory_wise_compliances[level_1].append(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                         compliance["compliance_id"], compliance_name,
                         compliance["compliance_description"],
@@ -1354,6 +1358,7 @@ def get_statutory_wise_compliances(
     for (
         level_1_statutory_name, compliances
     ) in level_1_statutory_wise_compliances.iteritems():
+        print "Line 1320>>>>>"
         if len(compliances) > 0:
             statutory_wise_compliances.append(
                 clienttransactions.STATUTORY_WISE_COMPLIANCES(
@@ -1408,7 +1413,7 @@ def is_already_completed_compliance(
 
 def validate_before_save(
     db, unit_id, compliance_id, due_date, completion_date, documents,
-    validity_date, completed_by
+    completed_by
 ):
     # Checking whether compliance already completed
     if is_already_completed_compliance(
@@ -1423,7 +1428,7 @@ def validate_before_save(
 
 def save_past_record(
         db, unit_id, compliance_id, due_date, completion_date, documents,
-        validity_date, completed_by, client_id
+        completed_by, legal_entity_id
 ):
     is_uploading_file = False
 
@@ -1435,7 +1440,7 @@ def save_past_record(
     ):
         return False
 
-    # Hanling upload
+    # Handling upload
     document_names = []
     file_size = 0
     if len(documents) > 0:
@@ -1459,7 +1464,8 @@ def save_past_record(
                 auto_code = new_uuid()
                 file_name = "%s-%s.%s" % (name, auto_code, exten)
                 document_names.append(file_name)
-                convert_base64_to_file(file_name, doc.file_content, client_id)
+                convert_base64_to_file(file_name, doc.file_content, 2)
+                # convert_base64_to_file(file_name, doc.file_content, client_id)
             update_used_space(db, file_size)
         else:
             return clienttransactions.NotEnoughSpaceAvailable()
@@ -1480,7 +1486,7 @@ def save_past_record(
         concur_approve_columns += ", concurrence_person"
     condition = "compliance_id = %s and unit_id = %s "
     rows = db.get_data(
-        tblAssignedCompliances,
+        tblAssignCompliances,
         concur_approve_columns,
         condition, [compliance_id, unit_id]
     )
@@ -1494,18 +1500,20 @@ def save_past_record(
         "unit_id", "compliance_id",
         "due_date", "completion_date",
         "completed_by", "completed_on",
-        "approve_status", "approved_by", "approved_on"
+        "approve_status", "approved_by", "approved_on", "legal_entity_id",
+        "current_status", "start_date"
     ]
     values = [
         unit_id, compliance_id,
         string_to_datetime(due_date).date(),
         completion_date,
-        completed_by, completion_date, 1, approved_by, completion_date
+        completed_by, completion_date, 1, approved_by, completion_date,
+        legal_entity_id, 3, get_date_time()
     ]
-    if validity_date is not None and validity_date != "":
-        validity_date = string_to_datetime(validity_date).date()
-        columns.append("validity_date")
-        values.append(validity_date)
+    # if validity_date is not None and validity_date != "":
+    #     validity_date = string_to_datetime(validity_date).date()
+    #     columns.append("validity_date")
+    #     values.append(validity_date)
 
     if is_two_level:
         columns.append("concurrence_status")
@@ -1821,13 +1829,13 @@ def save_compliance_activity(
 # Approve Compliances
 ############################################################
 def approve_compliance(
-    db, compliance_history_id, remarks, next_due_date,
+    db, approve_status, compliance_history_id, remarks, next_due_date,
     validity_date, session_user
 ):
     # Updating approval in compliance history
     columns = ["approve_status", "approved_on", "current_status"]
 
-    values = [1, get_date_time(),"3"]
+    values = [approve_status, get_date_time(), "3"]
     if remarks is not None:
         columns.append("remarks")
         values.append(remarks)
@@ -1902,13 +1910,20 @@ def approve_compliance(
     #     db, unit_id, compliance_id, "Approved", status,
     #     remarks
     # )
+    if approve_status == 1 :
+        action = "Compliance Approved \"%s\"" % compliance_task
+        sts = "Approved"
+    else :
+        action = "Compliance Rejected \"%s\"" % compliance_task
+        sts = "Approval Rejected"
+
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
-                             session_user, current_time_stamp, "Approved", remarks)
-    notify_compliance_approved(db, compliance_history_id, "Approved")
+                             session_user, current_time_stamp, sts, remarks)
+    notify_compliance_approved(db, compliance_history_id, sts)
 
     # Audit Log Entry
-    action = "Compliance Approved \"%s\"" % compliance_task
+
     db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
 
     return True
@@ -2133,12 +2148,12 @@ def notify_compliance_rejected(
 # Concurr Compliances
 #####################################################
 def concur_compliance(
-    db, compliance_history_id, remarks,
+    db, concurrence_status, compliance_history_id, remarks,
     next_due_date, validity_date, session_user
 ):
-    columns = ["concurrence_status", "concurred_on","current_status"]
+    columns = ["concurrence_status", "concurred_on", "current_status"]
 
-    values = [1, get_date_time(),"2"]
+    values = [concurrence_status, get_date_time(), "2"]
     if validity_date is not None:
         columns.append("validity_date")
         values.append(string_to_datetime(validity_date))
@@ -2159,7 +2174,7 @@ def concur_compliance(
         " where tch.compliance_id=tc.compliance_id) as compliance_task"
     condition = "compliance_history_id = %s "
     rows = db.get_data(
-        tblComplianceHistory+ " tch", columns, condition,
+        tblComplianceHistory + " tch", columns, condition,
         [compliance_history_id]
     )
     unit_id = rows[0]["unit_id"]
@@ -2199,13 +2214,20 @@ def concur_compliance(
     #     db, unit_id, compliance_id, "Concurred", status,
     #     remarks
     # )
+    if concurrence_status == 1 :
+        action = "Compliance Concurred \"%s\"" % compliance_task
+        sts = "Concurred"
+    else :
+        action = "Compliance Concurrence Rejected \"%s\"" % compliance_task
+        sts = "Concurrence Rejected"
+
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
-                             session_user, current_time_stamp, "Concurred", remarks)
-    notify_compliance_approved(db, compliance_history_id, "Concurred")
+                             session_user, current_time_stamp, sts, remarks)
+    notify_compliance_approved(db, compliance_history_id, sts)
 
     # Audit Log Entry
-    action = "Compliance Concurred \"%s\"" % (compliance_task)
+
     db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
     return True
 

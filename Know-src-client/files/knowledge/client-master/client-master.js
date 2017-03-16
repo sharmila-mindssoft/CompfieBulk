@@ -579,10 +579,7 @@ function saveClient() {
                 var inner_is_valid = false;
                 var domain_ids = [];
                 console.log("domain_count--"+domain_count);
-                for (var j = 1; j <= domain_count; j++) {
-                    console.log("o++"+organization_details.toSource());
-                    console.log("i++"+organization_details[i].toSource());
-                    console.log("j++"+organization_details[i][j].length+"--"+j);
+                for (var j = 1; j <= domain_count; j++) {                    
                     var domain_id = $(".domain-" + i + "-" + j + " option:selected").val();                    
                     if(domain_id){
                         var activationdate = $(".activationdate-" + i + "-" + j).val();
@@ -610,8 +607,7 @@ function saveClient() {
                         //     inner_is_valid = false;
                         //     return false;
                         // }
-                         else if (Object.keys(organization_details[i][j]).length <= 0) {
-                            console.log(organization_details[i][j].length + " <= 0");
+                         else if (Object.keys(organization_details[i][j]).length <= 0) {                            
                             displayMessage(message.organization_required + " for " + le_name);
                             inner_is_valid = false;
                             return false;
@@ -1164,8 +1160,7 @@ function editEntity(e, le_count, value, domain_details) {
                 var activationdate_class = "activationdate-" + le_count + "-" + i;
                 showEditable($("." + activationdate_class), value.domain_details[i - 1].activation_date);
                 orgs = value.domain_details[i - 1].org;                
-                organization_details[le_count][i] = orgs;     
-                console.log("orgs--"+JSON.stringify(orgs));
+                organization_details[le_count][i] = orgs;                     
                 $.each(orgs, function(orgk, orgval){
                     var getindname = industry_name_map[parseInt(orgk)];
                     orgtext += getindname+": "+orgval+" Units,";
