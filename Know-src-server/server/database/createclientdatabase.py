@@ -473,6 +473,14 @@ class ClientGroupDBCreate(ClientDBBase):
                 " END ;"
             cursor.execute(t5)
 
+            t6 = "CREATE TRIGGER `after_tbl_reminder_settings_update` AFTER UPDATE ON `tbl_reminder_settings` " + \
+                " FOR EACH ROW BEGIN " + \
+                " insert into tbl_le_settings_replication_status(legal_entity_id, s_action) " + \
+                " values(new.legal_entity_id, 1) on duplicate key update s_action = 1; " + \
+                " UPDATE tbl_le_replication_status set settings_data = 1 where legal_entity_id = new.legal_entity_id ; " + \
+                " END ;"
+            cursor.execute(t6)
+
         except Exception, e:
             logger.logGroup("_create_trigger", str(e))
             logger.logGroup("_create_trigger", "failed")
