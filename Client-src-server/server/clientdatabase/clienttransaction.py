@@ -2561,6 +2561,8 @@ def reassign_compliance(db, request, session_user):
         "old_concurrer", "old_approver", "assignee",
         "concurrer", "approver", "remarks", "assigned_by", "assigned_on"
     ]
+
+    users_list = [];
     for c in compliances:
         unit_id = c.u_id
         compliance_id = c.comp_id
@@ -2595,18 +2597,33 @@ def reassign_compliance(db, request, session_user):
             update_assign_val.append(assignee)
             update_assign_column.append("is_reassigned")
             update_assign_val.append(1)
-
+            if assignee not in users_list:
+                users_list.append(assignee)
+        
         if concurrence is not None and concurrence != o_concurrence:
             update_assign_column.append("concurrence_person")
             update_assign_val.append(concurrence)
             update_assign_column.append("c_is_reassigned")
             update_assign_val.append(1)
-
+            if concurrence not in users_list:
+                users_list.append(concurrence)
+        
         if approval is not None and approval != o_approval:
             update_assign_column.append("approval_person")
             update_assign_val.append(approval)
             update_assign_column.append("a_is_reassigned")
             update_assign_val.append(1)
+            if approval not in users_list:
+                users_list.append(approval)
+            
+        if o_assignee not in users_list:
+            users_list.append(o_assignee)
+
+        if o_concurrence not in users_list:
+            users_list.append(o_concurrence)
+
+        if o_approval not in users_list:
+                users_list.append(o_approval)
 
         if due_date is not None:
             update_assign_column.append("due_date")
@@ -2709,7 +2726,83 @@ def reassign_compliance(db, request, session_user):
     #     ]
     # )
     # notify_reassing_compliance.start()
+    update_user_wise_task_status(db, users_list)
+
     return clienttransactions.ReassignComplianceSuccess()
+
+def getCurrentYear():
+    now = datetime.datetime.now()
+    return now.year
+
+def get_year_to_update_chart(db):
+    q = "select distinct t1.country_id, t1.domain_id, t1.chart_year, t1.month_from, t1.month_to from tbl_compliance_status_chart_unitwise as t1" + \
+        " inner join tbl_client_configuration as t2 on t1.country_id = t2.country_id and t1.domain_id = t2.domain_id " + \
+        " and t1.month_from = t2.month_from and t1.month_to = t2.month_to " + \
+        " where t1.inprogress_count > 0 or t1.overdue_count > 0"
+    rows = db.select_all(q)
+    years = []
+    for r in rows :
+        years.append(r["chart_year"])
+    return years
+
+def get_client_date_configuration(db):
+    q = "select country_id, domain_id, month_from, month_to from tbl_client_configuration "
+    rows = db.select_all(q)
+    return rows
+
+def update_user_wise_task_status(db, users_list):
+        # unit_ids = ",".join([str(x) for x in self.started_unit_id])
+        # user_ids = ",".join([str(y) for y in self.started_user_id])
+        dat_conf = get_client_date_configuration(db)
+        year = get_year_to_update_chart(db)
+        year.append(getCurrentYear() - 1)
+        year.append(getCurrentYear())
+
+        q = "insert into tbl_compliance_status_chart_userwise( " + \
+            "     legal_entity_id, country_id, domain_id, unit_id, user_id, " + \
+            "     month_from, month_to, chart_year, complied_count, delayed_count, inprogress_count, overdue_count " + \
+            " ) " + \
+            " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, ch.unit_id, usr.user_id, " + \
+            " ccf.month_from,ccf.month_to,%s, " + \
+            " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+            " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
+            " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+            " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
+            " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+            " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
+            " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+            " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+            " from tbl_client_configuration as ccf " + \
+            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
+            " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \
+            " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
+            " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
+            " inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by " + \
+            " and find_in_set(usr.user_id, %s) " + \
+            " where ch.due_date >= date(concat_ws('-',%s,ccf.month_from,1))  " + \
+            " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+            " and ccf.country_id = %s and ccf.domain_id = %s " + \
+            " group by ccf.country_id,ccf.domain_id, ch.unit_id, ccf.month_from,ccf.month_to,usr.user_id " + \
+            " on duplicate key update complied_count = values(complied_count), " + \
+            " delayed_count = values(delayed_count), inprogress_count = values(inprogress_count), " + \
+            " overdue_count = values(overdue_count) "
+
+        # if len(self.started_unit_id) > 0 :
+        # self.execute(q_delete, [years])
+        for y in year :
+            for d in dat_conf :
+                c_id = d["country_id"]
+                d_id = d["domain_id"]
+                from_year = y
+                if d["month_from"] == 1 and d["month_to"] == 12 :
+                    to_year = y
+                else :
+                    to_year = y+1
+                db.execute(q, [y, ",".join([str(x) for x in users_list]), from_year, to_year, c_id, d_id])
+                # if c_id == y["country_id"] and d_id == y["domain_id"] :
+                #     self.execute(q, [y, from_year, to_year, c_id, d_id])
+                # else :
+                #     continue
 
 # update_user_settings
 def update_user_settings(db, new_units):

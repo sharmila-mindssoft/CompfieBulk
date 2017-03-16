@@ -16,7 +16,7 @@ CLIENT_TEMPLATE_PATHS = [
     ),
     (
         r"/reset_password/([a-zA-Z-0-9]+)/([a-zA-Z-0-9]+)",
-        "files/client/resetpassword.html",
+        "files/client/reset-password/resetpassword.html",
         None, {}
     ),
     (
