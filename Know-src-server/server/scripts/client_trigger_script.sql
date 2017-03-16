@@ -9,7 +9,7 @@ CREATE TRIGGER `tbl_statutory_notifications_insert` AFTER INSERT ON `tbl_statuto
     SET @notificationid = NEW.notification_id;
     INSERT INTO tbl_statutory_notifications_users (
     	notification_id, user_id, is_read)
-    	select @notificationid, t1.user_id, 0 from tbl_users as t1
+    	select distinct @notificationid, t1.user_id, 0 from tbl_users as t1
         left join tbl_user_domains as t3 on t1.user_id = t3.user_id
         left join tbl_compliances as t2
         on t3.domain_id = t2.domain_id and t2.compliance_id = new.compliance_id;

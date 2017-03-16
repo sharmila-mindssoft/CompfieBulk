@@ -1,10 +1,12 @@
 import threading
 from server.dbase import Database
+from server.common import get_date_time
 
 __all__ = [
     "LegalEntityReplicationManager",
     "LEntityReplicationUSer",
-    "LEntityReplicationServiceProvider"
+    "LEntityReplicationServiceProvider",
+    "LEntityUnitClosure"
 ]
 
 class LegalEntityReplicationManager(object):
@@ -337,3 +339,60 @@ class LEntityReplicationServiceProvider(object):
 
     def _start(self):
         self.perform_save()
+
+class LEntityUnitClosure(object):
+    def __init__(self, le_info, le_id, data, user_id):
+        self._le_info = le_info
+        self._le_id = le_id
+        self._data = data
+        self._user_id = user_id
+
+    def _initiate_connection(self, connection_param):
+        con = Database.make_connection(connection_param)
+        _db = Database(con)
+        return _db
+
+    def save_unit_closure_data(self, db, user_id, unit_id, remarks, action_mode):
+        current_time_stamp = get_date_time()
+        print action_mode
+        columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
+        values = []
+        if action_mode == "close":
+            print "save"
+            values = [1, current_time_stamp, user_id, remarks]
+            condition_val = "unit_id= %s"
+            values.append(unit_id)
+            result = db.update("tbl_units", columns, values, condition_val)
+        elif action_mode == "reactive":
+            values = [0, current_time_stamp, user_id, remarks]
+            condition_val = "unit_id= %s"
+            values.append(unit_id)
+            result = db.update("tbl_units", columns, values, condition_val)
+        print "result"
+        print result
+
+    def save_tbl_units(self, _db):
+        try :
+            self.save_unit_closure_data(
+                _db, self._user_id, self._data.unit_id,  self._data.closed_remarks,
+                self._data.grp_mode
+            )
+        except Exception, e :
+            print e
+
+    def perform_closure(self):
+
+        _db = self._initiate_connection(self._le_info)
+        try:
+            _db.begin()
+            self.save_tbl_units(_db)
+            _db.commit()
+
+        except Exception, e:
+            print e
+            _db.rollback()
+        finally:
+            _db.close()
+
+    def _start(self):
+        self.perform_closure()

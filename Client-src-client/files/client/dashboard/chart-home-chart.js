@@ -1330,7 +1330,7 @@ function prepareComplianceStatusChartData(chart_data) {
          temp[obj.filter_type_id].c_data[0]["inprogress_compliance_count"]  += obj.c_data[0]["inprogress_compliance_count"];
          temp[obj.filter_type_id].c_data[0]["not_complied_count"]  += obj.c_data[0]["not_complied_count"];
          temp[obj.filter_type_id].c_data[0]["delayed_compliance_count"]  += obj.c_data[0]["delayed_compliance_count"];
-         temp[obj.filter_type_id].c_data[0]["complied_count"]  += obj.c_data[0]["complied_count"];         
+         temp[obj.filter_type_id].c_data[0]["complied_count"]  += obj.c_data[0]["complied_count"];
      }
   }
   var chart_data = [];

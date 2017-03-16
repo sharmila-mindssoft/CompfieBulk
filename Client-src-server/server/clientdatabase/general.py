@@ -560,14 +560,23 @@ def return_client_users(users):
     return results
 
 
-def get_user_domains(db, user_id):
-    q = "select domain_id from tbl_domains"
-    param = None
+def get_user_domains(db, user_id, user_category_id=None):
     condition = ""
-    # if is_primary_admin(db, user_id) is not True:
-    q = "select domain_id from tbl_user_domains"
-    condition = " WHERE user_id = %s"
-    param = [user_id]
+
+    param = []
+    if user_category_id is not None :
+        if user_category_id <= 3 :
+            q = "select domain_id from tbl_domains"
+
+        else :
+            q = "select domain_id from tbl_user_domains"
+            condition = " WHERE user_id = %s"
+            param.append(user_id)
+
+    else :
+        q = "select domain_id from tbl_user_domains"
+        condition = " WHERE user_id = %s"
+        param.append(user_id)
 
     rows = db.select_all(q + condition, param)
     d_ids = []
@@ -810,17 +819,23 @@ def is_admin(db, user_id):
             return False
 
 
-def get_user_unit_ids(db, user_id):
-    q = "select distinct unit_id from tbl_units"
-    param = None
-    condition = ""
-    # if is_primary_admin(db, user_id) is not True:
-    condition = " WHERE unit_id in (select unit_id " + \
-        " from tbl_user_units " + \
-        " where user_id = %s )"
-    param = [user_id]
+def get_user_unit_ids(db, user_id, user_category_id=None):
+    if user_category_id is None:
+        q = "select distinct t1.unit_id from tbl_units as t1 " + \
+            "left join tbl_user_units as t2 on t1.unit_id = t2.unit_id " + \
+            " where t2.user_id = %s "
+        param = [user_id]
+    else :
+        if user_category_id > 3 :
+            q = "select distinct t1.unit_id from tbl_units as t1 " + \
+                "left join tbl_user_units as t2 on t1.unit_id = t2.unit_id " + \
+                " where t2.user_id = %s "
+            param = [user_id]
+        else :
+            q = "select unit_id from tbl_units "
+            param = []
 
-    rows = db.select_all(q + condition, param)
+    rows = db.select_all(q, param)
     u_ids = []
     for r in rows:
         u_ids.append(int(r["unit_id"]))
@@ -1659,7 +1674,7 @@ def calculate_due_date(
     # print"statutory_dates", statutory_dates
     # print"repeat_by>>>", statutory_dates
     # print "repeat_every>>>", repeat_every
-    # print "due_date>>>", due_date
+    print "due_date1632>>>", due_date
     def is_future_date(test_date):
         result = False
         current_date = datetime.date.today()
@@ -1673,7 +1688,7 @@ def calculate_due_date(
     )
     # print "from_date>>>", from_date
     # print "to_date>>>", to_date
-    # print "statutory_dates>>>", statutory_dates
+    print "statutory_dates>>>", statutory_dates
     # country_id
     due_dates = []
     summary = ""
@@ -1756,7 +1771,7 @@ def calculate_due_date(
 
 
 def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
-    # Checking same due date already exists
+    # Checking same due date already exists    
     if due_dates_list is not None and len(due_dates_list) > 0:
         formated_date_list = []
         for x in due_dates_list:
@@ -1776,6 +1791,11 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             " AND compliance_id = %s) THEN DATE(due_date) " + \
             " ELSE 'NotExists' END ) as " + \
             " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
+        # print "query>>", query
+        # print "unit_id>>", unit_id
+        # print "due_date_condition>>", due_date_condition
+        # print "due_date_condition_val>>", due_date_condition_val
+        # print "compliance_id>>", compliance_id
         rows = db.select_all(
             query, [unit_id, due_date_condition_val, compliance_id]
         )

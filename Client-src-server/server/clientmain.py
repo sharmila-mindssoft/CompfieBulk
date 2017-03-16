@@ -1,8 +1,8 @@
 import os
 import json
-import time
 import traceback
 import threading
+import datetime
 # import mysql.connector.pooling
 import mysql.connector
 from flask import Flask, request, Response
@@ -25,7 +25,7 @@ from server.clientreplicationbase import (
 )
 from server.clientdatabase.savelegalentitydata import(
     LegalEntityReplicationManager, LEntityReplicationUSer,
-    LEntityReplicationServiceProvider
+    LEntityReplicationServiceProvider, LEntityUnitClosure
 )
 from server.constants import SESSION_CUTOFF
 import logger
@@ -93,22 +93,25 @@ class API(object):
             for c_id, c_db in self._group_databases.iteritems() :
                 on_session_timeout(c_db)
 
-        def on_session_timeout(c_db):
-            c_db_con = self.client_connection_pool(c_db)
-            _db = Database(c_db_con)
-            _db.begin()
-            try :
-                _db.clear_session(SESSION_CUTOFF)
-                _db.commit()
-                c_db_con.close()
-            except Exception, e :
-                print e
-                _db.rollback()
-                c_db_con.close()
-
             t = threading.Timer(500, _with_client_info)
             t.daemon = True
             t.start()
+
+        def on_session_timeout(c_db):
+            print "session called "
+            print datetime.datetime.now()
+            c_db_con = self.client_connection_pool(c_db)
+            _db_clr = Database(c_db_con)
+            try :
+                _db_clr.begin()
+                _db_clr.clear_session(SESSION_CUTOFF)
+                _db_clr.commit()
+                c_db_con.close()
+
+            except Exception, e :
+                print e
+                _db_clr.rollback()
+                c_db_con.close()
 
         _with_client_info()
 
@@ -187,54 +190,57 @@ class API(object):
             def client_added(clients):
                 for client in clients:
                     _client_id = client.client_id
-                    # print _client_id
                     is_new_data = client.is_new_data
                     is_new_domain = client.is_new_domain
-                    # _domain_id = client.domain_id
+
                     if client.is_group is True:
-                        # print "client added"
+
                         db_cons_info = self._group_databases.get(_client_id)
                         if db_cons_info is None :
                             continue
-                        # db_cons = db_cons_info.get_connection()
-                        db_cons = self.client_connection_pool(db_cons_info)
 
-                        client_db = Database(db_cons)
-                        if client_db is not None :
-                            if is_new_data is True and is_new_domain is False :
-                                # replication for group db only master data
+                        if is_new_data is True and is_new_domain is False :
+                            # replication for group db only master data
+
+                            db_cons = self.client_connection_pool(db_cons_info)
+                            client_db = Database(db_cons)
+                            if client_db is not None :
+                                rep_man = ReplicationManagerWithBase(
+                                    self._knowledge_server_address,
+                                    client_db,
+                                    _client_id,
+                                    client.is_group
+                                )
                                 if self._replication_managers_for_group.get(_client_id) is None :
-                                    rep_man = ReplicationManagerWithBase(
-                                        self._knowledge_server_address,
-                                        client_db,
-                                        _client_id,
-                                        client.is_group
-                                    )
-                                    rep_man.start()
-                                    self._replication_managers_for_group[_client_id] = rep_man
+                                    pass
                                 else :
-                                    self._replication_managers_for_group[_client_id].start()
+                                    self._replication_managers_for_group[_client_id].stop()
+                                rep_man.start()
+                                self._replication_managers_for_group[_client_id] = rep_man
+
                     else :
                         db_cons_info = self._le_databases.get(_client_id)
                         if db_cons_info is None :
                             continue
-                        # db_cons = db_cons_info.get_connection()
-                        db_cons = self.client_connection_pool(db_cons_info)
-                        le_db = Database(db_cons)
-                        if le_db is not None :
-                            if is_new_data is True and is_new_domain is False :
-                                # replication for group db only master data
+
+                        if is_new_data is True and is_new_domain is False :
+                            # replication for group db only master data
+                            db_cons = self.client_connection_pool(db_cons_info)
+                            le_db = Database(db_cons)
+                            if le_db is not None :
+                                rep_le_man = ReplicationManagerWithBase(
+                                    self._knowledge_server_address,
+                                    le_db,
+                                    _client_id,
+                                    client.is_group
+                                )
                                 if self._replication_managers_for_le.get(_client_id) is None :
-                                    rep_le_man = ReplicationManagerWithBase(
-                                        self._knowledge_server_address,
-                                        le_db,
-                                        _client_id,
-                                        client.is_group
-                                    )
-                                    rep_le_man.start()
-                                    self._replication_managers_for_le[_client_id] = rep_le_man
+                                    pass
                                 else :
-                                    self._replication_managers_for_le[_client_id].start()
+                                    self._replication_managers_for_le[_client_id].stop()
+
+                                rep_le_man.start()
+                                self._replication_managers_for_le[_client_id] = rep_le_man
 
                             # if is_new_domain is True and _domain_id is not None :
                             #     d_rep_man = {}
@@ -347,9 +353,10 @@ class API(object):
         _group_db_info = self._group_databases.get(client_id)
         if _group_db_info is None :
             raise Exception("Client Not Found")
-        _group_db_cons = self.client_connection_pool(_group_db_info)
-        _group_db = Database(_group_db_cons)
+
         try :
+            _group_db_cons = self.client_connection_pool(_group_db_info)
+            _group_db = Database(_group_db_cons)
             _group_db.begin()
             session_user, session_category = _group_db.validate_session_token(session)
             _group_db.commit()
@@ -370,10 +377,11 @@ class API(object):
         _group_db_info = self._group_databases.get(client_id)
         if _group_db_info is None :
             raise Exception("Client Not Found")
-        _group_db_cons = self.client_connection_pool(_group_db_info)
-        _group_db = Database(_group_db_cons)
+
         is_valid = False
         try :
+            _group_db_cons = self.client_connection_pool(_group_db_info)
+            _group_db = Database(_group_db_cons)
             _group_db.begin()
             is_valid = _group_db.verify_password(user_id, usr_pwd)
             _group_db.commit()
@@ -428,13 +436,14 @@ class API(object):
             self._send_response("Company not found", 404)
 
         # _db_con = db_cons.get_connection()
-        _db_con = self.client_connection_pool(db_cons_info)
-        _db = Database(_db_con)
-        if _db_con is None:
-            self._send_response("Company not found", 404)
 
-        _db.begin()
         try:
+            _db_con = self.client_connection_pool(db_cons_info)
+            _db = Database(_db_con)
+            if _db_con is None:
+                self._send_response("Company not found", 404)
+
+            _db.begin()
             if need_client_id :
                 response_data = unbound_method(
                     self, request_data, _db, company_id, ip_address
@@ -544,7 +553,12 @@ class API(object):
                 elif type(request_data.request) is widgetprotocol.GetCalendarView :
                     p_response = controller.merge_calendar_view(p_response, data)
 
+                elif type(request_data.request) is widgetprotocol.GetRiskChart :
+                    print "----------------------------------------------"
+                    p_response = controller.merge_risk_chart_widget(p_response, data)
+
                 else :
+                    print "Else --------------"
                     pass
             return p_response
 
@@ -553,6 +567,10 @@ class API(object):
             request_data, company_id = self._parse_request(request_data_type, is_group)
             session = request_data.session_token
             session_user, client_id, session_category = self._validate_user_session(session)
+
+            if session_user is False :
+                return respond(clientlogin.InvalidSessionToken())
+
             if hasattr(request_data.request, "legal_entity_ids") :
                 le_ids = request_data.request.legal_entity_ids
                 performed_les = []
@@ -564,18 +582,17 @@ class API(object):
                         performed_les.append(le)
                         print 'connection pool is none'
                         continue
-                        # return self._send_response("Company not found", 404)
 
-                    # _db_con = db_cons.get_connection()
-                    _db_con = self.client_connection_pool(db_cons_info)
-                    _db = Database(_db_con)
-                    if _db_con is None:
-                        performed_les.append(le)
-                        continue
-                        # return self._send_response("Company not found", 404)
-
-                    _db.begin()
                     try:
+                        _db_con = self.client_connection_pool(db_cons_info)
+                        _db = Database(_db_con)
+                        if _db_con is None:
+                            performed_les.append(le)
+                            continue
+                            # return self._send_response("Company not found", 404)
+
+                        _db.begin()
+
                         response_data = unbound_method(
                             self, request_data, _db, session_user, session_category
                         )
@@ -618,7 +635,13 @@ class API(object):
 
     @api_request(clientmasters.RequestFormat, is_group=True, need_category=True)
     def handle_client_masters(self, request, db, session_user, client_id, session_category):
-        return controller.process_client_master_requests(request, db, session_user, client_id, session_category)
+        res = controller.process_client_master_requests(request, db, session_user, client_id, session_category)
+        if type(res) is clientmasters.SaveUnitClosureSuccess :
+            data = request.request
+            le_id = data.legal_entity_id
+            le_db_info = self._le_databases.get(le_id)
+            LEntityUnitClosure(le_db_info, le_id, data, session_user)._start()
+        return res
 
     @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
     def handle_client_master_filters(self, request, db, session_user, client_id, session_category):

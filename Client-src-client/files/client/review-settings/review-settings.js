@@ -497,6 +497,8 @@ loadCompliances = function(){
             $('.comp-checkbox').addClass("comp-checkbox-"+actCount);
             $('.comp-checkbox', clone2).click(function(){
                 if($(this).prop("checked") == true){
+                    $(".due-date-div", clone2).empty();
+                    $(".trigger-div", clone2).empty();
                     selectedcompliance += 1;
                     var sdates = value.s_dates;
                     $(".repeat-every", clone2).show();
@@ -565,7 +567,11 @@ loadCompliances = function(){
             $('.compliance-id', clone2).val(value.comp_id)
             $('.statutory-provision', clone2).text(value.s_prov);
             $('.compliance-task', clone2).text(value.comp_name);
-            $('.repeats-by', clone2).text("Every "+value.r_every+" "+ repeats_type[value.repeats_type_id]);
+            if(value.r_every != null || value.r_every != undefined){
+                $('.repeats-by', clone2).text("Every "+value.r_every+" "+ repeats_type[value.repeats_type_id]);    
+            }else{
+                $('.repeats-by', clone2).text("-");    
+            }            
             $('.old-repeat-by', clone2).val(value.r_every);
             $('.old-repeat-type-id', clone2).val(value.repeats_type_id);
             $('.old-due-date', clone2).val(value.due_date);

@@ -167,18 +167,21 @@ def frame_escalation_count(data, years):
 # Risk chart groupwise count
 
 def get_risk_chart_count(db, user_id, user_category):
-    q = "select ifnull(ch.not_complied,0) as not_comp, ifnull(ch.rejected,0) as reject, ifnull(cc.not_opted,0) as not_opt, ifnull(cc.unassigned,0) as unassign from ( " + \
-        " (select " + \
+    q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from ( " + \
+        " (select t3.unit_id," + \
         " sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
         " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
         " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-        " from tbl_compliance_history as t1 " + \
-        " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id) as ch, " + \
-        " (select sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
+        " from tbl_client_compliances as t3 " + \
+        " inner join tbl_compliances as t2 on t3.compliance_id = t2.compliance_id " + \
+        " left join tbl_compliance_history as t1 on t3.unit_id = t1.unit_id and t3.compliance_id = t1.compliance_id " + \
+        " group by t1.unit_id ) as ch, " + \
+        " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-        " from tbl_client_compliances as t1  " + \
-        " left join tbl_assign_compliances as t2 " + \
-        " on t1.compliance_id = t2.compliance_id ) as cc)"
+        " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id " + \
+        " and t1.unit_id = t2.unit_id group by t1.unit_id ) as cc ), " + \
+        " tbl_units as t3 where ch.unit_id = t3.unit_id and cc.unit_id = t3.unit_id"
+
     param = []
 
     if user_category > 3 :
@@ -213,20 +216,24 @@ def frame_risk_chart(data):
     chartData = []
     if data :
         chartData.append({
-            "name": "Not Complied",
-            "y": int(data["not_comp"])
+            "name": "Rejected",
+            "y": int(data["reject"]),
+            "visible": False if int(data["reject"]) == 0 else True
         })
         chartData.append({
-            "name": "Rejected",
-            "y": int(data["reject"])
+            "name": "Not Complied",
+            "y": int(data["not_comp"]),
+            "visible": False if int(data["not_comp"]) == 0 else True
         })
         chartData.append({
             "name": "Unassigned",
-            "y": int(data["unassign"])
+            "y": int(data["unassign"]),
+            "visible": False if int(data["unassign"]) == 0 else True
         })
         chartData.append({
             "name": "Not Opted",
-            "y": int(data["not_opt"])
+            "y": int(data["not_opt"]),
+            "visible": False if int(data["not_opt"]) == 0 else True
         })
 
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)

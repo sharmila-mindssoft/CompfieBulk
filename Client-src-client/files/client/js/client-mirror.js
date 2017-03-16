@@ -193,12 +193,11 @@ function initClientMirror() {
         return r ? r[1] : undefined;
     }
 
-    function makekey()
-    {
+    function makekey() {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-        for( var i=0; i < 5; i++ )
+        for (var i = 0; i < 5; i++)
             text += possible.charAt(Math.floor(Math.random() * possible.length));
         return text;
     }
@@ -1765,10 +1764,13 @@ function initClientMirror() {
         };
     }
 
-    function savePastRecords(compliances_list, callback) {
+    function savePastRecords(legalEntityId, compliances_list, callback) {
         var request = [
             'SavePastRecords',
-            { 'compliances': compliances_list }
+            {
+                'le_id': legalEntityId,
+                'pr_compliances': compliances_list
+            }
         ];
         clientApiRequest('client_transaction', request, callback);
     }
@@ -1917,14 +1919,15 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function saveUnitClosureData(password, remarks, unit_id, action_mode, callback) {
+    function saveUnitClosureData(legal_entity_id, password, remarks, unit_id, action_mode, callback) {
         callerName = 'client_masters';
         var request = [
             'SaveUnitClosureData', {
                 "password": password,
                 "closed_remarks": remarks,
                 "unit_id": unit_id,
-                "grp_mode": action_mode
+                "grp_mode": action_mode,
+                "legal_entity_id": legal_entity_id
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -2733,27 +2736,53 @@ function initClientMirror() {
         });
     }
 
-    function downloadTaskFile() {
+    function downloadTaskFile(le_id, c_id, d_id, u_id, start_date, file_name) {
         var request = [
             "DownloadFile",
             {
-                "le_id": 10,
-                "c_id": 1,
-                "d_id": 1,
-                "u_id": 12,
-                "start_date": "22-Feb-2017",
-                // "file_name": "images.jpeg"
-                // "file_name": "test.txt"
-                // "file_name": "img-png.png",
-                // "file_name": "Compfie_Phase II_Development_Days_version 1.1.xls",
-                // "file_name": "ComplianceDetails-08-Apr-2016.zip",
-                // "file_name": "download.jpg",
-                // "file_name": "O'Reilly - Introduction to Tornado - 2012.pdf",
-                "file_name": "Process Diagram Version 3.0.pptx",
+                "le_id": le_id,
+                "c_id": c_id,
+                "d_id": d_id,
+                "u_id": u_id,
+                "start_date": start_date,
+                "file_name": file_name,
             }
         ];
         DownloadApiRequest(request);
     }
+
+
+    function uploadComplianceTaskFile(le_id, c_id, d_id, u_id, start_date, file_info, callback) {
+        var request = [
+            'UploadComplianceTaskFile', {
+                "le_id": le_id,
+                "c_id": c_id,
+                "d_id": d_id,
+                "u_id": u_id,
+                "start_date": start_date,
+                "file_info": file_info
+            }
+        ];
+        callerName = 'files';
+        clientApiRequest(callerName, request, callback);
+    }
+
+
+    function removeUploadedTaskFile(le_id, c_id, d_id, u_id, start_date, file_info) {
+        var request = [
+            'RemoveFile', {
+                "le_id": le_id,
+                "c_id": c_id,
+                "d_id": d_id,
+                "u_id": u_id,
+                "start_date": start_date,
+                "file_info": file_info
+            }
+        ];
+        callerName = 'files';
+        clientApiRequest(callerName, request, callback);
+    }
+
 
     function ConvertToCSV(objArray) {
         var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
@@ -2988,7 +3017,7 @@ function initClientMirror() {
         getRiskReportData: getRiskReportData,
         changeStatutorySettingsLock: changeStatutorySettingsLock,
         changeThemes: changeThemes,
-        getLEids:getLEids,
+        getLEids: getLEids,
         getUserManagement_List: getUserManagement_List,
         getSettingsFormDetails: getSettingsFormDetails,
         saveSettingsFormDetails: saveSettingsFormDetails,
@@ -2996,7 +3025,10 @@ function initClientMirror() {
         downloadTaskFile: downloadTaskFile,
         complianceFilters: complianceFilters,
         exportJsontoCsv: exportJsontoCsv,
-        onOccurrenceLastTransaction: onOccurrenceLastTransaction
+        onOccurrenceLastTransaction: onOccurrenceLastTransaction,
+        uploadComplianceTaskFile: uploadComplianceTaskFile,
+
+
     };
 }
 
