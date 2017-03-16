@@ -70,10 +70,10 @@ class SaveUsers(KnowledgedbConnect):
         q = "INSERT INTO tbl_client_users(user_id, user_category_id, client_id, " + \
             "seating_unit_id, service_provider_id, user_level, email_id, " + \
             "employee_name, employee_code, contact_no, mobile_no, address, " + \
-            "is_service_provider, is_active, status_changed_on, is_disable, disabled_on " + \
+            "is_service_provider, is_active, status_changed_on, is_disable, disabled_on) " + \
             "values(%s, %s, %s, %s, %s, %s, %s, %s, %s , %s, %s, %s, %s, %s, %s, %s, %s)"
         values = [
-            self.user_id, self._user_info["user_category_id"],
+            self._user_id, self._user_info["user_category_id"],
             self._user_info["client_id"], self._user_info["seating_unit_id"],
             self._user_info["service_provider_id"], self._user_info["user_level"],
             self._user_info["email_id"], self._user_info["employee_name"],
