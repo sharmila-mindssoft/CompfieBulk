@@ -28,8 +28,8 @@ DROP TABLE IF EXISTS `tbl_client_activity_log`;
 CREATE TABLE `tbl_client_activity_log` (
   `client_activity_log_id` int(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
-  `legal_entity_id` int(11) NOT NULL,
-  `unit_id` int(11) NOT NULL,
+  `legal_entity_id` int(11) DEFAULT NULL,
+  `unit_id` int(11) DEFAULT NULL,
   `user_category_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `form_id` int(11) NOT NULL,

@@ -4,6 +4,7 @@ import logger
 from server.common import (convert_to_dict, get_date_time, encrypt)
 from server.exceptionmessage import fetch_error, process_procedure_error
 
+
 class BaseDatabase(object):
     def __init__(
         self,
@@ -726,10 +727,14 @@ class Database(object):
             " (client_id, legal_entity_id, unit_id, user_category_id, " + \
             " user_id, form_id, action, created_on) " + \
             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
-        self.execute(query, (
-                client_id, legal_entity_id, unit_id, category_id,
-                user_id, form_id, action, created_on
-        ))
+        values = [
+            client_id, legal_entity_id, unit_id, category_id,
+            user_id, form_id, action, created_on
+        ]
+        self.execute(query, values)
+        from server.clientdatabase.savetoknowledge import SaveClientActivity
+
+        SaveClientActivity(values)
         return True
 
     def validate_session_token(self, session_token):
