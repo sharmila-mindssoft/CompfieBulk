@@ -1273,8 +1273,8 @@ h2.chart-title: hover {
     z-index: 100 !important;
 }
 
-.accordian-past-records {
-    margin-top: 30px;
+.accordian-past-records{
+    margin-top: 15px;
 }
 
 .uploaded-filename .removeicon {

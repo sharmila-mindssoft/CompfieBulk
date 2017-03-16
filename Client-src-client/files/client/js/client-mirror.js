@@ -1757,15 +1757,15 @@ function initClientMirror() {
         clientApiRequest('client_transaction', request, callback);
     }
 
-    function getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, documents, validity_date, completed_by) {
+    function getPastRecordsComplianceDict(unit_id, compliance_id, due_date, completion_date, documents, completed_by) {
         return {
             'unit_id': unit_id,
             'compliance_id': compliance_id,
             'due_date': due_date,
             'completion_date': completion_date,
             'documents': documents,
-            'validity_date': validity_date,
-            'completed_by': completed_by
+            'validity_date': null,
+            'pr_completed_by': completed_by
         };
     }
 
@@ -1773,7 +1773,7 @@ function initClientMirror() {
         var request = [
             'SavePastRecords', {
                 'le_id': legalEntityId,
-                'pr_compliances': compliances_list
+                'pr_compliances_1': compliances_list
             }
         ];
         clientApiRequest('client_transaction', request, callback);
