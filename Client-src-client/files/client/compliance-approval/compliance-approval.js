@@ -169,11 +169,11 @@ function showSideBar(idval, data) {
     $('.sidebar-compliance-task i', cloneValSide).attr('title', data.description);
     $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);
     fileslist = data.file_names;
-    documentslist = data.documents;
+    documentslist = data.uploaded_documents;
     if (fileslist != null) {
         for (var i = 0; i < fileslist.length; i++) {
             if (fileslist[i] != '') {
-                $('.sidebar-uploaded-documents', cloneValSide).append('<span><abbr class=\'sidebardocview\'>' + fileslist[i] + '</abbr><a href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\' class=\'download-file\' ><img src=\'/images/download.png\' style=\'width:16px;height:16px\' title=\'Download\' /></a><a href=\'' + documentslist[i] + '\' target=\'_new\' class=\'view-file\'> <img src=\'/images/view.png\' style=\'width:16px;height:16px;\' title=\'View\' /></a></span>');
+                $('.sidebar-uploaded-documents', cloneValSide).append('<span><abbr class=\'sidebardocview\'>' + fileslist[i] + '</abbr><a href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\' class=\'download-file\' ><i class=\'fa fa-search fa-1-2x c-pointer pull-right\' title=\'View\' ></i> </a><a href=\'' + documentslist[i] + '\' target=\'_new\' class=\'view-file\'> <i class=\'fa fa-download fa-1-2x c-pointer pull-right\' style=\'margin-right:10px;\' title=\'Download\'></i> </a></span>');
                 $('.tr-sidebar-uploaded-date', cloneValSide).show();
             }
         }
