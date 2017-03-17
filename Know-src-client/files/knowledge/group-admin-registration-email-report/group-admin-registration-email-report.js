@@ -127,8 +127,11 @@ function loadGroupAdminReportData()
 	for (var i=0;i<groupadminList.length;i++)
 	{
 		console.log("client_id:"+groupadminList[i].client_id)
-		var ctry_check = country_id>0?groupadminList[i].country_id == country_id :false;
-		if(client_id == groupadminList[i].client_id && (ctry_check == true || ctry_check == false))
+		var ctry_check = true;
+		if(country_id>0 && (country_id != groupadminList[i].country_id)){
+			ctry_check =false;
+		}
+		if(client_id == groupadminList[i].client_id && ctry_check == true)
 		{
 			console.log("matched")
 			$('.countrynameval').text(groupadminList[i].registration_email_date);
