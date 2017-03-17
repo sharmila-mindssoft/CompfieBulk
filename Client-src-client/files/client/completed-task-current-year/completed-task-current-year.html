@@ -212,33 +212,34 @@
       <div class="panel panel-default bx-shadow-none">
         <div class="panel-heading p-0" role="tab" id="headingOne">
             <h4 class="panel-title ">
-                <div class="checkbox checkbox-primary m-b-0 m-t-5 m-l-5 tab-checkbox">
+           <!--      <div class="checkbox checkbox-primary m-b-0 m-t-5 m-l-5 tab-checkbox">
                     <input id="checkbox1" type="checkbox" class="text-center">
                     <label for="checkbox1" class="text-bold"></label>
-                </div>
+                </div> -->
                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne" class="p-5 actname"></a>
                 <div class="clearfix"></div>
             </h4>
         </div>
-        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+        <div id="collapseOne" class="panel-collapse coll-title collapse " role="tabpanel" aria-labelledby="headingOne">
             <div class="panel-body no-padding">
               <div class="dataTable_wrapper top-lightborder">
               <div class="table-responsive">
                 <table  class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
                   <thead>
                     <tr>
-                      <th width="13%">Compliance Task</th>
+                      <th width="22%">Compliance Task</th>
                       <th width="07%">Compliance Frequency</th>
-                      <th width="10%">Statutory Date</th>
-                      <th width="08%">Due Date <span class="mandatory">*</span></th>
-                      <th width="08%">Completion Date <span class="mandatory">*</span></th>
-                      <th width="10%">Document Upload</th>
-                      <th width="8%">Assignee <span class="mandatory">*</span></th>
-                      <th width="8%">Compliance Status <span class="mandatory">*</span></th>
+                      <th width="12%">Statutory Date</th>
+                      <th width="10%">Due Date <span class="mandatory">*</span></th>
+                      <th width="10%">Completion Date <span class="mandatory">*</span></th>
+                      <th width="13%">Document Upload</th>
+                      <th width="12%">Assignee <span class="mandatory">*</span></th>
+                      <th width="11%">Compliance Status <span class="mandatory">*</span></th>
                       <th width="03%">Completed <span class="mandatory">*</span></th>
                     </tr>
                   </thead>
-                  <tbody class="tbody-pastrecords">
+
+                  <tbody class="tbody-pastRecords">
                   </tbody>
                   </table>
                   </div>
@@ -259,32 +260,31 @@
     <div id="statutory-values" class="default-display-none">
       <table class="table-statutory-values">
         <tr class="compliance-details">
-        <input type="hidden" class="combineid-class" />
-        <td class="compliancetask"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i> <span></span></td>
-        <td class="compliancefrequency">>Periodical</td>
-        <td class="statutorydate">Every Year 1st January</td>
-        <td><input class="form-control input-sm duedate" value="" type="text"></td>
-        <td><input class="form-control input-sm completiondate" value="" type="text"></td>
-        <td class="view-validitydate"><input class="form-control input-sm validitydate" value="" type="text"></td>
-        <td ><input class="form-control input-sm no-padding documentupload" value="" type="file"></td>
-        <td><input class="form-control input-sm assignee-text" value="EMP10018 - Vivek - L5" type="text">
-          <input type="hidden" class="assignee"> 
-        </td>
-        <td>
-         <input type="hidden" class="assignee"> 
-          <select class="form-control input-sm">
-            <option>Complied</option>
-            <option>Delayed Complied</option>
-            <option>Not Complied</option>
-          </select>
-        </td>
-        <td class="text-center">
-          <div class="checkbox checkbox-primary m-b-0 m-t-0">
-              <input id="checkbox8" type="checkbox" class="text-center completedstatus">
-              <label for="checkbox8"></label>
-          </div>
-        </td>
-  
+            <input type="hidden" class="combineid-class" />
+            <td class="compliancetask"><i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title=""></i> <span></span></td>
+            <td class="compliancefrequency"></td>
+            <td class="statutorydate"></td>
+            <td class="duedate"></td>
+            <td class="completiondate"></td>
+            <!-- <td class="view-validitydate default-display-none"><input class="form-control input-sm validitydate" value="" type="text"></td> -->
+            
+            <td class="documentupload"></td>
+            <td class="assignee"><!-- <input class="form-control input-sm assignee-text" value="" type="text">
+              <input type="hidden" class="assignee">  -->
+            </td>
+            <td>
+              <select class="form-control input-sm">
+                <option>Complied</option>
+                <option>Delayed Complied</option>
+                <option>Not Complied</option>
+              </select>
+            </td>
+            <td class="text-center">
+              <div class="checkbox checkbox-primary m-b-0 m-t-0 completedstatus">
+                  <input id="checkbox8" type="checkbox" class="text-center ">
+                  <label for="checkbox8"></label>
+              </div>
+            </td>  
        </tr>
       </table>
     </div>

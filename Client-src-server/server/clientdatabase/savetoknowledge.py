@@ -29,16 +29,18 @@ class KnowledgedbConnect(object):
 
 
 class UpdateFileSpace(KnowledgedbConnect):
-    def __init__(self, space_used, client_id):
+    def __init__(self, space_used, legal_entity_id):
         super(UpdateFileSpace, self).__init__()
         self._space_used = space_used
-        self._client_id = client_id
+        self._legal_entity_id = legal_entity_id
         self.procee_update_space()
 
     def _update_space(self):
-        q = "Update tbl_client_groups set total_disk_space_used = %s " + \
-            " where client_id = %s "
-        res = self._k_db.execute(q, [self._space_used, self._client_id])
+        # q = "Update tbl_client_groups set total_disk_space_used = %s " + \
+        #     " where client_id = %s "
+        q = "Update tbl_legal_entities set used_file_space = %s " + \
+            " where legal_entity_id = %s "
+        res = self._k_db.execute(q, [self._space_used, self._legal_entity_id])
         if res is False:
             raise client_process_error("E021")
 
@@ -330,4 +332,28 @@ class SaveGroupAdminName(KnowledgedbConnect):
             print e
             self._k_db._cursor.close()
             self._k_db._connection.rollback()
-            raise client_process_error("E026")
+            raise client_process_error("E090")
+
+class SaveClientActivity(KnowledgedbConnect):
+    def __init__(self, values):
+        self._query = " INSERT INTO tbl_client_activity_log " + \
+            " (client_id, legal_entity_id, unit_id, user_category_id, " + \
+            " user_id, form_id, action, created_on) " + \
+            " VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
+        self._values = values
+        self.process_save_activity()
+
+    def process_save_activity(self):
+        try :
+            self.get_knowledge_connect()
+            self._k_db._cursor = self._k_db._connection.cursor()
+
+            self._k_db.execute(self._query, self._values)
+
+            self._k_db._cursor.close()
+            self._k_db._connection.commit()
+        except Exception, e:
+            print e
+            self._k_db._cursor.close()
+            self._k_db._connection.rollback()
+            raise client_process_error("E091")
