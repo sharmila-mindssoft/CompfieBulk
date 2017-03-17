@@ -34,8 +34,7 @@ function loadLegalEntities(){
 
 $('.btn-show').click(function() {
 	LegalEntityId = leSelect.val();
-
-	if(LegalEntityId != ''){
+	if(LegalEntityId != '' && LegalEntityId != 0){
 		function onSuccess(data) {
 	        unitClosureList = data.unit_closure_units;
 	        LoadUnitClosureUnits(unitClosureList);
