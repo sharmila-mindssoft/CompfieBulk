@@ -255,18 +255,26 @@ function validateMandatory(){
 	var returnMandatory = true;
 	if(group_application_server_name.val() == '' || $('#application_id').val() == ""){
 		displayMessage(message.client_server_name_required);
+		group_application_server_name.val('');
+		group_application_server_name.focus();
 		returnMandatory = false;
 	}
 	else if(group_db_server_name.val() == '' || $('#database_server_id').val() == ""){
 		displayMessage(message.db_server_name_required);
+		group_db_server_name.val('');
+		group_db_server_name.focus();
 		returnMandatory = false;
 	}
 	else if(le_db_server_name.val() == '' || $('#le_database_server_id').val() == ""){
 		displayMessage(message.le_db_server_name_required);
+		le_db_server_name.val('');
+		le_db_server_name.focus();
 		returnMandatory = false;
 	}
 	else if(le_file_server_name.val() == '' || $('#le_file_server_id').val() == ""){
 		displayMessage(message.le_file_server_name_required);
+		le_file_server_name.val('');
+		le_file_server_name.focus();
 		returnMandatory = false;
 	}
 
