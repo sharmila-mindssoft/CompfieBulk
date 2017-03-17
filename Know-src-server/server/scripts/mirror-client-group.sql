@@ -272,7 +272,7 @@ CREATE TABLE `tbl_user_units` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_email_verification` (
   `user_id` int(11) NOT NULL,
-  `verification_code` varchar(50) NOT NULL,
+  `verification_code` TEXT NOT NULL,
   `verification_type_id` int(11) NOT NULL,
   `expiry_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
