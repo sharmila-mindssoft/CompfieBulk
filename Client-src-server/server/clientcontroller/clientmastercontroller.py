@@ -714,15 +714,30 @@ def process_change_user_privilege_status(db, request, session_user):
 # To validate and save a user
 ########################################################
 def process_save_client_user(db, request, session_user, client_id):
-    # user_id = db.get_new_id("user_id", tblUsers)
-    # if (get_no_of_remaining_licence(db) <= 0):
-    #     return clientmasters.UserLimitExceeds()
-    if is_duplicate_employee_code(
-        db,
-        request.employee_code.replace(" ", ""),
-        user_id=None
-    ):
+
+    # Check Viewonly Licence Count
+    if request.user_category==2:
+        if (get_no_of_remaining_licence_Viewonly(db) <= 0):
+            return clientmasters.UserLimitExceeds()
+        else:
+            update_licence_viewonly(db)
+    else:
+        resultRows = get_no_of_remaining_licence(db, request.user_entity_ids)
+        print "resultRows>>>", resultRows
+        for row in resultRows:
+            legal_entity_id = int(row["legal_entity_id"])
+            print "legal_entity_id>>>", legal_entity_id
+            remaining_licence = int(row["remaining_licence"])
+            print "remaining_licence>>", remaining_licence
+            if remaining_licence <=0:
+                return clientmasters.UserLimitExceeds()
+            else:
+                update_licence(db, legal_entity_id)
+                print "licence updated!!!"
+            
+    if is_duplicate_employee_code(db, request.employee_code.replace(" ", ""), user_id=None):
         return clientmasters.EmployeeCodeAlreadyExists()
+    # Commented for functionality check
     # if is_already_assigned_units (db,request.user_unit_ids, request.user_domain_ids):
     #     return clientmasters.UnitsAlreadyAssigned()
 

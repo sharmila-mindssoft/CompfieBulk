@@ -160,7 +160,7 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days) 
         displayLoader();
 
         function onSuccess(data) {
-            displayMessage(message.action_success);
+            displaySuccessMessage(message.action_success);
             //getOnOccuranceCompliances ();
             $('#startdate' + thisval.id).val('');
             $('#remarks' + thisval.id).val('');

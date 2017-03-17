@@ -2029,7 +2029,7 @@ def notify_compliance_approved(
 
 
 def reject_compliance_approval(
-    db, compliance_history_id, remarks, next_due_date
+    db, compliance_history_id, remarks, next_due_date, session_user
 ):
     query = " SELECT unit_id, ch.compliance_id, due_date, " + \
         "completion_date, completed_by, concurred_by, approved_by, " + \
@@ -2038,10 +2038,9 @@ def reject_compliance_approval(
         " FROM tbl_compliances tc " + \
         " WHERE tc.compliance_id = ch.compliance_id) as compliance_name, " + \
         " (SELECT duration_type_id FROM tbl_compliances tc WHERE " + \
-        " tc.compliance_id = ch.compliance_id ) " + \
+        " tc.compliance_id = ch.compliance_id ) AS duration_type_id" + \
         " FROM tbl_compliance_history ch WHERE compliance_history_id = %s "
     rows = db.select_all(query, [compliance_history_id])
-
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
     due_date = rows[0]["due_date"]
@@ -2058,10 +2057,10 @@ def reject_compliance_approval(
         completion_date=completion_date,
         duration_type=duration_type_id
     )
-    save_compliance_activity(
-        db, unit_id, compliance_id, "Rejected", status,
-        ageing_remarks
-    )
+    # save_compliance_activity(
+    #     db, unit_id, compliance_id, "Rejected", status,
+    #     ageing_remarks
+    # )
 
     update_columns = [
         "approve_status", "remarks", "completion_date", "completed_on",
@@ -2072,10 +2071,13 @@ def reject_compliance_approval(
     db.update(
         tblComplianceHistory, update_columns, values, update_condition
     )
+    current_time_stamp = get_date_time_in_date()
+    save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
+                             session_user, current_time_stamp, "RectifyApproval", remarks)
     notify_compliance_rejected(
         db, compliance_history_id, remarks,
-        "RejectApproval", rows[0]["assignee_id"],
-        rows[0]["concurrence_id"], rows[0]["approval_id"],
+        "RejectApproval", rows[0]["completed_by"],
+        rows[0]["concurred_by"], rows[0]["approved_by"],
         rows[0]["compliance_name"], due_date
     )
     return True

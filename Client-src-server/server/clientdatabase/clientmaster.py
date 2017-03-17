@@ -87,7 +87,9 @@ __all__ = [
     "userManagement_EditView_GetUsers",
     "userManagement_EditView_GetLegalEntities",
     "userManagement_EditView_GetDomains",
-    "userManagement_EditView_GetUnits"
+    "userManagement_EditView_GetUnits",
+    "update_licence_viewonly",
+    "update_licence"
 ]
 
 ############################################################################
@@ -925,30 +927,21 @@ def return_service_providers(service_providers):
 # Return Type - int
 ############################################################################
 def get_no_of_remaining_licence_Viewonly(db):
-    q = " SELECT (total_view_licence - licence_used) As remaining_licence from tbl_Client_Groups"
-
+    q = " SELECT (total_view_licence - ifnull(licence_used,0)) As remaining_licence from tbl_Client_Groups "
     row = db.select_one(q, None)
-    return row
+    return row["remaining_licence"]
 
 ############################################################################
-# Returns Remaining number of  licences
+# Returns Remaining number of  licence
 # Parameter(s) - Object of database
 # Return Type - int
 ############################################################################
-def get_no_of_remaining_licence(db):
-    columns = ["count(0) as licence"]
-
-    condition = "1"
-    rows = db.get_data(tblUsers, columns, condition)
-    no_of_licence_holders = rows[0]["licence"]
-
-    columns = ["no_of_user_licence"]
-    rows = db.get_data(tblClientGroups, columns, condition)
-    no_of_licence = rows[0]["no_of_user_licence"]
-
-    remaining_licence = int(no_of_licence) - int(no_of_licence_holders)
-    return remaining_licence
-
+def get_no_of_remaining_licence(db, legal_entity_ids):
+    q = " SELECT legal_entity_id, (total_licence - ifnull(used_licence,0)) As remaining_licence " + \
+        " FROM tbl_legal_entities Where find_in_set(legal_entity_id, %s)"
+    legalEntityList = ",".join([str(x) for x in legal_entity_ids])
+    row = db.select_all(q, [legalEntityList])
+    return row
 
 ############################################################################
 # To check whether another user exists with the given email id
@@ -1230,6 +1223,36 @@ def update_user(db, user, session_user, client_id):
 
     return True
 
+############################################################################
+# To Update licence viewonly
+# Parameter(s) - Object of database
+# Return Type - True / RunTimeError
+#             - Returns True on successfull updation
+#             - Returns RuntimeError if Updation fails
+############################################################################
+def update_licence_viewonly(db):
+    q = " Update tbl_Client_Groups SET licence_used = (licence_used + %s)"
+    result1 = db.execute(q, [1])
+
+    if result1 is False:
+        raise client_process_error("E011")
+
+    return True
+############################################################################
+# To Update licence viewonly
+# Parameter(s) - Object of database
+# Return Type - True / RunTimeError
+#             - Returns True on successfull updation
+#             - Returns RuntimeError if Updation fails
+############################################################################
+def update_licence(db, legal_entity_id):
+    q = " Update tbl_legal_entities SET used_licence = (used_licence + %s) Where legal_entity_id = %s"
+    result1 = db.execute(q, [1, legal_entity_id])
+
+    if result1 is False:
+        raise client_process_error("E011")
+
+    return True
 
 ############################################################################
 # To Check the active status of user group of given user

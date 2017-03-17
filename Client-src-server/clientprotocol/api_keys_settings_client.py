@@ -678,7 +678,7 @@ api_params = {
     "pr_completed_by": make_int_field(is_optional=True),
     "field_name": make_text_field(length=100),
     "error": make_text_field(length=500),
-    "file_size": make_int_field(is_optional=True),
+    "file_size": make_int_field(length=52428800, is_optional=True),
     "file_name": make_text_field(length=500),
     "file_content": make_text_field(),
 

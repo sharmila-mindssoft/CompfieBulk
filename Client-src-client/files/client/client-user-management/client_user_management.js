@@ -96,7 +96,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
         }
     });
 
-    // ===================================================================================    
+    // ===================================================================================
     // Add Button Click
     userManagementPage.prototype.showAddScreen = function() {
         t_this = this;
@@ -427,6 +427,7 @@ userManagementPage.prototype.submitProcess = function() {
         client_mirror.saveClientUser(clientUserDetail, function(error, response) {
             if (error == null) {
                 displaySuccessMessage(message.save_success);
+                um_page.clearValues();
                 t_this.showList();
             } else {
                 t_this.possibleFailures(error);
@@ -451,6 +452,8 @@ userManagementPage.prototype.possibleFailures = function(error) {
         displayMessage(message.employeeid_exists);
     } else if (error == 'UnitsAlreadyAssigned') {
         displayMessage(message.units_already_assigned);
+    } else if (error == 'UserLimitExceeds') {
+        displayMessage(message.userlimitexceeds);
     } else {
         displayMessage(error);
     }
@@ -1114,7 +1117,6 @@ PageControls = function() {
     btnSubmit.click(function() {
         if (um_page.validateMandatory()) {
             um_page.submitProcess();
-            um_page.clearValues();
         }
     });
 
