@@ -676,19 +676,25 @@ def start_on_occurrence_task(
         session_user
     ]
 
-    approval_columns = ["approval_person", "concurrence_person"]
-    approval_condition = " compliance_id = %s and unit_id = %s "
-    rows = db.get_data(
-        tblAssignCompliances, approval_columns,
-        approval_condition, [compliance_id, unit_id]
-    )
-    approved_by = rows[0]["approval_person"]
-    concurred_by = rows[0]["concurrence_person"]
+    q = "select t2.compliance_id, t3.country_id, t1.domain_id, t1.compliance_task, t1.document_name, t2.approval_person, " + \
+        "t2.concurrence_person from tbl_assign_compliances as t2 " + \
+        " inner join tbl_compliances as t1 on t2.compliance_id = t1.compliance_id " + \
+        " inner join tbl_units as t3 on t2.unit_id = t3.unit_id " + \
+        " where t2.compliance_id = %s and t2.unit_id = %s "
+
+    row = db.select_one(q, [compliance_id, unit_id])
+    approver_id = row.get("approval_person")
+    concurrence_id = row.get("concurrence_person")
+    compliance_name = row.get("compliance_task")
+    document_name = row.get("document_name")
+    country_id = row.get("country_id")
+    domain_id = row.get("domain_id")
+
     if is_two_levels_of_approval(db):
         columns.append("concurred_by")
-        values.append(concurred_by)
+        values.append(concurrence_id)
     columns.append("approved_by")
-    values.append(approved_by)
+    values.append(approver_id)
 
     compliance_history_id = db.insert(
         tblComplianceHistory, columns, values
@@ -696,22 +702,18 @@ def start_on_occurrence_task(
     if compliance_history_id is False:
         raise client_process_error("E017")
 
-    history = get_compliance_history_details(db, compliance_history_id)
-    assignee_id = history["completed_by"]
-    concurrence_id = history["concurred"]
-    approver_id = history["approved_by"]
-    if approver_id is None:
-        approver_id = assignee_id
-    compliance_name = history["compliance_name"]
-    document_name = history["doc_name"]
-    due_date = history["due_date"]
+    users = [session_user, approver_id]
+    if concurrence_id is not None :
+        users.append(concurrence_id)
+
+    update_onoccurrence_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
 
     # Audit Log Entry
     action = "Compliances started \"%s\"" % (compliance_name)
     db.save_activity(session_user, 35, action, legal_entity_id, unit_id)
 
     # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
-    assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
+    assignee_email, assignee_name = get_user_email_name(db, str(session_user))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
     if (
         concurrence_id not in [None, "None", 0, "", "null", "Null"] and
@@ -741,6 +743,76 @@ def start_on_occurrence_task(
         logger.logClient("error", "clientdatabase.py-start-on-occurance", e)
         print "Error sending email: %s" % (e)
     return True
+
+def update_onoccurrence_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users):
+    year = due_date.year
+    q1 = "select month_from, month_to from tbl_client_configuration where country_id = %s and domain_id = %s"
+    dat_conf = db.select_all(q1, [country_id, domain_id])
+
+    q = "insert into tbl_compliance_status_chart_unitwise( " + \
+        "     legal_entity_id, country_id, domain_id, unit_id,  " + \
+        "     month_from, month_to, chart_year, complied_count, delayed_count, inprogress_count, overdue_count " + \
+        " ) " + \
+        " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, " + \
+        " ch.unit_id,ccf.month_from,ccf.month_to, %s, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+        " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+        " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+        " from tbl_client_configuration as ccf " + \
+        " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
+        " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id  " + \
+        " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id and ccf.domain_id = com.domain_id " + \
+        " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
+        " where ch.due_date >= date(concat_ws('-',%s,ccf.month_from,1))  " + \
+        " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+        " and ccf.country_id = %s and ccf.domain_id = %s and unt.unit_id = %s " + \
+        " group by ccf.country_id,ccf.domain_id,ccf.month_from,ccf.month_to,ch.unit_id " + \
+        " on duplicate key update complied_count = values(complied_count), " + \
+        " delayed_count = values(delayed_count), inprogress_count = values(inprogress_count), " + \
+        " overdue_count = values(overdue_count) "
+
+    q1 = "insert into tbl_compliance_status_chart_userwise( " + \
+        "     legal_entity_id, country_id, domain_id, unit_id, user_id, " + \
+        "     month_from, month_to, chart_year, complied_count, delayed_count, inprogress_count, overdue_count " + \
+        " ) " + \
+        " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, ch.unit_id, usr.user_id, " + \
+        " ccf.month_from,ccf.month_to,%s, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+        " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+        " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+        " from tbl_client_configuration as ccf " + \
+        " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
+        " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \
+        " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
+        " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
+        " inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by " + \
+        " where ch.due_date >= date(concat_ws('-',%s,ccf.month_from,1))  " + \
+        " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+        " and ccf.country_id = %s and ccf.domain_id = %s and unt.unit_id = %s " + \
+        " and find_in_set(usr.user_id, %s) " + \
+        " group by ccf.country_id,ccf.domain_id, ch.unit_id, ccf.month_from,ccf.month_to,usr.user_id " + \
+        " on duplicate key update complied_count = values(complied_count), " + \
+        " delayed_count = values(delayed_count), inprogress_count = values(inprogress_count), " + \
+        " overdue_count = values(overdue_count) "
+
+    for d in dat_conf :
+        from_year = year
+        if d["month_from"] == 1 and d["month_to"] == 12 :
+            to_year = year
+        else :
+            to_year = year+1
+        db.execute(q, [year, from_year, to_year, country_id, domain_id, unit_id])
+        db.execute(q1, [year, from_year, to_year, country_id, domain_id, unit_id, ",".join([str(x) for x in users])])
 
 def remove_uploaded_file(file_path):
     if os.path.exists(file_path):

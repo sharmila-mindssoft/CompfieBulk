@@ -345,7 +345,7 @@ class API(object):
             print e
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
-
+            print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 

@@ -2040,13 +2040,8 @@ def reject_compliance_approval(
         " (SELECT duration_type_id FROM tbl_compliances tc WHERE " + \
         " tc.compliance_id = ch.compliance_id ) " + \
         " FROM tbl_compliance_history ch WHERE compliance_history_id = %s "
-    result = db.select_all(query, [compliance_history_id])
-    history_columns = [
-        "unit_id", "compliance_id", "due_date", "completion_date",
-        "assignee_id", "concurrence_id", "approval_id", "compliance_name",
-        "duration_type_id"
-    ]
-    rows = convert_to_dict(result, history_columns)
+    rows = db.select_all(query, [compliance_history_id])
+
     unit_id = rows[0]["unit_id"]
     compliance_id = rows[0]["compliance_id"]
     due_date = rows[0]["due_date"]
@@ -2599,7 +2594,7 @@ def reassign_compliance(db, request, session_user):
             update_assign_val.append(1)
             if assignee not in users_list:
                 users_list.append(assignee)
-        
+
         if concurrence is not None and concurrence != o_concurrence:
             update_assign_column.append("concurrence_person")
             update_assign_val.append(concurrence)
@@ -2607,7 +2602,7 @@ def reassign_compliance(db, request, session_user):
             update_assign_val.append(1)
             if concurrence not in users_list:
                 users_list.append(concurrence)
-        
+
         if approval is not None and approval != o_approval:
             update_assign_column.append("approval_person")
             update_assign_val.append(approval)
@@ -2615,7 +2610,7 @@ def reassign_compliance(db, request, session_user):
             update_assign_val.append(1)
             if approval not in users_list:
                 users_list.append(approval)
-            
+
         if o_assignee not in users_list:
             users_list.append(o_assignee)
 
