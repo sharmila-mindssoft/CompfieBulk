@@ -295,14 +295,14 @@ def process_legal_entity_wise_report(db, request):
 
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, " + \
         "t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
         "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-        "as assignee_name, t1.completed_by, t2.activity_on, t1.documents, t1.document_size, " + \
+        "as assignee_name, t1.completed_by, t2.activity_on, t2.action, t1.documents, t1.document_size, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
@@ -347,27 +347,28 @@ def process_legal_entity_wise_report(db, request):
     print task_status
     if task_status == "Complied":
         where_clause = where_clause + \
-            "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
         where_clause = where_clause + \
-            "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
@@ -440,23 +441,26 @@ def process_legal_entity_wise_report(db, request):
             condition_val.append(user_id)
 
     if task_status == "Complied":
-        where_clause = where_clause + "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
-        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         where_clause = where_clause + " and t1.due_date < " + \
@@ -473,7 +477,7 @@ def process_legal_entity_wise_report(db, request):
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s "
+    where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id;"
     condition_val.extend([legal_entity_id])
     query = select_qry + from_clause + where_clause
     count = db.select_all(query, condition_val)
@@ -497,29 +501,25 @@ def process_legal_entity_wise_report(db, request):
             unit_name = row["unit_name"]
 
         # Find task status
-        if (row["approve_status"] == 1):
-            if (str(row["due_date"]) > str(row["completion_date"])):
+        if(row["current_status"] == 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "Complied"
             else:
                 task_status = "Delayed Compliance"
-        else:
-            if (str(row["due_date"]) > str(datetime.datetime.now())):
+        elif (row["current_status"] < 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
             else:
                 task_status = "Not Complied"
+        elif (row["completion_date"] is None and row["current_status"] == 0):
+            task_status = "In Progress"
 
         # Find Activity Status
         # print row["activity_date"]
-        if row["activity_on"] is None:
-            print row["approve_status"]
-            if row["approve_status"] == "0" or row["approve_status"] is None:
-                activity_status = "Pending"
-            elif row["approve_status"] == "1":
-                activity_status = "Approved"
-            elif row["approve_status"] == "2":
-                activity_status = "Rejected"
+        if row["action"] is None:
+            activity_status = "Pending"
         else:
-            activity_status = "Submitted"
+            activity_status = row["action"]
 
         document_name = row["documents"]
         compliance_task = row["compliance_task"]
@@ -599,14 +599,14 @@ def process_domain_wise_report(db, request):
         task_status = '%'
 
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
         "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-        "as assignee_name, t1.completed_by, t2.activity_on, t1.document_size, " + \
+        "as assignee_name, t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
@@ -651,27 +651,28 @@ def process_domain_wise_report(db, request):
     print task_status
     if task_status == "Complied":
         where_clause = where_clause + \
-            "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
         where_clause = where_clause + \
-            "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
@@ -744,23 +745,26 @@ def process_domain_wise_report(db, request):
             condition_val.append(user_id)
 
     if task_status == "Complied":
-        where_clause = where_clause + "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
-        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         where_clause = where_clause + " and t1.due_date < " + \
@@ -777,7 +781,7 @@ def process_domain_wise_report(db, request):
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s"
+    where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id;"
     condition_val.extend([legal_entity_id])
     query = select_qry + from_clause + where_clause
     count = db.select_all(query, condition_val)
@@ -800,31 +804,25 @@ def process_domain_wise_report(db, request):
         else:
             unit_name = row["unit_name"]
 
-
         # Find task status
-        if (row["approve_status"] == 1):
-            if (str(row["due_date"]) > str(row["completion_date"])):
+        if(row["current_status"] == 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "Complied"
             else:
                 task_status = "Delayed Compliance"
-        else:
-            if (str(row["due_date"]) > str(datetime.datetime.now())):
+        elif (row["current_status"] < 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
             else:
                 task_status = "Not Complied"
+        elif (row["completion_date"] is None and row["current_status"] == 0):
+            task_status = "In Progress"
 
         # Find Activity Status
-        # print row["activity_date"]
-        if row["activity_on"] is None:
-            print row["approve_status"]
-            if row["approve_status"] == "0" or row["approve_status"] is None:
-                activity_status = "Pending"
-            elif row["approve_status"] == "1":
-                activity_status = "Approved"
-            elif row["approve_status"] == "2":
-                activity_status = "Rejected"
+        if row["action"] is None:
+            activity_status = "Pending"
         else:
-            activity_status = "Submitted"
+            activity_status = row["action"]
 
         document_name = row["documents"]
         compliance_task = row["compliance_task"]
@@ -898,14 +896,14 @@ def process_unit_wise_report(db, request):
         task_status = '%'
 
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
         "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-        "as assignee_name, t1.completed_by, t2.activity_on, t1.document_size, " + \
+        "as assignee_name, t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
         "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
@@ -956,27 +954,28 @@ def process_unit_wise_report(db, request):
 
     if task_status == "Complied":
         where_clause = where_clause + \
-            "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
         where_clause = where_clause + \
-            "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
@@ -1050,23 +1049,26 @@ def process_unit_wise_report(db, request):
             condition_val.append(user_id)
 
     if task_status == "Complied":
-        where_clause = where_clause + "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
-        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         where_clause = where_clause + " and t1.due_date < " + \
@@ -1078,7 +1080,7 @@ def process_unit_wise_report(db, request):
         where_clause = where_clause + "and t1.compliance_id = %s "
         condition_val.append(compliance_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s"
+    where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s group by t1.compliance_history_id;"
     condition_val.extend([legal_entity_id, request.unit_id])
     query = select_qry + from_clause + where_clause
     count = db.select_all(query, condition_val)
@@ -1103,29 +1105,24 @@ def process_unit_wise_report(db, request):
             unit_name = row["unit_name"]
 
         # Find task status
-        if (row["approve_status"] == 1):
-            if (str(row["due_date"]) > str(row["completion_date"])):
+        if(row["current_status"] == 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "Complied"
             else:
                 task_status = "Delayed Compliance"
-        else:
-            if (str(row["due_date"]) > str(datetime.datetime.now())):
+        elif (row["current_status"] < 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
             else:
                 task_status = "Not Complied"
+        elif (row["completion_date"] is None and row["current_status"] == 0):
+            task_status = "In Progress"
 
         # Find Activity Status
-        print row["activity_on"]
-        if row["activity_on"] is None:
-            print row["approve_status"]
-            if row["approve_status"] == "0" or row["approve_status"] is None:
-                activity_status = "Pending"
-            elif row["approve_status"] == "1":
-                activity_status = "Approved"
-            elif row["approve_status"] == "2":
-                activity_status = "Rejected"
+        if row["action"] is None:
+            activity_status = "Pending"
         else:
-            activity_status = "Submitted"
+            activity_status = row["action"]
 
         document_name = row["documents"]
         compliance_task = row["compliance_task"]
@@ -1314,14 +1311,14 @@ def process_service_provider_wise_report(db, request):
         task_status = '%'
 
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
         "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-        "as assignee_name, t1.completed_by, t2.activity_on, t1.document_size, " + \
+        "as assignee_name, t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
     from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
@@ -1338,27 +1335,28 @@ def process_service_provider_wise_report(db, request):
 
     if task_status == "Complied":
         where_clause = where_clause + \
-            "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
         where_clause = where_clause + \
-            "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
@@ -1411,23 +1409,26 @@ def process_service_provider_wise_report(db, request):
         condition_val.append(stat_map)
 
     if task_status == "Complied":
-        where_clause = where_clause + "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
-        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         where_clause = where_clause + " and t1.due_date < " + \
@@ -1450,7 +1451,7 @@ def process_service_provider_wise_report(db, request):
         condition_val.append(user_id)
 
     where_clause = where_clause + "and t4.service_provider_id = %s and t1.legal_entity_id = %s " + \
-        "order by t1.due_date, t2.compliance_activity_id desc;"
+        "group by t1.compliance_history_id;"
     condition_val.extend([sp_id, legal_entity_id])
     query = select_qry + from_clause + where_clause
     count = db.select_all(query, condition_val)
@@ -1475,29 +1476,24 @@ def process_service_provider_wise_report(db, request):
             unit_name = row["unit_name"]
 
         # Find task status
-        if (row["approve_status"] == 1):
-            if (str(row["due_date"]) > str(row["completion_date"])):
+        if(row["current_status"] == 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "Complied"
             else:
                 task_status = "Delayed Compliance"
-        else:
-            if (str(row["due_date"]) > str(datetime.datetime.now())):
+        elif (row["current_status"] < 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
             else:
                 task_status = "Not Complied"
+        elif (row["completion_date"] is None and row["current_status"] == 0):
+            task_status = "In Progress"
 
         # Find Activity Status
-        print row["activity_on"]
-        if row["activity_on"] is None:
-            print row["approve_status"]
-            if row["approve_status"] == "0" or row["approve_status"] is None:
-                activity_status = "Pending"
-            elif row["approve_status"] == "1":
-                activity_status = "Approved"
-            elif row["approve_status"] == "2":
-                activity_status = "Rejected"
+        if row["action"] is None:
+            activity_status = "Pending"
         else:
-            activity_status = "Submitted"
+            activity_status = row["action"]
 
         document_name = row["documents"]
         compliance_task = row["compliance_task"]
@@ -1678,14 +1674,14 @@ def process_user_wise_report(db, request):
         task_status = '%'
 
     select_qry = "select t1.compliance_history_id, t2.compliance_activity_id, t3.country_id, t1.legal_entity_id, t3.domain_id, t1.unit_id, t1.compliance_id, t1.due_date,  " + \
-        "t1.documents, t1.completed_on, t1.completion_date, t1.approve_status, " + \
+        "t1.documents, t1.completed_on, t1.completion_date, t1.current_status, " + \
         "(select concat(unit_code,'-',unit_name,',',address,',',postal_code)" + \
         "from tbl_units where unit_id = t1.unit_id) as unit_name, t3.statutory_mapping, " + \
         "(select geography_name from tbl_units where unit_id = t1.unit_id) as geo_name, " + \
         "t3.compliance_task, (select frequency from tbl_compliance_frequency where " + \
         "frequency_id = t3.frequency_id) as frequency_name, (select " + \
         "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.completed_by) " + \
-        "as assignee_name, t1.completed_by, t2.activity_on, t1.document_size, " + \
+        "as assignee_name, t1.completed_by, t2.activity_on, t2.action, t1.document_size, " + \
         "(select domain_name from tbl_domains where domain_id = t3.domain_id) as domain_name, " + \
         "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
         "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size "
@@ -1726,27 +1722,28 @@ def process_user_wise_report(db, request):
 
     if task_status == "Complied":
         where_clause = where_clause + \
-            "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
         where_clause = where_clause + \
-            "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
@@ -1819,23 +1816,26 @@ def process_user_wise_report(db, request):
         condition_val.append(user_id)
 
     if task_status == "Complied":
-        where_clause = where_clause + "and t1.due_date > t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date >= t1.completion_date and t1.current_status = 3 "
     elif task_status == "Delayed Compliance":
-        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+        where_clause = where_clause + \
+            "and t1.due_date < t1.completion_date and t1.current_status = 3 "
     elif task_status == "Inprogress":
-        where_clause = where_clause + "and t1.due_date > curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and ((t1.completion_date is NULL and IFNULL(t1.current_status,0) = 0) or " + \
+            "(t1.due_date >= t1.completion_date and t1.current_status < 3)) "
     elif task_status == "Not Complied":
-        where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status = 0 "
+        where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
     if due_from is not None and due_to is not None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         where_clause = where_clause + " and t1.due_date >= " + \
             " date(%s)  and t1.due_date <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         where_clause = where_clause + " and t1.due_date < " + \
@@ -1852,7 +1852,7 @@ def process_user_wise_report(db, request):
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s"
+    where_clause = where_clause + "and t1.legal_entity_id = %s group by t1.compliance_history_id;"
     condition_val.extend([legal_entity_id])
     query = select_qry + from_clause + where_clause
     print "qry"
@@ -1879,29 +1879,24 @@ def process_user_wise_report(db, request):
             unit_name = row["unit_name"]
 
         # Find task status
-        if (row["approve_status"] == 1):
-            if (str(row["due_date"]) > str(row["completion_date"])):
+        if(row["current_status"] == 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "Complied"
             else:
                 task_status = "Delayed Compliance"
-        else:
-            if (str(row["due_date"]) > str(datetime.datetime.now())):
+        elif (row["current_status"] < 3):
+            if (str(row["due_date"]) >= str(row["completion_date"])):
                 task_status = "In Progress"
             else:
                 task_status = "Not Complied"
+        elif (row["completion_date"] is None and row["current_status"] == 0):
+            task_status = "In Progress"
 
         # Find Activity Status
-        print row["activity_on"]
-        if row["activity_on"] is None:
-            print row["approve_status"]
-            if row["approve_status"] == "0" or row["approve_status"] is None:
-                activity_status = "Pending"
-            elif row["approve_status"] == "1":
-                activity_status = "Approved"
-            elif row["approve_status"] == "2":
-                activity_status = "Rejected"
+        if row["action"] is None:
+            activity_status = "Pending"
         else:
-            activity_status = "Submitted"
+            activity_status = row["action"]
 
         document_name = row["documents"]
         compliance_task = row["compliance_task"]
@@ -2122,6 +2117,7 @@ def process_unit_list_report(db, request):
     print "qry"
     print query
     result = db.select_all(query, condition_val)
+    print result
 
     where_clause = None
     condition_val = []
@@ -2229,7 +2225,7 @@ def process_unit_list_report(db, request):
         else:
             unit_status = "Closed"
         d_i_names = []
-        if row["closed_on"] is None:
+        if row["closed_on"] is not None:
             closed_date = datetime_to_string(row["closed_on"])
         else:
             closed_date = None
@@ -2301,13 +2297,13 @@ def process_statutory_notification_list_report(db, request):
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t3.created_on >= " + \
             " date(%s)  and t3.created_on <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY)  "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
         where_clause = where_clause + " and t3.created_on >= " + \
             " date(%s)  and t3.created_on <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         due_to = string_to_datetime(due_to).date()
@@ -2341,12 +2337,12 @@ def process_statutory_notification_list_report(db, request):
     if due_from is not None and due_to is not None:
         where_clause = where_clause + " and t3.created_on >= " + \
             " date(%s)  and t3.created_on <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         where_clause = where_clause + " and t3.created_on >= " + \
             " date(%s)  and t3.created_on <= " + \
-            " date(curdate()) "
+            " DATE_ADD(date(curdate()), INTERVAL 1 DAY) "
         condition_val.append(due_from)
     elif due_from is None and due_to is not None:
         where_clause = where_clause + " and t3.created_on < " + \
@@ -2410,10 +2406,11 @@ def process_audit_trail_report(db, request):
         condition_val.append(form_id)
     if due_from is not None and due_to is not None:
         due_from = string_to_datetime(due_from).date()
+        print due_from
         due_to = string_to_datetime(due_to).date()
         where_clause = where_clause + " and t1.created_on >= " + \
             " date(%s)  and t1.created_on <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         due_from = string_to_datetime(due_from).date()
@@ -2472,7 +2469,7 @@ def process_audit_trail_report(db, request):
     if due_from is not None and due_to is not None:
         where_clause = where_clause + " and t1.created_on >= " + \
             " date(%s)  and t1.created_on <= " + \
-            " date(%s) "
+            " DATE_ADD(%s, INTERVAL 1 DAY) "
         condition_val.extend([due_from, due_to])
     elif due_from is not None and due_to is None:
         where_clause = where_clause + " and t1.created_on >= " + \
@@ -2686,7 +2683,7 @@ def process_risk_report(db, request):
             "t1.completed_by) as assignee_name, t3.penal_consequences, t1.documents, t1.document_size, " + \
             "(select logo from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo, " + \
             "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size, " + \
-            "t1.completion_date, t1.due_date, t1.approve_status, t5.compliance_opted_status, t1.start_date, " + \
+            "t1.completion_date, t1.due_date, t1.current_status, t5.compliance_opted_status, t1.start_date, " + \
             "t1.due_date, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
             "t1.concurred_by) as concurrer_name, (select concat(employee_code,'-',employee_name) from tbl_users " + \
             "where user_id = t1.approved_by) as approver_name, t1.remarks, t1.documents, t1.completed_on as " + \
@@ -2717,10 +2714,9 @@ def process_risk_report(db, request):
             where_clause = where_clause + "and t5.compliance_opted_status = 0 "
         elif task_status == "Delayed Compliance":
             where_clause = where_clause + \
-                "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+                "and t1.due_date < t1.completion_date and t1.current_status = 3 "
         elif task_status == "Not Complied":
-            where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status <> 0  " + \
-                "and t1.approve_status <> 1 "
+            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
         compliance_id = request.compliance_id
         if int(compliance_id) > 0:
@@ -2764,10 +2760,9 @@ def process_risk_report(db, request):
             where_clause = where_clause + "and t5.compliance_opted_status = 0 "
         elif task_status == "Delayed Compliance":
             where_clause = where_clause + \
-                "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+                "and t1.due_date < t1.completion_date and t1.current_status = 3 "
         elif task_status == "Not Complied":
-            where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status <> 0  " + \
-                "and t1.approve_status <> 1 "
+            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
         compliance_id = request.compliance_id
         if int(compliance_id) > 0:
@@ -2808,13 +2803,13 @@ def process_risk_report(db, request):
                     unit_name = row["unit_name"]
 
                 # Find task status
-                if row["compliance_opted_status"] == 0:
+                if row["compliance_opted_status"] == 0 and row["current_status"] != 3:
                     task_status = "Not Opted"
-                elif (str(row["due_date"]) < str(datetime.datetime.now())) and row["approve_status"] != 0:
+                elif (str(row["due_date"]) < str(row["completion_date"])) and row["current_status"] < 3:
                     task_status = "Not Complied"
-                elif (str(row["due_date"]) < str(row["completion_date"])) and row["approve_status"] != 1 and row["approve_status"] != 0:
+                elif (str(row["due_date"]) < str(row["completion_date"])) and row["current_status"] == 3:
                     task_status = "Delayed Compliance"
-                elif row["compliance_opted_status"] == 0 and row["approve_status"] == 3:
+                elif row["compliance_opted_status"] == 0 and row["current_status"] == 3:
                     task_status = "Not Opted - Rejected"
 
                 document_name = row["documents"]
@@ -3047,10 +3042,9 @@ def process_risk_report(db, request):
             where_clause = where_clause + "and t5.compliance_opted_status = 0 "
         elif task_status == "Delayed Compliance":
             where_clause = where_clause + \
-                "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+                "and t1.due_date < t1.completion_date and t1.current_status = 3 "
         elif task_status == "Not Complied":
-            where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status <> 0  " + \
-                "and t1.approve_status <> 1 "
+            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
         compliance_id = request.compliance_id
         if int(compliance_id) > 0:
@@ -3094,10 +3088,9 @@ def process_risk_report(db, request):
             where_clause = where_clause + "and t5.compliance_opted_status = 0 "
         elif task_status == "Delayed Compliance":
             where_clause = where_clause + \
-                "and t1.due_date < t1.completion_date and t1.approve_status = 1 "
+                "and t1.due_date < t1.completion_date and t1.current_status = 3 "
         elif task_status == "Not Complied":
-            where_clause = where_clause + "and t1.due_date < curdate() and t1.approve_status <> 0  " + \
-                "and t1.approve_status <> 1 "
+            where_clause = where_clause + "and t1.due_date < t1.completion_date and t1.current_status < 3 "
 
         compliance_id = request.compliance_id
         if int(compliance_id) > 0:
@@ -3139,13 +3132,13 @@ def process_risk_report(db, request):
                     unit_name = row["unit_name"]
 
                 # Find task status
-                if row["compliance_opted_status"] == 0:
+                if row["compliance_opted_status"] == 0 and row["current_status"] != 3:
                     task_status = "Not Opted"
-                elif (str(row["due_date"]) < str(datetime.datetime.now())) and row["approve_status"] != 0:
+                elif (str(row["due_date"]) < str(row["completion_date"])) and row["current_status"] < 3:
                     task_status = "Not Complied"
-                elif (str(row["due_date"]) < str(row["completion_date"])) and row["approve_status"] != 1 and row["approve_status"] != 0:
+                elif (str(row["due_date"]) < str(row["completion_date"])) and row["current_status"] == 3:
                     task_status = "Delayed Compliance"
-                elif row["compliance_opted_status"] == 0 and row["approve_status"] == 3:
+                elif row["compliance_opted_status"] == 0 and row["current_status"] == 3:
                     task_status = "Not Opted - Rejected"
 
                 document_name = row["documents"]
