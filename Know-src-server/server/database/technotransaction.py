@@ -4,7 +4,7 @@ from server.exceptionmessage import process_error
 from server.database.tables import *
 from server.common import (
     get_date_time, get_current_date,
-    addHours, new_uuid
+    addHours, new_uuid, string_to_datetime
 )
 
 from server.database.general import get_short_name
