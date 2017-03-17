@@ -82,6 +82,7 @@ $('#pagination').click(function() {
 
 function loadComplianceApprovalDetails(data) {
     var unitName = "";
+    alert(data.toSource());
     $.each(data, function(key, value) {
         complianceList = value.approval_compliances;
         //Full Width list append ---------------------------------------------------------------
@@ -132,7 +133,6 @@ function loadComplianceApprovalDetails(data) {
         });
     });
     $('[data-toggle="tooltip"]').tooltip();
-    // if(totalRecord == 0){
     if (data.length == 0) {
         var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
         var noclone = norecordtableRow.clone();
@@ -163,6 +163,7 @@ function showSideBar(idval, data) {
     var complianceFrequency = data.compliance_task_frequency;
     $('.validityAndDueDate', cloneValSide).hide();
     $('.sidebar-unit span', cloneValSide).html(data.unit_name);
+    $('.sidebar-unit i', cloneValSide).attr('title', data.unit_address);
     // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
     $('.sidebar-compliance-task span', cloneValSide).html(data.compliance_name);
     $('.sidebar-compliance-task i', cloneValSide).attr('title', data.description);

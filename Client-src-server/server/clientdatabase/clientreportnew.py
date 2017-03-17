@@ -146,7 +146,7 @@ def report_status_report_consolidated(
     from_date = string_to_datetime(from_date)
     to_date = string_to_datetime(to_date)
     query = "select t01.num, acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
-            "(select concat(unit_code,' - ',unit_name,' - ',address) from tbl_units where unit_id = ch.unit_id) as unit,ch.compliance_id, " + \
+            "(select concat(unit_code,' - ',unit_name,' - ',address,' - ', postal_code) from tbl_units where unit_id = ch.unit_id) as unit,ch.compliance_id, " + \
             "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
             "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
             "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
