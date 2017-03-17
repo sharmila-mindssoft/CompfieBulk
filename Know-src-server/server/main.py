@@ -395,7 +395,7 @@ STATIC_PATHS = [
     ("/knowledge/clientlogo/<path:filename>", LOGO_PATH),
     ("/clientlogo/<path:filename>", LOGO_PATH),
     ("/knowledge/downloadcsv/<path:filename>", CSV_PATH),
-    ("/knowledge/compliance_format/<path:filename>", DOC_PATH)
+    ("/knowledge/compliance_format/<path:filename>", DOC_PATH),
     ("/compliance_format/<path:filename>", DOC_PATH)
 
 ]

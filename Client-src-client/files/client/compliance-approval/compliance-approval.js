@@ -82,7 +82,7 @@ $('#pagination').click(function() {
 
 function loadComplianceApprovalDetails(data) {
     var unitName = "";
-    alert(data.toSource());
+
     $.each(data, function(key, value) {
         complianceList = value.approval_compliances;
         //Full Width list append ---------------------------------------------------------------
