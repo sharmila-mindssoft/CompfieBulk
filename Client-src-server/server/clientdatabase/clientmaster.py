@@ -20,6 +20,7 @@ from server.clientdatabase.savetoknowledge import *
 from server.exceptionmessage import client_process_error
 from server.constants import REGISTRATION_EXPIRY, KNOWLEDGE_URL, CLIENT_URL
 
+
 # email = EmailHandler()
 __all__ = [
     "get_service_provider_details_list",
