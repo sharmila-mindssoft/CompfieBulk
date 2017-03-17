@@ -150,7 +150,6 @@ function initializeNavBar() {
         });
     });
 
-
     $('ul', settingsMenuObject).append(item);
 
     var notification_type = "";
@@ -265,6 +264,30 @@ function initializeNavBar() {
                     }
                 });
             });
+        }
+    }
+    
+    if(window.localStorage.statutory_count) {
+        if(parseInt(window.localStorage.statutory_count) > 0) {
+            $('.notification-menu').find('.noti-dot').show();
+        }
+    }
+
+    if(window.localStorage.reminder_count) {
+        if(parseInt(window.localStorage.reminder_count) > 0) {
+            $('.reminder-menu').find('.noti-dot').show();
+        }
+    }
+
+    if(window.localStorage.escalation_count) {
+        if(parseInt(window.localStorage.escalation_count) > 0) {
+            $('.escalation-menu').find('.noti-dot').show();
+        }
+    }
+
+    if(window.localStorage.messages_count) {
+        if(parseInt(window.localStorage.messages_count) > 0) {
+            $('.message-menu').find('.noti-dot').show();
         }
     }
 }

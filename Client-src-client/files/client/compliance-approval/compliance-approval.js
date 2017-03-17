@@ -70,6 +70,7 @@ $('#pagination').click(function() {
         displayMessage(error);
         hideLoader();
     }
+
     client_mirror.getComplianceApprovalList(parseInt(LegalEntityId.val()), sno, function(error, response) {
         if (error == null) {
             onSuccess(response);
@@ -80,17 +81,27 @@ $('#pagination').click(function() {
 });
 
 function loadComplianceApprovalDetails(data) {
+    var unitName = "";
+    alert(data.toSource());
     $.each(data, function(key, value) {
-        if (lastAssignee != value.assignee_name) {
-            var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
-            var clone = tableRowHeading.clone();
-            $('.heading', clone).html(value.assignee_name);
-            $('.tbody-compliance-approval-list').append(clone);
-            lastAssignee = value.assignee_name;
-        }
         complianceList = value.approval_compliances;
         //Full Width list append ---------------------------------------------------------------
         $.each(complianceList, function(k, val) {
+            if (unitName != val.unit_name) {
+                var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
+                $('.unit-name', cloneunit).html(val.unit_name);
+                $('.tbody-compliance-approval-list').append(cloneunit);
+                unitName = val.unit_name;
+            }
+
+            if (lastAssignee != value.assignee_name) {
+                var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
+                var clone = tableRowHeading.clone();
+                $('.user-name', clone).html(value.assignee_name);
+                $('.tbody-compliance-approval-list').append(clone);
+                lastAssignee = value.assignee_name;
+            }
+
             var tableRowvalues = $('#templates .table-compliance-approval-list .table-row-list');
             var clonelist = tableRowvalues.clone();
             sno = sno + 1;
@@ -121,7 +132,7 @@ function loadComplianceApprovalDetails(data) {
             $('.full-width-list .tbody-compliance-approval-list').append(clonelist);
         });
     });
-    // if(totalRecord == 0){
+    $('[data-toggle="tooltip"]').tooltip();
     if (data.length == 0) {
         var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
         var noclone = norecordtableRow.clone();
@@ -152,16 +163,17 @@ function showSideBar(idval, data) {
     var complianceFrequency = data.compliance_task_frequency;
     $('.validityAndDueDate', cloneValSide).hide();
     $('.sidebar-unit span', cloneValSide).html(data.unit_name);
+    $('.sidebar-unit i', cloneValSide).attr('title', data.unit_address);
     // $('.sidebar-unit abbr', cloneValSide).attr("title", data['address']);
     $('.sidebar-compliance-task span', cloneValSide).html(data.compliance_name);
     $('.sidebar-compliance-task i', cloneValSide).attr('title', data.description);
     $('.sidebar-compliance-frequency', cloneValSide).html(complianceFrequency);
     fileslist = data.file_names;
-    documentslist = data.documents;
+    documentslist = data.uploaded_documents;
     if (fileslist != null) {
         for (var i = 0; i < fileslist.length; i++) {
             if (fileslist[i] != '') {
-                $('.sidebar-uploaded-documents', cloneValSide).append('<span><abbr class=\'sidebardocview\'>' + fileslist[i] + '</abbr><a href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\' class=\'download-file\' ><img src=\'/images/download.png\' style=\'width:16px;height:16px\' title=\'Download\' /></a><a href=\'' + documentslist[i] + '\' target=\'_new\' class=\'view-file\'> <img src=\'/images/view.png\' style=\'width:16px;height:16px;\' title=\'View\' /></a></span>');
+                $('.sidebar-uploaded-documents', cloneValSide).append('<span><abbr class=\'sidebardocview\'>' + fileslist[i] + '</abbr><a href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\' class=\'download-file\' ><i class=\'fa fa-search fa-1-2x c-pointer pull-right\' title=\'View\' ></i> </a><a href=\'' + documentslist[i] + '\' target=\'_new\' class=\'view-file\'> <i class=\'fa fa-download fa-1-2x c-pointer pull-right\' style=\'margin-right:10px;\' title=\'Download\'></i> </a></span>');
                 $('.tr-sidebar-uploaded-date', cloneValSide).show();
             }
         }

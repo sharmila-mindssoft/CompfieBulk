@@ -1597,6 +1597,9 @@ def get_compliance_approval_list(
         " (SELECT concat(unit_code, '-', tu.unit_name) " + \
         " FROM tbl_units tu " + \
         " where tch.unit_id = tu.unit_id) as unit_name, " + \
+        " (SELECT concat(tu.address, '-', tu.postal_code) " + \
+        " FROM tbl_units tu " + \
+        " where tch.unit_id = tu.unit_id) as unit_address, " + \
         " completed_by, " + \
         " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) " + \
         " FROM tbl_users tu " + \
@@ -1632,7 +1635,7 @@ def get_compliance_approval_list(
         "ageing", "compliance_task", "compliance_description",
         "frequency_id", "frequency", "document_name",
         "concurrence_status", "statutory_dates", "validity_date",
-        "approved_by", "unit_name", "completed_by", "employee_name",
+        "approved_by", "unit_name", "unit_address", "completed_by", "employee_name",
         "domain_name", "duration_type_id"
     ]
     # result = convert_to_dict(rows, columns)
@@ -1713,6 +1716,7 @@ def get_compliance_approval_list(
             row["validity_date"] is [None, "None", ""]
         ) else datetime_to_string(row["validity_date"])
         unit_name = row["unit_name"]
+        unit_address = row["unit_address"]
         date_list = []
         for date in statutory_dates:
             s_date = clientcore.StatutoryDate(
@@ -1761,7 +1765,7 @@ def get_compliance_approval_list(
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, remarks, action, date_list,
-                validity_date, unit_name
+                validity_date, unit_name, unit_address
             )
         )
     approval_compliances = []

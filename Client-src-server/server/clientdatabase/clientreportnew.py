@@ -78,7 +78,6 @@ def report_reassigned_history(
         compliance_id, usr_id, usr_id, usr_id, usr_id,
         usr_id, usr_id, from_date, to_date
     ])
-    # print rows
 
     return return_reassinged_history_report(
         db, rows, country_id, legal_entity_id
@@ -146,7 +145,7 @@ def report_status_report_consolidated(
     from_date = string_to_datetime(from_date)
     to_date = string_to_datetime(to_date)
     query = "select t01.num, acl.compliance_activity_id,ch.compliance_history_id, ch.legal_entity_id,ch.unit_id, " + \
-            "(select concat(unit_code,' - ',unit_name,' - ',address) from tbl_units where unit_id = ch.unit_id) as unit,ch.compliance_id, " + \
+            "(select concat(unit_code,' - ',unit_name,' - ',address,' - ', postal_code) from tbl_units where unit_id = ch.unit_id) as unit,ch.compliance_id, " + \
             "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
             "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
             "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
@@ -193,14 +192,12 @@ def report_status_report_consolidated(
             "WHEN (ch.approved_on IS NULL and ch.approve_status IS NULL) THEN 'In Progress' " + \
             "ELSE 'In Progress' END) = %s,1) AND t01.num between %s and %s " + \
             "order by t01.num, ch.compliance_history_id asc, acl.compliance_activity_id desc"
-    # print query;
 
     rows = db.select_all(query, [
         # usr_id, f_count, t_count,
         country_id, legal_entity_id, domain_id, unit_id, unit_id, act, act, compliance_id, compliance_id,
         frequency_id, frequency_id, user_type_id, usr_id, usr_id, usr_id, usr_id, from_date, to_date, status_name, status_name, f_count, t_count
     ])
-    # print rows
 
     return return_status_report_consolidated(
         db, rows, country_id, legal_entity_id
@@ -334,9 +331,6 @@ def report_statutory_settings_unit_Wise(
         compliance_id, compliance_id, f_date, t_date, status_name, status_name, f_count, t_count
     ])
 
-    # print query;
-    # print rows
-
     return return_statutory_settings_unit_Wise(
         db, rows, country_id, legal_entity_id
     )
@@ -437,7 +431,6 @@ def report_domain_score_card(
 
 
     domain_wise_count = db.select_all(query, [country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
-    # print domain_wise_count
 
     def domain_wise_unit_count(country_id, bg_id, legal_entity_id, div_id, cat_id, domain_id):
         query_new = "select cc.unit_id,(select domain_name from tbl_domains where domain_id = cc.domain_id) as domain_name, " + \
@@ -459,7 +452,6 @@ def report_domain_score_card(
                     "group by cc.domain_id,cc.unit_id"
 
         rows = db.select_all(query_new, [country_id, bg_id, bg_id, legal_entity_id, div_id, div_id, cat_id, cat_id, domain_id, domain_id])
-        # print rows
         units = []
         for r in rows:
             unit_id = int(r["unit_id"])
@@ -507,7 +499,6 @@ def report_le_wise_score_card(
 
     domain_wise_count = db.select_all(
         query, [legal_entity_id, domain_id])
-    # print domain_wise_count
 
     def inprogress_unit_wise_count(legal_entity_id, domain_id):
         query = "select ch.unit_id,concat(unt.unit_code,' - ',unt.unit_name) as unitname, " + \
@@ -524,7 +515,6 @@ def report_le_wise_score_card(
                 "group by ch.unit_id"
         rows = db.select_all(query, [legal_entity_id, domain_id])
 
-        # print rows
         inprogress_unit = []
         for r in rows:
             unit_id = int(r["unit_id"])
@@ -552,7 +542,6 @@ def report_le_wise_score_card(
                 "group by usr.user_id"
         rows = db.select_all(query, [legal_entity_id, domain_id])
 
-        # print rows
         inprogress_unit = []
         for r in rows:
             user_id = int(r["user_id"])
@@ -578,7 +567,6 @@ def report_le_wise_score_card(
                 "group by ch.unit_id"
         rows = db.select_all(query, [legal_entity_id, domain_id])
 
-        # print rows
         inprogress_unit = []
         for r in rows:
             unit_id = int(r["unit_id"])
@@ -604,7 +592,6 @@ def report_le_wise_score_card(
 
         rows = db.select_all(query, [legal_entity_id, domain_id])
 
-        # print rows
         inprogress_unit = []
         for r in rows:
             user_id = int(r["user_id"])
@@ -631,7 +618,6 @@ def report_le_wise_score_card(
                 "group by ch.unit_id"
         rows = db.select_all(query, [legal_entity_id, domain_id])
 
-        # print rows
         inprogress_unit = []
         for r in rows:
             unit_id = int(r["unit_id"])
@@ -660,7 +646,6 @@ def report_le_wise_score_card(
 
         rows = db.select_all(query, [legal_entity_id, domain_id])
 
-        # print rows
         inprogress_unit = []
         for r in rows:
             unit_id = int(r["user_id"])
@@ -726,7 +711,6 @@ def report_work_flow_score_card(
             "where ch.legal_entity_id = %s and com.domain_id = %s " + \
             "and IF((%s > 3 OR %s = 2),ch.unit_id = uud.unit_id and uud.domain_id = com.domain_id,1)"
     domain_wise_count = db.select_all(query, [session_user, domain_id, legal_entity_id, domain_id, session_category, session_category])
-    # print domain_wise_count
 
     def completed_task_count(country_id, legal_entity_id, domain_id, session_user):
         query = "select ch.unit_id,concat(unit_code,' - ',unit_name) as unit_name, " + \
@@ -775,7 +759,6 @@ def report_work_flow_score_card(
                 "ch.unit_id = uud.unit_id and uud.domain_id = com.domain_id,1) group by ch.unit_id"
         rows = db.select_all(query, [session_user, domain_id, legal_entity_id, domain_id, session_category, session_category])
 
-        # print rows
         inprogress_unit = []
         for r in rows:
             unit_id = int(r["unit_id"])
@@ -807,7 +790,6 @@ def report_work_flow_score_card(
                 "ch.unit_id = uud.unit_id and uud.domain_id = com.domain_id,1) group by ch.unit_id"
         rows = db.select_all(query, [session_user, domain_id, legal_entity_id, domain_id, session_category, session_category])
 
-        # print rows
         inprogress_unit = []
         for r in rows:
             unit_id = int(r["unit_id"])
