@@ -406,7 +406,7 @@ def process_approve_compliance(db, request, session_user):
 
     elif status == "Rectify Approval":
         reject_compliance_approval(
-            db, compliance_history_id, remarks,  next_due_date
+            db, compliance_history_id, remarks,  next_due_date, session_user
         )
 
     elif status == "Concur":
