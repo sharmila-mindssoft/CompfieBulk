@@ -477,10 +477,10 @@ class SaveClientUser(Request):
         }
 # --------------------------------------------------------------------------------------------------
 class UpdateClientUser(Request):
-    def __init__(self, user_id, user_group_id, 
+    def __init__(self, user_id, user_group_id,
         email_id, employee_name, employee_code, contact_no, mobile_no, user_level, seating_unit_id,is_service_provider, service_provider_id, user_domain_ids, user_unit_ids , user_entity_ids
         ):
-        self.user_id = user_id        
+        self.user_id = user_id
         self.user_group_id = user_group_id
         self.email_id = email_id
         self.employee_name = employee_name
@@ -500,7 +500,7 @@ class UpdateClientUser(Request):
         data = parse_dictionary(data, ["u_id", "u_g_id", "email_id", "emp_name", "emp_code",
         "cont_no", "mob_no", "u_level", "s_unit", "is_sp", "sp_id", "user_domain_ids", "user_unit_ids", "user_entity_ids"])
 
-        user_id = data.get("u_id")        
+        user_id = data.get("u_id")
         user_group_id = data.get("u_g_id")
         email_id = data.get("email_id")
         employee_name = data.get("emp_name")
@@ -522,7 +522,7 @@ class UpdateClientUser(Request):
 
     def to_inner_structure(self):
         return {
-            "u_id": self.user_id,            
+            "u_id": self.user_id,
             "user_group_id" : self.user_group_id,
             "email_id" : self.email_id,
             "employee_name" : self.employee_name,

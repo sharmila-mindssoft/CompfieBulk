@@ -96,7 +96,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
         }
     });
 
-    // ===================================================================================    
+    // ===================================================================================
     // Add Button Click
     userManagementPage.prototype.showAddScreen = function() {
         t_this = this;
