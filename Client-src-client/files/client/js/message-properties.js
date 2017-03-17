@@ -415,7 +415,6 @@ var message = {
   'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
   'units_already_assigned': 'Some of the Units are already assigned'
 
->>>>>>> usha/phase2
 };
 
 function clearMessage() {
