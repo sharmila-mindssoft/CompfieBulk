@@ -15,6 +15,12 @@
   border-radius: 2px;
   padding: 5px 12px;
 }
+
+body.fixed-left .side-menu.left {
+  /*background: #2196F3;*/
+  background: #47A1EF;
+}
+
 .btn-group-lg > .btn,
 .btn-lg {
   padding: 10px 16px !important;
