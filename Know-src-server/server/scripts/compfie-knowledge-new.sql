@@ -1116,3 +1116,10 @@ CREATE TABLE `tbl_client_forms` (
   `form_order` int(11) NOT NULL,
   PRIMARY KEY (`form_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+DROP TABLE IF EXISTS `tbl_client_user_category`;
+CREATE TABLE `tbl_client_user_category` (
+  `user_category_id` int(11) NOT NULL,
+  `user_category_name` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`user_category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

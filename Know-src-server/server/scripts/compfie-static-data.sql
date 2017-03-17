@@ -229,3 +229,10 @@ INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_or
 INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(37, 4, 'Statutory Notifications', "/statutory-notifications", 37, null);
 INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(38, 4, 'Escalations', "/escalations", 38, null);
 INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(39, 4, 'Messages', "/messages", 39, null);
+
+INSERT INTO tbl_client_user_category VALUES(1, "Group Admin");
+INSERT INTO tbl_client_user_category VALUES(2, "View Only");
+INSERT INTO tbl_client_user_category VALUES(3, "Legal Entity Admin");
+INSERT INTO tbl_client_user_category VALUES(4, "Domain Admin");
+INSERT INTO tbl_client_user_category VALUES(5, "Client Executive");
+INSERT INTO tbl_client_user_category VALUES(6, "Service Provider");
