@@ -92,3 +92,11 @@ def parse_structure_VectorType_RecordType_protocol_IPInfo(data):
     for item in data:
         lst.append(parse_structure_RecordType_protocol_IPInfo(item))
     return lst
+
+def parse_structure_MapType_CustomeText_VectorType_RecordType_protocol_IPInfo(data):
+    map = {}
+    for key , value in data.iteritems() :
+        val = parse_structure_VectorType_RecordType_protocol_IPInfo(value)
+        map[key] = val
+
+    return map

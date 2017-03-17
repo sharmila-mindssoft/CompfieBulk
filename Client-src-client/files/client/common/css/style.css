@@ -805,7 +805,7 @@ li.sortable-placeholder {
 }
 
 .table .zmdi {
-    color: #797979;
+    color: #797979 !important;
 }
 
 .table .fa {
@@ -1230,11 +1230,12 @@ h2.chart-title: hover {
 .table-not-complied-status {
     border: 1px solid #ededed;
 }
-<<<<<<< HEAD
+
 .table-compliance-status {
     border: 1px solid #ededed;
 }
-.escalation-drilldown-container{
+
+.escalation-drilldown-container {
     margin-top: 40px;
 }
 
@@ -1260,6 +1261,39 @@ h2.chart-title: hover {
     }
 }
 
+.table-compliance-status {
+    border: 1px solid #ededed;
+}
+
+.escalation-drilldown-container {
+    margin-top: 40px;
+}
+
 #ui-datepicker-div {
     z-index: 100 !important;
+}
+
+.accordian-past-records{
+    margin-top: 15px;
+}
+
+.uploaded-filename .removeicon {
+    padding-left: 10px;
+    cursor: pointer;
+}
+
+.uploaded-filename span {
+    display: inline-table;
+    line-height: 25px;
+    margin-bottom: 3px !important;
+    text-indent: 5px;
+    /*width: 85%;*/
+}
+
+.active1 {
+    background: #f1e9f6 none repeat scroll 0 0 !important;
+}
+
+.full-width-list {
+    vertical-align: top;
 }

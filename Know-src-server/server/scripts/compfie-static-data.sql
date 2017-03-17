@@ -182,12 +182,57 @@ INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");
 
+`form_id` int(11) NOT NULL AUTO_INCREMENT,
+  `form_name` varchar(200) NOT NULL,
+  `form_url` Text NOT NULL,
+  `form_type_id` int(11) NOT NULL,
+  `parent_menu` varchar(200) DEFAULT NULL,
+  `form_order` int(11) NOT NULL,
 
 -- tbl_client_forms
-INSERT INTO tbl_client_forms VALUES(5, 'Statutory Settings', "/statutory-settings", 2, null, 5);
-INSERT INTO tbl_client_forms VALUES(6, 'Review Settings', "/review-settings", 2, null, 6);
-INSERT INTO tbl_client_forms VALUES(7, 'Assign Compliance', "/assign-compliance", 2, null, 7);
-INSERT INTO tbl_client_forms VALUES(8, 'Reassign Compliance', "/reassign-compliance", 2, null, 8);
-INSERT INTO tbl_client_forms VALUES(9, 'Compliance Approval', "/compliance-approval", 2, null, 9);
-INSERT INTO tbl_client_forms VALUES(10, 'Completed Task - Current Year', "/completed-tasks-current-year", 2, null, 10);
-INSERT INTO tbl_client_forms VALUES(11, 'On Occurrence Compliances', "/on-occurrence-compliances", 2, null, 11);
+
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(1, 1, 'Service Provider', "/service-provider", 1, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(2, 1, 'User Privileges', "/client-user-privilege", 2, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(3, 1, 'User Management', "/client-user-management", 3, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(4, 1, 'Unit Closure', "/unit-closure", 4, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(5, 2, 'Statutory Settings', "/statutory-settings", 5, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(6, 2, 'Review Settings', "/review-settings", 6, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(7, 2, 'Assign Compliance', "/assign-compliance", 7, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(8, 2, 'Reassign Compliance', "/reassign-compliance", 8, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(9, 2, 'Compliance Approval', "/compliance-approval", 9, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(10, 2, 'Completed Task - Current Year', "/completed-tasks-current-year", 10, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(11, 2, 'On Occurrence Compliances', "/on-occurrence-compliances", 11, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(12, 3, 'Legal Entity Wise Report', "/legal-entity-wise-report", 12, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(13, 3, 'Domain Wise Report', "/domain-wise-report", 13, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(14, 3, 'Unit Wise Compliance', "/unit-wise-compliance", 14, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(15, 3, 'Service Provider Wise Compliance', "/service-provider-wise-compliance", 15, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(16, 3, 'User Wise Compliance', "/user-wise-compliance", 16, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(17, 3, 'Status Report Consolidated', "/status-report-consolidated", 17, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(18, 3, 'Domain Score Card', "/domain-score-card", 18, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(19, 3, 'Legal Entity Wise Score Card', "/legal-entity-wise-score-card", 19, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(20, 3, 'Work Flow Score Card', "/work-flow-score-card", 20, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(21, 3, 'Statutory Settings Unit Wise Report', "/statutory-settings-unit-wise-report", 21, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(22, 3, 'Reassigned History Report', "/reassigned-history-report", 22, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(23, 3, 'Risk Report', "/risk-report", 23, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(24, 3, 'Unit List', "/unit-list", 24, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(25, 3, 'Statutory Notification List', "/statutory-notification-list", 25, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(26, 3, 'Service Provider Details', "/service-provider-details", 26, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(27, 3, 'Audit Trail', "/audit-trail", 27, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(28, 3, 'Login Trace', "/login-trace", 28, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(29, 4, 'View Profile', "/view-profile", 29, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(31, 4, 'Change Password', "/change-password", 31, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(32, 4, 'Client Settings', "/client-settings", 32, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(33, 4, 'Themes', "/themes", 33, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(35, 2, 'Compliance Task Details', "/compliance-task-details", 35, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(36, 4, 'Reminders', "/reminders", 36, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(37, 4, 'Statutory Notifications', "/statutory-notifications", 37, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(38, 4, 'Escalations', "/escalations", 38, null);
+INSERT INTO tbl_client_forms(form_id, form_type_id, form_name, form_url, form_order, parent_menu) VALUES(39, 4, 'Messages', "/messages", 39, null);
+
+INSERT INTO tbl_client_user_category VALUES(1, "Group Admin");
+INSERT INTO tbl_client_user_category VALUES(2, "View Only");
+INSERT INTO tbl_client_user_category VALUES(3, "Legal Entity Admin");
+INSERT INTO tbl_client_user_category VALUES(4, "Domain Admin");
+INSERT INTO tbl_client_user_category VALUES(5, "Client Executive");
+INSERT INTO tbl_client_user_category VALUES(6, "Service Provider");

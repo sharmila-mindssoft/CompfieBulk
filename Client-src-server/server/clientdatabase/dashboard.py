@@ -30,7 +30,7 @@ __all__ = [
     "get_risk_chart_count", "get_escalation_chart",
     "get_units_for_dashboard_filters", "get_trend_chart_drill_down", "get_compliances_details_for_status_chart",
     "get_escalation_drill_down_data", "get_not_complied_drill_down", "get_compliance_applicability_drill_down",
-    "get_reminders", "get_escalations", "get_messages", "get_statutory",
+    "get_notification_counts", "get_reminders", "get_escalations", "get_messages", "get_statutory",
     "update_notification_status", "update_statutory_notification_status", "statutory_notification_detail",
     "notification_detail", "get_user_company_details", "get_assigneewise_compliances_list",
     "get_assigneewise_yearwise_compliances", "get_assigneewise_reassigned_compliances",
@@ -118,10 +118,11 @@ def get_compliance_status_count(db, request, user_id, user_category):
             " chart_year " + \
             " from tbl_compliance_status_chart_unitwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
-            " where chart_year = %s and t1.domain_id = %s and t1.country_id = %s"
+            " where chart_year = %s and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            chart_year, ",".join([str(x) for x in country_ids]),
-            ",".join([str(x) for x in domain_ids])
+            chart_year,
+            ",".join([str(x) for x in domain_ids]),
+            ",".join([str(x) for x in country_ids])
         ]
     else :
         q = "select " + group_by_name + " as filter_name, t1.country_id, t1.domain_id, " + \
@@ -131,16 +132,18 @@ def get_compliance_status_count(db, request, user_id, user_category):
             " from tbl_compliance_status_chart_userwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " where chart_year = %s and user_id = %s " + \
-            " and t1.domain_id = %s and t1.country_id = %s"
+            " and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            chart_year, user_id, ",".join([str(x) for x in country_ids]),
-            ",".join([str(x) for x in domain_ids])
+            chart_year, user_id,
+            ",".join([str(x) for x in domain_ids]),
+            ",".join([str(x) for x in country_ids])
         ]
     if filter_type_ids is not None :
         q += filter_type_ids
         param.append(filter_ids)
 
     q += " group by " + group_by_name
+    print q % tuple(param)
     rows = db.select_all(q, param)
 
     return frame_compliance_status(rows)
@@ -245,6 +248,7 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         param.append(filter_ids)
 
     q += " group by " + group_by_name
+    print q % tuple(param)
     rows = db.select_all(q, param)
 
     return frame_compliance_status(rows)
@@ -366,6 +370,7 @@ def get_escalation_chart(db, request, user_id, user_category):
     years = get_last_7_years()
     years.append(getCurrentYear())
     years = ",".join([str(x) for x in years])
+    filter_ids = request.filter_ids
 
     if filter_type == "Group":
         filter_type_ids = None
@@ -398,10 +403,11 @@ def get_escalation_chart(db, request, user_id, user_category):
             " chart_year " + \
             " from tbl_compliance_status_chart_unitwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
-            " where find_in_set(chart_year, %s) and t1.domain_id = %s and t1.country_id = %s"
+            " where find_in_set(chart_year, %s) and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            years, ",".join([str(x) for x in country_ids]),
-            ",".join([str(x) for x in domain_ids])
+            years,
+            ",".join([str(x) for x in domain_ids]),
+            ",".join([str(x) for x in country_ids]),
         ]
     else :
         q = "select t1.country_id, t1.domain_id, " + \
@@ -411,10 +417,11 @@ def get_escalation_chart(db, request, user_id, user_category):
             " from tbl_compliance_status_chart_userwise as t1  " + \
             " inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
             " where find_in_set(chart_year, %s) and user_id = %s " + \
-            " and t1.domain_id = %s and t1.country_id = %s"
+            " and find_in_set(t1.domain_id, %s) and find_in_set(t1.country_id, %s)"
         param = [
-            years, user_id, ",".join([str(x) for x in country_ids]),
-            ",".join([str(x) for x in domain_ids])
+            years, user_id,
+            ",".join([str(x) for x in domain_ids]),
+            ",".join([str(x) for x in country_ids]),
         ]
     if filter_type_ids is not None :
         q += filter_type_ids
@@ -553,45 +560,48 @@ def get_risk_chart_count(db, request, user_id, user_category):
         filter_type_ids = " AND find_in_set(t3.unit_id, %s) "
         filter_ids = ",".join([str(x) for x in filter_ids])
 
-    q = "select ifnull(ch.not_complied,0) as not_comp, ifnull(ch.rejected,0) as reject, ifnull(cc.not_opted,0) as not_opt, ifnull(cc.unassigned,0) as unassign from ( " + \
-        " (select t1.unit_id," + \
-        " sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
+    q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, " + \
+        " ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from " + \
+        " (select t3.unit_id, sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
         " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
         " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-        " from tbl_compliance_history as t1 " + \
-        " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
-        " where find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch, " + \
+        " from tbl_client_compliances as t3 " + \
+        " inner join tbl_compliances as t2 on t3.compliance_id = t2.compliance_id " + \
+        " left join tbl_compliance_history as t1 on t3.unit_id = t1.unit_id and t3.compliance_id = t1.compliance_id " + \
+        " where find_in_set(t2.domain_id, %s) " + \
+        " group by t1.unit_id ) as ch, " + \
         " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-        " from tbl_client_compliances as t1  " + \
-        " left join tbl_assign_compliances as t2 " + \
-        " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id " + \
-        " where find_in_set(t1.domain_id, %s) group by t1.unit_id ) as cc), " + \
-        " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id and t3.is_closed = 0"
+        " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id " + \
+        " and t1.unit_id = t2.unit_id  where find_in_set(t1.domain_id, %s) group by t1.unit_id ) as cc, " + \
+        " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id and t3.is_closed = 0 "
 
     param = [d_ids, d_ids]
 
     if user_category > 3 :
-        q = "select ifnull(ch.not_complied,0) as not_comp, ifnull(ch.rejected,0) as reject, ifnull(cc.not_opted,0) as not_opt, ifnull(cc.unassigned,0) as unassign from ( " + \
-            " (select t1.unit_id, " + \
-            " sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0), " + \
-            " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied, " + \
-            " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected " + \
-            " from tbl_compliance_history as t1 " + \
-            " inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
-            " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            "  and find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch, " + \
-            " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
-            " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
-            " from tbl_client_compliances as t1  " + \
-            " left join tbl_assign_compliances as t2 " + \
-            " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id " + \
-            " inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id " + \
-            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s " + \
-            " and find_in_set(t1.domain_id, %s) group by t1.unit_id) as cc)," + \
-            " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id and t3.is_closed = 0"
+        q = "select ifnull(sum(ch.not_complied),0) as not_comp, ifnull(sum(ch.rejected),0) as reject, " + \
+            " ifnull(sum(cc.not_opted),0) as not_opt, ifnull(sum(cc.unassigned),0) as unassign from (   " + \
+            " (select cc.unit_id,  sum(IF(t2.frequency_id = 5,IF(t1.due_date < now() and ifnull(t1.approve_status,0) <> 1 ,1,0),   " + \
+            " IF(date(t1.due_date) < curdate() and ifnull(t1.approve_status,0) <> 1 ,1,0))) as not_complied,   " + \
+            " sum(if(ifnull(t1.approve_status, 0) = 3, 1, 0)) as rejected   " + \
+            " from tbl_client_compliances as cc " + \
+            " left join tbl_compliance_history as t1 on cc.unit_id = t1.unit_id and cc.compliance_id = t1.compliance_id " + \
+            " inner join tbl_compliances as t2 on cc.compliance_id = t2.compliance_id   " + \
+            " inner join tbl_user_units as t3 on cc.unit_id = t3.unit_id   " + \
+            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s  " + \
+            " and find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch,   " + \
+            " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted,   " + \
+            " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned   " + \
+            " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id  " + \
+            " and t1.unit_id = t2.unit_id  inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id   " + \
+            " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s and find_in_set(t1.domain_id, %s)  " + \
+            " group by t1.unit_id) as cc),  " + \
+            " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id  " + \
+            " and t3.is_closed = 0 "
+
         param = [user_id, d_ids, user_id, d_ids]
+
+        print q % (user_id, d_ids, user_id, d_ids)
 
     if filter_type_ids is not None :
         q += filter_type_ids
@@ -928,7 +938,7 @@ def get_client_domain_configuration(
     year_condition = []
     cond = "(T3.country_id = %s " + \
         "  AND T2.domain_id = %s " + \
-        " AND find_in_set(YEAR(T1.due_date),%s))"
+        " AND find_in_set(YEAR(T1.due_date), '%s'))"
     for d in rows:
 
         info = {}
@@ -1479,6 +1489,44 @@ def get_compliance_applicability_drill_down(
 
     return level_1_wise_compliance.values()
 
+def get_notification_counts(db, session_user, session_category, le_ids):
+    statutory = 0
+    reminder = 0
+    escalation = 0
+    messages = 0
+    # statutory_query =
+
+    reminder_query = "SELECT SUM(reminder_count) as reminder_count FROM ( " + \
+                    "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as reminder_count  " + \
+                    "from tbl_legal_entities as le  " + \
+                    "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id  " + \
+                    "where %s = 1 OR %s = 3 AND ule.user_id = %s " + \
+                    "UNION ALL  " + \
+                    "Select count(*) as reminder_count from tbl_notifications_log as nl  " + \
+                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 2  " + \
+                    "Where nlu.user_id = @user_id and nlu.read_status = 0 ) x"
+    row = db.select_one(reminder_query, [session_category, session_category, session_user])
+    if row['reminder_count'] > 0:
+        reminder = row['reminder_count']
+
+    escalation_query = "Select count(*) as escalation_count from tbl_notifications_log as nl " + \
+                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \
+                    "Where nlu.user_id = %s and nlu.read_status = 0"
+    row = db.select_one(escalation_query, [session_user])
+    if row['escalation_count'] > 0:
+        escalation = row['escalation_count']
+
+    messages_query = "Select count(*) as messages_count from tbl_notifications_log as nl " + \
+                    "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 4 " + \
+                    "Where nlu.user_id = %s and nlu.read_status = 0"
+    row = db.select_one(messages_query, [session_user])
+    if row['messages_count'] > 0:
+        messages = row['messages_count']
+    notification_count = []
+    notification = dashboard.NotificationsCountSuccess(statutory, reminder, escalation, messages)
+    notification_count.append(notification)
+    return notification_count
+
 def get_reminders(
     db, notification_type, start_count, to_count, session_user, session_category
 ):
@@ -1486,14 +1534,14 @@ def get_reminders(
     qry = "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as expire_count " + \
         "from tbl_legal_entities as le " + \
         "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-        "where %s = 1 OR %s = 2 AND %s = 1 AND ule.user_id = %s "
+        "where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s "
     row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
 
     if row["expire_count"] > 0:
         query = "(Select legal_entity_id, '0' as row_number,'0' as notification_id, " + \
                 "IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),concat('Your contract with Compfie for the legal entity ',legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
                 "Before contract expiration you can download documents <a href=#>here</a>'),'') as notification_text, " + \
-                "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg Where %s = 1 OR %s = 2 AND %s = 1 ) " + \
+                "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg Where %s = 1 OR %s = 2 AND %s = 2 ) " + \
                 "UNION ALL " + \
                 "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \
@@ -1762,12 +1810,14 @@ def get_assigneewise_compliances_list(
     if division_id is not None:
         condition += " AND tu.division_id = %s"
         condition_val.append(division_id)
+
     if unit_id is not None:
         condition += " AND tu.unit_id = %s"
         condition_val.append(unit_id)
     else:
 
-        units = get_user_unit_ids(db, session_user)
+        units = get_user_unit_ids(db, session_user, session_category)
+        print units
         condition += " AND find_in_set(tu.unit_id, %s)"
         condition_val.append(",".join([str(x) for x in units]))
         # unit_condition, unit_condition_val = db.generate_tuple_condition(
@@ -1778,9 +1828,10 @@ def get_assigneewise_compliances_list(
     if assignee_id is not None:
         condition += " AND tch.completed_by = %s"
         condition_val.append(assignee_id)
-    domain_ids_list = get_user_domains(db, session_user)
+    domain_ids_list = get_user_domains(db, session_user, session_category)
     current_date = get_date_time_in_date()
     result = {}
+    print domain_ids_list
     for domain_id in domain_ids_list:
         timelines = get_country_domain_timelines(
             db, [country_id], [domain_id], [current_date.year]
@@ -1838,6 +1889,10 @@ def get_assigneewise_compliances_list(
             " group by completed_by, tch.unit_id; "
         param = [domain_id, from_date, to_date]
         parameter_list = condition_val + param
+        print "\n"
+
+        print query % tuple(parameter_list)
+        print "\n"
         assignee_wise_compliances = db.select_all(query, parameter_list)
         for compliance in assignee_wise_compliances:
             unit_name = compliance["unit_name"]

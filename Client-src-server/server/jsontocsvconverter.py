@@ -37,8 +37,9 @@ CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 CLIENT_LOGO_PATH = os.path.join(ROOT_PATH, "clientlogo")
 
 class ConvertJsonToCSV(object):
-    def __init__(self, db, request, session_user, report_type):
+    def __init__(self, db, request, session_user, report_type, session_category=None):
         s = str(uuid.uuid4())
+        self.session_category = session_category
         file_name = "%s.csv" % s.replace("-", "")
         self.FILE_DOWNLOAD_PATH = "%s/%s" % (
             FILE_DOWNLOAD_BASE_PATH, file_name)
@@ -48,7 +49,7 @@ class ConvertJsonToCSV(object):
             os.makedirs(CSV_PATH)
         if report_type == "AssigneeWise":
             self.generate_assignee_wise_report_and_zip(
-                    db, request, session_user
+                    db, request, session_user, session_category
                 )
         else:
             with io.FileIO(self.FILE_PATH, "wb+") as f:
@@ -120,14 +121,14 @@ class ConvertJsonToCSV(object):
                         db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
-        self, db, request, session_user
+        self, db, request, session_user, session_category
     ):
         s = str(uuid.uuid4())
         docs_path = "%s/%s" % (CSV_PATH, s)
         self.temp_path = "%s/%s" % (CSV_PATH, s)
         self.create_a_csv("Assigneewise compliance count")
         self.generate_assignee_wise_report_data(
-            db, request, session_user
+            db, request, session_user, session_category
         )
         self.generateZipFile(
             docs_path, self.documents_list
@@ -908,12 +909,12 @@ class ConvertJsonToCSV(object):
                     self.write_csv(None, csv_values)
 
     def generate_assignee_wise_report_data(
-        self, db, request, session_user
+        self, db, request, session_user, session_category
     ):
         is_header = False
         country_id = request.country_id
         business_group_id = request.business_group_id
-        legal_entity_id = request.legal_entity_id
+        legal_entity_ids = request.legal_entity_ids
         division_id = request.division_id
         unit_id = request.unit_id
         assignee_id = request.user_id
@@ -922,9 +923,9 @@ class ConvertJsonToCSV(object):
         if business_group_id is not None:
             condition += " AND tu.business_group_id = %s"
             condition_val.append(business_group_id)
-        if legal_entity_id is not None:
-            condition += " AND tu.legal_entity_id = %s"
-            condition_val.append(legal_entity_id)
+        if legal_entity_ids is not None:
+            condition += " AND find_in_set(tu.legal_entity_id, %s)"
+            condition_val.append(",".join([str(x) for x in legal_entity_ids]))
         if division_id is not None:
             condition += " AND tu.division_id = %s"
             condition_val.append(division_id)
@@ -933,11 +934,9 @@ class ConvertJsonToCSV(object):
             condition_val.append(unit_id)
         else:
             units = get_user_unit_ids(db, session_user)
-            unit_condition, unit_condition_val = db.generate_tuple_condition(
-                "tu.unit_id", units
-            )
-            condition = " %s AND %s " % (condition, unit_condition)
-            condition_val.append(unit_condition_val)
+            condition += "AND find_in_set(tu.unit_id, %s)"
+            condition_val.append(",".join([str(x) for x in units]))
+
         if assignee_id is not None:
             condition += " AND tch.completed_by = %s"
             condition_val.append(assignee_id)

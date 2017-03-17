@@ -88,7 +88,8 @@ messages = {
     "E087": "Invalid statutory mapping",
     "E088": "Save process failed",
     "E089": "Invalid status code",
-
+    "E090": "Group admin save failed",
+    "E091": "Activity save failed"
 }
 
 client_message = {

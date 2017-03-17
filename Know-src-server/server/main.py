@@ -36,7 +36,7 @@ from replication.protocol import (
 from server.constants import (
     KNOWLEDGE_DB_HOST, KNOWLEDGE_DB_PORT, KNOWLEDGE_DB_USERNAME,
     KNOWLEDGE_DB_PASSWORD, KNOWLEDGE_DATABASE_NAME,
-    IS_DEVELOPMENT, SESSION_CUTOFF, KNOWLEDGE_DB_POOL_SIZE
+    IS_DEVELOPMENT, SESSION_CUTOFF
 )
 
 from server.templatepath import (
@@ -229,18 +229,16 @@ class API(object):
 
     @csrf.exempt
     @api_request(DistributionRequest)
-    def handle_ip_list(self, request, db):
-        pass
-
-    @csrf.exempt
-    @api_request(DistributionRequest)
     def handle_server_list(self, request, db):
         return CompanyServerDetails(gen.get_servers(db))
 
     @csrf.exempt
     @api_request(DistributionRequest)
     def handle_group_server_list(self, request, db):
-        return ServerDetails(gen.get_group_servers(db))
+        return ServerDetails(
+            gen.get_group_servers(db),
+            gen.get_ip_details(db)
+        )
 
     @csrf.exempt
     @api_request(GetClientChanges)
@@ -459,7 +457,6 @@ def run_server(port):
 
         # post urls
         api_urls_and_handlers = [
-            ("/knowledge/ip-list", api.handle_ip_list),
             ("/knowledge/server-list", api.handle_server_list),
             ("/knowledge/group-server-list", api.handle_group_server_list),
             ("/knowledge/client-list", api.handle_client_list),

@@ -80,7 +80,8 @@ __all__ = [
     "get_themes_for_user",
     "save_themes_for_user",
     "update_themes_for_user",
-    "legal_entity_logo_url"
+    "legal_entity_logo_url",
+    "verify_username_forgotpassword",
     ]
 
 
@@ -559,14 +560,23 @@ def return_client_users(users):
     return results
 
 
-def get_user_domains(db, user_id):
-    q = "select domain_id from tbl_domains"
-    param = None
+def get_user_domains(db, user_id, user_category_id=None):
     condition = ""
-    # if is_primary_admin(db, user_id) is not True:
-    q = "select domain_id from tbl_user_domains"
-    condition = " WHERE user_id = %s"
-    param = [user_id]
+
+    param = []
+    if user_category_id is not None :
+        if user_category_id <= 3 :
+            q = "select domain_id from tbl_domains"
+
+        else :
+            q = "select domain_id from tbl_user_domains"
+            condition = " WHERE user_id = %s"
+            param.append(user_id)
+
+    else :
+        q = "select domain_id from tbl_user_domains"
+        condition = " WHERE user_id = %s"
+        param.append(user_id)
 
     rows = db.select_all(q + condition, param)
     d_ids = []
@@ -636,10 +646,11 @@ def get_user_forms(db, user_id, category_id):
         "SELECT t1.form_id, t1.form_type_id, t1.form_name, t1.form_url, t1.form_order, t1.parent_menu, tf.form_type " + \
         "FROM tbl_forms as t1 " + \
         "INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
-        "WHERE t1.form_type_id = 4 " + \
+        "WHERE t1.form_type_id = 4 AND IF(%s = 2, t1.form_id != 32,1) AND IF(%s = 4, t1.form_id != 32,1) " + \
+        "AND IF(%s = 5, t1.form_id != 32,1) AND IF(%s = 6, t1.form_id != 32,1) " + \
         "ORDER BY form_order, form_type_id "
-
-    rows = db.select_all(q, [user_id])
+    print q, user_id, category_id
+    rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id])
     return rows
 
 def get_country_info(db, user_id, user_category_id):
@@ -672,7 +683,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "(select business_group_name from tbl_business_groups where ifnull(business_group_id,0) = t1.business_group_id) as business_group_name " + \
             "FROM tbl_legal_entities as t1 " + \
             "inner join tbl_countries t2 on t1.country_id = t2.country_id " + \
-            "WHERE contract_to >= CURDATE() and is_closed = 0"
+            "WHERE contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0"
         rows = db.select_all(q)
         # print "------------------ Admin ---------------"
     else :
@@ -683,7 +694,7 @@ def get_legal_entity_info(db, user_id, user_category_id):
             "inner join tbl_user_legal_entities as t2 on " + \
             "t1.legal_entity_id = t2.legal_entity_id " + \
             "inner join tbl_countries t3 on t1.country_id = t3.country_id " + \
-            "where contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
+            "where contract_from <= CURDATE() and contract_to >= CURDATE() and is_closed = 0 and t2.user_id= %s"
 
         rows = db.select_all(q, [user_id])
         # print "------------------ User ---------------"
@@ -809,17 +820,23 @@ def is_admin(db, user_id):
             return False
 
 
-def get_user_unit_ids(db, user_id):
-    q = "select distinct unit_id from tbl_units"
-    param = None
-    condition = ""
-    # if is_primary_admin(db, user_id) is not True:
-    condition = " WHERE unit_id in (select unit_id " + \
-        " from tbl_user_units " + \
-        " where user_id = %s )"
-    param = [user_id]
+def get_user_unit_ids(db, user_id, user_category_id=None):
+    if user_category_id is None:
+        q = "select distinct t1.unit_id from tbl_units as t1 " + \
+            "left join tbl_user_units as t2 on t1.unit_id = t2.unit_id " + \
+            " where t2.user_id = %s "
+        param = [user_id]
+    else :
+        if user_category_id > 3 :
+            q = "select distinct t1.unit_id from tbl_units as t1 " + \
+                "left join tbl_user_units as t2 on t1.unit_id = t2.unit_id " + \
+                " where t2.user_id = %s "
+            param = [user_id]
+        else :
+            q = "select unit_id from tbl_units "
+            param = []
 
-    rows = db.select_all(q + condition, param)
+    rows = db.select_all(q, param)
     u_ids = []
     for r in rows:
         u_ids.append(int(r["unit_id"]))
@@ -1658,7 +1675,7 @@ def calculate_due_date(
     # print"statutory_dates", statutory_dates
     # print"repeat_by>>>", statutory_dates
     # print "repeat_every>>>", repeat_every
-    # print "due_date>>>", due_date
+    print "due_date1632>>>", due_date
     def is_future_date(test_date):
         result = False
         current_date = datetime.date.today()
@@ -1672,7 +1689,7 @@ def calculate_due_date(
     )
     # print "from_date>>>", from_date
     # print "to_date>>>", to_date
-    # print "statutory_dates>>>", statutory_dates
+    print "statutory_dates>>>", statutory_dates
     # country_id
     due_dates = []
     summary = ""
@@ -1755,7 +1772,7 @@ def calculate_due_date(
 
 
 def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
-    # Checking same due date already exists
+    # Checking same due date already exists    
     if due_dates_list is not None and len(due_dates_list) > 0:
         formated_date_list = []
         for x in due_dates_list:
@@ -1775,6 +1792,11 @@ def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
             " AND compliance_id = %s) THEN DATE(due_date) " + \
             " ELSE 'NotExists' END ) as " + \
             " is_ok FROM tbl_compliance_history ) a WHERE is_ok != 'NotExists'"
+        # print "query>>", query
+        # print "unit_id>>", unit_id
+        # print "due_date_condition>>", due_date_condition
+        # print "due_date_condition_val>>", due_date_condition_val
+        # print "compliance_id>>", compliance_id
         rows = db.select_all(
             query, [unit_id, due_date_condition_val, compliance_id]
         )
@@ -2126,3 +2148,27 @@ def legal_entity_logo_url(db, legal_entity_id):
     else:
         logo_url = None
     return logo_url
+
+def verify_username_forgotpassword(db, username):
+    # columns = "user_id, email_id, "
+    # condition = "username=%s and is_active = 1"
+    # condition_val = [username]
+    # rows = db.get_data(
+    #     tblUserLoginDetails, columns, condition, condition_val
+    # )
+    # count = rows[0]["result"]
+    # if count == 1:
+    #     return rows[0]["user_id"]
+    # else:
+    #     return None
+
+    #     u.user_id, u.email_id, us.employee_name
+    q = "select u.user_id, u.username, us.email_id, us.employee_name " + \
+        "FROM tbl_user_login_details u " + \
+        "inner join  tbl_users us on u.user_id = us.user_id " + \
+        "where u.username = %s "
+    rows = db.select_one(q, [username])
+    if rows:
+        return rows
+    else:
+        return None

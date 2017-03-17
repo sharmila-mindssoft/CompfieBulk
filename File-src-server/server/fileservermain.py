@@ -1,3 +1,6 @@
+import base64
+import string
+import random
 import traceback
 import json
 from flask import Flask, Response, request
@@ -30,7 +33,12 @@ class API(object):
         #     #print data
         #     s = json.dumps(data, indent=2)
         # else:
-        s = response_data
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        data = json.dumps(response_data.to_structure(), indent=2)
+        print data
+        s = base64.b64encode(data)
+        s = json.dumps(key+s)
+
         resp = Response(s, status=status_code, mimetype="application/json")
         return resp
 
@@ -61,10 +69,12 @@ class API(object):
 
             company_id = int(data[0])
             actual_data = data[1]
-            # print company_id
+            print company_id
+            print actual_data
             request_data = request_data_type.parse_structure(
                 actual_data
             )
+            print request_data
 
         except Exception, e:
             print e
@@ -92,6 +102,7 @@ class API(object):
             )
 
             if type(request_data.request) is not fileprotocol.DownloadFile :
+                print "send response"
                 return respond(response_data)
             else :
                 return response_data

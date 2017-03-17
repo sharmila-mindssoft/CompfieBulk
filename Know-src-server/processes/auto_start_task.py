@@ -48,8 +48,9 @@ class KnowledgeConnect(object):
             self._k_db.begin()
             q = "SELECT country_id, country_name FROM tbl_countries"
             rows = self._k_db.select_all(q)
+            print rows
             self._k_db.commit()
-            return convert_to_dict(rows, ["country_id", "country_name"])
+            return rows
         except Exception, e:
             logProcessError("get_countries", str(e))
             self._k_db.rollback()
@@ -79,6 +80,18 @@ class KnowledgeConnect(object):
             logProcessError("get_clients", str(e))
             self._k_db.rollback()
             logProcessError("get_clients", str(traceback.format_exc()))
+
+    def get_deletion_period(self):
+        try :
+            self._k_db.begin()
+            query = "select client_id, legal_entity_id, unit_id, deletion_period from tbl_auto_deletion"
+            rows = self._k_db.select_all(query)
+            self._k_db.commit()
+            return rows
+        except Exception, e :
+            self._k_db.rollback()
+            print e
+
 
 class AutoStart(Database):
     def __init__(
@@ -453,8 +466,9 @@ class AutoStart(Database):
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
         dat_conf = self.get_client_date_configuration()
         year = self.get_year_to_update_chart()
-        if getCurrentYear() not in year :
-            year.append(getCurrentYear())
+
+        year.append(getCurrentYear() - 1)
+        year.append(getCurrentYear())
 
         q = "insert into tbl_compliance_status_chart_unitwise( " + \
             "     legal_entity_id, country_id, domain_id, unit_id,  " + \

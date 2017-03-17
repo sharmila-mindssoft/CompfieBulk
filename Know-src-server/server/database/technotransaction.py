@@ -4,7 +4,8 @@ from server.exceptionmessage import process_error
 from server.database.tables import *
 from server.common import (
     get_date_time, get_current_date,
-    addHours, new_uuid, string_to_datetime
+    addHours, new_uuid, string_to_datetime,
+    datetime_to_string
 )
 
 from server.database.general import get_short_name
@@ -473,7 +474,7 @@ def return_groupadmin_registration_grouplist(groupslist):
         email_id = groups.get("email_id")
         user_id_search = groups.get("user_id")
         emp_code_name = groups.get("emp_code_name")
-        registration_email_date = groups.get("registration_email_date")
+        registration_email_date = datetime_to_string(groups.get("registration_email_date"))
         c_names = []
         occur = -1
         for countries in groupslist[1]:

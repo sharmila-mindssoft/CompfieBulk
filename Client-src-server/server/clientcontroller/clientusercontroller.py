@@ -28,11 +28,13 @@ def process_client_user_request(request, db, session_user):
 
     if type(request) is clientuser.GetCurrentComplianceDetail:
         result = process_get_current_compliance_detail(
-            db, request, session_user )
+            db, request, session_user
+        )
 
     if type(request) is clientuser.GetUpcomingComplianceDetail:
         result = process_get_upcoming_compliance_detail(
-            db, request, session_user )
+            db, request, session_user
+        )
 
     if type(request) is clientuser.UpdateComplianceDetail:
         result = process_update_compliance_detail(
@@ -207,8 +209,8 @@ def process_start_on_occurrence_compliance(
 ########################################################
 def process_compliance_filters(
     db, request, session_user
-):    
-    user_units = get_units_for_user(db, session_user)    
+):
+    user_units = get_units_for_user(db, session_user)
 
     return clientuser.ComplianceFiltersSuccess(user_units=user_units)
 
@@ -221,13 +223,13 @@ def process_onoccurrence_last_transaction(
     onOccurrenceTransactions = {}
 
     onOccurrenceTransactions = process_onoccurrence_transaction_list(db, request, session_user)
-        
+
     return clientuser.OnOccurrenceLastTransactionSuccess(onoccurrence_transactions = onOccurrenceTransactions)
 ########################################################
 # OnOccurrence Last Transactions
 ########################################################
 def process_onoccurrence_transaction_list(db, request, session_user):
-    
+
     compliance_id = request.compliance_id
     unit_id = request.unit_id
 
@@ -255,4 +257,4 @@ def process_onoccurrence_transaction_list(db, request, session_user):
         )
 
     return transactionList
-    
+

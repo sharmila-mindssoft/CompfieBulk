@@ -511,7 +511,7 @@ def userManagement_EditView_GetUsers(db, userID):
     q = " SELECT  T01.user_id, T01.user_category_id, T01. seating_unit_id, T01.service_provider_id, " + \
         " T01.user_level, T01.user_group_id, T01.email_id, T01.employee_name, T01.employee_code, " + \
         " T01.contact_no, T01.mobile_no, T01.address, T01.is_service_provider, T01.is_active, " + \
-        " T01.is_disable FROM Tbl_users AS T01 Where T01.user_id = %s"
+        " T01.is_disable FROM tbl_users AS T01 Where T01.user_id = %s"
 
     row = db.select_all(q, [userID])
     return row
@@ -520,7 +520,9 @@ def userManagement_EditView_GetUsers(db, userID):
 # User Management - Edit View Get Users - Legal Entities
 ##############################################################################
 def userManagement_EditView_GetLegalEntities(db, userID):
-    q = " SELECT user_id, legal_entity_id from tbl_user_legal_entities where user_id = %s "
+    q = "SELECT T01.user_id, T01.legal_entity_id, T02.business_group_id " + \
+        " FROM tbl_user_legal_entities As T01 INNER JOIN tbl_legal_entities As T02 " + \
+        " ON T01.legal_entity_id = T02.legal_entity_id WHERE user_id = %s"
 
     row = db.select_all(q, [userID])
     return row
@@ -538,8 +540,9 @@ def userManagement_EditView_GetDomains(db, userID):
 # User Management - Edit View Get Users - Units
 ##############################################################################
 def userManagement_EditView_GetUnits(db, userID):
-    q = " SELECT user_id, legal_entity_id, unit_id from tbl_user_units where user_id = %s "
-
+    q = " SELECT T01.user_id, T01.legal_entity_id, T01.unit_id, T02.business_group_id, " + \
+        " T02.division_id, T02.category_id FROM tbl_user_units As T01 " + \
+        " INNER JOIN tbl_units AS T02 ON T01.unit_id = T02.unit_id where user_id = %s "
     row = db.select_all(q, [userID])
     return row
 
@@ -933,6 +936,7 @@ def get_no_of_remaining_licence_Viewonly(db):
 ############################################################################
 def get_no_of_remaining_licence(db):
     columns = ["count(0) as licence"]
+
     condition = "1"
     rows = db.get_data(tblUsers, columns, condition)
     no_of_licence_holders = rows[0]["licence"]
@@ -1167,20 +1171,34 @@ def save_user(db, user, session_user, client_id):
 #             - Returns RuntimeError if Updation fails
 ############################################################################
 def update_user(db, user, session_user, client_id):
+    current_time_stamp = get_date_time()
     user_id = user.user_id
     current_time_stamp = get_date_time()
     user.is_service_provider = 0 if user.is_service_provider is False else 1
+    # columns = [
+    #     "user_group_id", "employee_name", "employee_code",
+    #     "contact_no", "seating_unit_id", "user_level",
+    #     "is_service_provider", "updated_on", "updated_by"
+    # ]
     columns = [
-        "user_group_id", "employee_name", "employee_code",
-        "contact_no", "seating_unit_id", "user_level",
-        "is_service_provider", "updated_on", "updated_by"
+        "user_group_id", "email_id", "employee_name",
+        "employee_code", "contact_no", "mobile_no", "user_level",
+        "is_service_provider",
+        "updated_by", "updated_on"
     ]
+    # values = [
+    #     user.user_group_id, user.employee_name,
+    #     user.employee_code.replace(" ", ""),
+    #     user.contact_no, user.seating_unit_id, user.user_level,
+    #     user.is_service_provider, current_time_stamp,
+    #     session_user
+    # ]
     values = [
-        user.user_group_id, user.employee_name,
-        user.employee_code.replace(" ", ""),
-        user.contact_no, user.seating_unit_id, user.user_level,
-        user.is_service_provider, current_time_stamp,
-        session_user
+        user.user_group_id, user.email_id,
+        user.employee_name, user.employee_code.replace(" ", ""),
+        user.contact_no, user.mobile_no, user.user_level,
+        user.is_service_provider,
+        session_user, current_time_stamp
     ]
     condition = "user_id= %s "
 
@@ -1190,14 +1208,19 @@ def update_user(db, user, session_user, client_id):
     else:
         columns.append("seating_unit_id")
         values.append(user.seating_unit_id)
+
     values.append(user_id)
     result1 = db.update(tblUsers, columns, values, condition)
     if result1 is False:
         raise client_process_error("E011")
 
-    save_user_domains(db, user.domain_ids, user_id)
-    save_user_units(db, user.unit_ids, user_id)
-    UpdateUsers(user, user.user_id, client_id)
+    # save_user_domains(db, user.domain_ids, user_id)
+    # save_user_units(db, user.unit_ids, user_id)
+    save_user_domains(db, user.user_domain_ids, user_id)
+    save_user_units(db, user.user_unit_ids, user_id)
+    save_user_legal_entities(db, user.user_entity_ids, user_id)
+
+    UpdateUsers(user, client_id)
 
     action = "Updated user \"%s - %s\"" % (
         user.employee_code, user.employee_name
@@ -1626,9 +1649,10 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
     print action_mode
     columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
     values = []
+    is_closed = 1
     if action_mode == "close":
         print "save"
-        values = [1, current_time_stamp, user_id, remarks]
+        values = [is_closed, current_time_stamp, user_id, remarks]
         condition_val = "unit_id= %s"
         values.append(unit_id)
         result = db.update(tblUnits, columns, values, condition_val)
@@ -1647,7 +1671,8 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
         db.save_activity(user_id, 4, action)
 
     elif action_mode == "reactive":
-        values = [0, current_time_stamp, user_id, remarks]
+        is_closed = 0
+        values = [is_closed, current_time_stamp, user_id, remarks]
         condition_val = "unit_id= %s"
         values.append(unit_id)
         result = db.update(tblUnits, columns, values, condition_val)
@@ -1664,6 +1689,7 @@ def save_unit_closure_data(db, user_id, password, unit_id, remarks, action_mode)
         )
         # Audit Log Entry
         db.save_activity(user_id, 4, action)
+    UnitClose(unit_id, is_closed, current_time_stamp, user_id, remarks)
     print "result"
     print result
     return result

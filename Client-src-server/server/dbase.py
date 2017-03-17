@@ -4,6 +4,7 @@ import logger
 from server.common import (convert_to_dict, get_date_time, encrypt)
 from server.exceptionmessage import fetch_error, process_procedure_error
 
+
 class BaseDatabase(object):
     def __init__(
         self,
@@ -300,8 +301,8 @@ class Database(object):
 
     def select_one(self, query, param=None):
         cursor = self.cursor()
-        print "query>>>", query
-        print "param>>", param
+        # print "query>>>", query
+        # print "param>>", param
         assert cursor is not None
 
         try:
@@ -505,8 +506,8 @@ class Database(object):
         except Exception, e:
             print e
             # print query, values
-            logger.logKnowledgeApi("insert", query + " -- " + values)
-            logger.logKnowledgeApi("insert", e)
+            logger.logClientApi("insert", query + " -- " + values)
+            logger.logClientApi("insert", e)
             return False
 
     ########################################################
@@ -530,8 +531,8 @@ class Database(object):
             return True
         except Exception, e:
             print e
-            logger.logKnowledgeApi("bulk_insert", query)
-            logger.logKnowledgeApi("bulk_insert", e)
+            logger.logClientApi("bulk_insert", query)
+            logger.logClientApi("bulk_insert", e)
             return False
 
     ########################################################
@@ -558,8 +559,8 @@ class Database(object):
             return True
         except Exception, e:
             print e
-            logger.logKnowledgeApi("bulk_update", query)
-            logger.logKnowledgeApi("bulk_update", e)
+            logger.logClientApi("bulk_update", query)
+            logger.logClientApi("bulk_update", e)
             return False
 
     ########################################################
@@ -581,8 +582,8 @@ class Database(object):
         except Exception, e:
             print query, values
             print e
-            logger.logKnowledgeApi("update", query + " , " + values)
-            logger.logKnowledgeApi("update", e)
+            logger.logClientApi("update", query + " , " + values)
+            logger.logClientApi("update", e)
             return False
 
     ########################################################
@@ -721,15 +722,19 @@ class Database(object):
         print '-------------'
         print rows
         client_id = rows[0]["client_id"]
-        category_id = rows[0]["user_category_id"]        
+        category_id = rows[0]["user_category_id"]
         query = " INSERT INTO tbl_activity_log " + \
             " (client_id, legal_entity_id, unit_id, user_category_id, " + \
             " user_id, form_id, action, created_on) " + \
             " VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
-        self.execute(query, (
-                client_id, legal_entity_id, unit_id, category_id,
-                user_id, form_id, action, created_on
-        ))
+        values = [
+            client_id, legal_entity_id, unit_id, category_id,
+            user_id, form_id, action, created_on
+        ]
+        self.execute(query, values)
+        from server.clientdatabase.savetoknowledge import SaveClientActivity
+
+        SaveClientActivity(values)
         return True
 
     def validate_session_token(self, session_token):

@@ -9,7 +9,7 @@ CREATE TRIGGER `tbl_statutory_notifications_insert` AFTER INSERT ON `tbl_statuto
     SET @notificationid = NEW.notification_id;
     INSERT INTO tbl_statutory_notifications_users (
     	notification_id, user_id, is_read)
-    	select @notificationid, t1.user_id, 0 from tbl_users as t1
+    	select distinct @notificationid, t1.user_id, 0 from tbl_users as t1
         left join tbl_user_domains as t3 on t1.user_id = t3.user_id
         left join tbl_compliances as t2
         on t3.domain_id = t2.domain_id and t2.compliance_id = new.compliance_id;
@@ -54,6 +54,18 @@ CREATE TRIGGER `after_tbl_user_legal_entities_delete` AFTER DELETE ON `tbl_user_
  //
  DELIMITER ;
 
+
+DROP TRIGGER IF EXISTS `after_tbl_reminder_settings_update`;
+DELIMITER //
+
+CREATE TRIGGER `after_tbl_reminder_settings_update` AFTER UPDATE ON `tbl_reminder_settings`
+ FOR EACH ROW BEGIN
+ insert into tbl_le_settings_replication_status(legal_entity_id, s_action)
+ values(new.legal_entity_id, 1) on duplicate key update s_action = 1;
+ UPDATE tbl_le_replication_status set settings_data = 1 where legal_entity_id = new.legal_entity_id;
+ END
+//
+ DELIMITER ;
 
 DROP TRIGGER IF EXISTS `after_tbl_units_insert`;
 DELIMITER //

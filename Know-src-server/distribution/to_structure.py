@@ -95,7 +95,7 @@ def to_structure_VectorType_RecordType_protocol_IPInfo(data):
 
 def to_structure_MapType_CustomeText_VectorType_RecordType_protocol_IPInfo(data):
     map = {}
-    for key , value in data.item() :
+    for key, value in data.iteritems() :
         val = to_structure_VectorType_RecordType_protocol_IPInfo(value)
         map[key] = val
 

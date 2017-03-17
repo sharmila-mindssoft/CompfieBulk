@@ -155,6 +155,7 @@ function popup_toggle(unit_id, mode) {
 }
 
 $('#update_status').click(function() {
+    LegalEntityId = leSelect.val();
     var txtpwd = $('#client_pwd').val();
     var txtRemarks = $('#remarks').val();
     var unit_id, action_mode;
@@ -181,7 +182,7 @@ $('#update_status').click(function() {
                 displayMessage(error);
             }
         }
-        client_mirror.saveUnitClosureData(txtpwd, txtRemarks, parseInt(unit_id), action_mode, function(error, response) {
+        client_mirror.saveUnitClosureData(parseInt(LegalEntityId), txtpwd, txtRemarks, parseInt(unit_id), action_mode, function(error, response) {
             console.log(error, response)
             if (error == null) {
                 Custombox.close();

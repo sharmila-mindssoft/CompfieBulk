@@ -71,11 +71,11 @@ __all__ = [
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
 def get_user_based_countries(db, user_id, user_category):
-    query = "SELECT distinct t1.country_name, t1.country_id, t1.is_active FROM tbl_countries as t1"
+    query = "SELECT distinct t1.country_name, t1.country_id, t1.is_active FROM tbl_countries as t1 " + \
+        " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id "
     param = []
     if user_category > 1 :
-        query += " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id " + \
-            " INNER JOIN tbl_user_legal_entities as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
+        query += " INNER JOIN tbl_user_legal_entities as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
             " where t3.user_id = %s Order by t1.country_name"
         param = [user_id]
 
@@ -191,7 +191,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "t1.user_id = t3.user_id and t5.legal_entity_id = t3.legal_entity_id " + \
         "left join tbl_service_providers as t4 " + \
         "on t1.service_provider_id = t4.service_provider_id " + \
-        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t3.legal_entity_id = %s; "
+        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t5.legal_entity_id = %s; "
 
     print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
@@ -513,7 +513,7 @@ def update_statutory_settings(db, data, session_user):
         for u in unit_ids :
             db.execute(q, [session_user, updated_on, u, domain_id])
 
-    SaveOptedStatus(data)
+    SaveOptedStatus(data, session_user, updated_on)
 
     return clienttransactions.UpdateStatutorySettingsSuccess()
 
@@ -1254,13 +1254,13 @@ def get_statutory_wise_compliances(
         param.extend(condition_val)
 
     rows = db.select_all(query, param)
-    columns = [
-        "compliance_id", "statutory_dates", "due_date", "assignee",
-        "employee_code", "employee_name", "statutory_mapping",
-        "document_name", "compliance_task", "compliance_description",
-        "repeats_type_id",  "repeat_type", "repeats_every", "frequency",
-        "frequency_id"
-    ]
+    # columns = [
+    #     "compliance_id", "statutory_dates", "due_date", "assignee",
+    #     "employee_code", "employee_name", "statutory_mapping",
+    #     "document_name", "compliance_task", "compliance_description",
+    #     "repeats_type_id",  "repeat_type", "repeats_every", "frequency",
+    #     "frequency_id"
+    # ]
     # client_compliance_rows = convert_to_dict(rows, columns)
     level_1_statutory_wise_compliances = {}
     total_count = 0
@@ -1268,12 +1268,13 @@ def get_statutory_wise_compliances(
     for compliance in rows:
         statutories = compliance["statutory_mapping"].split(">>")
         if level_1_statutory_name is None:
-
             level_1 = statutories[0]
         else:
             level_1 = level_1_statutory_name
+        print "level_1>>>", level_1
         if level_1 not in level_1_statutory_wise_compliances:
             level_1_statutory_wise_compliances[level_1] = []
+            print "1235"
         compliance_name = compliance["compliance_task"]
         if compliance["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % (
@@ -1291,7 +1292,7 @@ def get_statutory_wise_compliances(
         # country_id=country_id,
         if compliance["repeats_type_id"] == 1:  # Days
             due_dates, summary = calculate_due_date(
-                db,                
+                db,
                 repeat_by=1,
                 repeat_every=compliance["repeats_every"],
                 due_date=compliance["due_date"],
@@ -1315,12 +1316,13 @@ def get_statutory_wise_compliances(
                 due_date=compliance["due_date"],
                 domain_id=domain_id
             )
-        print "due_dates>>>", due_dates 
+        print "due_dates>>>", due_dates
         print "summary>>>", summary
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
         )
         total_count += len(final_due_dates)
+        print "final_due_dates>>>", final_due_dates
         for due_date in final_due_dates:
             if (
                 int(start_count) <= compliance_count and
@@ -1331,10 +1333,12 @@ def get_statutory_wise_compliances(
                 month = due_date_parts[1]
                 day = due_date_parts[2]
                 due_date = datetime.date(int(year), int(month), int(day))
-                level_1_statutory_wise_compliances[
-                    # statutories[0].strip()
-                    statutories[0]
-                ].append(
+                print "statutories>>>>", statutories
+                print "statutories[0]>>>>", statutories[0]
+                print "statutories[0].strip()>>", statutories[0].strip()
+                statutories_strip = statutories[0].strip()
+                print "level_1>>", level_1
+                level_1_statutory_wise_compliances[level_1].append(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                         compliance["compliance_id"], compliance_name,
                         compliance["compliance_description"],
@@ -1354,6 +1358,7 @@ def get_statutory_wise_compliances(
     for (
         level_1_statutory_name, compliances
     ) in level_1_statutory_wise_compliances.iteritems():
+        print "Line 1320>>>>>"
         if len(compliances) > 0:
             statutory_wise_compliances.append(
                 clienttransactions.STATUTORY_WISE_COMPLIANCES(
@@ -1408,7 +1413,7 @@ def is_already_completed_compliance(
 
 def validate_before_save(
     db, unit_id, compliance_id, due_date, completion_date, documents,
-    validity_date, completed_by
+    completed_by
 ):
     # Checking whether compliance already completed
     if is_already_completed_compliance(
@@ -1423,7 +1428,7 @@ def validate_before_save(
 
 def save_past_record(
         db, unit_id, compliance_id, due_date, completion_date, documents,
-        validity_date, completed_by, client_id
+        completed_by, legal_entity_id
 ):
     is_uploading_file = False
 
@@ -1435,7 +1440,7 @@ def save_past_record(
     ):
         return False
 
-    # Hanling upload
+    # Handling upload
     document_names = []
     file_size = 0
     if len(documents) > 0:
@@ -1459,7 +1464,8 @@ def save_past_record(
                 auto_code = new_uuid()
                 file_name = "%s-%s.%s" % (name, auto_code, exten)
                 document_names.append(file_name)
-                convert_base64_to_file(file_name, doc.file_content, client_id)
+                convert_base64_to_file(file_name, doc.file_content, 2)
+                # convert_base64_to_file(file_name, doc.file_content, client_id)
             update_used_space(db, file_size)
         else:
             return clienttransactions.NotEnoughSpaceAvailable()
@@ -1480,7 +1486,7 @@ def save_past_record(
         concur_approve_columns += ", concurrence_person"
     condition = "compliance_id = %s and unit_id = %s "
     rows = db.get_data(
-        tblAssignedCompliances,
+        tblAssignCompliances,
         concur_approve_columns,
         condition, [compliance_id, unit_id]
     )
@@ -1494,18 +1500,20 @@ def save_past_record(
         "unit_id", "compliance_id",
         "due_date", "completion_date",
         "completed_by", "completed_on",
-        "approve_status", "approved_by", "approved_on"
+        "approve_status", "approved_by", "approved_on", "legal_entity_id",
+        "current_status", "start_date"
     ]
     values = [
         unit_id, compliance_id,
         string_to_datetime(due_date).date(),
         completion_date,
-        completed_by, completion_date, 1, approved_by, completion_date
+        completed_by, completion_date, 1, approved_by, completion_date,
+        legal_entity_id, 3, get_date_time()
     ]
-    if validity_date is not None and validity_date != "":
-        validity_date = string_to_datetime(validity_date).date()
-        columns.append("validity_date")
-        values.append(validity_date)
+    # if validity_date is not None and validity_date != "":
+    #     validity_date = string_to_datetime(validity_date).date()
+    #     columns.append("validity_date")
+    #     values.append(validity_date)
 
     if is_two_level:
         columns.append("concurrence_status")
@@ -1821,13 +1829,13 @@ def save_compliance_activity(
 # Approve Compliances
 ############################################################
 def approve_compliance(
-    db, compliance_history_id, remarks, next_due_date,
+    db, approve_status, compliance_history_id, remarks, next_due_date,
     validity_date, session_user
 ):
     # Updating approval in compliance history
     columns = ["approve_status", "approved_on", "current_status"]
 
-    values = [1, get_date_time(),"3"]
+    values = [approve_status, get_date_time(), "3"]
     if remarks is not None:
         columns.append("remarks")
         values.append(remarks)
@@ -1862,6 +1870,8 @@ def approve_compliance(
     completion_date = rows[0]["completion_date"]
     frequency_id = rows[0]["frequency_id"]
     duration_type_id = rows[0]["duration_type_id"]
+    compliance_task = rows[0]["compliance_task"]
+    legal_entity_id = rows[0]["legal_entity_id"]
 
     # Updating next due date validity dates in assign compliance table
     as_columns = []
@@ -1900,14 +1910,21 @@ def approve_compliance(
     #     db, unit_id, compliance_id, "Approved", status,
     #     remarks
     # )
+    if approve_status == 1 :
+        action = "Compliance Approved \"%s\"" % compliance_task
+        sts = "Approved"
+    else :
+        action = "Compliance Rejected \"%s\"" % compliance_task
+        sts = "Approval Rejected"
+
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
-                             session_user, current_time_stamp, "Approved", remarks)
-    notify_compliance_approved(db, compliance_history_id, "Approved")
+                             session_user, current_time_stamp, sts, remarks)
+    notify_compliance_approved(db, compliance_history_id, sts)
 
     # Audit Log Entry
-    action = "Compliance Approved \"%s\"" % (row["compliance_task"])
-    db.save_activity(session_user, 9, action, row["legal_entity_id"], unit_id)
+
+    db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
 
     return True
 
@@ -2131,12 +2148,12 @@ def notify_compliance_rejected(
 # Concurr Compliances
 #####################################################
 def concur_compliance(
-    db, compliance_history_id, remarks,
+    db, concurrence_status, compliance_history_id, remarks,
     next_due_date, validity_date, session_user
 ):
-    columns = ["concurrence_status", "concurred_on","current_status"]
+    columns = ["concurrence_status", "concurred_on", "current_status"]
 
-    values = [1, get_date_time(),"2"]
+    values = [concurrence_status, get_date_time(), "2"]
     if validity_date is not None:
         columns.append("validity_date")
         values.append(string_to_datetime(validity_date))
@@ -2157,7 +2174,7 @@ def concur_compliance(
         " where tch.compliance_id=tc.compliance_id) as compliance_task"
     condition = "compliance_history_id = %s "
     rows = db.get_data(
-        tblComplianceHistory+ " tch", columns, condition,
+        tblComplianceHistory + " tch", columns, condition,
         [compliance_history_id]
     )
     unit_id = rows[0]["unit_id"]
@@ -2197,13 +2214,20 @@ def concur_compliance(
     #     db, unit_id, compliance_id, "Concurred", status,
     #     remarks
     # )
+    if concurrence_status == 1 :
+        action = "Compliance Concurred \"%s\"" % compliance_task
+        sts = "Concurred"
+    else :
+        action = "Compliance Concurrence Rejected \"%s\"" % compliance_task
+        sts = "Concurrence Rejected"
+
     current_time_stamp = get_date_time_in_date()
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
-                             session_user, current_time_stamp, "Concurred", remarks)
-    notify_compliance_approved(db, compliance_history_id, "Concurred")
+                             session_user, current_time_stamp, sts, remarks)
+    notify_compliance_approved(db, compliance_history_id, sts)
 
     # Audit Log Entry
-    action = "Compliance Concurred \"%s\"" % (compliance_task)
+
     db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
     return True
 
@@ -2239,8 +2263,8 @@ def reject_compliance_concurrence(
     completion_date = rows[0]["completion_date"]
     duration_type_id = rows[0]["duration_type_id"]
     legal_entity_id = rows[0]["legal_entity_id"]
-    compliance_task = rows[0]["compliance_task"]    
-    
+    compliance_task = rows[0]["compliance_task"]
+
     status = "Inprogress"
     if due_date < completion_date:
         status = "Not Complied"
@@ -2537,6 +2561,8 @@ def reassign_compliance(db, request, session_user):
         "old_concurrer", "old_approver", "assignee",
         "concurrer", "approver", "remarks", "assigned_by", "assigned_on"
     ]
+
+    users_list = [];
     for c in compliances:
         unit_id = c.u_id
         compliance_id = c.comp_id
@@ -2571,18 +2597,33 @@ def reassign_compliance(db, request, session_user):
             update_assign_val.append(assignee)
             update_assign_column.append("is_reassigned")
             update_assign_val.append(1)
-
+            if assignee not in users_list:
+                users_list.append(assignee)
+        
         if concurrence is not None and concurrence != o_concurrence:
             update_assign_column.append("concurrence_person")
             update_assign_val.append(concurrence)
             update_assign_column.append("c_is_reassigned")
             update_assign_val.append(1)
-
+            if concurrence not in users_list:
+                users_list.append(concurrence)
+        
         if approval is not None and approval != o_approval:
             update_assign_column.append("approval_person")
             update_assign_val.append(approval)
             update_assign_column.append("a_is_reassigned")
             update_assign_val.append(1)
+            if approval not in users_list:
+                users_list.append(approval)
+            
+        if o_assignee not in users_list:
+            users_list.append(o_assignee)
+
+        if o_concurrence not in users_list:
+            users_list.append(o_concurrence)
+
+        if o_approval not in users_list:
+                users_list.append(o_approval)
 
         if due_date is not None:
             update_assign_column.append("due_date")
@@ -2685,7 +2726,83 @@ def reassign_compliance(db, request, session_user):
     #     ]
     # )
     # notify_reassing_compliance.start()
+    update_user_wise_task_status(db, users_list)
+
     return clienttransactions.ReassignComplianceSuccess()
+
+def getCurrentYear():
+    now = datetime.datetime.now()
+    return now.year
+
+def get_year_to_update_chart(db):
+    q = "select distinct t1.country_id, t1.domain_id, t1.chart_year, t1.month_from, t1.month_to from tbl_compliance_status_chart_unitwise as t1" + \
+        " inner join tbl_client_configuration as t2 on t1.country_id = t2.country_id and t1.domain_id = t2.domain_id " + \
+        " and t1.month_from = t2.month_from and t1.month_to = t2.month_to " + \
+        " where t1.inprogress_count > 0 or t1.overdue_count > 0"
+    rows = db.select_all(q)
+    years = []
+    for r in rows :
+        years.append(r["chart_year"])
+    return years
+
+def get_client_date_configuration(db):
+    q = "select country_id, domain_id, month_from, month_to from tbl_client_configuration "
+    rows = db.select_all(q)
+    return rows
+
+def update_user_wise_task_status(db, users_list):
+        # unit_ids = ",".join([str(x) for x in self.started_unit_id])
+        # user_ids = ",".join([str(y) for y in self.started_user_id])
+        dat_conf = get_client_date_configuration(db)
+        year = get_year_to_update_chart(db)
+        year.append(getCurrentYear() - 1)
+        year.append(getCurrentYear())
+
+        q = "insert into tbl_compliance_status_chart_userwise( " + \
+            "     legal_entity_id, country_id, domain_id, unit_id, user_id, " + \
+            "     month_from, month_to, chart_year, complied_count, delayed_count, inprogress_count, overdue_count " + \
+            " ) " + \
+            " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, ch.unit_id, usr.user_id, " + \
+            " ccf.month_from,ccf.month_to,%s, " + \
+            " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+            " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
+            " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+            " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
+            " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+            " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
+            " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+            " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+            " from tbl_client_configuration as ccf " + \
+            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
+            " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \
+            " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
+            " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
+            " inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by " + \
+            " and find_in_set(usr.user_id, %s) " + \
+            " where ch.due_date >= date(concat_ws('-',%s,ccf.month_from,1))  " + \
+            " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+            " and ccf.country_id = %s and ccf.domain_id = %s " + \
+            " group by ccf.country_id,ccf.domain_id, ch.unit_id, ccf.month_from,ccf.month_to,usr.user_id " + \
+            " on duplicate key update complied_count = values(complied_count), " + \
+            " delayed_count = values(delayed_count), inprogress_count = values(inprogress_count), " + \
+            " overdue_count = values(overdue_count) "
+
+        # if len(self.started_unit_id) > 0 :
+        # self.execute(q_delete, [years])
+        for y in year :
+            for d in dat_conf :
+                c_id = d["country_id"]
+                d_id = d["domain_id"]
+                from_year = y
+                if d["month_from"] == 1 and d["month_to"] == 12 :
+                    to_year = y
+                else :
+                    to_year = y+1
+                db.execute(q, [y, ",".join([str(x) for x in users_list]), from_year, to_year, c_id, d_id])
+                # if c_id == y["country_id"] and d_id == y["domain_id"] :
+                #     self.execute(q, [y, from_year, to_year, c_id, d_id])
+                # else :
+                #     continue
 
 # update_user_settings
 def update_user_settings(db, new_units):
