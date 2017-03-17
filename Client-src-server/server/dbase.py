@@ -923,3 +923,10 @@ class Database(object):
             return False
         else:
             return True
+
+    def save_notification_users(self, notification_id, user_id):
+        if user_id is not "NULL" and user_id is not None  :
+            q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                " VALUES (%s, %s) "
+            v = (notification_id, user_id)
+            self.execute(q, v)

@@ -128,7 +128,7 @@ class EmailHandler(Email):
         subject = "Confirm Your Registration"
         message = '''
             Dear %s, <br> \
-            <p>Use the following link to confirm your registraion </p>  <br>\
+            <p>Use the following link to confirm your registration </p>  <br>\
             <p>%s</p>  <br>\
             <p> Thanks & Regards, </p>  <br>\
             Compfie Support Team
@@ -141,7 +141,7 @@ class EmailHandler(Email):
         subject = "Confirm Your Registration"
         message = '''
             Dear Group Admin, <br> \
-            <p>Use the following link to confirm your registraion </p>  <br>\
+            <p>Use the following link to confirm your registration </p>  <br>\
             <p>%s</p>  <br>\
             <p> Thanks & Regards, </p>  <br>\
             Compfie Support Team
