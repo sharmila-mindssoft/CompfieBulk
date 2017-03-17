@@ -935,10 +935,8 @@ def get_no_of_remaining_licence_Viewonly(db):
 # Return Type - int
 ############################################################################
 def get_no_of_remaining_licence(db, legal_entity_id):
-     q = " SELECT (total_licence - ifnull(used_licence,0)) As remaining_licence " + \
+    q = " SELECT (total_licence - ifnull(used_licence,0)) As remaining_licence " + \
          " FROM tbl_legal_entities WHERE legal_entity_id = %s"
-#          SELECT legal_entity_id, (total_licence - ifnull(used_licence,0)) As remaining_licence 
-# FROM tbl_legal_entities Where find_in_set(legal_entity_id, ('2,8')) ;
     row = db.select_one(q, [legal_entity_id])
     return row["remaining_licence"]
 
