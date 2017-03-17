@@ -21,7 +21,8 @@ from server.clientdatabase.general import (
     is_admin, calculate_due_date, filter_out_due_dates,
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
-    get_user_category, is_primary_admin
+    get_user_category, is_primary_admin, update_task_status_in_chart
+
 )
 from server.exceptionmessage import client_process_error
 from server.clientdatabase.savetoknowledge import *
@@ -1847,31 +1848,32 @@ def approve_compliance(
     db.update(tblComplianceHistory, columns, values, condition)
 
     # Getting compliance details from compliance history
-    query = " SELECT tch.legal_entity_id, tch.unit_id, tch.compliance_id, " + \
-        " (SELECT frequency_id FROM tbl_compliances tc " + \
-        " WHERE tch.compliance_id = tc.compliance_id ) as frequency_id, " + \
-        " due_date, completion_date, " + \
-        " (select duration_type_id FROM tbl_compliances tc " + \
-        " where tch.compliance_id=tc.compliance_id) as duration_type_id, " + \
-        " (select compliance_task FROM tbl_compliances tc " + \
-        " where tch.compliance_id=tc.compliance_id) as compliance_task " + \
-        " FROM tbl_compliance_history tch " + \
-        " WHERE compliance_history_id = %s "
-    rows = db.select_all(query, [compliance_history_id])
-    columns = [
-        "unit_id", "compliance_id", "frequency_id",
-        "due_date", "completion_date", "duration_type_id"
-    ]
-    # rows = convert_to_dict(rows, columns)
+    query = "SELECT t1.legal_entity_id, t1.unit_id, t1.compliance_id, " + \
+        " t1.due_date, t1.completion_date, t1.completed_by, t1.concurred_by, t1.approved_by, " + \
+        "t2.frequency_id, t2.duration_type_id, t2.compliance_task, t2.domain_id, " + \
+        "t3.country_id " + \
+        "from tbl_compliance_history as t1 " + \
+        "inner join tbl_compliances as t2 on t1.compliance_id = t2.compliance_id " + \
+        "inner join tbl_units as t3 on t1.unit_id = t3.unit_id " + \
+        "where t1.compliance_history_id = %s "
+    rows = db.select_one(query, [compliance_history_id])
 
-    unit_id = rows[0]["unit_id"]
-    compliance_id = rows[0]["compliance_id"]
-    due_date = rows[0]["due_date"]
-    completion_date = rows[0]["completion_date"]
-    frequency_id = rows[0]["frequency_id"]
-    duration_type_id = rows[0]["duration_type_id"]
-    compliance_task = rows[0]["compliance_task"]
-    legal_entity_id = rows[0]["legal_entity_id"]
+    unit_id = rows["unit_id"]
+    compliance_id = rows["compliance_id"]
+    due_date = rows["due_date"]
+    completion_date = rows["completion_date"]
+    frequency_id = rows["frequency_id"]
+    duration_type_id = rows["duration_type_id"]
+    compliance_task = rows["compliance_task"]
+    legal_entity_id = rows["legal_entity_id"]
+    country_id = rows["country_id"]
+    domain_id = rows["domain_id"]
+    users = [rows["completed_by"], rows["approved_by"]]
+    if rows["concurred_by"] is not None :
+        users.append(rows["concurred_by"])
+
+    update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
+
 
     # Updating next due date validity dates in assign compliance table
     as_columns = []

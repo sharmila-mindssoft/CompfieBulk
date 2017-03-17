@@ -3,7 +3,7 @@ import base64
 import os
 import io
 import datetime
-from flask import make_response, send_from_directory
+from flask import make_response
 import fileprotocol
 from constants import (FILE_MAX_LIMIT, CLIENT_DOCS_BASE_PATH, LOCAL_TIMEZONE)
 
@@ -16,6 +16,20 @@ def localize(time_stamp):
     local_dt = local_dt+tzoffseet
     return local_dt
 
+string_months = {
+    1: "Jan",
+    2: "Feb",
+    3: "Mar",
+    4: "Apr",
+    5: "May",
+    6: "Jun",
+    7: "Jul",
+    8: "Aug",
+    9: "Sep",
+    10: "Oct",
+    11: "Nov",
+    12: "Dec",
+}
 
 def string_to_datetime(string):
     string_in_date = string
@@ -40,11 +54,12 @@ def upload_file(request, client_id) :
     unit_id = request.unit_id
     start_date = string_to_datetime(request.start_date).date()
     year = start_date.year
+    month = "%s%s" % (string_months.get(start_date.month), str(year))
     file_info = request.file_info
 
     file_path = "%s/%s/%s/%s/%s/%s/%s/%s" % (
         CLIENT_DOCS_BASE_PATH, client_id, country_id, legal_entity_id,
-        unit_id, domain_id, year, start_date
+        unit_id, domain_id, year, month
     )
 
     if not os.path.exists(file_path):
