@@ -1410,31 +1410,35 @@ def get_compliance_name_by_id(db, compliance_id):
 
 
 def is_space_available(db, upload_size):
-    columns = "(total_disk_space - total_disk_space_used) as space"
-    rows = db.get_data(tblClientGroups, columns, "1")
+    # columns = "(total_disk_space - total_disk_space_used) as space"
+    # GB to Bytes
+    columns = "((file_space_limit*1073741824) - used_file_space) as space"
+    rows = db.get_data(tblLegalEntities, columns, "1")
     remaining_space = rows[0]["space"]
     if upload_size < remaining_space:
         return True
     else:
         return False
 
-
 def update_used_space(db, file_size):
-    columns = ["total_disk_space_used"]
+    # columns = ["total_disk_space_used"]
+    columns = ["used_file_space"]
     condition = "1"
     db.increment(
-        tblClientGroups, columns, condition, value=file_size
+        tblLegalEntities, columns, condition, value=file_size
     )
 
     total_used_space = 0
     rows = db.get_data(
-        tblClientGroups, "total_disk_space_used, client_id", "1"
+        tblLegalEntities, "used_file_space, legal_entity_id", "1"
     )
-    client_id = rows[0]["client_id"]
-    if rows[0]["total_disk_space_used"] is not None:
-        total_used_space = int(rows[0]["total_disk_space_used"])
+    legal_entity_id = rows[0]["legal_entity_id"]
+    print "legal_entity_id>>update_used_space>", legal_entity_id
+    if rows[0]["used_file_space"] is not None:
+        total_used_space = int(rows[0]["used_file_space"])
 
-    UpdateFileSpace(total_used_space, client_id)
+    # UpdateFileSpace(total_used_space, client_id)
+    UpdateFileSpace(total_used_space, legal_entity_id)
 
 
 def save_compliance_activity(

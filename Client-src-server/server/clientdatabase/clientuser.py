@@ -336,7 +336,7 @@ def handle_file_upload(
             for doc in documents:
                 file_size += doc.file_size
 
-            if is_space_available(db, file_size):
+            if is_space_available(db, file_size):                
                 for doc in documents:
                     file_name_parts = doc.file_name.split('.')
                     name = None
@@ -352,27 +352,29 @@ def handle_file_upload(
                     auto_code = new_uuid()
                     file_name = "%s-%s.%s" % (name, auto_code, exten)
                     document_names.append(file_name)
-                    convert_base64_to_file(
-                        file_name, doc.file_content, client_id
-                    )
-                update_used_space(db, file_size)
+                    # convert_base64_to_file(
+                    #     file_name, doc.file_content, client_id
+                    # )
+                update_used_space(db, file_size)                
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
 
-    if old_documents is not None and len(old_documents) > 0:
-        for document in old_documents.split(","):
-            if document is not None and document.strip(',') != '':
-                name = document.split("-")[0]
-                document_parts = document.split(".")
-                ext = document_parts[len(document_parts)-1]
-                name = "%s.%s" % (name, ext)
-                if name not in uploaded_documents:
-                    path = "%s/%s/%s" % (
-                       CLIENT_DOCS_BASE_PATH, client_id, document
-                    )
-                    remove_uploaded_file(path)
-                else:
-                    document_names.append(document)
+    # TO DO: Show Old uploaded documents
+    # if old_documents is not None and len(old_documents) > 0:
+    #     for document in old_documents.split(","):
+    #         if document is not None and document.strip(',') != '':
+    #             name = document.split("-")[0]
+    #             document_parts = document.split(".")
+    #             ext = document_parts[len(document_parts)-1]
+    #             name = "%s.%s" % (name, ext)
+    #             # if name not in uploaded_documents:
+    #             #     # path = "%s/%s/%s" % (
+    #             #     #    CLIENT_DOCS_BASE_PATH, client_id, document
+    #             #     # )                    
+    #             #     # remove_uploaded_file(path)
+    #             # else:
+    #             #     document_names.append(document)
+    #             document_names.append(document)
     return document_names
 
 
@@ -431,8 +433,10 @@ def update_compliances(
         return False
     # document_names = handle_file_upload(
     #     db, documents, uploaded_compliances, row["documents"])
-    # document_names = []
-    document_names = []
+    print "documents>>", documents
+    document_names = handle_file_upload(
+        db, documents, documents, row["documents"])
+    
     if type(document_names) is not list:
         return document_names
     if row["frequency_id"] == 4 and row["duration_type_id"] == 2:
