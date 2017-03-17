@@ -450,18 +450,12 @@ RiskReport.prototype.validate = function() {
         return false;
     }
     if (BusinessGroupName) {
-        if (isNotEmpty(BusinessGroupName, message.businessgroup_required) == false)
-            return false;
-        else if (isLengthMinMax(BusinessGroupName, 1, 50, message.businessgroup_max) == false)
+        if (isLengthMinMax(BusinessGroupName, 0, 50, message.businessgroup_max) == false)
             return false;
         else if (isCommonName(BusinessGroupName, message.businessgroup_str) == false)
             return false;
     }
-    if (BusinessGroupId.val() == ""){
-        displayMessage(message.businessgroup_required);
-        BusinessGroupName.focus();
-        return false;
-    }
+
     if (LegalEntityName) {
         if (isNotEmpty(LegalEntityName, message.legalentity_required) == false)
             return false;
@@ -532,6 +526,8 @@ RiskReport.prototype.fetchReportValues = function() {
     t_this = this;
     c_id = countryId.val();
     bg_id = BusinessGroupId.val();
+    if (bg_id == "")
+        bg_id = 0;
     le_id = LegalEntityId.val();
     d_id = domainId.val();
     div_id = DivisionId.val();
@@ -676,7 +672,7 @@ RiskReport.prototype.showReportValues = function() {
                             });
                         }
                         else{
-                            if (v.assignee_name!=null){
+                            if (v.assignee_name==null){
                                 $('.view-data', clonethree).on('click', function() {
                                     displayPopup(
                                         v.start_date, v.due_date, v.assignee_name, v.assigned_on, v.concurrer_name,
