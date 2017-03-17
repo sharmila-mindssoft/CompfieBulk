@@ -401,10 +401,10 @@ function loadStatutorySettingReport(data)
     {
       if(act_grp[j].unit_id == unit_grp[i].unit_id)
       {
-        var tableRowAssigned = $('#act-heading .table-act-heading-list .tablerow');
+        var tableRowAssigned = $('#act-heading .tablerow');
         var cloneAssigned = tableRowAssigned.clone();
         var actheading = "Act : "+act_grp[j].statutory_name;
-        $('.heading', cloneAssigned).text(actheading);
+        $('.act-name', cloneAssigned).text(actheading);
         $('.tbody-assigned-statutory-list').append(cloneAssigned);
         for(var k=0;k<compl_stat_List.length;k++)
         {
@@ -563,7 +563,7 @@ $('#businessgroupsval').keyup(function (e) {
     }
     console.log(bg_grp.length)
     commonAutoComplete(
-      e, ACBusinessGroup, BusinessGroupVal, textval,
+      e, ACBusinessGroup, BusinessGroup, textval,
       bg_grp, "business_group_name", "business_group_id", function (val) {
         onAutoCompleteSuccess(BusinessGroupVal, BusinessGroup, val);
     }, condition_fields, condition_values);
