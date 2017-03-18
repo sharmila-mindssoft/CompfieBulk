@@ -535,6 +535,23 @@ def is_duplicate_group_name(db, group_name, client_id=None):
 
 
 ##########################################################################
+#  To Check whether created maximum licence users
+#  Parameters : Object of database, client id, no_of_licence
+#  Return Type : Boolean - Returns true if group name already exists
+#   returns False if there is no maximum exists
+##########################################################################
+def check_licence_created(db, group_id, no_of_licence):
+    count_rows = db.call_proc(
+        "sp_client_group_licence_count",
+        (client_id, no_of_licence)
+    )
+    if count_rows[0]["count"] > 0:
+        return True
+    else:
+        return False
+
+
+##########################################################################
 #  To Check whether the group name already exists
 #  Parameters : Object of database, group name, client id (Optional)
 #  Return Type : Boolean - Returns true if group name already exists

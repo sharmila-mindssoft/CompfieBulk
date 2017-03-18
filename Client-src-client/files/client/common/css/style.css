@@ -1297,3 +1297,7 @@ h2.chart-title: hover {
 .full-width-list {
     vertical-align: top;
 }
+
+.bg-grey {
+    background-color: #eeeeee;
+}

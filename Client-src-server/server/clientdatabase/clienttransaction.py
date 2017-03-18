@@ -2961,8 +2961,9 @@ def get_review_settings_compliance(db, request, session_user):
     d_id = request.domain_id
     unit_ids = ",".join([str(x) for x in request.unit_ids])
     f_type = request.f_id
+    print "unit_ids==", unit_ids
 
-    where_qry = " and t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and t01.unit_id in (%s)"
+    where_qry = " and t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and find_in_set(t01.unit_id, %s)"
     condition_val = [f_type, le_id, d_id, unit_ids]
 
     query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision,  " + \
@@ -2978,11 +2979,8 @@ def get_review_settings_compliance(db, request, session_user):
             " group by t01.compliance_id "
 
     query = query % (where_qry)
-    if condition_val is None:
-        rows = db.select_all(query)
-    else:
-        rows = db.select_all(query, condition_val)
-
+    rows = db.select_all(query, condition_val)
+    
     return return_review_settings_compliance(rows)
 
 
@@ -3012,6 +3010,7 @@ def return_review_settings_compliance(data):
                 unit_ids, level_1_statutory_name
             )
         )
+        print  d["compliance_id"], d["compliance_task"], d["statutory_provision"], d["repeats_every"], d['repeats_type_id'], date_list, unit_ids, level_1_statutory_name
     return results
 
 
