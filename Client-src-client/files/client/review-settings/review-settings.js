@@ -75,7 +75,9 @@ PageControls = function() {
     });
 
     ShowUnitButton.click(function() {
-       r_s_page.getUnitList();
+        SelectAll.prop('checked', false);
+        ACTIVE_UNITS = [];
+        r_s_page.getUnitList();
     });
 }
 
@@ -246,11 +248,13 @@ ReviewSettingsPage.prototype.renderUnitList = function(_Units) {
             unit_text = value.u_code + " - " + value.u_name + " - " + value.address;
             var d_name = value.div_name;
             if(temp_d_name != d_name){
-                var UnitRowheading = $(".unit-list-ul .heading");
-                var cloneHeading = UnitRowheading.clone();    
-                cloneHeading.html(d_name);
-                UnitList.append(cloneHeading);
-                temp_d_name = d_name;
+                if(d_name != null){
+                    var UnitRowheading = $(".unit-list-ul .heading");
+                    var cloneHeading = UnitRowheading.clone();    
+                    cloneHeading.html(d_name);
+                    UnitList.append(cloneHeading);
+                }   
+                temp_d_name = d_name;                 
             }
             
             var UnitRow = $(".unit-list-ul .unit-names");
@@ -404,6 +408,7 @@ showTab = function(){
         $('.tab-step-2').addClass('active')
         $('#tab2').addClass('active in');
         $('#tab2').show();
+        $(".accordion-div").empty();
         SubmitButton.show();
         PreviousButton.show();
         showBreadCrumbText();
@@ -450,6 +455,7 @@ loadCompliances = function(){
         var no_clone = no_record_row.clone();
         $(".accordion-div").append(no_clone);
         $(".total_count_view").hide();
+         SubmitButton.hide();
     }else{
         $(".accordion-div").empty();
         LastAct = '';
@@ -709,6 +715,12 @@ SubmitButton.on("click", function(){
             client_mirror.saveReviewSettingsCompliance(parseInt(le_id), selected_compliances_list, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.save_success);
+                    BusinessGroupSelect.find("option").removeAttr("selected");
+                    LegalEntitySelect.find("option").removeAttr("selected");
+                    Domain.val('');
+                    DomainId.val('');
+                    UnitList.empty();
+                    $(".step-1-unit-list").hide();
                     CURRENT_TAB = 1;
                     showTab();
                     SelectAll.prop("checked", false);

@@ -2898,13 +2898,14 @@ def get_domains_for_legalentity(db, request, session_user):
     where_qry = " WHERE t02.legal_entity_id = %s "
     condition_val = [le_id]
 
-    if cat_id > 2:
+    if cat_id > 3:
         where_qry += "AND t03.user_id = %s "
         condition_val.extend([session_user])
     query = "SELECT t01.domain_id, t01.domain_name, t02.legal_entity_id, t01.is_active " + \
             "FROM tbl_domains t01  " + \
             "INNER JOIN tbl_legal_entity_domains t02 on t01.domain_id = t02.domain_id " + \
-            "LEFT JOIN tbl_user_domains t03 on t01.domain_id = t03.domain_id %s "
+            "LEFT JOIN tbl_user_domains t03 on t01.domain_id = t03.domain_id %s " + \
+            "GROUP BY t01.domain_id "
     query = query % (where_qry)
     if condition_val is None:
         rows = db.select_all(query)
@@ -2929,7 +2930,7 @@ def get_review_settings_units(db, request, session_user):
 
     where_qry = "WHERE t1.legal_entity_id = %s and t2.domain_id = %s "
     condition_val = [le_id, d_id]
-    if cat_id > 2:
+    if cat_id > 3:
         where_qry += " AND t3.user_id = %s "
         condition_val.extend([session_user])
     query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.geography_name, " + \
@@ -2964,17 +2965,19 @@ def get_review_settings_compliance(db, request, session_user):
     unit_ids = ",".join([str(x) for x in request.unit_ids])
     f_type = request.f_id
 
-    where_qry = "WHERE t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and t01.unit_id in (%s) "
+    where_qry = " and t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and t01.unit_id in (%s)"
     condition_val = [f_type, le_id, d_id, unit_ids]
 
-    query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision, " + \
-            " ifnull(t03.repeats_every, t02.repeats_every) as repeats_every, " + \
+    query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision,  " + \
+            " ifnull(t03.repeats_every, t02.repeats_every) as repeats_every,  " + \
             " ifnull(t03.repeats_type_id, t02.repeats_type_id) as repeats_type_id, " + \
-            " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates, " + \
-            " group_concat(t01.unit_id) as unit_ids, t02.statutory_mapping " + \
-            " from tbl_client_compliances as t01 " + \
-            " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id " + \
-            " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id %s " + \
+            " ifnull(t03.statutory_date, t02.statutory_dates) as statutory_dates,  " + \
+            " group_concat(distinct t01.unit_id) as unit_ids, t02.statutory_mapping  " + \
+            " from tbl_client_compliances as t01  " + \
+            " inner join tbl_compliances as t02 on t01.compliance_id = t02. compliance_id  " + \
+            " left join tbl_compliance_dates as t03 on t01.compliance_id = t03.compliance_id  " + \
+            " WHERE ifnull(t01.is_submitted,0) = 1 and ifnull(t01.compliance_opted_status,0) = 1 " + \
+            " and ifnull(t02.is_active,0) = 1 %s " +\
             " group by t01.compliance_id "
 
     query = query % (where_qry)
@@ -3056,7 +3059,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                 ]
                 values = [
                     c.f_id, old_statutory_dates, c.old_repeat_type_id, c.old_repeat_by,
-                    c.repeat_by, c.repeat_type_id, statutory_dates, c.trigger_before_days,
+                    c.repeat_type_id, c.repeat_by,  statutory_dates, c.trigger_before_days,
                     string_to_datetime(c.due_date).date(), c.compliance_id, c.domain_id,  u
                 ]
                 condition = "compliance_id = %s and  domain_id = %s and unit_id = %s "
@@ -3075,7 +3078,7 @@ def save_review_settings_compliance(db, compliances, session_user):
                 values = [
                     c.legal_entity_id, c.compliance_id, c.f_id, u, c.domain_id,
                     old_statutory_dates, c.old_repeat_type_id, c.old_repeat_by,
-                    c.repeat_by, c.repeat_type_id, statutory_dates, c.trigger_before_days,
+                    c.repeat_type_id, c.repeat_by, statutory_dates, c.trigger_before_days,
                     string_to_datetime(c.due_date).date()
                 ]
                 result = db.insert(

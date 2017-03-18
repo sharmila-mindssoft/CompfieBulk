@@ -764,18 +764,18 @@ function ChartInput() {
     return this.escalation_year;
   };
 }
-function clearMessage() {
-  $('.chart-error-message').text('');
-}
-function displayMessage(message) {
-  $('.chart-error-message').text(message);
-}
-function hideLoader() {
-  $('.loading-indicator-spin').hide();
-}
-function displayLoader() {
-  $('.loading-indicator-spin').hide();
-}
+// function clearMessage() {
+//   $('.chart-error-message').text('');
+// }
+// function displayMessage(message) {
+//   $('.chart-error-message').text(message);
+// }
+// function hideLoader() {
+//   $('.loading-indicator-spin').hide();
+// }
+// function displayLoader() {
+//   $('.loading-indicator-spin').hide();
+// }
 function getOptionElement(v, t, selected) {
   var option = $('<option></option>');
   option.val(v);
@@ -901,6 +901,7 @@ function loadDomains() {
   }
 }
 function loadBusinessGroups(isSelectAll) {
+  $(".bg-filter option").remove();
   business_groups = CHART_FILTERS_DATA.bg_groups;
   for (var i = 0; i < business_groups.length; i++) {
     var business_group = business_groups[i];
@@ -912,6 +913,7 @@ function loadBusinessGroups(isSelectAll) {
   }
 }
 function loadLegalEntities(isSelectAll) {
+  $(".legal-entity-filter option").remove();
   legal_entities = CHART_FILTERS_DATA.le_did_infos;
   for (var i = 0; i < legal_entities.length; i++) {
     var legal_entity = legal_entities[i];
@@ -964,7 +966,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     $(".business-group-selection").show();
     $(".legal-entity-selection").show();
   }
-
+  console.log("isSingleSelect--"+isSingleSelect);
   $('.bg-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -981,6 +983,12 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
       chartInput.setBusinessGroupsAll([]);
     }
   });
+  if(isSingleSelect == "multiple") {
+    $(".bg-filter").attr("multiple", "multiple");
+  }else{
+    $(".bg-filter").removeAttr("multiple", "multiple");
+  }
+  $(".bg-filter").multiselect('rebuild');
   $('.legal-entity-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -997,6 +1005,13 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
       chartInput.setLegalEntitiesAll([]);
     }
   });
+  if(isSingleSelect == "multiple"){
+    $(".legal-entity-filter").attr("multiple", "multiple");
+  }else{
+    $(".legal-entity-filter").removeAttr("multiple");
+  }
+  $(".legal-entity-filter").multiselect('rebuild');
+
   $('.division-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1013,6 +1028,12 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
       chartInput.setDivisionsAll([]);
     }
   });
+  if(isSingleSelect == "multiple"){
+    $(".division-filter").attr("multiple", "multiple");
+  }else{
+    $(".division-filter").removeAttr("multiple");
+  }
+  $(".division-filter").multiselect('rebuild');
   $('.category-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1029,6 +1050,12 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
       chartInput.setCategoryAll([]);
     }
   });
+  if(isSingleSelect == "multiple"){
+    $('.category-filter').attr("multiple", "multiple");
+  }else{
+    $('.category-filter').removeAttr("multiple");
+  }
+  $(".category-filter").multiselect('rebuild');
   $('.unit-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1045,6 +1072,12 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
       chartInput.setUnitsAll([]);
     }
   });
+  if(isSingleSelect == "multiple"){
+    $('.unit-filter').attr("multiple", "multiple");
+  }else{
+    $('.unit-filter').removeAttr("multiple");
+  }
+  $(".unit-filter").multiselect('rebuild');
 }
 function initializeFilters() {
   loadCountries();
@@ -1079,7 +1112,7 @@ function initializeFilters() {
       chartInput.setDomainsAll([]);
     }
   });
-  loadSubFilters(selectall = true, singleSelect = false);
+  loadSubFilters(selectall = true, singleSelect = "multiple");
   // $('.btn-country').on('click', function () {
   //   $(this).toggleClass('active');
   //   if ($(this).hasClass('active')) {
@@ -1153,9 +1186,9 @@ function initializeFilters() {
     var chart_type = chartInput.getChartType();
     loadCharts();
   });
-  $('.btn-go .btn').on('click', function () {
-    loadCharts();
-  });
+  // $('.btn-go .btn').on('click', function () {
+  //   loadCharts();
+  // });
   $('.btn-previous-year').on('click', function (event) {
     $('.btn-next-year').show();
     event.preventDefault();
@@ -1287,8 +1320,12 @@ function parseComplianceStatusApiInput() {
   var filterIds = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
-  var fromDate = chartInput.getFromDate();
-  var toDate = chartInput.getToDate();
+  var fromDate = $('#fromdate').val();
+  var toDate = $('#todate').val();
+  if(fromDate == ""){ fromDate = null;}
+  if(toDate == ""){ toDate = null;}
+  // var fromDate = chartInput.getFromDate();
+  // var toDate = chartInput.getToDate();
   var chart_year = chartInput.getChartYear();
   if (chart_year == 0) {
     chart_year = chartInput.getCurrentYear();
@@ -1763,6 +1800,7 @@ function loadComplianceStatusChart() {
       showPreviousNext();
     }
     $('.btn-previous').hide();
+    $('.btn-group').prop('checked', true);
   });
 }
 function loadEscalationChart() {
