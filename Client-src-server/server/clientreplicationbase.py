@@ -232,12 +232,12 @@ class ReplicationBase(object):
 
     def _execute_insert_statement(self, changes, error_ok=False):
         assert (len(changes)) > 0
-        # print changes
+        print changes
         tbl_name = changes[0].tbl_name
         auto_id = self._auto_id_columns.get(tbl_name)
-        # print tbl_name
+        print tbl_name
         column_count = self._columns_count.get(tbl_name)
-        # print column_count
+        print column_count
         column_count -= 1
         assert auto_id is not None
         if error_ok:
@@ -299,6 +299,8 @@ class ReplicationBase(object):
                 " duration = values(duration), is_active = values(is_active), " + \
                 " format_file = values(format_file), format_file_size = values(format_file_size), " + \
                 " statutory_nature = values(statutory_nature), statutory_mapping = values(statutory_mapping)"
+        elif tbl_name == "tbl_legal_entity_domains":
+            query += "ON DUPLICATE KEY UPDATE count = values(count)"
         else :
             query += ""
 
@@ -318,11 +320,12 @@ class ReplicationBase(object):
                 self._db.execute(query)
 
             elif tbl_name == "tbl_legal_entities" :
-                self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [auto_id])
+                self._db.execute("delete from tbl_legal_entity_domains where legal_entity_id = %s", [changes[0].tbl_auto_id])
                 self._db.execute("delete from tbl_client_configuration")
                 self._db.execute(query)
+
             elif tbl_name == "tbl_units" :
-                self._db.execute("delete from tbl_units_organizations where unit_id = %s", [auto_id])
+                self._db.execute("delete from tbl_units_organizations where unit_id = %s", [changes[0].tbl_auto_id])
                 self._db.execute(query)
 
             else :
