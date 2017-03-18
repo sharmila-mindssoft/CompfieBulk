@@ -102,6 +102,7 @@ var statutoriesCount = 1;
 var actCount = 1;
 var count = 1;
 var sno = 1;
+var msno = 1;
 var totalRecord = 0;
 
 AssignStatutoryList.empty();
@@ -309,6 +310,7 @@ function pageControls() {
         //reset();
         if(ACTIVE_UNITS.length > 0){
             sno = 1;
+            msno = 1;
             statutoriesCount = 1;
             $(".total_count_view").hide();
             $('.tbody-compliance-list').empty();
@@ -410,11 +412,11 @@ function pageControls() {
     });
 
     SaveButton.click(function() {
-        //displayPopUp(SAVE_API, null);
-        displayLoader();
+        displayPopUp(SAVE_API, null);
+        /*displayLoader();
         setTimeout(function() {
             callAPI(SAVE_API)
-        }, 500);
+        }, 500);*/
     });
 
     PasswordSubmitButton.click(function() {
@@ -1176,12 +1178,12 @@ function loadMultipleUnitCompliances() {
         var clone2 = complianceDetailtableRow.clone();
 
         $('tr', clone2).addClass('act' + count);
-        $('.sno', clone2).text(sno);
+        $('.sno', clone2).text(msno);
         $('.statutoryprovision', clone2).text(value.s_prov);
         $('.compliancetask', clone2).text(value.comp_name);
         $('.compliancefrequency', clone2).text(value.frequency_name);
         $('.compliancedescription', clone2).text(value.descp);
-        $('.applicablelocation', clone2).attr('id', 'appl' + sno);
+        $('.applicablelocation', clone2).attr('id', 'appl' + msno);
         $('.applicablelocation', clone2).text(value.unit_wise_status.length + '/' + ACTIVE_UNITS.length);
 
        /* $('.saved', clone2).attr('id', 'save' + sno);
@@ -1195,7 +1197,7 @@ function loadMultipleUnitCompliances() {
         $('tr', clone5).addClass('act' + count);
 
         temp1 = temp1 + clone5.html();
-        sno++;
+        msno++;
         var temp = "";
         var applUnits = value.unit_wise_status;
         $.each(applUnits, function(key1, value1) {
@@ -1260,6 +1262,7 @@ function loadMultipleUnitCompliances() {
 
             temp = temp + clone4.html();
             statutoriesCount++;
+            sno++;
 
             if(value1.is_saved == false){
                 var C_U_ID = value.comp_id + '-' + value1.unit_id;
@@ -1311,20 +1314,20 @@ function loadMultipleUnitCompliances() {
         mcremarkstatus(this);
     });
 
-    if (sno <= 0) {
+    if (msno <= 0) {
         SubmitButton.hide();
         SaveButton.hide();
         $(".total_count_view").hide();
     } else {
         SaveButton.show();
-        if (totalRecord == (sno - 1)) {
+        if (C_COUNT == (sno - 1)) {
             SubmitButton.show();
             ShowMore.hide();
         } else {
             SubmitButton.hide();
             ShowMore.show();
         }
-        $(".total_count").text('Showing 1 to ' + (sno - 1) + ' of ' + totalRecord + ' entries');
+        $(".total_count").text('Showing 1 to ' + (msno - 1) + ' of ' + totalRecord + ' entries');
         $(".total_count_view").show();
     }
     hideLoader();

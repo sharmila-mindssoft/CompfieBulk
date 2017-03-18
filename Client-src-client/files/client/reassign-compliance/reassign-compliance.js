@@ -1147,7 +1147,7 @@ function validate_thirdtab() {
         displayMessage(message.reason_required);
         return false;
     } else {
-        return false;
+        return true;
     }
 }
 

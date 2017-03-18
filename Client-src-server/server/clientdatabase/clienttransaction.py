@@ -635,8 +635,8 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "group by t1.unit_id) as c_details " + \
             "INNER JOIN  " + \
             "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id " + \
-            " inner join tbl_user_units as t3 on c_details.unit_id = t3.unit_id" + \
-            " inner join tbl_user_domains as t4 on t4.domain_id = %s and t3.user_id = t4.user_id" + \
+            " inner join tbl_user_units as t5 on c_details.unit_id = t5.unit_id " + \
+            " inner join tbl_user_domains as t4 on t4.domain_id = %s and t5.user_id = t4.user_id " + \
             "where c_details.unassigned > 0 and t4.user_id = %s " + \
             "ORDER BY t3.unit_name"
 
@@ -653,7 +653,8 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
         #     " where t2.ccount > 0 and t2.domain_id = %s and t4.user_id = %s" + \
         #     " order by t1.unit_code, t1.unit_name"
         param = [domain_id, domain_id, domain_id, session_user]
-
+        print query
+        print param
     row = db.select_all(query, param)
     return return_units_for_assign_compliance(row)
 
@@ -775,25 +776,33 @@ def get_users_for_seating_units(db, session_user):
 
 
 def total_compliance_for_units(db, unit_ids, domain_id, sf_ids):
-    q = " select " + \
-        " count(distinct t01.compliance_id) as ccount" + \
-        " From " + \
-        " tbl_client_compliances t01 " + \
-        " inner join " + \
-        " tbl_compliances t04 ON t01.compliance_id = t04.compliance_id " + \
-        " left join " + \
-        " tbl_assign_compliances t03 ON t01.unit_id = t03.unit_id " + \
-        " and t01.compliance_id = t03.compliance_id " + \
-        " where " + \
-        " find_in_set(t01.unit_id, %s)" + \
-        " and t01.domain_id = %s " + \
-        " and find_in_set(t04.frequency_id, %s) " + \
-        " and t01.compliance_opted_status = 1 " + \
-        " and t04.is_active = 1 " + \
-        " and t03.compliance_id IS NULL "
+    # q = " select " + \
+    #     " count(distinct t01.compliance_id) as ccount" + \
+    #     " From " + \
+    #     " tbl_client_compliances t01 " + \
+    #     " inner join " + \
+    #     " tbl_compliances t04 ON t01.compliance_id = t04.compliance_id " + \
+    #     " left join " + \
+    #     " tbl_assign_compliances t03 ON t01.unit_id = t03.unit_id " + \
+    #     " and t01.compliance_id = t03.compliance_id " + \
+    #     " where " + \
+    #     " find_in_set(t01.unit_id, %s)" + \
+    #     " and t01.domain_id = %s " + \
+    #     " and find_in_set(t04.frequency_id, %s) " + \
+    #     " and t01.compliance_opted_status = 1 " + \
+    #     " and t04.is_active = 1 " + \
+    #     " and t03.compliance_id IS NULL "
+    q = " select  count(distinct t01.compliance_id) as ccount From  tbl_client_compliances t01  " + \
+        " inner join  tbl_compliances t04 ON t01.compliance_id = t04.compliance_id  " + \
+        " left join  tbl_assign_compliances t03 ON t01.unit_id = t03.unit_id  and t01.compliance_id = t03.compliance_id  " + \
+        " where  find_in_set(t01.unit_id, %s) and t01.domain_id = %s  and " + \
+        " find_in_set(t04.frequency_id, %s)  and t01.compliance_opted_status = 1  and " + \
+        " t04.is_active = 1  and t03.compliance_id IS NULL " + \
+        " and If(t04.frequency_id = 4,find_in_set(t01.compliance_id," + \
+        " (select group_concat(compliance_id) from tbl_compliance_dates where unit_id = %s and domain_id = %s and frequency_id = 4)),1); "
 
     row = db.select_one(q, [
-        ",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids])
+        ",".join([str(x) for x in unit_ids]), domain_id, ",".join([str(y) for y in sf_ids]), ",".join([str(x) for x in unit_ids]), domain_id
     ])
     if row:
         return row["ccount"]
@@ -958,20 +967,21 @@ def return_assign_compliance_data(result, applicable_units, nrow):
             statutory_dates, r["repeats_type_id"], c_id
         )
 
-        compliance = clienttransactions.UNIT_WISE_STATUTORIES(
-            c_id,
-            name,
-            r["compliance_description"],
-            r["frequency"],
-            date_list,
-            due_date_list,
-            unit_ids,
-            summary,
-            r["repeats_every"],
-            r["repeats_type_id"]
-        )
-        compliance_list.append(compliance)
-        level_1_wise[level_1] = compliance_list
+        if r["repeats_every"] is not None or r["frequency_id"] != 4: 
+            compliance = clienttransactions.UNIT_WISE_STATUTORIES(
+                c_id,
+                name,
+                r["compliance_description"],
+                r["frequency"],
+                date_list,
+                due_date_list,
+                unit_ids,
+                summary,
+                r["repeats_every"],
+                r["repeats_type_id"]
+            )
+            compliance_list.append(compliance)
+            level_1_wise[level_1] = compliance_list
     level_1_name = sorted(level_1_wise.keys())
     return level_1_name, level_1_wise
 
@@ -2642,14 +2652,20 @@ def reassign_compliance(db, request, session_user):
 
         if history_id is not None:
             update_history = "UPDATE tbl_compliance_history SET  " + \
-                " completed_by = %s, approved_by = %s"
+                " compliance_id = %s"
+            if assignee not in [None, "None", "null", "Null", 0]:
+                update_history += " ,completed_by = %s " % (assignee)
             if concurrence not in [None, "None", "null", "Null", 0]:
                 update_history += " ,concurred_by = %s " % (concurrence)
+            if approval not in [None, "None", "null", "Null", 0]:
+                update_history += " ,approved_by = %s " % (approval)
+
             where_qry = " WHERE IFNULL(approve_status, 0) != 1 " + \
                 " and compliance_id = %s  and unit_id = %s "
-
             qry = update_history + where_qry
-            update_qry_val = [assignee, approval, compliance_id, unit_id]
+
+            update_qry_val = [compliance_id, compliance_id, unit_id]
+            print update_qry_val
             db.execute(qry, update_qry_val)
 
     # if new_unit_settings is not None:

@@ -435,7 +435,6 @@ function actstatus(element) {
     $('.a-' + id).each(function() {
     	if(cstatus){
     		if($('.comp-checkbox:checked').length > mCompliances){
-    			alert('hi')
 				$(this).prop("checked", false);
 				displayMessage(message.maximum_compliance_selection_reached_select_all);
 				return false;
