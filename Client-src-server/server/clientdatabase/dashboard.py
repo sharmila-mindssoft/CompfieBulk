@@ -791,10 +791,8 @@ def frame_compliance_details_query(
             " AND IFNULL(T1.approve_status, 0) = 1"
 
     elif compliance_status == "Not Complied":
-        where_qry = " AND ((IFNULL(T2.duration_type_id,0) =2 " + \
-            " AND T1.due_date < now()) " + \
-            " or (IFNULL(T2.duration_type_id,0) != 2 " + \
-            " AND T1.due_date < CURDATE())) " + \
+        where_qry = " AND ((IFNULL(T2.duration_type_id,0) = 2 AND T1.due_date < now()) " + \
+            " or (IFNULL(T2.duration_type_id,0) != 2  AND T1.due_date < CURDATE()) ) " + \
             " AND IFNULL(T1.approve_status, 0) != 1 "
 
     if filter_type == "Group":
@@ -906,7 +904,7 @@ def frame_compliance_details_query(
     param = [",".join([str(x) for x in domain_ids])]
     param.extend(where_qry_val)
     print chart_type
-    print q, param
+    print q % tuple(param)
     print "\n"
     rows = db.select_all(q, param)
     print rows
