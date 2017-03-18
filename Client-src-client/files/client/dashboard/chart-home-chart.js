@@ -1549,6 +1549,7 @@ function prepareTrendChartData(source_data) {
   var total_count = [];
 
   //xAxis = source_data.years;
+  final_data = {}
   for (var i = 0; i < source_data.trend_data.length; i++) {
     chartData = source_data.trend_data[i];
     var filter_type_id = chartData.filter_id;
@@ -1556,25 +1557,52 @@ function prepareTrendChartData(source_data) {
     if (filterTypeInput.indexOf(filter_type_id) == -1)
       continue;
     var filterTypeName = getFilterTypeName(filter_type_id);
-
-    //compliance_info = chartData.complied_compliance;
-    data = [];
-//   for (var j = 0; j < compliance_info.length; j++) {
-      //compliance_count.push(compliance_info[j].complied_compliances_count);
-    total_count.push(chartData.total_compliances);
-      data.push({
-        y: chartData.complied_compliances_count,
-        t: chartData.total_compliances
+    if (final_data[filterTypeName] == undefined) {
+      final_data[filterTypeName] = {};
+      t_info = {}
+      t_info['name'] = filterTypeName;
+      t_info['data'] = [{
+        'year': chartData.chart_year,
+        'y': chartData.complied_compliances_count,
+        't': chartData.total_compliances
+      }];
+      t_info['total'] = chartData.total_compliances;
+      final_data[filterTypeName] = t_info;
+    }
+    else {
+      t_info = final_data[filterTypeName];
+      year_data = t_info['data'];
+      data_added = false;
+      $.each(year_data, function(idx, v) {
+        if (v['year'] == chartData.chart_year) {
+          data_added = true;
+          v['y'] += chartData.complied_compliances_count;
+          v['t'] += chartData.total_compliances;
+        }
       });
-    //}
-
-    chartDataSeries.push({
-      'name': filterTypeName,
-      'data': data,
-      'total': total_count
-    });
-    xAxis.push(chartData.chart_year);
+      if (data_added == false) {
+        year_data.push({
+          'year': chartData.chart_year,
+          'y': chartData.complied_compliances_count,
+          't': chartData.total_compliances
+        });
+      }
+      t_info['data'] = year_data;
+      final_data[filterTypeName] = t_info;
+    }
   }
+  $.each(final_data, function(k, v) {
+    chartDataSeries.push(v);
+
+    $.each(v['data'], function(idx, v1) {
+      index = xAxis.indexOf(v1['year']);
+      if (index == -1) {
+        xAxis.push(v1['year']);
+      }
+    });
+
+  });
+
   chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
 
   return [
