@@ -210,7 +210,6 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        alert(body.toSource())
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,

@@ -1,5 +1,6 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<style type="text/css">.navbar-header{display: block;}</style>
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
@@ -272,7 +273,7 @@ $(function() {
         <input id="radioBusinessGroup" class="chart-filter btn-business-group" type="checkbox">
         <label for="radioBusinessGroup"> Business Group </label>
       </div>
-      <div class="selections business-group-selection">
+      <div class="selections business-group-selection default-display-none">
         <select class="form-control input-sm textboxbusiness bg-filter default-display-none" multiple id="filter-business-group" >
         </select>
       </div>
@@ -282,7 +283,7 @@ $(function() {
         <input id="radioLegalEntity" class="chart-filter btn-legal-entity" type="checkbox">
         <label for="radioLegalEntity"> Legal Entity </label>
       </div>
-      <div class="selections legal-entity-selection">
+      <div class="selections legal-entity-selection default-display-none">
         <select class="form-control input-sm textboxlegalentity default-display-none legal-entity-filter" multiple id="filter-legal-entity" >
         </select>
       </div>

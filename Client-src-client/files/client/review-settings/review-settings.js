@@ -75,6 +75,7 @@ PageControls = function() {
     });
 
     ShowUnitButton.click(function() {
+        SelectAll.prop('checked', false);
         ACTIVE_UNITS = [];
         r_s_page.getUnitList();
     });
@@ -714,9 +715,12 @@ SubmitButton.on("click", function(){
             client_mirror.saveReviewSettingsCompliance(parseInt(le_id), selected_compliances_list, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.save_success);
+                    BusinessGroupSelect.find("option").removeAttr("selected");
+                    LegalEntitySelect.find("option").removeAttr("selected");
                     Domain.val('');
                     DomainId.val('');
                     UnitList.empty();
+                    $(".step-1-unit-list").hide();
                     CURRENT_TAB = 1;
                     showTab();
                     SelectAll.prop("checked", false);

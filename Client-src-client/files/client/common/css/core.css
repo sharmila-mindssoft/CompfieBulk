@@ -1596,7 +1596,7 @@ pre {
 
 .multiselect-container>li>a>label.radio,
 .multiselect-container>li>a>label.checkbox {
-    padding-left: 45px;
+    padding-left: 25px;
 }
 
 .custombox-modal-container-slit {

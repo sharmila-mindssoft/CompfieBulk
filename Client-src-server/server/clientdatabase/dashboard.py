@@ -12,7 +12,8 @@ from server.clientdatabase.common import (
 from server.common import (
     get_date_time_in_date,
     datetime_to_string,
-    make_summary
+    make_summary,
+    string_to_datetime
 )
 from server.clientdatabase.general import (
     get_user_unit_ids, get_admin_id,
@@ -233,12 +234,12 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
     if user_category > 3 :
         q += " inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by  " + \
             " where find_in_set(cc.domain_id, %s) " + \
-            " date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
+            " and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
             " and usr.user_id = %s "
         param = [",".join([str(x) for x in domain_ids]), from_date, to_date, user_id]
     else :
         q += " where find_in_set(cc.domain_id, %s) " + \
-            " date(ch.due_date) >= %s and date(ch.due_date) <= %s "
+            " and date(ch.due_date) >= %s and date(ch.due_date) <= %s "
         param = [",".join([str(x) for x in domain_ids]), from_date, to_date]
 
     q += " group by " + group_by_name
@@ -247,7 +248,6 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         q += filter_type_ids
         param.append(filter_ids)
 
-    q += " group by " + group_by_name
     print q % tuple(param)
     rows = db.select_all(q, param)
 

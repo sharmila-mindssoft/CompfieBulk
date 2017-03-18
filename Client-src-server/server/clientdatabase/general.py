@@ -537,6 +537,7 @@ def return_units_assign(units):
 #     )
 #     return return_client_users(rows)
 
+
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
         "t1.employee_code, t1.is_active from tbl_users as t1 " + \
@@ -546,7 +547,11 @@ def get_client_users(db):
 
 
 def get_assignees(db, unit_ids=None):
-    q = "select user_id, employee_code, employee_name, is_active from tbl_users where is_active = 1 and user_category_id in (5,6)"
+    q = "select t1.user_id, t1.employee_code, t1.employee_name, t1.is_active, t2.legal_entity_id " + \
+        " from tbl_users t1  " + \
+        " inner join tbl_user_legal_entities t2 on t1.user_id = t2.user_id  " + \
+        " where t1.is_active = 1 and t1.user_category_id in (5,6)"
+
     rows = db.select_all(q)
     return return_client_users(rows)
 
@@ -555,7 +560,7 @@ def return_client_users(users):
     results = []
     for user in users:
         results.append(clientcore.LegalEntityUser(
-            user["user_id"], user["employee_code"], user["employee_name"], bool(user["is_active"])
+            user["user_id"], user["employee_code"], user["employee_name"], bool(user["is_active"]), user["legal_entity_id"]
         ))
     return results
 
