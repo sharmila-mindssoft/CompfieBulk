@@ -907,7 +907,7 @@ def frame_compliance_details_query(
     print q % tuple(param)
     print "\n"
     rows = db.select_all(q, param)
-    print rows
+    # print rows
     return rows
 
 
@@ -925,12 +925,15 @@ def get_client_domain_configuration(
     db, domain_ids, current_year=None
 ):
     print current_year
-    query = "SELECT country_id, domain_id, " + \
-        " month_from, month_to " + \
-        " FROM  tbl_client_configuration " + \
+    query = "SELECT distinct t1.country_id, t1.domain_id, t1.month_from, t1.month_to " + \
+        " FROM  tbl_client_configuration as t1 " + \
+        " inner join tbl_legal_entities as t2 on t1.country_id = t2.country_id " + \
         " WHERE find_in_set(domain_id, %s)"
     param = [",".join([str(y) for y in domain_ids])]
     rows = db.select_all(query, param)
+
+    print query % tuple(param)
+    print "\n"
 
     years_range = []
     year_condition = []
@@ -1555,7 +1558,7 @@ def get_reminders(
                 "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s"
         rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
 
-    print rows
+
     notifications = []
     for r in rows :
         legal_entity_id = int(r["legal_entity_id"])
@@ -1638,7 +1641,7 @@ def notification_detail(
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id " + \
             "Where nlu.user_id = %s AND nl.notification_id = %s"
     rows = db.select_all(query, [session_user, notification_id])
-    print rows
+
     notifications = []
     for r in rows :
         notification_id = int(r["notification_id"])
@@ -2020,7 +2023,7 @@ def get_assigneewise_yearwise_compliances(
             rows = db.select_all(query, [
                 user_id, unit_id, int(domain_id)
             ])
-            print rows
+
             for row in rows:
                 domainwise_complied += 0 if(
                     row["complied"] is None) else int(row["complied"])
