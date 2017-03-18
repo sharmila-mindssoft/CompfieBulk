@@ -249,9 +249,9 @@
   color: #57c5a5 !important;
 }
 .btn-trans.btn-primary {
-  border: 1px solid rgba(70, 103, 204, 0.1) !important;
+  /*border: 1px solid rgba(70, 103, 204, 0.1) !important;
   background-color: rgba(70, 103, 204, 0.15) !important;
-  color: #4667cc !important;
+  color: #4667cc !important;*/
 }
 .btn-trans.btn-success {
   border: 1px solid rgba(62, 200, 69, 0.1) !important;

@@ -13,7 +13,8 @@ from server.clientdatabase.general import (
     is_two_levels_of_approval, calculate_ageing, is_space_available,
     save_compliance_activity, save_compliance_notification, is_primary_admin,
     get_user_email_name, convert_base64_to_file, update_used_space,
-    convert_datetime_to_date
+    convert_datetime_to_date,
+    update_task_status_in_chart
 )
 from server.exceptionmessage import client_process_error
 from server.emailcontroller import EmailHandler
@@ -352,27 +353,29 @@ def handle_file_upload(
                     auto_code = new_uuid()
                     file_name = "%s-%s.%s" % (name, auto_code, exten)
                     document_names.append(file_name)
-                    convert_base64_to_file(
-                        file_name, doc.file_content, client_id
-                    )
+                    # convert_base64_to_file(
+                    #     file_name, doc.file_content, client_id
+                    # )
                 update_used_space(db, file_size)
             else:
                 return clienttransactions.NotEnoughSpaceAvailable()
 
-    if old_documents is not None and len(old_documents) > 0:
-        for document in old_documents.split(","):
-            if document is not None and document.strip(',') != '':
-                name = document.split("-")[0]
-                document_parts = document.split(".")
-                ext = document_parts[len(document_parts)-1]
-                name = "%s.%s" % (name, ext)
-                if name not in uploaded_documents:
-                    path = "%s/%s/%s" % (
-                       CLIENT_DOCS_BASE_PATH, client_id, document
-                    )
-                    remove_uploaded_file(path)
-                else:
-                    document_names.append(document)
+    # TO DO: Show Old uploaded documents
+    # if old_documents is not None and len(old_documents) > 0:
+    #     for document in old_documents.split(","):
+    #         if document is not None and document.strip(',') != '':
+    #             name = document.split("-")[0]
+    #             document_parts = document.split(".")
+    #             ext = document_parts[len(document_parts)-1]
+    #             name = "%s.%s" % (name, ext)
+    #             # if name not in uploaded_documents:
+    #             #     # path = "%s/%s/%s" % (
+    #             #     #    CLIENT_DOCS_BASE_PATH, client_id, document
+    #             #     # )
+    #             #     # remove_uploaded_file(path)
+    #             # else:
+    #             #     document_names.append(document)
+    #             document_names.append(document)
     return document_names
 
 
@@ -431,8 +434,10 @@ def update_compliances(
         return False
     # document_names = handle_file_upload(
     #     db, documents, uploaded_compliances, row["documents"])
-    # document_names = []
-    document_names = []
+    print "documents>>", documents
+    document_names = handle_file_upload(
+        db, documents, documents, row["documents"])
+
     if type(document_names) is not list:
         return document_names
     if row["frequency_id"] == 4 and row["duration_type_id"] == 2:
@@ -676,19 +681,25 @@ def start_on_occurrence_task(
         session_user
     ]
 
-    approval_columns = ["approval_person", "concurrence_person"]
-    approval_condition = " compliance_id = %s and unit_id = %s "
-    rows = db.get_data(
-        tblAssignCompliances, approval_columns,
-        approval_condition, [compliance_id, unit_id]
-    )
-    approved_by = rows[0]["approval_person"]
-    concurred_by = rows[0]["concurrence_person"]
+    q = "select t2.compliance_id, t3.country_id, t1.domain_id, t1.compliance_task, t1.document_name, t2.approval_person, " + \
+        "t2.concurrence_person from tbl_assign_compliances as t2 " + \
+        " inner join tbl_compliances as t1 on t2.compliance_id = t1.compliance_id " + \
+        " inner join tbl_units as t3 on t2.unit_id = t3.unit_id " + \
+        " where t2.compliance_id = %s and t2.unit_id = %s "
+
+    row = db.select_one(q, [compliance_id, unit_id])
+    approver_id = row.get("approval_person")
+    concurrence_id = row.get("concurrence_person")
+    compliance_name = row.get("compliance_task")
+    document_name = row.get("document_name")
+    country_id = row.get("country_id")
+    domain_id = row.get("domain_id")
+
     if is_two_levels_of_approval(db):
         columns.append("concurred_by")
-        values.append(concurred_by)
+        values.append(concurrence_id)
     columns.append("approved_by")
-    values.append(approved_by)
+    values.append(approver_id)
 
     compliance_history_id = db.insert(
         tblComplianceHistory, columns, values
@@ -696,22 +707,18 @@ def start_on_occurrence_task(
     if compliance_history_id is False:
         raise client_process_error("E017")
 
-    history = get_compliance_history_details(db, compliance_history_id)
-    assignee_id = history["completed_by"]
-    concurrence_id = history["concurred"]
-    approver_id = history["approved_by"]
-    if approver_id is None:
-        approver_id = assignee_id
-    compliance_name = history["compliance_name"]
-    document_name = history["doc_name"]
-    due_date = history["due_date"]
+    users = [session_user, approver_id]
+    if concurrence_id is not None :
+        users.append(concurrence_id)
+
+    update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
 
     # Audit Log Entry
     action = "Compliances started \"%s\"" % (compliance_name)
     db.save_activity(session_user, 35, action, legal_entity_id, unit_id)
 
     # user_ids = "{},{},{}".format(assignee_id, concurrence_id, approver_id)
-    assignee_email, assignee_name = get_user_email_name(db, str(assignee_id))
+    assignee_email, assignee_name = get_user_email_name(db, str(session_user))
     approver_email, approver_name = get_user_email_name(db, str(approver_id))
     if (
         concurrence_id not in [None, "None", 0, "", "null", "Null"] and

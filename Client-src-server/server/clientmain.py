@@ -345,7 +345,7 @@ class API(object):
             print e
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
-
+            print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
@@ -645,7 +645,8 @@ class API(object):
             data = request.request
             le_id = data.legal_entity_id
             le_db_info = self._le_databases.get(le_id)
-            LEntityUnitClosure(le_db_info, le_id, data, session_user)._start()
+            gp_info = self._group_databases.get(client_id)
+            LEntityUnitClosure(gp_info, le_db_info, le_id, data, session_user)._start()
         return res
 
     @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)

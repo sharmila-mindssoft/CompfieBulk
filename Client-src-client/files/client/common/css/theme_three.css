@@ -137,8 +137,8 @@ body.fixed-left .side-menu.left {
   border: 1px solid #dcdcdc !important;
 }
 .btn-primary {
-  background-color: #4667cc !important;
-  border: 1px solid #4667cc !important;
+  background-color: #963eb7 !important;
+  border: 1px solid #963eb7 !important;
 }
 .btn-primary:hover,
 .btn-primary:focus,
@@ -149,9 +149,9 @@ body.fixed-left .side-menu.left {
 .btn-primary:focus,
 .btn-primary:hover,
 .open > .dropdown-toggle.btn-primary {
-  background-color: #3658c3 !important;
+  background-color: #983dba !important;
   /*border: 1px solid #3658c3 !important;*/
-  border: 1px solid #122b40 !important;
+  border: 1px solid #270d30 !important;
   color: #ccc !important;
 }
 .btn-success {
@@ -171,8 +171,8 @@ body.fixed-left .side-menu.left {
   border: 1px solid #34b83b !important;
 }
 .btn-info {
-  background-color: #44B0E2 !important;
-  border: 1px solid #44B0E2 !important;
+  background-color: #c457ed !important;
+  border: 1px solid #c457ed !important;
 }
 .btn-info:hover,
 .btn-info:focus,
@@ -183,8 +183,8 @@ body.fixed-left .side-menu.left {
 .btn-info:focus,
 .btn-info:hover,
 .open > .dropdown-toggle.btn-info {
-  background-color: #449DEB !important;
-  border: 1px solid #419AE8 !important;
+  background-color: #b543e0 !important;
+  border: 1px solid #b73be5 !important;
 }
 .btn-warning {
   background-color: #fbca35 !important;
@@ -304,9 +304,9 @@ body.fixed-left .side-menu.left {
   color: #57c5a5 !important;
 }
 .btn-trans.btn-primary {
-  border: 1px solid rgba(70, 103, 204, 0.1) !important;
+ /* border: 1px solid rgba(70, 103, 204, 0.1) !important;
   background-color: rgba(70, 103, 204, 0.15) !important;
-  color: #4667cc !important;
+  color: #4667cc !important;*/
 }
 .btn-trans.btn-success {
   border: 1px solid rgba(62, 200, 69, 0.1) !important;
@@ -1140,7 +1140,7 @@ body.fixed-left .side-menu.left {
 .table > tbody > tr.active > th,
 .table > tfoot > tr.active > th {
   /*background-color: #f9f9f9 !important;*/
-  background-color: #E6F2F7 !important;
+  background-color: #e1c9ea !important;
 }
 .table > thead > tr > th,
 .table > tbody > tr > th,
@@ -1444,8 +1444,8 @@ div.DTS tbody tr.even {
   color: #ffffff;
 }
 .bg-info {
-  background-color: #73C4E9 !important;
-}
+  background-color: #b45fd3 !important;
+} 
 .heading {
   background-color: #73C4E9 !important;
   color: #fff;
@@ -1488,4 +1488,9 @@ div.DTS tbody tr.even {
 .legal-entity-filter, .bg-filter {
   display: none;
   min-width: 70%;
+}
+.dropdown-menu>li>a:focus,
+.dropdown-menu>li>a:hover {
+    background-color: #650887 !important;
+    color: #ffffff;
 }

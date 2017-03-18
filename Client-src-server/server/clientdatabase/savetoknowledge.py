@@ -29,16 +29,18 @@ class KnowledgedbConnect(object):
 
 
 class UpdateFileSpace(KnowledgedbConnect):
-    def __init__(self, space_used, client_id):
+    def __init__(self, space_used, legal_entity_id):
         super(UpdateFileSpace, self).__init__()
         self._space_used = space_used
-        self._client_id = client_id
+        self._legal_entity_id = legal_entity_id
         self.procee_update_space()
 
     def _update_space(self):
-        q = "Update tbl_client_groups set total_disk_space_used = %s " + \
-            " where client_id = %s "
-        res = self._k_db.execute(q, [self._space_used, self._client_id])
+        # q = "Update tbl_client_groups set total_disk_space_used = %s " + \
+        #     " where client_id = %s "
+        q = "Update tbl_legal_entities set used_file_space = %s " + \
+            " where legal_entity_id = %s "
+        res = self._k_db.execute(q, [self._space_used, self._legal_entity_id])
         if res is False:
             raise client_process_error("E021")
 

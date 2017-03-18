@@ -397,6 +397,7 @@ def parse_dictionary_values(x, field_names=[], is_validation_and_parse=False):
         elif _type == "WIDGET_TYPE":
             val = val
         else:
+            # print "jsonvalidator>>",field_name, param, val
             val = parse_values(field_name, param, val, "parse")
         if(
             val is not None and

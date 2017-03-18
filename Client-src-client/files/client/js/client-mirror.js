@@ -109,7 +109,7 @@ function initClientMirror() {
         var info = getUserInfo();
         return info.entity_info;
     }
-    
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -241,6 +241,7 @@ function initClientMirror() {
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
+                alert(rdata);
                 rdata = atob(rdata.substring(5));
                 callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
                 // if (errorThrown == 'Not Found') {

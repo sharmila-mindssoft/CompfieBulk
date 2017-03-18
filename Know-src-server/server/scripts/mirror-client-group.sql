@@ -105,7 +105,7 @@ CREATE TABLE `tbl_legal_entity_domains` (
   `activation_date` timestamp NULL DEFAULT NULL,
   `organisation_id` int(11) NOT NULL,
   `count` int(11) NOT NULL,
-  UNIQUE KEY(`legal_entity_id`, `domain_id`)
+  UNIQUE KEY(`legal_entity_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_divisions` (
   `division_id` int(11) NOT NULL,
@@ -272,7 +272,7 @@ CREATE TABLE `tbl_user_units` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_email_verification` (
   `user_id` int(11) NOT NULL,
-  `verification_code` varchar(50) NOT NULL,
+  `verification_code` TEXT NOT NULL,
   `verification_type_id` int(11) NOT NULL,
   `expiry_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

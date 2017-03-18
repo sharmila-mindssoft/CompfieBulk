@@ -1,35 +1,33 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 <style type="text/css">
-    .heading {
-        padding: 5px 5px;
-        color: #000 !important;
-        background-color: #fff;
-    }
-    
-    .grid-table .managetask td {
-        font-size: 0.9em;
-        background-color: #F1E9F6;
-    }
-    
-    .tablenopadd span {
-        height: 1.2em;
-    }
-    
-    .sidebar-uploaded-documents span {
-        display: block;
-        padding: 5px;
-        background: #ccc;
-        border: 1px solid #aaa;
-        margin-bottom: 3px;
-    }
-    
-    .sidebar-uploaded-documents span img {
-        float: right;
-        margin-right: 15px;
-    }
+.heading {
+    padding: 5px 5px;
+    color: #000 !important;
+    background-color: #fff;
+}
+
+.grid-table .managetask td {
+    font-size: 0.9em;
+    background-color: #F1E9F6;
+}
+
+.tablenopadd span {
+    height: 1.2em;
+}
+
+.sidebar-uploaded-documents span {
+    display: block;
+    padding: 5px;
+    background: #ccc;
+    border: 1px solid #aaa;
+    margin-bottom: 3px;
+}
+
+.sidebar-uploaded-documents span img {
+    float: right;
+    margin-right: 15px;
+}
 </style>
-
-
 <div class="content-page">
     <div class="content">
         <div class="container page_font_size_13">
@@ -42,10 +40,9 @@
                             </div>
                             <div class="clearfix"></div>
                         </div>
-
-                        <div class="portlet-body p-b-10">
+                        <div class="portlet-body p-b-0 m-b-0">
                             <div class="form-horizontal" role="form">
-                                <div class="form-group has-feedback">
+                                <div class="form-group has-feedback m-b-0">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label" for="example-input-small">Legal Entity:<span class="mandatory">*</span></label>
                                     <div class="col-sm-3 controls">
                                         <p class="form-control-static legal-entity-name default-display-none"></p>
@@ -61,11 +58,9 @@
                                     <div class="col-sm-3 controls">
                                         <button class="btn btn-primary waves-effect waves-light btn-show" type="button"> Show </button>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
-
                         <div id="bg-primary1" class="panel-collapse collapse in">
                             <div class="portlet-body">
                                 <div class="tab-content">
@@ -80,25 +75,25 @@
                                                                     <table id="datatable-responsive" class="table dt-responsive nowrap highlight m-b-0 js-filtertable" cellspacing="0" width="100%">
                                                                         <thead>
                                                                             <tr align="left" style="background:#ccc;">
-                                                                                <td width="5%">
+                                                                                <th width="5%">
                                                                                     <span style="font-weight:bold;">#</span>
-                                                                                </td>
-                                                                                <td>
+                                                                                </th>
+                                                                                <th>
                                                                                     <span style="font-weight:bold;">Compliance Task</span>
-                                                                                </td>
-                                                                                <td>
+                                                                                </th>
+                                                                                <th>
                                                                                     <span style="font-weight:bold;">Domain</span>
-                                                                                </td>
-                                                                                <td>
+                                                                                </th>
+                                                                                <th>
                                                                                     <span style="font-weight:bold;">Start date</span>
-                                                                                </td>
-                                                                                <td>
+                                                                                </th>
+                                                                                <th>
                                                                                     <span style="font-weight:bold;">Due date</span>
-                                                                                </td>
-                                                                                <td width="15%">
+                                                                                </th>
+                                                                                <th width="15%">
                                                                                     <span style="font-weight:bold;">Days</span>
-                                                                                </td>
-                                                                                <td></td>
+                                                                                </th>
+                                                                                <th></th>
                                                                             </tr>
                                                                             <tr>
                                                                                 <td></td>
@@ -108,14 +103,12 @@
                                                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                                     </div>
                                                                                 </td>
-
                                                                                 <td>
                                                                                     <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
                                                                                         <input type="text" class="form-control input-sm js-filter" placeholder="Domain" />
                                                                                         <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                                     </div>
                                                                                 </td>
-
                                                                                 <td align="center">
                                                                                     <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
                                                                                         <input type="text" class="form-control input-sm js-filter" placeholder="Start Date" />
@@ -142,13 +135,11 @@
                                                                     <div align="center" style="padding-top:10px;">
                                                                         <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination">
                                                                     </div>
-
                                                                 </div>
                                                             </td>
                                                             <td width="1%" class="half-width-task-details default-display-none" style="vertical-align:top; background:#F1E9F6; padding-left:10px;"></td>
                                                         </tr>
                                                     </table>
-
                                                     <p style="border-top:1px dashed #ccc; padding:10px;font-size:0.813em;" class="compliance_count"></p>
                                                 </div>
                                                 <div class="current-tab-content" style="border:1px solid white;display:none">
@@ -176,19 +167,24 @@
         </div>
     </div>
 </div>
-
-
 <div id="templates">
     <table class="table-compliance-approval-list">
+        <tr class="bg-lightdark unitheadingRow">
+            <th colspan="7"><span class="unit-name"></span></th>
+        </tr>
         <tr class="bg-lightdark headingRow">
-            <th colspan="7"><span class="heading"></span></th>
+            <th colspan="7">
+                <!-- <span class="heading"></span> -->
+                <div class="col-sm-3 no-padding">
+                    <mark class="p-l-10 p-r-10 user-name"></mark>
+                </div>
+            </th>
         </tr>
         <tr style="background:#fff;" class="table-row-list">
             <td class="sno-ca"></td>
             <td class="compliance-task">
-                <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title=""></i>
+                <i data-toggle="tooltip" data-original-title="" class="fa fa-info-circle text-primary c-pointer"></i>
                 <span></span>
-
             </td>
             <td class="domain">
                 <td class="startdate"></td>
@@ -212,12 +208,10 @@
                 <td width="35%">
                     <span style="font-weight:bold;">Unit:</span>
                 </td>
-                <td width="65%" class="sidebar-unit"><span></span>
-                    <!--  <abbr class="page-load" title="">
-          <img src="/images/icon-info.png">
-          <span></span></abbr>  -->
+                <td width="65%" class="sidebar-unit">
+                    <i class="zmdi zmdi-info" data-toggle="tooltip"></i>
+                    <span></span>
                 </td>
-
             </tr>
             <tr align="left">
                 <td width="35%">
@@ -226,10 +220,7 @@
                 <td width="65%" class="sidebar-compliance-task">
                     <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title=""></i>
                     <span></span>
-
-
                 </td>
-
             </tr>
             <tr>
                 <td>
@@ -242,7 +233,6 @@
                     <span style="font-weight:bold;">Uploaded Documents:</span>
                 </td>
                 <td class="sidebar-uploaded-documents">
-
                 </td>
             </tr>
             <tr>
@@ -257,7 +247,6 @@
                 </td>
                 <td class="sidebar-uploaded-date"></td>
             </tr>
-
             <tr class="validityAndDueDate">
                 <td>
                     <span style="font-weight:bold;">Validity Date:</span>
@@ -311,18 +300,17 @@
                 </td>
                 <td>
                     <select class="form-control input-sm width-40 sidebar-action approval-action">
-          <option value="">Select</option>
-          <option value="Approve">Approve</option>
-          <option value="Rectify Approval">Rectify</option>
-          <option value="Reject Approval">Reject</option>
-          
-        </select>
+                        <option value="">Select</option>
+                        <option value="Approve">Approve</option>
+                        <option value="Rectify Approval">Rectify</option>
+                        <option value="Reject Approval">Reject</option>
+                    </select>
                     <select class="form-control input-sm width-40 sidebar-action concurr-action">
-          <option value="">Select</option>
-          <option value="Concur">Concurrence</option>
-          <option value="Rectify Concurrence">Rectify</option>
-          <option value="Reject Concurrence">Reject</option>
-        </select>
+                        <option value="">Select</option>
+                        <option value="Concur">Concurrence</option>
+                        <option value="Rectify Concurrence">Rectify</option>
+                        <option value="Reject Concurrence">Reject</option>
+                    </select>
                 </td>
             </tr>
             <tr class="sidebar-remarks-textarea default-display-none">
@@ -338,13 +326,11 @@
             <tr>
                 <td colspan="2" align="center">
                     <button class="btn btn-primary waves-effect waves-light btn-submit" type="button"> Submit </button>
-
                 </td>
             </tr>
         </table>
     </div>
 </div>
-
 <div id="no-record-templates" class="default-display-none">
     <table class="table-no-content">
         <tr align="left" class="table-row-no-content">
@@ -352,6 +338,5 @@
         </tr>
     </table>
 </div>
-
 <script type="text/javascript" src="/script/compliance-approval/compliance-approval.js"></script>
 {% endblock %}

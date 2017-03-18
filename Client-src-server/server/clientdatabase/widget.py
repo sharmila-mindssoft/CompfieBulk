@@ -246,7 +246,7 @@ def get_trend_chart(db, user_id, user_category):
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
             " from tbl_compliance_status_chart_unitwise as t1 " + \
             " inner join tbl_countries as c on c.country_id = t1.country_id " +\
-            " where find_in_set(chart_year, %s) " + \
+            " where complied_count > 0 and find_in_set(chart_year, %s) " + \
             " group by chart_year "
         param = [",".join([str(x) for x in years])]
 
@@ -255,10 +255,11 @@ def get_trend_chart(db, user_id, user_category):
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
             " from tbl_compliance_status_chart_userwise as t1 " + \
             " inner join tbl_countries as c on c.country_id = t1.country_id " +\
-            " where find_in_set(chart_year, %s) and user_id = %s " + \
+            " where complied_count > 0 and find_in_set(chart_year, %s) and user_id = %s " + \
             " group by chart_year "
         param = [",".join([str(x) for x in years]), user_id]
 
+    print q % tuple(param)
     rows = db.select_all(q, param)
     return frame_trend_chart(rows)
 
@@ -299,8 +300,8 @@ def get_not_complied_count(db, user_id, user_category):
         " IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '31_60_days', " + \
         " sum(IF(com.frequency_id = 5,IF(datediff(now(),ch.due_date) >= 31 and datediff(now(),ch.due_date) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
         " IF(datediff(now(),ch.due_date) >= 61 and datediff(now(),ch.due_date) <= 90 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as '61_90_days', " + \
-        " sum(IF(com.frequency_id = 5,IF(datediff(ch.due_date,now()) >= 31 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
-        " IF(datediff(ch.due_date,now()) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
+        " sum(IF(com.frequency_id = 5,IF(datediff(now(), ch.due_date) >= 91 and datediff(ch.due_date,now()) <= 60 and ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(datediff(now(), ch.due_date) >= 91 and date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as 'above_90_days' " + \
         " from tbl_compliance_history as ch " + \
         " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id "
     param = []

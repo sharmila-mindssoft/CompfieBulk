@@ -2502,7 +2502,7 @@ class APPROVALCOMPLIANCE(object):
         self, compliance_history_id, compliance_name, description,
         domain_name, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-        remarks, action, statutory_dates, validity_date, unit_name
+        remarks, action, statutory_dates, validity_date, unit_name, unit_address
     ):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
@@ -2523,6 +2523,7 @@ class APPROVALCOMPLIANCE(object):
         self.statutory_dates = statutory_dates
         self.validity_date = validity_date
         self.unit_name = unit_name
+        self.unit_address = unit_address
 
     @staticmethod
     def parse_structure(data):
@@ -2532,7 +2533,7 @@ class APPROVALCOMPLIANCE(object):
                 "description", "domain_name", "file_names", "start_date", "due_date", "delayed_by",
                 "compliance_task_frequency", "uploaded_documents", "upload_date", "completion_date",
                 "next_due_date", "concurrenced_by", "remarks", "action",
-                "statutory_dates", "validity_date", "unit_name"
+                "statutory_dates", "validity_date", "unit_name", "unit_address"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -2554,12 +2555,13 @@ class APPROVALCOMPLIANCE(object):
         statutory_dates = data.get("statutory_dates")
         validity_date = data.get("validity_date")
         unit_name = data.get("unit_name")
+        unit_address = data.get("unit_address")
         
         return APPROVALCOMPLIANCE(
             compliance_history_id, compliance_name, description,
             domain_name, start_date, due_date, delayed_by, compliance_frequency,
             documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-            remarks, action, statutory_dates, validity_date, unit_name
+            remarks, action, statutory_dates, validity_date, unit_name, unit_address
         )
 
     def to_structure(self):
@@ -2582,7 +2584,8 @@ class APPROVALCOMPLIANCE(object):
             "action": self.action,
             "statutory_dates" : self.statutory_dates,
             "validity_date": self.validity_date,
-            "unit_name": self.unit_name
+            "unit_name": self.unit_name,
+            "unit_address": self.unit_address
         }
 
 #

@@ -94,7 +94,7 @@ CREATE TABLE `tbl_legal_entity_domains` (
   `activation_date` timestamp NULL DEFAULT NULL,
   `organisation_id` int(11) NOT NULL,
   `count` int(11) NOT NULL,
-  UNIQUE KEY(`legal_entity_id`, `domain_id`)
+  UNIQUE KEY(`legal_entity_id`, `domain_id`, `organisation_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_divisions` (
   `division_id` int(11) NOT NULL,
