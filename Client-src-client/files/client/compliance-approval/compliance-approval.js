@@ -335,6 +335,7 @@ function showSideBar(idval, data) {
         var next_due_date;
         var validity_date;
         compliance_history_id = data.compliance_history_id;
+        
         if (action == 'Approve') {
             approval_status = $('.approval-action option:selected').val();
         }
@@ -348,16 +349,26 @@ function showSideBar(idval, data) {
             approval_status = $('.approval-action option:selected').val();
         }
         //console.log(approval_status);
+        var rem = $('.remarks-textarea', cloneValSide);
         if (approval_status == '') {
             displayMessage(message.action_required);
             return false;
         } else if (approval_status == 'Reject Concurrence') {
+            if (isNotEmpty(rem, message.remarks_required) == false)
+                return false;
             remarks = $('.remarks-textarea', cloneValSide).val();
         } else if (approval_status == 'Reject Approval') {
+            if (isNotEmpty(rem, message.remarks_required) == false)
+                return false;
+            remarks = $('.remarks-textarea', cloneValSide).val();
+        } else if (approval_status == 'Rectify Concurrence') {
+            if (isNotEmpty(rem, message.remarks_required) == false)
+                return false;
             remarks = $('.remarks-textarea', cloneValSide).val();
         } else {
             remarks = data.remarks;
         }
+
         validity_date = $('.validity1-textbox-input', cloneValSide).val();
         if (validity_date == '') {
             validity_date = $('.validitydate1_label', cloneValSide).html();
@@ -393,12 +404,6 @@ function showSideBar(idval, data) {
                 return;
             }
         }
-        // if(currentDate != null && validity_date != null){
-        //     if(parseMyDate(currentDate) > parseMyDate(next_due_date)){
-        //         displayMessage("Validity Date is Greater than Current Date");
-        //         return;
-        //     }
-        // }
         displayLoader();
 
         function onSuccess(data) {
