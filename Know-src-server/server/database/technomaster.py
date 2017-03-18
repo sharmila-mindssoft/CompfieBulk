@@ -289,11 +289,11 @@ def update_legal_entities(db, request, group_id, session_user):
         elif validate_total_disk_space(
             db, entity.file_space, group_id, entity.legal_entity_id
         ):
-            raise process_error("E069")
+            raise process_error("E070")
         elif validate_no_of_user_licence(
             db, entity.no_of_licence, group_id, entity.legal_entity_id
         ):
-            raise process_error("E070")
+            raise process_error("E069")
         legal_entity_names.append(entity.legal_entity_name)
         if entity.legal_entity_id is not None:
             value_list = [
@@ -970,8 +970,10 @@ def validate_no_of_user_licence(
     rows = db.call_proc(
         "sp_client_users_count", (client_id, legal_entity_id)
     )
+    print rows
+    print no_of_user_licence
     current_no_of_users = int(rows[0]["count"])
-    if no_of_user_licence < current_no_of_users:
+    if no_of_user_licence <= current_no_of_users:
         return True
     else:
         return False
@@ -993,8 +995,10 @@ def validate_total_disk_space(
     rows = db.call_proc(
         "sp_legal_entities_space_used", (legal_entity_id,),
     )
+    print rows
+    print file_space
     used_space = int(rows[0]["used_file_space"])
-    if file_space < used_space:
+    if (file_space * 1024 * 1024 * 1024) < used_space:
         return True
     else:
         return False
