@@ -1,6 +1,7 @@
 var from_count = 0;
 var page_count = 50;
 var LEIDS = client_mirror.getLEids();
+
 function loadMessages(data) {
     var isEmpty = true;
     $('.tbody-message-list').find('tr').remove();
@@ -39,7 +40,7 @@ function loadMessages(data) {
         } else {
             $('.message-content', rowClone).html(v.notification_text.replace('#', '<a href="#">here</a>'));
         }
-        
+
         $('.message-time', rowClone).text(v.created_on);
         $('.tbody-message-list').append(rowClone);
     });
