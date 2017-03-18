@@ -970,7 +970,7 @@ function loadUnits() {
             activateUnit(this);
         });
         if(rbutton){
-            $('.tbl_reassign', clone).show();
+
             if(value.user_type_id == 1) {
                 $('.tbl_reassign', clone).on('click', function(e) {
                     getCompliance(this, 1);
@@ -986,6 +986,7 @@ function loadUnits() {
                     getCompliance(this, 3);
                 });
             }
+            $('.tbl_reassign', clone).show();
         }else{
             $('.tbl_reassign', clone).hide();
         }
@@ -1170,10 +1171,11 @@ function loadEntityDetails(){
 
 function initialize() {
     reset();
-    pageControls();
     loadEntityDetails();
 }
 
 $(function() {
     initialize();
+    pageControls();
+    
 });

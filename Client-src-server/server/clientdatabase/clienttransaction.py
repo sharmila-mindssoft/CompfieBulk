@@ -240,7 +240,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " (select count(compliance_id) from tbl_client_compliances where " +\
             " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
             " (select is_new from tbl_client_compliances where is_new = 1 AND unit_id = t2.unit_id AND domain_id = t2.domain_id limit 1) is_new, " + \
-            " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
+            " (select employee_name from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " Date(t2.updated_on)updated_on, t2.is_locked, " + \
             " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category, " + \
             " (select count(tc1.client_compliance_id) " + \
@@ -260,7 +260,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " (select count(compliance_id) from tbl_client_compliances where " +\
             " unit_id = t1.unit_id and domain_id = t2.domain_id) as comp_count, " + \
             " (select is_new from tbl_client_compliances where is_new = 1 AND unit_id = t2.unit_id AND domain_id = t2.domain_id limit 1) is_new, " + \
-            " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
+            " (select employee_name from tbl_users where user_id = t2.updated_by) updatedby, " + \
             " t2.updated_on, t2.is_locked, " + \
             " (select user_category_id from tbl_users where user_id = t2.locked_by) locked_user_category, " + \
             " (select count(tc1.client_compliance_id) " + \
@@ -277,7 +277,7 @@ def get_statutory_settings(db, legal_entity_id, div_id, cat_id, session_user):
             " IF (%s IS NOT NULL, IFNULL(t1.division_id, 0) = %s, 1) and" + \
             " IF (%s IS NOT NULL, IFNULL(t1.category_id, 0) = %s, 1)"
         param = [legal_entity_id, session_user, div_id, div_id, cat_id, cat_id]
-
+        # " (select concat(employee_code, ' - ', employee_name) from tbl_users where user_id = t2.updated_by) updatedby, " + \
     query += " ORDER BY t1.unit_code, t1.unit_name, t3.domain_name"
     print query % tuple(param)
     # print param
@@ -418,7 +418,8 @@ def return_statutory_settings(data, session_category):
             d["postal_code"]
         )
         locked_cat = d["locked_user_category"]
-        if locked_cat is not None and (locked_cat < session_category or session_category == 1):
+        
+        if locked_cat is not None and (locked_cat > session_category or session_category == 1):
             allow_nlock = True
         else :
             allow_nlock = False

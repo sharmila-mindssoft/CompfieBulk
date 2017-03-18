@@ -399,8 +399,9 @@ def get_user_based_units(db, user_id, user_category) :
 
 
 def get_units_for_user(db, user_id):
-    admin_id = get_admin_id(db)
-    if user_id != admin_id:
+    #admin_id = get_admin_id(db)
+    user_category_id = get_user_category(db, user_id)
+    if user_category_id > 3:
         query = "SELECT t2.unit_id, t2.legal_entity_id, t2.division_id, " + \
                 "t2.category_id, t2.unit_code, t2.unit_name, t2.is_closed, " + \
                 "t2.address, GROUP_CONCAT(t3.domain_id) as domain_ids, t2.country_id, t2.business_group_id " + \

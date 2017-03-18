@@ -216,7 +216,11 @@ function callAPI(api_type) {
                         //loadEntityDetails();
                         hideLoader();
                     } else {
-                        displayMessage(error);
+                        if(error == 'InvalidPassword'){
+                            displayMessage(message.invalid_password);
+                        }else{
+                            displayMessage(error);
+                        }
                         hideLoader();
                     }
                 }
@@ -748,13 +752,13 @@ function compliancestatus(element, C_ID, U_ID, A_ID) {
     if($(element).attr("data-applicable") == 'false') C_A_STATUS = false;
 
     var C_REMARK = $(element).attr("data-remark");
-
     if(c_bool(C_STATUS) != C_A_STATUS){
         $('#c-remark-add-' + sid).show();
         $('#c-remark-view-' + sid).hide();
     }else{
         $('#c-remark-add-' + sid).hide();
         $('#c-remark-view-' + sid).hide();
+        C_REMARK = null;
     }
 
     /*alert( C_A_STATUS + '==' + c_bool(C_STATUS))*/
@@ -869,13 +873,13 @@ function mcompliancestatus(element) {
     if($(element).attr("data-applicable") == 'false') C_A_STATUS = false;
 
     var C_REMARK = $(element).attr("data-remark");
-
     if(c_bool(C_STATUS) != C_A_STATUS){
         $('#c-remark-add-' + sid1).show();
         $('#c-remark-view-' + sid1).hide();
     }else{
         $('#c-remark-add-' + sid1).hide();
         $('#c-remark-view-' + sid1).hide();
+        C_REMARK = null;
     }
 
     /*if (CLIENT_STATUTORY_ID == null) {
