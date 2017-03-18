@@ -160,27 +160,41 @@ def get_domains_for_user(db, user_id, user_category):
     return return_domains(rows)
 
 
-def get_domains_info(db, user_id, user_category):
+def get_domains_info(db, user_id, user_category, le_ids=None):
 
     if user_category > 3 :
         query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
             "where t1.user_id = %s "
+        param = [user_id]
+        if le_ids is not None :
+            query += " where find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
 
         rows = db.select_all(query, [user_id])
     elif user_category == 1 :
         query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
-            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
-        rows = db.select_all(query)
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  "
+        param = []
+        if le_ids is not None :
+            query += " where find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
+
+        rows = db.select_all(query, param)
     else :
         query = "SELECT distinct t2.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_domains AS t2 " + \
             " INNER JOIN tbl_legal_entity_domains as t3 on t2.domain_id = t3.domain_id " + \
             "INNER JOIN tbl_user_legal_entities AS t4 ON t4.legal_entity_id = t3.legal_entity_id " + \
             "where t4.user_id = %s "
-        rows = db.select_all(query, [user_id])
+        param = [user_id]
+        if le_ids is not None :
+            query += " where find_in_set(t3.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
+
+        rows = db.select_all(query, param)
 
     results = []
     for d in rows:
