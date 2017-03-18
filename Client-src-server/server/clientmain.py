@@ -503,6 +503,8 @@ class API(object):
                 # merge chart from the processed LE database
                 if type(request_data.request) is dashboard.GetComplianceStatusChart :
                     p_response.chart_data.extend(data.chart_data)
+                    print performed_les
+                    p_response.chart_data = controller.merge_compliance_status(p_response.chart_data)
 
                 elif type(request_data.request) is dashboard.GetEscalationsChart :
                     p_response.chart_data.extend(data.chart_data)
