@@ -246,7 +246,7 @@ def get_trend_chart(db, user_id, user_category):
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
             " from tbl_compliance_status_chart_unitwise as t1 " + \
             " inner join tbl_countries as c on c.country_id = t1.country_id " +\
-            " where find_in_set(chart_year, %s) " + \
+            " where complied_count > 0 and find_in_set(chart_year, %s) " + \
             " group by chart_year "
         param = [",".join([str(x) for x in years])]
 
@@ -255,10 +255,11 @@ def get_trend_chart(db, user_id, user_category):
             " (sum(complied_count)+sum(delayed_count)+sum(inprogress_count)+sum(overdue_count)) as total" + \
             " from tbl_compliance_status_chart_userwise as t1 " + \
             " inner join tbl_countries as c on c.country_id = t1.country_id " +\
-            " where find_in_set(chart_year, %s) and user_id = %s " + \
+            " where complied_count > 0 and find_in_set(chart_year, %s) and user_id = %s " + \
             " group by chart_year "
         param = [",".join([str(x) for x in years]), user_id]
 
+    print q % tuple(param)
     rows = db.select_all(q, param)
     return frame_trend_chart(rows)
 
