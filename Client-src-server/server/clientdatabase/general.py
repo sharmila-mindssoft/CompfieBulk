@@ -541,8 +541,10 @@ def return_units_assign(units):
 
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
-        "t1.employee_code, t1.is_active from tbl_users as t1 " + \
+        "t1.employee_code, t1.is_active, t3.legal_entity_id from tbl_users as t1 " + \
+        " inner join tbl_user_legal_entities t3 on t1.user_id = t3.user_id  " + \
         "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
+
     rows = db.select_all(query)
     return return_client_users(rows)
 
