@@ -79,7 +79,7 @@ def verify_login(db, username, password):
         " t1.is_service_provider, t2.is_blocked " + \
         " FROM tbl_user_login_details as ul  " + \
         " INNER JOIN tbl_users t1 on t1.user_id = ul.user_id " + \
-        " LEFT JOIN tbl_service_provider as t2 on ifnull(t1.service_provider_id, 0) = t2.service_provider_id " + \
+        " LEFT JOIN tbl_service_providers as t2 on ifnull(t1.service_provider_id, 0) = t2.service_provider_id " + \
         " and t2.is_active = 1 and t2.is_blocked = 0 " + \
         " WHERE ul.password= %s and ul.username = %s and t1.is_active=1 "
     #print q
