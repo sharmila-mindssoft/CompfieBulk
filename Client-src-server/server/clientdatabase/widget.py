@@ -462,7 +462,8 @@ def get_calendar_view(db, user_id):
     year = getCurrentYear()
     month = getCurrentMonth()
     q = "select year, month, date, due_date_count, upcoming_count " + \
-        " from tbl_calendar_view where user_id = %s and year = %s and month = %s"
+        " from tbl_calendar_view where user_id = %s and year = %s and month = %s " + \
+        " and date > day(now())"
 
     rows = db.select_all(q, [user_id, year, month])
     return frame_calendar_view(db, rows, user_id)

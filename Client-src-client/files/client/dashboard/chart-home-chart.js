@@ -2021,7 +2021,7 @@ function Compliance_Status_Export() {
       });
       data.push(info);
     });
-    client_mirror.exportJsontoCsv(data, "Complaince Status Graph");
+    client_mirror.exportJsontoCsv(data, "Compliance Status Graph");
 }
 function Escalation_Export() {
   cols = ["Years"];

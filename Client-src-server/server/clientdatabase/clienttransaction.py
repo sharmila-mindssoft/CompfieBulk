@@ -71,14 +71,22 @@ __all__ = [
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
 
-def get_user_based_countries(db, user_id, user_category):
+def get_user_based_countries(db, user_id, user_category, le_ids=None):
     query = "SELECT distinct t1.country_name, t1.country_id, t1.is_active FROM tbl_countries as t1 " + \
         " INNER JOIN tbl_legal_entities as t2 on t1.country_id = t2.country_id "
     param = []
     if user_category > 1 :
         query += " INNER JOIN tbl_user_legal_entities as t3 on t2.legal_entity_id = t3.legal_entity_id " + \
-            " where t3.user_id = %s Order by t1.country_name"
+            " where t3.user_id = %s and is_closed = 0 "
         param = [user_id]
+    else :
+        query += " where t2.is_closed = 0 "
+
+    if le_ids is not None :
+        query += " find_in_set(t2.legal_entity_id, %s) "
+        param.append(",".join([str(x) for x in le_ids]))
+
+    query += "Order by t1.country_name"
 
     rows = db.select_all(query, param)
 
@@ -89,24 +97,33 @@ def get_user_based_countries(db, user_id, user_category):
         ))
     return results
 
-def get_user_based_legal_entity(db, user_id, user_category):
+def get_user_based_legal_entity(db, user_id, user_category, le_ids=None):
 
     q1 = "select distinct t1.domain_id, t1.legal_entity_id from tbl_legal_entity_domains as t1"
 
     q = "select distinct t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id " + \
-        " from tbl_legal_entities t1"
+        " from tbl_legal_entities t1 where t1.is_closed = 0 "
 
+    param = []
     if user_category == 1 :
-        rows = db.select_all(q, None)
+        if le_ids is not None :
+            q += " find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
+        rows = db.select_all(q, param)
         domains = db.select_all(q1, None)
     else :
         q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
-            " where t2.user_id = %s"
+            " where t1.is_closed = 0 and t2.user_id = %s"
+        param = [user_id]
+
+        if le_ids is not None :
+            q += " find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
 
         q1 += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
 
-        rows = db.select_all(q, [user_id])
+        rows = db.select_all(q, param)
         domains = db.select_all(q1, [user_id])
 
     results = []
@@ -127,17 +144,26 @@ def get_user_based_legal_entity(db, user_id, user_category):
         ))
     return results
 
-def get_user_based_division(db, user_id, user_category):
+def get_user_based_division(db, user_id, user_category, le_ids=None):
 
     q = "select t1.division_id, t1.division_name, t1.legal_entity_id, t1.business_group_id " + \
         " from tbl_divisions t1"
 
     if user_category == 1 :
-        rows = db.select_all(q, None)
+        param = []
+        if le_ids is not None :
+            q += " where find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
+        rows = db.select_all(q, param)
     else :
+        param = [user_id]
         q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
-        rows = db.select_all(q, [user_id])
+        if le_ids is not None :
+            q += " where find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
+
+        rows = db.select_all(q, param)
 
     results = []
     for division in rows:
@@ -154,11 +180,21 @@ def get_user_based_category(db, user_id, user_category):
         " from tbl_categories t1"
 
     if user_category == 1 :
-        rows = db.select_all(q, None)
+        param = []
+        if le_ids is not None :
+            q += " where find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
+
+        rows = db.select_all(q, param)
     else :
+        param = [user_id]
         q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
-        rows = db.select_all(q, [user_id])
+        if le_ids is not None :
+            q += " where find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
+
+        rows = db.select_all(q, param)
 
     results = []
     for c in rows:
@@ -563,7 +599,7 @@ def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user
     return True
 
 
-def get_units_for_assign_compliance(db, session_user, is_closed=None):
+def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=None):
     if is_closed is None:
         is_close = 0
     else:
@@ -581,6 +617,10 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None):
     if qry is not None:
         query += qry
         condition_val.append(int(session_user))
+
+    if le_ids is not None :
+        query += " find_in_set(t1.legal_entity_id, %s) "
+        condition_val.append(",".join([str(x) for x in le_ids]))
 
     rows = db.select_all(query, condition_val)
 

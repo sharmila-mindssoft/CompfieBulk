@@ -5,7 +5,8 @@ from server.constants import RECORD_DISPLAY_COUNT
 from server.clientdatabase.dashboard import *
 
 __all__ = [
-    "process_client_dashboard_requests"
+    "process_client_dashboard_requests",
+    "merge_compliance_status"
 ]
 
 
@@ -417,3 +418,36 @@ def process_get_messages(
         show_popup=show_popup,
         notification_text=notification_text
     )
+
+def merge_compliance_status(chart_data) :
+    final_data = {}
+    for idx, c in enumerate(chart_data):
+        if final_data.get(c.filter_type_id) is None :
+            if len(c.data) == 1 :
+                final_data[c.filter_type_id] = c
+            else :
+                for idx, count in enumerate(c.data):
+                    if idx == 0 :
+                        p_c = count
+                    else :
+                        p_c.complied_count += count.complied_count
+                        p_c.delayed_compliance_count += count.delayed_compliance_count
+                        p_c.inprogress_compliance_count += count.inprogress_compliance_count
+                        p_c.not_complied_count += count.not_complied_count
+                c.data = [p_c]
+                final_data[c.filter_type_id] = c
+        else :
+            p_c = final_data[c.filter_type_id]
+            if len(c.data) == 1 :
+                p_c.data[0].complied_count += c.data[0].complied_count
+                p_c.data[0].delayed_compliance_count += c.data[0].delayed_compliance_count
+                p_c.data[0].inprogress_compliance_count += c.data[0].inprogress_compliance_count
+                p_c.data[0].not_complied_count += c.data[0].not_complied_count
+            else :
+                for idx, count in enumerate(c.data):
+                    p_c.data[0].complied_count += count.complied_count
+                    p_c.data[0].delayed_compliance_count += count.delayed_compliance_count
+                    p_c.data[0].inprogress_compliance_count += count.inprogress_compliance_count
+                    p_c.data[0].not_complied_count += count.not_complied_count
+            final_data[c.filter_type_id] = p_c
+    return final_data.values()

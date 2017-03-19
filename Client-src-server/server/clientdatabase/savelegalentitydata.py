@@ -156,15 +156,15 @@ class LEntityReplicationUSer(object):
         d = user_info
         q = "insert into tbl_users(user_id, user_category_id, client_id, seating_unit_id, " + \
             " service_provider_id, user_level, user_group_id, email_id, employee_name, " + \
-            " employee_code, contact_no, mobile_no, is_service_provider, is_active, is_disable) " + \
-            " values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
+            " employee_code, contact_no, mobile_no, is_service_provider, is_active, is_disable, remarks) " + \
+            " values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) "
         try :
             _db.execute(q, [
                 d["user_id"], d["user_category_id"], d["client_id"], d["seating_unit_id"],
                 d["service_provider_id"], d["user_level"], d["user_group_id"],
                 d["email_id"], d["employee_name"], d["employee_code"],
                 d["contact_no"], d["mobile_no"], d["is_service_provider"],
-                d["is_active"], d["is_disable"]
+                d["is_active"], d["is_disable"], d["remarks"]
             ])
         except Exception, e :
             print e

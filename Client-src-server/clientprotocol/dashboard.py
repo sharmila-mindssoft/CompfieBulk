@@ -1902,7 +1902,7 @@ class NotificationsCountSuccess(object):
             "escalation_count": self.escalation,
             "messages_count": self.messages
         }
-        
+
 class RemindersSuccess(object):
     def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
         self.legal_entity_id = legal_entity_id
