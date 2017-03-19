@@ -52,6 +52,12 @@ var ddlDivision = $('#ddlDivision');
 var ddlCategory = $('#ddlCategory');
 var ddlDomain = $('#ddlDomain');
 
+var CurrentPassword = $('#current-password');
+var btnPasswordSubmit_Status = $('#btnPasswordSubmit_Status');
+var btnPasswordSubmit_Block = $('#btnPasswordSubmit_Block');
+var divRemarks = $('#divRemarks');
+var txtRemarks = $('#txtRemarks');
+
 var UnitRow = $("#template .unit-row li");
 var UnitList = $(".unit-list");
 var SelectAll = $('.select_all');
@@ -66,6 +72,12 @@ var businessGroup_ids = [];
 var legalEntity_ids = [];
 var ACTIVE_UNITS = [];
 var unit_ids_edit = [];
+
+var userId = null;
+var user_status = null;
+var blocked_status = null
+var remarks = "";
+var empName = null;
 
 var um_page = null;
 
@@ -159,7 +171,13 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users) {
                     var user_name = v1.user_name;
                     $('.sno', cloneUserRow).text(j);
                     $('.um-employee-name', cloneUserRow).text(v1.emp_name);
-                    $('.um-user-name', cloneUserRow).text(user_name);
+                    $('.um-user-name span', cloneUserRow).text(user_name);
+                    if (user_name == null || user_name == "") {
+                        $('.um-user-name', cloneUserRow).empty();
+                    } else {
+                        $('.um-user-name i', cloneUserRow).attr("data-original-title", v1.seating_unit);
+                    }
+
                     $('.um-user-email', cloneUserRow).text(v1.email_id);
                     $('.um-user-mobile', cloneUserRow).text(v1.mob_no);
 
@@ -181,18 +199,56 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users) {
                     $('.edit i').attr('title', 'Click Here to Edit');
                     $('.edit i', cloneUserRow).attr("onClick", "showEdit('" + v1.user_id + "')");
 
+                    if (v1.is_active == true) {
+                        $('.status i', cloneUserRow).removeClass('fa-times text-danger');
+                        $('.status i', cloneUserRow).addClass('fa-check text-success');
+                        $('.status i', cloneUserRow).attr('title', 'Click here to Deactivate');
+                    } else {
+                        $('.status i', cloneUserRow).removeClass('fa-check text-success');
+                        $('.status i', cloneUserRow).addClass('fa-times text-danger');
+                        $('.status i', cloneUserRow).attr('title', 'Click here to Activate');
+                    }
+
+                    if (v1.is_disable == true) {
+                        $('.blocked i', cloneUserRow).addClass('text-danger');
+                        $('.blocked i', cloneUserRow).removeClass('text-muted');
+                        if (v1.unblock_days == 0) {
+                            $('.blocked i', cloneUserRow).hide();
+                        } else {
+                            $('.blocked i', cloneUserRow).attr('title', 'Days left ' + v1.unblock_days + ' day(s)');
+                        }
+
+                    } else {
+                        $('.blocked i', cloneUserRow).removeClass('text-danger');
+                        $('.blocked i', cloneUserRow).addClass('text-muted');
+                        $('.blocked i', cloneUserRow).attr('title', 'Click here to Block');
+                    }
+
+                    // $('.status i', cloneUserRow).attr("onClick", "showModalDialog('" + v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, 'STATUS'')");
+
+                    // showDialog
+
                     $('.um-category i', cloneUserRow).addClass(cat_class);
                     $('.user-row-body', cloneRow).append(cloneUserRow);
 
                     j = j + 1;
                 }
+
+                // Status Event
+                $('.status i', cloneUserRow).on('click', function(e) {
+                    t_this.showModalDialog(e, v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "STATUS");
+                });
+
+                // Disable Event
+                $('.blocked i', cloneRow).on('click', function(e) {
+                    t_this.showModalDialog(e, v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "BLOCK");
+                });
             });
             listContainer.append(cloneRow);
         });
     }
     $('[data-toggle="tooltip"]').tooltip();
 };
-
 
 showEdit = function(user_id) {
     client_mirror.userManagementEditView(parseInt(user_id), function(error, response) {
@@ -209,6 +265,7 @@ showEdit = function(user_id) {
         }
     });
 }
+
 
 userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEntity_edit, listDomains_edit, listUnits_edit) {
     t_this = this;
@@ -346,6 +403,58 @@ userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEnt
     }
 }
 
+function showDialog() {}
+
+//open password dialog
+userManagementPage.prototype.showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked, mode) {
+    t_this = this;
+    statusmsg = "";
+    if (mode == "STATUS") {
+        btnPasswordSubmit_Status.show();
+        btnPasswordSubmit_Block.hide();
+        divRemarks.hide();
+
+        if (isActive == true) {
+            user_status = false;
+            statusmsg = message.deactive_message;
+        } else {
+            user_status = true;
+            statusmsg = message.active_message;
+        }
+    } else if (mode == "BLOCK") {
+        btnPasswordSubmit_Status.hide();
+        btnPasswordSubmit_Block.show();
+        divRemarks.show();
+
+        if (isBlocked == true) {
+            blocked_status = false;
+            statusmsg = message.disable_user_message;
+        } else {
+            blocked_status = true;
+            statusmsg = message.enable_user_message;
+
+        }
+    }
+
+    CurrentPassword.val('');
+    confirm_alert(statusmsg, function(isConfirm) {
+        if (isConfirm) {
+            Custombox.open({
+                target: '#custom-modal',
+                effect: 'contentscale',
+                complete: function() {
+                    CurrentPassword.focus();
+                    userId = user_id;
+                    empName = emp_name;
+                    alert("userId- showModalDialog- " + userId)
+                },
+            });
+            // e.preventDefault();
+            return false;
+        }
+    });
+}
+
 //Save User Management data
 userManagementPage.prototype.submitProcess = function() {
     var sp_id, is_sp, s_unit, u_level;
@@ -445,6 +554,50 @@ userManagementPage.prototype.submitProcess = function() {
     }
 
 
+};
+
+userManagementPage.prototype.changeStatus = function(user_id, status) {
+    t_this = this;
+    if (isNotEmpty(CurrentPassword, message.password_required) == false) {
+        return false;
+    } else {
+        var password = CurrentPassword.val();
+        if (status == "false") { status = false; }
+        if (status == "true") { status = true; }
+        client_mirror.changeClientUserStatus(user_id, status, empName, password, function(error, response) {
+            if (error == null) {
+                Custombox.close();
+                displaySuccessMessage(message.status_success);
+                t_this.showList();
+            } else {
+                t_this.possibleFailures(error);
+            }
+        });
+    }
+};
+
+userManagementPage.prototype.blockuser = function(user_id, block_status, remarks) {
+    t_this = this;
+    if (isNotEmpty(CurrentPassword, message.password_required) == false) {
+        return false;
+    } else {
+        var password = CurrentPassword.val();
+        if (block_status == "false") { block_status = false; }
+        if (block_status == "true") { block_status = true; }
+        client_mirror.blockUser(user_id, block_status, remarks, password, function(error, response) {
+            if (error == null) {
+                Custombox.close();
+                if (block_status) {
+                    displaySuccessMessage(message.disable_success);
+                } else {
+                    displaySuccessMessage(message.enable_success);
+                }
+                t_this.showList();
+            } else {
+                t_this.possibleFailures(error);
+            }
+        });
+    }
 };
 
 userManagementPage.prototype.possibleFailures = function(error) {
@@ -1122,6 +1275,18 @@ PageControls = function() {
 
     chkSelectAll.click(function() {
         um_page.selectAllUnits();
+    });
+
+    btnPasswordSubmit_Status.click(function() {
+        um_page.changeStatus(userId, user_status);
+    });
+
+    btnPasswordSubmit_Block.click(function() {
+        if (txtRemarks.val().trim() == "") {
+            displayMessage(message.remarks_required);
+        } else {
+            um_page.blockuser(userId, blocked_status, txtRemarks.val());
+        }
     });
 }
 
