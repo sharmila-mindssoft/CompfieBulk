@@ -174,7 +174,7 @@ def get_user_based_division(db, user_id, user_category, le_ids=None):
         results.append(division_obj)
     return results
 
-def get_user_based_category(db, user_id, user_category):
+def get_user_based_category(db, user_id, user_category, le_ids=None):
 
     q = "select t1.category_id, t1.category_name, t1.division_id, t1.legal_entity_id, t1.business_group_id " + \
         " from tbl_categories t1"
@@ -191,7 +191,7 @@ def get_user_based_category(db, user_id, user_category):
         q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
         if le_ids is not None :
-            q += " where find_in_set(t1.legal_entity_id, %s) "
+            q += " and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
         rows = db.select_all(q, param)
