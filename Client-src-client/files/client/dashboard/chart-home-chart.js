@@ -1520,6 +1520,18 @@ function prepareEscalationChartdata(source_data) {
     dict[key] = temp;
   }
   chart_data = source_data.es_chart_data;
+
+  function sortJSON(data, key, way) {
+      return data.sort(function(a, b) {
+          var x = a[key]; var y = b[key];
+          if (way === '123' ) { return ((x < y) ? -1 : ((x > y) ? 1 : 0)); }
+          if (way === '321') { return ((x > y) ? -1 : ((x < y) ? 1 : 0)); }
+      });
+  }
+  chart_data = sortJSON(chart_data,'chart_year', '123');  //asc order by filter_type_id
+
+  console.log("###"+chart_data);
+
   var chartDataSeries = [];
   delayed_data = [];
   not_complied_data = [];
@@ -1585,7 +1597,7 @@ function prepareTrendChartData(source_data) {
   var chartDataSeries = [];
   var total_count = [];
 
-  //xAxis = source_data.years;
+  xAxis = source_data.years;
   final_data = {}
   for (var i = 0; i < source_data.trend_data.length; i++) {
     chartData = source_data.trend_data[i];
@@ -1628,11 +1640,12 @@ function prepareTrendChartData(source_data) {
       final_data[filterTypeName] = t_info;
     }
   }
+  console.log("final_data--"+final_data.toSource());
   $.each(final_data, function(k, v) {
     chartDataSeries.push(v);
 
     $.each(v['data'], function(idx, v1) {
-      index = xAxis.indexOf(v1['year']);
+      index = xAxis.indexOf(v1['years']);
       if (index == -1) {
         xAxis.push(v1['year']);
       }

@@ -478,7 +478,7 @@ loadCompliances = function(){
                 $('.coll-title', clone).attr('id', 'collapse'+actCount);
                 $('.coll-title', clone).attr('aria-labelledb', 'heading'+actCount);
                 // $('#collapse'+actCount+' tbody', clone).addClass("welcome");
-                $('.all-comp-checkbox', clone).on("click", function(){
+                $('#checkbox1', clone).on("click", function(){
                     var tableelement = $(this).closest(".table").find("tbody");
                     console.log(tableelement);
                     if($(this).prop("checked") == true){
@@ -507,7 +507,7 @@ loadCompliances = function(){
             var complianceDetailtableRow = $('#templates .div-compliance-list .compliance-details');
             var clone2 = complianceDetailtableRow.clone();
             $('.comp-checkbox').addClass("comp-checkbox-"+actCount);
-            $('.comp-checkbox', clone2).click(function(){
+            $('#checkbox2', clone2).click(function(){
                 if($(this).prop("checked") == true){
                     $(".due-date-div", clone2).empty();
                     $(".trigger-div", clone2).empty();

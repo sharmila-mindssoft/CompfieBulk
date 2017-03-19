@@ -1773,6 +1773,7 @@ function updateAssigneeWiseComplianceList(data) {
   });
 }
 function updateComplianceList(country_id, user_id, domain_id, year, unit_id, start_count, assigneename, domain_name) {
+  Custombox.close();
   console.log("domain_id++"+domain_id);
   displayLoader();
   // $('.popupoverlay').css('visibility', 'hidden');
@@ -1805,7 +1806,7 @@ function updateComplianceList(country_id, user_id, domain_id, year, unit_id, sta
     dispYear = year;
   $('.comp-list-year', cloneHeadingth).text(dispYear);
   $('.comp-list-domain', cloneHeadingth).text(dispDomain);    
-  $('.div-assignee-wise-compliance').append(cloneHeadingth);
+  $('.assignee-wise').append(cloneHeadingth);
 
   legalentityids = chartInput.getLegalEntities(); 
   client_mirror.getAssigneewiseCompliancesDrilldown(country_id, user_id, domain_id, year, unit_id, start_count, legalentityids, function (status, data) {
