@@ -109,6 +109,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
         if (error == null) {
             listLegalEntity = response.ul_legal_entity;
             listUsers = response.ul_users;
+            alert(listUsers.toSource());
             t_this.renderList(listLegalEntity, listUsers);
         } else {
             // t_this.possibleFailures(error);
