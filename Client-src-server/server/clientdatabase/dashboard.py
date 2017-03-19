@@ -144,7 +144,7 @@ def get_compliance_status_count(db, request, user_id, user_category):
         param.append(filter_ids)
 
     q += " group by " + group_by_name
-    print q % tuple(param)
+
     rows = db.select_all(q, param)
 
     return frame_compliance_status(rows)
@@ -248,7 +248,6 @@ def get_compliance_status_chart_date_wise(db, request, user_id, user_category):
         q += filter_type_ids
         param.append(filter_ids)
 
-    print q % tuple(param)
     rows = db.select_all(q, param)
 
     return frame_compliance_status(rows)
@@ -600,8 +599,6 @@ def get_risk_chart_count(db, request, user_id, user_category):
 
         param = [user_id, d_ids, user_id, d_ids]
 
-        print q % (user_id, d_ids, user_id, d_ids)
-
     if filter_type_ids is not None :
         q += filter_type_ids
         param.append(filter_ids)
@@ -689,12 +686,11 @@ def get_trend_chart_drill_down(
         year, year, ",".join([str(x) for x in domain_ids]),
     ]
     param.extend(where_qry_val)
-    print query % tuple(param)
+
     history_rows = db.select_all(query, param)
 
     trend_comp = {}
     for d in history_rows:
-        print d
         unit_id = d["unit_id"]
 
         business_group_name = d["business_group_name"]
@@ -745,8 +741,7 @@ def frame_compliance_details_query(
     db, chart_type, compliance_status, request,
     from_count, to_count, user_id, user_category, chart_year=None
 ):
-    print chart_type
-    print chart_year
+
     domain_ids = request.domain_ids
     filter_type = request.filter_type
     if chart_type == "compliance_status":
@@ -760,7 +755,7 @@ def frame_compliance_details_query(
 
     if chart_year is not None:
         year_condition = get_client_domain_configuration(db, domain_ids, chart_year)[1]
-        print year_condition
+
         for i, y in enumerate(year_condition):
             if i == 0:
                 year_range_qry = y
@@ -903,9 +898,7 @@ def frame_compliance_details_query(
     q = "%s %s %s " % (query, where_qry, order)
     param = [",".join([str(x) for x in domain_ids])]
     param.extend(where_qry_val)
-    print chart_type
-    print q % tuple(param)
-    print "\n"
+
     rows = db.select_all(q, param)
     # print rows
     return rows
@@ -924,16 +917,13 @@ def compliance_details_query(
 def get_client_domain_configuration(
     db, domain_ids, current_year=None
 ):
-    print current_year
+
     query = "SELECT distinct t1.country_id, t1.domain_id, t1.month_from, t1.month_to " + \
         " FROM  tbl_client_configuration as t1 " + \
         " inner join tbl_legal_entities as t2 on t1.country_id = t2.country_id " + \
         " WHERE find_in_set(domain_id, %s)"
     param = [",".join([str(y) for y in domain_ids])]
     rows = db.select_all(query, param)
-
-    print query % tuple(param)
-    print "\n"
 
     years_range = []
     year_condition = []
@@ -966,7 +956,7 @@ def get_client_domain_configuration(
         info["month_from"] = int(d["month_from"])
         info["month_to"] = int(d["month_to"])
         years_range.append(info)
-    print years_range, year_condition
+
     return (years_range, year_condition)
 
 
@@ -1558,7 +1548,6 @@ def get_reminders(
                 "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s"
         rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
 
-
     notifications = []
     for r in rows :
         legal_entity_id = int(r["legal_entity_id"])
@@ -1730,7 +1719,7 @@ def statutory_notification_detail(
                     date.get("repeat_by")
                 )
                 date_list.append(s_date)
-                print date_list, r["frequency_id"], r
+
         summary, dates, trigger = make_summary(date_list, r["frequency_id"], r)
         if summary != "" and dates is not None and dates != "" :
             summary += ' on (%s)' % (dates)
@@ -1818,7 +1807,7 @@ def get_assigneewise_compliances_list(
     else:
 
         units = get_user_unit_ids(db, session_user, session_category)
-        print units
+
         condition += " AND find_in_set(tu.unit_id, %s)"
         condition_val.append(",".join([str(x) for x in units]))
         # unit_condition, unit_condition_val = db.generate_tuple_condition(
@@ -1832,13 +1821,12 @@ def get_assigneewise_compliances_list(
     domain_ids_list = get_user_domains(db, session_user, session_category)
     current_date = get_date_time_in_date()
     result = {}
-    print domain_ids_list
+
     for domain_id in domain_ids_list:
         timelines = get_country_domain_timelines(
             db, [country_id], [domain_id], [current_date.year]
         )
-        print "%%%%%%"
-        print timelines
+
         if len(timelines[0][1]) == 0:
             continue
         from_date = timelines[0][1][0][1][0]["start_date"].date()
@@ -1894,10 +1882,7 @@ def get_assigneewise_compliances_list(
             " group by completed_by, tch.unit_id; "
         param = [domain_id, from_date, to_date]
         parameter_list = condition_val + param
-        print "\n"
 
-        print query % tuple(parameter_list)
-        print "\n"
         assignee_wise_compliances = db.select_all(query, parameter_list)
         for compliance in assignee_wise_compliances:
             unit_name = compliance["unit_name"]
@@ -1968,15 +1953,14 @@ def get_assigneewise_yearwise_compliances(
     db, country_id, unit_id, user_id
 ):
     current_year = get_date_time_in_date().year
-    print user_id
+
     domain_ids_list = get_user_domains(db, user_id)
-    print domain_ids_list
+
     start_year = current_year - 5
     iter_year = start_year
     year_wise_compliance_count = []
 
     while iter_year <= current_year:
-        print iter_year , current_year
         domainwise_complied = 0
         domainwise_inprogress = 0
         domainwise_notcomplied = 0
@@ -1986,6 +1970,8 @@ def get_assigneewise_yearwise_compliances(
             result = get_country_domain_timelines(
                 db, [country_id], [domain_id], [iter_year]
             )
+            if len(result[0][1]) == 0:
+                continue
             from_date = result[0][1][0][1][0]["start_date"].date()
             to_date = result[0][1][0][1][0]["end_date"].date()
             query = " SELECT tc.domain_id, " + \
@@ -2057,6 +2043,7 @@ def get_assigneewise_yearwise_compliances(
             )
         )
         iter_year += 1
+    year_wise_compliance_count = sorted(year_wise_compliance_count, key=lambda k: k.year, reverse=True)
     return year_wise_compliance_count
 
 
