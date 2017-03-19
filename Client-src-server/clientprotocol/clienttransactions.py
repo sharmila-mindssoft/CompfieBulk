@@ -839,7 +839,7 @@ class GetChartFilters(Request):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data)
+        data = parse_dictionary(data, ["le_ids"])
         legal_entity_ids = data.get("le_ids")
         return GetChartFilters(legal_entity_ids)
 

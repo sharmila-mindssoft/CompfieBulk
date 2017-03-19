@@ -534,8 +534,8 @@ def process_save_review_settings_compliance(db, request, session_user):
 # Master filters
 ##################################################################
 
-def process_client_master_filters_request(request, db, session_user, session_category):
-    request = request.request
+def process_client_master_filters_request(pre_request, db, session_user, session_category):
+    request = pre_request.request
 
     if type(request) is clienttransactions.GetStatutorySettingsFilters:
         result = process_get_statu_settings_filters(db, session_user, session_category)
@@ -592,6 +592,9 @@ def process_get_user_to_assign(db, request):
 
 def process_get_chart_filters(db, request, session_user, session_category):
     le_ids = request.legal_entity_ids
+    print request
+    print request.to_structure()
+    print le_ids
     countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
 

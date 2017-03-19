@@ -473,7 +473,7 @@ function initClientMirror() {
         var request = [
             'GetChartFilters',
             {
-                'legal_entity_ids': le_ids
+                'le_ids': le_ids
             }
         ];
         var callerName = 'client_master_filters';

@@ -88,6 +88,8 @@ def get_user_based_countries(db, user_id, user_category, le_ids=None):
 
     query += "Order by t1.country_name"
 
+    print query % tuple(param)
+
     rows = db.select_all(query, param)
 
     results = []
