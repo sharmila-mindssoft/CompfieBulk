@@ -2259,7 +2259,13 @@ $(document).ready(function () {
     // window.location.href = "/login";
     return;
   }
-  client_mirror.getChartFilters(function (status, data) {
+  var le_ids = [];
+  var le_list = client_mirror.getSelectedLegalEntity();
+  $.each(le_list, function(k, v){
+    le_ids.push(v.le_id);
+  });
+
+  client_mirror.getChartFilters(le_ids, function (status, data) {
     if (data == null) {
       return;
     }

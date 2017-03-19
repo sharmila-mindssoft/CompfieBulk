@@ -126,9 +126,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
   var options = {
     // var options = new Highcharts.Chart({
     colors: [
-      '#A5D17A',
-      '#F58835',
-      '#F0F468',
+      '#3ec845',
+      '#fe6271',
+      '#fbca35',
       '#F32D2B'
     ],
     chart: { renderTo: 'status-container' },
@@ -202,9 +202,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
     options.chart.type = 'column';
     options.legend.enabled = false;
     options.colors = [
-      '#A5D17A',
-      '#F58835',
-      '#F0F468',
+      '#3ec845',
+      '#fe6271',
+      '#fbca35',
       '#F32D2B'
     ];
     var chart1 = new Highcharts.Chart(options);
@@ -439,6 +439,7 @@ function updateComplianceApplicabilityChart(data) {
         point: {
           events: {
             click: function () {
+              alert("onclick");
               var drilldown = this.drilldown;
               loadComplianceApplicabilityDrillDown(drilldown);
             }

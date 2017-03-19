@@ -469,10 +469,12 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getChartFilters(callback) {
+    function getChartFilters(le_ids, callback) {
         var request = [
             'GetChartFilters',
-            {}
+            {
+                'legal_entity_ids': le_ids
+            }
         ];
         var callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
