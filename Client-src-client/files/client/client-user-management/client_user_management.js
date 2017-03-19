@@ -1081,7 +1081,7 @@ key_search = function(mainList, listUsers) {
     key_four = Filter_Mobile.val().toLowerCase();
     // d_status = Search_status_ul.find('li.active').attr('value');
     var fList = [];
-    //alert(listUsers.toSource())
+    alert(listUsers.toSource())
     for (var v in listUsers) {
         emp_name = listUsers[v].emp_name;
         emp_code = listUsers[v].emp_code;
