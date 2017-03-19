@@ -1212,14 +1212,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function startOnOccurrenceCompliance(le_id, compliance_id, start_date, unit_id, duration, callback) {
+    function startOnOccurrenceCompliance(le_id, compliance_id, start_date, unit_id, duration, remarks, password, callback) {
         var request = [
             'StartOnOccurrenceCompliance', {
                 'le_id': le_id,
                 'compliance_id': compliance_id,
                 'start_date': start_date,
                 'unit_id': unit_id,
-                'duration': duration
+                'duration': duration,
+                'remarks': remarks,
+                'password': password
             }
         ];
         callerName = 'client_user';
@@ -1406,17 +1408,34 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function blockServiceProvider(sId, block, password, callback) {
+    function blockServiceProvider(sId, block, remarks, password, callback) {
         callerName = 'client_masters';
         var request = [
             'BlockServiceProvider', {
                 'sp_id': sId,
                 'is_blocked': block,
+                'remarks': remarks,
                 "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
+
+    function blockUser(user_id, block, remarks, password, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'BlockUser', {
+                'user_id': user_id,
+                'is_blocked': block,
+                'remarks': remarks,
+                "password": password
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+
+
     // Client User
     function getClientUsers(callback) {
         callerName = 'client_masters';
@@ -1482,13 +1501,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeClientUserStatus(uId, active, employeeName, callback) {
+    function changeClientUserStatus(uId, active_status, employeeName, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeClientUserStatus', {
                 'u_id': uId,
-                'active': active,
-                'emp_name': employeeName
+                'active_status': active_status,
+                'emp_name': employeeName,
+                'password': password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -3042,7 +3062,8 @@ function initClientMirror() {
         exportJsontoCsv: exportJsontoCsv,
         onOccurrenceLastTransaction: onOccurrenceLastTransaction,
         uploadComplianceTaskFile: uploadComplianceTaskFile,
-        userManagementEditView: userManagementEditView
+        userManagementEditView: userManagementEditView,
+        blockUser: blockUser
     };
 }
 
