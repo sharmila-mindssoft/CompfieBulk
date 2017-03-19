@@ -41,7 +41,7 @@ var le_id = null;
 var d_id = null;
 var sno = 1;
 var temp_ftype = "";
-var actCount = 1;
+var actCount = 0;
 var LastAct = "";
 var LastSubAct = "";
 var count = 1;
@@ -224,11 +224,16 @@ ReviewSettingsPage.prototype.getUnitList = function(){
 
 SearchUnit.keyup(function () {
     var filter = jQuery(this).val();
-    jQuery(".unit-list .unit-names").each(function () {
+    jQuery(".unit-list .unit-names").each(function () {        
         if (jQuery(this).text().search(new RegExp(filter, "i")) < 0) {
             jQuery(this).hide();
+            jQuery(".unit-list .heading").hide();
         } else {
-            jQuery(this).show()
+            jQuery(this).show();
+            jQuery(".unit-list .heading").hide();
+        }
+        if(filter == ""){
+            jQuery(".unit-list .heading").show();
         }
     });
 });
@@ -461,6 +466,7 @@ loadCompliances = function(){
         LastAct = '';
         $.each(COMPLIANCES_LIST, function(key, value) {
             if(LastAct != value.level_1_s_name){
+                actCount = actCount + 1;
                 console.log("actCount--"+actCount);
                 var acttableRow = $('#templates .p-head');
                 var clone = acttableRow.clone();
@@ -472,7 +478,7 @@ loadCompliances = function(){
                 $('.coll-title', clone).attr('id', 'collapse'+actCount);
                 $('.coll-title', clone).attr('aria-labelledb', 'heading'+actCount);
                 // $('#collapse'+actCount+' tbody', clone).addClass("welcome");
-                $('.all-comp-checkbox', clone).on("click", function(){
+                $('#checkbox1', clone).on("click", function(){
                     var tableelement = $(this).closest(".table").find("tbody");
                     console.log(tableelement);
                     if($(this).prop("checked") == true){
@@ -487,7 +493,7 @@ loadCompliances = function(){
                 });
                 $('.accordion-div').append(clone);
                 LastAct = value.level_1_s_name;
-                actCount = actCount + 1;
+                
 
             }
             // if(LastSubAct != value.map_text){
@@ -501,7 +507,7 @@ loadCompliances = function(){
             var complianceDetailtableRow = $('#templates .div-compliance-list .compliance-details');
             var clone2 = complianceDetailtableRow.clone();
             $('.comp-checkbox').addClass("comp-checkbox-"+actCount);
-            $('.comp-checkbox', clone2).click(function(){
+            $('#checkbox2', clone2).click(function(){
                 if($(this).prop("checked") == true){
                     $(".due-date-div", clone2).empty();
                     $(".trigger-div", clone2).empty();
@@ -587,8 +593,7 @@ loadCompliances = function(){
             $('.applicable-count', clone2).on('click', function() {
                 displayPopup(value.u_ids);
             });
-
-            $('#collapse'+count+' .tbody-compliance-list').append(clone2);
+            $('#collapse'+actCount+' .tbody-compliance-list').append(clone2);
 
         });
     }
@@ -673,8 +678,40 @@ SubmitButton.on("click", function(){
                         displayMessage("Trigger Before Days Required for "+comtask);
                         dt = 1;
                         return false;
-                    }            
+                    } 
+
+
+
                     else{
+                        if (trigger != '') {
+                            var max_triggerbefore = 0;
+                            if (repeateverytype != null) {
+                              if (repeateverytype == 1) {
+                                max_triggerbefore = repeatevery;
+                              } else if (repeateverytype == 2) {
+                                max_triggerbefore = repeatevery * 30;
+                              } else {
+                                max_triggerbefore = repeatevery * 365;
+                              }
+                            }
+                            trigger = parseInt(trigger);
+                            if (trigger > 100) {
+                                console.log('displayMessage("Trigger Before Days Required for "+comtask);');
+                                displayMessage(message.triggerbefore_exceed);
+                                dt = 1;
+                                return false;
+                            }
+                            if (trigger == 0) {
+                                displayMessage(message.triggerbefore_iszero);
+                                dt = 1;
+                                return false;
+                            }
+                            if (max_triggerbefore > 0 && trigger > max_triggerbefore) {
+                                displayMessage(message.triggerdays_exceeding_repeatsevery);
+                                dt = 1;
+                                return false;
+                            }
+                        }
                         var statu = {};                                      
                         statu['statutory_date'] = null;
                         statu['statutory_month'] = null;

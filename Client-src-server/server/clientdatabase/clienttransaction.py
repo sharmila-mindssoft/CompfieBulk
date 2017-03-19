@@ -83,7 +83,7 @@ def get_user_based_countries(db, user_id, user_category, le_ids=None):
         query += " where t2.is_closed = 0 "
 
     if le_ids is not None :
-        query += " find_in_set(t2.legal_entity_id, %s) "
+        query += " and find_in_set(t2.legal_entity_id, %s) "
         param.append(",".join([str(x) for x in le_ids]))
 
     query += "Order by t1.country_name"
@@ -107,7 +107,7 @@ def get_user_based_legal_entity(db, user_id, user_category, le_ids=None):
     param = []
     if user_category == 1 :
         if le_ids is not None :
-            q += " find_in_set(t1.legal_entity_id, %s) "
+            q += " and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
         rows = db.select_all(q, param)
         domains = db.select_all(q1, None)
@@ -117,7 +117,7 @@ def get_user_based_legal_entity(db, user_id, user_category, le_ids=None):
         param = [user_id]
 
         if le_ids is not None :
-            q += " find_in_set(t1.legal_entity_id, %s) "
+            q += "  and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
         q1 += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
@@ -585,6 +585,7 @@ def execute_bulk_insert(db, value_list, s_status):
         table, ",".join(column), value_list, update_column
     )
 
+
 def update_new_statutory_settings(db, unit_id, domain_id, user_id, submit_status):
     if submit_status == 2 :
         q = "Update tbl_client_statutories set is_locked=1, locked_on=%s , locked_by =%s, updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"
@@ -592,6 +593,7 @@ def update_new_statutory_settings(db, unit_id, domain_id, user_id, submit_status
     else :
         q = "Update tbl_client_statutories set updated_by = %s , updated_on = %s where unit_id = %s and domain_id = %s"
         db.execute(q, [user_id, get_date_time(), unit_id, domain_id])
+
 
 def update_new_statutory_settings_lock(db, unit_id, domain_id, lock_status, user_id):
     q = "Update tbl_client_statutories set is_locked=%s, locked_on=%s , locked_by =%s where unit_id = %s and domain_id = %s"
@@ -619,7 +621,7 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=Non
         condition_val.append(int(session_user))
 
     if le_ids is not None :
-        query += " find_in_set(t1.legal_entity_id, %s) "
+        query += " and find_in_set(t1.legal_entity_id, %s) "
         condition_val.append(",".join([str(x) for x in le_ids]))
 
     rows = db.select_all(query, condition_val)
@@ -3004,8 +3006,9 @@ def get_review_settings_compliance(db, request, session_user):
     d_id = request.domain_id
     unit_ids = ",".join([str(x) for x in request.unit_ids])
     f_type = request.f_id
+    print "unit_ids==", unit_ids
 
-    where_qry = " and t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and t01.unit_id in (%s)"
+    where_qry = " and t02.frequency_id = %s and t01.legal_entity_id = %s and t01.domain_id = %s and find_in_set(t01.unit_id, %s)"
     condition_val = [f_type, le_id, d_id, unit_ids]
 
     query = " SELECT t01.compliance_id, t02.compliance_task, t02.statutory_provision,  " + \
@@ -3021,10 +3024,7 @@ def get_review_settings_compliance(db, request, session_user):
             " group by t01.compliance_id "
 
     query = query % (where_qry)
-    if condition_val is None:
-        rows = db.select_all(query)
-    else:
-        rows = db.select_all(query, condition_val)
+    rows = db.select_all(query, condition_val)
 
     return return_review_settings_compliance(rows)
 
@@ -3055,6 +3055,7 @@ def return_review_settings_compliance(data):
                 unit_ids, level_1_statutory_name
             )
         )
+        print  d["compliance_id"], d["compliance_task"], d["statutory_provision"], d["repeats_every"], d['repeats_type_id'], date_list, unit_ids, level_1_statutory_name
     return results
 
 
