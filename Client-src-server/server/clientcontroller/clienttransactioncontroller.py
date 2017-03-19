@@ -622,7 +622,7 @@ def process_assigneewise_compliances_filters(
     division_list = get_user_based_division(db, session_user, session_category)
     unit_list = get_user_based_units(db, session_user, session_category)
     users_list = get_assignees(db, None)
-    category_list = get_user_based_category(db, session_user, session_category)
+    category_list = get_user_based_category(db, session_user, session_category, le_ids=None)
     return clienttransactions.GetAssigneewiseComplianesFiltersSuccess(
         countries=countries, business_groups=business_group_list,
         legal_entities=legal_entity_list, divisions=division_list,

@@ -123,11 +123,13 @@ function updateComplianceStatusChart(data_input) {
   }
 }
 function complianceDrillDown(data_list, chartTitle, filter_name) {
-  $('.btn-bar-chart').on('click', function () {
+  $('.btn-bar-chart').on('click', function () {    
     updateComplianceStatusPieChart(data_list, chartTitle, 'column', filter_name);
+    hideButtons();
   });
-  $('.btn-pie-chart').on('click', function () {
+  $('.btn-pie-chart').on('click', function () {    
     updateComplianceStatusPieChart(data_list, chartTitle, 'pie', filter_name);
+    hideButtons();
   });
 }
 function updateDrillDown(status, data, filterTypeName) {
@@ -529,7 +531,7 @@ function unitWiseNotCompliedDrillDown(status, data) {
 }
 function notCompliedDrilldown(status, data) {
   $('.btn-back').on('click', function () {
-    $('.chart-container').hide();
+    $('.chart-container').show();
     $('.div-drilldown-container').hide();
     $('.drilldown-container').hide();
     $('.div-assignee-wise-compliance').hide();
@@ -1949,7 +1951,7 @@ function showPopup(country_assignee, unit_assignee, user_assignee, name_assignee
           $('.popup-year-val', cloneval).html(val.year);
           $('.popup-total-count', cloneval).html(val.total_compliances);
           $('.popup-complied-count', cloneval).html(val.complied_count);
-          $('.popup-delayed-count', cloneval).html(val.delayed_compliance);
+          $('.popup-delayed-count', cloneval).html(val.delayed_compliance_count);
           $('.popup-inprogress-count', cloneval).html(val.inprogress_compliance_count);
           $('.popup-not-complied-count', cloneval).html(val.not_complied_count);
           $('.popup-click-drilldown', cloneval).on('click', function () {

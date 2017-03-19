@@ -118,6 +118,8 @@ function updateComplianceStatusStackBarChart(data) {
 }
 
 function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter_name) {
+  $(".graph-selections-bottom").hide();
+  hideButtons();
   var total = 0;
   for (var i = 0; i < data_list.length; i++) {
     item = data_list[i];
@@ -1791,6 +1793,7 @@ function prepareComplianceApplicability(source_data) {
 }
 // Load chart
 function loadComplianceStatusChart() {
+  PageTitle.text("Compliance Status");
   var requestData = parseComplianceStatusApiInput();
   client_mirror.getComplianceStatusChartData(requestData, function (status, data) {
     // TODO: API Error Validation
@@ -1818,6 +1821,7 @@ function loadComplianceStatusChart() {
   });
 }
 function loadEscalationChart() {
+  PageTitle.text("Escalation");
   var filter_type = chartInput.getFilterType();
   var filterType = filter_type.replace('_', '-');
   filterType = hyphenatedToUpperCamelCase(filterType);
@@ -1840,6 +1844,7 @@ function loadEscalationChart() {
   });
 }
 function loadTrendChart() {
+  PageTitle.text("Trend Chart");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
@@ -1861,6 +1866,7 @@ function loadTrendChart() {
   });
 }
 function loadNotCompliedChart() {
+  PageTitle.text("Not Complied");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filterType = filter_type.replace('_', '-');
@@ -1882,6 +1888,7 @@ function loadNotCompliedChart() {
   });
 }
 function loadComplianceApplicabilityChart() {
+  PageTitle.text("Risk Report");
   var filter_type = chartInput.getFilterType();
   var filter_ids = getFilterIds(filter_type);
   var filter_type = chartInput.getFilterType().replace('_', '-');
@@ -1903,6 +1910,7 @@ function loadComplianceApplicabilityChart() {
   });
 }
 function loadAssigneeWiseCompliance() {
+  PageTitle.text("Assignee Wise Compliances");
   client_mirror.getAssigneewiseComplianesFilters(function (status, data) {
     updateAssigneeWiseComplianceFiltersList(data);
   });
@@ -1940,25 +1948,19 @@ function loadCharts() {
   $(".assignee-wise").hide();
   $(".div-assignee-wise-compliance").hide();
   $(".assignee-wise").empty();
-  if (chartType == 'compliance_status') {
-    PageTitle.text("Compliance Status");
+  if (chartType == 'compliance_status') {    
     loadComplianceStatusChart();
   } else if (chartType == 'escalations') {
-    PageTitle.text("Escalation");
     loadEscalationChart();
   } else if (chartType == 'not_complied') {
-    PageTitle.text("Not Complied");
     loadNotCompliedChart();
   } else if (chartType == 'compliance_report') {
-    PageTitle.text("Assignee Wise Compliances");
     $(".drilldown-container").empty();
     $(".div-assignee-wise-compliance").hide();
     loadAssigneeWiseCompliance();
   } else if (chartType == 'trend_chart') {
-    PageTitle.text("Trend Chart");
     loadTrendChart();
   } else if (chartType == 'applicability_status') {
-    PageTitle.text("Risk Report");
     loadComplianceApplicabilityChart();
   }
   // else if (chartType == 'assignee_wise_compliance') {
