@@ -48,8 +48,10 @@ class ConvertJsonToCSV(object):
         if not os.path.exists(CSV_PATH):
             os.makedirs(CSV_PATH)
         if report_type == "AssigneeWise":
+            print report_type
+            print self.session_category
             self.generate_assignee_wise_report_and_zip(
-                    db, request, session_user, session_category
+                    db, request, session_user
                 )
         else:
             with io.FileIO(self.FILE_PATH, "wb+") as f:
@@ -121,14 +123,17 @@ class ConvertJsonToCSV(object):
                         db, request, session_user)
 
     def generate_assignee_wise_report_and_zip(
-        self, db, request, session_user, session_category
+        self, db, request, session_user
     ):
         s = str(uuid.uuid4())
         docs_path = "%s/%s" % (CSV_PATH, s)
+        print docs_path
         self.temp_path = "%s/%s" % (CSV_PATH, s)
         self.create_a_csv("Assigneewise compliance count")
+        print self.documents_list
+        print "==============================="
         self.generate_assignee_wise_report_data(
-            db, request, session_user, session_category
+            db, request, session_user
         )
         self.generateZipFile(
             docs_path, self.documents_list
@@ -826,7 +831,7 @@ class ConvertJsonToCSV(object):
                     " AS repeat_type " + \
                     " FROM tbl_client_statutories cs, " + \
                     " tbl_client_compliances cc, tbl_compliances c, " + \
-                    " tbl_assigned_compliances ac, " + \
+                    " tbl_assign_compliances ac, " + \
                     " tbl_compliance_frequency cf " + \
                     " where  cs.country_id = %s and cs.domain_id = %s " + \
                     " and cs.unit_id = %s and cc.statutory_opted = 1 " + \
@@ -909,7 +914,7 @@ class ConvertJsonToCSV(object):
                     self.write_csv(None, csv_values)
 
     def generate_assignee_wise_report_data(
-        self, db, request, session_user, session_category
+        self, db, request, session_user
     ):
         is_header = False
         country_id = request.country_id
@@ -933,50 +938,53 @@ class ConvertJsonToCSV(object):
             condition += " AND tu.unit_id = %s"
             condition_val.append(unit_id)
         else:
-            units = get_user_unit_ids(db, session_user)
+            units = get_user_unit_ids(db, session_user, self.session_category)
             condition += "AND find_in_set(tu.unit_id, %s)"
             condition_val.append(",".join([str(x) for x in units]))
 
         if assignee_id is not None:
             condition += " AND tch.completed_by = %s"
             condition_val.append(assignee_id)
-        domain_ids_list = get_user_domains(db, session_user)
+        domain_ids_list = get_user_domains(db, session_user, self.session_category)
         current_date = get_date_time_in_date()
+        print domain_ids_list
         for domain_id in domain_ids_list:
             timelines = get_country_domain_timelines(
                 db, [country_id], [domain_id], [current_date.year]
             )
+            if len(timelines[0][1]) == 0 :
+                continue
             from_date = timelines[0][1][0][1][0]["start_date"].date()
             to_date = timelines[0][1][0][1][0]["end_date"].date()
             query = " SELECT " + \
                 " concat(IFNULL(employee_code, " + \
                 " 'Administrator'), '-', employee_name) " + \
-                " as Assignee, tch.completed_by, tch.unit_id, " + \
-                " concat(unit_code, '-', unit_name) as Unit, " + \
+                " as assignee, tch.completed_by, tch.unit_id, " + \
+                " concat(unit_code, '-', unit_name) as unit_name, " + \
                 " address, tc.domain_id, " + \
                 " (SELECT domain_name FROM tbl_domains td " + \
-                " WHERE tc.domain_id = td.domain_id) as Domain, " + \
+                " WHERE tc.domain_id = td.domain_id) as domain_name, " + \
                 " sum(case when (approve_status = 1 " + \
                 " and (tch.due_date > completion_date or " + \
                 " tch.due_date = completion_date)) then 1 else 0 end) " + \
                 " as complied, " + \
                 " sum(case when ((approve_status = 0 " + \
                 " or approve_status is null) and " + \
-                " tch.due_date > now()) then 1 else 0 end) as Inprogress, " + \
+                " tch.due_date > now()) then 1 else 0 end) as inprogress, " + \
                 " sum(case when ((approve_status = 0 " + \
                 " or approve_status is null) and " + \
                 " tch.due_date < now()) then 1 else 0 end) " + \
-                " as NotComplied, " + \
+                " as not_complied, " + \
                 " sum(case when (approve_status = 1 " + \
                 " and completion_date > tch.due_date and " + \
                 " (is_reassigned = 0 or is_reassigned is null) ) " + \
-                " then 1 else 0 end) as DelayedCompliance , " + \
+                " then 1 else 0 end) as delayedc, " + \
                 " sum(case when (approve_status = 1 " + \
                 " and completion_date > tch.due_date and " + \
                 " (is_reassigned = 1)) " + \
-                " then 1 else 0 end) as DelayedReassignedCompliance " + \
+                " then 1 else 0 end) as delayed_reassigned " + \
                 " FROM tbl_compliance_history tch " + \
-                " INNER JOIN tbl_assigned_compliances tac ON ( " + \
+                " INNER JOIN tbl_assign_compliances tac ON ( " + \
                 " tch.compliance_id = tac.compliance_id " + \
                 " AND tch.unit_id = tac.unit_id) " + \
                 " INNER JOIN tbl_units tu ON (tac.unit_id = tu.unit_id) " + \
@@ -984,20 +992,25 @@ class ConvertJsonToCSV(object):
                 " (tus.user_id = tch.completed_by) " + \
                 " INNER JOIN tbl_compliances tc " + \
                 " ON (tac.compliance_id = tc.compliance_id) " + \
-                " WHERE " + condition + " AND domain_id = %s " + \
+                " WHERE " + condition + " AND tac.domain_id = %s " + \
                 " AND tch.due_date " + \
                 " BETWEEN DATE_SUB(%s, INTERVAL 1 DAY) AND " + \
                 " DATE_ADD(%s, INTERVAL 1 DAY) " + \
                 " group by completed_by, tch.unit_id; "
             param = [domain_id, from_date, to_date]
             parameter_list = condition_val + param
-            rows = db.select_all(query, parameter_list)
-            columns = [
-                "assignee", "completed_by", "unit_id", "unit_name",
-                "address", "domain_id", "domain_name", "complied",
-                "inprogress", "not_complied", "delayed", "delayed_reassigned",
-            ]
-            assignee_wise_compliances = convert_to_dict(rows, columns)
+            assignee_wise_compliances = db.select_all(query, parameter_list)
+            # columns = [
+            #     "assignee", "completed_by", "unit_id", "unit_name",
+            #     "address", "domain_id", "domain_name", "complied",
+            #     "inprogress", "not_complied", "delayed", "delayed_reassigned",
+            # ]
+            # assignee_wise_compliances = convert_to_dict(rows, columns)
+            print self.FILE_PATH
+            print "\n"
+            print "\n"
+            print "\n"
+            print "\n"
             with io.FileIO(self.FILE_PATH, "wb+") as f:
                 self.writer = csv.writer(f)
                 if not is_header:
@@ -1009,6 +1022,7 @@ class ConvertJsonToCSV(object):
                     self.write_csv(csv_headers, None)
                     is_header = True
 
+                print assignee_wise_compliances
                 for compliance in assignee_wise_compliances:
                     unit_name = compliance["unit_name"]
                     assignee = compliance["assignee"]
@@ -1017,12 +1031,12 @@ class ConvertJsonToCSV(object):
                     total_compliances = int(
                         compliance["complied"]) + int(compliance["inprogress"])
                     total_compliances += int(
-                        compliance["delayed"]) + int(
+                        compliance["delayedc"]) + int(
                         compliance["delayed_reassigned"])
                     total_compliances += int(compliance["not_complied"])
 
                     complied_count = int(compliance["complied"])
-                    delayed_count = int(compliance["delayed"])
+                    delayed_count = int(compliance["delayedc"])
                     delayed_reassigned_count = int(
                         compliance["delayed_reassigned"])
                     inprogress_count = int(compliance["inprogress"])
@@ -1078,13 +1092,13 @@ class ConvertJsonToCSV(object):
                     compliance["domain_name"]
                 )
                 self.create_a_csv(file_name)
+                print self.FILE_PATH
                 with io.FileIO(self.FILE_PATH, "wb+") as f:
                     self.writer = csv.writer(f)
                     self.get_reassigned_details(
                         db, country_id, compliance["unit_id"],
                         compliance["completed_by"], compliance["domain_id"]
                     )
-
 
     def generate_assignee_wise_report_drill_down(
         self, db, country_id, assignee_id, domain_id, unit_id,
@@ -1093,12 +1107,12 @@ class ConvertJsonToCSV(object):
         is_header = False
         count = get_assigneewise_compliances_drilldown_data_count(
             db, country_id=country_id, assignee_id=assignee_id,
-            domain_id=domain_id, client_id=None, year=year,
+            domain_id=domain_id, year=year,
             unit_id=unit_id, session_user=session_user
         )
         result = fetch_assigneewise_compliances_drilldown_data(
             db, country_id=country_id, assignee_id=assignee_id,
-            domain_id=domain_id, client_id=None,
+            domain_id=domain_id,
             year=year, unit_id=unit_id, start_count=0, to_count=count,
             session_user=session_user
         )
@@ -1117,7 +1131,7 @@ class ConvertJsonToCSV(object):
             is_header = True
 
         for compliance in result:
-            compliance_name = compliance["compliance_name"]
+            compliance_name = compliance["compliance_task"]
             compliance_status = compliance["compliance_status"]
             if compliance["document_name"] is not None:
                 compliance_name = "%s - %s" % (
@@ -1179,7 +1193,7 @@ class ConvertJsonToCSV(object):
     ):
         is_header = False
         current_year = get_date_time_in_date().year
-        domain_ids_list = get_user_domains(db, user_id)
+        domain_ids_list = get_user_domains(db, user_id, self.session_category)
         start_year = current_year - 5
         iter_year = start_year
         if not is_header:
@@ -1223,7 +1237,7 @@ class ConvertJsonToCSV(object):
                     " (is_reassigned = 1)) " + \
                     " then 1 else 0 end) as DelayedReassignedCompliance " + \
                     " FROM tbl_compliance_history tch " + \
-                    " INNER JOIN tbl_assigned_compliances tac ON ( " + \
+                    " INNER JOIN tbl_assign_compliances tac ON ( " + \
                     " tch.compliance_id = tac.compliance_id " + \
                     " AND tch.unit_id = tac.unit_id " + \
                     " AND tch.completed_by = %s) " + \
