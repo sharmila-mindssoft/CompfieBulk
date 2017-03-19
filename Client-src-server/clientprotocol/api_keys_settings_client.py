@@ -682,5 +682,6 @@ api_params = {
     "file_name": make_text_field(length=500),
     "file_content": make_text_field(),
     "unit_address": make_text_field(length=500),
+    "seating_unit": make_text_field(length=500, is_optional=True),
 
 }

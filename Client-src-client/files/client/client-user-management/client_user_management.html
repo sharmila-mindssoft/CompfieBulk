@@ -472,7 +472,9 @@
             <td class="sno"></td>
             <td class="text-center um-category"><i class="fa fa-square"></i></td>
             <td class="um-employee-name"></td>
-            <td class="um-user-name"></td>
+            <td class="um-user-name">
+                <i class="zmdi zmdi-info" data-toggle="tooltip" title="" data-original-title="Seating Unit: VBM1003 - Branch Office, 12 RJ Complex, Main road, T.Nagar, Chennai, 600022"></i> <span> </span>
+            </td>
             <td class="um-user-email"></td>
             <td class="um-user-mobile"></td>
             <td class="text-center um-email-resend">
@@ -481,12 +483,43 @@
             <td class="icon-3x text-center edit">
                 <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip"></i>
             </td>
-            <td class="icon-3x text-center "><i class="fa fa-check text-success c-pointer " id="success-alert " data-toggle="tooltip " data-placement="top " title=" " data-original-title="Click here to Deactivate "></i></td>
-            <td class="icon-3x text-center ">
-                <i class="fa fa-ban text-muted c-pointer " data-toggle="tooltip " title="Click here to Disable "></i>
+            <td class="icon-3x text-center status">
+                <i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top " title=" " data-original-title="Click here to Deactivate"></i></td>
+            <td class="icon-3x text-center blocked">
+                <i class="fa fa-ban text-muted c-pointer " data-toggle="tooltip " title="Click here to Disable"></i>
             </td>
         </tr>
     </table>
+</div>
+
+<!-- Modal -->
+<div id="custom-modal" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+        </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text p-t-0">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <div id="divRemarks">
+                <div class="form-group">
+                    <label for="Remarks" class="pull-left">Remarks <span class="mandatory">*</span></label>
+                </div>
+                <div class="clearfix"></div>
+                <div class="form-group">
+                    <textarea class="form-control input-sm" id="txtRemarks" rows="2" placeholder="Enter Reason"></textarea>
+                </div>
+            </div>
+            <button type=" button " class="btn btn-primary waves-effect waves-light " id="btnPasswordSubmit_Status">Submit</button>
+            <button type="button " class="btn btn-primary waves-effect waves-light " id="btnPasswordSubmit_Block">Submit</button>
+        </div>
+    </div>
 </div>
 
 <!-- js -->

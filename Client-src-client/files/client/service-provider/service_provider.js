@@ -124,14 +124,13 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             }
             // Status Event
             $('.status i', cloneRow).on('click', function(e) {
-                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.is_blocked, v.unblock_days, "STATUS");
+                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.unblock_days, v.is_blocked, "STATUS");
             });
 
             // Block Event
             $('.blocked i', cloneRow).on('click', function(e) {
-                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.is_blocked, v.unblock_days, "BLOCK");
+                t_this.showModalDialog(e, v.s_p_id, v.is_active, v.unblock_days, v.is_blocked, "BLOCK");
             });
-
 
             listContainer.append(cloneRow);
             j = j + 1;
@@ -422,7 +421,7 @@ key_search = function(mainList) {
 
 // Validate Input Characters
 txtServiceProviderName.on('input', function(e) {
-    this.value = isAlphanumeric_Shortname($(this));
+    this.value = isCommon_Name($(this));
 });
 txtShortName.on('input', function(e) {
     this.value = isAlphanumeric_Shortname($(this));
