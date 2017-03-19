@@ -681,5 +681,6 @@ api_params = {
     "file_size": make_int_field(length=52428800, is_optional=True),
     "file_name": make_text_field(length=500),
     "file_content": make_text_field(),
+    "seating_unit": make_text_field(length=500, is_optional=True),
 
 }
