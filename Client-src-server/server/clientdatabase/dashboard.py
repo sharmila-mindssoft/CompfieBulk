@@ -1855,8 +1855,8 @@ def get_assigneewise_compliances_list(
             " or approve_status is null) and " + \
             " tch.due_date < now() and frequency_id=5) " + \
             " then 1 else 0 end) as on_occurrence_not_complied, " + \
-            " sum(case when ((approve_status = 0 " + \
-            " or approve_status is null) and " + \
+            " sum(case when ((ifnull(approve_status,0) = 0 " + \
+            " or ifnull(approve_status,0) = 3 ) and " + \
             " tch.due_date < current_date and frequency_id != 5) " + \
             " then 1 else 0 end) as not_complied, " + \
             " sum(case when (approve_status = 1 " + \
