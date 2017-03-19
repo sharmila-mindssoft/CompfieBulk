@@ -403,7 +403,6 @@ key_search = function(mainList) {
     key_three = filterContactNo.val().toLowerCase();
     key_four = filterEmailID.val().toLowerCase();
     d_status = search_status_ul.find('li.active').attr('value');
-    // key_five = filterRemarks.val().toLowerCase();
     var fList = [];
     for (var entity in mainList) {
         s_p_name = mainList[entity].s_p_name;

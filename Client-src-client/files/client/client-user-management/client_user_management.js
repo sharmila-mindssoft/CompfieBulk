@@ -69,6 +69,11 @@ var unit_ids_edit = [];
 
 var um_page = null;
 
+var Filter_Users = $('.filter-users');
+var Filter_User_ID = $('.filter-user-id');
+var Filter_Email = $('.filter-email');
+var Filter_Mobile = $('.filter-mobile');
+
 userManagementPage = function() {
         this._userCategory = [];
         this._userGroup = [];
@@ -78,19 +83,21 @@ userManagementPage = function() {
 userManagementPage.prototype.showList = function() {
     addScreen.hide();
     viewScreen.show();
+    Filter_Users.val('');
+    Filter_User_ID.val('');
+    Filter_Email.val('');
+    Filter_Mobile.val('');
     this.fetchUserManagement();
 };
 
 //Load User List
 userManagementPage.prototype.fetchUserManagement = function() {
     t_this = this;
-
     client_mirror.getUserManagement_List(function(error, response) {
         if (error == null) {
             listLegalEntity = response.ul_legal_entity;
             listUsers = response.ul_users;
             t_this.renderList(listLegalEntity, listUsers);
-
         } else {
             // t_this.possibleFailures(error);
         }
@@ -151,11 +158,20 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users) {
             $('.um-used-licence', cloneRow).text(v.used_licences);
             $('.um-remaining-licence', cloneRow).text(remaining_licences);
 
+            // $('.filter-users', cloneRow).text(remaining_licences);
+            // Filter_User_ID
+            // Filter_Email
+            // Filter_Mobile
+            // Filter_Mobile
+            $('.filter-users', cloneRow).on('keyup', function(e) {
+                fList = key_search(ul_legal, ul_users);
+                t_this.renderList(ul_legal, fList);
+            });
+
             var j = 1;
             $.each(ul_users, function(k1, v1) {
                 if (v.le_id == v1.le_id) {
                     var cloneUserRow = $('#template .user-row-table tr').clone();
-
                     var user_name = v1.user_name;
                     $('.sno', cloneUserRow).text(j);
                     $('.um-employee-name', cloneUserRow).text(v1.emp_name);
@@ -1058,7 +1074,29 @@ userManagementPage.prototype.validateMandatory = function() {
     return true;
 }
 
-
+key_search = function(mainList, listUsers) {
+    key_one = Filter_Users.val().toLowerCase();
+    key_two = Filter_User_ID.val().toLowerCase();
+    key_three = Filter_Email.val().toLowerCase();
+    key_four = Filter_Mobile.val().toLowerCase();
+    // d_status = Search_status_ul.find('li.active').attr('value');
+    var fList = [];
+    //alert(listUsers.toSource())
+    for (var v in listUsers) {
+        emp_name = listUsers[v].emp_name;
+        emp_code = listUsers[v].emp_code;
+        email_id = listUsers[v].email_id;
+        mob_no = listUsers[v].mob_no;
+        // dStatus = mainList[entity].is_active;
+        if ((~emp_name.toLowerCase().indexOf(key_one)) && (~emp_code.toLowerCase().indexOf(key_two)) && (~email_id.toLowerCase().indexOf(key_three)) && (~mob_no.toLowerCase().indexOf(key_four))) {
+            // if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
+            //     fList.push(mainList[entity]);
+            // }
+            fList.push(mainList[v]);
+        }
+    }
+    return fList
+}
 
 //Page Control Events
 PageControls = function() {
