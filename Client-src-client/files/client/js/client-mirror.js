@@ -137,7 +137,7 @@ function initClientMirror() {
             return info.menu;
         } else {
             // alert(info);
-            window.location.href = login_url;
+            window.location.href = "/login";
         }
     }
 
