@@ -1837,6 +1837,10 @@ def get_assigneewise_compliances_list(
         timelines = get_country_domain_timelines(
             db, [country_id], [domain_id], [current_date.year]
         )
+        print "%%%%%%"
+        print timelines
+        if len(timelines[0][1]) == 0:
+            continue
         from_date = timelines[0][1][0][1][0]["start_date"].date()
         to_date = timelines[0][1][0][1][0]["end_date"].date()
         query = " SELECT " + \
