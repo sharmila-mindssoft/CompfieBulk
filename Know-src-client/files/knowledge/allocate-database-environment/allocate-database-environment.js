@@ -210,15 +210,31 @@ function removeCLIds(cl_ids, cl_id){
 	var new_cl_ids = null;
 
 	if(cl_ids != null){
-		splitCLIds = cl_ids.split(",");
-		for(var i=0;i<splitCLIds.length;i++){
-			if(splitCLIds[i] == cl_id){
+		if (cl_ids..indexOf(",") >= 0){
+			splitCLIds = cl_ids.split(",");
+			for(var i=0;i<splitCLIds.length;i++){
+				if(splitCLIds[i] == cl_id){
+				}
+				else{
+					if (new_cl_ids == null)
+					{
+						new_cl_ids = splitCLIds[i];
+					}
+					else{
+						new_cl_ids = new_cl_ids + "," + splitCLIds[i];
+					}
+				}
 			}
-			else{
-				if (new_cl_ids == null)
+		}
+		else
+		{
+			if (new_cl_ids == null)
+			{
+				if(cl_ids == cl_id){
+					new_cl_ids = "";
+				}else{
 					new_cl_ids = splitCLIds[i];
-				else
-					new_cl_ids = new_cl_ids + "," + splitCLIds[i];
+				}
 			}
 		}
 	}
