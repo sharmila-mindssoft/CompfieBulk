@@ -62,6 +62,7 @@ var SUBMIT_API = 'submit_api';
 
 var LastUnit = '';
 var LastAct = '';
+var LastType = '';
 var SCOUNT = 0;
 var ACOUNT = 0;
 var UCOUNT = 0;
@@ -646,7 +647,7 @@ function actstatus(element) {
     var id = $(element).attr("id");
     var cstatus = $(element).prop("checked");
     $('.a-' + id).prop("checked", cstatus);
-
+    $('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
     /*$('.a-' + id).each(function() {
         if(cstatus){
             if($('.comp-checkbox:checked').length > mCompliances){
@@ -670,6 +671,14 @@ function getNoRecord(){
     UnitList.append(clone);
 }
 
+function get_selected_count(element){
+    /*if($('.comp-checkbox:checked').length > mCompliances){
+        $(element).prop("checked", false);
+        displayMessage(message.maximum_compliance_selection_reached_select_all);
+    }*/
+    $('.selected_count').text('Selected Compliance:' + $('.comp-checkbox:checked').length);
+}
+
 function reset(){
     LegalEntityId.val('');
     LegalEntityName.val('');
@@ -683,7 +692,6 @@ function reset(){
     UnitList.empty();
     SelectedUnitCount.text('0');
     Reason.val('');
-
 }
 
 function loadCompliances(){
@@ -701,6 +709,7 @@ function loadCompliances(){
             $('.tbody-reassign-compliance').append(accordion_clone);
             LastUnit = value.u_name;
             LastAct = '';
+            LastType = '';
         }
 
         if(LastAct != value.act_name){
@@ -725,8 +734,17 @@ function loadCompliances(){
                 actstatus(this);
             });*/
             LastAct = value.act_name;
+            LastType = '';
         }
-        
+
+        if(LastType != value.task_type){
+            var categoryRow = $('#templates .table-category tr');
+            var category_clone = categoryRow.clone();
+            $('.category', category_clone).text(value.task_type);
+            $('#collapse' + ACOUNT + ' .tbody-compliance-list').append(category_clone);
+            LastType = value.task_type;
+        }
+
         SCOUNT++;
         var compliance_id = value.comp_id;
         var compliance_name = value.compliance_name;
@@ -753,9 +771,9 @@ function loadCompliances(){
         $('.comp-checkbox', clone2).val(compliance_id);
         $('.comp-checkbox', clone2).addClass('a-' + ACOUNT);
 
-        /*$('.comp-checkbox', clone2).on('click', function() {
+        $('.comp-checkbox', clone2).on('click', function() {
             get_selected_count(this);
-        });*/
+        });
         
         $('.combineid-class', clone2).attr('id', 'combineid' + SCOUNT);
         $('.combineid-class', clone2).val(combineId);
@@ -880,6 +898,7 @@ function getCompliance(e, type){
     LastUnit = '';
     ACOUNT = 0;
     UCOUNT = 0;
+    $('.selected_count').text('Selected Compliance: 0');
 
     $('.unit-checkbox:checkbox:checked').each(function (index, el) {
         var id = $(this).val().split(',');
