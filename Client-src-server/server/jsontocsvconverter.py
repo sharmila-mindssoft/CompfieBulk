@@ -1447,13 +1447,14 @@ class ConvertJsonToCSV(object):
             "t1.completed_by)) as assigned_to, (select concat(employee_code,'-',employee_name) from tbl_users " + \
             "where user_id = t1.completed_by) as assignee, t1.completed_on, t1.concurred_on, (select " + \
             "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.concurred_by) as " + \
-            "concurred_by, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-            "t1.approved_by) as approved_by, t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
+            "concurred_by, (select (case when employee_code is not null then concat(employee_code,'-',employee_name) " + \
+            "else employee_name end) from tbl_users where user_id = t1.approved_by) as approved_by, " + \
+            "t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
             "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
             "as duration_type, t1.current_status, (select country_name from tbl_countries where country_id =  " + \
             "t3.country_id) as country_name, (select domain_name from tbl_domains where domain_id = " + \
             "t3.domain_id) as domain_name, (select legal_entity_name from tbl_legal_entities where legal_entity_id = " + \
-            "t1.legal_entity_id) as legal_entity_name "
+            "t1.legal_entity_id) as legal_entity_name, t1.completion_date "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_history_id = t1.compliance_history_id " + \
             "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -1561,7 +1562,7 @@ class ConvertJsonToCSV(object):
                 ]
                 self.write_csv(csv_headers, None)
                 csv_headers = [
-                    "SNO", "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
+                    "SNO", "Unit Code", "Unit Name", "Act / Rules", "Compliance Task", "Frequency", "Assigned By",
                     "Assigned To", "Assigned Date", "Assignee", "DOC", "Concurrer", "DOC", "Approver",
                     "DOC", "Start Date", "Due Date", "Month", "Validity Date", "Statutory Status",
                     "Duration"
@@ -1590,16 +1591,16 @@ class ConvertJsonToCSV(object):
             elif (row["completion_date"] is None and row["current_status"] == 0):
                 task_status = "In Progress"
 
-            if row["validity_date"] is not None:
-                month_names = datetime_to_string(row["validity_date"]).split("-")[1]+" "+datetime_to_string(row["validity_date"]).split("-")[2]
+            if row["due_date"] is not None:
+                month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
             else:
                 month_names = None
             csv_values = [
-                j, row["unit_name"], statutory_mapping, row["compliance_task"], row["frequency_name"],
+                j, row["unit_name"].split("-")[0], row["unit_name"].split("-")[1], statutory_mapping, row["compliance_task"], row["frequency_name"],
                 row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
                 datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
                 row["approved_by"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
-                datetime_to_string(row["due_date"]), datetime_to_string(row["validity_date"]), month_names,
+                datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
                 task_status, row["duration_type"]
             ]
             j = j + 1
@@ -1639,13 +1640,14 @@ class ConvertJsonToCSV(object):
             "t1.completed_by)) as assigned_to, (select concat(employee_code,'-',employee_name) from tbl_users " + \
             "where user_id = t1.completed_by) as assignee, t1.completed_on, t1.concurred_on, (select " + \
             "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.concurred_by) as " + \
-            "concurred_by, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-            "t1.approved_by) as approved_by, t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
+            "concurred_by, (select (case when employee_code is not null then concat(employee_code,'-',employee_name) " + \
+            "else employee_name end) from tbl_users where user_id = t1.approved_by) as approved_by, " + \
+            "t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
             "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
             "as duration_type, t1.current_status, (select country_name from tbl_countries where country_id =  " + \
             "t3.country_id) as country_name, (select legal_entity_name from tbl_legal_entities where legal_entity_id = " + \
             "t1.legal_entity_id) as legal_entity_name, (select concat(unit_code,'-',unit_name) from tbl_units where unit_id = " + \
-            "t1.unit_id) as unit_name "
+            "t1.unit_id) as unit_name, t1.completion_date "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_history_id = t1.compliance_history_id " + \
             "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -1779,8 +1781,8 @@ class ConvertJsonToCSV(object):
             elif (row["completion_date"] is None and row["current_status"] == 0):
                 task_status = "In Progress"
 
-            if row["validity_date"] is not None:
-                month_names = datetime_to_string(row["validity_date"]).split("-")[1]+" "+datetime_to_string(row["validity_date"]).split("-")[2]
+            if row["due_date"] is not None:
+                month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
             else:
                 month_names = None
             csv_values = [
@@ -1788,7 +1790,7 @@ class ConvertJsonToCSV(object):
                 row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
                 datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
                 row["approved_by"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
-                datetime_to_string(row["due_date"]), datetime_to_string(row["validity_date"]), month_names,
+                datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
                 task_status, row["duration_type"]
             ]
             j = j + 1
@@ -1823,13 +1825,14 @@ class ConvertJsonToCSV(object):
             "t1.completed_by)) as assigned_to, (select concat(employee_code,'-',employee_name) from tbl_users " + \
             "where user_id = t1.completed_by) as assignee, t1.completed_on, t1.concurred_on, (select " + \
             "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.concurred_by) as " + \
-            "concurred_by, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-            "t1.approved_by) as approved_by, t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
+            "concurred_by, (select (case when employee_code is not null then concat(employee_code,'-',employee_name) " + \
+            "else employee_name end) from tbl_users where user_id = t1.approved_by) as approved_by, " + \
+            "t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
             "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
             "as duration_type, t1.current_status, (select country_name from tbl_countries where country_id =  " + \
             "t3.country_id) as country_name, (select domain_name from tbl_domains where domain_id = " + \
             "t3.domain_id) as domain_name, (select service_provider_name from tbl_service_providers where " + \
-            "service_provider_id = t4.service_provider_id) as service_provider_name "
+            "service_provider_id = t4.service_provider_id) as service_provider_name, t1.completion_date "
         from_clause = "from tbl_users as t4 inner join tbl_compliance_history as t1 " + \
             "on (t1.completed_by=t4.user_id or t1.concurred_by=t4.user_id or t1.approved_by=t4.user_id) " + \
             "left join tbl_compliance_activity_log as t2 " + \
@@ -1944,8 +1947,8 @@ class ConvertJsonToCSV(object):
             elif (row["completion_date"] is None and row["current_status"] == 0):
                 task_status = "In Progress"
 
-            if row["validity_date"] is not None:
-                month_names = datetime_to_string(row["validity_date"]).split("-")[1]+" "+datetime_to_string(row["validity_date"]).split("-")[2]
+            if row["due_date"] is not None:
+                month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
             else:
                 month_names = None
             csv_values = [
@@ -1953,7 +1956,7 @@ class ConvertJsonToCSV(object):
                 row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
                 datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
                 row["approved_by"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
-                datetime_to_string(row["due_date"]), datetime_to_string(row["validity_date"]), month_names,
+                datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
                 task_status, row["duration_type"]
             ]
             j = j + 1
@@ -1993,11 +1996,12 @@ class ConvertJsonToCSV(object):
             "t1.completed_by)) as assigned_to, (select concat(employee_code,'-',employee_name) from tbl_users " + \
             "where user_id = t1.completed_by) as assignee, t1.completed_on, t1.concurred_on, (select " + \
             "concat(employee_code,'-',employee_name) from tbl_users where user_id = t1.concurred_by) as " + \
-            "concurred_by, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-            "t1.approved_by) as approved_by, t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
+            "concurred_by, (select (case when employee_code is not null then concat(employee_code,'-',employee_name) " + \
+            "else employee_name end) from tbl_users where user_id = t1.approved_by) as approved_by, " + \
+            "t1.approved_on, t1.start_date, t1.due_date, t1.validity_date, " + \
             "(select duration_type from tbl_compliance_duration_type where duration_type_id = t3.duration_type_id) " + \
             "as duration_type, t1.current_status, (select country_name from tbl_countries where country_id =  " + \
-            "t3.country_id) as country_name "
+            "t3.country_id) as country_name, t1.completion_date "
         from_clause = "from tbl_compliance_history as t1 left join tbl_compliance_activity_log as t2 " + \
             "on t2.compliance_history_id = t1.compliance_history_id " + \
             "inner join tbl_compliances as t3 on t3.compliance_id = t1.compliance_id where "
@@ -2128,8 +2132,8 @@ class ConvertJsonToCSV(object):
             elif (row["completion_date"] is None and row["current_status"] == 0):
                 task_status = "In Progress"
 
-            if row["validity_date"] is not None:
-                month_names = datetime_to_string(row["validity_date"]).split("-")[1]+" "+datetime_to_string(row["validity_date"]).split("-")[2]
+            if row["due_date"] is not None:
+                month_names = datetime_to_string(row["due_date"]).split("-")[1]+" "+datetime_to_string(row["due_date"]).split("-")[2]
             else:
                 month_names = None
 
@@ -2138,7 +2142,7 @@ class ConvertJsonToCSV(object):
                 row["assigned_by"], row["assigned_to"], row["assigned_date"], row["assignee"],
                 datetime_to_string(row["completed_on"]), row["concurred_by"], datetime_to_string(row["concurred_on"]),
                 row["approved_by"], datetime_to_string(row["approved_on"]), datetime_to_string(row["start_date"]),
-                datetime_to_string(row["due_date"]), datetime_to_string(row["validity_date"]), month_names,
+                datetime_to_string(row["due_date"]), month_names, datetime_to_string(row["validity_date"]),
                 task_status, row["duration_type"]
             ]
             j = j + 1
@@ -2691,7 +2695,8 @@ class ConvertJsonToCSV(object):
                 "assigned_to, t6.assigned_on as assigned_date, t3.penal_consequences, t1.completion_date, t1.due_date, t1.approve_status, " + \
                 "t1.completion_date, t1.due_date, t1.current_status, t5.compliance_opted_status, t1.start_date, " + \
                 "t1.due_date, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-                "t1.concurred_by) as concurrer_name, (select concat(employee_code,'-',employee_name) from tbl_users " + \
+                "t1.concurred_by) as concurrer_name, (select (case when employee_code is not null then " + \
+                "concat(employee_code,'-',employee_name) else employee_name end) from tbl_users " + \
                 "where user_id = t1.approved_by) as approver_name, t1.remarks, t1.documents, t1.completed_on as " + \
                 "assigned_on, t1.concurred_on, t1.approved_on, t6.validity_date, (select duration_type from tbl_" + \
                 "compliance_duration_type where duration_type_id = (select duration_type_id from tbl_compliances where " + \
@@ -2910,7 +2915,8 @@ class ConvertJsonToCSV(object):
                 "assigned_to, t6.assigned_on as assigned_date, t3.penal_consequences, t1.completion_date, t1.due_date, t1.approve_status, " + \
                 "t1.completion_date, t1.due_date, t1.current_status, t5.compliance_opted_status, t1.start_date, " + \
                 "t1.due_date, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-                "t1.concurred_by) as concurrer_name, (select concat(employee_code,'-',employee_name) from tbl_users " + \
+                "t1.concurred_by) as concurrer_name, (select (case when employee_code is not null then " + \
+                "concat(employee_code,'-',employee_name) else employee_name end) from tbl_users " + \
                 "where user_id = t1.approved_by) as approver_name, t1.remarks, t1.documents, t1.completed_on as " + \
                 "assigned_on, t1.concurred_on, t1.approved_on, t6.validity_date, (select duration_type from tbl_" + \
                 "compliance_duration_type where duration_type_id = (select duration_type_id from tbl_compliances where " + \
