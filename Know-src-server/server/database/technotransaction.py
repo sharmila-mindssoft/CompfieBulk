@@ -474,7 +474,7 @@ def return_groupadmin_registration_grouplist(groupslist):
         email_id = groups.get("email_id")
         user_id_search = groups.get("user_id")
         emp_code_name = groups.get("emp_code_name")
-        registration_email_date = datetime_to_string(groups.get("registration_email_date"))
+        registration_email_date = groups.get("registration_email_date")
         c_names = []
         occur = -1
         for countries in groupslist[1]:
