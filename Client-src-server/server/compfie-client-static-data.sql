@@ -53,7 +53,7 @@ INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 1, null);
 INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/View Profile", 1, null);
 INSERT INTO tbl_forms VALUES(30, 4, 'Client View Profile', "/client-view-profile", 1, null);
 INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 1, null);
-INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 1, null);
+INSERT INTO tbl_forms VALUES(32, 4, 'Settings', "/settings", 1, null);
 INSERT INTO tbl_forms VALUES(33, 4, 'themes', "/themes", 1, null);
 
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 1, null);
@@ -129,7 +129,7 @@ insert into tbl_form_category values (65, 32, 3);
 insert into tbl_form_category values (66, 33, 3);
 insert into tbl_form_category values (67, 34, 3);
 
--- Domain Admin Forms 
+-- Domain Admin Forms
 insert into tbl_form_category values (68, 3, 4);
 insert into tbl_form_category values (69, 5, 4);
 insert into tbl_form_category values (70, 7, 4);

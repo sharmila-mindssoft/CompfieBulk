@@ -1902,7 +1902,7 @@ class NotificationsCountSuccess(object):
             "escalation_count": self.escalation,
             "messages_count": self.messages
         }
-        
+
 class RemindersSuccess(object):
     def __init__(self, legal_entity_id, notification_id, notification_text, created_on):
         self.legal_entity_id = legal_entity_id
@@ -2177,7 +2177,7 @@ class Compliance(object):
             "comp_name", "descp",
             "doc_name", "format_file_list",
             "p_cons", "frequency",
-            "statu_dates", "is_active", "download_url", "summary"
+            "statu_dates", "is_active", "download_url_list", "summary"
         ])
         compliance_id = data.get("comp_id")
         statutory_provision = data.get("s_prov")
@@ -2189,7 +2189,7 @@ class Compliance(object):
         frequency = data.get("frequency")
         statutory_dates = data.get("statu_dates")
         is_active = data.get("is_active")
-        download_url = data.get("download_url")
+        download_url = data.get("download_url_list")
         summary = data.get("summary")
         return Compliance(
             compliance_id, statutory_provision,
@@ -2213,7 +2213,7 @@ class Compliance(object):
             "frequency": self.frequency,
             "statu_dates": self.statutory_dates,
             "is_active": self.is_active,
-            "download_url": self.download_url,
+            "download_url_list": self.download_url,
             "summary": self.summary,
         }
 

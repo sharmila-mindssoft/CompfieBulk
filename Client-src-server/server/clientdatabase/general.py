@@ -82,6 +82,7 @@ __all__ = [
     "update_themes_for_user",
     "legal_entity_logo_url",
     "verify_username_forgotpassword",
+    "update_task_status_in_chart"
     ]
 
 
@@ -159,27 +160,41 @@ def get_domains_for_user(db, user_id, user_category):
     return return_domains(rows)
 
 
-def get_domains_info(db, user_id, user_category):
+def get_domains_info(db, user_id, user_category, le_ids=None):
 
     if user_category > 3 :
         query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_user_domains AS t1 " + \
             "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id " + \
             "where t1.user_id = %s "
+        param = [user_id]
+        if le_ids is not None :
+            query += " where find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
 
         rows = db.select_all(query, [user_id])
     elif user_category == 1 :
         query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
-            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id "
-        rows = db.select_all(query)
+            "INNER JOIN tbl_domains AS t2 ON t2.domain_id = t1.domain_id  "
+        param = []
+        if le_ids is not None :
+            query += " where find_in_set(t1.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
+
+        rows = db.select_all(query, param)
     else :
         query = "SELECT distinct t2.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_domains AS t2 " + \
             " INNER JOIN tbl_legal_entity_domains as t3 on t2.domain_id = t3.domain_id " + \
             "INNER JOIN tbl_user_legal_entities AS t4 ON t4.legal_entity_id = t3.legal_entity_id " + \
             "where t4.user_id = %s "
-        rows = db.select_all(query, [user_id])
+        param = [user_id]
+        if le_ids is not None :
+            query += " where find_in_set(t3.legal_entity_id, %s) "
+            param.append(",".join([str(x) for x in le_ids]))
+
+        rows = db.select_all(query, param)
 
     results = []
     for d in rows:
@@ -538,16 +553,23 @@ def return_units_assign(units):
 #     )
 #     return return_client_users(rows)
 
+
 def get_client_users(db):
     query = "SELECT distinct t1.user_id, t1.employee_name, " + \
-        "t1.employee_code, t1.is_active from tbl_users as t1 " + \
+        "t1.employee_code, t1.is_active, t3.legal_entity_id from tbl_users as t1 " + \
+        " inner join tbl_user_legal_entities t3 on t1.user_id = t3.user_id  " + \
         "left join tbl_user_domains as t2 ON t2.user_id = t1.user_id "
+
     rows = db.select_all(query)
     return return_client_users(rows)
 
 
 def get_assignees(db, unit_ids=None):
-    q = "select user_id, employee_code, employee_name, is_active from tbl_users where is_active = 1 and user_category_id in (5,6)"
+    q = "select t1.user_id, t1.employee_code, t1.employee_name, t1.is_active, t2.legal_entity_id " + \
+        " from tbl_users t1  " + \
+        " inner join tbl_user_legal_entities t2 on t1.user_id = t2.user_id  " + \
+        " where t1.is_active = 1 and t1.user_category_id in (5,6)"
+
     rows = db.select_all(q)
     return return_client_users(rows)
 
@@ -561,14 +583,13 @@ def return_client_users(users):
             employee_name = user["employee_name"]
 
         results.append(clientcore.LegalEntityUser(
-            user["user_id"], user["employee_code"], employee_name, bool(user["is_active"])
+            user["user_id"], user["employee_code"], user["employee_name"], bool(user["is_active"]), user["legal_entity_id"]
         ))
     return results
 
-
 def get_user_domains(db, user_id, user_category_id=None):
     condition = ""
-
+    print user_category_id
     param = []
     if user_category_id is not None :
         if user_category_id <= 3 :
@@ -584,7 +605,9 @@ def get_user_domains(db, user_id, user_category_id=None):
         condition = " WHERE user_id = %s"
         param.append(user_id)
 
+    print q
     rows = db.select_all(q + condition, param)
+    print rows
     d_ids = []
     for r in rows:
         d_ids.append(int(r["domain_id"]))
@@ -654,9 +677,12 @@ def get_user_forms(db, user_id, category_id):
         "INNER JOIN tbl_form_type tf on t1.form_type_id = tf.form_type_id " + \
         "WHERE t1.form_type_id = 4 AND IF(%s = 2, t1.form_id != 32,1) AND IF(%s = 4, t1.form_id != 32,1) " + \
         "AND IF(%s = 5, t1.form_id != 32,1) AND IF(%s = 6, t1.form_id != 32,1) " + \
-        "ORDER BY form_order, form_type_id "
+        "AND IF(%s = 5, t1.form_id NOT IN (37),1) " + \
+        "AND IF(%s = 6, t1.form_id NOT IN (36,37,38),1) " + \
+        "AND IF(%s = 2, t1.form_id NOT IN (36,37,38,39),1) " + \
+        "ORDER BY form_order, form_type_id"
     print q, user_id, category_id
-    rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id])
+    rows = db.select_all(q, [user_id,category_id,category_id,category_id,category_id,category_id,category_id,category_id])
     return rows
 
 def get_country_info(db, user_id, user_category_id):
@@ -1416,31 +1442,35 @@ def get_compliance_name_by_id(db, compliance_id):
 
 
 def is_space_available(db, upload_size):
-    columns = "(total_disk_space - total_disk_space_used) as space"
-    rows = db.get_data(tblClientGroups, columns, "1")
+    # columns = "(total_disk_space - total_disk_space_used) as space"
+    # GB to Bytes
+    columns = "((file_space_limit*1073741824) - used_file_space) as space"
+    rows = db.get_data(tblLegalEntities, columns, "1")
     remaining_space = rows[0]["space"]
     if upload_size < remaining_space:
         return True
     else:
         return False
 
-
 def update_used_space(db, file_size):
-    columns = ["total_disk_space_used"]
+    # columns = ["total_disk_space_used"]
+    columns = ["used_file_space"]
     condition = "1"
     db.increment(
-        tblClientGroups, columns, condition, value=file_size
+        tblLegalEntities, columns, condition, value=file_size
     )
 
     total_used_space = 0
     rows = db.get_data(
-        tblClientGroups, "total_disk_space_used, client_id", "1"
+        tblLegalEntities, "used_file_space, legal_entity_id", "1"
     )
-    client_id = rows[0]["client_id"]
-    if rows[0]["total_disk_space_used"] is not None:
-        total_used_space = int(rows[0]["total_disk_space_used"])
+    legal_entity_id = rows[0]["legal_entity_id"]
+    print "legal_entity_id>>update_used_space>", legal_entity_id
+    if rows[0]["used_file_space"] is not None:
+        total_used_space = int(rows[0]["used_file_space"])
 
-    UpdateFileSpace(total_used_space, client_id)
+    # UpdateFileSpace(total_used_space, client_id)
+    UpdateFileSpace(total_used_space, legal_entity_id)
 
 
 def save_compliance_activity(
@@ -1731,7 +1761,7 @@ def calculate_due_date(
                 date_details += "(%s)" % (
                     statutory_date_json[0]["statutory_date"]
                 )
-        print "repeat_by>>>>>>>>>>", repeat_by
+
         # For Compliances Recurring in days
         if repeat_by == 1:  # Days
             summary = "Every %s day(s)" % (repeat_every)
@@ -1778,7 +1808,7 @@ def calculate_due_date(
 
 
 def filter_out_due_dates(db, unit_id, compliance_id, due_dates_list):
-    # Checking same due date already exists    
+    # Checking same due date already exists
     if due_dates_list is not None and len(due_dates_list) > 0:
         formated_date_list = []
         for x in due_dates_list:
@@ -2178,3 +2208,73 @@ def verify_username_forgotpassword(db, username):
         return rows
     else:
         return None
+
+def update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users):
+    year = due_date.year
+    q1 = "select month_from, month_to from tbl_client_configuration where country_id = %s and domain_id = %s"
+    dat_conf = db.select_all(q1, [country_id, domain_id])
+
+    q = "insert into tbl_compliance_status_chart_unitwise( " + \
+        "     legal_entity_id, country_id, domain_id, unit_id,  " + \
+        "     month_from, month_to, chart_year, complied_count, delayed_count, inprogress_count, overdue_count " + \
+        " ) " + \
+        " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, " + \
+        " ch.unit_id,ccf.month_from,ccf.month_to, %s, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+        " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+        " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+        " from tbl_client_configuration as ccf " + \
+        " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
+        " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id  " + \
+        " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id and ccf.domain_id = com.domain_id " + \
+        " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
+        " where ch.due_date >= date(concat_ws('-',%s,ccf.month_from,1))  " + \
+        " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+        " and ccf.country_id = %s and ccf.domain_id = %s and unt.unit_id = %s " + \
+        " group by ccf.country_id,ccf.domain_id,ccf.month_from,ccf.month_to,ch.unit_id " + \
+        " on duplicate key update complied_count = values(complied_count), " + \
+        " delayed_count = values(delayed_count), inprogress_count = values(inprogress_count), " + \
+        " overdue_count = values(overdue_count) "
+
+    q1 = "insert into tbl_compliance_status_chart_userwise( " + \
+        "     legal_entity_id, country_id, domain_id, unit_id, user_id, " + \
+        "     month_from, month_to, chart_year, complied_count, delayed_count, inprogress_count, overdue_count " + \
+        " ) " + \
+        " select unt.legal_entity_id, ccf.country_id,ccf.domain_id, ch.unit_id, usr.user_id, " + \
+        " ccf.month_from,ccf.month_to,%s, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+        " IF(date(ch.due_date) >= date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as complied_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < ch.completion_date and ifnull(ch.approve_status,0) = 1,1,0), " + \
+        " IF(date(ch.due_date) < date(ch.completion_date) and ifnull(ch.approve_status,0) = 1,1,0))) as delayed_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date >= now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) >= curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as inprogress_count, " + \
+        " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
+        " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
+        " from tbl_client_configuration as ccf " + \
+        " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
+        " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \
+        " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
+        " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
+        " inner join tbl_users as usr on usr.user_id = ch.completed_by OR usr.user_id = ch.concurred_by OR usr.user_id = ch.approved_by " + \
+        " where ch.due_date >= date(concat_ws('-',%s,ccf.month_from,1))  " + \
+        " and ch.due_date <= last_day(date(concat_ws('-',%s,ccf.month_to,1))) " + \
+        " and ccf.country_id = %s and ccf.domain_id = %s and unt.unit_id = %s " + \
+        " and find_in_set(usr.user_id, %s) " + \
+        " group by ccf.country_id,ccf.domain_id, ch.unit_id, ccf.month_from,ccf.month_to,usr.user_id " + \
+        " on duplicate key update complied_count = values(complied_count), " + \
+        " delayed_count = values(delayed_count), inprogress_count = values(inprogress_count), " + \
+        " overdue_count = values(overdue_count) "
+
+    for d in dat_conf :
+        from_year = year
+        if d["month_from"] == 1 and d["month_to"] == 12 :
+            to_year = year
+        else :
+            to_year = year+1
+        db.execute(q, [year, from_year, to_year, country_id, domain_id, unit_id])
+        db.execute(q1, [year, from_year, to_year, country_id, domain_id, unit_id, ",".join([str(x) for x in users])])

@@ -5,9 +5,11 @@ var CancelScreen = $("#cancel-screen");
 var SubmitButton = $("#btn-submit");
 
 var ListContainer = $('#tbody-list');
+
 var FilterUserGroupName = $('#filter-user-group-name');
 var FilterCategoryName = $('#filter-category-name');
 var FilterStatus = $('#filter-status');
+
 var CurrentPassword = $('#current-password');
 var PasswordSubmitButton = $('#password-submit');
 

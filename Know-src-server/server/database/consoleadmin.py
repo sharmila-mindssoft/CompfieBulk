@@ -63,7 +63,7 @@ def return_database_servers(data):
     result = []
     for datum in data:
         no_of_clients = 0
-        if datum["legal_entity_ids"] is not None:
+        if datum["legal_entity_ids"] is not None and datum["legal_entity_ids"] != "" :
             if datum["legal_entity_ids"].find(",") >= 0:
                 no_of_clients = len(datum["legal_entity_ids"].split(","))
             else:
@@ -144,7 +144,10 @@ def validate_database_server_before_save(db, request):
             return True
         except mysql.Error, e :
             print e
-            return "Database server connection failed"
+            if(e[0] == 1045):
+                return "Invalid Database Credentials"
+            else:
+                return "Database server connection failed"
 ###############################################################################
 # To Get list of client servers
 # parameter : Object of database
@@ -172,7 +175,7 @@ def return_client_servers(data):
     result = []
     for datum in data:
         no_of_clients = []
-        if datum["client_ids"] is not None:
+        if datum["client_ids"] is not None and datum["client_ids"] != "":
             no_of_clients = datum["client_ids"].split(",")
         result.append(
             fn(
@@ -518,6 +521,10 @@ def save_allocated_db_env(db, request, session_user):
     file_server_id = request.file_server_id
     client_ids = request.console_cl_ids
     legal_entity_ids = request.console_le_ids
+    f_legal_entity_ids = request.console_f_le_ids
+    le_legal_entity_ids = request.console_le_le_ids
+    print "new"
+    print request.new_le_le_ids
     #
     #  To save allocated database environment
     #  Parameters : client id, legal entity id, database ip, client server id
@@ -543,7 +550,7 @@ def save_allocated_db_env(db, request, session_user):
             (client_db_id, client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
                 client_ids, legal_entity_ids, request.old_grp_app_id, request.old_grp_db_s_id, request.old_le_db_s_id,
                 request.old_le_f_s_id, request.new_cl_ids, request.new_grp_le_ids, request.new_le_le_ids,
-                request.new_le_f_s_ids, session_user, get_date_time())
+                request.new_le_f_s_ids, session_user, get_date_time(), f_legal_entity_ids, le_legal_entity_ids)
         )
     #
     #  To get legal entity name by it's id to save activity
@@ -779,7 +786,7 @@ def return_file_servers(data):
     file_server_list = []
     for datum in data:
         no_of_clients = 0
-        if(datum["legal_entity_ids"] is not None):
+        if(datum["legal_entity_ids"] is not None and datum["legal_entity_ids"] != ""):
             no_of_clients = len(datum["legal_entity_ids"].split(","))
 
         file_server_list.append(consoleadmin.FileServerList(
@@ -820,7 +827,10 @@ def file_server_entry_process(db, request, user_id):
     #  Parameters : Client server id, Client server name, ip, port
     #  Return : returns last inserted id
     #
-    try:
+    # try:
+        is_valid = validate_file_server_before_save(request)
+        if is_valid is not True:
+            raise fetch_run_error(is_valid)
         print "args"
         print request.file_server_id, request.file_server_name, request.ip, request.port
         new_id = db.call_insert_proc(
@@ -836,9 +846,25 @@ def file_server_entry_process(db, request, user_id):
         if request.file_server_id is not None:
             action = "File Server %s updated" % (request.file_server_name)
         db.save_activity(user_id,  frmConfigureFileServer, action)
-    except Exception, e:
-        print e
-        raise process_error("E078")
+    # except Exception, e:
+    #     print e
+    #     raise process_error("E078")
+
+
+def validate_file_server_before_save(request):
+    port = request.port
+    ip = request.ip
+    try :
+        r = requests.post("http://%s:%s/api/isalive" % (ip, port))
+        print r
+        print "-" * 50
+        if r.status_code != 200 :
+            return "File server connection failed"
+        else :
+            return True
+
+    except :
+        raise RuntimeError("File server connection failed")
 
 
 def get_ip_settings_form_data(db):

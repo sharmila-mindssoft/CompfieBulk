@@ -1273,7 +1273,7 @@ h2.chart-title: hover {
     z-index: 100 !important;
 }
 
-.accordian-past-records{
+.accordian-past-records {
     margin-top: 15px;
 }
 
@@ -1291,9 +1291,41 @@ h2.chart-title: hover {
 }
 
 .active1 {
-    background: #f1e9f6 none repeat scroll 0 0 !important;
+    background: #D9EDF7 none repeat scroll 0 0 !important;
 }
 
 .full-width-list {
     vertical-align: top;
+}
+
+.btn-group ul li {
+    cursor: pointer;
+}
+
+.bg-grey {
+    background-color: #eeeeee;
+}
+
+.pw-hint span{
+    z-index:10;
+    font-size:12px;
+    padding:14px 20px;
+    margin-top:-30px;
+    margin-left:28px;
+    width:300px;
+    line-height:16px;
+    border-radius:4px;
+    position:absolute;color:#111;
+    border:1px solid #DCA;
+    background:#fffAF0;float:left
+}
+
+.pw-hint input{
+    float:left
+}
+.pw-callout{
+    z-index:20;
+    position:absolute;
+    top:30px;border:0;
+    left:-12px
 }

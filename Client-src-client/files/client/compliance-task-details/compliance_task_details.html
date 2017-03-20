@@ -1,8 +1,5 @@
 {% extends "files/client/common/html/container.html" %} {% block content %}
 <link href="/css/calender.css" rel="stylesheet" type="text/css" />
-<!--<div class='loading-indicator-spin'>
-    <span><img src='/images/loading-img.gif' alt=""></span>
-</div>-->
 <!--<div align="center" style="padding-top:10px;">
                     <input type="button" value="Show more records" class="btn-submit default-display-none" id="pagination">
                   </div>-->
@@ -72,151 +69,6 @@
                                                 <center>
                                                     <div class="cal table-responsive p-t-0 m-t-15 comp-calendar">
 
-                                                        <!--<table class="cal-table" style="border-left: none;">
-                                                            <caption class="cal-caption">
-                                                                <a href="##" class="prev"><i class="ti-angle-double-left text-info"></i></a>
-                                                                <a href="##" class="next"><i class="ti-angle-double-right text-info"></i></a> October - 2016
-                                                            </caption>
-                                                            <tbody class="cal-body">
-                                                                <tr>
-                                                                    <th><span>Sunday</span></th>
-                                                                    <th><span>Monday</span></th>
-                                                                    <th><span>Tuesday</span></th>
-                                                                    <th><span>Wednesday</span></th>
-                                                                    <th><span>Thursday</span></th>
-                                                                    <th><span>Friday</span></th>
-                                                                    <th><span>Saturday</span></th>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td>
-                                                                        <div class="date">1</div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="date">2</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">3</div>
-                                                                    </td>
-                                                                    <td class="cal-selected">
-                                                                        <div class="date">4</div>
-                                                                        <div class="count-round due-date">300+</div>
-                                                                        <div class="count-round inprogress">5</div>
-                                                                        <div class="count-round over-due">55</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">5</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">6</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">7</div>
-                                                                        <div class="count-round due-date">2</div>
-                                                                        <div class="count-round empty-space"></div>
-                                                                        <div class="count-round upcomming">3</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">8</div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="date">9</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">10</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">11</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">12</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">13</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">14</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">15</div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="date">16</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">17</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">18</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">19</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">20</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">21</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">22</div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="date">23</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">24</div>
-                                                                        <div class="count-round empty-space"></div>
-                                                                        <div class="count-round empty-space"></div>
-                                                                        <div class="count-round upcomming">2</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">25</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">26</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">27</div>
-                                                                        <div class="count-round due-date">2</div>
-                                                                        <div class="count-round empty-space"></div>
-                                                                        <div class="count-round empty-space"></div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">28</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">29</div>
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>
-                                                                        <div class="date">30</div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="date">31</div>
-                                                                    </td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                    <td class="cal-off">&nbsp;</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>-->
                                                     </div>
                                                     <div style="font-size:12px; font-weight: bold;" class="m-b-10 m-t-5">
                                                         <div style="display: inline-block; margin-right: 15px; ">
@@ -390,11 +242,10 @@
         </tr>
         <tr class="expand_inprogress table-row-list" id="2 ">
             <td class="sno"></td>
-            <td>
-                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip " title=" " data-original-title="Whether half yearly returns submitted by dealer to manufacturer "></i>                
-                <abbr class="page-load compliance-task" title="">
-          <span></span></abbr>
-                <!--<small>Assigned on 14-Aug-2015</small>-->
+            <td class="compliance-task">
+                <i class="fa fa-info-circle text-primary c-pointer" data-toggle="tooltip " title=" " data-original-title="Whether half yearly returns submitted by dealer to manufacturer "></i>
+                <span></span><br/>
+                <small></small>
             </td>
             <td class="domain"></td>
             <td class="startdate"></td>
@@ -434,7 +285,7 @@
                     <!--<input type="file" class="input-box upload-documents custom-file-input" id="upload_file" multiple="multiple" style="width: 83px; height: 25px; overflow: hidden; " value="" />-->
                     <span style="float:right;"><span class="sideview-upload-date" ></span>
                     <br><span style="font-size:10px"> (Upload Date) </span></span>
-                    <input class="input-box upload-documents custom-file-input" id="upload_file" multiple="multiple"  style="width: 90px; height: 25px; overflow: hidden; " value="" type="file">
+                    <input class="input-box upload-documents custom-file-input" id="upload_file" multiple="multiple" style="width: 90px; height: 25px; overflow: hidden; " value="" type="file">
                     <span style="font-size:0.75em;">(max 50 MB)</span>
                 </td>
                 <td></td>
@@ -530,35 +381,18 @@
                 </caption>
                 <tbody class="cal-body">
                     <tr>
-                        <th><span>SUN</span></th>
-                        <th><span>MON</span></th>
-                        <th><span>TUE</span></th>
-                        <th><span>WED</span></th>
-                        <th><span>THU</span></th>
-                        <th><span>FRI</span></th>
-                        <th><span>SAT</span></th>
+                        <th><span>Sunday</span></th>
+                        <th><span>Monday</span></th>
+                        <th><span>Tuesday</span></th>
+                        <th><span>Wednesday</span></th>
+                        <th><span>Thursday</span></th>
+                        <th><span>Friday</span></th>
+                        <th><span>Saturday</span></th>
                     </tr>
                 </tbody>
             </table>
             <br>
-            <div class="f-s-10">
-                <div class="cal-label-div">
-                    <div class="cal-label-duedate"></div>
-                    <div class="pull-left">Due Date</div>
-                </div>
-                <div class="cal-label-div">
-                    <div class="cal-label-inprogress"></div>
-                    <div class="pull-left">Inprogress</div>
-                </div>
-                <div class="cal-label-div">
-                    <div class="cal-label-overdue"></div>
-                    <div class="pull-left">Over Due</div>
-                </div>
-                <div class="cal-label-div">
-                    <div class="cal-label-upcoming"></div>
-                    <div class="pull-left">Upcoming</div>
-                </div> &nbsp;
-            </div>
+
         </div>
         <table>
             <tr>
@@ -569,9 +403,9 @@
 </div>
 <script>
     $(document).ready(function() {
-        // $('#basicwizard').bootstrapWizard({
-        //     'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
-        // });
+        $('#basicwizard').bootstrapWizard({
+            'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+        });
 
         // $(".due-date, .inprogress, .over-due, .cur_2 ").click(function() {
         //     $('.nav-tabs li:eq(1) a').tab('show');
@@ -579,20 +413,7 @@
         // $(".upcomming, .cur_3 ").click(function() {
         //     $('.nav-tabs li:eq(2) a').tab('show');
         // });
-        //val-date
-        // $(".expand_inprogress ").click(function() {
-        //     $('.expand_inprogress').removeClass('info');
-        //     $(".td_inprogress ").show();
-        //     $(this).addClass('info');
-        //     if ($(this).attr("id ") == "2 ")
-        //         $(".val-date ").show();
-        //     else
-        //         $(".val-date ").hide();
-        // });        
-        // $('.date-edit').click(function() {
-        //     $('.edit-date').show();
-        //     $('.view-date').hide();
-        // });
+
     });
 </script>
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>

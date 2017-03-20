@@ -352,6 +352,12 @@ def run_web_front_end(port, knowledge_server_address):
         )
 
         web_server.low_level_url(
+            r"/closure/(.*)",
+            StaticFileHandler,
+            dict(path=reports_path)
+        )
+
+        web_server.low_level_url(
             r"/download/bkup/(.*)",
             StaticFileHandler,
             dict(path=expiry_download)

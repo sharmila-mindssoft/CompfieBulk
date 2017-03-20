@@ -109,7 +109,12 @@ function initClientMirror() {
         var info = getUserInfo();
         return info.entity_info;
     }
-    
+
+    function getUserCategoryID() {
+        var info = getUserInfo();
+        return info.usr_cat_id;
+    }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -136,8 +141,7 @@ function initClientMirror() {
         if (info != null) {
             return info.menu;
         } else {
-            // alert(info);
-            window.location.href = login_url;
+            window.location.href = "/login";
         }
     }
 
@@ -210,7 +214,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        //alert(body.toSource())
+
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -243,13 +247,7 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
-                callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
-                // if (errorThrown == 'Not Found') {
-                //     // alert('Server connection not found');
-                //     redirect_login();
-                // } else {
-                //     callback(jqXHR.responseText, errorThrown);
-                // }
+                callback(rdata, errorThrown);
             }
         });
     }
@@ -469,10 +467,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getChartFilters(callback) {
+    function getChartFilters(le_ids, callback) {
         var request = [
-            'GetChartFilters',
-            {}
+            'GetChartFilters', {
+                'le_ids': le_ids
+            }
         ];
         var callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
@@ -818,7 +817,7 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
-                callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
+                callback(rdata, errorThrown);
             }
         });
     }
@@ -1212,14 +1211,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function startOnOccurrenceCompliance(le_id, compliance_id, start_date, unit_id, duration, callback) {
+    function startOnOccurrenceCompliance(le_id, compliance_id, start_date, unit_id, duration, remarks, password, callback) {
         var request = [
             'StartOnOccurrenceCompliance', {
                 'le_id': le_id,
                 'compliance_id': compliance_id,
                 'start_date': start_date,
                 'unit_id': unit_id,
-                'duration': duration
+                'duration': duration,
+                'remarks': remarks,
+                'password': password
             }
         ];
         callerName = 'client_user';
@@ -1406,17 +1407,34 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function blockServiceProvider(sId, block, password, callback) {
+    function blockServiceProvider(sId, block, remarks, password, callback) {
         callerName = 'client_masters';
         var request = [
             'BlockServiceProvider', {
                 'sp_id': sId,
                 'is_blocked': block,
+                'remarks': remarks,
                 "password": password
             }
         ];
         clientApiRequest(callerName, request, callback);
     }
+
+    function blockUser(user_id, block, remarks, password, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'BlockUser', {
+                'user_id': user_id,
+                'is_blocked': block,
+                'remarks': remarks,
+                "password": password
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+
+
     // Client User
     function getClientUsers(callback) {
         callerName = 'client_masters';
@@ -1482,13 +1500,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function changeClientUserStatus(uId, active, employeeName, callback) {
+    function changeClientUserStatus(uId, active_status, employeeName, password, callback) {
         callerName = 'client_masters';
         var request = [
             'ChangeClientUserStatus', {
                 'u_id': uId,
-                'active': active,
-                'emp_name': employeeName
+                'active_status': active_status,
+                'emp_name': employeeName,
+                'password': password
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -2732,7 +2751,6 @@ function initClientMirror() {
                 var xhr = new window.XMLHttpRequest();
 
                 xhr.onreadystatechange = function() {
-                    // alert(this.status);
                     if (this.readyState == 4 && this.status == 200) {
                         var data = this.response;
                         // data = atob(data);
@@ -2859,6 +2877,7 @@ function initClientMirror() {
         getUserCountry: getUserCountry,
         getUserBusinessGroup: getUserBusinessGroup,
         getUserLegalEntity: getUserLegalEntity,
+        getUserCategoryID:getUserCategoryID,
         getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
@@ -3044,7 +3063,8 @@ function initClientMirror() {
         exportJsontoCsv: exportJsontoCsv,
         onOccurrenceLastTransaction: onOccurrenceLastTransaction,
         uploadComplianceTaskFile: uploadComplianceTaskFile,
-        userManagementEditView: userManagementEditView
+        userManagementEditView: userManagementEditView,
+        blockUser: blockUser
     };
 }
 

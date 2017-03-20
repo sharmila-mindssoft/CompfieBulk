@@ -148,7 +148,7 @@ def process_client_master_requests(request, db, session_user, client_id, session
         )
 
     elif type(request) is clientmasters.UserManagementList:
-        result = process_UserManagement_list(db, request, session_user)
+        result = process_UserManagement_list(db, request, session_user, session_category)
 
     elif type(request) is clientmasters.UserManagementEditView:
         result = process_UserManagement_EditView(db, request, session_user)
@@ -158,6 +158,9 @@ def process_client_master_requests(request, db, session_user, client_id, session
 
     elif type(request) is clientmasters.SaveSettingsFormDetails:
         result = process_save_settings_form_data(db, request, session_user)
+    
+    elif type(request) is clientmasters.BlockUser:
+        result = process_block_user(db, request, session_user)        
 
     return result
 
@@ -246,9 +249,28 @@ def process_block_service_provider(
     if block_service_provider(
         db,
         request.service_provider_id,
+        request.remarks,
         is_blocked, session_user
     ):
         return clientmasters.BlockServiceProviderSuccess()
+    
+########################################################
+# To Disable user
+########################################################
+def process_block_user(
+    db, request, session_user
+):
+    password = request.password
+    is_blocked = 0 if request.is_blocked is False else 1
+    if verify_password_user_privilege(db, session_user, password):
+        return clientmasters.InvalidPassword()
+    if block_user(
+        db,
+        request.user_id,
+        request.remarks,
+        is_blocked, session_user
+    ):
+        return clientmasters.BlockUserSuccess()
 
 ########################################################
 # User Management Add Prerequisite
@@ -288,12 +310,12 @@ def process_UserManagementAddPrerequisite(db, request, session_user, session_cat
 ########################################################
 # User Management - List users
 ########################################################
-def process_UserManagement_list(db, request, session_user):
+def process_UserManagement_list(db, request, session_user, session_category):
     legalEntities = {}
     users = {}
 
     legalEntities = process_UserManagement_list_LegalEntities(db, request, session_user)
-    users = process_UserManagement_list_users(db, request, session_user)
+    users = process_UserManagement_list_users(db, request, session_user, session_category)
 
     return clientmasters.UserManagementListSuccess(
         legal_entities=legalEntities,
@@ -521,8 +543,8 @@ def process_UserManagement_list_LegalEntities(db, request, session_user):
 ########################################################
 # User Management List - Get Users
 ########################################################
-def process_UserManagement_list_users(db, request, session_user):
-    resultRows = userManagement_list_GetUsers(db)
+def process_UserManagement_list_users(db, request, session_user, session_category):
+    resultRows = userManagement_list_GetUsers(db, session_category)
     userList = []
     for row in resultRows:
         user_id = row["user_id"]
@@ -533,11 +555,16 @@ def process_UserManagement_list_users(db, request, session_user):
         email_id = row["email_id"]
         mobile_no = row["mobile_no"]
         legal_entity_id = row["legal_entity_id"]
+        is_active = bool(row["is_active"])
+        is_disable = bool(row["is_disable"])
+        unblock_days = row["unblock_days"]
+        seating_unit = row["seating_unit"]
         userList.append(
             clientcore.ClientUsers_UserManagementList(user_id, user_category_id,
                                                       employee_code, employee_name,
                                                       username, email_id,
-                                                      mobile_no, legal_entity_id)
+                                                      mobile_no, legal_entity_id, is_active,
+                                                      is_disable, unblock_days, seating_unit)
         )
     return userList
 
@@ -714,15 +741,30 @@ def process_change_user_privilege_status(db, request, session_user):
 # To validate and save a user
 ########################################################
 def process_save_client_user(db, request, session_user, client_id):
-    # user_id = db.get_new_id("user_id", tblUsers)
-    # if (get_no_of_remaining_licence(db) <= 0):
-    #     return clientmasters.UserLimitExceeds()
-    if is_duplicate_employee_code(
-        db,
-        request.employee_code.replace(" ", ""),
-        user_id=None
-    ):
+
+    # Check Viewonly Licence Count
+    if request.user_category==2:
+        if (get_no_of_remaining_licence_Viewonly(db) <= 0):
+            return clientmasters.UserLimitExceeds()
+        else:
+            update_licence_viewonly(db)
+    else:
+        resultRows = get_no_of_remaining_licence(db, request.user_entity_ids)
+        print "resultRows>>>", resultRows
+        for row in resultRows:
+            legal_entity_id = int(row["legal_entity_id"])
+            print "legal_entity_id>>>", legal_entity_id
+            remaining_licence = int(row["remaining_licence"])
+            print "remaining_licence>>", remaining_licence
+            if remaining_licence <=0:
+                return clientmasters.UserLimitExceeds()
+            else:
+                update_licence(db, legal_entity_id)
+                print "licence updated!!!"
+            
+    if is_duplicate_employee_code(db, request.employee_code.replace(" ", ""), user_id=None):
         return clientmasters.EmployeeCodeAlreadyExists()
+    # Commented for functionality check
     # if is_already_assigned_units (db,request.user_unit_ids, request.user_domain_ids):
     #     return clientmasters.UnitsAlreadyAssigned()
 
@@ -753,19 +795,19 @@ def process_update_client_user(db, request, session_user, client_id):
 # To change the status of a user
 ########################################################
 def process_change_client_user_status(db, request, session_user, client_id):
-    if db.is_invalid_id(tblUsers, "user_id", request.user_id):
-        return clientmasters.InvalidUserId()
-    elif is_old_primary_admin(db, request.user_id):
-        return clientmasters.CannotChangeOldPrimaryAdminStatus()
-    elif is_primary_admin(db, request.user_id):
-        return clientmasters.CannotChangePrimaryAdminStatus()
-    elif have_compliances(
-            db, request.user_id) and request.is_active in [False, 0]:
-        return clientmasters.ReassignCompliancesBeforeDeactivate()
-    elif update_user_status(
+    # if db.is_invalid_id(tblUsers, "user_id", request.user_id):
+    #     return clientmasters.InvalidUserId()
+    # if is_old_primary_admin(db, request.user_id):
+    #     return clientmasters.CannotChangeOldPrimaryAdminStatus()
+    # elif is_primary_admin(db, request.user_id):
+    #     return clientmasters.CannotChangePrimaryAdminStatus()
+    # if have_compliances(
+    #         db, request.user_id) and request.is_active in [False, 0]:
+    #     return clientmasters.ReassignCompliancesBeforeDeactivate()
+    if update_user_status(
         db,
         request.user_id,
-        request.is_active,
+        request.active_status,
         request.employee_name,
         session_user, client_id
     ):

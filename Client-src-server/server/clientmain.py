@@ -87,6 +87,7 @@ class API(object):
 
         self._ip_address = None
         self._remove_old_session()
+        self._notify_occurrence_task()
 
     def _remove_old_session(self):
 
@@ -115,6 +116,34 @@ class API(object):
                 c_db_con.close()
 
         _with_client_info()
+
+    def _notify_occurrence_task(self):
+
+        def _with_le_info():
+            for c_id, c_db in self._le_databases.iteritems() :
+                on_session_timeout(c_db)
+
+            t = threading.Timer(500, _with_le_info)
+            t.daemon = True
+            t.start()
+
+        def on_session_timeout(c_db):
+            print "session called "
+            print datetime.datetime.now()
+            c_db_con = self.client_connection_pool(c_db)
+            _db_clr = Database(c_db_con)
+            try :
+                _db_clr.begin()
+                _db_clr.get_onoccurance_compliance_to_notify()
+                _db_clr.commit()
+                c_db_con.close()
+
+            except Exception, e :
+                print e
+                _db_clr.rollback()
+                c_db_con.close()
+
+        _with_le_info()
 
     def close_connection(self, db):
         try:
@@ -205,6 +234,7 @@ class API(object):
 
                             db_cons = self.client_connection_pool(db_cons_info)
                             client_db = Database(db_cons)
+                            client_db.set_owner_id(_client_id)
                             if client_db is not None :
                                 rep_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
@@ -228,6 +258,7 @@ class API(object):
                             # replication for group db only master data
                             db_cons = self.client_connection_pool(db_cons_info)
                             le_db = Database(db_cons)
+                            le_db.set_owner_id(_client_id)
                             if le_db is not None :
                                 rep_le_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
@@ -345,7 +376,7 @@ class API(object):
             print e
             logger.logClientApi(e, "_parse_request")
             logger.logClientApi(traceback.format_exc(), "")
-
+            print(traceback.format_exc())
             logger.logClient("error", "clientmain.py-parse-request", e)
             logger.logClient("error", "clientmain.py", traceback.format_exc())
 
@@ -445,6 +476,7 @@ class API(object):
         try:
             _db_con = self.client_connection_pool(db_cons_info)
             _db = Database(_db_con)
+            _db.set_owner_id(company_id)
             if _db_con is None:
                 self._send_response("Company not found", 404)
 
@@ -503,6 +535,8 @@ class API(object):
                 # merge chart from the processed LE database
                 if type(request_data.request) is dashboard.GetComplianceStatusChart :
                     p_response.chart_data.extend(data.chart_data)
+                    print performed_les
+                    p_response.chart_data = controller.merge_compliance_status(p_response.chart_data)
 
                 elif type(request_data.request) is dashboard.GetEscalationsChart :
                     p_response.chart_data.extend(data.chart_data)
@@ -591,6 +625,7 @@ class API(object):
                     try:
                         _db_con = self.client_connection_pool(db_cons_info)
                         _db = Database(_db_con)
+                        _db.set_owner_id(le)
                         if _db_con is None:
                             performed_les.append(le)
                             continue
@@ -645,7 +680,8 @@ class API(object):
             data = request.request
             le_id = data.legal_entity_id
             le_db_info = self._le_databases.get(le_id)
-            LEntityUnitClosure(le_db_info, le_id, data, session_user)._start()
+            gp_info = self._group_databases.get(client_id)
+            LEntityUnitClosure(gp_info, le_db_info, le_id, data, session_user)._start()
         return res
 
     @api_request(clienttransactions.RequestFormat, is_group=True, need_category=True)
