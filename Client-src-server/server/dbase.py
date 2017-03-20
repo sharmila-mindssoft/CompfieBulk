@@ -110,6 +110,8 @@ class Database(object):
 
     @classmethod
     def make_connection(self, data):
+        if data is None :
+            raise ValueError(str("database connection information is empty"))
         return mysql.connector.connect(
             autocommit=False,
             user=data.db_username,
@@ -934,3 +936,14 @@ class Database(object):
                 " VALUES (%s, %s) "
             v = (notification_id, user_id)
             self.execute(q, v)
+
+    def get_onoccurance_compliance_to_notify(self):
+        q = " select ch.compliance_history_id,ch.compliance_id,com.compliance_task,ch.unit_id,ch.start_date,ch.due_date " + \
+            " from tbl_compliance_history ch " + \
+            " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+            " where com.frequency_id = 5 and ch.current_status < 3 " + \
+            " and DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i')  " + \
+            " >= DATE_FORMAT(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30'),'%Y-%m-%d %H:%i') " + \
+            " and DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i')  " + \
+            " <= DATE_FORMAT(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:45'),'%Y-%m-%d %H:%i') "
+
