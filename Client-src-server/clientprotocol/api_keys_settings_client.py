@@ -683,13 +683,9 @@ api_params = {
     "error": make_text_field(length=500),
     "file_size": make_int_field(length=52428800, is_optional=True),
     "file_name": make_text_field(length=500),
-
     "file_content": make_text_field(is_optional=True),
     "unit_address": make_text_field(length=500),
     "seating_unit": make_text_field(length=500, is_optional=True),
-
     "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
-
     "is_available": make_bool_field(),
-
 }

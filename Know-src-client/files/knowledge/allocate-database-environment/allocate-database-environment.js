@@ -147,7 +147,7 @@ btn_submit.click(function(){
     		parseInt($('#database_server_id').val()), parseInt($('#le_database_server_id').val()),
     		parseInt($('#le_file_server_id').val()), client_ids, legal_entity_ids, f_legal_entity_ids, le_legal_entity_ids,
     		parseInt(old_grp_app_id), parseInt(old_grp_db_s_id), parseInt(old_le_db_s_id), parseInt(old_le_f_s_id),
-    		new_grp_cl_ids.toString(), new_grp_le_ids.toString(), new_le_le_ids.toString(), new_f_le_ids.toString(), function (error, response) {
+    		new_grp_cl_ids, new_grp_le_ids, new_le_le_ids, new_f_le_ids, function (error, response) {
             if (error == null) {
             	hideLoader();
         		displaySuccessMessage(message.allocated_db_env);
@@ -210,15 +210,31 @@ function removeCLIds(cl_ids, cl_id){
 	var new_cl_ids = null;
 
 	if(cl_ids != null){
-		splitCLIds = cl_ids.split(",");
-		for(var i=0;i<splitCLIds.length;i++){
-			if(splitCLIds[i] == cl_id){
+		if (cl_ids.indexOf(",") >= 0){
+			splitCLIds = cl_ids.split(",");
+			for(var i=0;i<splitCLIds.length;i++){
+				if(splitCLIds[i] == cl_id){
+				}
+				else{
+					if (new_cl_ids == null)
+					{
+						new_cl_ids = splitCLIds[i];
+					}
+					else{
+						new_cl_ids = new_cl_ids + "," + splitCLIds[i];
+					}
+				}
 			}
-			else{
-				if (new_cl_ids == null)
+		}
+		else
+		{
+			if (new_cl_ids == null)
+			{
+				if(cl_ids == cl_id){
+					new_cl_ids = "";
+				}else{
 					new_cl_ids = splitCLIds[i];
-				else
-					new_cl_ids = new_cl_ids + "," + splitCLIds[i];
+				}
 			}
 		}
 	}

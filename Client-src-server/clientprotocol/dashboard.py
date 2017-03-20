@@ -264,26 +264,30 @@ class GetAssigneeWiseCompliancesChart(Request):
 
 class GetAssigneewiseYearwiseCompliances(Request):
     def __init__(
-        self, country_id, unit_id, user_id, legal_entity_ids
+        self, country_id, unit_id, user_id, legal_entity_ids,
+        domain_ids
     ):
         self.country_id = country_id
         self.unit_id = unit_id
         self.user_id = user_id
         self.legal_entity_ids = legal_entity_ids
+        self.domain_ids = domain_ids
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(
             data, [
-                "c_id", "u_id", "usr_id", "le_ids"
+                "c_id", "u_id", "usr_id", "le_ids", "d_ids"
             ]
         )
         country_id = data.get("c_id")
         unit_id = data.get("u_id")
         user_id = data.get("usr_id")
         legal_entity_ids = data.get("le_ids")
+        domain_ids = data.get("d_ids")
         return GetAssigneewiseYearwiseCompliances(
-            country_id, unit_id, user_id, legal_entity_ids
+            country_id, unit_id, user_id, legal_entity_ids,
+            domain_ids
         )
 
     def to_inner_structure(self):
@@ -291,7 +295,8 @@ class GetAssigneewiseYearwiseCompliances(Request):
             "c_id": self.country_id,
             "u_id": self.unit_id,
             "usr_id": self.user_id,
-            "le_ids": self.legal_entity_ids
+            "le_ids": self.legal_entity_ids,
+            "d_ids": self.domain_ids
         }
 
 class GetAssigneewiseReassignedComplianes(Request):
@@ -332,12 +337,12 @@ class GetAssigneewiseReassignedComplianes(Request):
 
 class GetAssigneeWiseComplianceDrillDown(Request):
     def __init__(
-        self, country_id, assignee_id, domain_id, year, unit_id, start_count,
+        self, country_id, assignee_id, domain_ids, year, unit_id, start_count,
         legal_entity_ids
     ):
         self.country_id = country_id
         self.assignee_id = assignee_id
-        self.domain_id = domain_id
+        self.domain_ids = domain_ids
         self.year = year
         self.unit_id = unit_id
         self.start_count = start_count
@@ -347,17 +352,17 @@ class GetAssigneeWiseComplianceDrillDown(Request):
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
             "c_id", "assignee_id",
-            "d_id", "chart_year", "unit_id", "start_count", "le_ids"
+            "d_ids", "chart_year", "unit_id", "start_count", "le_ids"
         ])
         country_id = data.get("c_id")
         assignee_id = data.get("assignee_id")
-        domain_id = data.get("d_id")
+        domain_ids = data.get("d_ids")
         year = data.get("chart_year")
         unit_id = data.get("unit_id")
         start_count = data.get("start_count")
         legal_entity_ids = data.get("le_ids")
         return GetAssigneeWiseComplianceDrillDown(
-            country_id, assignee_id, domain_id, year, unit_id, start_count,
+            country_id, assignee_id, domain_ids, year, unit_id, start_count,
             legal_entity_ids
         )
 
@@ -365,7 +370,7 @@ class GetAssigneeWiseComplianceDrillDown(Request):
         return {
             "c_id": self.country_id,
             "assignee_id": self.assignee_id,
-            "d_id": self.domain_id,
+            "d_ids": self.domain_ids,
             "chart_year": self.year,
             "unit_id": self.unit_id,
             "start_count" : self.start_count,

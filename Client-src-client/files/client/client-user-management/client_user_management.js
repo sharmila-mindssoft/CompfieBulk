@@ -101,7 +101,6 @@ userManagementPage = function() {
         this._userCategory = [];
         this._userGroup = [];
     }
-    // ===================================================================================
     // Load User List
 userManagementPage.prototype.showList = function() {
     addScreen.hide();
@@ -118,18 +117,16 @@ userManagementPage.prototype.fetchUserManagement = function() {
             listUsers = response.ul_users;
             t_this.renderList(listLegalEntity, listUsers, null, null, null);
         } else {
-            // t_this.possibleFailures(error);
+            t_this.possibleFailures(error);
         }
     });
 
-    // ===================================================================================
     // Add Button Click
     userManagementPage.prototype.showAddScreen = function() {
         t_this = this;
         viewScreen.hide();
         addScreen.show();
         ddlUserCategory.attr('disabled', false);
-
     };
 
     // Load Prerequisiste
@@ -149,7 +146,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
             loadBusinessGroup(businessGroupList);
 
         } else {
-            // t_this.possibleFailures(error);
+            t_this.possibleFailures(error);
         }
     });
 };
@@ -162,8 +159,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
         //No Records Found
     } else {
         $.each(ul_legal, function(k, v) {
-            //alert(le_name +' - '+ v.le_name)
-            if (((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null))) {
+            if( ((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null)) )  {
                 var cloneRow = $('#template .legal-entity-row').clone();
 
                 var total_licences = parseInt(v.total_licences);
@@ -252,6 +248,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
     t_this = this;
     $('.user-row-body', cloneRow).empty();
     var j = 1;
+    var id = "";
     $.each(ul_users, function(k1, v1) {
         if (le_id == v1.le_id) {
             var cloneUserRow = $('#template .user-row-table tr').clone();
@@ -281,6 +278,10 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
 
             if (user_name == null) {
                 $('.um-email-resend a', cloneUserRow).html("Resend");
+                $('.um-email-resend a', cloneUserRow).attr("data-original-title", "Click here to resend email");
+                $('.um-email-resend a', cloneUserRow).on('click', function(e) {
+                    t_this.resendemail(v1.user_id);
+                });
             }
 
             $('.edit i').attr('title', 'Click Here to Edit');
@@ -310,21 +311,28 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
                 $('.blocked i', cloneUserRow).attr('title', 'Click here to Block');
             }
 
+            $('.status i', cloneUserRow).attr("onClick", "showModalDialog("+v1.user_id+", '"+v1.emp_name+"', "+v1.is_active+", "+v1.unblock_days+", "+v1.is_disable+", 'STATUS')");
+            $('.blocked i', cloneUserRow).attr("onClick", "showModalDialog("+v1.user_id+", '"+v1.emp_name+"', "+v1.is_active+", "+v1.unblock_days+", "+v1.is_disable+", 'BLOCK')");
+            
+
+            // Status Event
+            // $('.status i', cloneUserRow).on('click', function(e) {
+            //     alert(v1.user_id)
+            //     showModalDialog(v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "STATUS");
+            // });
+
+            // Disable Event
+            // $('.blocked i', cloneRow).on('click', function(e) {
+            //     showModalDialog(v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "BLOCK");
+            // });
+
             $('.um-category i', cloneUserRow).addClass(cat_class);
             $('.user-row-body', cloneRow).append(cloneUserRow);
 
             j = j + 1;
         }
 
-        // Status Event
-        $('.status i', cloneUserRow).on('click', function(e) {
-            t_this.showModalDialog(e, v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "STATUS");
-        });
-
-        // Disable Event
-        $('.blocked i', cloneRow).on('click', function(e) {
-            t_this.showModalDialog(e, v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "BLOCK");
-        });
+        
     });
     $('[data-toggle="tooltip"]').tooltip();
 };
@@ -336,11 +344,10 @@ showEdit = function(user_id) {
             listLegalEntity_edit = response.ul_legal_entities;
             listDomains_edit = response.ul_user_domains;
             listUnits_edit = response.ul_user_units;
-
             t_this.showEditView(listUser_edit, listLegalEntity_edit, listDomains_edit, listUnits_edit);
 
         } else {
-            // t_this.possibleFailures(error);
+            t_this.possibleFailures(error);
         }
     });
 }
@@ -349,7 +356,6 @@ showEdit = function(user_id) {
 userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEntity_edit, listDomains_edit, listUnits_edit) {
     t_this = this;
     t_this.showAddScreen();
-
     if (listUser_edit.length != 0) {
         $.each(listUser_edit, function(k1, v1) {
             hdnUserId.val(v1.user_id);
@@ -485,9 +491,8 @@ userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEnt
 function showDialog() {}
 
 //open password dialog
-userManagementPage.prototype.showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked, mode) {
-    t_this = this;
-    statusmsg = "";
+showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked, mode) {
+    var statusmsg = "";
     if (mode == "STATUS") {
         btnPasswordSubmit_Status.show();
         btnPasswordSubmit_Block.hide();
@@ -504,14 +509,12 @@ userManagementPage.prototype.showModalDialog = function(user_id, emp_name, isAct
         btnPasswordSubmit_Status.hide();
         btnPasswordSubmit_Block.show();
         divRemarks.show();
-
         if (isBlocked == true) {
             blocked_status = false;
             statusmsg = message.disable_user_message;
         } else {
             blocked_status = true;
             statusmsg = message.enable_user_message;
-
         }
     }
 
@@ -525,10 +528,8 @@ userManagementPage.prototype.showModalDialog = function(user_id, emp_name, isAct
                     CurrentPassword.focus();
                     userId = user_id;
                     empName = emp_name;
-                    // alert("userId- showModalDialog- " + userId)
                 },
             });
-            // e.preventDefault();
             return false;
         }
     });
@@ -631,8 +632,6 @@ userManagementPage.prototype.submitProcess = function() {
             }
         });
     }
-
-
 };
 
 userManagementPage.prototype.changeStatus = function(user_id, status) {
@@ -838,8 +837,8 @@ function loadDivision() {
     if (divisionList.length > 0) {
         var bg_flag = null;
         var str = "";
-        $.each(divisionList, function(k, v) {
-            $.each(legalEntityList, function(key, value) {
+        $.each(legalEntityList, function(key, value) {
+            $.each(divisionList, function(k, v) {
                 if ($.inArray(value.le_id, sLegalEntity) >= 0 && v.le_id == value.le_id) {
                     if (bg_flag != v.le_id)
                         str += '<optgroup label="' + value.le_name + '">';
@@ -866,8 +865,8 @@ function loadCategory() {
     if (categoryList.length > 0) {
         var lg_flag = null;
         var str = "";
-        $.each(categoryList, function(k, v) {
-            $.each(legalEntityList, function(key, value) {
+        $.each(legalEntityList, function(key, value) {
+            $.each(categoryList, function(k, v) {
                 if ($.inArray(value.le_id, sLegalEntity) >= 0 && v.le_id == value.le_id) {
                     if (lg_flag != v.le_id)
                         str += '<optgroup label="' + value.le_name + '">';
@@ -894,9 +893,10 @@ function loadDomain() {
     if (domainList.length > 0) {
         var lg_flag = null;
         var str = "";
-        $.each(domainList, function(k, v) {
-            $.each(legalEntityList, function(key, value) {
+        $.each(legalEntityList, function(key, value) {
+            $.each(domainList, function(k, v) {
                 if ($.inArray(value.le_id, sLegalEntity) >= 0 && v.le_id == value.le_id) {
+                    // alert(value.le_id);
                     if (lg_flag != v.le_id)
                         str += '<optgroup label="' + value.le_name + '">';
                     var dVal = value.le_id + '-' + v.u_dm_id;
@@ -1306,6 +1306,16 @@ userManagementPage.prototype.validateMandatory = function() {
     return true;
 }
 
+userManagementPage.prototype.resendemail = function(id) {
+    client_mirror.resendRegistrationEmail(parseInt(id), function(error, response) {
+        if (error == null) {
+            displayMessage(message.email_sent);
+        } else {
+             t_this.possibleFailures(error);
+        }
+    });
+}
+
 key_search = function(cloneRow, le_id, data) {
     key_one = $('.filter-users', cloneRow).val().toLowerCase();
     key_two = $('.filter-user-id', cloneRow).val().toLowerCase();
@@ -1371,6 +1381,16 @@ PageControls = function() {
         loadDivision();
         loadCategory();
         loadDomain();
+    });
+
+    ddlLegalEntity.multiselect({
+        buttonWidth: '100%',
+        enableClickableOptGroups: true,
+        onChange: function(option, checked) {
+            loadDivision();
+            loadCategory();
+            loadDomain();
+        }
     });
 
     //Next Button Click Event

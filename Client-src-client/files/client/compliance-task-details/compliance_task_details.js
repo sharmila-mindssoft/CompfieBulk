@@ -872,8 +872,8 @@ $(document).ready(function() {
     $(".current-tab").click(function() {
         showCurrentTab();
     });
+
     $(".upcoming-tab").click(function() {
         showUpcomingTab();
     });
-
 });

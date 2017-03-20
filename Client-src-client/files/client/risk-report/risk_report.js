@@ -662,7 +662,6 @@ RiskReport.prototype.showReportValues = function() {
                         $('.assignee', clonethree).text(v.assignee_name);
                         $('.compliance-task-status', clonethree).text(v.task_status);
                         $('.penal-consq', clonethree).text(v.penal_consequences);
-
                         // $('.view-data', clonethree).html("View");
                         if (v.assignee_name!=null){
                             $('.view-data a', clonethree).on('click', function() {
@@ -673,7 +672,6 @@ RiskReport.prototype.showReportValues = function() {
                             });
                         }
                         else{
-
                             if (v.assignee_name==null){
                                 $('.view-data a', clonethree).on('click', function() {
                                     displayPopup(

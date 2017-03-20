@@ -1006,11 +1006,7 @@ class ConvertJsonToCSV(object):
             #     "inprogress", "not_complied", "delayed", "delayed_reassigned",
             # ]
             # assignee_wise_compliances = convert_to_dict(rows, columns)
-            print self.FILE_PATH
-            print "\n"
-            print "\n"
-            print "\n"
-            print "\n"
+
             with io.FileIO(self.FILE_PATH, "wb+") as f:
                 self.writer = csv.writer(f)
                 if not is_header:
@@ -1107,13 +1103,13 @@ class ConvertJsonToCSV(object):
         is_header = False
         count = get_assigneewise_compliances_drilldown_data_count(
             db, country_id=country_id, assignee_id=assignee_id,
-            domain_id=domain_id, year=year,
+            domain_ids=[domain_id], year=year,
             unit_id=unit_id, session_user=session_user,
             session_category=self.session_category
         )
         result = fetch_assigneewise_compliances_drilldown_data(
             db, country_id=country_id, assignee_id=assignee_id,
-            domain_id=domain_id,
+            domain_ids=[domain_id],
             year=year, unit_id=unit_id, start_count=0, to_count=count,
             session_user=session_user, session_category=self.session_category
         )
@@ -1214,6 +1210,8 @@ class ConvertJsonToCSV(object):
                 result = get_country_domain_timelines(
                     db, [country_id], [domain_id], [iter_year]
                 )
+                if len(result[0][1]) == 0 :
+                    continue
                 from_date = result[0][1][0][1][0]["start_date"].date()
                 to_date = result[0][1][0][1][0]["end_date"].date()
                 query = " SELECT tc.domain_id, " + \

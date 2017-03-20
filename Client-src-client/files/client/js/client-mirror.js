@@ -214,7 +214,6 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -1439,6 +1438,16 @@ function initClientMirror() {
                 'is_blocked': block,
                 'remarks': remarks,
                 "password": password
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function resendRegistrationEmail(user_id, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'ResendRegistrationEmail', {
+                'user_id': user_id
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -3076,6 +3085,7 @@ function initClientMirror() {
         uploadComplianceTaskFile: uploadComplianceTaskFile,
         userManagementEditView: userManagementEditView,
         blockUser: blockUser,
+        resendRegistrationEmail: resendRegistrationEmail
     };
 }
 

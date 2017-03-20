@@ -415,7 +415,6 @@ var message = {
     'repeats_type_not_exceed_actual_value': 'Repeats Type is not exceed in Actual Value',
     'units_already_assigned': 'Some of the Units are already assigned',
     'select_atleast_one_compliance': 'Select atleast one completed compliance',
-
     'userlimitexceeds': 'User Licence Count exceeds. Unable to create user',
     "disable_success": "Disabled Successfully",
     "enable_success": "Enabled Successfully",
@@ -423,8 +422,8 @@ var message = {
     'enable_user_message': 'You want to enable this User',
     "onoccurrence_start": 'You want to start this compliance',
     "mobile_invalid": "Invalid Mobile Number",
-    "contactno_invalid": "Invalid Contact Number"
-
+    "contactno_invalid": "Invalid Contact Number",
+    "email_sent": "Email Sent Successfully"
 };
 
 function clearMessage() {
