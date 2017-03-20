@@ -1,6 +1,7 @@
 import threading
 from server.dbase import Database
 from server.common import get_date_time
+from server.clientdatabase.exportdata import UnitClosureExport
 
 __all__ = [
     "LegalEntityReplicationManager",
@@ -347,6 +348,8 @@ class LEntityUnitClosure(object):
         self._le_id = le_id
         self._data = data
         self._user_id = user_id
+        self._closed_on = None
+        self._unit_id = None
 
     def _initiate_connection(self, connection_param):
         con = Database.make_connection(connection_param)
@@ -355,6 +358,8 @@ class LEntityUnitClosure(object):
 
     def save_unit_closure_data(self, db, user_id, unit_id, remarks, action_mode):
         current_time_stamp = get_date_time()
+        self._closed_on = current_time_stamp
+        self._unit_id = unit_id
         print action_mode
         columns = ["is_closed", "closed_on", "closed_by", "closed_remarks"]
         values = []
@@ -387,6 +392,7 @@ class LEntityUnitClosure(object):
         try:
             _db.begin()
             self.save_tbl_units(_db)
+            UnitClosureExport(_db, self._unit_id, self._closed_on)
             _db.commit()
 
         except Exception, e:

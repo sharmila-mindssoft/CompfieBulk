@@ -15,6 +15,12 @@
   border-radius: 2px;
   padding: 5px 12px;
 }
+
+body.fixed-left .side-menu.left {
+  /*background: #2196F3;*/
+  background: #47A1EF;
+}
+
 .btn-group-lg > .btn,
 .btn-lg {
   padding: 10px 16px !important;
@@ -1410,4 +1416,9 @@ div.DTS tbody tr.even {
 .legal-entity-filter, .bg-filter {
   display: none;
   min-width: 70%;
+}
+.dropdown-menu>li>a:focus,
+.dropdown-menu>li>a:hover {
+    background-color: #47a1ef !important;
+    color: #ffffff;
 }

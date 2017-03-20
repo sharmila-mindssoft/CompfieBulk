@@ -3014,14 +3014,12 @@ class ConvertJsonToCSV(object):
         f_count = request.f_count
         t_count = request.t_count
 
-
-
         query = "select (select country_name from tbl_countries where country_id = com.country_id) as countryname, " + \
                 "(select domain_name from tbl_domains where domain_id = com.domain_id) as domainname, " + \
                 "(select legal_entity_name from tbl_legal_entities where legal_entity_id = ch.legal_entity_id) as legal_entity_name, " + \
                 "%s as fromdate, %s as todate, " + \
                 "unt.unit_code, concat(unt.unit_name,' - ',SUBSTRING_INDEX(unt.geography_name,'>>',-1),' - ',unt.address) unitname, " + \
-                "SUBSTRING(SUBSTRING_INDEX(com.statutory_mapping,'>>',1),3) as act_name, " + \
+                "SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) as act_name, " + \
                 "concat(com.document_name,' - ',com.compliance_task) as compliance_name, " + \
                 "(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as frequency_name, " + \
                 "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.assigned_by) as assigned_by, " + \
@@ -3035,7 +3033,7 @@ class ConvertJsonToCSV(object):
                 "IF(acl.activity_by = ch.approved_by,(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = acl.activity_by), " + \
                 "(select concat(employee_code,' - ',employee_name) from tbl_users where user_id = ac.approval_person)) as approver , " + \
                 "ch.approved_on, " + \
-                "ch.start_date,ch.due_date,ch.due_date as activity_month, " + \
+                "ch.start_date,ch.due_date, ch.due_date as activity_month, " + \
                 "ch.validity_date, " + \
                 "(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
                 "WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'Complied' " + \
@@ -3053,34 +3051,24 @@ class ConvertJsonToCSV(object):
                 "left join tbl_compliance_activity_log as acl on ch.compliance_history_id = acl.compliance_history_id " + \
                 "inner join tbl_assign_compliances as ac on acl.compliance_id = ac.compliance_id and acl.unit_id = ac.unit_id " + \
                 "inner join tbl_units as unt on ch.unit_id = unt.unit_id " + \
-                "inner join (select compliance_id,unit_id,num from  " + \
-                "(select compliance_id,unit_id,@rownum := @rownum + 1 AS num  " + \
-                "from (select distinct t1.compliance_id,t1.unit_id from tbl_compliance_history as t1 " + \
-                "left join tbl_compliance_activity_log as t2 on t1.compliance_history_id = t2.compliance_history_id " + \
-                "order by t1.unit_id,t1.compliance_id) t, " + \
-                "(SELECT @rownum := 0) r) as cnt " + \
-                "where cnt.num between 0 and 25 order by cnt.unit_id, cnt.compliance_id) as t01  " + \
-                "on ch.compliance_id = t01.compliance_id and ch.unit_id = t01.unit_id " + \
                 "where com.country_id = %s and ch.legal_entity_id = %s " + \
                 "and com.domain_id = %s " + \
                 "and IF(%s IS NOT NULL, acl.unit_id = %s,1) " + \
-                "and IF(%s IS NOT NULL,SUBSTRING_INDEX(com.statutory_mapping,'>>',1) = %s,1) " + \
+                "and IF(%s IS NOT NULL,SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1, char_length(com.statutory_mapping) -4), '>>', 1) = %s,1) " + \
                 "and IF(%s IS NOT NULL, ch.compliance_id = %s,1) " + \
                 "and IF(%s > 0, com.frequency_id = %s,1) " + \
-                "and (CASE %s WHEN 1 THEN ac.assignee = acl.activity_by " + \
-                "WHEN 2 THEN ac.concurrence_person = acl.activity_by WHEN 3 THEN ac.approval_person = acl.activity_by " + \
+                "and (CASE %s WHEN 1 THEN (ch.completed_by = acl.activity_by OR acl.activity_by IS NULL) " + \
+                "WHEN 2 THEN ch.concurred_by = acl.activity_by WHEN 3 THEN ch.approved_by = acl.activity_by " + \
                 "ELSE 1 END) " + \
                 "and IF(%s IS NOT NULL, acl.activity_by = %s,1) " + \
                 "and date(ch.due_date) >= %s and date(ch.due_date) <= %s " + \
-                "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.approved_on and ch.approve_status = 3) THEN 'Delayed Compliance' " + \
-                "WHEN (ch.due_date >= ch.approved_on and ch.approve_status = 3) THEN 'Complied' " + \
-                "WHEN (ch.due_date >= ch.approved_on and ch.approve_status < 3) THEN 'In Progress' " + \
-                "WHEN (ch.due_date < ch.approved_on and ch.approve_status < 3) THEN 'Not Complied' " + \
-                "WHEN (ch.approved_on IS NULL and ch.approve_status IS NULL) THEN 'In Progress' " + \
+                "and IF(%s <> 'All',(CASE WHEN (ch.due_date < ch.completion_date and ch.current_status = 3) THEN 'Delayed Compliance' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.current_status = 3) THEN 'Complied' " + \
+                "WHEN (ch.due_date >= ch.completion_date and ch.current_status < 3) THEN 'In Progress' " + \
+                "WHEN (ch.due_date < ch.completion_date and ch.current_status < 3) THEN 'Not Complied' " + \
+                "WHEN (ch.completion_date IS NULL and IFNULL(ch.current_status,0) = 0) THEN 'In Progress' " + \
                 "ELSE 'In Progress' END) = %s,1) " + \
-                "order by ch.compliance_history_id asc,acl.compliance_activity_id desc; "
-
-        # print query
+                "order by ch.compliance_history_id asc,acl.compliance_activity_id desc"
 
         rows = db.select_all(query, [ from_date, to_date, country_id, legal_entity_id, domain_id,
                     unit_id, unit_id, act, act, compliance_id, compliance_id, frequency_id, frequency_id,

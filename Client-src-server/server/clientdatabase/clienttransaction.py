@@ -1549,7 +1549,7 @@ def get_compliance_approval_count(db, session_user):
     if (is_two_levels_of_approval(db)):
         concur_condition = " %s AND IFNULL(concurrence_status, 0) != 1 "
         concur_condition = concur_condition % approval_condition
-        concur_count_condition = concur_condition + "  AND concurred_by = %s "
+        concur_count_condition = concur_condition + "  AND concurred_by = %s AND current_status = 1"
         concur_count_condition_val = [session_user]
         concur_count = db.get_data(
             tblComplianceHistory, columns,
@@ -1569,6 +1569,14 @@ def get_compliance_approval_count(db, session_user):
         approval_count_condition_val
     )[0]["count"]
     return concur_count + approval_count
+
+    # query = "SELECT count(compliance_history_id) as total_count FROM tbl_compliance_history tch  " + \
+    #         "INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id)  WHERE IFNULL(completion_date, 0) != 0   " + \
+    #         "AND IFNULL(completed_on, 0) != 0   AND ( IFNULL(approve_status, 0) = 0  OR (IFNULL(concurrence_status, 0) = 0 " + \
+    #         "AND  IFNULL(approve_status, 0) != 1)) AND  (concurred_by = %s OR approved_by = %s) ORDER BY completed_by, " + \
+    #         "due_date ASC"
+    # rows = db.select_one(query, [session_user, session_user])
+    # return int(rows["total_count"])
 
 ########################################################
 # To get the list of compliances to be approved by the
@@ -1593,9 +1601,12 @@ def get_compliance_approval_list(
         " tbl_assign_compliances tac " + \
         " where tac.compliance_id = tch.compliance_id " + \
         " limit 1) as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
-        " (SELECT concat(unit_code, '-', tu.unit_name) " + \
+        " (SELECT concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) " + \
         " FROM tbl_units tu " + \
         " where tch.unit_id = tu.unit_id) as unit_name, " + \
+        " (SELECT concat(tu.address, '-', tu.postal_code) " + \
+        " FROM tbl_units tu " + \
+        " where tch.unit_id = tu.unit_id) as unit_address, " + \
         " completed_by, " + \
         " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) " + \
         " FROM tbl_users tu " + \
@@ -1607,7 +1618,7 @@ def get_compliance_approval_list(
         " ON (tch.compliance_id = tc.compliance_id) " + \
         " WHERE IFNULL(completion_date, 0) != 0  " + \
         " AND IFNULL(completed_on, 0) != 0  "
-    order = " ORDER BY completed_by, due_date ASC " + \
+    order = " ORDER BY unit_id, employee_name, completed_by, due_date ASC " + \
         " LIMIT %s, %s "
 
     param = []
@@ -1615,7 +1626,7 @@ def get_compliance_approval_list(
         condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
             " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
             " IFNULL(approve_status, 0) != 1)) AND " + \
-            " (concurred_by = %s OR approved_by = %s)"
+            " (concurred_by = %s OR approved_by = %s) AND current_status = 1"
         param.append(int(session_user))
         param.append(int(session_user))
     else:
@@ -1624,22 +1635,12 @@ def get_compliance_approval_list(
         param.append(int(session_user))
     param.extend([start_count, to_count])
     rows = db.select_all(query + condition + order, param)
-    columns = [
-        "compliance_history_id", "compliance_id", "start_date",
-        "due_date", "documents", "completion_date",
-        "completed_on", "next_due_date", "concurred_by", "remarks",
-        "ageing", "compliance_task", "compliance_description",
-        "frequency_id", "frequency", "document_name",
-        "concurrence_status", "statutory_dates", "validity_date",
-        "approved_by", "unit_name", "completed_by", "employee_name",
-        "domain_name", "duration_type_id"
-    ]
-    # result = convert_to_dict(rows, columns)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
+    approval_compliances = []
     count = 0
     for row in rows:
-        no_of_days, ageing = calculate_ageing(
+        no_of_days, ageing = calculate_ageing (
             due_date=row["due_date"],
             frequency_type=row["frequency_id"],
             duration_type=row["duration_type_id"]
@@ -1702,9 +1703,7 @@ def get_compliance_approval_list(
             )
         frequency = clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
         description = row["compliance_description"]
-        concurrence_status = None if (
-                row["concurrence_status"] in [None, "None", ""]
-            ) else bool(int(row["concurrence_status"]))
+        concurrence_status = None if (row["concurrence_status"] in [None, "None", ""]) else bool(int(row["concurrence_status"]))
         statutory_dates = [] if (
             row["statutory_dates"] is [None, "None", ""]
         ) else json.loads(row["statutory_dates"])
@@ -1712,6 +1711,7 @@ def get_compliance_approval_list(
             row["validity_date"] is [None, "None", ""]
         ) else datetime_to_string(row["validity_date"])
         unit_name = row["unit_name"]
+        unit_address = row["unit_address"]
         date_list = []
         for date in statutory_dates:
             s_date = clientcore.StatutoryDate(
@@ -1748,32 +1748,26 @@ def get_compliance_approval_list(
             continue
         assignee = row["employee_name"]
 
+
+
         if assignee not in assignee_id_name_map:
             assignee_id_name_map[assignee] = row["completed_by"]
         if assignee not in assignee_wise_compliances:
             assignee_wise_compliances[assignee] = []
         count += 1
-        assignee_wise_compliances[assignee].append(
+        print "(", assignee, ")"
+
+        approval_compliances.append(
             clienttransactions.APPROVALCOMPLIANCE(
                 compliance_history_id, compliance_name,
                 description, domain_name,
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, remarks, action, date_list,
-                validity_date, unit_name
+                validity_date, unit_name, unit_address,
+                assignee_id_name_map[assignee], assignee
             )
         )
-    approval_compliances = []
-    for assignee in assignee_wise_compliances:
-        if len(assignee_wise_compliances[assignee]) > 0:
-            approval_compliances.append(
-                clienttransactions.APPORVALCOMPLIANCELIST(
-                    assignee_id_name_map[assignee], assignee,
-                    assignee_wise_compliances[assignee]
-                )
-            )
-        else:
-            continue
     return approval_compliances, count
 
 def save_compliance_activity(

@@ -136,7 +136,6 @@ function initClientMirror() {
         if (info != null) {
             return info.menu;
         } else {
-            // alert(info);
             window.location.href = login_url;
         }
     }
@@ -210,7 +209,6 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-        // alert(body.toSource())
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -243,13 +241,7 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
-                callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
-                // if (errorThrown == 'Not Found') {
-                //     // alert('Server connection not found');
-                //     redirect_login();
-                // } else {
-                //     callback(jqXHR.responseText, errorThrown);
-                // }
+                callback(rdata, errorThrown);
             }
         });
     }
@@ -818,7 +810,7 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
-                callback(rdata, errorThrown); // alert("jqXHR:"+jqXHR.status);
+                callback(rdata, errorThrown); 
             }
         });
     }
@@ -2750,7 +2742,6 @@ function initClientMirror() {
                 var xhr = new window.XMLHttpRequest();
 
                 xhr.onreadystatechange = function() {
-                    // alert(this.status);
                     if (this.readyState == 4 && this.status == 200) {
                         var data = this.response;
                         // data = atob(data);
