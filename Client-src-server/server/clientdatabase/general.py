@@ -555,8 +555,13 @@ def get_assignees(db, unit_ids=None):
 def return_client_users(users):
     results = []
     for user in users:
+        if user["employee_code"] is not None :
+            employee_name = user["employee_code"] + ' - ' + user["employee_name"]
+        else:
+            employee_name = user["employee_name"]
+
         results.append(clientcore.LegalEntityUser(
-            user["user_id"], user["employee_code"], user["employee_name"], bool(user["is_active"])
+            user["user_id"], user["employee_code"], employee_name, bool(user["is_active"])
         ))
     return results
 
