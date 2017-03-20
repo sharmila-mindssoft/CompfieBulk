@@ -2922,7 +2922,8 @@ IN client_db_id int(11), clientid INT(11), le_id INT(11), machineid INT(11), db_
     le_db_server_id int(11), _f_s_id int(11), _cl_ids longtext, _le_ids longtext,
     old_machineid INT(11), old_grp_d_s_id int(11), old_le_d_s_id int(11),
     old_le_f_s_id int(11), old_cl_ids longtext, old_grp_le_ids longtext,
-    old_le_ids longtext, old_f_le_ids longtext, _created_by int(11), _created_on timestamp
+    old_le_ids longtext, old_f_le_ids longtext, _created_by int(11), _created_on timestamp,
+    _f_le_ids longtext, _le_le_ids longtext
 )
 BEGIN
     update tbl_client_database set client_id = clientid, legal_entity_id = le_id,
@@ -2940,15 +2941,18 @@ BEGIN
     where machine_id = old_machineid;
 
     update tbl_database_server set legal_entity_ids = _le_ids
-    where database_server_id = le_db_server_id;
+    where database_server_id = db_server_id;
 
     update tbl_database_server set legal_entity_ids = old_grp_le_ids
     where database_server_id = old_grp_d_s_id;
 
+    update tbl_database_server set legal_entity_ids = _le_le_ids
+    where database_server_id = le_db_server_id;
+
     update tbl_database_server set legal_entity_ids = old_le_ids
     where database_server_id = old_le_d_s_id;
 
-    update tbl_file_server set legal_entity_ids = _le_ids
+    update tbl_file_server set legal_entity_ids = _f_le_ids
     where file_server_id = _f_s_id;
 
     update tbl_file_server set legal_entity_ids = old_f_le_ids
