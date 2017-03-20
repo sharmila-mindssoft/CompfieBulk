@@ -3231,7 +3231,7 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "com.compliance_description, " + \
         "ac.statutory_dates, ac.repeats_every, " + \
         "ac.repeats_type_id, com.duration, com.duration_type_id, " + \
-        "(select repeat_type from tbl_compliance_repeat_type where repeat_type_id = com.repeats_type_id) as repeat_type, " + \
+        "(select repeat_type from tbl_compliance_repeat_type where repeat_type_id = ac.repeats_type_id) as repeat_type, " + \
         "(select duration_type from tbl_compliance_duration_type where duration_type_id = com.duration_type_id) as duration_type , " + \
         "ac.trigger_before_days, " + \
         "(select employee_name from tbl_users where user_id = IFNULL(ch.completed_by,ac.assignee)) as assignee_name, " + \
@@ -3255,6 +3255,8 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "concat(com.document_name,' - ',com.compliance_task),com.frequency_id " +\
         "limit %s, %s ;"
     param = [domain_id, ",".join([str(x) for x in unit_ids]), user_type, user_id, user_id, user_id, from_count, to_count]
+
+    print query % (domain_id, ",".join([str(x) for x in unit_ids]), user_type, user_id, user_id, user_id, from_count, to_count)
     row = db.select_all(query, param)
     return return_compliance_for_reassign(row)
 
