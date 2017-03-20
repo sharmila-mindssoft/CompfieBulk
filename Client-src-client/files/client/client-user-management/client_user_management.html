@@ -417,7 +417,7 @@
                                     <li value="5" class="search-category-li"><a><i class="fa fa-square text-danger"></i> Inhouse User</a></li>
                                     <li value="6" class="search-category-li"><a><i class="fa fa-square"></i> Service Provider User</a></li>
                                 </ul>
-                            </div> 
+                            </div>
                         </td>
                         <td>
                             <div class="form-group col-sm-12 no-padding m-t-10 m-b-10">
@@ -538,8 +538,10 @@
         $('.example-multiple').multiselect({
             buttonWidth: '100%'
         });
+
+        $('#basicwizard .nav-tabs li a').click(function() {
+            return false;
+        });
     });
 </script>
-
-
 {% endblock %}

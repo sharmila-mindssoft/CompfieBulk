@@ -529,7 +529,14 @@ def userManagement_list_GetLegalEntities(db):
 ##############################################################################
 # User Management List - Get Users
 ##############################################################################
-def userManagement_list_GetUsers(db):
+def userManagement_list_GetUsers(db, session_category):
+    if session_category == 1: #Group Admin
+        condition = " AND T01.user_category_id like '%' "
+    elif session_category == 3: #Legal Entity Admin
+        condition = " AND T01.user_category_id NOT IN (1,2,3)"
+    elif session_category == 4: #Domain Admin
+        condition = " AND T01.user_category_id NOT IN (1,2,3,4)"
+
     le_ids = "%"
     q = " SELECT T01.user_id, T01.user_category_id, T01.employee_code, T01.employee_name, " + \
         " T02.username, T01.email_id, T01.mobile_no,T03.legal_entity_id, T01.is_active, T01.is_disable, " + \
@@ -538,7 +545,7 @@ def userManagement_list_GetUsers(db):
         " From tbl_units where unit_id = T01.seating_unit_id) as seating_unit " + \
         " FROM tbl_users AS T01 INNER JOIN tbl_user_legal_entities AS T03 " + \
         " ON T01.user_id = T03.user_id LEFT JOIN tbl_user_login_details AS T02 " + \
-        " ON T01.user_id = T02.user_id Where T03.legal_entity_id like '%' "
+        " ON T01.user_id = T02.user_id Where T03.legal_entity_id like '%' " + condition
     # row = db.select_all(q, [le_ids])
     row = db.select_all(q, None)
     return row
@@ -1096,6 +1103,8 @@ def save_user_legal_entities(db, entity_ids, user_id):
     db.delete(tbluserlegalentities, "user_id = %s", [user_id])
     entity_columns = ["user_id", "legal_entity_id"]
     entity_values_list = [(user_id, int(le_id)) for le_id in entity_ids]
+    print "entity_columns>>>", entity_columns
+    print "entity_values_list>>", entity_values_list
     res = db.bulk_insert(tbluserlegalentities, entity_columns, entity_values_list)
     if res is False:
         raise client_process_error("E010")

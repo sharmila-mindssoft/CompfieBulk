@@ -908,7 +908,7 @@ function getLegalEntityIds() {
     legalEntity_ids = [];
     for (var i = 0; i < ddlLegalEntity.val().length; i++) {
         ids = ddlLegalEntity.val();
-        legalEntity_ids.push(parseInt(ids))
+        legalEntity_ids.push(parseInt(ids[i]))
     }
     return legalEntity_ids;
 }
@@ -1117,20 +1117,25 @@ userManagementPage.prototype.loadUnits = function() {
         clone.text('No Units Found');
         UnitList.append(clone);
     } else {
+
+        legalEntity_ids = getLegalEntityIds();
+
         $.each(unitArray, function(key, value) {
-            unit_idval = value.u_unt_id + '-' + value.le_id;
-            unit_text = value.u_unt_code + " - " + value.u_unt_name + " - " + value.u_unt_address;
-            var clone = UnitRow.clone();
-            clone.html(unit_text + '<i></i>');
-            clone.attr('id', unit_idval);
-            UnitList.append(clone);
-            if (unit_ids_edit.length > 0) {
-                if (jQuery.inArray(unit_idval, unit_ids_edit) !== -1)
-                    activateUnit(clone);
+            if ($.inArray(value.le_id, legalEntity_ids) >= 0) {
+                unit_idval = value.u_unt_id + '-' + value.le_id;
+                unit_text = value.u_unt_code + " - " + value.u_unt_name + " - " + value.u_unt_address;
+                var clone = UnitRow.clone();
+                clone.html(unit_text + '<i></i>');
+                clone.attr('id', unit_idval);
+                UnitList.append(clone);
+                if (unit_ids_edit.length > 0) {
+                    if (jQuery.inArray(unit_idval, unit_ids_edit) !== -1)
+                        activateUnit(clone);
+                }
+                clone.click(function() {
+                    activateUnit(this);
+                });
             }
-            clone.click(function() {
-                activateUnit(this);
-            });
         });
     }
 }
@@ -1328,6 +1333,8 @@ PageControls = function() {
 
     //Add Button Click Event
     addButton.click(function() {
+        CURRENT_TAB = 1;
+        showTab();
         btnNext.hide();
         btnPrevious.hide();
         um_page.showAddScreen();

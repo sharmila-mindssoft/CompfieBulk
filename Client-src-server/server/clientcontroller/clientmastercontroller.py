@@ -148,7 +148,7 @@ def process_client_master_requests(request, db, session_user, client_id, session
         )
 
     elif type(request) is clientmasters.UserManagementList:
-        result = process_UserManagement_list(db, request, session_user)
+        result = process_UserManagement_list(db, request, session_user, session_category)
 
     elif type(request) is clientmasters.UserManagementEditView:
         result = process_UserManagement_EditView(db, request, session_user)
@@ -310,12 +310,12 @@ def process_UserManagementAddPrerequisite(db, request, session_user, session_cat
 ########################################################
 # User Management - List users
 ########################################################
-def process_UserManagement_list(db, request, session_user):
+def process_UserManagement_list(db, request, session_user, session_category):
     legalEntities = {}
     users = {}
 
     legalEntities = process_UserManagement_list_LegalEntities(db, request, session_user)
-    users = process_UserManagement_list_users(db, request, session_user)
+    users = process_UserManagement_list_users(db, request, session_user, session_category)
 
     return clientmasters.UserManagementListSuccess(
         legal_entities=legalEntities,
@@ -543,8 +543,8 @@ def process_UserManagement_list_LegalEntities(db, request, session_user):
 ########################################################
 # User Management List - Get Users
 ########################################################
-def process_UserManagement_list_users(db, request, session_user):
-    resultRows = userManagement_list_GetUsers(db)
+def process_UserManagement_list_users(db, request, session_user, session_category):
+    resultRows = userManagement_list_GetUsers(db, session_category)
     userList = []
     for row in resultRows:
         user_id = row["user_id"]
