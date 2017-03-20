@@ -1183,11 +1183,23 @@ userManagementPage.prototype.validateMandatory = function() {
     } else {
         validateMaxLength('employeeid', txtEmployeeId.val(), "Employee id");
     }
+
+    if (txtContactNo3.val().indexOf('000') >= 0) {
+        txtContactNo3.focus();
+        displayMessage(message.contactno_invalid);
+        return false;
+    }
     if (txtMobileNo2.val().trim().length == 0) {
         displayMessage(message.mobile_required);
         txtMobileNo2.focus();
         return false;
+    } else if (txtMobileNo2.val().indexOf('000') >= 0) {
+        txtMobileNo2.focus();
+        displayMessage(message.mobile_invalid);
+        return false;
     }
+
+
     if (ddlLegalEntity.val() == null) {
         displayMessage(message.legalentity_required);
         ddlLegalEntity.focus();
