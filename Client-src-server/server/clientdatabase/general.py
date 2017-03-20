@@ -169,10 +169,10 @@ def get_domains_info(db, user_id, user_category, le_ids=None):
             "where t1.user_id = %s "
         param = [user_id]
         if le_ids is not None :
-            query += " where find_in_set(t1.legal_entity_id, %s) "
+            query += " and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
-        rows = db.select_all(query, [user_id])
+        rows = db.select_all(query, param)
     elif user_category == 1 :
         query = "SELECT distinct t1.domain_id, t2.domain_name, " + \
             "t2.is_active FROM tbl_legal_entity_domains AS t1 " + \
@@ -191,7 +191,7 @@ def get_domains_info(db, user_id, user_category, le_ids=None):
             "where t4.user_id = %s "
         param = [user_id]
         if le_ids is not None :
-            query += " where find_in_set(t3.legal_entity_id, %s) "
+            query += " and find_in_set(t3.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
         rows = db.select_all(query, param)
@@ -583,7 +583,8 @@ def return_client_users(users):
             employee_name = user["employee_name"]
 
         results.append(clientcore.LegalEntityUser(
-            user["user_id"], user["employee_code"], employee_name, bool(user["is_active"])
+            user["user_id"], user["employee_code"], employee_name, bool(user["is_active"]),
+            user["legal_entity_id"]
         ))
     return results
 
