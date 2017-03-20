@@ -891,7 +891,6 @@ class GetReAssignComplianceUnits(Request):
             "unit_id": self.unit_id
         }
 
-
 class GetReAssignComplianceForUnits(Request):
     def __init__(self, legal_entity_id, d_id, usr_id, user_type_id, u_ids, r_count):
         self.legal_entity_id = legal_entity_id
@@ -955,6 +954,24 @@ class GetReAssignComplianceForUnits(Request):
             "r_count": self.r_count
         }
 
+    # class HaveCompliances(Request):
+    #     def __init__(self, legal_entity_id, user_id):
+    #         self.legal_entity_id = legal_entity_id
+    #         self.user_id = user_id
+
+    # @staticmethod
+    # def parse_inner_structure(data):
+    #     data = parse_dictionary(data, ["le_id", "user_id"])
+    #     return HaveCompliances(
+    #         data.get("le_id"),
+    #         data.get("user_id")
+    #     )
+
+    # def to_inner_structure(self):
+    #     return {
+    #         "le_id": self.legal_entity_id,
+    #         "user_id": self.user_id
+    #     }
 
 class GetAssigneewiseComplianesFilters(Request):
     def __init__(self):
@@ -1074,6 +1091,7 @@ def _init_Request_class_map():
         GetUserToAssignCompliance, GetChartFilters,
         GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData,
         ChangeThemes
+
     ]
 
     class_map = {}
@@ -1796,6 +1814,34 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
         return GetAssigneewiseComplianesFiltersSuccess(
             countries, business_groups, legal_entities, divisions, units, users, domains, categories
         )
+
+    def to_inner_structure(self):
+        return {
+            "countries": self.countries,
+            "business_groups": self.business_groups,
+            "legal_entities": self.legal_entities,
+            "client_divisions": self.divisions,
+            "client_categories": self.categories,
+            "units": self.units,
+            "users": self.users,
+            "d_info": self.domains
+        }
+# class HaveComplianceSuccess(Response):
+#     def __init__(
+#         self, is_available
+#     ):
+#         self.is_available = is_available
+
+#     @staticmethod
+#     def parse_inner_structure(data):
+#         data = parse_dictionary(data, [
+#             "is_available"
+#         ])
+#         is_available = data.get("is_available")
+
+#         return HaveComplianceSuccess(
+#             is_available
+#         )
 
     def to_inner_structure(self):
         return {
@@ -2565,7 +2611,7 @@ class APPROVALCOMPLIANCE(object):
         unit_address = data.get("unit_address")
         assignee_id = data.get("assignee_id")
         assignee_name = data.get("assignee_name")
-        
+
         return APPROVALCOMPLIANCE(
             compliance_history_id, compliance_name, description,
             domain_name, start_date, due_date, delayed_by, compliance_frequency,
