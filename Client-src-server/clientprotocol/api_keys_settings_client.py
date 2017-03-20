@@ -167,7 +167,7 @@ api_params = {
     "d_i_names": make_vector_type_string(),
     "is_closed": make_bool_field(),
     'postal_code': make_int_field(length=1000000, is_optional=False),
-    'division_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
+    'division_name': make_text_field(length=50, is_optional=True),
     'category_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'geography_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'business_group_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
