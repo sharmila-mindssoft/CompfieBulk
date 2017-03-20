@@ -666,15 +666,28 @@ function loadCalendarData(data) {
     $.each(getdata, function(k, v) {
         if (v.inprogress > 0) {
             $(".dateid" + v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="' + v.inprogress + ' Inprogress Compliances"> ' + v.inprogress + ' </div>');
+            $('.dateid').on('click', function() {
+                showCurrentTab();
+            });
         }
         if (v.duedate > 0) {
             $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Due Date Compliances"> ' + v.duedate + '</div>');
+            $('.dateid').on('click', function() {
+                showCurrentTab();
+            });
         }
         if (v.upcoming > 0) {
             $(".dateid" + v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="' + v.upcoming + ' Upcoming Compliances">' + v.upcoming + '</div>');
+            $('.dateid').on('click', function() {
+                showUpcomingTab();
+            });
+
         }
         if (v.overdue > 0) {
             $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Not Complied">' + v.overdue + '</div>');
+            $('.dateid').on('click', function() {
+                showCurrentTab();
+            });
         }
     });
 }
