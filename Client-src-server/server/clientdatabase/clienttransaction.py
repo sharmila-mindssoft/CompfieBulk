@@ -104,7 +104,7 @@ def get_user_based_legal_entity(db, user_id, user_category, le_ids=None):
     q1 = "select distinct t1.domain_id, t1.legal_entity_id from tbl_legal_entity_domains as t1"
 
     q = "select distinct t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id " + \
-        " from tbl_legal_entities t1 where t1.is_closed = 0 "
+        " from tbl_legal_entities t1 "
 
     param = []
     if user_category == 1 :
@@ -125,6 +125,7 @@ def get_user_based_legal_entity(db, user_id, user_category, le_ids=None):
         q1 += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
 
+        print q % (user_id)
         rows = db.select_all(q, param)
         domains = db.select_all(q1, [user_id])
 
@@ -1053,14 +1054,14 @@ def save_assigned_compliance(db, request, session_user):
         "statutory_dates", "assignee",
         "assigned_by", "assigned_on",
         "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every"
+        "trigger_before_days", "due_date", "validity_date",
     ]
     value_list = []
     update_column = [
         "statutory_dates", "assignee",
         "assigned_by", "assigned_on",
         "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every",
+        "trigger_before_days", "due_date", "validity_date",
     ]
 
     if concurrence is not None:
@@ -1115,10 +1116,21 @@ def save_assigned_compliance(db, request, session_user):
                 le_id, country_id, domain_id, unit_id, compliance_id,
                 str(date_list), assignee, int(session_user), created_on,
                 approval, int(session_user), created_on,
-                trigger_before, str(due_date), str(validity_date), int(repeats_type), int(repeats_every)
+                trigger_before, str(due_date), str(validity_date),
             ]
             if concurrence is not None:
                 value.extend([concurrence, int(session_user), created_on])
+
+            if repeats_type is not None:
+                columns.extend(["repeats_type_id"])
+                update_column.extend(["repeats_type_id"])
+                value.extend([repeats_type])
+
+            if repeats_every is not None:
+                columns.extend(["repeats_every"])
+                update_column.extend(["repeats_every"])
+                value.extend([repeats_every])
+
             value_list.append(tuple(value))
 
     # db.bulk_insert("tbl_assign_compliances", columns, value_list)
