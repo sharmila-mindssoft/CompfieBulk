@@ -420,7 +420,9 @@ var message = {
     "enable_success": "Enabled Successfully",
     'disable_user_message': 'You want to disable this User',
     'enable_user_message': 'You want to enable this User',
-    "onoccurrence_start": 'You want to start this compliance'
+    "onoccurrence_start": 'You want to start this compliance',
+    "mobile_invalid": "Invalid Mobile Number",
+    "contactno_invalid": "Invalid Contact Number"
 };
 
 function clearMessage() {
