@@ -908,7 +908,7 @@ def get_assign_compliance_statutories_for_units(
     # updated statutory dates from review settings for the selected unit and domain
     q = "select t1.compliance_id, t1.unit_id, t1.domain_id, t1.statutory_date, t1.repeats_every, t1.repeats_type_id, " + \
         " (select repeat_type from tbl_compliance_repeat_type " + \
-        " where repeat_type_id = t1.repeats_type_id) repeat_type " + \
+        " where repeat_type_id = t1.repeats_type_id) as repeat_type " + \
         " FROM tbl_compliance_dates as t1 WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s"
 
     if len(sunit_ids) > 1 :
@@ -940,6 +940,7 @@ def return_assign_compliance_data(result, applicable_units, nrow):
                 r["statutory_dates"] = n["statutory_date"]
                 r["repeats_type_id"] = n["repeats_type_id"]
                 r["repeats_every"] = n["repeats_every"]
+                r["repeat_type"] = n["repeat_type"]
         # unit_ids = [
         #     int(x) for x in c_units.split(',')
         # ]
