@@ -2732,7 +2732,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
+        actula_data = toJSON(body);
         var saveData = (function() {
             var a = document.createElement("a");
             document.body.appendChild(a);
@@ -2764,7 +2764,7 @@ function initClientMirror() {
             headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             crossDomain: true,
-            data: toJSON(body),
+            data: makekey() + btoa(actula_data),
             processData: false,
             contentType: false,
 
