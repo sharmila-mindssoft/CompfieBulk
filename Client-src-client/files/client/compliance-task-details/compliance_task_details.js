@@ -717,7 +717,7 @@ function uploadedfile(e) {
             }
             $(".uploaded-filename").html(result);
         } else {
-            alert(data);
+            // alert(data);
         }
     });
 }
@@ -859,7 +859,6 @@ $(document).ready(function() {
     $(".current-tab").click(function() {
         showCurrentTab();
     });
-
     $(".upcoming-tab").click(function() {
         showUpcomingTab();
     });

@@ -1,4 +1,4 @@
-// Declare basic elements to variable 
+// Declare basic elements to variable
 var country = $("#country");
 var countryId = $("#country-id");
 var acCountry = $("#ac-country");
@@ -73,7 +73,7 @@ function PageControls() {
         }
     });
 
-    //when click the country text box to initiate auto complete to display & get values from object 
+    //when click the country text box to initiate auto complete to display & get values from object
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
@@ -83,7 +83,7 @@ function PageControls() {
         var condition_values = [];
         // to call auto complete common function to required variable to pass
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
-            // on success to return the ID and value  
+            // on success to return the ID and value
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
     });
@@ -498,7 +498,7 @@ createPageView = function(total_records) {
 };
 
 ReassignHistory.prototype.exportReportValues = function() {
-    alert('export');
+    // alert('export');
 };
 
 ReassignHistory.prototype.possibleFailures = function(error) {
@@ -540,7 +540,7 @@ REPORT = new ReassignHistory();
 $(document).ready(function() {
     // To initially to call the page controller what are the activity to set in page controller
     PageControls();
-    // To store values in object & search list element 
+    // To store values in object & search list element
     REPORT.loadSearch();
     REPORT.loadEntityDetails();
     loadItemsPerPage();

@@ -450,18 +450,12 @@ RiskReport.prototype.validate = function() {
         return false;
     }
     if (BusinessGroupName) {
-        if (isNotEmpty(BusinessGroupName, message.businessgroup_required) == false)
-            return false;
-        else if (isLengthMinMax(BusinessGroupName, 1, 50, message.businessgroup_max) == false)
+        if (isLengthMinMax(BusinessGroupName, 0, 50, message.businessgroup_max) == false)
             return false;
         else if (isCommonName(BusinessGroupName, message.businessgroup_str) == false)
             return false;
     }
-    if (BusinessGroupId.val() == ""){
-        displayMessage(message.businessgroup_required);
-        BusinessGroupName.focus();
-        return false;
-    }
+
     if (LegalEntityName) {
         if (isNotEmpty(LegalEntityName, message.legalentity_required) == false)
             return false;
@@ -532,6 +526,8 @@ RiskReport.prototype.fetchReportValues = function() {
     t_this = this;
     c_id = countryId.val();
     bg_id = BusinessGroupId.val();
+    if (bg_id == "")
+        bg_id = 0;
     le_id = LegalEntityId.val();
     d_id = domainId.val();
     div_id = DivisionId.val();
@@ -606,13 +602,13 @@ RiskReport.prototype.showReportValues = function() {
     for (var i=0;i<data.length;i++){
         var occur = -1;
         for(var j=0;j<unit_names.length;j++){
-            if(data[i].unit_id == unit_names[j]){
+            if(data[i].unit_name == unit_names[j]){
                 occur = 1;
                 break;
             }
         }
         if(occur < 0){
-            unit_names.push(data[i].unit_id);
+            unit_names.push(data[i].unit_name);
         }
     }
     for (var i=0;i<data.length;i++){
@@ -640,7 +636,7 @@ RiskReport.prototype.showReportValues = function() {
             $.each(data, function(k, v) {
                 is_null = false;
                 $('.client-logo').attr("src", v.logo_url);
-                if(v.unit_id == unit_names[i]){
+                if(v.unit_name == unit_names[i]){
                     // unit name cloning
                     if(u_count == 1){
                         var cloneone = $('#template #report-table .row-one').clone();
@@ -666,8 +662,9 @@ RiskReport.prototype.showReportValues = function() {
                         $('.assignee', clonethree).text(v.assignee_name);
                         $('.compliance-task-status', clonethree).text(v.task_status);
                         $('.penal-consq', clonethree).text(v.penal_consequences);
-                        // $('.view-data a', clonethree).html("View");
-                        if (v.assignee_name!=null) {
+
+                        // $('.view-data', clonethree).html("View");
+                        if (v.assignee_name!=null){
                             $('.view-data a', clonethree).on('click', function() {
                                 displayPopup(
                                     v.start_date, v.due_date, v.assignee_name, v.assigned_on, v.concurrer_name,
@@ -676,7 +673,8 @@ RiskReport.prototype.showReportValues = function() {
                             });
                         }
                         else{
-                            if (v.assignee_name!=null){
+
+                            if (v.assignee_name==null){
                                 $('.view-data a', clonethree).on('click', function() {
                                     displayPopup(
                                         v.start_date, v.due_date, v.assignee_name, v.assigned_on, v.concurrer_name,
