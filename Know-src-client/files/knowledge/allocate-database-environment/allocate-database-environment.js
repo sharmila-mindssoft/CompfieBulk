@@ -147,7 +147,7 @@ btn_submit.click(function(){
     		parseInt($('#database_server_id').val()), parseInt($('#le_database_server_id').val()),
     		parseInt($('#le_file_server_id').val()), client_ids, legal_entity_ids, f_legal_entity_ids, le_legal_entity_ids,
     		parseInt(old_grp_app_id), parseInt(old_grp_db_s_id), parseInt(old_le_db_s_id), parseInt(old_le_f_s_id),
-    		new_grp_cl_ids.toString(), new_grp_le_ids.toString(), new_le_le_ids.toString(), new_f_le_ids.toString(), function (error, response) {
+    		new_grp_cl_ids, new_grp_le_ids, new_le_le_ids, new_f_le_ids, function (error, response) {
             if (error == null) {
             	hideLoader();
         		displaySuccessMessage(message.allocated_db_env);
