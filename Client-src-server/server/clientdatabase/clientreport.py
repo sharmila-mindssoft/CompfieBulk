@@ -1951,8 +1951,8 @@ def process_user_wise_report(db, request):
 
 def get_divisions_for_unit_list(db, business_group_id, legal_entity_id):
     query = "select division_id, division_name from tbl_divisions " + \
-        "where legal_entity_id = %s and business_group_id = %s"
-    result = db.select_all(query, [legal_entity_id, business_group_id])
+        "where legal_entity_id = %s"
+    result = db.select_all(query, [legal_entity_id])
     divisions_list = []
     for row in result:
         divisions_list.append(clientreport.Divisions(
@@ -1969,8 +1969,8 @@ def get_divisions_for_unit_list(db, business_group_id, legal_entity_id):
 
 def get_categories_for_unit_list(db, business_group_id, legal_entity_id):
     query = "select division_id, category_id, category_name from tbl_categories " + \
-        "where legal_entity_id = %s and business_group_id = %s"
-    result = db.select_all(query, [legal_entity_id, business_group_id])
+        "where legal_entity_id = %s"
+    result = db.select_all(query, [legal_entity_id])
     category_list = []
     for row in result:
         category_list.append(clientreport.Category(
@@ -1987,17 +1987,17 @@ def get_categories_for_unit_list(db, business_group_id, legal_entity_id):
 
 def get_units_list(db, country_id, business_group_id, legal_entity_id):
     query = "select unit_id, unit_code, unit_name, division_id, category_id from " + \
-        "tbl_units where business_group_id = %s and legal_entity_id =%s and country_id = %s"
+        "tbl_units where legal_entity_id =%s and country_id = %s"
     result = db.select_all(
-        query, [business_group_id, legal_entity_id, country_id])
+        query, [legal_entity_id, country_id])
 
     query = "select t1.unit_id, t2.domain_id, t2.organisation_id " + \
         "from tbl_units as t1 inner join tbl_units_organizations as t2 on " + \
-        "t2.unit_id = t1.unit_id where t1.business_group_id = %s and t1.legal_entity_id = %s and " + \
+        "t2.unit_id = t1.unit_id where t1.legal_entity_id = %s and " + \
         "t1.country_id = %s group by t1.unit_id, t2.domain_id, t2.organisation_id order by " + \
         "t1.unit_id;"
     result_1 = db.select_all(
-        query, [business_group_id, legal_entity_id, country_id])
+        query, [legal_entity_id, country_id])
 
     unit_list = []
     for row in result:
@@ -2219,6 +2219,8 @@ def process_unit_list_report(db, request):
         address = row["address"]
         postal_code = row["postal_code"]
         division_name = row["division_name"]
+        if division_name is None:
+            division_name = "---"
         print row["is_closed"]
         if row["is_closed"] == 0:
             unit_status = "Active"
@@ -2685,7 +2687,8 @@ def process_risk_report(db, request):
             "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size, " + \
             "t1.completion_date, t1.due_date, t1.current_status, t5.compliance_opted_status, t1.start_date, " + \
             "t1.due_date, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-            "t1.concurred_by) as concurrer_name, (select concat(employee_code,'-',employee_name) from tbl_users " + \
+            "t1.concurred_by) as concurrer_name, (select (case when employee_code is not null then " + \
+            "concat(employee_code,'-',employee_name) else employee_name end) from tbl_users " + \
             "where user_id = t1.approved_by) as approver_name, t1.remarks, t1.documents, t1.completed_on as " + \
             "assigned_on, t1.concurred_on, t1.approved_on "
 
@@ -3013,7 +3016,8 @@ def process_risk_report(db, request):
             "(select logo_size from tbl_legal_entities where legal_entity_id = t1.legal_entity_id) as logo_size, " + \
             "t1.completion_date, t1.due_date, t1.approve_status, t5.compliance_opted_status, t1.start_date, " + \
             "t1.due_date, (select concat(employee_code,'-',employee_name) from tbl_users where user_id = " + \
-            "t1.concurred_by) as concurrer_name, (select concat(employee_code,'-',employee_name) from tbl_users " + \
+            "t1.concurred_by) as concurrer_name, (select (case when employee_code is not null then " + \
+            "concat(employee_code,'-',employee_name) else employee_name end) from tbl_users " + \
             "where user_id = t1.approved_by) as approver_name, t1.remarks, t1.documents, t1.completed_on as " + \
             "assigned_on, t1.concurred_on, t1.approved_on "
 
