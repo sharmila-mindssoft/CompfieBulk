@@ -63,7 +63,7 @@ def return_database_servers(data):
     result = []
     for datum in data:
         no_of_clients = 0
-        if datum["legal_entity_ids"] is not None:
+        if datum["legal_entity_ids"] is not None and datum["legal_entity_ids"] != "" :
             if datum["legal_entity_ids"].find(",") >= 0:
                 no_of_clients = len(datum["legal_entity_ids"].split(","))
             else:
@@ -175,7 +175,7 @@ def return_client_servers(data):
     result = []
     for datum in data:
         no_of_clients = []
-        if datum["client_ids"] is not None:
+        if datum["client_ids"] is not None and datum["client_ids"] != "":
             no_of_clients = datum["client_ids"].split(",")
         result.append(
             fn(
@@ -521,6 +521,10 @@ def save_allocated_db_env(db, request, session_user):
     file_server_id = request.file_server_id
     client_ids = request.console_cl_ids
     legal_entity_ids = request.console_le_ids
+    f_legal_entity_ids = request.console_f_le_ids
+    le_legal_entity_ids = request.console_le_le_ids
+    print "new"
+    print request.new_le_le_ids
     #
     #  To save allocated database environment
     #  Parameters : client id, legal entity id, database ip, client server id
@@ -546,7 +550,7 @@ def save_allocated_db_env(db, request, session_user):
             (client_db_id, client_id, legal_entity_id, machine_id, db_server_id, le_db_server_id, file_server_id,
                 client_ids, legal_entity_ids, request.old_grp_app_id, request.old_grp_db_s_id, request.old_le_db_s_id,
                 request.old_le_f_s_id, request.new_cl_ids, request.new_grp_le_ids, request.new_le_le_ids,
-                request.new_le_f_s_ids, session_user, get_date_time())
+                request.new_le_f_s_ids, session_user, get_date_time(), f_legal_entity_ids, le_legal_entity_ids)
         )
     #
     #  To get legal entity name by it's id to save activity
@@ -782,7 +786,7 @@ def return_file_servers(data):
     file_server_list = []
     for datum in data:
         no_of_clients = 0
-        if(datum["legal_entity_ids"] is not None):
+        if(datum["legal_entity_ids"] is not None and datum["legal_entity_ids"] != ""):
             no_of_clients = len(datum["legal_entity_ids"].split(","))
 
         file_server_list.append(consoleadmin.FileServerList(
