@@ -148,7 +148,7 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_get_reassign_compliance_for_units(
             db, request, session_user
         )
-
+    
     return result
 
 def process_get_statutory_settings(db, request, session_user):

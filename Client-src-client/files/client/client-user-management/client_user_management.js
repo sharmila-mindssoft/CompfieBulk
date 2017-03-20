@@ -1463,8 +1463,10 @@ PageControls = function() {
             displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
-        if (businessGroupId.val() != '') { condition_fields.push("bg_id");
-            condition_values.push(businessGroupId.val()); }
+        if (businessGroupId.val() != '') {
+            condition_fields.push("bg_id");
+            condition_values.push(businessGroupId.val());
+        }
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(val);
         }, condition_fields, condition_values);
