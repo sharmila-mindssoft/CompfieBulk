@@ -279,7 +279,7 @@ function loadUpcomingCompliancesDetails(data) {
         $('.uc-duedate', cloneval).html(data[k]['due_date']);
         if (data[k]['upcoming_format_file_name'] != null) {
             // $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);
-            client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key]['domain_id'], data[key]['unit_id'], data[key]['start_date'], data[key].format_file_name);
+            client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[k]['domain_id'], data[k]['unit_id'], data[k]['start_date'], data[k].format_file_name);
         } else {
             $('.format-file', cloneval).hide();
         }
@@ -303,7 +303,6 @@ function loadUpcomingCompliancesDetails(data) {
 function remove_uploaded_temp_file(a) {
     $(".uploaded" + a).remove();
     uploaded_file_list.splice(parseInt(a), 1)
-
 }
 // $(".expand_inprogress ").click(function() {
 //     $('.expand_inprogress').removeClass('info');
@@ -810,13 +809,40 @@ function loadEntityDetails() {
     }
 }
 
+function showCalendarTab() {
+    $(".calendar-tab").addClass("active in");
+    $(".current-tab").removeClass("active in");
+    $(".upcoming-tab").removeClass("active in");
+
+    $(".calendar-tab-content").show()
+    $(".upcoming-tab-content").hide()
+    $(".current-tab-content").hide();
+}
+
+function showCurrentTab() {
+    $(".current-tab").addClass("active in");
+    $(".upcoming-tab").removeClass("active in");
+    $(".calendar-tab").removeClass("active in");
+
+    $(".current-tab-content").show();
+    $(".upcoming-tab-content").hide()
+    $(".calendar-tab-content").hide()
+}
+
+function showUpcomingTab() {
+    $(".upcoming-tab").addClass("active in");
+    $(".current-tab").removeClass("active in");
+    $(".calendar-tab").removeClass("active in");
+
+    $(".upcoming-tab-content").show()
+    $(".current-tab-content").hide();
+    $(".calendar-tab-content").hide()
+}
+
 $(function() {
     loadEntityDetails();
 });
 
-// $(document).find(".js-filtertable").each(function() {
-//     $(this).filtertable().addFilter(".js-filter")
-// });
 $('.js-filtertable').each(function() {
     $(this).filtertable().addFilter('.js-filter');
 });
@@ -824,23 +850,19 @@ $('.js-filtertable').each(function() {
 $(document).find(".js-filtertable-upcoming").each(function() {
     $(this).filtertable().addFilter(".js-filter-upcoming")
 });
-// $(document).tooltip({
-//     position: {
-//         my: "center bottom-20",
-//         at: "center top",
-//         using: function(a, b) {
-//             $(this).css(a);
-//             $("<div>").addClass("arrow").addClass(b.vertical).addClass(b.horizontal).appendTo(this)
-//         }
-//     }
-// });
+
 $(document).ready(function() {
-    $(".current-tab").click(function() {
-        $(".current-tab").addClass("active");
-        $(".upcoming-tab").removeClass("active");
-        $(".main-tab-content").show();
-        $(".upcoming-tab-content").hide()
+    $(".calendar-tab").click(function() {
+        showCalendarTab();
     });
+
+    $(".current-tab").click(function() {
+        showCurrentTab();
+    });
+    // $(".upcoming-tab").click(function() {
+    //     showUpcomingTab();
+    // });
+
     // $(".upcoming-tab").click(function() {
     //     $(".upcoming-tab").addClass("active");
     //     $(".current-tab").removeClass("active");

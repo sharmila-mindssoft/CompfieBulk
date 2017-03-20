@@ -214,7 +214,6 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -2877,7 +2876,7 @@ function initClientMirror() {
         getUserCountry: getUserCountry,
         getUserBusinessGroup: getUserBusinessGroup,
         getUserLegalEntity: getUserLegalEntity,
-        getUserCategoryID:getUserCategoryID,
+        getUserCategoryID: getUserCategoryID,
         getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
