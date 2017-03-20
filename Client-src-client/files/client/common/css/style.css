@@ -1329,3 +1329,6 @@ h2.chart-title: hover {
     top:30px;border:0;
     left:-12px
 }
+.resetpwd-page .cardbox{
+    max-width: 600px !important;
+}
