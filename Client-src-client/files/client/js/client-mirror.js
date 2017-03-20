@@ -2876,7 +2876,7 @@ function initClientMirror() {
         getUserCountry: getUserCountry,
         getUserBusinessGroup: getUserBusinessGroup,
         getUserLegalEntity: getUserLegalEntity,
-        getUserCategoryID:getUserCategoryID,
+        getUserCategoryID: getUserCategoryID,
         getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,

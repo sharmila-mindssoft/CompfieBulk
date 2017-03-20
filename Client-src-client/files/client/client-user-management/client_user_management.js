@@ -101,7 +101,6 @@ userManagementPage = function() {
         this._userCategory = [];
         this._userGroup = [];
     }
-    // ===================================================================================
     // Load User List
 userManagementPage.prototype.showList = function() {
     addScreen.hide();
@@ -122,7 +121,6 @@ userManagementPage.prototype.fetchUserManagement = function() {
         }
     });
 
-    // ===================================================================================
     // Add Button Click
     userManagementPage.prototype.showAddScreen = function() {
         t_this = this;
@@ -1373,10 +1371,16 @@ PageControls = function() {
         loadDomain();
     });
 
-    // $('#ddlLegalEntity optgroup').on('click', '.multiselect-group', function(event) {
-    //     alert('ji');
-    // });
-
+    ddlLegalEntity.multiselect({
+        buttonWidth: '100%',
+        enableClickableOptGroups: true,
+        onChange: function(option, checked) {
+            loadDivision();
+            loadCategory();
+            loadDomain();
+        }
+    });
+     
     //Next Button Click Event
     btnNext.click(function() {
         CURRENT_TAB += 1;
