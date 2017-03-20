@@ -1273,7 +1273,7 @@ h2.chart-title: hover {
     z-index: 100 !important;
 }
 
-.accordian-past-records{
+.accordian-past-records {
     margin-top: 15px;
 }
 
@@ -1300,4 +1300,8 @@ h2.chart-title: hover {
 
 .btn-group ul li {
     cursor: pointer;
+}
+
+.bg-grey {
+    background-color: #eeeeee;
 }

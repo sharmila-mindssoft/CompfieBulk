@@ -17,9 +17,10 @@
                         <h4 class="page-title">User Management</h4>
                     </div>
                 </div>
-                <div class="row">
+
+                <div class="row" >
                     <div class="col-sm-12">
-                        <div class="portlet p-b-20">
+                        <div class="portlet p-b-20 default-display-none" id="user_filter">
                             <div id="bg-primary1" class="panel-collapse collapse in">
                                 <div class="portlet-body">
                                     <div class="col-lg-12">
@@ -29,8 +30,12 @@
                                                     <div class="form-group has-feedback">
                                                         <label class="col-md-4 control-label">Country</label>
                                                         <div class="col-md-7">
-                                                            <input type="text" class="form-control input-sm" value="" placeholder="Enter Country Name">
+                                                            <input type="text" class="form-control input-sm" id="country" placeholder="Enter Country" tabindex="1">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                            <input type="hidden" id="country-id" value="">
+                                                            <div id="ac-country" class="ac-textbox default-display-none">
+                                                                <ul class="hidemenu"></ul>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -39,8 +44,12 @@
                                                     <div class="form-group has-feedback">
                                                         <label class="col-md-4 control-label">Business Group</label>
                                                         <div class="col-md-7">
-                                                            <input type="text" class="form-control input-sm" value="" placeholder="Enter Business Group">
+                                                            <input type="text" class="form-control input-sm" id="business-group" placeholder="Enter Business Group" tabindex="2">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                            <input type="hidden" id="business-group-id" value="">
+                                                            <div id="ac-business-group" class="ac-textbox default-display-none">
+                                                                <ul class="hidemenu"></ul>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -49,8 +58,12 @@
                                                     <div class="form-group has-feedback">
                                                         <label class="col-md-4 control-label">Legal Entity</label>
                                                         <div class="col-md-7">
-                                                            <input type="text" class="form-control input-sm" value="" placeholder="Enter Legal Entity">
+                                                            <input type="text" class="form-control input-sm" id="legal-entity" placeholder="Enter Legal Entity" tabindex="2">
                                                             <i class="fa-1-2x form-control-feedback fa fa-search"></i>
+                                                            <input type="hidden" id="legal-entity-id" value="">
+                                                            <div id="ac-legal-entity" class="ac-textbox default-display-none">
+                                                                <ul class="hidemenu"></ul>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -65,6 +78,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="clear"></div>
                         </div>
                         <div id="listContainer"></div>
@@ -72,7 +86,9 @@
                     </div>
                     <div class="clear"></div><br><br>
                 </div>
+
             </div>
+
             <!-- user management list ends -->
             <!-- user management add starts -->
             <div id="add-screen" class="default-display-none">
@@ -484,9 +500,9 @@
                 <i class="fa fa-pencil text-primary c-pointer" data-toggle="tooltip"></i>
             </td>
             <td class="icon-3x text-center status">
-                <i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip" data-placement="top " title=" " data-original-title="Click here to Deactivate"></i></td>
+                <i class="fa fa-check text-success c-pointer" id="success-alert" data-toggle="tooltip"></i></td>
             <td class="icon-3x text-center blocked">
-                <i class="fa fa-ban text-muted c-pointer " data-toggle="tooltip " title="Click here to Disable"></i>
+                <i class="fa fa-ban text-muted c-pointer" data-toggle="tooltip" ></i>
             </td>
         </tr>
     </table>

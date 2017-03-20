@@ -110,6 +110,11 @@ function initClientMirror() {
         return info.entity_info;
     }
 
+    function getUserCategoryID() {
+        var info = getUserInfo();
+        return info.usr_cat_id;
+    }
+
     function getUserProfile() {
         var info = getUserInfo();
         var userDetails = {
@@ -136,7 +141,7 @@ function initClientMirror() {
         if (info != null) {
             return info.menu;
         } else {
-            window.location.href = login_url;
+            window.location.href = "/login";
         }
     }
 
@@ -461,10 +466,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getChartFilters(callback) {
+    function getChartFilters(le_ids, callback) {
         var request = [
-            'GetChartFilters',
-            {}
+            'GetChartFilters', {
+                'le_ids': le_ids
+            }
         ];
         var callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
@@ -810,7 +816,7 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
-                callback(rdata, errorThrown); 
+                callback(rdata, errorThrown);
             }
         });
     }
@@ -2868,6 +2874,7 @@ function initClientMirror() {
         getUserCountry: getUserCountry,
         getUserBusinessGroup: getUserBusinessGroup,
         getUserLegalEntity: getUserLegalEntity,
+        getUserCategoryID:getUserCategoryID,
         getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,

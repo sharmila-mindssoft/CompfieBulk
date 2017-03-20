@@ -1265,7 +1265,7 @@ CREATE PROCEDURE `sp_client_users_count`(
 BEGIN
     SELECT count(user_id)+1 as count FROM tbl_client_users
     WHERE client_id = group_id and
-    legal_entity_ids = entity_id;
+    find_in_set(entity_id, legal_entity_ids);
 END //
 
 DELIMITER ;
