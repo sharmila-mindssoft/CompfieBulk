@@ -7,7 +7,9 @@ __all__ = [
     "merge_escalation_chart_widget",
     "merge_user_scorecard",
     "merge_domain_scorecard",
-    "merge_risk_chart_widget"
+    "merge_risk_chart_widget",
+    "merge_calendar_view"
+
 ]
 
 def process_client_widget_requests(request, db, session_user, session_category):
@@ -144,7 +146,7 @@ def merge_domain_scorecard(data, new_data):
 def merge_calendar_view(data, new_data):
     new_xaxis = new_data.xaxis
     old_xaxis = data.xaxis
-    for idx in val in enumerate(new_xaxis) :
+    for idx, val in enumerate(new_xaxis) :
         if val in old_xaxis :
             old = old_xaxis.index(val)
             old_data = data.chart_data[0]["data"][old]
