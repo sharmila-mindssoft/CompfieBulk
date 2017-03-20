@@ -100,6 +100,22 @@ function loadSettingDetails() {
 		$('.le-name').text(_settings_info[0].legal_entity_name);
 		$('.contract-from').text(_settings_info[0].contract_from);
 		$('.contract-to').text(_settings_info[0].contract_to);
+		var totaldiskspace = _settings_info[0].file_space_limit;
+		var useddiskspace =  _settings_info[0].used_file_space;
+		var free_space = (totaldiskspace - useddiskspace).toFixed(2);
+		var calculate = (useddiskspace / totaldiskspace * 100).toFixed(2);
+		var balance = 100 - calculate;
+		if (calculate != '0.00') {
+			$('.usedspace').css('width', calculate + '%');
+			$('.totalspace').css('width', balance + '%');
+			$('.totalspace').html(balance + '%');
+			$('.usedspace').html(calculate + '%');
+		} else {
+			$('.usedspace').hide();
+			$('.totalspace').css('width', balance + '%');
+			$('.totalspace').html(balance + '%');
+		}
+
 		u_l = parseInt(_settings_info[0].used_licence);
 		r_l = parseInt(_settings_info[0].total_licence) - parseInt(_settings_info[0].used_licence);
 		$('.licence-details').text("Total Licence(s): "+_settings_info[0].total_licence+" - Used: "+ u_l+" | Remaining: "+r_l);
@@ -204,7 +220,7 @@ btnSubmit.click(function() {
 		client_mirror.saveSettingsFormDetails(le_id, le_name, app_opt, a_r, c_a_r, a_a_c_r, sp_r, function(error, response) {
         console.log(error, response)
         if (error == null) {
-        	displayMessage(message.action_selection_success);
+        	displaySuccessMessage(message.action_selection_success);
         } else {
             displayMessage(error);
         }
@@ -213,13 +229,19 @@ btnSubmit.click(function() {
 });
 
 function validateMandatory(){
-	if ($("#assignee_reminder").val() == ""){
+	alert(parseInt($("#assignee_reminder").val().trim()))
+	if(LegalEntityId.val() == "" || LegalEntityName.val() == ""){
+		displayMessage(message.legalentity_required);
+		LegalEntityName.focus();
+		return false;
+	}
+	else if ($("#assignee_reminder").val() == ""){
 		displayMessage(message.reminder_assignee_required);
 		$("#assignee_reminder").focus();
 		return false;
 	}
-	else if(parseInt($("#assignee_reminder").val().trim()) > 99 && parseInt($("#assignee_reminder").val().trim()) <= 0){
-		displayMessage(message.invalid_duration);
+	else if(parseInt($("#assignee_reminder").val().trim()) > 99 || parseInt($("#assignee_reminder").val().trim()) <= 0){
+		displayMessage(message.invalid_duration+" for AssigneeReminder");
 		$("#assignee_reminder").focus();
 		return false;
 	}
@@ -228,8 +250,8 @@ function validateMandatory(){
 		$("#conc_app_reminder").focus();
 		return false;
 	}
-	else if(parseInt($("#conc_app_reminder").val().trim()) > 99 && parseInt($("#conc_app_reminder").val().trim()) <= 0){
-		displayMessage(message.invalid_duration);
+	else if(parseInt($("#conc_app_reminder").val().trim()) > 99 || parseInt($("#conc_app_reminder").val().trim()) <= 0){
+		displayMessage(message.invalid_duration+" for concurrence & approval person");
 		$("#conc_app_reminder").focus();
 		return false;
 	}
@@ -238,8 +260,8 @@ function validateMandatory(){
 		$("#ass_app_conc_days").focus();
 		return false;
 	}
-	else if(parseInt($("#ass_app_conc_days").val().trim()) > 99 && parseInt($("#ass_app_conc_days").val().trim()) <= 0){
-		displayMessage(message.invalid_duration);
+	else if(parseInt($("#ass_app_conc_days").val().trim()) > 99 || parseInt($("#ass_app_conc_days").val().trim()) <= 0){
+		displayMessage(message.invalid_duration+" for assignee, concurrence & approval person");
 		$("#ass_app_conc_days").focus();
 		return false;
 	}
@@ -248,8 +270,8 @@ function validateMandatory(){
 		$("#sp_compl_reminder").focus();
 		return false;
 	}
-	else if(parseInt($("#sp_compl_reminder").val().trim()) > 99 && parseInt($("#sp_compl_reminder").val().trim()) <= 0){
-		displayMessage(message.invalid_duration);
+	else if(parseInt($("#sp_compl_reminder").val().trim()) > 99 || parseInt($("#sp_compl_reminder").val().trim()) <= 0){
+		displayMessage(message.invalid_duration+" for service provider's reminder");
 		$("#sp_compl_reminder").focus();
 		return false;
 	}
