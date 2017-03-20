@@ -544,7 +544,7 @@ BEGIN
         AND user_category_id like _category_id;
     end if;
 
-    if _category_id > 2 then
+    if _category_id >= 2 then
         SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on
     FROM tbl_activity_log as t1 -- , tbl_users as t2, tbl_user_countries as t3
     WHERE
@@ -6039,10 +6039,10 @@ in _user_id int(11))
 BEGIN
     select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
         no_of_legal_entities, t3.group_admin_username as ug_name,
-        (select email_id from tbl_client_groups where client_id = t3.client_id) as email_id,
-        (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
+        (select distinct email_id from tbl_client_groups where client_id = t3.client_id) as email_id,
+        (select distinct user_id from tbl_client_users where client_id = t3.client_id and user_category_id = 1) as user_id,
         (select concat(employee_name,'-',(case when employee_code is null then
-            '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name,
+            '' else employee_code end)) from tbl_client_users where client_id = t3.client_id and user_category_id = 1) as emp_code_name,
         (select date_format(registration_sent_on, '%d-%b-%y') from tbl_group_admin_email_notification where
         client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date
@@ -6090,8 +6090,8 @@ SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id =
             t2.client_id and legal_entity_id = t2.legal_entity_id and statu_sent_on is not null
             and assign_statutory_informed=1)
         as statutory_assigned_informed,
-        (select email_id from tbl_client_groups where client_id = t1.client_id) as email_id,
-        (select user_id from tbl_client_users where client_id = t1.client_id) as user_id,
+        (select email_id from tbl_client_groups where client_id = t1.client_id and user_category_id = 1) as email_id,
+        (select user_id from tbl_client_users where client_id = t1.client_id and user_category_id = 1) as user_id,
         'Group Admin' as emp_code_name,
         (select count(*) from tbl_client_statutories where client_id = t1.client_id and
             unit_id in (select unit_id from tbl_units where client_id = t1.client_id and
@@ -6843,6 +6843,19 @@ BEGIN
     FROM tbl_activity_log as t1;
 
     SELECT user_id, user_category_id, form_id, action, created_on FROM tbl_activity_log;
+
+    SELECT distinct(t1.user_id), t1.user_category_id,
+    (Select user_category_name from tbl_client_user_category where
+        user_category_id = t1.user_category_id) as user_category_name,
+    (select employee_name from tbl_client_users where user_id = t1.user_id) as employee_name,
+    (select employee_code from tbl_client_users where user_id = t1.user_id) as employee_code,
+    (select is_active from tbl_client_users where user_id = t1.user_id) as is_active,
+    t1.client_id, t1.legal_entity_id, t1.unit_id FROM tbl_client_activity_log as t1;
+
+    SELECT form_id, form_name FROM tbl_client_forms;
+
+    SELECT client_id, legal_entity_id, unit_id, user_id, user_category_id,
+    form_id, action, created_on FROM tbl_client_activity_log;
 END//
 
 DELIMITER ;
@@ -8848,7 +8861,7 @@ BEGIN
         ORDER BY t1.created_on DESC;
     end if;
 
-    if _category_id > 2 then
+    if _category_id >= 2 then
         SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on,
         (select concat(employee_name,'-',employee_code) from tbl_users where
         user_id = t1.user_id) as employee_name,
@@ -9163,6 +9176,126 @@ BEGIN
         order by t2.legal_entity_name;
     end if;
 
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_get_client_audit_trails`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_get_client_audit_trails`(
+    IN _from_date varchar(10), IN _to_date varchar(10),
+    IN _user_id varchar(10), IN _form_id varchar(10),
+    IN _category_id int(11), IN _cl_id int(11),
+    IN _le_id int(11), IN _unit_id varchar(10),
+    IN _from_limit INT, IN _to_limit INT
+)
+BEGIN
+    SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on
+    FROM tbl_client_activity_log as t1 -- , tbl_users as t2, tbl_user_countries as t3
+    WHERE
+        date(t1.created_on) >= _from_date
+        AND date(t1.created_on) <= _to_date
+        AND COALESCE(t1.form_id,'') LIKE _form_id
+        AND t1.user_id LIKE _user_id
+        AND t1.user_category_id like _category_id
+        AND t1.client_id = _cl_id
+        AND t1.legal_entity_id = _le_id
+        AND coalesce(t1.unit_id, '') like _unit_id
+        -- AND t3.user_id = t2.user_id
+        -- AND t2.user_id LIKE _user_id
+        -- AND t2.user_category_id LIKE _category_id
+        -- ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        ORDER BY t1.created_on DESC
+        limit _from_limit, _to_limit;
+
+        SELECT count(0) as total FROM tbl_client_activity_log
+        WHERE
+        date(created_on) >= _from_date
+        AND date(created_on) <= _to_date
+        AND user_id LIKE _user_id AND coalesce(form_id,'') LIKE _form_id
+        AND user_category_id like _category_id AND client_id = _cl_id
+        AND legal_entity_id = _le_id
+        AND coalesce(unit_id, '') like _unit_id;
+END //
+
+DELIMITER ;
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_audit_trail_client_user_filters`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_audit_trail_client_user_filters`()
+BEGIN
+    select client_id, group_name, is_active from tbl_client_groups;
+
+    select client_id, business_group_id, business_group_name from
+    tbl_business_groups;
+
+    select client_id, business_group_id, legal_entity_id,
+    legal_entity_name, country_id from tbl_legal_entities;
+
+    select client_id, business_group_id, legal_entity_id, division_id,
+    division_name from tbl_divisions;
+
+    select client_id, business_group_id, legal_entity_id, division_id,
+    category_id, category_name from tbl_categories;
+
+    select client_id, business_group_id, legal_entity_id, division_id,
+    category_id, unit_id, concat(unit_code,'-',unit_name) as unit_name
+    from tbl_units;
+END //
+
+DELIMITER ;
+
+
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DROP PROCEDURE IF EXISTS `sp_export_client_audit_trails`;
+
+DELIMITER //
+
+CREATE PROCEDURE `sp_export_client_audit_trails`(
+    IN _from_date varchar(10), IN _to_date varchar(10),
+    IN _user_id varchar(10), IN _form_id varchar(10),
+    IN _category_id int(11), IN _cl_id int(11),
+    IN _le_id int(11), IN _unit_id varchar(10)
+)
+BEGIN
+    SELECT t1.user_id, t1.user_category_id, t1.form_id, t1.action, t1.created_on,
+    (select concat(employee_name,'-',employee_code) from tbl_client_users where
+    user_id = t1.user_id) as employee_name,
+    (Select user_category_name from tbl_client_user_category where
+    user_category_id = t1.user_category_id) as user_category_name,
+    (select form_name from tbl_client_forms where form_id = t1.form_id) as
+    form_name
+    FROM tbl_client_activity_log as t1 -- , tbl_users as t2, tbl_user_countries as t3
+    WHERE
+        date(t1.created_on) >= _from_date
+        AND date(t1.created_on) <= _to_date
+        AND COALESCE(t1.form_id,'') LIKE _form_id
+        AND t1.user_id LIKE _user_id
+        AND t1.user_category_id like _category_id
+        AND t1.client_id = _cl_id
+        AND t1.legal_entity_id = _le_id
+        AND coalesce(t1.unit_id, '') like _unit_id
+        -- AND t3.user_id = t2.user_id
+        -- AND t2.user_id LIKE _user_id
+        -- AND t2.user_category_id LIKE _category_id
+        -- ORDER BY t1.user_id ASC, DATE(t1.created_on) DESC
+        ORDER BY t1.created_on DESC;
 END //
 
 DELIMITER ;
