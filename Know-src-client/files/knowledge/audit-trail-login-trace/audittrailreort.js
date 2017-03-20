@@ -572,7 +572,7 @@ initializeControlEvents = function(a_page){
 
     Category.change(function(e) {
         a_page.resetFields();
-        if(parseInt(Category.val()) > 2){
+        if(parseInt(Category.val()) >= 2){
             $('.user-list').show();
             User.val('');
         }else{
