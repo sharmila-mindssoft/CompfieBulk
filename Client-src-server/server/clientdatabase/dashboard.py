@@ -2131,7 +2131,7 @@ def get_assigneewise_compliances_drilldown_data_count(
 ):
     domain_id_list = []
     if domain_id is None:
-        domain_id_list = get_user_domains(db, session_user, session_category)
+        domain_id_list = get_user_domains(db, session_user)
     else:
         domain_id_list = [domain_id]
 
@@ -2142,8 +2142,6 @@ def get_assigneewise_compliances_drilldown_data_count(
     result = get_country_domain_timelines(
         db, [country_id], [domain_id], [current_year]
     )
-    if len(result[0][1]) == 0 :
-        return 0
     from_date = datetime.datetime(current_year, 1, 1)
     to_date = datetime.datetime(current_year, 12, 31)
     domain_condition = ",".join(str(x) for x in domain_id_list)
@@ -2273,6 +2271,7 @@ def fetch_assigneewise_compliances_drilldown_data(
         int(start_count), to_count
     ]
     query = query + where_condition
+    print query % tuple(where_condition_val)
     rows = db.select_all(query, where_condition_val)
     return rows
 

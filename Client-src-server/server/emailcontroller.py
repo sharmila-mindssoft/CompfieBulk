@@ -430,6 +430,25 @@ class EmailHandler(Email):
             print e
             print "Email Failed for notify to assignee %s ", message
 
+    def notify_occurrence_to_assignee(
+        self, assignee, days_left, compliance_name, unit_name,
+        receiver
+    ):
+        subject = "Compliance Task Reminder"
+        message = '''
+            Dear %s, \
+            Only %s left to complete %s task for unit %s
+        ''' % (
+            assignee, days_left, compliance_name, unit_name
+        )
+        try:
+            print
+            self.send_email(receiver, subject, message, cc=None)
+            pass
+        except Exception, e:
+            print e
+            print "Email Failed for notify to assignee %s ", message
+
     def notify_before_due_date(
         self, assignee, days_left, compliance_name, unit_name,
         receiver, cc_person
