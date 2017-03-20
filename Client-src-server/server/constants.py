@@ -16,7 +16,7 @@ CLIENT_DOCS_BASE_PATH = os.path.join(ROOT_PATH, "clientdocuments")
 KNOWLEDGE_FORMAT_DOWNLOAD_URL = "compliance_format"
 LOGO_URL = "knowledge/clientlogo"
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
-FORMAT_DOWNLOAD_URL = "/client/compliance_format"
+FORMAT_DOWNLOAD_URL = "compliance_format"
 
 #
 # Log flag
@@ -32,7 +32,7 @@ LOCAL_TIMEZONE = pytz.timezone("Asia/Kolkata")
 
 IS_DEVELOPMENT = True
 VERSION = 1
-SEND_EMAIL = False
+SEND_EMAIL = True
 RECORD_DISPLAY_COUNT = 100
 CAPTCHA_LENGTH = 6
 NO_OF_FAILURE_ATTEMPTS = 3

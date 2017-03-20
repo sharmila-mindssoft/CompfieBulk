@@ -1,9 +1,10 @@
 # from flaskext.mysql import MySQL
 import mysql.connector
 import logger
-from server.common import (convert_to_dict, get_date_time, encrypt)
+import threading
+from server.common import (convert_to_dict, get_date_time, get_current_date, encrypt, datetime_to_string_time)
 from server.exceptionmessage import fetch_error, process_procedure_error
-
+from server.emailcontroller import EmailHandler
 
 class BaseDatabase(object):
     def __init__(
@@ -58,6 +59,7 @@ class Database(object):
         self._connection = mysqlConnection
         self._cursor = None
         self._for_client = False
+        self.owner_id = None
 
     # Used to get first three letters of month by the month's integer value
     string_months = {
@@ -109,6 +111,8 @@ class Database(object):
 
     @classmethod
     def make_connection(self, data):
+        if data is None :
+            raise ValueError(str("database connection information is empty"))
         return mysql.connector.connect(
             autocommit=False,
             user=data.db_username,
@@ -117,6 +121,9 @@ class Database(object):
             database=data.db_name,
             port=data.db_ip.port
         )
+
+    def set_owner_id(self, o_id):
+        self.owner_id = o_id
 
     ########################################################
     # To Redirect Requests to Functions
@@ -526,6 +533,8 @@ class Database(object):
         try:
             cursor = self.cursor()
             assert cursor is not None
+            print "query>>>", query
+            print "valueList>>", valueList
             cursor.executemany(query, valueList)
             cursor.nextset()
             return True
@@ -923,3 +932,124 @@ class Database(object):
             return False
         else:
             return True
+
+    def save_notification_users(self, notification_id, user_id):
+        if user_id is not "NULL" and user_id is not None  :
+            q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                " VALUES (%s, %s) "
+            v = (notification_id, user_id)
+            self.execute(q, v)
+
+    def save_in_notification(
+        self, country_id, domain_id, business_group_id, legal_entity_id, division_id,
+        unit_id, compliance_id, assignee, concurrence_person, approval_person,
+        notification_text, extra_details, notification_type_id, notify_to_all=True
+    ):
+        def save_notification_users(notification_id, user_id):
+            if user_id is not "NULL" and user_id is not None :
+                q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id) " + \
+                    " VALUES (%s, %s) "
+                v = (notification_id, user_id)
+                self.execute(q, v)
+
+        # notification_id = get_new_id(db, "tbl_notifications_log", "notification_id")
+        created_on = get_current_date()
+        column = [
+                "country_id", "domain_id",
+                "legal_entity_id", "unit_id", "compliance_id",
+                "assignee", "approval_person", "notification_type_id",
+                "notification_text", "extra_details", "created_on"
+            ]
+        values = [
+            country_id, domain_id,
+            legal_entity_id, unit_id, compliance_id,
+            assignee, approval_person, notification_type_id,
+            notification_text, extra_details, created_on
+        ]
+        if business_group_id is not None :
+            column.append("business_group_id")
+            values.append(business_group_id)
+        if division_id is not None :
+            column.append("division_id")
+            values.append(division_id)
+        if concurrence_person is not None :
+            column.append("concurrence_person")
+            values.append(concurrence_person)
+
+        notification_id = self.insert("tbl_notifications_log", column, values)
+        save_notification_users(notification_id, assignee)
+        if notify_to_all:
+            if approval_person is not None and assignee != approval_person :
+                save_notification_users(notification_id, approval_person)
+            if concurrence_person is not None or concurrence_person is not "NULL" :
+                save_notification_users(notification_id, concurrence_person)
+
+    def get_onoccurance_compliance_to_notify(self):
+        q = " select ch.compliance_history_id,ch.compliance_id,com.compliance_task, com.document_name, " + \
+            " ch.unit_id,ch.start_date,ch.due_date, " + \
+            "if (  " + \
+            " TIMESTAMPDIFF(HOUR, DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i'), due_date ) <= 24, " + \
+            "    concat(TIMESTAMPDIFF(HOUR, DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i'), due_date ), ' hours'), " + \
+            "    concat(TIMESTAMPDIFF(DAY, DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i'), due_date ), ' days') " + \
+            ")as hours_left, " + \
+            " usr.email_id, usr.employee_code, usr.employee_name, " + \
+            " u.country_id, com.domain_id, u.business_group_id, u.legal_entity_id, u.division_id, u.unit_code, u.unit_name,  " + \
+            " ch.completed_by, ch.concurred_by, ch.approved_by   " + \
+            " from tbl_compliance_history ch " + \
+            " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
+            " inner join tbl_users as usr on ch.completed_by = usr.user_id " + \
+            " inner join tbl_units as u on ch.unit_id = u.unit_id " + \
+            " where com.frequency_id = 5 and ch.current_status < 3 " + \
+            " and DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i')  " + \
+            " >= DATE_FORMAT(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:15'),'%Y-%m-%d %H:%i') " + \
+            " and DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i')  " + \
+            " <= DATE_FORMAT(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30'),'%Y-%m-%d %H:%i') "
+
+        email = EmailHandler()
+        rows = self.select_all(q)
+        for r in rows :
+            print rows
+            country_id = r["country_id"]
+            domain_id = r["domain_id"]
+            ch_id = r["compliance_history_id"]
+            comp_id = r["compliance_id"]
+            c_task = r["compliance_task"]
+            doc_name = r["document_name"]
+            cname = c_task
+            if doc_name is not None :
+                cname = "%s - %s" % (doc_name, c_task)
+            unit_id = r["unit_id"]
+            due_date = r["due_date"]
+            left = r["hours_left"]
+            email_id = r["email_id"]
+            emp_name = r["employee_name"]
+            emp_code = r["employee_code"]
+            if emp_code is not None :
+                name = "%s - %s" % (emp_code, emp_name)
+            else :
+                name = emp_name
+            assignee = r["completed_by"]
+            concurr = r["concurred_by"]
+            approver = r["approved_by"]
+            bg_id = r["business_group_id"]
+            div_id = r["division_id"]
+            le_id = r["legal_entity_id"]
+            unit_name = "%s - %s" % (r["unit_code"], r["unit_name"])
+
+            notification_text = "%s left to complete %s task on due date %s" % (left, cname, datetime_to_string_time(due_date))
+            extra_details = " %s - Reminder" % (ch_id)
+            self.save_in_notification(
+                country_id, domain_id, bg_id, le_id, div_id, unit_id, comp_id, assignee,
+                concurr, approver, notification_text, extra_details, 2
+
+            )
+            email.notify_occurrence_to_assignee
+
+            notify_occur_compliance = threading.Thread(
+                target=email.notify_occurrence_to_assignee,
+                args=[
+                    name, left, cname, unit_name,
+                    email_id
+                ]
+            )
+            notify_occur_compliance.start()

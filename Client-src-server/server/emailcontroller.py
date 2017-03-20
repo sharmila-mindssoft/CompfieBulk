@@ -50,7 +50,7 @@ class Email(object):
             print msg
             msg['From'] = self.sender
             print msg['From']
-            if type(cc) is list:
+            if type(receiver) is list:
                 msg['To'] = ",".join(receiver)
             else:
                 msg['To'] = receiver
@@ -128,7 +128,7 @@ class EmailHandler(Email):
         subject = "Confirm Your Registration"
         message = '''
             Dear %s, <br> \
-            <p>Use the following link to confirm your registraion </p>  <br>\
+            <p>Use the following link to confirm your registration </p>  <br>\
             <p>%s</p>  <br>\
             <p> Thanks & Regards, </p>  <br>\
             Compfie Support Team
@@ -141,7 +141,7 @@ class EmailHandler(Email):
         subject = "Confirm Your Registration"
         message = '''
             Dear Group Admin, <br> \
-            <p>Use the following link to confirm your registraion </p>  <br>\
+            <p>Use the following link to confirm your registration </p>  <br>\
             <p>%s</p>  <br>\
             <p> Thanks & Regards, </p>  <br>\
             Compfie Support Team
@@ -419,6 +419,25 @@ class EmailHandler(Email):
         message = '''
             Dear %s, \
             Only %s day(s) left to complete %s task for unit %s
+        ''' % (
+            assignee, days_left, compliance_name, unit_name
+        )
+        try:
+            print
+            self.send_email(receiver, subject, message, cc=None)
+            pass
+        except Exception, e:
+            print e
+            print "Email Failed for notify to assignee %s ", message
+
+    def notify_occurrence_to_assignee(
+        self, assignee, days_left, compliance_name, unit_name,
+        receiver
+    ):
+        subject = "Compliance Task Reminder"
+        message = '''
+            Dear %s, \
+            Only %s left to complete %s task for unit %s
         ''' % (
             assignee, days_left, compliance_name, unit_name
         )

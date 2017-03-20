@@ -164,6 +164,7 @@ def process_get_statutory_compliance(db, session_user, request):
     unit_id = request.unit_id
     domain_d = request.domain_id
     f_id = request.frequency_id
+    print '++++++'
     data, total = return_compliance_for_statutory_settings(
         db, unit_id, domain_d, f_id, from_count, to_count
     )
@@ -406,7 +407,7 @@ def process_approve_compliance(db, request, session_user):
 
     elif status == "Rectify Approval":
         reject_compliance_approval(
-            db, compliance_history_id, remarks,  next_due_date
+            db, compliance_history_id, remarks,  next_due_date, session_user
         )
 
     elif status == "Concur":
@@ -534,8 +535,8 @@ def process_save_review_settings_compliance(db, request, session_user):
 # Master filters
 ##################################################################
 
-def process_client_master_filters_request(request, db, session_user, session_category):
-    request = request.request
+def process_client_master_filters_request(pre_request, db, session_user, session_category):
+    request = pre_request.request
 
     if type(request) is clienttransactions.GetStatutorySettingsFilters:
         result = process_get_statu_settings_filters(db, session_user, session_category)
@@ -547,7 +548,7 @@ def process_client_master_filters_request(request, db, session_user, session_cat
         result = process_get_user_to_assign(db, request)
 
     elif type(request) is clienttransactions.GetChartFilters:
-        result = process_get_chart_filters(db, session_user, session_category)
+        result = process_get_chart_filters(db, request, session_user, session_category)
 
     elif type(request) is clienttransactions.GetAssigneewiseComplianesFilters :
         result = process_assigneewise_compliances_filters(db, session_user, session_category)
@@ -590,18 +591,22 @@ def process_get_user_to_assign(db, request):
     two_level = get_approve_level(db, le_id)
     return clienttransactions.GetUserToAssignComplianceSuccess(users, two_level)
 
-def process_get_chart_filters(db, session_user, session_category):
-    countries = get_user_based_countries(db, session_user, session_category)
+def process_get_chart_filters(db, request, session_user, session_category):
+    le_ids = request.legal_entity_ids
+    print request
+    print request.to_structure()
+    print le_ids
+    countries = get_user_based_countries(db, session_user, session_category, le_ids)
     business_groups = get_business_groups_for_user(db, None)
 
-    units = get_units_for_dashboard_filters(db, session_user)
+    units = get_units_for_assign_compliance(db, session_user, le_ids=le_ids)
     domain_info = get_country_wise_domain_month_range(db)
     group_name = get_group_name(db)
 
-    le_info = get_user_based_legal_entity(db, session_user, session_category)
-    div_info = get_user_based_division(db, session_user, session_category)
-    cat_info = get_user_based_category(db, session_user, session_category)
-    domains = get_domains_info(db, session_user, session_category)
+    le_info = get_user_based_legal_entity(db, session_user, session_category, le_ids)
+    div_info = get_user_based_division(db, session_user, session_category, le_ids)
+    cat_info = get_user_based_category(db, session_user, session_category, le_ids)
+    domains = get_domains_info(db, session_user, session_category, le_ids)
 
     return clienttransactions.GetChartFiltersSuccess(
         countries, domains, business_groups,
@@ -621,7 +626,7 @@ def process_assigneewise_compliances_filters(
     division_list = get_user_based_division(db, session_user, session_category)
     unit_list = get_user_based_units(db, session_user, session_category)
     users_list = get_assignees(db, None)
-    category_list = get_user_based_category(db, session_user, session_category)
+    category_list = get_user_based_category(db, session_user, session_category, le_ids=None)
     return clienttransactions.GetAssigneewiseComplianesFiltersSuccess(
         countries=countries, business_groups=business_group_list,
         legal_entities=legal_entity_list, divisions=division_list,

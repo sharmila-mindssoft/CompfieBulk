@@ -32,16 +32,16 @@ var sno = 0;
 var uploaded_file_list = [];
 var unitList = [];
 
-function displayLoader() {
-    $(".loading-indicator-spin").show()
-}
+// function displayLoader() {
+//     $(".loading-indicator-spin").show()
+// }
 
-function hideLoader() {
-    $(".loading-indicator-spin").hide()
-}
+// function hideLoader() {
+//     $(".loading-indicator-spin").hide()
+// }
 
 function initialize() {
-    // displayLoader();
+    displayLoader();
     c_endCount = 0;
     $(".tbody-compliances-task-list-overdue tr").remove();
     $(".tbody-compliances-task-list-inprogress tr").remove();
@@ -60,11 +60,11 @@ function initialize() {
         c_totalRecord2 = data['overdue_count'];
         currentDate = data['current_date'];
         loadComplianceTaskDetails(currentCompliances);
-        // hideLoader();
+        hideLoader();
     }
 
     function onFailure(error) {
-        // hideLoader()
+        hideLoader()
     }
     client_mirror.getCurrentComplianceDetail(parseInt(LegalEntityId.val()), c_endCount, function(error, response) {
         if (error == null) {
@@ -125,6 +125,7 @@ function loadComplianceTaskDetails(data) {
         var tableRowvalues = $("#templates .table-compliances-task-list .table-row-list");
         var cloneval = tableRowvalues.clone();
         $(".compliance-task span", cloneval).html(data[key].compliance_name);
+        $(".compliance-task small", cloneval).html('Assigned on: ' + data[key].assigned_on);
         $(".compliance-task", cloneval).attr("title", data[key].compliance_description);
         $(".domain", cloneval).html(data[key].domain_name);
         $(".startdate", cloneval).html(data[key].start_date);
@@ -190,7 +191,7 @@ function loadComplianceTaskDetails(data) {
     } else {
         $("#pagination").show()
     }
-    // hideLoader()   
+    hideLoader()
 
     $('.js-filtertable').each(function() {
         $(this).filtertable().addFilter('.js-filter');
@@ -314,11 +315,11 @@ function remove_uploaded_temp_file(a) {
 //         $(".val-date ").hide();
 // });
 
-function getCountryId(le_id){
+function getCountryId(le_id) {
     var c_id = null;
-    $.each(LEGAL_ENTITIES, function(k, v){
-        if(v.le_id == parseInt(le_id)){
-            console.log("parseInt--"+v.c_id);
+    $.each(LEGAL_ENTITIES, function(k, v) {
+        if (v.le_id == parseInt(le_id)) {
+            console.log("parseInt--" + v.c_id);
             c_id = v.c_id;
         }
     });
@@ -428,7 +429,7 @@ function showSideBar(idval, data) {
 
                 uploaded_documents = uploaded_file_list;
                 if (uploaded_documents.length == 0) {
-                  uploaded_documents = null;
+                    uploaded_documents = null;
                 }
 
                 // validity_date = uploaded_file_list;
@@ -467,26 +468,26 @@ function showSideBar(idval, data) {
                     displayMessage(message.completiondate_required);
                     return
                 }
-                if (validity_date == "") {
-                    displayMessage(message.validitydate_required);
-                    return
-                }
-                if (data[key1]['compliance_task_frequency'] == "Periodical") {
-                    if (validity_date == "" || validity_date == null) {
-                        displayMessage(message.validitydate_required);
-                        return
-                    }
-                }
+                // if (validity_date == "") {
+                //     displayMessage(message.validitydate_required);
+                //     return
+                // }
+                // if (data[key1]['compliance_task_frequency'] == "Periodical") {
+                //     if (validity_date == "" || validity_date == null) {
+                //         displayMessage(message.validitydate_required);
+                //         return
+                //     }
+                // }
                 if (parseMyDate(start_date) > parseMyDate(completion_date)) {
                     displayMessage(message.complietion_gt_start);
                     return;
                 }
-                if (validity_date != null) {
-                    if (parseMyDate(start_date) > parseMyDate(validity_date)) {
-                        displayMessage(message.validity_gt_start);
-                        return;
-                    }
-                }
+                // if (validity_date != null) {
+                //     if (parseMyDate(start_date) > parseMyDate(validity_date)) {
+                //         displayMessage(message.validity_gt_start);
+                //         return;
+                //     }
+                // }
                 if (next_due_date != null) {
                     if (parseMyDate(start_date) > parseMyDate(next_due_date)) {
                         displayMessage(message.duedate_gt_start);
@@ -503,21 +504,21 @@ function showSideBar(idval, data) {
                         return;
                     }
                 }
-                if (validity_date != null && next_due_date != null) {
-                    if (parseMyDate(next_due_date) >= parseMyDate(validity_date)) {
-                        displayMessage(message.validity_gt_nextduedate);
-                        return;
-                    }
-                }
+                // if (validity_date != null && next_due_date != null) {
+                //     if (parseMyDate(next_due_date) >= parseMyDate(validity_date)) {
+                //         displayMessage(message.validity_gt_nextduedate);
+                //         return;
+                //     }
+                // }
 
                 function onSuccess(data) {
                     initialize();
-                    // hideLoader();
+                    hideLoader();
                     custom_alert(message.compliance_uploaded_success)
                 }
 
                 function onFailure(error) {
-                    // hideLoader();
+                    hideLoader();
                     if (error == "NotEnoughSpaceAvailable") {
                         displayMessage(message.error)
                     } else {
@@ -532,7 +533,7 @@ function showSideBar(idval, data) {
                         }
                     }
                 }
-                // displayLoader();
+                displayLoader();
                 // if (v != null) {
                 //     $(".upload-progress-count").html("");
                 //     $(".upload-progress-count").show()
@@ -541,26 +542,27 @@ function showSideBar(idval, data) {
                 client_mirror.updateComplianceDetail(parseInt(LegalEntityId.val()), compliance_history_id, documents, uploaded_documents, completion_date, validity_date, next_due_date, remarks,
                     function(error, response) {
                         if (error == null) {
-                            saveUploadedFile();                            
-                            onSuccess(response);                            
+                            saveUploadedFile();
+                            onSuccess(response);
                             displaySuccessMessage(message.submit_success);
                         } else {
                             onFailure(error);
                         }
                     }
                 );
-                function saveUploadedFile(){
-                    if(uploaded_documents != ''){
-                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], file_list, 
-                            function(error, response) {                                
+
+                function saveUploadedFile() {
+                    if (uploaded_documents != '') {
+                        client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], file_list,
+                            function(error, response) {
                                 if (error == null) {
-                                    console.log(response);                                    
+                                    console.log(response);
                                 } else {
                                     console.log(error);
                                 }
                             });
-                        }                   
                     }
+                }
                 //}
             });
             $(".half-width-task-details").append(cloneValSide);
@@ -620,7 +622,11 @@ function loadCalendarData(data) {
     var html = '';
     var ct = $("#templates .calender-templates .cal");
     var ctclone = ct.clone();
-    $(".cal-caption", ctclone).html(months[month_value] + " - " + year_value);
+    var previous = "<a href='##' class='prev'><i class='ti-angle-double-left text-info '></i></a>"
+    var next = "<a href='##' class='next'><i class='ti-angle-double-right text-info '></i></a>"
+
+    $(".cal-caption", ctclone).html(previous + (months[month_value] + " - " + year_value) + next);
+    // $(".cal-caption", ctclone).html(months[month_value] + " - " + year_value);
     $(".comp-calendar").append(ctclone);
 
 
@@ -663,7 +669,7 @@ function loadCalendarData(data) {
             $(".dateid" + v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="' + v.inprogress + ' Inprogress Compliances"> ' + v.inprogress + ' </div>');
         }
         if (v.duedate > 0) {
-            $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Unassinged Compliances"> ' + v.duedate + '</div>');
+            $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Due Date Compliances"> ' + v.duedate + '</div>');
         }
         if (v.upcoming > 0) {
             $(".dateid" + v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="' + v.upcoming + ' Upcoming Compliances">' + v.upcoming + '</div>');

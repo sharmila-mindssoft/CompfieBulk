@@ -20,6 +20,7 @@ from server.clientdatabase.savetoknowledge import *
 from server.exceptionmessage import client_process_error
 from server.constants import REGISTRATION_EXPIRY, KNOWLEDGE_URL, CLIENT_URL
 
+
 # email = EmailHandler()
 __all__ = [
     "get_service_provider_details_list",
@@ -86,7 +87,10 @@ __all__ = [
     "userManagement_EditView_GetUsers",
     "userManagement_EditView_GetLegalEntities",
     "userManagement_EditView_GetDomains",
-    "userManagement_EditView_GetUnits"
+    "userManagement_EditView_GetUnits",
+    "update_licence_viewonly",
+    "update_licence",
+    "block_user"
 ]
 
 ############################################################################
@@ -99,7 +103,7 @@ def get_service_provider_details_list(db):
         "service_provider_id", "service_provider_name", "short_name", "contract_from",
         "contract_to", "contact_person", "contact_no", "email_id", "mobile_no",
         "address", "is_active", "is_blocked", "remarks",
-        "ifnull(DATEDIFF(CURRENT_DATE(), blocked_on),0) AS unblock_days"
+        "greatest((30 - ifnull(DATEDIFF(CURRENT_DATE(), blocked_on),0)),0) AS unblock_days"
     ]
     condition = condition_val = None
     order = " ORDER BY service_provider_name"
@@ -358,10 +362,10 @@ def update_service_provider_status(
 #             - Returns RuntimeError on failure block
 ##############################################################################
 def block_service_provider(
-    db, service_provider_id,  is_blocked, session_user
+    db, service_provider_id, remarks, is_blocked, session_user
 ):
-    columns = ["is_blocked", "updated_on", "updated_by", "blocked_on", "blocked_by"]
-    values = [is_blocked, get_date_time(), session_user, get_date_time(), session_user, service_provider_id]
+    columns = ["is_blocked", "updated_on", "updated_by", "blocked_on", "blocked_by", "remarks"]
+    values = [is_blocked, get_date_time(), session_user, get_date_time(), session_user, remarks, service_provider_id ]
     condition = "service_provider_id= %s "
     result = db.update(tblServiceProviders, columns, values, condition)
     if result is False:
@@ -377,6 +381,38 @@ def block_service_provider(
         action = "Blocked Service Provider \"%s\"" % service_provider_name
     else:
         action = "Unblocked Service Provider \"%s\"" % service_provider_name
+    db.save_activity(session_user, 2, action)
+
+    return result
+
+##############################################################################
+# To Disable User
+# Parameter(s) - Object of database, Service provider id, block status and
+#                session user
+# Return Type - Boolean
+#             - Returns True on successfull block
+#             - Returns RuntimeError on failure block
+##############################################################################
+def block_user(
+    db, user_id, remarks, is_blocked, session_user
+):
+    columns = ["is_disable", "updated_on", "updated_by", "disabled_on", "remarks"]
+    values = [is_blocked, get_date_time(), session_user, get_date_time(), remarks, user_id ]
+    condition = "user_id= %s "
+    result = db.update(tblUsers, columns, values, condition)
+    if result is False:
+        raise client_process_error("E003")
+
+    action_column = "employee_name"
+    rows = db.get_data(
+        tblUsers, action_column, condition, [user_id]
+    )
+    employee_name = rows[0]["employee_name"]
+    action = None
+    if is_blocked == 1:
+        action = "Disabled User \"%s\"" % employee_name
+    else:
+        action = "Enabled User \"%s\"" % employee_name
     db.save_activity(session_user, 2, action)
 
     return result
@@ -493,13 +529,23 @@ def userManagement_list_GetLegalEntities(db):
 ##############################################################################
 # User Management List - Get Users
 ##############################################################################
-def userManagement_list_GetUsers(db):
+def userManagement_list_GetUsers(db, session_category):
+    if session_category == 1: #Group Admin
+        condition = " AND T01.user_category_id like '%' "
+    elif session_category == 3: #Legal Entity Admin
+        condition = " AND T01.user_category_id NOT IN (1,2,3)"
+    elif session_category == 4: #Domain Admin
+        condition = " AND T01.user_category_id NOT IN (1,2,3,4)"
+
     le_ids = "%"
-    q = " SELECT  T01.user_id, T01.user_category_id, T01.employee_code, T01.employee_name, " + \
-        " T02.username, T01.email_id, T01.mobile_no,T03.legal_entity_id " + \
+    q = " SELECT T01.user_id, T01.user_category_id, T01.employee_code, T01.employee_name, " + \
+        " T02.username, T01.email_id, T01.mobile_no,T03.legal_entity_id, T01.is_active, T01.is_disable, " + \
+        " greatest((30 - ifnull(DATEDIFF(CURRENT_DATE(), T01.disabled_on),0)),0) AS unblock_days, " + \
+        " (Select CONCAT('Seating Unit: ', unit_code, ' - ' , unit_name , ' - ' , address , ', ' , postal_code) " + \
+        " From tbl_units where unit_id = T01.seating_unit_id) as seating_unit " + \
         " FROM tbl_users AS T01 INNER JOIN tbl_user_legal_entities AS T03 " + \
         " ON T01.user_id = T03.user_id LEFT JOIN tbl_user_login_details AS T02 " + \
-        " ON T01.user_id = T02.user_id Where T03.legal_entity_id like '%' "
+        " ON T01.user_id = T02.user_id Where T03.legal_entity_id like '%' " + condition
     # row = db.select_all(q, [le_ids])
     row = db.select_all(q, None)
     return row
@@ -924,30 +970,21 @@ def return_service_providers(service_providers):
 # Return Type - int
 ############################################################################
 def get_no_of_remaining_licence_Viewonly(db):
-    q = " SELECT (total_view_licence - licence_used) As remaining_licence from tbl_Client_Groups"
-
+    q = " SELECT (total_view_licence - ifnull(licence_used,0)) As remaining_licence from tbl_Client_Groups "
     row = db.select_one(q, None)
-    return row
+    return row["remaining_licence"]
 
 ############################################################################
-# Returns Remaining number of  licences
+# Returns Remaining number of  licence
 # Parameter(s) - Object of database
 # Return Type - int
 ############################################################################
-def get_no_of_remaining_licence(db):
-    columns = ["count(0) as licence"]
-
-    condition = "1"
-    rows = db.get_data(tblUsers, columns, condition)
-    no_of_licence_holders = rows[0]["licence"]
-
-    columns = ["no_of_user_licence"]
-    rows = db.get_data(tblClientGroups, columns, condition)
-    no_of_licence = rows[0]["no_of_user_licence"]
-
-    remaining_licence = int(no_of_licence) - int(no_of_licence_holders)
-    return remaining_licence
-
+def get_no_of_remaining_licence(db, legal_entity_ids):
+    q = " SELECT legal_entity_id, (total_licence - ifnull(used_licence,0)) As remaining_licence " + \
+        " FROM tbl_legal_entities Where find_in_set(legal_entity_id, %s)"
+    legalEntityList = ",".join([str(x) for x in legal_entity_ids])
+    row = db.select_all(q, [legalEntityList])
+    return row
 
 ############################################################################
 # To check whether another user exists with the given email id
@@ -1066,6 +1103,8 @@ def save_user_legal_entities(db, entity_ids, user_id):
     db.delete(tbluserlegalentities, "user_id = %s", [user_id])
     entity_columns = ["user_id", "legal_entity_id"]
     entity_values_list = [(user_id, int(le_id)) for le_id in entity_ids]
+    print "entity_columns>>>", entity_columns
+    print "entity_values_list>>", entity_values_list
     res = db.bulk_insert(tbluserlegalentities, entity_columns, entity_values_list)
     if res is False:
         raise client_process_error("E010")
@@ -1229,6 +1268,36 @@ def update_user(db, user, session_user, client_id):
 
     return True
 
+############################################################################
+# To Update licence viewonly
+# Parameter(s) - Object of database
+# Return Type - True / RunTimeError
+#             - Returns True on successfull updation
+#             - Returns RuntimeError if Updation fails
+############################################################################
+def update_licence_viewonly(db):
+    q = " Update tbl_Client_Groups SET licence_used = (licence_used + %s)"
+    result1 = db.execute(q, [1])
+
+    if result1 is False:
+        raise client_process_error("E011")
+
+    return True
+############################################################################
+# To Update licence viewonly
+# Parameter(s) - Object of database
+# Return Type - True / RunTimeError
+#             - Returns True on successfull updation
+#             - Returns RuntimeError if Updation fails
+############################################################################
+def update_licence(db, legal_entity_id):
+    q = " Update tbl_legal_entities SET used_licence = (used_licence + %s) Where legal_entity_id = %s"
+    result1 = db.execute(q, [1, legal_entity_id])
+
+    if result1 is False:
+        raise client_process_error("E011")
+
+    return True
 
 ############################################################################
 # To Check the active status of user group of given user
@@ -1238,11 +1307,11 @@ def update_user(db, user, session_user, client_id):
 #             inactive
 ############################################################################
 def check_user_group_active_status(db, user_id):
-    q = "select count(ug.user_group_id) from tbl_user_groups ug " + \
+    q = "select count(ug.user_group_id) count from tbl_user_groups ug " + \
         " inner join tbl_users u on  ug.user_group_id = u.user_group_id " + \
         " where u.user_id = %s and ug.is_active = 1 "
     row = db.select_one(q, [user_id])
-    if int(row[0]) == 0:
+    if int(row["count"]) == 0:
         raise client_process_error("E030")
 
 
@@ -1260,18 +1329,19 @@ def update_user_status(
     check_user_group_active_status(db, user_id)
 
     columns = [
-        "is_active", "updated_on", "updated_by"
+        "is_active", "updated_on", "updated_by", "status_changed_on"
     ]
     is_active = 1 if is_active is not False else 0
     condition = "user_id = %s "
     values = [
-        is_active, get_date_time(), session_user, user_id
+        is_active, get_date_time(), session_user, get_date_time(), user_id
     ]
     result = db.update(tblUsers, columns, values, condition)
     if result is False:
         raise client_process_error("E012")
 
-    UpdateUserStatus(is_active, user_id, client_id)
+    # Updating the Status to Knowledge Database
+    # UpdateUserStatus(is_active, user_id, client_id)
 
     if is_active == 1:
         action = "Activated user %s" % (emp_name)

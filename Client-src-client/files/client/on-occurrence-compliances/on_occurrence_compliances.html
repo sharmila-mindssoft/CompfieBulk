@@ -207,7 +207,8 @@
                 <input type="text" class="form-control input-sm remarks" placeholder="Remarks">
             </td>
             <td class="action" align="center">
-                <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm btn-submit" type="button" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>
+                <!--<button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm btn-submit" type="button" data-toggle="modal" data-target=".bs-example-modal-sm"> Start</button>-->
+                <button class="btn btn-primary waves-effect m-l-5 width-90px btn-sm btn-submit" type="button" data-animation="contentscale" data-plugin="custommodal" data-overlaycolor="#36404a"> Start</button>
             </td>
         </tr>
     </table>
@@ -230,9 +231,27 @@
             <td class="pop-compliance-status"></td>
         </tr>
     </table>
-
-
-
 </div>
+
+<!-- Modal -->
+<div id="custom-modal-start" class="modal-demo box-width-400">
+    <span class="pull-right m-t-10 m-r-15 c-pointer text-white" onclick="Custombox.close();">
+        <i class="zmdi zmdi-close zmdi-hc-2x"></i>
+        </span>
+    <h4 class="custom-modal-title p-t-10 p-b-10">Enter Password</h4>
+    <div class="custom-modal-text p-t-0">
+        <div role="form">
+            <div class="form-group">
+                <label for="current-password" class="pull-left">Password <span class="mandatory">*</span></label>
+            </div>
+            <div class="clearfix"></div>
+            <div class="form-group">
+                <input type="password" class="form-control input-sm" id="current-password" placeholder="Password" maxlength="20">
+            </div>
+            <button type=" button " class="btn btn-primary waves-effect waves-light " id="btnPasswordSubmit">Submit</button>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript" src="/script/on-occurrence-compliances/on_occurrence_compliances.js"></script>
 {% endblock %}

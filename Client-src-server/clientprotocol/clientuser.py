@@ -216,16 +216,18 @@ class GetOnOccurrenceCompliances(Request):
 # Start Onoccurrence Compliances
 ######################################################################
 class StartOnOccurrenceCompliance(Request):
-    def __init__(self, legal_entity_id, compliance_id, start_date, unit_id, duration):
+    def __init__(self, legal_entity_id, compliance_id, start_date, unit_id, duration, remarks, password):
         self.legal_entity_id = legal_entity_id
         self.compliance_id = compliance_id
         self.start_date = start_date
         self.unit_id = unit_id
         self.duration = duration
+        self.remarks = remarks
+        self.password = password
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["le_id", "compliance_id", "start_date", "unit_id", "duration"])
+        data = parse_dictionary(data, ["le_id", "compliance_id", "start_date", "unit_id", "duration", "remarks", "password"])
         legal_entity_id = data.get("le_id")
         compliance_id = data.get("compliance_id")
         # compliance_id = parse_structure_UnsignedIntegerType_32(compliance_id)
@@ -234,9 +236,11 @@ class StartOnOccurrenceCompliance(Request):
         unit_id = data.get("unit_id")
         # unit_id = parse_structure_UnsignedIntegerType_32(unit_id)
         duration = data.get("duration")
+        remarks = data.get("remarks")
+        password = data.get("password")
         # duration = parse_structure_CustomTextType_20(duration)
         return StartOnOccurrenceCompliance(
-            legal_entity_id, compliance_id, start_date, unit_id, duration
+            legal_entity_id, compliance_id, start_date, unit_id, duration, remarks, password
         )
 
     def to_inner_structure(self):
@@ -245,7 +249,9 @@ class StartOnOccurrenceCompliance(Request):
             "compliance_id": self.compliance_id,
             "start_date": self.start_date,
             "unit_id": self.unit_id,
-            "duration": self.duration
+            "duration": self.duration,
+            "remarks": self.remarks,
+            "password": self.password
         }
 ######################################################################
 # Compliance Filters
@@ -487,6 +493,18 @@ class FileSizeExceedsLimit(Response):
         return {
         }
 
+class InvalidPassword(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return InvalidPassword()
+
+    def to_inner_structure(self):
+        return {
+        }
 
 class GetOnOccurrenceCompliancesSuccess(Response):
     def __init__(self, compliances, total_count):
@@ -559,7 +577,7 @@ def _init_Response_class_map():
         NotEnoughDiskSpaceAvailable, GetOnOccurrenceCompliancesSuccess,
         StartOnOccurrenceComplianceSuccess, UnSupportedFile,
         NextDueDateMustBeWithIn90DaysBeforeValidityDate, FileSizeExceedsLimit,
-        ComplianceFiltersSuccess, OnOccurrenceLastTransactionSuccess
+        ComplianceFiltersSuccess, OnOccurrenceLastTransactionSuccess, InvalidPassword
     ]
     class_map = {}
     for c in classes:

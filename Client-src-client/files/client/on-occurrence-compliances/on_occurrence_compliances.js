@@ -11,6 +11,8 @@ var ACLegalEntity = $("#ac-entity");
 var UnitName = $("#unit_name");
 var UnitId = $("#unit_id");
 var ACUnit = $("#ac-unit");
+var CurrentPassword = $('#current-password');
+var btnPasswordSubmit = $('#btnPasswordSubmit');
 
 var ShowButton = $(".btn-show");
 var ShowMore = $(".btn-showmore");
@@ -20,6 +22,13 @@ var transactionList;
 var sno = 0;
 var totalRecord;
 var lastUnit = '';
+
+var complianceId = null;
+var thisval = null;
+var unitId = null;
+var complete_within_days = null;
+var password = null;
+var remarks = null;
 
 
 function displayPopup(statutoryProvision, unitName, complianceName, description, transactionList) {
@@ -75,28 +84,44 @@ function load_compliances(compliancesList) {
         var compliances = compliancesList[entity];
         $.each(compliances, function(key, value) {
             sno = sno + 1;
-            var complianceId = value.compliance_id;
-            var unitId = value.unit_id;
-            var completeDays = value.complete_within_days;
+            // var complianceId = value.compliance_id;
+            // var unitId = value.unit_id;
+            // var completeDays = value.complete_within_days;
             var tableRow1 = $('#templates .table-compliances .table-row');
             var clone1 = tableRow1.clone();
             $('.sno', clone1).text(sno);
+            //$('.sno', clone1).attr('id', 'sn-' + sno)
             $('.statutory', clone1).text(value.statutory_provision);
             $('.compliance-task', clone1).find('a').text(value.compliance_name);
             $('.compliance-task', clone1).find('a').on('click', function(e) {
-                loadLastTransaction(complianceId, unitId);
+                loadLastTransaction(value.compliance_id, value.unit_id);
                 displayPopup(value.statutory_provision, lastUnit, value.compliance_name, value.description, transactionList);
             });
 
             $('.description', clone1).text(value.description);
-            $('.duration', clone1).text(completeDays);
+            $('.duration', clone1).text(value.complete_within_days);
             $('.startdate', clone1).attr('id', 'startdate' + sno);
 
             $('.remarks', clone1).attr('id', 'remarks' + sno);
 
             $('.btn-submit', clone1).attr('id', sno);
             $('.btn-submit', clone1).on('click', function() {
-                submitOnOccurence(value.compliance_id, this, value.unit_id, value.complete_within_days);
+                if ($('.startdate').val().trim() == "") {
+                    displayMessage(message.startdate_required);
+                    return false;
+                } else if ($('.remarks').val().trim() == "") {
+                    displayMessage(message.remarks_required);
+                    return false;
+                } else {
+                    complianceId = value.compliance_id;
+                    thisval = $(this).closest('tr').find('.sno').html();
+                    unitId = value.unit_id;
+                    complete_within_days = value.complete_within_days;
+                    Custombox.open({
+                        target: '#custom-modal-start',
+                        effect: 'contentscale',
+                    });
+                }
             });
 
             $('.tbody-compliances-list').append(clone1);
@@ -124,6 +149,7 @@ function load_compliances(compliancesList) {
         }
     }
 }
+
 //convert string to date format
 function convert_date(data) {
     var datetime = data.split(' ');
@@ -142,10 +168,12 @@ function convert_date(data) {
     return new Date(date[2], date[1] - 1, date[0]);
 }
 
-//start on occurance compliance
-function submitOnOccurence(complianceId, thisval, unitId, complete_within_days) {
-    var startdate = $('#startdate' + thisval.id).val();
-    var remarks = $('#remarks' + thisval.id).val();
+//start on occurrence compliance
+function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, password) {
+    // alert(thisval);
+    // alert($('#startdate' + thisval).val());
+    var startdate = $('#startdate' + thisval).val();
+    var remarks = $('#remarks' + thisval).val();
     var d = new Date();
     var month = d.getMonth() + 1;
     var day = d.getDate();
@@ -160,10 +188,10 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days) 
         displayLoader();
 
         function onSuccess(data) {
-            displayMessage(message.action_success);
+            displaySuccessMessage(message.action_success);
             //getOnOccuranceCompliances ();
-            $('#startdate' + thisval.id).val('');
-            $('#remarks' + thisval.id).val('');
+            $('#startdate' + thisval).val('');
+            $('#remarks' + thisval).val('');
             hideLoader(); //window.location.href='/compliance-task-details'
         }
 
@@ -171,13 +199,16 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days) 
             displayMessage(error);
             hideLoader();
         }
-        client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, function(error, response) {
-            if (error == null) {
-                onSuccess(response);
-            } else {
-                onFailure(error);
-            }
-        });
+        client_mirror.startOnOccurrenceCompliance(parseInt(LegalEntityId.val()), complianceId, startdate, unitId, complete_within_days, remarks, password,
+            function(error, response) {
+                Custombox.close();
+                CurrentPassword.val('');
+                if (error == null) {
+                    onSuccess(response);
+                } else {
+                    onFailure(error);
+                }
+            });
     } else {
         displayMessage(message.startdate_required);
         return false;
@@ -283,10 +314,18 @@ function pageControls() {
             function(val) {
                 onAutoCompleteSuccess(UnitName, UnitId, val);
             }, condition_fields, condition_values);
-
-
     });
 
+    btnPasswordSubmit.click(function() {
+        if (CurrentPassword.val().trim() == "") {
+            displayMessage(message.password_required);
+            return false;
+        } else {
+            // var remarks = $('#remarks' + thisval.id).val();
+            // var password = CurrentPassword.val().trim();
+            submitOnOccurence(complianceId, thisval, unitId, complete_within_days, CurrentPassword.val().trim());
+        }
+    });
 }
 
 function loadEntityDetails() {

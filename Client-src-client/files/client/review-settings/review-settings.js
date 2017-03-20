@@ -41,7 +41,7 @@ var le_id = null;
 var d_id = null;
 var sno = 1;
 var temp_ftype = "";
-var actCount = 1;
+var actCount = 0;
 var LastAct = "";
 var LastSubAct = "";
 var count = 1;
@@ -75,7 +75,9 @@ PageControls = function() {
     });
 
     ShowUnitButton.click(function() {
-       r_s_page.getUnitList();
+        SelectAll.prop('checked', false);
+        ACTIVE_UNITS = [];
+        r_s_page.getUnitList();
     });
 }
 
@@ -222,11 +224,16 @@ ReviewSettingsPage.prototype.getUnitList = function(){
 
 SearchUnit.keyup(function () {
     var filter = jQuery(this).val();
-    jQuery(".unit-list .unit-names").each(function () {
+    jQuery(".unit-list .unit-names").each(function () {        
         if (jQuery(this).text().search(new RegExp(filter, "i")) < 0) {
             jQuery(this).hide();
+            jQuery(".unit-list .heading").hide();
         } else {
-            jQuery(this).show()
+            jQuery(this).show();
+            jQuery(".unit-list .heading").hide();
+        }
+        if(filter == ""){
+            jQuery(".unit-list .heading").show();
         }
     });
 });
@@ -246,11 +253,13 @@ ReviewSettingsPage.prototype.renderUnitList = function(_Units) {
             unit_text = value.u_code + " - " + value.u_name + " - " + value.address;
             var d_name = value.div_name;
             if(temp_d_name != d_name){
-                var UnitRowheading = $(".unit-list-ul .heading");
-                var cloneHeading = UnitRowheading.clone();    
-                cloneHeading.html(d_name);
-                UnitList.append(cloneHeading);
-                temp_d_name = d_name;
+                if(d_name != null){
+                    var UnitRowheading = $(".unit-list-ul .heading");
+                    var cloneHeading = UnitRowheading.clone();    
+                    cloneHeading.html(d_name);
+                    UnitList.append(cloneHeading);
+                }   
+                temp_d_name = d_name;                 
             }
             
             var UnitRow = $(".unit-list-ul .unit-names");
@@ -404,6 +413,7 @@ showTab = function(){
         $('.tab-step-2').addClass('active')
         $('#tab2').addClass('active in');
         $('#tab2').show();
+        $(".accordion-div").empty();
         SubmitButton.show();
         PreviousButton.show();
         showBreadCrumbText();
@@ -450,11 +460,13 @@ loadCompliances = function(){
         var no_clone = no_record_row.clone();
         $(".accordion-div").append(no_clone);
         $(".total_count_view").hide();
+         SubmitButton.hide();
     }else{
         $(".accordion-div").empty();
         LastAct = '';
         $.each(COMPLIANCES_LIST, function(key, value) {
             if(LastAct != value.level_1_s_name){
+                actCount = actCount + 1;
                 console.log("actCount--"+actCount);
                 var acttableRow = $('#templates .p-head');
                 var clone = acttableRow.clone();
@@ -466,7 +478,7 @@ loadCompliances = function(){
                 $('.coll-title', clone).attr('id', 'collapse'+actCount);
                 $('.coll-title', clone).attr('aria-labelledb', 'heading'+actCount);
                 // $('#collapse'+actCount+' tbody', clone).addClass("welcome");
-                $('.all-comp-checkbox', clone).on("click", function(){
+                $('#checkbox1', clone).on("click", function(){
                     var tableelement = $(this).closest(".table").find("tbody");
                     console.log(tableelement);
                     if($(this).prop("checked") == true){
@@ -481,7 +493,7 @@ loadCompliances = function(){
                 });
                 $('.accordion-div').append(clone);
                 LastAct = value.level_1_s_name;
-                actCount = actCount + 1;
+                
 
             }
             // if(LastSubAct != value.map_text){
@@ -495,7 +507,7 @@ loadCompliances = function(){
             var complianceDetailtableRow = $('#templates .div-compliance-list .compliance-details');
             var clone2 = complianceDetailtableRow.clone();
             $('.comp-checkbox').addClass("comp-checkbox-"+actCount);
-            $('.comp-checkbox', clone2).click(function(){
+            $('#checkbox2', clone2).click(function(){
                 if($(this).prop("checked") == true){
                     $(".due-date-div", clone2).empty();
                     $(".trigger-div", clone2).empty();
@@ -581,8 +593,7 @@ loadCompliances = function(){
             $('.applicable-count', clone2).on('click', function() {
                 displayPopup(value.u_ids);
             });
-
-            $('#collapse'+count+' .tbody-compliance-list').append(clone2);
+            $('#collapse'+actCount+' .tbody-compliance-list').append(clone2);
 
         });
     }
@@ -605,6 +616,25 @@ displayPopup = function(unit_ids){
         }
     });
 }
+
+
+function convert_date(data) {
+  var date = data.split('-');
+  var months = [
+    'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
+  ];
+  for (var j = 0; j < months.length; j++) {
+    if (date[1] == months[j]) {
+      date[1] = months.indexOf(months[j]) + 1;
+    }
+  }
+  if (date[1] < 10) {
+    date[1] = '0' + date[1];
+  }
+  return new Date(date[2], date[1] - 1, date[0]);
+}
+
+
 
 SubmitButton.on("click", function(){
     var checkedcount = $(".comp-checkbox:checked").length;
@@ -645,6 +675,12 @@ SubmitButton.on("click", function(){
                 var statu_dates =[];                
                 var c = 1;
                
+                var d = new Date();
+                var month = d.getMonth() + 1;
+                var day = d.getDate();
+                var output = d.getFullYear() + '/' + month + '/' + day;
+                var currentDate = new Date(output);
+
                 $.each(eachloop, function(k, val){
                     var duedate_input = $(data).find(".due-date-div .col-sm-12:nth-child("+c+") input");
                     var trigger_input = $(data).find(".trigger-div .col-sm-8:nth-child("+c+") input");
@@ -661,14 +697,51 @@ SubmitButton.on("click", function(){
                         displayMessage("Due Date Required for "+comtask);
                         dt = 1;
                         return false;
-                    }
+                    }           
                     else if(trigger == ""){
                         console.log('displayMessage("Trigger Before Days Required for "+comtask);');
                         displayMessage("Trigger Before Days Required for "+comtask);
                         dt = 1;
                         return false;
-                    }            
+                    }    
                     else{
+                        if (trigger != '') {
+                            var max_triggerbefore = 0;
+                            if (repeateverytype != null) {
+                              if (repeateverytype == 1) {
+                                max_triggerbefore = repeatevery;
+                              } else if (repeateverytype == 2) {
+                                max_triggerbefore = repeatevery * 30;
+                              } else {
+                                max_triggerbefore = repeatevery * 365;
+                              }
+                            }
+                            trigger = parseInt(trigger);
+                            if (trigger > 100) {
+                                console.log('displayMessage("Trigger Before Days Required for "+comtask);');
+                                displayMessage(message.triggerbefore_exceed);
+                                dt = 1;
+                                return false;
+                            }
+                            if (trigger == 0) {
+                                displayMessage(message.triggerbefore_iszero);
+                                dt = 1;
+                                return false;
+                            }
+                            if (max_triggerbefore > 0 && trigger > max_triggerbefore) {
+                                displayMessage(message.triggerdays_exceeding_repeatsevery);
+                                dt = 1;
+                                return false;
+                            }
+                        }
+
+                        var convertDueDate = convert_date(duedate);
+                        if (convertDueDate < currentDate) {
+                            displayMessage(message.duedatelessthantoday_compliance + comtask);
+                            dt = 1;
+                            return false;
+                        }
+
                         var statu = {};                                      
                         statu['statutory_date'] = null;
                         statu['statutory_month'] = null;
@@ -709,6 +782,12 @@ SubmitButton.on("click", function(){
             client_mirror.saveReviewSettingsCompliance(parseInt(le_id), selected_compliances_list, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.save_success);
+                    BusinessGroupSelect.find("option").removeAttr("selected");
+                    LegalEntitySelect.find("option").removeAttr("selected");
+                    Domain.val('');
+                    DomainId.val('');
+                    UnitList.empty();
+                    $(".step-1-unit-list").hide();
                     CURRENT_TAB = 1;
                     showTab();
                     SelectAll.prop("checked", false);
