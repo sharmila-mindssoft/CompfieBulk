@@ -167,7 +167,7 @@ api_params = {
     "d_i_names": make_vector_type_string(),
     "is_closed": make_bool_field(),
     'postal_code': make_int_field(length=1000000, is_optional=False),
-    'division_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
+    'division_name': make_text_field(length=50, is_optional=True),
     'category_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'geography_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
     'business_group_name': make_string_field(length=50, validfun=is_alpha_numeric, is_optional=True),
@@ -669,11 +669,13 @@ api_params = {
     "on_unit": make_text_field(length=100),
     "on_compliance_status": make_text_field(length=500),
     "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),
+
     "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
     "statutory_count": make_int_field(is_optional=True),
     "reminder_count": make_int_field(is_optional=True),
     "escalation_count": make_int_field(is_optional=True),
     "messages_count": make_int_field(is_optional=True),
+
     "pr_statutory_date": make_text_field(length=500, is_optional=True),
     "pr_compliances_1": make_vector_type_field(module="clienttransactions", klass_name="PAST_RECORD_COMPLIANCE"),
     "pr_completed_by": make_int_field(is_optional=True),
@@ -681,8 +683,11 @@ api_params = {
     "error": make_text_field(length=500),
     "file_size": make_int_field(length=52428800, is_optional=True),
     "file_name": make_text_field(length=500),
+
     "file_content": make_text_field(is_optional=True),
     "unit_address": make_text_field(length=500),
     "seating_unit": make_text_field(length=500, is_optional=True),
+
+    "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
 
 }

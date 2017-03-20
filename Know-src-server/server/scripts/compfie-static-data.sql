@@ -9,6 +9,7 @@ INSERT INTO tbl_user_category VALUES(5, "Techno Manager");
 INSERT INTO tbl_user_category VALUES(6, "Techno Executive");
 INSERT INTO tbl_user_category VALUES(7, "Domain Manager");
 INSERT INTO tbl_user_category VALUES(8, "Domain Executive");
+INSERT INTO tbl_user_category VALUES(9, "Client");
 
 -- DELETE FROM tbl_form_type;
 INSERT INTO tbl_form_type VALUES(1, "Master");
@@ -181,13 +182,6 @@ INSERT INTO tbl_compliance_frequency VALUES(5, "On Occurrence");
 INSERT INTO tbl_verification_type VALUES(1, "Registraion");
 INSERT INTO tbl_verification_type VALUES(2, "Reset Password");
 INSERT INTO tbl_verification_type VALUES(3, "Data Download");
-
-`form_id` int(11) NOT NULL AUTO_INCREMENT,
-  `form_name` varchar(200) NOT NULL,
-  `form_url` Text NOT NULL,
-  `form_type_id` int(11) NOT NULL,
-  `parent_menu` varchar(200) DEFAULT NULL,
-  `form_order` int(11) NOT NULL,
 
 -- tbl_client_forms
 

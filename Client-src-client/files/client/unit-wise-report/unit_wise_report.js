@@ -719,7 +719,7 @@ UnitWiseReport.prototype.showReportValues = function() {
                         }
                         else {
                             var clonefour = $('#template #report-table .row-four').clone();
-                            $(clonefour).addClass("tree" + v.compliance_id);
+                            $(clonefour).addClass("tree" + v.compliance_history_id);
                             $('.user-name-new', clonefour).text(v.assignee_name);
                             $('.activity-status-new', clonefour).text(v.activity_status);
                             if (v.activity_date != "")

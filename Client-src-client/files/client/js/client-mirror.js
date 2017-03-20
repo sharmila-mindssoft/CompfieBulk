@@ -214,6 +214,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
+
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -1713,7 +1714,7 @@ function initClientMirror() {
         return statutoryDate;
     }
 
-    function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore, uIds) {
+    function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore, uIds, rBy, rEvery) {
         return {
             'comp_id': compId,
             'comp_name': compName,
@@ -1721,7 +1722,9 @@ function initClientMirror() {
             'd_date': dDate,
             'v_date': vDate,
             'trigger_before_days': trigBefore,
-            'u_ids': uIds
+            'u_ids': uIds,
+            'repeat_by': rBy,
+            'r_every': rEvery
         };
     }
 
@@ -2730,7 +2733,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
+        actula_data = toJSON(body);
         var saveData = (function() {
             var a = document.createElement("a");
             document.body.appendChild(a);
@@ -2762,7 +2765,7 @@ function initClientMirror() {
             headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             crossDomain: true,
-            data: toJSON(body),
+            data: makekey() + btoa(actula_data),
             processData: false,
             contentType: false,
 

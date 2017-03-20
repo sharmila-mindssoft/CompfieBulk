@@ -1958,11 +1958,12 @@ def get_assigneewise_compliances_list(
 
 
 def get_assigneewise_yearwise_compliances(
-    db, country_id, unit_id, user_id
+    db, country_id, unit_id, user_id, domain_ids
 ):
     current_year = get_date_time_in_date().year
 
-    domain_ids_list = get_user_domains(db, user_id)
+    # domain_ids_list = get_user_domains(db, user_id)
+    domain_ids_list = domain_ids
 
     start_year = current_year - 5
     iter_year = start_year
@@ -2134,14 +2135,16 @@ def return_reassigned_details(results):
 
 
 def get_assigneewise_compliances_drilldown_data_count(
-    db, country_id, assignee_id, domain_id, year, unit_id,
+    db, country_id, assignee_id, domain_ids, year, unit_id,
     session_user, session_category
 ):
-    domain_id_list = []
-    if domain_id is None:
-        domain_id_list = get_user_domains(db, session_user)
-    else:
-        domain_id_list = [domain_id]
+    # domain_id_list = []
+    # if domain_id is None:
+    #     domain_id_list = get_user_domains(db, session_user)
+    # else:
+    #     domain_id_list = [domain_id]
+
+    domain_id_list = domain_ids
 
     if year is None:
         current_year = get_date_time_in_date().year
@@ -2177,25 +2180,25 @@ def get_assigneewise_compliances_drilldown_data_count(
 
 
 def get_assigneewise_compliances_drilldown_data(
-    db, country_id, assignee_id, domain_id, year, unit_id,
+    db, country_id, assignee_id, domain_ids, year, unit_id,
     start_count, to_count, session_user, session_category
 ):
     result = fetch_assigneewise_compliances_drilldown_data(
-        db, country_id, assignee_id, domain_id, year, unit_id,
+        db, country_id, assignee_id, domain_ids, year, unit_id,
         start_count, to_count, session_user, session_category
     )
     return return_assignee_wise_compliance_drill_down_data(result)
 
 
 def fetch_assigneewise_compliances_drilldown_data(
-    db, country_id, assignee_id, domain_id, year, unit_id,
+    db, country_id, assignee_id, domain_ids, year, unit_id,
     start_count, to_count, session_user, session_category
 ):
-    domain_id_list = []
-    if domain_id is None:
-        domain_id_list = get_user_domains(db, session_user, session_category)
-    else:
-        domain_id_list = [domain_id]
+    domain_id_list = domain_ids
+    # if domain_id is None:
+    #     domain_id_list = get_user_domains(db, session_user, session_category)
+    # else:
+    #     domain_id_list = [domain_id]
 
     if year is None:
         current_year = get_date_time_in_date().year

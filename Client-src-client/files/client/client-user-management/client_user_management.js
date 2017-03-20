@@ -525,7 +525,7 @@ userManagementPage.prototype.showModalDialog = function(user_id, emp_name, isAct
                     CurrentPassword.focus();
                     userId = user_id;
                     empName = emp_name;
-                    alert("userId- showModalDialog- " + userId)
+                    // alert("userId- showModalDialog- " + userId)
                 },
             });
             // e.preventDefault();

@@ -252,6 +252,14 @@ function validateSecondTab() {
 			        var frequency = combineidVal[2];
 			        var repeats_type = combineidVal[4];
 			        var repeats_every = combineidVal[5];
+
+			        if(repeats_type != null){
+			        	repeats_type = parseInt(repeats_type);
+			        }
+			        if(repeats_every != null){
+			        	repeats_every = parseInt(repeats_every);
+			        }
+
 			        var appl_units = $('#appl_unit' + totalCompliance).val();
 			        if (appl_units != '')
 			          appl_units = appl_units.replace(/,\s*$/, '').split(',');
@@ -399,7 +407,7 @@ function validateSecondTab() {
 			          	var current_due_date = null;
 			          	var current_trigger_day = null;
 			        }
-			        assignComplianceData = client_mirror.assignCompliances(compliance_id, compliance_name, statutory_dates, current_due_date, validitydate, current_trigger_day, applicable_units);
+			        assignComplianceData = client_mirror.assignCompliances(compliance_id, compliance_name, statutory_dates, current_due_date, validitydate, current_trigger_day, applicable_units, repeats_type, repeats_every);
 			        assignCompliance.push(assignComplianceData);
 			    }
 			    totalCompliance++;
@@ -435,7 +443,6 @@ function actstatus(element) {
     $('.a-' + id).each(function() {
     	if(cstatus){
     		if($('.comp-checkbox:checked').length > mCompliances){
-    			alert('hi')
 				$(this).prop("checked", false);
 				displayMessage(message.maximum_compliance_selection_reached_select_all);
 				return false;

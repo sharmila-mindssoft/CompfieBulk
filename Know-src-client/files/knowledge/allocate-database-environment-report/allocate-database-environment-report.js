@@ -37,7 +37,7 @@ function initialize() {
     console.log(data)
     bindGroups();
     totalRecord = GroupList.length;
-    processPaging();
+    //processPaging();
     //loadAllocateDBEnvReport(AllocatedServerList);
   }
   function onFailure(error) {
@@ -118,6 +118,10 @@ $('.btn-show').click(function () {
 			}
 		}
 	}
+	else if(clientId == '' && legalentityId == ''){
+		showHit = false;
+		SearchedList = AllocatedServerList;
+	}
 	processPaging();
 });
 
@@ -184,6 +188,7 @@ function loadAllocateDBEnvReport(data){
 				$('.inner-db-name', cloneData_1).text(value.db_server_name);
 				$('.inner-file-name', cloneData_1).text(value.file_server_name);
 				$('.tbody-allocate-db-env-list').append(cloneData_1);
+				r++;
 			}
 			else
 			{
@@ -199,7 +204,6 @@ function loadAllocateDBEnvReport(data){
 				}
 			}
 		}
-		r++;
 	}
 }
 
@@ -398,11 +402,10 @@ function pageData(on_current_page){
 	console.log(totalRecord,_page_limit)
 	var showFrom = sno + 1;
 	var is_null = true;
-
 	if(showHit == true){
 		dataView = SearchedList;
 	}else{
-		dataView = AllocatedServerList;
+		dataView = SearchedList;
 	}
 	for(i=sno;i<dataView.length;i++)
 	{

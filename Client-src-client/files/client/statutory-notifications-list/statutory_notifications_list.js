@@ -386,7 +386,7 @@ StatutoryNotificationsList.prototype.showReportValues = function() {
         reportTableTbody.append(clone4);
     }
     else {
-        t_this.showPagePan(showFrom, t_this._sno, t_this._total_record);
+        showPagePan(showFrom, t_this._sno, t_this._total_record);
     }
 };
 
