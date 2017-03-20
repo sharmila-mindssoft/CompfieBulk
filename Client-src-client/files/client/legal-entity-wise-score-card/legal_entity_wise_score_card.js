@@ -534,7 +534,7 @@ LEWiseScoreCard.prototype.overdueUserView = function(data) {
 };
 
 LEWiseScoreCard.prototype.exportReportValues = function() {
-    alert('export');
+    // alert('export');
 };
 
 LEWiseScoreCard.prototype.possibleFailures = function(error) {
@@ -550,7 +550,7 @@ LEWiseScoreCard.prototype.loadEntityDetails = function(){
     if(t_this._entities.length > 1) {
         country.parent().show();
         filterCountryName.hide();
-        
+
         legalEntity.parent().show();
         filterLegalEntityName.hide();
     } else {

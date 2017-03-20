@@ -718,7 +718,7 @@ function uploadedfile(e) {
             }
             $(".uploaded-filename").html(result);
         } else {
-            alert(data);
+            // alert(data);
         }
     });
 }

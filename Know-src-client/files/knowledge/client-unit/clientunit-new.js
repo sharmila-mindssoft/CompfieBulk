@@ -1819,7 +1819,7 @@ $('#btn-clientunit-submit').click(function() {
             }
             unit_cnt = $('.unitcnt-' + i + '-1').val();
 
-            alert("unit-cnt:"+unit_cnt)
+            // alert("unit-cnt:"+unit_cnt)
             if (unit_cnt > 0) {
                 for (var j = 1; j <= unit_cnt; j++) {
                     var added = false, edited = false;
@@ -1833,7 +1833,7 @@ $('#btn-clientunit-submit').click(function() {
                         var unitLocation, unitIndustryId, unitdomain;
 
                         if (($('.unit-id-' + i + '-' + j).val() != "" && (edit_icon.indexOf("display: none") >= 0) && addStatus == false)) {
-                            alert("inside edit")
+                            // alert("inside edit")
                             edited = true;
                             unitId = $('.unit-id-' + i + '-' + j).val();
 
@@ -1906,7 +1906,7 @@ $('#btn-clientunit-submit').click(function() {
                         /*if (($('.unit-id-' + i + '-' + j).val() != "" && (edit_icon.indexOf("display: none") >= 0)) ||
                             ($('.unit-id-' + i + '-' + j).val() == ""))*/
                         if (added == true || edited == true) {
-                            alert($('.unit-id-' + i + '-' + j).val())
+                            // alert($('.unit-id-' + i + '-' + j).val())
                             total_units = total_units + 1;
                             if (unitLocation == '' && unitGeographyId == '' && unitCode == '' && unitName == '' && unitAddress == '' && unitPostalCode == '' && unitdomain == '' && unitIndustryId == '') {
                                 if (unitcount == 1) {
