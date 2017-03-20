@@ -117,7 +117,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
             listUsers = response.ul_users;
             t_this.renderList(listLegalEntity, listUsers, null, null, null);
         } else {
-            // t_this.possibleFailures(error);
+            t_this.possibleFailures(error);
         }
     });
 
@@ -146,7 +146,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
             loadBusinessGroup(businessGroupList);
 
         } else {
-            // t_this.possibleFailures(error);
+            t_this.possibleFailures(error);
         }
     });
 };
@@ -278,6 +278,10 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
 
             if (user_name == null) {
                 $('.um-email-resend a', cloneUserRow).html("Resend");
+                $('.um-email-resend a', cloneUserRow).attr("data-original-title", "Click here to resend email");
+                $('.um-email-resend a', cloneUserRow).on('click', function(e) {
+                    t_this.resendemail(v1.user_id);
+                });
             }
 
             $('.edit i').attr('title', 'Click Here to Edit');
@@ -343,7 +347,7 @@ showEdit = function(user_id) {
             t_this.showEditView(listUser_edit, listLegalEntity_edit, listDomains_edit, listUnits_edit);
 
         } else {
-            // t_this.possibleFailures(error);
+            t_this.possibleFailures(error);
         }
     });
 }
@@ -628,8 +632,6 @@ userManagementPage.prototype.submitProcess = function() {
             }
         });
     }
-
-
 };
 
 userManagementPage.prototype.changeStatus = function(user_id, status) {
@@ -1304,6 +1306,16 @@ userManagementPage.prototype.validateMandatory = function() {
     return true;
 }
 
+userManagementPage.prototype.resendemail = function(id) {
+    client_mirror.resendRegistrationEmail(parseInt(id), function(error, response) {
+        if (error == null) {
+            displayMessage(message.email_sent);
+        } else {
+             t_this.possibleFailures(error);
+        }
+    });
+}
+
 key_search = function(cloneRow, le_id, data) {
     key_one = $('.filter-users', cloneRow).val().toLowerCase();
     key_two = $('.filter-user-id', cloneRow).val().toLowerCase();
@@ -1380,7 +1392,7 @@ PageControls = function() {
             loadDomain();
         }
     });
-     
+
     //Next Button Click Event
     btnNext.click(function() {
         CURRENT_TAB += 1;
@@ -1451,8 +1463,10 @@ PageControls = function() {
             displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
-        if (businessGroupId.val() != '') { condition_fields.push("bg_id");
-            condition_values.push(businessGroupId.val()); }
+        if (businessGroupId.val() != '') {
+            condition_fields.push("bg_id");
+            condition_values.push(businessGroupId.val());
+        }
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(val);
         }, condition_fields, condition_values);

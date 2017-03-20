@@ -395,7 +395,7 @@ function initClientMirror() {
         apiRequest('general', request, callback);
     }
 
-    /* Compliance Approal */
+    /* Compliance Approval */
     function getComplianceApprovalList(le_id, start_count, callback) {
         var request = [
             'GetComplianceApprovalList', {
@@ -405,6 +405,17 @@ function initClientMirror() {
         ];
         clientApiRequest('client_transaction', request, callback);
     }
+
+    // /* Have Compliances */
+    // function haveCompliances(le_id, user_id, callback) {
+    //     var request = [
+    //         'HaveCompliances', {
+    //             'le_id': le_id,
+    //             'user_id': user_id
+    //         }
+    //     ];
+    //     clientApiRequest('client_transaction', request, callback);
+    // }
 
     function getClientReportFilters(callback) {
         var request = [
@@ -1427,6 +1438,16 @@ function initClientMirror() {
                 'is_blocked': block,
                 'remarks': remarks,
                 "password": password
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
+    function resendRegistrationEmail(user_id, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'ResendRegistrationEmail', {
+                'user_id': user_id
             }
         ];
         clientApiRequest(callerName, request, callback);
@@ -3063,7 +3084,8 @@ function initClientMirror() {
         onOccurrenceLastTransaction: onOccurrenceLastTransaction,
         uploadComplianceTaskFile: uploadComplianceTaskFile,
         userManagementEditView: userManagementEditView,
-        blockUser: blockUser
+        blockUser: blockUser,
+        resendRegistrationEmail: resendRegistrationEmail
     };
 }
 

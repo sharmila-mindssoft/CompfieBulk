@@ -1648,7 +1648,8 @@ def get_compliance_approval_count(db, session_user):
     if (is_two_levels_of_approval(db)):
         concur_condition = " %s AND IFNULL(concurrence_status, 0) != 1 "
         concur_condition = concur_condition % approval_condition
-        concur_count_condition = concur_condition + "  AND concurred_by = %s AND current_status = 1"
+        concur_count_condition = concur_condition + "  AND concurred_by = %s "
+        # AND current_status = 1
         concur_count_condition_val = [session_user]
         concur_count = db.get_data(
             tblComplianceHistory, columns,
@@ -1725,7 +1726,8 @@ def get_compliance_approval_list(
         condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
             " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
             " IFNULL(approve_status, 0) != 1)) AND " + \
-            " (concurred_by = %s OR approved_by = %s) AND current_status = 1"
+            " (concurred_by = %s OR approved_by = %s) "
+        # AND current_status = 1
         param.append(int(session_user))
         param.append(int(session_user))
     else:
@@ -1733,6 +1735,10 @@ def get_compliance_approval_list(
             " AND approved_by = %s "
         param.append(int(session_user))
     param.extend([start_count, to_count])
+    # print "query + condition", query + condition
+    # print "order>>",order
+    # print "param>>", param
+
     rows = db.select_all(query + condition + order, param)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
