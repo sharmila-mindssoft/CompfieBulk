@@ -2198,6 +2198,8 @@ def fetch_assigneewise_compliances_drilldown_data(
         result = get_country_domain_timelines(
             db, [country_id], domain_id_list, [current_year]
         )
+        if len(result[0][1]) == 0 :
+            continue
         from_date = result[0][1][0][1][0]["start_date"]
         to_date = result[0][1][0][1][0]["end_date"]
         domain_condition = str(domain_id_list[0])
