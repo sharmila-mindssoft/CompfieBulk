@@ -95,6 +95,7 @@ var legalEntity = $("#legal-entity");
 var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
 var filterLegalEntityName = $(".filter-legal-entity-name");
+var btnShow = $('#btnShow');
 
 userManagementPage = function() {
         this._userCategory = [];
@@ -115,7 +116,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
         if (error == null) {
             listLegalEntity = response.ul_legal_entity;
             listUsers = response.ul_users;
-            t_this.renderList(listLegalEntity, listUsers, []);
+            t_this.renderList(listLegalEntity, listUsers, null, null, null);
         } else {
             // t_this.possibleFailures(error);
         }
@@ -154,90 +155,93 @@ userManagementPage.prototype.fetchUserManagement = function() {
 };
 
 //User List
-userManagementPage.prototype.renderList = function(ul_legal, ul_users, arr) {
+userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, bg_name, le_name) {
     t_this = this;
     listContainer.empty();
     if (ul_legal.length == 0) {
         //No Records Found
     } else {
         $.each(ul_legal, function(k, v) {
-            var cloneRow = $('#template .legal-entity-row').clone();
+            //alert(le_name +' - '+ v.le_name)
+            if( ((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null)) )  {
+                var cloneRow = $('#template .legal-entity-row').clone();
 
-            var total_licences = parseInt(v.total_licences);
-            var used_licences = parseInt(v.used_licences);
-            var remaining_licences = parseInt(total_licences - used_licences);
+                var total_licences = parseInt(v.total_licences);
+                var used_licences = parseInt(v.used_licences);
+                var remaining_licences = parseInt(total_licences - used_licences);
 
-            $('.um-country', cloneRow).text(v.c_name);
-            $('.um-business-group', cloneRow).text(v.b_g_name);
-            $('.um-legal-entity', cloneRow).text(v.le_name);
-            $('.um-contract-from', cloneRow).text(v.cont_from);
-            $('.um-contract-to', cloneRow).text(v.cont_to);
-            $('.um-total-licence', cloneRow).text(v.total_licences);
-            $('.um-used-licence', cloneRow).text(v.used_licences);
-            $('.um-remaining-licence', cloneRow).text(remaining_licences);
+                $('.um-country', cloneRow).text(v.c_name);
+                $('.um-business-group', cloneRow).text(v.b_g_name);
+                $('.um-legal-entity', cloneRow).text(v.le_name);
+                $('.um-contract-from', cloneRow).text(v.cont_from);
+                $('.um-contract-to', cloneRow).text(v.cont_to);
+                $('.um-total-licence', cloneRow).text(v.total_licences);
+                $('.um-used-licence', cloneRow).text(v.used_licences);
+                $('.um-remaining-licence', cloneRow).text(remaining_licences);
 
-            $('.filter-users', cloneRow).on('keyup', function(e) {
-                fList = key_search(cloneRow, v.le_id, ul_users);
-                t_this.renderUserList(v.le_id, cloneRow, fList);
-            });
-
-            $('.filter-user-id', cloneRow).on('keyup', function(e) {
-                fList = key_search(cloneRow, v.le_id, ul_users);
-                t_this.renderUserList(v.le_id, cloneRow, fList);
-            });
-
-            $('.filter-email', cloneRow).on('keyup', function(e) {
-                fList = key_search(cloneRow, v.le_id, ul_users);
-                t_this.renderUserList(v.le_id, cloneRow, fList);
-            });
-
-            $('.filter-mobile', cloneRow).on('keyup', function(e) {
-                fList = key_search(cloneRow, v.le_id, ul_users);
-                t_this.renderUserList(v.le_id, cloneRow, fList);
-            });
-
-            $('.search-status-list', cloneRow).click(function(event) {
-                $('.search-status-li', cloneRow).each(function(index, el) {
-                    $(el).removeClass('active');
+                $('.filter-users', cloneRow).on('keyup', function(e) {
+                    fList = key_search(cloneRow, v.le_id, ul_users);
+                    t_this.renderUserList(v.le_id, cloneRow, fList);
                 });
-                $(event.target).parent().addClass('active');
 
-                var currentClass = $(event.target).find('i').attr('class');
-
-                $('#search-status', cloneRow).removeClass();
-                if (currentClass != undefined) {
-                    $('#search-status', cloneRow).addClass(currentClass);
-                    $('#search-status', cloneRow).text('');
-                } else {
-                    $('#search-status', cloneRow).addClass('fa');
-                    $('#search-status', cloneRow).text('All');
-                }
-                fList = key_search(cloneRow, v.le_id, ul_users);
-                t_this.renderUserList(v.le_id, cloneRow, fList);
-            });
-
-            $('.search-category-list', cloneRow).click(function(event) {
-                $('.search-category-li', cloneRow).each(function(index, el) {
-                    $(el).removeClass('active');
+                $('.filter-user-id', cloneRow).on('keyup', function(e) {
+                    fList = key_search(cloneRow, v.le_id, ul_users);
+                    t_this.renderUserList(v.le_id, cloneRow, fList);
                 });
-                $(event.target).parent().addClass('active');
 
-                var currentClass = $(event.target).find('i').attr('class');
+                $('.filter-email', cloneRow).on('keyup', function(e) {
+                    fList = key_search(cloneRow, v.le_id, ul_users);
+                    t_this.renderUserList(v.le_id, cloneRow, fList);
+                });
 
-                $('#search-category', cloneRow).removeClass();
-                if (currentClass != undefined) {
-                    $('#search-category', cloneRow).addClass(currentClass);
-                    $('#search-category', cloneRow).text('');
-                } else {
-                    $('#search-category', cloneRow).addClass('fa');
-                    $('#search-category', cloneRow).text('All');
-                }
-                fList = key_search(cloneRow, v.le_id, ul_users);
-                t_this.renderUserList(v.le_id, cloneRow, fList);
-            });
+                $('.filter-mobile', cloneRow).on('keyup', function(e) {
+                    fList = key_search(cloneRow, v.le_id, ul_users);
+                    t_this.renderUserList(v.le_id, cloneRow, fList);
+                });
 
-            t_this.renderUserList(v.le_id, cloneRow, ul_users);
-            listContainer.append(cloneRow);
+                $('.search-status-list', cloneRow).click(function(event) {
+                    $('.search-status-li', cloneRow).each(function(index, el) {
+                        $(el).removeClass('active');
+                    });
+                    $(event.target).parent().addClass('active');
+
+                    var currentClass = $(event.target).find('i').attr('class');
+
+                    $('#search-status', cloneRow).removeClass();
+                    if (currentClass != undefined) {
+                        $('#search-status', cloneRow).addClass(currentClass);
+                        $('#search-status', cloneRow).text('');
+                    } else {
+                        $('#search-status', cloneRow).addClass('fa');
+                        $('#search-status', cloneRow).text('All');
+                    }
+                    fList = key_search(cloneRow, v.le_id, ul_users);
+                    t_this.renderUserList(v.le_id, cloneRow, fList);
+                });
+
+                $('.search-category-list', cloneRow).click(function(event) {
+                    $('.search-category-li', cloneRow).each(function(index, el) {
+                        $(el).removeClass('active');
+                    });
+                    $(event.target).parent().addClass('active');
+
+                    var currentClass = $(event.target).find('i').attr('class');
+
+                    $('#search-category', cloneRow).removeClass();
+                    if (currentClass != undefined) {
+                        $('#search-category', cloneRow).addClass(currentClass);
+                        $('#search-category', cloneRow).text('');
+                    } else {
+                        $('#search-category', cloneRow).addClass('fa');
+                        $('#search-category', cloneRow).text('All');
+                    }
+                    fList = key_search(cloneRow, v.le_id, ul_users);
+                    t_this.renderUserList(v.le_id, cloneRow, fList);
+                });
+
+                t_this.renderUserList(v.le_id, cloneRow, ul_users);
+                listContainer.append(cloneRow);
+            }
         });
     }
     $('[data-toggle="tooltip"]').tooltip();
@@ -1429,6 +1433,13 @@ PageControls = function() {
     var user_cat_id = client_mirror.getUserCategoryID();
     if(user_cat_id == 1)
         $('#user_filter').show();
+
+    btnShow.click(function() {
+        (country.val()) ? c_name = country.val() : c_name = null;
+        (businessGroup.val()) ? bg_name = businessGroup.val() : bg_name = null;
+        (legalEntity.val()) ? le_name = legalEntity.val() : le_name = null;
+        um_page.renderList(listLegalEntity, listUsers, c_name, bg_name, le_name);
+    });
 
 }
 
