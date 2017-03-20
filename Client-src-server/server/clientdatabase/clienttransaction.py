@@ -104,12 +104,12 @@ def get_user_based_legal_entity(db, user_id, user_category, le_ids=None):
     q1 = "select distinct t1.domain_id, t1.legal_entity_id from tbl_legal_entity_domains as t1"
 
     q = "select distinct t1.legal_entity_id, t1.legal_entity_name, t1.business_group_id " + \
-        " from tbl_legal_entities t1 where t1.is_closed = 0 "
+        " from tbl_legal_entities t1 "
 
     param = []
     if user_category == 1 :
         if le_ids is not None :
-            q += " and find_in_set(t1.legal_entity_id, %s) "
+            q += " where t1.is_closed = 0  and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
         rows = db.select_all(q, param)
         domains = db.select_all(q1, None)
@@ -457,7 +457,7 @@ def return_statutory_settings(data, session_category):
             d["postal_code"]
         )
         locked_cat = d["locked_user_category"]
-        
+
         if locked_cat is not None and (locked_cat > session_category or session_category == 1):
             allow_nlock = True
         else :
@@ -1013,7 +1013,7 @@ def return_assign_compliance_data(result, applicable_units, nrow):
             statutory_dates, r["repeats_type_id"], c_id
         )
 
-        if r["repeats_every"] is not None or r["frequency_id"] != 4: 
+        if r["repeats_every"] is not None or r["frequency_id"] != 4:
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
                 c_id,
                 name,
