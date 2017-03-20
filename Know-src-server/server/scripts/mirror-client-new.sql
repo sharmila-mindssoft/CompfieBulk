@@ -368,6 +368,8 @@ CREATE TABLE `tbl_assign_compliances` (
   `unit_id` int(11) NOT NULL,
   `compliance_id` int(11) NOT NULL,
   `statutory_dates` longtext NOT NULL,
+  `repeats_type_id` int(11) DEFAULT NULL,
+  `repeats_every` int(11) DEFAULT NULL,
   `assignee` int(11) DEFAULT NULL,
   `assigned_by` int(11) DEFAULT NULL,
   `assigned_on` timestamp NULL DEFAULT NULL,

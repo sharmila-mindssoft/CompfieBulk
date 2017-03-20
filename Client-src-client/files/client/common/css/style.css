@@ -1273,7 +1273,7 @@ h2.chart-title: hover {
     z-index: 100 !important;
 }
 
-.accordian-past-records{
+.accordian-past-records {
     margin-top: 15px;
 }
 
@@ -1291,11 +1291,15 @@ h2.chart-title: hover {
 }
 
 .active1 {
-    background: #f1e9f6 none repeat scroll 0 0 !important;
+    background: #D9EDF7 none repeat scroll 0 0 !important;
 }
 
 .full-width-list {
     vertical-align: top;
+}
+
+.btn-group ul li {
+    cursor: pointer;
 }
 
 .bg-grey {

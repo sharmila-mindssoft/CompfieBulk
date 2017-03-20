@@ -87,6 +87,7 @@ class API(object):
 
         self._ip_address = None
         self._remove_old_session()
+        self._notify_occurrence_task()
 
     def _remove_old_session(self):
 
@@ -115,6 +116,34 @@ class API(object):
                 c_db_con.close()
 
         _with_client_info()
+
+    def _notify_occurrence_task(self):
+
+        def _with_le_info():
+            for c_id, c_db in self._le_databases.iteritems() :
+                on_session_timeout(c_db)
+
+            t = threading.Timer(500, _with_le_info)
+            t.daemon = True
+            t.start()
+
+        def on_session_timeout(c_db):
+            print "session called "
+            print datetime.datetime.now()
+            c_db_con = self.client_connection_pool(c_db)
+            _db_clr = Database(c_db_con)
+            try :
+                _db_clr.begin()
+                _db_clr.get_onoccurance_compliance_to_notify()
+                _db_clr.commit()
+                c_db_con.close()
+
+            except Exception, e :
+                print e
+                _db_clr.rollback()
+                c_db_con.close()
+
+        _with_le_info()
 
     def close_connection(self, db):
         try:

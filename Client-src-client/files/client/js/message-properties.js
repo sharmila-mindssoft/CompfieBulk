@@ -417,6 +417,13 @@ var message = {
     'select_atleast_one_compliance': 'Select atleast one completed compliance',
 
     'userlimitexceeds': 'User Licence Count exceeds. Unable to create user',
+    "disable_success": "Disabled Successfully",
+    "enable_success": "Enabled Successfully",
+    'disable_user_message': 'You want to disable this User',
+    'enable_user_message': 'You want to enable this User',
+    "onoccurrence_start": 'You want to start this compliance',
+    "mobile_invalid": "Invalid Mobile Number",
+    "contactno_invalid": "Invalid Contact Number"
 
 };
 

@@ -1522,30 +1522,38 @@ def get_reminders(
     db, notification_type, start_count, to_count, session_user, session_category
 ):
 
-    qry = "select sum(IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),1,0)) as expire_count " + \
-        "from tbl_legal_entities as le " + \
-        "inner join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-        "where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s "
+    qry = "select count(distinct le.legal_entity_id) as expire_count " + \
+            "from tbl_legal_entities as le " + \
+            "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
+            "where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s " + \
+            "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
+
     row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
 
     if row["expire_count"] > 0:
-        query = "(Select legal_entity_id, '0' as row_number,'0' as notification_id, " + \
-                "IF(contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()),concat('Your contract with Compfie for the legal entity ',legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
-                "Before contract expiration you can download documents <a href=#>here</a>'),'') as notification_text, " + \
-                "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg Where %s = 1 OR %s = 2 AND %s = 2 ) " + \
+        query = "(Select Distinct lg.legal_entity_id, '0' as rank,'0' as notification_id, " + \
+                "concat('Your contract with Compfie for the legal entity ', legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
+                "Before contract expiration you can download documents <a href=#>here</a>') as notification_text, " + \
+                "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg " + \
+                "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = lg.legal_entity_id " + \
+                "Where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s " + \
+                "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now())) " + \
                 "UNION ALL " + \
                 "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \
-                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 1 " + \
+                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
                 "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
-                "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s) "
-        rows = db.select_all(query, [session_category, session_category, notification_type, session_user, notification_type, start_count, to_count])
+                "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t " + \
+                "where t.rank >= %s and t.rank <= %s) "
+
+        rows = db.select_all(query, [session_category, session_category, notification_type, session_user, session_user, notification_type, start_count, to_count])
     else:
-        query = "select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+        query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \
-                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 1 " + \
+                "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
                 "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
-                "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t where t.rank >= %s and @row_num < %s"
+                "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t " + \
+                "where t.rank >= %s and t.rank <= %s "
         rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
 
     notifications = []
@@ -1563,12 +1571,12 @@ def get_escalations(
 ):
     query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
             "from tbl_notifications_log as nl " + \
-            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id IN (3,4) " + \
+            "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \
             "Where nlu.user_id = %s " + \
             "AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
             "order by nl.notification_id desc) as t1, " + \
             "(SELECT @rownum := 0) r) as t " + \
-            "where t.rank >= %s and t.rank <= %s"
+            "where t.rank >= %s and t.rank <= %s "
     rows = db.select_all(query, [session_user, notification_type, start_count, to_count])
     #print rows
     notifications = []
@@ -1618,19 +1626,18 @@ def notification_detail(
     db, notification_id, session_user
 ):
     query = "select nl.notification_id, SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) - 4),'>>',1) as act_name, " + \
-            "(select concat(unit_code,' - ',unit_name,' - ',SUBSTRING_INDEX(substring(substring(com.statutory_mapping,3),1,char_length(com.statutory_mapping) - 4),'>>',1)) from tbl_units where unit_id = nl.unit_id) as unit, " + \
+            "(select concat(unit_code,' - ',unit_name) from tbl_units where unit_id = nl.unit_id) as unit, " + \
             "concat(com.document_name,' - ',com.compliance_task) as compliance_name,date(ch.due_date) as duedate, " + \
             "IF(ch.due_date < now() and ch.approve_status <> 1,concat(abs(datediff(now(),ch.due_date)),' Days'),'-') as delayed_by, " + \
             "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.assignee) as assignee_name, " + \
             "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.concurrence_person) as concur_name, " + \
-            "(select concat(employee_code,'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.approval_person) as approver_name " + \
+            "(select concat(ifnull(employee_code, ''),'-',employee_name,' ',email_id,',',ifnull(mobile_no,'-')) from tbl_users where user_id = nl.approval_person) as approver_name " + \
             "from tbl_notifications_log as nl " + \
             "inner join tbl_compliances as com on nl.compliance_id = com.compliance_id " + \
             "inner join tbl_compliance_history as ch on nl.compliance_id = ch.compliance_id and nl.unit_id = ch.unit_id and ch.compliance_history_id = substring_index(nl.extra_details,'-',1) " + \
             "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id " + \
-            "Where nlu.user_id = %s AND nl.notification_id = %s"
+            "Where nlu.user_id = %s AND nl.notification_id = %s "
     rows = db.select_all(query, [session_user, notification_id])
-
     notifications = []
     for r in rows :
         notification_id = int(r["notification_id"])
@@ -1653,12 +1660,13 @@ def get_statutory(
 ):
     le_ids_str = ','.join(str(v) for v in le_ids)
     query = "SELECT s.notification_id, s.compliance_id, s.notification_text, s.created_on, " + \
-            "su.user_id, CONCAT(ifnull(u.employee_code,''), ' - ', u.employee_name) as user_name " + \
+            "su.user_id, CONCAT(ifnull(u.employee_code,''), '', u.employee_name) as user_name " + \
             "from tbl_statutory_notifications s " + \
-            "INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id AND su.user_id = %s AND su.is_read = 0 " + \
+            "INNER JOIN tbl_statutory_notifications_users su ON su.notification_id = s.notification_id AND su.user_id = %s " + \
+            "AND su.is_read = 0 " + \
             "INNER JOIN tbl_users u ON u.user_id = su.user_id " + \
-            "INNER JOIN tbl_user_legal_entities ul ON ul.user_id = su.user_id AND ul.legal_entity_id IN (%s)" + \
-            "order by s.created_on DESC Limit %s, %s"
+            "LEFT JOIN tbl_user_legal_entities ul ON ul.user_id = su.user_id AND find_in_set(ul.legal_entity_id , %s) " + \
+            "order by s.created_on DESC Limit %s, %s "
 
     rows = db.select_all(query, [session_user, le_ids_str, start_count, to_count])
     #print rows
@@ -2131,7 +2139,7 @@ def get_assigneewise_compliances_drilldown_data_count(
 ):
     domain_id_list = []
     if domain_id is None:
-        domain_id_list = get_user_domains(db, session_user, session_category)
+        domain_id_list = get_user_domains(db, session_user)
     else:
         domain_id_list = [domain_id]
 
@@ -2142,8 +2150,6 @@ def get_assigneewise_compliances_drilldown_data_count(
     result = get_country_domain_timelines(
         db, [country_id], [domain_id], [current_year]
     )
-    if len(result[0][1]) == 0 :
-        return 0
     from_date = datetime.datetime(current_year, 1, 1)
     to_date = datetime.datetime(current_year, 12, 31)
     domain_condition = ",".join(str(x) for x in domain_id_list)
@@ -2273,6 +2279,7 @@ def fetch_assigneewise_compliances_drilldown_data(
         int(start_count), to_count
     ]
     query = query + where_condition
+    print query % tuple(where_condition_val)
     rows = db.select_all(query, where_condition_val)
     return rows
 

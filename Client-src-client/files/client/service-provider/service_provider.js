@@ -13,9 +13,11 @@ var filterRemarks = $('#filterRemarks');
 var CurrentPassword = $('#current-password');
 var btnPasswordSubmit_Status = $('#btnPasswordSubmit_Status');
 var btnPasswordSubmit_Block = $('#btnPasswordSubmit_Block');
+var divRemarks = $('#divRemarks');
+var txtRemarks = $('#txtRemarks');
 
 var filterStatus = $('#filter-status');
-var currentPassword = $('#current-password');
+
 
 var isAuthenticate;
 var sp_page = null;
@@ -41,6 +43,7 @@ var txtAddress = $('#txtAddress');
 var spId = null;
 var sp_status = null;
 var blocked_status = null
+var remarks = "";
 
 serviceProviderPage = function() {
     this._serviceProviderList = [];
@@ -99,6 +102,7 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             $('.sp-contact-name', cloneRow).text(v.cont_person);
             $('.sp-contact-number', cloneRow).text(v.cont_no);
             $('.sp-contact-email', cloneRow).text(v.e_id);
+            $('.sp-contact-remarks', cloneRow).text(v.remarks);
 
             $('.edit i').attr('title', 'Click Here to Edit');
             $('.edit i', cloneRow).on('click', function() {
@@ -116,7 +120,12 @@ serviceProviderPage.prototype.renderList = function(sp_data) {
             if (v.is_blocked == true) {
                 $('.blocked i', cloneRow).addClass('text-danger');
                 $('.blocked i', cloneRow).removeClass('text-muted');
-                $('.blocked i', cloneRow).attr('title', 'Click here to Unblock');
+                if (v.unblock_days == 0) {
+                    $('.blocked i', cloneRow).hide();
+                } else {
+                    $('.blocked i', cloneRow).attr('title', 'Days left ' + v.unblock_days + ' day(s)');
+                }
+
             } else {
                 $('.blocked i', cloneRow).removeClass('text-danger');
                 $('.blocked i', cloneRow).addClass('text-muted');
@@ -181,6 +190,10 @@ serviceProviderPage.prototype.validate = function() {
     if (isNotEmpty(txtContact3, message.contactno_required) == false) {
         txtContact3.focus();
         return false;
+    } else if (txtContact3.val().indexOf('000') >= 0) {
+        txtContact3.focus();
+        displayMessage(message.contactno_invalid);
+        return false;
     } else if (!validateMaxLength("serviceprovider_contact_number", txtContact3.val().trim(), "Contact Number")) {
         txtContact3.focus();
         return false;
@@ -188,6 +201,11 @@ serviceProviderPage.prototype.validate = function() {
     if (txtMobile2.val() != '') {
         if (isLengthMinMax(txtMobile2, 10, 10, message.mobile_max10) == false) {
             txtMobile2.focus();
+            return false;
+        }
+        if (txtMobile2.val().indexOf('000') >= 0) {
+            txtMobile2.focus();
+            displayMessage(message.mobile_invalid);
             return false;
         }
     }
@@ -281,6 +299,7 @@ serviceProviderPage.prototype.showModalDialog = function(e, sp_id, isActive, unb
     if (mode == "STATUS") {
         btnPasswordSubmit_Status.show();
         btnPasswordSubmit_Block.hide();
+        divRemarks.hide();
 
         if (isActive == true) {
             sp_status = false;
@@ -292,6 +311,7 @@ serviceProviderPage.prototype.showModalDialog = function(e, sp_id, isActive, unb
     } else if (mode == "BLOCK") {
         btnPasswordSubmit_Status.hide();
         btnPasswordSubmit_Block.show();
+        divRemarks.show();
 
         if (isBlocked == true) {
             blocked_status = false;
@@ -338,7 +358,7 @@ serviceProviderPage.prototype.changeStatus = function(sp_id, status) {
     }
 };
 
-serviceProviderPage.prototype.blockSP = function(sp_id, block_status) {
+serviceProviderPage.prototype.blockSP = function(sp_id, block_status, remarks) {
     t_this = this;
     if (isNotEmpty(CurrentPassword, message.password_required) == false) {
         return false;
@@ -346,7 +366,7 @@ serviceProviderPage.prototype.blockSP = function(sp_id, block_status) {
         var password = CurrentPassword.val();
         if (block_status == "false") { block_status = false; }
         if (block_status == "true") { block_status = true; }
-        client_mirror.blockServiceProvider(sp_id, block_status, password, function(error, response) {
+        client_mirror.blockServiceProvider(sp_id, block_status, remarks, password, function(error, response) {
             if (error == null) {
                 Custombox.close();
                 if (block_status) {
@@ -390,6 +410,8 @@ serviceProviderPage.prototype.possibleFailures = function(error) {
         displayMessage(message.CannotChangeStatusOfContractExpiredSP);
     } else if (error == 'CannotDeactivateUserExists') {
         displayMessage(message.cannot_deactivate_sp);
+    } else if (error == 'CannotChangeStatusOfContractExpiredSP') {
+        displayMessage(message.cannot_change_status);
     } else {
         displayMessage(error);
     }
@@ -402,7 +424,6 @@ key_search = function(mainList) {
     key_three = filterContactNo.val().toLowerCase();
     key_four = filterEmailID.val().toLowerCase();
     d_status = search_status_ul.find('li.active').attr('value');
-    // key_five = filterRemarks.val().toLowerCase();
     var fList = [];
     for (var entity in mainList) {
         s_p_name = mainList[entity].s_p_name;
@@ -495,7 +516,11 @@ PageControls = function() {
     });
 
     btnPasswordSubmit_Block.click(function() {
-        sp_page.blockSP(spId, blocked_status);
+        if (txtRemarks.val().trim() == "") {
+            displayMessage(message.remarks_required);
+        } else {
+            sp_page.blockSP(spId, blocked_status, txtRemarks.val());
+        }
     });
 
     //Service Provider Name Filter
