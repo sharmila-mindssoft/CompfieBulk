@@ -1158,9 +1158,9 @@ def save_assigned_compliance(db, request, session_user):
 
 
     # db.bulk_insert("tbl_assign_compliances", columns, value_list)
-    print columns
-    print value_list
-    print update_column
+    # print columns
+    # print value_list
+    # print update_column
     db.on_duplicate_key_update(
         "tbl_assign_compliances", ",".join(columns),
         value_list, update_column
