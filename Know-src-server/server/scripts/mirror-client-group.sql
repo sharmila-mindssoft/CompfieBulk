@@ -386,7 +386,7 @@ INSERT INTO tbl_forms VALUES(27, 3, 'Audit Trail', "/audit-trail", 27, null);
 INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 28, null);
 INSERT INTO tbl_forms VALUES(29, 4, 'View Profile', "/view-profile", 29, null);
 INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 31, null);
-INSERT INTO tbl_forms VALUES(32, 4, 'Settings', "/client-settings", 32, null);
+INSERT INTO tbl_forms VALUES(32, 4, 'Settings', "/settings", 32, null);
 INSERT INTO tbl_forms VALUES(33, 4, 'Themes', "/themes", 33, null);
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 34, null);
 INSERT INTO tbl_forms VALUES(35, 2, 'Compliance Task Details', "/compliance-task-details", 35, null);
