@@ -2151,7 +2151,7 @@ def get_assigneewise_compliances_drilldown_data_count(
     else:
         current_year = year
     result = get_country_domain_timelines(
-        db, [country_id], [domain_id], [current_year]
+        db, [country_id], domain_id_list, [current_year]
     )
     from_date = datetime.datetime(current_year, 1, 1)
     to_date = datetime.datetime(current_year, 12, 31)

@@ -210,7 +210,7 @@ function removeCLIds(cl_ids, cl_id){
 	var new_cl_ids = null;
 
 	if(cl_ids != null){
-		if (cl_ids..indexOf(",") >= 0){
+		if (cl_ids.indexOf(",") >= 0){
 			splitCLIds = cl_ids.split(",");
 			for(var i=0;i<splitCLIds.length;i++){
 				if(splitCLIds[i] == cl_id){
