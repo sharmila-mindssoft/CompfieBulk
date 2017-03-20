@@ -1052,20 +1052,6 @@ def save_assigned_compliance(db, request, session_user):
     unit_ids = []
     value_list = []
     for c in compliances:
-        columns = [
-            "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
-            "statutory_dates", "assignee",
-            "assigned_by", "assigned_on",
-            "approval_person", "a_assigned_by", "a_assigned_on",
-            "trigger_before_days", "due_date", "validity_date",
-        ]
-
-        update_column = [
-            "statutory_dates", "assignee",
-            "assigned_by", "assigned_on",
-            "approval_person", "a_assigned_by", "a_assigned_on",
-            "trigger_before_days", "due_date", "validity_date",
-        ]
 
         repeats_every = c.r_every
         repeats_type = c.repeat_by
@@ -1109,6 +1095,21 @@ def save_assigned_compliance(db, request, session_user):
             validity_date = "0000-00-00"
 
         for unit_id in unit_ids:
+            columns = [
+                "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
+                "statutory_dates", "assignee",
+                "assigned_by", "assigned_on",
+                "approval_person", "a_assigned_by", "a_assigned_on",
+                "trigger_before_days", "due_date", "validity_date",
+            ]
+
+            update_column = [
+                "statutory_dates", "assignee",
+                "assigned_by", "assigned_on",
+                "approval_person", "a_assigned_by", "a_assigned_on",
+                "trigger_before_days", "due_date", "validity_date",
+            ]
+
             value = [
                 le_id, country_id, domain_id, unit_id, compliance_id,
                 str(date_list), assignee, int(session_user), created_on,
