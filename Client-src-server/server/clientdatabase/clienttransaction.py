@@ -1064,9 +1064,26 @@ def save_assigned_compliance(db, request, session_user):
         "trigger_before_days", "due_date", "validity_date",
     ]
 
+    columns_repeats = [
+        "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
+        "statutory_dates", "assignee",
+        "assigned_by", "assigned_on",
+        "approval_person", "a_assigned_by", "a_assigned_on",
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every", 
+    ]
+    value_list_repeats = []
+    update_column_repeats = [
+        "statutory_dates", "assignee",
+        "assigned_by", "assigned_on",
+        "approval_person", "a_assigned_by", "a_assigned_on",
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every", 
+    ]
+
     if concurrence is not None:
         columns.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
         update_column.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
+        columns_repeats.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
+        update_column_repeats.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
 
     unit_ids = []
     for c in compliances:
@@ -1112,26 +1129,30 @@ def save_assigned_compliance(db, request, session_user):
             validity_date = "0000-00-00"
 
         for unit_id in unit_ids:
-            value = [
-                le_id, country_id, domain_id, unit_id, compliance_id,
-                str(date_list), assignee, int(session_user), created_on,
-                approval, int(session_user), created_on,
-                trigger_before, str(due_date), str(validity_date),
-            ]
-            if concurrence is not None:
-                value.extend([concurrence, int(session_user), created_on])
+            
+            if repeats_type is not None and repeats_every is not None:
+                value_repeats = [
+                    le_id, country_id, domain_id, unit_id, compliance_id,
+                    str(date_list), assignee, int(session_user), created_on,
+                    approval, int(session_user), created_on,
+                    trigger_before, str(due_date), str(validity_date), repeats_type, repeats_every,
+                ]
+                if concurrence is not None:
+                    value.extend([concurrence, int(session_user), created_on])
 
-            if repeats_type is not None:
-                columns.extend(["repeats_type_id"])
-                update_column.extend(["repeats_type_id"])
-                value.extend([repeats_type])
-
-            if repeats_every is not None:
-                columns.extend(["repeats_every"])
-                update_column.extend(["repeats_every"])
-                value.extend([repeats_every])
+            else:
+                value = [
+                    le_id, country_id, domain_id, unit_id, compliance_id,
+                    str(date_list), assignee, int(session_user), created_on,
+                    approval, int(session_user), created_on,
+                    trigger_before, str(due_date), str(validity_date),
+                ]
+                if concurrence is not None:
+                    value.extend([concurrence, int(session_user), created_on])
 
             value_list.append(tuple(value))
+            value_list_repeats.append(tuple(value_repeats))
+
 
     # db.bulk_insert("tbl_assign_compliances", columns, value_list)
     db.on_duplicate_key_update(
@@ -1139,6 +1160,10 @@ def save_assigned_compliance(db, request, session_user):
         value_list, update_column
     )
 
+    db.on_duplicate_key_update(
+        "tbl_assign_compliances", ",".join(columns_repeats),
+        value_list_repeats, update_column_repeats
+    )
 
     # if new_unit_settings is not None:
     #     update_user_settings(db, new_unit_settings)
