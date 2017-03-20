@@ -81,11 +81,6 @@ var empName = null;
 
 var um_page = null;
 
-var Filter_Users = $('.filter-users');
-var Filter_User_ID = $('.filter-user-id');
-var Filter_Email = $('.filter-email');
-var Filter_Mobile = $('.filter-mobile');
-
 userManagementPage = function() {
         this._userCategory = [];
         this._userGroup = [];
@@ -95,10 +90,6 @@ userManagementPage = function() {
 userManagementPage.prototype.showList = function() {
     addScreen.hide();
     viewScreen.show();
-    Filter_Users.val('');
-    Filter_User_ID.val('');
-    Filter_Email.val('');
-    Filter_Mobile.val('');
     this.fetchUserManagement();
 };
 
@@ -109,7 +100,6 @@ userManagementPage.prototype.fetchUserManagement = function() {
         if (error == null) {
             listLegalEntity = response.ul_legal_entity;
             listUsers = response.ul_users;
-            alert(listUsers.toSource());
             t_this.renderList(listLegalEntity, listUsers);
         } else {
             // t_this.possibleFailures(error);
@@ -177,93 +167,156 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users) {
             // Filter_Mobile
             // Filter_Mobile
             $('.filter-users', cloneRow).on('keyup', function(e) {
-                fList = key_search(ul_legal, ul_users);
-                t_this.renderList(ul_legal, fList);
+                fList = key_search(cloneRow, v.le_id, ul_users);
+                t_this.renderUserList(v.le_id, cloneRow, fList);
             });
 
-            var j = 1;
-            $.each(ul_users, function(k1, v1) {
-                if (v.le_id == v1.le_id) {
-                    var cloneUserRow = $('#template .user-row-table tr').clone();
-                    var user_name = v1.user_name;
-                    $('.sno', cloneUserRow).text(j);
-                    $('.um-employee-name', cloneUserRow).text(v1.emp_name);
-                    $('.um-user-name span', cloneUserRow).text(user_name);
-                    if (user_name == null || user_name == "") {
-                        $('.um-user-name', cloneUserRow).empty();
-                    } else {
-                        $('.um-user-name i', cloneUserRow).attr("data-original-title", v1.seating_unit);
-                    }
+            $('.filter-user-id', cloneRow).on('keyup', function(e) {
+                fList = key_search(cloneRow, v.le_id, ul_users);
+                t_this.renderUserList(v.le_id, cloneRow, fList);
+            });
 
-                    $('.um-user-email', cloneUserRow).text(v1.email_id);
-                    $('.um-user-mobile', cloneUserRow).text(v1.mob_no);
+            $('.filter-email', cloneRow).on('keyup', function(e) {
+                fList = key_search(cloneRow, v.le_id, ul_users);
+                t_this.renderUserList(v.le_id, cloneRow, fList);
+            });
 
-                    var cat_class = "";
-                    if (v1.u_cat_id == 2) {
-                        cat_class = "text-muted";
-                    } else if (v1.u_cat_id == 3) {
-                        cat_class = "text-warning";
-                    } else if (v1.u_cat_id == 4) {
-                        cat_class = "text-info";
-                    } else if (v1.u_cat_id == 5) {
-                        cat_class = "text-danger";
-                    }
+            $('.filter-mobile', cloneRow).on('keyup', function(e) {
+                fList = key_search(cloneRow, v.le_id, ul_users);
+                t_this.renderUserList(v.le_id, cloneRow, fList);
+            });
 
-                    if (user_name == null) {
-                        $('.um-email-resend a', cloneUserRow).html("Resend");
-                    }
+            $('.search-status-list', cloneRow).click(function(event) {
+                $('.search-status-li', cloneRow).each(function(index, el) {
+                    $(el).removeClass('active');
+                });
+                $(event.target).parent().addClass('active');
 
-                    $('.edit i').attr('title', 'Click Here to Edit');
-                    $('.edit i', cloneUserRow).attr("onClick", "showEdit('" + v1.user_id + "')");
+                var currentClass = $(event.target).find('i').attr('class');
 
-                    if (v1.is_active == true) {
-                        $('.status i', cloneUserRow).removeClass('fa-times text-danger');
-                        $('.status i', cloneUserRow).addClass('fa-check text-success');
-                        $('.status i', cloneUserRow).attr('title', 'Click here to Deactivate');
-                    } else {
-                        $('.status i', cloneUserRow).removeClass('fa-check text-success');
-                        $('.status i', cloneUserRow).addClass('fa-times text-danger');
-                        $('.status i', cloneUserRow).attr('title', 'Click here to Activate');
-                    }
-
-                    if (v1.is_disable == true) {
-                        $('.blocked i', cloneUserRow).addClass('text-danger');
-                        $('.blocked i', cloneUserRow).removeClass('text-muted');
-                        if (v1.unblock_days == 0) {
-                            $('.blocked i', cloneUserRow).hide();
-                        } else {
-                            $('.blocked i', cloneUserRow).attr('title', 'Days left ' + v1.unblock_days + ' day(s)');
-                        }
-
-                    } else {
-                        $('.blocked i', cloneUserRow).removeClass('text-danger');
-                        $('.blocked i', cloneUserRow).addClass('text-muted');
-                        $('.blocked i', cloneUserRow).attr('title', 'Click here to Block');
-                    }
-
-                    // $('.status i', cloneUserRow).attr("onClick", "showModalDialog('" + v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, 'STATUS'')");
-
-                    // showDialog
-
-                    $('.um-category i', cloneUserRow).addClass(cat_class);
-                    $('.user-row-body', cloneRow).append(cloneUserRow);
-
-                    j = j + 1;
+                $('#search-status', cloneRow).removeClass();
+                if (currentClass != undefined) {
+                    $('#search-status', cloneRow).addClass(currentClass);
+                    $('#search-status', cloneRow).text('');
+                } else {
+                    $('#search-status', cloneRow).addClass('fa');
+                    $('#search-status', cloneRow).text('All');
                 }
-
-                // Status Event
-                $('.status i', cloneUserRow).on('click', function(e) {
-                    t_this.showModalDialog(e, v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "STATUS");
-                });
-
-                // Disable Event
-                $('.blocked i', cloneRow).on('click', function(e) {
-                    t_this.showModalDialog(e, v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "BLOCK");
-                });
+                fList = key_search(cloneRow, v.le_id, ul_users);
+                t_this.renderUserList(v.le_id, cloneRow, fList);
             });
+
+            $('.search-category-list', cloneRow).click(function(event) {
+                $('.search-category-li', cloneRow).each(function(index, el) {
+                    $(el).removeClass('active');
+                });
+                $(event.target).parent().addClass('active');
+
+                var currentClass = $(event.target).find('i').attr('class');
+
+                $('#search-category', cloneRow).removeClass();
+                if (currentClass != undefined) {
+                    $('#search-category', cloneRow).addClass(currentClass);
+                    $('#search-category', cloneRow).text('');
+                } else {
+                    $('#search-category', cloneRow).addClass('fa');
+                    $('#search-category', cloneRow).text('All');
+                }
+                fList = key_search(cloneRow, v.le_id, ul_users);
+                t_this.renderUserList(v.le_id, cloneRow, fList);
+            });
+
+            t_this.renderUserList(v.le_id, cloneRow, ul_users);
             listContainer.append(cloneRow);
         });
     }
+    $('[data-toggle="tooltip"]').tooltip();
+};
+
+
+userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users) {
+    t_this = this;
+    $('.user-row-body', cloneRow).empty();
+    var j = 1;
+    $.each(ul_users, function(k1, v1) {
+        if (le_id == v1.le_id) {
+            var cloneUserRow = $('#template .user-row-table tr').clone();
+            var user_name = v1.user_name;
+            $('.sno', cloneUserRow).text(j);
+            $('.um-employee-name', cloneUserRow).text(v1.emp_name);
+            $('.um-user-name span', cloneUserRow).text(user_name);
+            if (user_name == null || user_name == "") {
+                $('.um-user-name', cloneUserRow).empty();
+            } else {
+                $('.um-user-name i', cloneUserRow).attr("data-original-title", v1.seating_unit);
+            }
+
+            $('.um-user-email', cloneUserRow).text(v1.email_id);
+            $('.um-user-mobile', cloneUserRow).text(v1.mob_no);
+
+            var cat_class = "";
+            if (v1.u_cat_id == 2) {
+                cat_class = "text-muted";
+            } else if (v1.u_cat_id == 3) {
+                cat_class = "text-warning";
+            } else if (v1.u_cat_id == 4) {
+                cat_class = "text-info";
+            } else if (v1.u_cat_id == 5) {
+                cat_class = "text-danger";
+            }
+
+            if (user_name == null) {
+                $('.um-email-resend a', cloneUserRow).html("Resend");
+            }
+
+            $('.edit i').attr('title', 'Click Here to Edit');
+            $('.edit i', cloneUserRow).attr("onClick", "showEdit('" + v1.user_id + "')");
+
+            if (v1.is_active == true) {
+                $('.status i', cloneUserRow).removeClass('fa-times text-danger');
+                $('.status i', cloneUserRow).addClass('fa-check text-success');
+                $('.status i', cloneUserRow).attr('title', 'Click here to Deactivate');
+            } else {
+                $('.status i', cloneUserRow).removeClass('fa-check text-success');
+                $('.status i', cloneUserRow).addClass('fa-times text-danger');
+                $('.status i', cloneUserRow).attr('title', 'Click here to Activate');
+            }
+
+            if (v1.is_disable == true) {
+                $('.blocked i', cloneUserRow).addClass('text-danger');
+                $('.blocked i', cloneUserRow).removeClass('text-muted');
+                if (v1.unblock_days == 0) {
+                    $('.blocked i', cloneUserRow).hide();
+                } else {
+                    $('.blocked i', cloneUserRow).attr('title', 'Days left ' + v1.unblock_days + ' day(s)');
+                }
+
+            } else {
+                $('.blocked i', cloneUserRow).removeClass('text-danger');
+                $('.blocked i', cloneUserRow).addClass('text-muted');
+                $('.blocked i', cloneUserRow).attr('title', 'Click here to Block');
+            }
+
+            // $('.status i', cloneUserRow).attr("onClick", "showModalDialog('" + v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, 'STATUS'')");
+
+            // showDialog
+
+            $('.um-category i', cloneUserRow).addClass(cat_class);
+            $('.user-row-body', cloneRow).append(cloneUserRow);
+
+            j = j + 1;
+        }
+
+        // Status Event
+        $('.status i', cloneUserRow).on('click', function(e) {
+            t_this.showModalDialog(e, v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "STATUS");
+        });
+
+        // Disable Event
+        $('.blocked i', cloneRow).on('click', function(e) {
+            t_this.showModalDialog(e, v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "BLOCK");
+        });
+    });
     $('[data-toggle="tooltip"]').tooltip();
 };
 
@@ -1228,27 +1281,33 @@ userManagementPage.prototype.validateMandatory = function() {
     return true;
 }
 
-key_search = function(mainList, listUsers) {
-    key_one = Filter_Users.val().toLowerCase();
-    key_two = Filter_User_ID.val().toLowerCase();
-    key_three = Filter_Email.val().toLowerCase();
-    key_four = Filter_Mobile.val().toLowerCase();
-    // d_status = Search_status_ul.find('li.active').attr('value');
+key_search = function(cloneRow, le_id, data) {
+    key_one = $('.filter-users', cloneRow).val().toLowerCase();
+    key_two = $('.filter-user-id', cloneRow).val().toLowerCase();
+    key_three = $('.filter-email', cloneRow).val().toLowerCase();
+    key_four = $('.filter-mobile', cloneRow).val().toLowerCase();
+    d_status = $('.search-status-list', cloneRow).find('li.active').attr('value');
+    d_category = $('.search-category-list', cloneRow).find('li.active').attr('value');
     var fList = [];
-    alert(listUsers.toSource())
-    for (var v in listUsers) {
-        emp_name = listUsers[v].emp_name;
-        emp_code = listUsers[v].emp_code;
-        email_id = listUsers[v].email_id;
-        mob_no = listUsers[v].mob_no;
-        // dStatus = mainList[entity].is_active;
-        if ((~emp_name.toLowerCase().indexOf(key_one)) && (~emp_code.toLowerCase().indexOf(key_two)) && (~email_id.toLowerCase().indexOf(key_three)) && (~mob_no.toLowerCase().indexOf(key_four))) {
-            // if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
-            //     fList.push(mainList[entity]);
-            // }
-            fList.push(mainList[v]);
+    for (var v in data) {
+        //alert(le_id+' - '+data[v].le_id)
+        if (le_id == data[v].le_id) {
+            emp_name = data[v].emp_name;
+            user_name = data[v].user_name;
+            if (user_name == null) user_name = "";
+            email_id = data[v].email_id;
+            mob_no = data[v].mob_no;
+            dStatus = data[v].is_active;
+            dCategory = data[v].u_cat_id;
+            if ((~emp_name.toLowerCase().indexOf(key_one)) && (~user_name.toLowerCase().indexOf(key_two)) && (~email_id.toLowerCase().indexOf(key_three)) && (~mob_no.toLowerCase().indexOf(key_four))) {
+                if ((d_status == 'all') || (Boolean(parseInt(d_status)) == dStatus)) {
+                    if ((d_category == 'all') || (parseInt(d_category) == dCategory))
+                        fList.push(data[v]);
+                }
+            }
         }
     }
+    //consol.log(fList);
     return fList
 }
 
