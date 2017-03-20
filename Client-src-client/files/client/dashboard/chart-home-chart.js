@@ -505,18 +505,18 @@ function ChartInput() {
     this.countries = copyArray(countries);
   };
   this.getCountries = function () {
-    // if (this.country_selected) {
+    if (this.country_selected) {
       if (this.countries.length > 0)
         return copyArray(this.countries);
       else
         return [];
-    // } else {
-    //     //return [];
-    //   get_ids(CHART_FILTERS_DATA.countries, 'c_id');
-    //   countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
-    //   chartInput.setCountriesAll(countries);
-    //   return countries;
-    // }
+    } else {
+        //return [];
+      get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+      countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+      chartInput.setCountriesAll(countries);
+      return countries;
+    }
   };
   this.setDomainSelected = function (v) {
     this.domain_selected = v;
@@ -1187,6 +1187,8 @@ function initializeFilters() {
     }
   });
   $('.btn-go .btn').on('click', function () {
+    chartInput.setCountrySelected(true);
+    chartInput.setDomainSelected(true);
     var chart_type = chartInput.getChartType();
     loadCharts();
   });
@@ -1958,9 +1960,9 @@ function loadCharts() {
   $(".div-assignee-wise-compliance").hide();
   $(".assignee-wise").empty();
 
-  get_ids(CHART_FILTERS_DATA.countries, 'c_id');
-  countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
-  chartInput.setCountriesAll(countries);
+  // get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+  // countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+  // chartInput.setCountriesAll(countries);
 
   if (chartType == 'compliance_status') {    
     loadComplianceStatusChart();

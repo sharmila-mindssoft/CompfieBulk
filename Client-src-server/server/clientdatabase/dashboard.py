@@ -2142,6 +2142,8 @@ def get_assigneewise_compliances_drilldown_data_count(
     result = get_country_domain_timelines(
         db, [country_id], [domain_id], [current_year]
     )
+    if len(result[0][1]) == 0 :
+        return 0
     from_date = datetime.datetime(current_year, 1, 1)
     to_date = datetime.datetime(current_year, 12, 31)
     domain_condition = ",".join(str(x) for x in domain_id_list)
@@ -2199,7 +2201,7 @@ def fetch_assigneewise_compliances_drilldown_data(
             db, [country_id], domain_id_list, [current_year]
         )
         if len(result[0][1]) == 0 :
-            continue
+            return []
         from_date = result[0][1][0][1][0]["start_date"]
         to_date = result[0][1][0][1][0]["end_date"]
         domain_condition = str(domain_id_list[0])
