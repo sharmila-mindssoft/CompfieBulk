@@ -651,10 +651,8 @@ api_params = {
     'contact_person': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'statutory_nature': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "applicable_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "ApplicableUnit"},
-
-
-
-
+    "audit_client_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AuditTrailClientUser"},
+    "client_audit_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "ClientAuditTrail"},
 }
 api_params['domain_id'] = api_params.get('d_id')
 api_params['domain_name'] = api_params.get('d_name')
