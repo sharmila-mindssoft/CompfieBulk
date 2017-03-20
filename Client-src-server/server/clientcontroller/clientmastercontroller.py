@@ -160,7 +160,10 @@ def process_client_master_requests(request, db, session_user, client_id, session
         result = process_save_settings_form_data(db, request, session_user)
     
     elif type(request) is clientmasters.BlockUser:
-        result = process_block_user(db, request, session_user)        
+        result = process_block_user(db, request, session_user)
+
+    elif type(request) is clientmasters.ResendRegistrationEmail:
+        result = process_resend_registration_email(db, request, session_user, client_id)       
 
     return result
 
@@ -271,6 +274,17 @@ def process_block_user(
         is_blocked, session_user
     ):
         return clientmasters.BlockUserSuccess()
+
+########################################################
+# To Resend Registration Email user
+########################################################
+def process_resend_registration_email(
+    db, request, session_user, client_id
+):
+    if resend_registration_email(
+        db, request.user_id, session_user, client_id
+    ):
+        return clientmasters.ResendRegistrationEmailSuccess()
 
 ########################################################
 # User Management Add Prerequisite

@@ -1432,6 +1432,16 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
+    function resendRegistrationEmail(user_id, callback) {
+        callerName = 'client_masters';
+        var request = [
+            'ResendRegistrationEmail', {
+                'user_id': user_id
+            }
+        ];
+        clientApiRequest(callerName, request, callback);
+    }
+
 
 
     // Client User
@@ -3063,7 +3073,8 @@ function initClientMirror() {
         onOccurrenceLastTransaction: onOccurrenceLastTransaction,
         uploadComplianceTaskFile: uploadComplianceTaskFile,
         userManagementEditView: userManagementEditView,
-        blockUser: blockUser
+        blockUser: blockUser,
+        resendRegistrationEmail:resendRegistrationEmail
     };
 }
 

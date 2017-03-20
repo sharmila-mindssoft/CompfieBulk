@@ -422,7 +422,8 @@ var message = {
     'enable_user_message': 'You want to enable this User',
     "onoccurrence_start": 'You want to start this compliance',
     "mobile_invalid": "Invalid Mobile Number",
-    "contactno_invalid": "Invalid Contact Number"
+    "contactno_invalid": "Invalid Contact Number",
+    "email_sent": "Email Sent Successfully"
 };
 
 function clearMessage() {

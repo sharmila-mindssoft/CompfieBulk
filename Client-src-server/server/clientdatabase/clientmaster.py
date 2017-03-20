@@ -90,7 +90,8 @@ __all__ = [
     "userManagement_EditView_GetUnits",
     "update_licence_viewonly",
     "update_licence",
-    "block_user"
+    "block_user",
+    "resend_registration_email"
 ]
 
 ############################################################################
@@ -416,6 +417,29 @@ def block_user(
     db.save_activity(session_user, 2, action)
 
     return result
+
+##############################################################################
+# To Disable User
+# Parameter(s) - Object of database, Service provider id, block status and
+#                session user
+# Return Type - Boolean
+#             - Returns True on successfull block
+#             - Returns RuntimeError on failure block
+##############################################################################
+def resend_registration_email(
+    db, user_id, session_user, client_id
+):
+    query = "select employee_name, email_id from tbl_users where client_id=%s AND user_id = %s"
+    result = db.select_all(query, [client_id, user_id])
+    for row in result:
+        emp_name = row["employee_name"]
+        email_id = row["email_id"]
+
+    short_name = get_short_name(db)
+    save_registration_token(db, short_name, user_id, emp_name, email_id)
+
+    return True
+
 ##############################################################################
 # User Management Add - Category Prerequisite
 ##############################################################################
@@ -1185,6 +1209,7 @@ def save_user(db, user, session_user, client_id):
     save_user_domains(db, user.user_domain_ids, user_id)
     save_user_units(db, user.user_unit_ids, user_id)
     save_user_legal_entities(db, user.user_entity_ids, user_id)
+
     save_registration_token(db, short_name, user_id, user.employee_name, user.email_id)
 
     action = "Created user \"%s - %s\"" % (
@@ -1201,6 +1226,8 @@ def save_user(db, user, session_user, client_id):
     # )
     # notify_user_thread.start()
     return True
+
+
 ############################################################################
 # To Update User
 # Parameter(s) - Object of database, Object of user, session user
