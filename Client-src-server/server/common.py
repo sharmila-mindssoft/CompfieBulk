@@ -301,6 +301,7 @@ def convert_base64_to_file(file_name, file_content, file_path=None):
             fn.write(file_content.decode('base64'))
 
 def make_summary(data, data_type, c):
+    print c
     string_months = {
         1: "Jan",
         2: "Feb",

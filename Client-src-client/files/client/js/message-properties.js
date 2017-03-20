@@ -1,4 +1,3 @@
-var message = {
     //Common
     "submit_success": "Record Submitted Successfully",
     "save_success": "Record Saved Successfully",

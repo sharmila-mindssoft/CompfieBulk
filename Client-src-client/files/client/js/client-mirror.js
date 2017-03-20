@@ -214,6 +214,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
+
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -1712,7 +1713,7 @@ function initClientMirror() {
         return statutoryDate;
     }
 
-    function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore, uIds) {
+    function assignCompliances(compId, compName, sDateList, dDate, vDate, trigBefore, uIds, rBy, rEvery) {
         return {
             'comp_id': compId,
             'comp_name': compName,
@@ -1720,7 +1721,9 @@ function initClientMirror() {
             'd_date': dDate,
             'v_date': vDate,
             'trigger_before_days': trigBefore,
-            'u_ids': uIds
+            'u_ids': uIds,
+            'repeat_by': rBy,
+            'r_every': rEvery
         };
     }
 
