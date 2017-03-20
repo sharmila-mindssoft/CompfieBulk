@@ -669,11 +669,13 @@ api_params = {
     "on_unit": make_text_field(length=100),
     "on_compliance_status": make_text_field(length=500),
     "onoccurrence_transactions": make_vector_type_field(module="clientcore", klass_name="GetOnoccurrencce_Last_Transaction"),
+
     "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
     "statutory_count": make_int_field(is_optional=True),
     "reminder_count": make_int_field(is_optional=True),
     "escalation_count": make_int_field(is_optional=True),
     "messages_count": make_int_field(is_optional=True),
+
     "pr_statutory_date": make_text_field(length=500, is_optional=True),
     "pr_compliances_1": make_vector_type_field(module="clienttransactions", klass_name="PAST_RECORD_COMPLIANCE"),
     "pr_completed_by": make_int_field(is_optional=True),
@@ -684,5 +686,4 @@ api_params = {
     "file_content": make_text_field(is_optional=True),
     "unit_address": make_text_field(length=500),
     "seating_unit": make_text_field(length=500, is_optional=True),
-
 }
