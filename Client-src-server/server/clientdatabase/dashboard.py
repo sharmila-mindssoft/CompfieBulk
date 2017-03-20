@@ -569,8 +569,8 @@ def get_risk_chart_count(db, request, user_id, user_category):
         " left join tbl_compliance_history as t1 on t3.unit_id = t1.unit_id and t3.compliance_id = t1.compliance_id " + \
         " where find_in_set(t2.domain_id, %s) " + \
         " group by t1.unit_id ) as ch, " + \
-        " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
-        " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
+        " (select t1.unit_id, sum(IF(t1.compliance_opted_status = 0 , 1, 0)) as not_opted, " + \
+        " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null = 1, 1, 0)) as unassigned " + \
         " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id " + \
         " and t1.unit_id = t2.unit_id  where find_in_set(t1.domain_id, %s) group by t1.unit_id ) as cc, " + \
         " tbl_units as t3 where t3.unit_id = ch.unit_id and t3.unit_id = cc.unit_id "
@@ -589,8 +589,8 @@ def get_risk_chart_count(db, request, user_id, user_category):
             " inner join tbl_user_units as t3 on cc.unit_id = t3.unit_id   " + \
             " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s  " + \
             " and find_in_set(t2.domain_id, %s) group by t1.unit_id ) as ch,   " + \
-            " (select t1.unit_id, sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted,   " + \
-            " sum(IF(ifnull(t1.compliance_opted_status, 0) and t2.compliance_id is null = 1, 1, 0)) as unassigned   " + \
+            " (select t1.unit_id, sum(IF(t1.compliance_opted_status = 0 , 1, 0)) as not_opted,   " + \
+            " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null = 1, 1, 0)) as unassigned   " + \
             " from tbl_client_compliances as t1   left join tbl_assign_compliances as t2  on t1.compliance_id = t2.compliance_id  " + \
             " and t1.unit_id = t2.unit_id  inner join tbl_user_units as t3 on t1.unit_id = t3.unit_id   " + \
             " inner join tbl_user_domains as t4 on t3.user_id = t4.user_id where t4.user_id = %s and find_in_set(t1.domain_id, %s)  " + \
@@ -1263,7 +1263,7 @@ def make_not_opted_drill_down_query():
         " inner join tbl_units as T2 on T1.unit_id = T2.unit_id" + \
         " inner join tbl_compliances as T3 on T1.compliance_id = T3.compliance_id and" + \
         " T3.domain_id = T1.domain_id " + \
-        " where ifnull(T1.compliance_opted_status,0) = 0 " + \
+        " where T1.compliance_opted_status = 0 " + \
         " AND find_in_set(T2.country_id, %s) " + \
         " AND find_in_set(T1.domain_id, %s) "
     return q_not_opted
@@ -1395,8 +1395,8 @@ def get_compliance_applicability_drill_down(
     query1 = query + where_type_qry + limit
 
     param.extend([from_count, to_count])
-    rows = db.select_all(query1, param)
 
+    rows = db.select_all(query1, param)
     level_1_wise_compliance = {}
 
     for r in rows:
@@ -1498,7 +1498,7 @@ def get_notification_counts(db, session_user, session_category, le_ids):
                     "Where nlu.user_id = @user_id and nlu.read_status = 0 ) x"
     row = db.select_one(reminder_query, [session_category, session_category, session_user])
     if row['reminder_count'] > 0:
-        reminder = row['reminder_count']
+        reminder = int(row['reminder_count'])
 
     escalation_query = "Select count(*) as escalation_count from tbl_notifications_log as nl " + \
                     "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id AND nl.notification_type_id = 3 " + \

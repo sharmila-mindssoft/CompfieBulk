@@ -481,7 +481,7 @@ def to_structure_dictionary_values(x):
             assert _class_name is not None
             val = to_EnumType(_module_name, _class_name, val)
         else:
-            print "field_name:val>>>", "%s:%s" % (field_name, val)
+
             val = parse_values(field_name, param, val)
         if(
             val is not None and _validation_method is not None and

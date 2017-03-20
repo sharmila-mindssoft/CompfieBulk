@@ -58,6 +58,7 @@ class Database(object):
         self._connection = mysqlConnection
         self._cursor = None
         self._for_client = False
+        self.owner_id = None
 
     # Used to get first three letters of month by the month's integer value
     string_months = {
@@ -117,6 +118,9 @@ class Database(object):
             database=data.db_name,
             port=data.db_ip.port
         )
+
+    def set_owner_id(self, o_id):
+        self.owner_id = o_id
 
     ########################################################
     # To Redirect Requests to Functions
