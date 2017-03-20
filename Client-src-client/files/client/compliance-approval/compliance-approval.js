@@ -83,29 +83,15 @@ var unitName = "";
 var lastAssignee = "";
 
 function loadComplianceApprovalDetails(data) {
-// <<<<<<< HEAD
-//     $.each(data, function(key, val) {
-//         if (unitName != val.unit_name) {
-//             var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
-//             $('.unit-name', cloneunit).html(val.unit_name);
-//             $('.tbody-compliance-approval-list').append(cloneunit);
-//             unitName = val.unit_name;
-//             lastAssignee = "";
-//         }
-// =======
-//     var unitName = "";
 
-    $.each(data, function(key, value) {
-        complianceList = value.approval_compliances;
-        //Full Width list append ---------------------------------------------------------------
-        $.each(complianceList, function(k, val) {
-            if (unitName != val.unit_name) {
-                var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
-                $('.unit-name', cloneunit).html(val.unit_name);
-                $('.tbody-compliance-approval-list').append(cloneunit);
-                unitName = val.unit_name;
-            }
-// >>>>>>> Usha/phase2
+    $.each(data, function(key, val) {
+        if (unitName != val.unit_name) {
+            var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
+            $('.unit-name', cloneunit).html(val.unit_name);
+            $('.tbody-compliance-approval-list').append(cloneunit);
+            unitName = val.unit_name;
+            lastAssignee = "";
+        }
 
         if (lastAssignee != val.assignee_name) {
             var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');
@@ -350,7 +336,7 @@ function showSideBar(idval, data) {
         var next_due_date;
         var validity_date;
         compliance_history_id = data.compliance_history_id;
-        
+
         if (action == 'Approve') {
             approval_status = $('.approval-action option:selected').val();
         }
