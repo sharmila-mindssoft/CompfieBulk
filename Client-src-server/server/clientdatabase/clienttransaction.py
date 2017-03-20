@@ -1114,7 +1114,7 @@ def save_assigned_compliance(db, request, session_user):
                 le_id, country_id, domain_id, unit_id, compliance_id,
                 str(date_list), assignee, int(session_user), created_on,
                 approval, int(session_user), created_on,
-                trigger_before, str(due_date), str(validity_date), int(repeats_type), int(repeats_every)
+                trigger_before, str(due_date), str(validity_date), repeats_type, repeats_every
             ]
             if concurrence is not None:
                 value.extend([concurrence, int(session_user), created_on])
