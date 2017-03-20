@@ -1986,9 +1986,15 @@ function loadCharts() {
   var chartType = chartInput.getChartType();
   chartInput.setChartYear(0);
   if (chartType == 'compliance_report') {
+    $(".filter-button").hide();
     $('.chart-container-inner').hide();
     $('.report-container-inner').show();
+    $(".escalation-drilldown-container").hide();
+    $(".div-assignee-wise-compliance").show();
+    $(".assignee-wise-accordian-list").hide();
+    $(".compliance-report-tab-content").show();
   } else {
+    $(".filter-button").show();
     if (chartType == 'compliance_status') {
       $('.chart-filters').show();
       $('.chart-filters-autocomplete').hide();
