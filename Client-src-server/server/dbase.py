@@ -533,6 +533,8 @@ class Database(object):
         try:
             cursor = self.cursor()
             assert cursor is not None
+            print "query>>>", query
+            print "valueList>>", valueList
             cursor.executemany(query, valueList)
             cursor.nextset()
             return True

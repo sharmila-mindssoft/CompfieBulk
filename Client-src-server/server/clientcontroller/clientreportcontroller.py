@@ -1030,7 +1030,7 @@ def get_le_wise_score_card(db, request, session_user, session_category):
         domain_id = request.d_id
 
         le_wise_score_card_list = report_le_wise_score_card(
-            db, country_id, legal_entity_id, domain_id, session_user
+            db, country_id, legal_entity_id, domain_id, session_user, session_category
         )
         logo_url = legal_entity_logo_url(
             db, legal_entity_id

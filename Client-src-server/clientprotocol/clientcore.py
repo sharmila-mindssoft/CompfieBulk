@@ -2386,7 +2386,7 @@ class AssignedStatutory(object):
 class ActiveCompliance(object):
     def __init__(
         self, compliance_history_id, compliance_name, compliance_frequency,
-        domain_name, domain_id, unit_id, start_date, due_date, compliance_status, validity_date,
+        domain_name, domain_id, unit_id, assigned_on, start_date, due_date, compliance_status, validity_date,
         next_due_date, ageing, format_file_name, unit_name, address,
         compliance_description, remarks, compliance_id, file_names, download_url
     ):
@@ -2395,7 +2395,8 @@ class ActiveCompliance(object):
         self.compliance_frequency = compliance_frequency
         self.domain_name = domain_name
         self.domain_id = domain_id
-        self.unit_id = unit_id
+        self.unit_id = unit_id        
+        self.assigned_on = assigned_on
         self.start_date = start_date
         self.due_date = due_date
         self.compliance_status = compliance_status
@@ -2416,7 +2417,7 @@ class ActiveCompliance(object):
         data = parse_dictionary(
             data, [
                 "compliance_history_id", "compliance_name",
-                "compliance_task_frequency", "domain_name", "domain_id", "unit_id", "start_date", "due_date",
+                "compliance_task_frequency", "domain_name", "domain_id", "unit_id", "assigned_on", "start_date", "due_date",
                 "compliance_status", "validity_date", "next_due_date", "ageing",
                 "compliance_file_name", "unit_name", "address", "compliance_description",
                 "remarks", "compliance_id", "file_names", "compliance_download_url"
@@ -2432,6 +2433,7 @@ class ActiveCompliance(object):
         # domain_name = parse_structure_CustomTextType_50(domain_name)
         domain_id  = data.get("domain_id")
         unit_id  = data.get("unit_id")
+        assigned_on = data.get("assigned_on")
         start_date = data.get("start_date")
         # start_date = parse_structure_CustomTextType_20(start_date)
         due_date = data.get("due_date")
@@ -2462,7 +2464,7 @@ class ActiveCompliance(object):
         # download_url = parse_structure_OptionalType_VectorType_CustomTextType_500(download_url)
         return ActiveCompliance(
             compliance_history_id, compliance_name,
-            compliance_frequency, domain_name, domain_id, unit_id, start_date, due_date,
+            compliance_frequency, domain_name, domain_id, unit_id, assigned_on, start_date, due_date,
             compliance_status, validity_date, next_due_date, ageing,
             format_file_name, unit_name, address, compliance_description,
             remarks, compliance_id, file_names, download_url
@@ -2476,6 +2478,7 @@ class ActiveCompliance(object):
             "domain_name": self.domain_name,
             "domain_id": self.domain_id,
             "unit_id": self.unit_id,
+            "assigned_on": self.assigned_on,
             "start_date": self.start_date,
             "due_date": self.due_date,
             "compliance_status": self.compliance_status,
@@ -4643,7 +4646,8 @@ class ClientLegalEntities_UserManagementList(object):
 ##############################################################################
 class ClientUsers_UserManagementList(object):
     def __init__(self, user_id, user_category_id, employee_code, employee_name,
-                 username, email_id, mobile_no, legal_entity_id):
+                 username, email_id, mobile_no, legal_entity_id, is_active, 
+                 is_disable, unblock_days, seating_unit):
         self.user_id = user_id
         self.user_category_id = user_category_id
         self.employee_code = employee_code
@@ -4652,12 +4656,17 @@ class ClientUsers_UserManagementList(object):
         self.email_id = email_id
         self.mobile_no = mobile_no
         self.legal_entity_id = legal_entity_id
+        self.is_active = is_active
+        self.is_disable = is_disable
+        self.unblock_days = unblock_days
+        self.seating_unit = seating_unit
 
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, ["user_id", "user_category_id", "employee_code"
                                        "employee_name", "username", "email_id",
-                                       "mobile_no", "legal_entity_id"])
+                                       "mobile_no", "legal_entity_id", "is_active",
+                                       "is_disable", "unblock_days", "seating_unit"])
         user_id = data.get("user_id")
         user_category_id = data.get("user_category_id")
         employee_code = data.get("employee_code")
@@ -4666,9 +4675,14 @@ class ClientUsers_UserManagementList(object):
         email_id = data.get("email_id")
         mobile_no = data.get("mobile_no")
         legal_entity_id = data.get("legal_entity_id")
+        is_active = data.get("is_active")
+        is_disable = data.get("is_disable")
+        unblock_days = data.get("unblock_days")
+        seating_unit = data.get("seating_unit")
         return ClientUsers_UserManagementList(user_id, user_category_id, employee_code,
                                                      employee_name, username, email_id, mobile_no,
-                                                     legal_entity_id)
+                                                     legal_entity_id, is_active, is_disable,
+                                                     unblock_days, seating_unit)
 
     def to_structure(self):
         return {
@@ -4679,7 +4693,11 @@ class ClientUsers_UserManagementList(object):
             "user_name": self.username,
             "email_id": self.email_id,
             "mob_no": self.mobile_no,
-            "le_id": self.legal_entity_id
+            "le_id": self.legal_entity_id,
+            "is_active": self.is_active,
+            "is_disable": self.is_disable,
+            "unblock_days": self.unblock_days,
+            "seating_unit": self.seating_unit
         }
 ##############################################################################
 # User Management Edit - Get Users for Edit View

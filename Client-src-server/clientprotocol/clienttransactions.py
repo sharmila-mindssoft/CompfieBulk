@@ -1528,14 +1528,10 @@ class GetComplianceApprovalListSuccess(Response):
 
     @staticmethod
     def parse_inner_structure(data):
-        data = parse_dictionary(data, ["approval_list",
-                                       "approval_status", "total_count"])
+        data = parse_dictionary(data, ["approval_list", "approval_status", "total_count"])
         approval_list = data.get("approval_list")
-        # approval_list = parse_structure_VectorType_RecordType_clienttransactions_APPORVALCOMPLIANCELIST(approval_list)
         approval_status = data.get("approval_status")
-        # approval_status = parse_structure_VectorType_RecordType_core_COMPLIANCE_APPROVAL_STATUS(approval_status)
         total_count = data.get("total_count")
-        # total_count = parse_structure_UnsignedIntegerType_32(total_count)
         return GetComplianceApprovalListSuccess(approval_list, approval_status, total_count)
 
     def to_inner_structure(self):
@@ -2504,7 +2500,7 @@ class APPROVALCOMPLIANCE(object):
         self, compliance_history_id, compliance_name, description,
         domain_name, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-        remarks, action, statutory_dates, validity_date, unit_name, unit_address
+        remarks, action, statutory_dates, validity_date, unit_name, unit_address, assignee_id, assignee_name
     ):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
@@ -2526,6 +2522,8 @@ class APPROVALCOMPLIANCE(object):
         self.validity_date = validity_date
         self.unit_name = unit_name
         self.unit_address = unit_address
+        self.assignee_id = assignee_id
+        self.assignee_name = assignee_name
 
     @staticmethod
     def parse_structure(data):
@@ -2535,7 +2533,7 @@ class APPROVALCOMPLIANCE(object):
                 "description", "domain_name", "file_names", "start_date", "due_date", "delayed_by",
                 "compliance_task_frequency", "uploaded_documents", "upload_date", "completion_date",
                 "next_due_date", "concurrenced_by", "remarks", "action",
-                "statutory_dates", "validity_date", "unit_name", "unit_address"
+                "statutory_dates", "validity_date", "unit_name", "unit_address", "assignee_id", "assignee_name"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
@@ -2558,12 +2556,14 @@ class APPROVALCOMPLIANCE(object):
         validity_date = data.get("validity_date")
         unit_name = data.get("unit_name")
         unit_address = data.get("unit_address")
-
+        assignee_id = data.get("assignee_id")
+        assignee_name = data.get("assignee_name")
+        
         return APPROVALCOMPLIANCE(
             compliance_history_id, compliance_name, description,
             domain_name, start_date, due_date, delayed_by, compliance_frequency,
             documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-            remarks, action, statutory_dates, validity_date, unit_name, unit_address
+            remarks, action, statutory_dates, validity_date, unit_name, unit_address, assignee_id, assignee_name
         )
 
     def to_structure(self):
@@ -2587,36 +2587,38 @@ class APPROVALCOMPLIANCE(object):
             "statutory_dates" : self.statutory_dates,
             "validity_date": self.validity_date,
             "unit_name": self.unit_name,
-            "unit_address": self.unit_address
+            "unit_address": self.unit_address,
+            "assignee_id": self.assignee_id,
+            "assignee_name": self.assignee_name
         }
 
 #
 # APPORVALCOMPLIANCELIST
 #
 
-class APPORVALCOMPLIANCELIST(object):
-    def __init__(self, assignee_id, assignee_name, compliances):
-        self.assignee_id = assignee_id
-        self.assignee_name = assignee_name
-        self.compliances = compliances
+# class APPORVALCOMPLIANCELIST(object):
+#     def __init__(self, assignee_id, assignee_name, compliances):
+#         self.assignee_id = assignee_id
+#         self.assignee_name = assignee_name
+#         self.compliances = compliances
 
-    @staticmethod
-    def parse_structure(data):
-        data = parse_dictionary(data, ["assignee_id", "assignee_name", "approval_compliances"])
-        assignee_id = data.get("assignee_id")
-        # assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
-        assignee_name = data.get("assignee_name")
-        # assignee_name = parse_structure_CustomTextType_50(assignee_name)
-        compliances = data.get("approval_compliances")
-        # compliances = parse_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE(compliances)
-        return APPORVALCOMPLIANCELIST(assignee_id, assignee_name, compliances)
+#     @staticmethod
+#     def parse_structure(data):
+#         data = parse_dictionary(data, ["assignee_id", "assignee_name", "approval_compliances"])
+#         assignee_id = data.get("assignee_id")
+#         # assignee_id = parse_structure_UnsignedIntegerType_32(assignee_id)
+#         assignee_name = data.get("assignee_name")
+#         # assignee_name = parse_structure_CustomTextType_50(assignee_name)
+#         compliances = data.get("approval_compliances")
+#         # compliances = parse_structure_VectorType_RecordType_clienttransactions_APPROVALCOMPLIANCE(compliances)
+#         return APPORVALCOMPLIANCELIST(assignee_id, assignee_name, compliances)
 
-    def to_structure(self):
-        return {
-            "assignee_id": self.assignee_id,
-            "assignee_name": self.assignee_name,
-            "approval_compliances": self.compliances,
-        }
+#     def to_structure(self):
+#         return {
+#             "assignee_id": self.assignee_id,
+#             "assignee_name": self.assignee_name,
+#             "approval_compliances": self.compliances,
+#         }
 
 #
 # STATUTORY_WISE_COMPLIANCES

@@ -616,7 +616,7 @@ api_params = {
     "statutory_provision": make_text_field(is_optional=True),
     "complete_within_days": make_text_field(is_optional=True),
     "duration": make_text_field(is_optional=True),
-    "approval_list": make_vector_type_field(module="clienttransactions", klass_name="APPORVALCOMPLIANCELIST"),
+    "approval_list": make_vector_type_field(module="clienttransactions", klass_name="APPROVALCOMPLIANCE"),
     "approval_status": make_vector_type_field(module="clientcore", klass_name="COMPLIANCE_APPROVAL_STATUS"),
     "approval_compliances": make_vector_type_field(module="clienttransactions", klass_name="APPROVALCOMPLIANCE"),
     "upload_date": make_text_field(is_optional=True),
@@ -683,5 +683,6 @@ api_params = {
     "file_name": make_text_field(length=500),
     "file_content": make_text_field(is_optional=True),
     "unit_address": make_text_field(length=500),
+    "seating_unit": make_text_field(length=500, is_optional=True),
 
 }

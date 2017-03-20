@@ -17,7 +17,8 @@
   color: #f5f5f5 !important;
 }
 body.fixed-left .side-menu.left {
-  background: #595F72;
+  /*background: #595F72;*/
+  background: #F46036;
 }
 .sidebar-inner {
   height: 100%;

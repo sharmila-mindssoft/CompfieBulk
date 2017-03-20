@@ -53,7 +53,7 @@ INSERT INTO tbl_forms VALUES(28, 3, 'Login Trace', "/login-trace", 1, null);
 INSERT INTO tbl_forms VALUES(29, 4, 'view-profile', "/View Profile", 1, null);
 INSERT INTO tbl_forms VALUES(30, 4, 'Client View Profile', "/client-view-profile", 1, null);
 INSERT INTO tbl_forms VALUES(31, 4, 'Change Password', "/change-password", 1, null);
-INSERT INTO tbl_forms VALUES(32, 4, 'Client Settings', "/client-settings", 1, null);
+INSERT INTO tbl_forms VALUES(32, 4, 'Settings', "/client-settings", 1, null);
 INSERT INTO tbl_forms VALUES(33, 4, 'themes', "/themes", 1, null);
 
 INSERT INTO tbl_forms VALUES(34, 5, 'Dashboard', "/dashboard", 1, null);
