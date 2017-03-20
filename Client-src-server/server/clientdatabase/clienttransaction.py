@@ -1052,14 +1052,14 @@ def save_assigned_compliance(db, request, session_user):
         "statutory_dates", "assignee",
         "assigned_by", "assigned_on",
         "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date",
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every"
     ]
     value_list = []
     update_column = [
         "statutory_dates", "assignee",
         "assigned_by", "assigned_on",
         "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date",
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every",
     ]
 
     if concurrence is not None:
@@ -1068,6 +1068,8 @@ def save_assigned_compliance(db, request, session_user):
 
     unit_ids = []
     for c in compliances:
+        repeats_every = c.r_every
+        repeats_type = c.repeat_by
         compliance_id = int(c.compliance_id)
         statutory_dates = c.statutory_dates
         if statutory_dates is not None:
@@ -1112,7 +1114,7 @@ def save_assigned_compliance(db, request, session_user):
                 le_id, country_id, domain_id, unit_id, compliance_id,
                 str(date_list), assignee, int(session_user), created_on,
                 approval, int(session_user), created_on,
-                trigger_before, str(due_date), str(validity_date)
+                trigger_before, str(due_date), str(validity_date), int(repeats_type), int(repeats_every)
             ]
             if concurrence is not None:
                 value.extend([concurrence, int(session_user), created_on])
@@ -3266,8 +3268,8 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "concat(com.document_name,' - ',com.compliance_task) as compliance_name,ac.compliance_id, " + \
         "com.frequency_id,(select frequency from tbl_compliance_frequency where frequency_id = com.frequency_id) as freq_name, " + \
         "com.compliance_description, " + \
-        "com.statutory_dates, com.repeats_every, " + \
-        "com.repeats_type_id, com.duration, com.duration_type_id, " + \
+        "ac.statutory_dates, ac.repeats_every, " + \
+        "ac.repeats_type_id, com.duration, com.duration_type_id, " + \
         "(select repeat_type from tbl_compliance_repeat_type where repeat_type_id = com.repeats_type_id) as repeat_type, " + \
         "(select duration_type from tbl_compliance_duration_type where duration_type_id = com.duration_type_id) as duration_type , " + \
         "ac.trigger_before_days, " + \
@@ -3292,7 +3294,6 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "concat(com.document_name,' - ',com.compliance_task),com.frequency_id " +\
         "limit %s, %s ;"
     param = [domain_id, ",".join([str(x) for x in unit_ids]), user_type, user_id, user_id, user_id, from_count, to_count]
-
     row = db.select_all(query, param)
     return return_compliance_for_reassign(row)
 

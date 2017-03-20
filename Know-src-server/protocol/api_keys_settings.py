@@ -633,6 +633,8 @@ api_params = {
     'is_created': {'type': 'BOOL', 'length': None, 'validation_method': None, 'is_optional': False},
     "console_cl_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     "console_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    "console_le_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
+    "console_f_le_ids": {'type': 'TEXT', 'length': 50, 'validation_method': None, 'is_optional': True},
     'ip_optional': {'type': 'TEXT', 'length': 100, 'validation_method': None, 'is_optional': True},
     'group_info': {'type': 'VECTOR_TYPE', 'length': 100000, 'validation_method': None, 'module_name': 'clientcoordinationmaster', 'class_name': 'GroupInfo'},
     'old_d_e_id': {'type': 'INT', 'length': 10000, 'validation_method': None, 'is_optional': False},
@@ -649,10 +651,8 @@ api_params = {
     'contact_person': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     'statutory_nature': {'type': 'STRING', 'length': 50, 'validation_method': is_alpha_numeric, 'is_optional': True},
     "applicable_units": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'domaintransactionprotocol', "class_name": "ApplicableUnit"},
-
-
-
-
+    "audit_client_users": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'core', "class_name": "AuditTrailClientUser"},
+    "client_audit_details": {'type': 'VECTOR_TYPE', 'length': None, 'validation_method': None, 'is_optional': False, 'module_name': 'general', "class_name": "ClientAuditTrail"},
 }
 api_params['domain_id'] = api_params.get('d_id')
 api_params['domain_name'] = api_params.get('d_name')

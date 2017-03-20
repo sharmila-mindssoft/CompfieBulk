@@ -1761,7 +1761,7 @@ def calculate_due_date(
                 date_details += "(%s)" % (
                     statutory_date_json[0]["statutory_date"]
                 )
-        print "repeat_by>>>>>>>>>>", repeat_by
+
         # For Compliances Recurring in days
         if repeat_by == 1:  # Days
             summary = "Every %s day(s)" % (repeat_every)

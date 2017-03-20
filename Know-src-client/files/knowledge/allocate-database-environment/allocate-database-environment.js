@@ -7,6 +7,8 @@ var client_ids = null;
 var client_id = null;
 var legal_entity_id = null;
 var legal_entity_ids = null;
+var le_legal_entity_ids = null;
+var f_legal_entity_ids = null;
 var old_grp_app_id = null;
 var old_grp_db_s_id = null;
 var old_le_db_s_id = null;
@@ -106,6 +108,8 @@ btn_submit.click(function(){
 		var new_grp_le_ids = null, new_le_le_ids = null, new_f_le_ids = null, new_grp_cl_ids = null;
 		client_ids = checkClientIds(client_ids,client_id);
 		legal_entity_ids = checkLEIds(legal_entity_ids, legal_entity_id);
+		le_legal_entity_ids = checkLEIds(le_legal_entity_ids, legal_entity_id);
+		f_legal_entity_ids = checkLEIds(f_legal_entity_ids, legal_entity_id);
 		if (old_grp_app_id != $('#application_id').val()){
 			new_grp_cl_ids = removeCLIds(old_cl_ids, client_id);
 		}else{
@@ -123,7 +127,6 @@ btn_submit.click(function(){
 		}else{
 			new_le_le_ids = old_le_le_ids;
 		}
-
 		if (old_le_f_s_id != $('#le_file_server_id').val()){
 			new_f_le_ids = removeLEIds(old_f_le_ids, legal_entity_id);
 		}else{
@@ -142,9 +145,9 @@ btn_submit.click(function(){
 
     	mirror.saveDBEnv(edit_id, client_id, legal_entity_id, parseInt($('#application_id').val()),
     		parseInt($('#database_server_id').val()), parseInt($('#le_database_server_id').val()),
-    		parseInt($('#le_file_server_id').val()), client_ids, legal_entity_ids, parseInt(old_grp_app_id),
-    		parseInt(old_grp_db_s_id), parseInt(old_le_db_s_id), parseInt(old_le_f_s_id), new_grp_cl_ids, new_grp_le_ids,
-    		new_le_le_ids, new_f_le_ids, function (error, response) {
+    		parseInt($('#le_file_server_id').val()), client_ids, legal_entity_ids, f_legal_entity_ids, le_legal_entity_ids,
+    		parseInt(old_grp_app_id), parseInt(old_grp_db_s_id), parseInt(old_le_db_s_id), parseInt(old_le_f_s_id),
+    		new_grp_cl_ids, new_grp_le_ids, new_le_le_ids, new_f_le_ids, function (error, response) {
             if (error == null) {
             	hideLoader();
         		displaySuccessMessage(message.allocated_db_env);
@@ -183,7 +186,7 @@ function checkLEIds(legal_entity_ids, db_s_id){
 	var splitLEIds = null;
 	var le_count = 0;
 
-	if(legal_entity_ids != null){
+	if(legal_entity_ids != null && legal_entity_ids != ""){
 		splitLEIds = legal_entity_ids.split(",");
 		for(var i=0;i<splitLEIds.length;i++){
 			if(splitLEIds[i] == db_s_id){
@@ -194,7 +197,7 @@ function checkLEIds(legal_entity_ids, db_s_id){
 
 
 	if(le_count == 0){
-		if(legal_entity_ids != null)
+		if(legal_entity_ids != null && legal_entity_ids != "")
 			legal_entity_ids = legal_entity_ids + "," + db_s_id;
 		else
 			legal_entity_ids = db_s_id.toString();
@@ -207,15 +210,31 @@ function removeCLIds(cl_ids, cl_id){
 	var new_cl_ids = null;
 
 	if(cl_ids != null){
-		splitCLIds = cl_ids.split(",");
-		for(var i=0;i<splitCLIds.length;i++){
-			if(splitCLIds[i] == cl_id){
+		if (cl_ids.indexOf(",") >= 0){
+			splitCLIds = cl_ids.split(",");
+			for(var i=0;i<splitCLIds.length;i++){
+				if(splitCLIds[i] == cl_id){
+				}
+				else{
+					if (new_cl_ids == null)
+					{
+						new_cl_ids = splitCLIds[i];
+					}
+					else{
+						new_cl_ids = new_cl_ids + "," + splitCLIds[i];
+					}
+				}
 			}
-			else{
-				if (new_cl_ids == null)
+		}
+		else
+		{
+			if (new_cl_ids == null)
+			{
+				if(cl_ids == cl_id){
+					new_cl_ids = "";
+				}else{
 					new_cl_ids = splitCLIds[i];
-				else
-					new_cl_ids = new_cl_ids + "," + splitCLIds[i];
+				}
 			}
 		}
 	}
@@ -241,12 +260,15 @@ function removeLEIds(legal_entity_ids, le_id){
 				}
 			}
 		}else{
-			if (new_le_ids == null)
-				new_le_ids = le_id;
-			else
-				new_le_ids = new_le_ids + "," + le_id;
+			if (new_le_ids == null){
+				if (legal_entity_ids == le_id){
+					new_le_ids = ""
+				}
+				else{
+					new_le_ids = le_id;
+				}
+			}
 		}
-
 	}
 	return new_le_ids;
 }
@@ -255,18 +277,26 @@ function validateMandatory(){
 	var returnMandatory = true;
 	if(group_application_server_name.val() == '' || $('#application_id').val() == ""){
 		displayMessage(message.client_server_name_required);
+		group_application_server_name.val('');
+		group_application_server_name.focus();
 		returnMandatory = false;
 	}
 	else if(group_db_server_name.val() == '' || $('#database_server_id').val() == ""){
 		displayMessage(message.db_server_name_required);
+		group_db_server_name.val('');
+		group_db_server_name.focus();
 		returnMandatory = false;
 	}
 	else if(le_db_server_name.val() == '' || $('#le_database_server_id').val() == ""){
 		displayMessage(message.le_db_server_name_required);
+		le_db_server_name.val('');
+		le_db_server_name.focus();
 		returnMandatory = false;
 	}
 	else if(le_file_server_name.val() == '' || $('#le_file_server_id').val() == ""){
 		displayMessage(message.le_file_server_name_required);
+		le_file_server_name.val('');
+		le_file_server_name.focus();
 		returnMandatory = false;
 	}
 
@@ -451,6 +481,7 @@ function loadLEDatabaseIpAndPort(database_server_id){
 	var returnIP = null;
 	$.each(database_server_list, function(key, value){
 		if(database_server_id == value.db_server_id){
+			le_legal_entity_ids = value.console_le_ids;
 			returnIP = "IP: "+value.database_server_ip+", Port: "+value.port;
 		}
 	});
@@ -462,6 +493,7 @@ function loadFileIpAndPort(file_server_id){
 	var returnIP = null;
 	$.each(file_server_list, function(key, value){
 		if(file_server_id == value.file_server_id){
+			f_legal_entity_ids = value.console_le_ids;
 			returnIP = "IP: "+value.ip+", Port: "+value.port;
 		}
 	});

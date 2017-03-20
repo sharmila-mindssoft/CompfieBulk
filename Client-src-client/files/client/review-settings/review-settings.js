@@ -617,6 +617,25 @@ displayPopup = function(unit_ids){
     });
 }
 
+
+function convert_date(data) {
+  var date = data.split('-');
+  var months = [
+    'Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'
+  ];
+  for (var j = 0; j < months.length; j++) {
+    if (date[1] == months[j]) {
+      date[1] = months.indexOf(months[j]) + 1;
+    }
+  }
+  if (date[1] < 10) {
+    date[1] = '0' + date[1];
+  }
+  return new Date(date[2], date[1] - 1, date[0]);
+}
+
+
+
 SubmitButton.on("click", function(){
     var checkedcount = $(".comp-checkbox:checked").length;
     console.log("checkedcount--"+checkedcount);
@@ -656,6 +675,12 @@ SubmitButton.on("click", function(){
                 var statu_dates =[];                
                 var c = 1;
                
+                var d = new Date();
+                var month = d.getMonth() + 1;
+                var day = d.getDate();
+                var output = d.getFullYear() + '/' + month + '/' + day;
+                var currentDate = new Date(output);
+
                 $.each(eachloop, function(k, val){
                     var duedate_input = $(data).find(".due-date-div .col-sm-12:nth-child("+c+") input");
                     var trigger_input = $(data).find(".trigger-div .col-sm-8:nth-child("+c+") input");
@@ -672,16 +697,13 @@ SubmitButton.on("click", function(){
                         displayMessage("Due Date Required for "+comtask);
                         dt = 1;
                         return false;
-                    }
+                    }           
                     else if(trigger == ""){
                         console.log('displayMessage("Trigger Before Days Required for "+comtask);');
                         displayMessage("Trigger Before Days Required for "+comtask);
                         dt = 1;
                         return false;
-                    } 
-
-
-
+                    }    
                     else{
                         if (trigger != '') {
                             var max_triggerbefore = 0;
@@ -712,6 +734,14 @@ SubmitButton.on("click", function(){
                                 return false;
                             }
                         }
+
+                        var convertDueDate = convert_date(duedate);
+                        if (convertDueDate < currentDate) {
+                            displayMessage(message.duedatelessthantoday_compliance + comtask);
+                            dt = 1;
+                            return false;
+                        }
+
                         var statu = {};                                      
                         statu['statutory_date'] = null;
                         statu['statutory_month'] = null;

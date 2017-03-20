@@ -543,6 +543,18 @@ def return_users(users):
         )
     return result
 
+def return_client_users(users):
+    result = []
+    for u in users :
+        employee_name = "%s - %s" % (u["employee_code"], u["employee_name"])
+        result.append(
+            core.AuditTrailClientUser(
+                u["user_id"], u["user_category_id"], employee_name, bool(u["is_active"]),
+                u["client_id"], u["legal_entity_id"], u["unit_id"]
+            )
+        )
+    return result
+
 def get_user_cetegories_db(db):
     userCategoryList = []
     rows = get_form_categories(db)
@@ -616,7 +628,7 @@ def get_user_cetegories_audit_trail(db):
 ###############################################################################
 def get_audit_trail_filters(db):
     user_categories = get_user_cetegories_audit_trail(db)
-    expected_result = 4
+    expected_result = 6
     result = db.call_proc_with_multiresult_set('sp_countries_for_audit_trails', (), expected_result)
     countries = result[0]
     audit_trail_countries = []
@@ -641,7 +653,21 @@ def get_audit_trail_filters(db):
         audit_trail_details.append(
             general.AuditTrail(user_id, user_category_id, form_id, action, date)
         )
-    return general.GetAuditTrailFilterSuccess(user_categories, audit_trail_countries, forms_list, users, audit_trail_details)
+
+    # client users
+    audit_client_users = return_client_users(result[4])
+    client_audit_details = []
+    for row in result[5]:
+        client_audit_details.append(general.ClientAuditTrail(
+            row["user_id"], row["user_category_id"], row["form_id"], row["action"],
+            datetime_to_string_time(row["created_on"]), row["client_id"],
+            row["legal_entity_id"], row["unit_id"]
+        ))
+
+    return general.GetAuditTrailFilterSuccess(
+        user_categories, audit_trail_countries, forms_list, users, audit_trail_details,
+        audit_client_users, client_audit_details
+    )
 
 
 #

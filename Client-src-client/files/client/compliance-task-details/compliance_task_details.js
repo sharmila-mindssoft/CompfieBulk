@@ -717,7 +717,7 @@ function uploadedfile(e) {
             }
             $(".uploaded-filename").html(result);
         } else {
-            alert(data);
+            // alert(data);
         }
     });
 }
@@ -859,9 +859,14 @@ $(document).ready(function() {
     $(".current-tab").click(function() {
         showCurrentTab();
     });
+    // $(".upcoming-tab").click(function() {
+    //     showUpcomingTab();
+    // });
 
-    $(".upcoming-tab").click(function() {
-        showUpcomingTab();
-    });
-
+    // $(".upcoming-tab").click(function() {
+    //     $(".upcoming-tab").addClass("active");
+    //     $(".current-tab").removeClass("active");
+    //     $(".main-tab-content").hide();
+    //     $(".upcoming-tab-content").show()
+    // });
 });

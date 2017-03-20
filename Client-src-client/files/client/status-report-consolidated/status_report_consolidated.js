@@ -456,7 +456,7 @@ StatusReportConsolidated.prototype.showReportValues = function() {
     legalEntityName.html(legalEntity.val());
     countryName.html(country.val());
     domainName.html(domain.val());
-    
+
     reportTableTbody.find('tr').remove();
     var unitId = ""; //unit
     var actname = "";
@@ -602,7 +602,7 @@ createPageView = function(total_records) {
 };
 
 StatusReportConsolidated.prototype.exportReportValues = function() {
-    alert('export');
+    // alert('export');
 };
 
 StatusReportConsolidated.prototype.possibleFailures = function(error) {

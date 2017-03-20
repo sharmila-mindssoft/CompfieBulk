@@ -441,7 +441,6 @@ function updateComplianceApplicabilityChart(data) {
         point: {
           events: {
             click: function () {
-              alert("onclick");
               var drilldown = this.drilldown;
               loadComplianceApplicabilityDrillDown(drilldown);
             }
@@ -1964,7 +1963,7 @@ function loadCharts() {
   // countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
   // chartInput.setCountriesAll(countries);
 
-  if (chartType == 'compliance_status') {    
+  if (chartType == 'compliance_status') {
     loadComplianceStatusChart();
   } else if (chartType == 'escalations') {
     loadEscalationChart();

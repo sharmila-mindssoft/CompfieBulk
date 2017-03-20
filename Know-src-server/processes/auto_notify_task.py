@@ -6,7 +6,7 @@ from processes.auto_start_task import KnowledgeConnect
 from server.emailcontroller import EmailHandler
 from server.common import (return_hour_minute, get_current_date)
 
-NOTIFY_TIME = "12:07"
+NOTIFY_TIME = "12:00"
 email = EmailHandler()
 class AutoNotify(Database):
     def __init__(

@@ -2922,7 +2922,8 @@ IN client_db_id int(11), clientid INT(11), le_id INT(11), machineid INT(11), db_
     le_db_server_id int(11), _f_s_id int(11), _cl_ids longtext, _le_ids longtext,
     old_machineid INT(11), old_grp_d_s_id int(11), old_le_d_s_id int(11),
     old_le_f_s_id int(11), old_cl_ids longtext, old_grp_le_ids longtext,
-    old_le_ids longtext, old_f_le_ids longtext, _created_by int(11), _created_on timestamp
+    old_le_ids longtext, old_f_le_ids longtext, _created_by int(11), _created_on timestamp,
+    _f_le_ids longtext, _le_le_ids longtext
 )
 BEGIN
     update tbl_client_database set client_id = clientid, legal_entity_id = le_id,
@@ -2940,15 +2941,18 @@ BEGIN
     where machine_id = old_machineid;
 
     update tbl_database_server set legal_entity_ids = _le_ids
-    where database_server_id = le_db_server_id;
+    where database_server_id = db_server_id;
 
     update tbl_database_server set legal_entity_ids = old_grp_le_ids
     where database_server_id = old_grp_d_s_id;
 
+    update tbl_database_server set legal_entity_ids = _le_le_ids
+    where database_server_id = le_db_server_id;
+
     update tbl_database_server set legal_entity_ids = old_le_ids
     where database_server_id = old_le_d_s_id;
 
-    update tbl_file_server set legal_entity_ids = _le_ids
+    update tbl_file_server set legal_entity_ids = _f_le_ids
     where file_server_id = _f_s_id;
 
     update tbl_file_server set legal_entity_ids = old_f_le_ids
@@ -5969,16 +5973,22 @@ BEGIN
     t1.legal_entity_id = _le_id and t1.client_id = _cl_id
     group by t1.unit_id, t3.statutory_id;
 
-    select t1.unit_id, t1.statutory_id, t2.statutory_provision, t2.compliance_task as c_task,
+    select t1.compliance_id, t1.client_compliance_id,
+    t1.unit_id, t1.statutory_id, t2.statutory_provision, t2.compliance_task as c_task,
     t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
-    t1.statutory_opted_status, 'user@compfie.com'  as compfie_admin,
-    DATE_FORMAT(t1.updated_on, '%d/%m/%Y') as admin_update,
-    (select email_id from tbl_users where user_id = t1.client_opted_by) as client_admin,
+    t1.compliance_opted_status as statutory_opted_status,
+    (case when t1.updated_by is not null then (select email_id from tbl_users where
+    user_id = t1.updated_by) else (select email_id from tbl_users where
+    user_id = t1.submitted_by) end) as compfie_admin,
+    (case when t1.updated_on is not null then DATE_FORMAT(t1.updated_on, '%d/%m/%Y')
+    else DATE_FORMAT(t1.submitted_on, '%d/%m/%Y') end) as admin_update,
+    (select email_id from tbl_client_users where user_id = t1.client_opted_by and
+    client_id = _cl_id) as client_admin,
     DATE_FORMAT(t1.client_opted_on, '%d/%m/%Y') as client_update,
     (select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
     where tsn.statutory_nature_id = tsm.statutory_nature_id and
     tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
-    from
+        from
     tbl_client_compliances as t1 left join tbl_compliances as t2 on
     t2.compliance_id = t1.compliance_id
     where
@@ -6033,7 +6043,7 @@ BEGIN
         (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
         (select concat(employee_name,'-',(case when employee_code is null then
             '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name,
-        (select registration_sent_on from tbl_group_admin_email_notification where
+        (select date_format(registration_sent_on, '%d-%b-%y') from tbl_group_admin_email_notification where
         client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date
         from
@@ -6314,17 +6324,18 @@ BEGIN
 
         select t2.client_id, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
         unit_count, t2.country_id, (select country_name from tbl_countries where country_id =
-        t2.country_id) as country_name, (select date_format(unit_sent_on, '%d/%m/%y %h:%i')
+        t2.country_id) as country_name, (select date_format(unit_sent_on, '%d-%b-%y %h:%i')
         from tbl_group_admin_email_notification where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         legal_entity_id = t2.legal_entity_id and unit_creation_informed=1)) as unit_email_date,
-        (select date_format(statu_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
+        (select date_format(statu_sent_on, '%d-%b-%y %h:%i') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         legal_entity_id = t2.legal_entity_id and assign_statutory_informed=1)) as statutory_email_date,
-        (select date_format(registration_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
+        (select date_format(registration_sent_on, '%d-%b-%y %h:%i') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
-        from tbl_group_admin_email_notification where client_id = t1.client_id)) as registration_email_date
+        from tbl_group_admin_email_notification where client_id = t1.client_id and
+        registration_sent_by is not null)) as registration_email_date
         from
         tbl_user_clients as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id left join tbl_units as t4 on

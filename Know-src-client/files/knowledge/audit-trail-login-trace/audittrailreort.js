@@ -44,6 +44,8 @@ function Auditpage() {
     this._categoryList = {};
     //this._countryList = {};
     this._auditData = {};
+    this._clientUsers = {};
+    this._clientForms = {};
     this._on_current_page = 1;
     this._sno = 0;
     this._total_record = 0;
@@ -329,6 +331,8 @@ Auditpage.prototype.fetchFiltersData = function() {
                 t_this._userList = response.users;
                 t_this._categoryList = response.user_categories;
                 //t_this._countryList = response.audit_trail_countries;
+                t_this._clientUsers = response.audit_client_users;
+                t_this._clientForms = response.client_audit_details;
                 t_this.setControlValues();
             }
         }
@@ -572,7 +576,7 @@ initializeControlEvents = function(a_page){
 
     Category.change(function(e) {
         a_page.resetFields();
-        if(parseInt(Category.val()) > 2){
+        if(parseInt(Category.val()) >= 2){
             $('.user-list').show();
             User.val('');
         }else{
