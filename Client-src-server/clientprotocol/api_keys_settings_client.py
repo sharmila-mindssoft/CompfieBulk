@@ -690,4 +690,6 @@ api_params = {
 
     "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
 
+    "is_available": make_bool_field(),
+
 }
