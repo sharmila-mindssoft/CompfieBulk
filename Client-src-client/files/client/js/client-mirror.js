@@ -56,7 +56,6 @@ function initClientMirror() {
     function getUserInfo() {
         var info = window.sessionStorage.userInfo;
         user = parseJSON(info);
-        alert(user.toSource());
         return user;
     }
 
@@ -109,6 +108,11 @@ function initClientMirror() {
     function getUserLegalEntity() {
         var info = getUserInfo();
         return info.entity_info;
+    }
+
+    function getUserCategoryID() {
+        var info = getUserInfo();
+        return info.usr_cat_id;
     }
 
     function getUserProfile() {
@@ -2870,6 +2874,7 @@ function initClientMirror() {
         getUserCountry: getUserCountry,
         getUserBusinessGroup: getUserBusinessGroup,
         getUserLegalEntity: getUserLegalEntity,
+        getUserCategoryID:getUserCategoryID,
         getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,

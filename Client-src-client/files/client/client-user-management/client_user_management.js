@@ -115,7 +115,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
         if (error == null) {
             listLegalEntity = response.ul_legal_entity;
             listUsers = response.ul_users;
-            t_this.renderList(listLegalEntity, listUsers);
+            t_this.renderList(listLegalEntity, listUsers, []);
         } else {
             // t_this.possibleFailures(error);
         }
@@ -154,7 +154,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
 };
 
 //User List
-userManagementPage.prototype.renderList = function(ul_legal, ul_users) {
+userManagementPage.prototype.renderList = function(ul_legal, ul_users, arr) {
     t_this = this;
     listContainer.empty();
     if (ul_legal.length == 0) {
@@ -1426,6 +1426,10 @@ PageControls = function() {
             onLegalEntityAutoCompleteSuccess(val);
         }, condition_fields, condition_values);
     });
+    var user_cat_id = client_mirror.getUserCategoryID();
+    if(user_cat_id == 1)
+        $('#user_filter').show();
+
 }
 
 onCountryAutoCompleteSuccess = function(val) {
