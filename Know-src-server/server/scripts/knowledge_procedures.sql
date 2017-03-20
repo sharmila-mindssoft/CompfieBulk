@@ -6045,8 +6045,7 @@ BEGIN
             '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name,
         (select date_format(registration_sent_on, '%d-%b-%y') from tbl_group_admin_email_notification where
         client_id = t3.client_id and client_informed_id = (select max(client_informed_id)
-        from tbl_group_admin_email_notification where client_id=t3.client_id
-        and registration_sent_on is not null)) as registration_email_date
+        from tbl_group_admin_email_notification where client_id=t3.client_id)) as registration_email_date
         from
         tbl_user_clients as t1, tbl_legal_entities as t2, tbl_client_groups as t3
         where

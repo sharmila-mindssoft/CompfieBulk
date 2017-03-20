@@ -85,6 +85,8 @@ function fillGroupAdmingroupData(groupAdminList)
         $('.Country', rowClone).text(v.c_names);
         $('.Group',rowClone).html(v.group_name);
         $('.No-of-legalentity', rowClone).html(v.no_of_legal_entities);
+        console.log(v.ug_name)
+        console.log(v.registration_email_date)
         if (v.ug_name == null && v.registration_email_date == null){
         	$('.btn-send', rowClone).show();
         	$('.btn-resend', rowClone).hide();
@@ -102,6 +104,10 @@ function fillGroupAdmingroupData(groupAdminList)
         else if(v.ug_name != null && v.registration_email_date != null){
         	$('.btn-send', rowClone).hide();
           	$('#btnResend', rowClone).hide();
+        }
+        else if(v.ug_name != null && v.registration_email_date == null){
+        	$('.btn-send', rowClone).hide();
+          	$('.btn-resend', rowClone).hide();
         }
         $('#btnView', rowClone).on('click', function() {
             displayLegalEntityList(v.client_id, v.group_name);

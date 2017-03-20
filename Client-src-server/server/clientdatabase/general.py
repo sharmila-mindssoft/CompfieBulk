@@ -583,7 +583,7 @@ def return_client_users(users):
             employee_name = user["employee_name"]
 
         results.append(clientcore.LegalEntityUser(
-            user["user_id"], user["employee_code"], user["employee_name"], bool(user["is_active"]), user["legal_entity_id"]
+            user["user_id"], user["employee_code"], employee_name, bool(user["is_active"])
         ))
     return results
 
