@@ -584,7 +584,7 @@ def return_client_users(users):
 
 def get_user_domains(db, user_id, user_category_id=None):
     condition = ""
-
+    print user_category_id
     param = []
     if user_category_id is not None :
         if user_category_id <= 3 :
@@ -600,7 +600,9 @@ def get_user_domains(db, user_id, user_category_id=None):
         condition = " WHERE user_id = %s"
         param.append(user_id)
 
+    print q
     rows = db.select_all(q + condition, param)
+    print rows
     d_ids = []
     for r in rows:
         d_ids.append(int(r["domain_id"]))

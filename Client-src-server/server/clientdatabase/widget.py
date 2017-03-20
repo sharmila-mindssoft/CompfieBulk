@@ -413,14 +413,14 @@ def frame_user_score_card(data):
     return widgetprotocol.ChartSuccess(chart_title, xaxis_name, xaxis, yaxis_name, yaxis, chartData)
 
 def get_domain_score_card(db, user_id, user_category_id):
-    q = "select t1.domain_id, " + \
+    q = "select distinct t1.domain_id, " + \
         " (select domain_name from tbl_domains where domain_id = t1.domain_id) as d_name, " + \
-        "sum(IF(ifnull(t1.compliance_opted_status, 0) = 0 , 1, 0)) as not_opted, " + \
+        "sum(IF(t1.compliance_opted_status = 0, 1, 0)) as not_opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1, 1, 0)) as opted, " + \
         " sum(IF(ifnull(t1.compliance_opted_status, 0) = 1 and t2.compliance_id is null, 1, 0)) as unassigned " + \
         " from tbl_client_compliances as t1   " + \
         " left join tbl_assign_compliances as t2 " + \
-        " on t1.compliance_id = t2.compliance_id "
+        " on t1.compliance_id = t2.compliance_id and t1.unit_id = t2.unit_id"
 
     param = []
     if user_category_id > 3 :
@@ -428,6 +428,7 @@ def get_domain_score_card(db, user_id, user_category_id):
             " where t3.user_id = %s"
         param = [user_id]
 
+    print q % tuple(param)
     rows = db.select_all(q, param)
     return frame_domain_scorecard(rows)
 

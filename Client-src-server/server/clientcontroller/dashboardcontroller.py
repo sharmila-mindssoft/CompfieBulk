@@ -271,10 +271,14 @@ def process_update_statutory_notification_status(db, request, session_user):
 # based on the received filters
 ########################################################
 def process_assigneewise_compliances(db, request, session_user, session_category):
+    print session_category
+    print request.csv
     if request.csv:
+        print "88888888888888888888888888"
         converter = ConvertJsonToCSV(
             db, request, session_user, "AssigneeWise", session_category
         )
+        print converter.session_category
         return clientreport.ExportToCSVSuccess(
             link=converter.FILE_DOWNLOAD_PATH
         )
