@@ -2290,7 +2290,7 @@ $(document).ready(function () {
     toDict(BUSINESS_GROUPS, data.bg_groups, 'bg_id', 'bg_name');
     toDict(LEGAL_ENTITIES, data.le_did_infos, 'le_id', 'le_name');
     toDict(DIVISIONS, data.div_infos, 'div_id', 'div_name');
-    toDict(CATEGORIES, data.cat_info, 'category_id', 'category_name');
+    toDict(CATEGORIES, data.cat_info, 'cat_id', 'cat_name');
     toDict(UNITS, data.assign_units, 'u_id', 'u_name');
     DOMAIN_INFO = data.d_months;
     GROUP_NAME = data.g_name;
