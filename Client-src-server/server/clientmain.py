@@ -205,6 +205,7 @@ class API(object):
 
                             db_cons = self.client_connection_pool(db_cons_info)
                             client_db = Database(db_cons)
+                            client_db.set_owner_id(_client_id)
                             if client_db is not None :
                                 rep_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
@@ -228,6 +229,7 @@ class API(object):
                             # replication for group db only master data
                             db_cons = self.client_connection_pool(db_cons_info)
                             le_db = Database(db_cons)
+                            le_db.set_owner_id(_client_id)
                             if le_db is not None :
                                 rep_le_man = ReplicationManagerWithBase(
                                     self._knowledge_server_address,
@@ -445,6 +447,7 @@ class API(object):
         try:
             _db_con = self.client_connection_pool(db_cons_info)
             _db = Database(_db_con)
+            _db.set_owner_id(company_id)
             if _db_con is None:
                 self._send_response("Company not found", 404)
 
@@ -593,6 +596,7 @@ class API(object):
                     try:
                         _db_con = self.client_connection_pool(db_cons_info)
                         _db = Database(_db_con)
+                        _db.set_owner_id(le)
                         if _db_con is None:
                             performed_les.append(le)
                             continue
