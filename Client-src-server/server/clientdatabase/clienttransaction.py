@@ -125,6 +125,7 @@ def get_user_based_legal_entity(db, user_id, user_category, le_ids=None):
         q1 += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
 
+        print q % (user_id)
         rows = db.select_all(q, param)
         domains = db.select_all(q1, [user_id])
 
@@ -953,7 +954,7 @@ def get_assign_compliance_statutories_for_units(
     # updated statutory dates from review settings for the selected unit and domain
     q = "select t1.compliance_id, t1.unit_id, t1.domain_id, t1.statutory_date, t1.repeats_every, t1.repeats_type_id, " + \
         " (select repeat_type from tbl_compliance_repeat_type " + \
-        " where repeat_type_id = t1.repeats_type_id) repeat_type " + \
+        " where repeat_type_id = t1.repeats_type_id) as repeat_type " + \
         " FROM tbl_compliance_dates as t1 WHERE find_in_set(t1.unit_id, %s) and t1.domain_id = %s"
 
     if len(sunit_ids) > 1 :
@@ -985,6 +986,7 @@ def return_assign_compliance_data(result, applicable_units, nrow):
                 r["statutory_dates"] = n["statutory_date"]
                 r["repeats_type_id"] = n["repeats_type_id"]
                 r["repeats_every"] = n["repeats_every"]
+                r["repeat_type"] = n["repeat_type"]
         # unit_ids = [
         #     int(x) for x in c_units.split(',')
         # ]
@@ -1047,27 +1049,29 @@ def save_assigned_compliance(db, request, session_user):
     country_id = country.get("country_id")
 
     compliance_names = []
-    columns = [
-        "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
-        "statutory_dates", "assignee",
-        "assigned_by", "assigned_on",
-        "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every"
-    ]
-    value_list = []
-    update_column = [
-        "statutory_dates", "assignee",
-        "assigned_by", "assigned_on",
-        "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every",
-    ]
-
-    if concurrence is not None:
-        columns.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
-        update_column.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
 
     unit_ids = []
+    value_list = []
     for c in compliances:
+        columns = [
+            "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
+            "statutory_dates", "assignee",
+            "assigned_by", "assigned_on",
+            "approval_person", "a_assigned_by", "a_assigned_on",
+            "trigger_before_days", "due_date", "validity_date",
+        ]
+
+        update_column = [
+            "statutory_dates", "assignee",
+            "assigned_by", "assigned_on",
+            "approval_person", "a_assigned_by", "a_assigned_on",
+            "trigger_before_days", "due_date", "validity_date",
+        ]
+
+        if concurrence is not None:
+            columns.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
+            update_column.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
+
         repeats_every = c.r_every
         repeats_type = c.repeat_by
         compliance_id = int(c.compliance_id)
@@ -1114,10 +1118,21 @@ def save_assigned_compliance(db, request, session_user):
                 le_id, country_id, domain_id, unit_id, compliance_id,
                 str(date_list), assignee, int(session_user), created_on,
                 approval, int(session_user), created_on,
-                trigger_before, str(due_date), str(validity_date), repeats_type, repeats_every
+                trigger_before, str(due_date), str(validity_date),
             ]
             if concurrence is not None:
                 value.extend([concurrence, int(session_user), created_on])
+
+            if repeats_type is not None:
+                columns.extend(["repeats_type_id"])
+                update_column.extend(["repeats_type_id"])
+                value.extend([repeats_type])
+
+            if repeats_every is not None:
+                columns.extend(["repeats_every"])
+                update_column.extend(["repeats_every"])
+                value.extend([repeats_every])
+
             value_list.append(tuple(value))
 
     # db.bulk_insert("tbl_assign_compliances", columns, value_list)
@@ -1374,13 +1389,12 @@ def get_statutory_wise_compliances(
                 due_date=compliance["due_date"],
                 domain_id=domain_id
             )
-        print "due_dates>>>", due_dates
-        print "summary>>>", summary
+
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
         )
         total_count += len(final_due_dates)
-        print "final_due_dates>>>", final_due_dates
+
         for due_date in final_due_dates:
             if (
                 int(start_count) <= compliance_count and
@@ -1391,11 +1405,9 @@ def get_statutory_wise_compliances(
                 month = due_date_parts[1]
                 day = due_date_parts[2]
                 due_date = datetime.date(int(year), int(month), int(day))
-                print "statutories>>>>", statutories
-                print "statutories[0]>>>>", statutories[0]
-                print "statutories[0].strip()>>", statutories[0].strip()
+
                 statutories_strip = statutories[0].strip()
-                print "level_1>>", level_1
+
                 level_1_statutory_wise_compliances[level_1].append(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                         compliance["compliance_id"], compliance_name,
@@ -1416,7 +1428,7 @@ def get_statutory_wise_compliances(
     for (
         level_1_statutory_name, compliances
     ) in level_1_statutory_wise_compliances.iteritems():
-        print "Line 1320>>>>>"
+
         if len(compliances) > 0:
             statutory_wise_compliances.append(
                 clienttransactions.STATUTORY_WISE_COMPLIANCES(
@@ -3270,7 +3282,7 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "com.compliance_description, " + \
         "ac.statutory_dates, ac.repeats_every, " + \
         "ac.repeats_type_id, com.duration, com.duration_type_id, " + \
-        "(select repeat_type from tbl_compliance_repeat_type where repeat_type_id = com.repeats_type_id) as repeat_type, " + \
+        "(select repeat_type from tbl_compliance_repeat_type where repeat_type_id = ac.repeats_type_id) as repeat_type, " + \
         "(select duration_type from tbl_compliance_duration_type where duration_type_id = com.duration_type_id) as duration_type , " + \
         "ac.trigger_before_days, " + \
         "(select employee_name from tbl_users where user_id = IFNULL(ch.completed_by,ac.assignee)) as assignee_name, " + \
@@ -3294,6 +3306,8 @@ def get_reassign_compliance_for_units(db, domain_id, unit_ids, user_id, user_typ
         "concat(com.document_name,' - ',com.compliance_task),com.frequency_id " +\
         "limit %s, %s ;"
     param = [domain_id, ",".join([str(x) for x in unit_ids]), user_type, user_id, user_id, user_id, from_count, to_count]
+
+    print query % (domain_id, ",".join([str(x) for x in unit_ids]), user_type, user_id, user_id, user_id, from_count, to_count)
     row = db.select_all(query, param)
     return return_compliance_for_reassign(row)
 
