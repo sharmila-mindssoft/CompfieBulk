@@ -163,7 +163,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
     } else {
         $.each(ul_legal, function(k, v) {
             //alert(le_name +' - '+ v.le_name)
-            if( ((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null)) )  {
+            if (((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null))) {
                 var cloneRow = $('#template .legal-entity-row').clone();
 
                 var total_licences = parseInt(v.total_licences);
@@ -1176,7 +1176,6 @@ function showTab() {
         $('#tab1').hide();
         $('#tab2').hide();
 
-
         btnNext.hide();
         btnPrevious.show();
     }
@@ -1444,19 +1443,20 @@ PageControls = function() {
             displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
-        if (businessGroupId.val() != '') { condition_fields.push("bg_id"); condition_values.push(businessGroupId.val()); }
+        if (businessGroupId.val() != '') { condition_fields.push("bg_id");
+            condition_values.push(businessGroupId.val()); }
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(val);
         }, condition_fields, condition_values);
     });
     var user_cat_id = client_mirror.getUserCategoryID();
-    if(user_cat_id == 1)
+    if (user_cat_id == 1)
         $('#user_filter').show();
 
     btnShow.click(function() {
-        (country.val()) ? c_name = country.val() : c_name = null;
-        (businessGroup.val()) ? bg_name = businessGroup.val() : bg_name = null;
-        (legalEntity.val()) ? le_name = legalEntity.val() : le_name = null;
+        (country.val()) ? c_name = country.val(): c_name = null;
+        (businessGroup.val()) ? bg_name = businessGroup.val(): bg_name = null;
+        (legalEntity.val()) ? le_name = legalEntity.val(): le_name = null;
         um_page.renderList(listLegalEntity, listUsers, c_name, bg_name, le_name);
     });
 
