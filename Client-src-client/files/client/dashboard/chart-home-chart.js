@@ -511,6 +511,7 @@ function ChartInput() {
       else
         return [];
     } else {
+        //return [];
       get_ids(CHART_FILTERS_DATA.countries, 'c_id');
       countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
       chartInput.setCountriesAll(countries);
@@ -940,7 +941,7 @@ function loadCategories(isSelectAll) {
   categories = CHART_FILTERS_DATA.cat_info;
   for (var i = 0; i < categories.length; i++) {
     var catg = categories[i];
-    var option = getOptionElement(catg.category_id, catg.category_name, isSelectAll);
+    var option = getOptionElement(catg.cat_id, catg.cat_name, isSelectAll);
     $('.category-filter').append(option);
   }
 }
@@ -1186,6 +1187,8 @@ function initializeFilters() {
     }
   });
   $('.btn-go .btn').on('click', function () {
+    chartInput.setCountrySelected(true);
+    chartInput.setDomainSelected(true);
     var chart_type = chartInput.getChartType();
     loadCharts();
   });
@@ -1318,6 +1321,14 @@ function initializeFilters() {
 function parseComplianceStatusApiInput() {
   var countryIds = chartInput.getCountries();
   var domainIds = chartInput.getDomains();
+  if(countryIds.length == 0){
+    displayMessage(message.country_required);
+    return false;
+  }
+  if(domainIds.length == 0){
+    displayMessage(message.domain_required);
+    return false;
+  }
   // TODO: Validation of empty Country / Domain list.
   var filter_type = chartInput.getFilterType();
   var filterIds = getFilterIds(filter_type);
@@ -1948,6 +1959,11 @@ function loadCharts() {
   $(".assignee-wise").hide();
   $(".div-assignee-wise-compliance").hide();
   $(".assignee-wise").empty();
+
+  // get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+  // countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+  // chartInput.setCountriesAll(countries);
+
   if (chartType == 'compliance_status') {    
     loadComplianceStatusChart();
   } else if (chartType == 'escalations') {
