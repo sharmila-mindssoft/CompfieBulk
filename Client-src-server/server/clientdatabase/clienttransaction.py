@@ -937,7 +937,7 @@ def return_assign_compliance_data(result, applicable_units, nrow):
         unit_ids = c_units
         for n in nrow :
             if n["compliance_id"] == c_id :
-                r["satutory_dates"] = n["statutory_date"]
+                r["statutory_dates"] = n["statutory_date"]
                 r["repeats_type_id"] = n["repeats_type_id"]
                 r["repeats_every"] = n["repeats_every"]
         # unit_ids = [
