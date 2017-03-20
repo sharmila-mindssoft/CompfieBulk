@@ -56,6 +56,7 @@ function initClientMirror() {
     function getUserInfo() {
         var info = window.sessionStorage.userInfo;
         user = parseJSON(info);
+        // alert(user.toSource());
         return user;
     }
 
