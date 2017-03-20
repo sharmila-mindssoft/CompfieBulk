@@ -607,19 +607,21 @@ function ChartInput() {
     }
   };
   this.setLegalEntities = function (v, isAdd, isSingle) {
+    console.log(v+"--"+isAdd+"--"+isSingle);
     v = parseInt(v);
     index = this.legal_entities.indexOf(v);
     if (index >= 0 && !isAdd) {
       this.legal_entities.splice(index, 1);
       return;
     }
-    if (isSingle) {
+    if (isSingle != "multiple") {
       this.legal_entities = [v];
     } else {
       if (isAdd) {
         this.legal_entities.push(v);
       }
     }
+    console.log(this.legal_entities);
   };
   this.setLegalEntitiesAll = function (legal_entities) {
     this.legal_entities = copyArray(legal_entities);
@@ -629,19 +631,20 @@ function ChartInput() {
     return selectedLegalentity[0]['le_id'];
   };
   this.getLegalEntities = function () {
-    leids = client_mirror.getSelectedLegalEntity();
-    this.legal_entities = $.map(leids, function(element,index) {return element.le_id});
+    // leids = client_mirror.getSelectedLegalEntity();
+    // this.legal_entities = $.map(leids, function(element,index) {return element.le_id});
+    console.log("this.legal_entities.length--"+this.legal_entities.length)
     if (this.legal_entities.length > 0)
       return copyArray(this.legal_entities);
     else {
-      if (this.filter_type == 'legal_entity') {
-        ids = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
+      //if (this.filter_type == 'legal_entity') {
+        ids = get_ids(client_mirror.getSelectedLegalEntity(), 'le_id');
         if (this.chart_type == 'compliance_status')
           return ids;
         else
           return [ids[0]];
-      } else
-        return [];
+      // } else
+      //   return [];
     }
   };
   this.setDivisions = function (v, isAdd, isSingle) {
@@ -966,26 +969,44 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     $(".business-group-selection").hide();
     $(".legal-entity-selection").hide();
   }else{
-    $(".group-selection").show();
-    $(".business-group-selection").show();
-    $(".legal-entity-selection").show();
+    // $(".group-selection").show();
+    // $(".business-group-selection").show();
+    // $(".legal-entity-selection").show();
   }
+  business_groups = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
+  chartInput.setBusinessGroupsAll(business_groups);
+
+  legal_entities = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
+  chartInput.setLegalEntitiesAll(legal_entities);
+
+  divisions = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
+  chartInput.setDivisionsAll(divisions);
+
+  categories = get_ids(CHART_FILTERS_DATA.cat_info, 'category_id');
+  chartInput.setCategoryAll(categories);
+
+  units = get_ids(CHART_FILTERS_DATA.units, 'unit_id');
+  chartInput.setUnitsAll(units);
+
   console.log("isSingleSelect--"+isSingleSelect);
   $('.bg-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Business Group',
-    onDropdownShow: function (business_group) {
-      chartInput.setBusinessGroups(business_group.value, business_group.checked, isSingleSelect);
-    },
-    onSelectAll: function () {
-      business_groups = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
-      chartInput.setBusinessGroupsAll(business_groups);
-    },
-    onDeselectAll: function () {
-      chartInput.setBusinessGroupsAll([]);
-    }
+    // onDropdownHide: function (business_group) {
+    //   chartInput.setBusinessGroups(business_group.value, business_group.checked, isSingleSelect);
+    // },
+    onChange: function(option, checked, select) {
+      chartInput.setBusinessGroups(option.val(), checked, isSingleSelect);
+    }, 
+    // onSelectAll: function () {
+    //   business_groups = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
+    //   chartInput.setBusinessGroupsAll(business_groups);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setBusinessGroupsAll([]);
+    // }
   });
   if(isSingleSelect == "multiple") {
     $(".bg-filter").attr("multiple", "multiple");
@@ -998,16 +1019,16 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Legal Entity',
-    onDropdownShow: function (legal_entity) {
-      chartInput.setLegalEntities(legal_entity.value, legal_entity.checked, isSingleSelect);
-    },
-    onSelectAll: function () {
-      legal_entities = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
-      chartInput.setLegalEntitiesAll(legal_entities);
-    },
-    onDeselectAll: function () {
-      chartInput.setLegalEntitiesAll([]);
-    }
+    onChange: function(option, checked, select) {
+      chartInput.setLegalEntities(option.val(), checked, isSingleSelect);
+    },    
+    // onSelectAll: function () {
+    //   legal_entities = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
+    //   chartInput.setLegalEntitiesAll(legal_entities);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setLegalEntitiesAll([]);
+    // }
   });
   if(isSingleSelect == "multiple"){
     $(".legal-entity-filter").attr("multiple", "multiple");
@@ -1021,16 +1042,19 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Division',
-    onDropdownShow: function (division) {
-      chartInput.setDivisions(division.value, division.checked, isSingleSelect);
-    },
-    onSelectAll: function () {
-      divisions = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
-      chartInput.setDivisionsAll(divisions);
-    },
-    onDeselectAll: function () {
-      chartInput.setDivisionsAll([]);
-    }
+    //   onDropdownHide: function (division) {
+    //   chartInput.setDivisions(division.value, division.checked, isSingleSelect);
+    // },
+     onChange: function(option, checked, select) {
+      chartInput.setDivisions(option.val(), checked, isSingleSelect);
+    }, 
+    // onSelectAll: function () {
+    //   divisions = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
+    //   chartInput.setDivisionsAll(divisions);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setDivisionsAll([]);
+    // }
   });
   if(isSingleSelect == "multiple"){
     $(".division-filter").attr("multiple", "multiple");
@@ -1043,16 +1067,19 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Unit',
-    onDropdownShow: function (catg) {
-      chartInput.setCategory(catg.value, catg.checked, isSingleSelect);
-    },
-    onSelectAll: function () {
-      categories = get_ids(CHART_FILTERS_DATA.cat_info, 'category_id');
-      chartInput.setCategoryAll(categories);
-    },
-    onDeselectAll: function () {
-      chartInput.setCategoryAll([]);
-    }
+    //   onDropdownHide: function (catg) {
+    //   chartInput.setCategory(catg.value, catg.checked, isSingleSelect);
+    // },
+        onChange: function(option, checked, select) {
+      chartInput.setCategory(option.val(), checked, isSingleSelect);
+    }, 
+    // onSelectAll: function () {
+    //   categories = get_ids(CHART_FILTERS_DATA.cat_info, 'category_id');
+    //   chartInput.setCategoryAll(categories);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setCategoryAll([]);
+    // }
   });
   if(isSingleSelect == "multiple"){
     $('.category-filter').attr("multiple", "multiple");
@@ -1065,16 +1092,19 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // selectAll: isSelectAll,
     // single: isSingleSelect,
     // placeholder: 'Select Unit',
-    onDropdownShow: function (unit) {
-      chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
-    },
-    onSelectAll: function () {
-      units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
-      chartInput.setUnitsAll(units);
-    },
-    onDeselectAll: function () {
-      chartInput.setUnitsAll([]);
-    }
+    //   onDropdownHide: function (unit) {
+    //   chartInput.setUnits(unit.value, unit.checked, isSingleSelect);
+    // },
+    onChange: function(option, checked, select) {
+      chartInput.setUnits(option.val(), checked, isSingleSelect);
+    }, 
+    // onSelectAll: function () {
+    //   units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
+    //   chartInput.setUnitsAll(units);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setUnitsAll([]);
+    // }
   });
   if(isSingleSelect == "multiple"){
     $('.unit-filter').attr("multiple", "multiple");
@@ -1084,37 +1114,43 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
   $(".unit-filter").multiselect('rebuild');
 }
 function initializeFilters() {
+  countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+  chartInput.setCountriesAll(countries);
+
+  domains = get_ids(CHART_FILTERS_DATA.d_infos, 'd_id');
+  chartInput.setDomainsAll(domains);
+
   loadCountries();
   $('.country-filter').multiselect({
     buttonWidth: '100%',
     includeSelectAllOption: true,
     enableFiltering: true,
-    onDropdownShow: function (country) {
-      chartInput.setCountries(country.value, country.checked);
+      onDropdownHide: function (country, checked) {
+      chartInput.setCountries(country.val(), checked);
     },
-    onSelectAll: function() {
-      countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
-      chartInput.setCountriesAll(countries);
-    },
-    onDeselectAll: function () {
-      chartInput.setCountriesAll([]);
-    }
+    // onSelectAll: function() {
+    //   countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
+    //   chartInput.setCountriesAll(countries);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setCountriesAll([]);
+    // }
   });
 
   loadDomains();
   $('.domain-filter').multiselect({
     enableFiltering: true,
     // placeholder: 'Select Domain',
-    onDropdownShow: function (domain) {
+      onDropdownHide: function (domain) {
       chartInput.setDomains(domain.value, domain.checked);
     },
-    onSelectAll: function () {
-      domains = get_ids(CHART_FILTERS_DATA.d_infos, 'd_id');
-      chartInput.setDomainsAll(domains);
-    },
-    onDeselectAll: function () {
-      chartInput.setDomainsAll([]);
-    }
+    // onSelectAll: function () {
+    //   domains = get_ids(CHART_FILTERS_DATA.d_infos, 'd_id');
+    //   chartInput.setDomainsAll(domains);
+    // },
+    // onDeselectAll: function () {
+    //   chartInput.setDomainsAll([]);
+    // }
   });
   loadSubFilters(selectall = true, singleSelect = "multiple");
   // $('.btn-country').on('click', function () {
@@ -1321,6 +1357,7 @@ function initializeFilters() {
 function parseComplianceStatusApiInput() {
   var countryIds = chartInput.getCountries();
   var domainIds = chartInput.getDomains();
+  alert(countryIds);
   if(countryIds.length == 0){
     displayMessage(message.country_required);
     return false;
