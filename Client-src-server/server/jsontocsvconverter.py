@@ -1108,13 +1108,14 @@ class ConvertJsonToCSV(object):
         count = get_assigneewise_compliances_drilldown_data_count(
             db, country_id=country_id, assignee_id=assignee_id,
             domain_id=domain_id, year=year,
-            unit_id=unit_id, session_user=session_user
+            unit_id=unit_id, session_user=session_user,
+            session_category=self.session_category
         )
         result = fetch_assigneewise_compliances_drilldown_data(
             db, country_id=country_id, assignee_id=assignee_id,
             domain_id=domain_id,
             year=year, unit_id=unit_id, start_count=0, to_count=count,
-            session_user=session_user
+            session_user=session_user, session_category=self.session_category
         )
         complied_compliances = {}
         inprogress_compliances = {}
@@ -1193,7 +1194,7 @@ class ConvertJsonToCSV(object):
     ):
         is_header = False
         current_year = get_date_time_in_date().year
-        domain_ids_list = get_user_domains(db, user_id, self.session_category)
+        domain_ids_list = get_user_domains(db, user_id)
         start_year = current_year - 5
         iter_year = start_year
         if not is_header:

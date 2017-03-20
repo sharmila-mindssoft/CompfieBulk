@@ -104,7 +104,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
 
     elif type(request) is dashboard.GetAssigneeWiseCompliancesChart:
         result = process_assigneewise_compliances(
-            db, request, session_user, session_user
+            db, request, session_user, session_category
         )
     elif type(request) is dashboard.GetAssigneewiseYearwiseCompliances:
 
@@ -121,7 +121,7 @@ def process_client_dashboard_requests(request, db, session_user, session_categor
     elif type(request) is dashboard.GetAssigneeWiseComplianceDrillDown:
 
         result = process_assigneewise_compliances_drilldown(
-            db, request, session_user
+            db, request, session_user, session_category
         )
 
     elif type(request) is dashboard.CheckContractExpiration:
@@ -333,7 +333,7 @@ def process_get_assigneewise_reassigned_compliances(
 # assignee wise compliances chart
 ########################################################
 def process_assigneewise_compliances_drilldown(
-    db, request, session_user
+    db, request, session_user, session_category
 ):
     country_id = request.country_id
     assignee_id = request.assignee_id
@@ -348,11 +348,11 @@ def process_assigneewise_compliances_drilldown(
         complied, delayed, inprogress, not_complied
     ) = get_assigneewise_compliances_drilldown_data(
             db, country_id, assignee_id, domain_id,
-            year, unit_id, start_count, to_count, session_user
+            year, unit_id, start_count, to_count, session_user, session_category
     )
     total_count = get_assigneewise_compliances_drilldown_data_count(
         db, country_id, assignee_id, domain_id,
-        year, unit_id, session_user
+        year, unit_id, session_user, session_category
     )
 
     drill_down_data = dashboard.AssigneeWiseCompliance(

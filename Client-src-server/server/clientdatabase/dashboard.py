@@ -2127,11 +2127,11 @@ def return_reassigned_details(results):
 
 def get_assigneewise_compliances_drilldown_data_count(
     db, country_id, assignee_id, domain_id, year, unit_id,
-    session_user
+    session_user, session_category
 ):
     domain_id_list = []
     if domain_id is None:
-        domain_id_list = get_user_domains(db, session_user)
+        domain_id_list = get_user_domains(db, session_user, session_category)
     else:
         domain_id_list = [domain_id]
 
@@ -2149,6 +2149,8 @@ def get_assigneewise_compliances_drilldown_data_count(
         result = get_country_domain_timelines(
             db, [country_id], domain_id_list, [current_year]
         )
+        if len(result[0][1]) == 0 :
+            return 0
         from_date = result[0][1][0][1][0]["start_date"]
         to_date = result[0][1][0][1][0]["end_date"]
         domain_condition = str(domain_id_list[0])
@@ -2168,22 +2170,22 @@ def get_assigneewise_compliances_drilldown_data_count(
 
 def get_assigneewise_compliances_drilldown_data(
     db, country_id, assignee_id, domain_id, year, unit_id,
-    start_count, to_count, session_user
+    start_count, to_count, session_user, session_category
 ):
     result = fetch_assigneewise_compliances_drilldown_data(
         db, country_id, assignee_id, domain_id, year, unit_id,
-        start_count, to_count, session_user
+        start_count, to_count, session_user, session_category
     )
     return return_assignee_wise_compliance_drill_down_data(result)
 
 
 def fetch_assigneewise_compliances_drilldown_data(
     db, country_id, assignee_id, domain_id, year, unit_id,
-    start_count, to_count, session_user
+    start_count, to_count, session_user, session_category
 ):
     domain_id_list = []
     if domain_id is None:
-        domain_id_list = get_user_domains(db, session_user)
+        domain_id_list = get_user_domains(db, session_user, session_category)
     else:
         domain_id_list = [domain_id]
 
@@ -2199,7 +2201,7 @@ def fetch_assigneewise_compliances_drilldown_data(
             db, [country_id], domain_id_list, [current_year]
         )
         if len(result[0][1]) == 0 :
-            continue
+            return []
         from_date = result[0][1][0][1][0]["start_date"]
         to_date = result[0][1][0][1][0]["end_date"]
         domain_condition = str(domain_id_list[0])

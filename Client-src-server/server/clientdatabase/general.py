@@ -581,7 +581,6 @@ def return_client_users(users):
         ))
     return results
 
-
 def get_user_domains(db, user_id, user_category_id=None):
     condition = ""
     print user_category_id
