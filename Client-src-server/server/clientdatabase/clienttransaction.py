@@ -109,7 +109,7 @@ def get_user_based_legal_entity(db, user_id, user_category, le_ids=None):
     param = []
     if user_category == 1 :
         if le_ids is not None :
-            q += " and find_in_set(t1.legal_entity_id, %s) "
+            q += " where t1.is_closed = 0  and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
         rows = db.select_all(q, param)
         domains = db.select_all(q1, None)
@@ -125,7 +125,6 @@ def get_user_based_legal_entity(db, user_id, user_category, le_ids=None):
         q1 += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
 
-        print q % (user_id)
         rows = db.select_all(q, param)
         domains = db.select_all(q1, [user_id])
 
@@ -163,7 +162,7 @@ def get_user_based_division(db, user_id, user_category, le_ids=None):
         q += " inner join tbl_user_legal_entities as t2 on t1.legal_entity_id = t2.legal_entity_id" + \
             " where t2.user_id = %s"
         if le_ids is not None :
-            q += " where find_in_set(t1.legal_entity_id, %s) "
+            q += " and find_in_set(t1.legal_entity_id, %s) "
             param.append(",".join([str(x) for x in le_ids]))
 
         rows = db.select_all(q, param)
@@ -458,7 +457,7 @@ def return_statutory_settings(data, session_category):
             d["postal_code"]
         )
         locked_cat = d["locked_user_category"]
-        
+
         if locked_cat is not None and (locked_cat > session_category or session_category == 1):
             allow_nlock = True
         else :
@@ -1015,7 +1014,7 @@ def return_assign_compliance_data(result, applicable_units, nrow):
             statutory_dates, r["repeats_type_id"], c_id
         )
 
-        if r["repeats_every"] is not None or r["frequency_id"] != 4: 
+        if r["repeats_every"] is not None or r["frequency_id"] != 4:
             compliance = clienttransactions.UNIT_WISE_STATUTORIES(
                 c_id,
                 name,
@@ -1086,7 +1085,9 @@ def save_assigned_compliance(db, request, session_user):
         update_column_repeats.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
 
     unit_ids = []
+    value_list = []
     for c in compliances:
+
         repeats_every = c.r_every
         repeats_type = c.repeat_by
         compliance_id = int(c.compliance_id)
@@ -1129,7 +1130,9 @@ def save_assigned_compliance(db, request, session_user):
             validity_date = "0000-00-00"
 
         for unit_id in unit_ids:
-            
+            value_repeats = []
+            value = []
+
             if repeats_type is not None and repeats_every is not None:
                 value_repeats = [
                     le_id, country_id, domain_id, unit_id, compliance_id,
@@ -1138,7 +1141,7 @@ def save_assigned_compliance(db, request, session_user):
                     trigger_before, str(due_date), str(validity_date), repeats_type, repeats_every,
                 ]
                 if concurrence is not None:
-                    value.extend([concurrence, int(session_user), created_on])
+                    value_repeats.extend([concurrence, int(session_user), created_on])
 
             else:
                 value = [
@@ -1155,6 +1158,9 @@ def save_assigned_compliance(db, request, session_user):
 
 
     # db.bulk_insert("tbl_assign_compliances", columns, value_list)
+    print columns
+    print value_list
+    print update_column
     db.on_duplicate_key_update(
         "tbl_assign_compliances", ",".join(columns),
         value_list, update_column
@@ -1412,13 +1418,12 @@ def get_statutory_wise_compliances(
                 due_date=compliance["due_date"],
                 domain_id=domain_id
             )
-        print "due_dates>>>", due_dates
-        print "summary>>>", summary
+
         final_due_dates = filter_out_due_dates(
             db, unit_id, compliance["compliance_id"], due_dates
         )
         total_count += len(final_due_dates)
-        print "final_due_dates>>>", final_due_dates
+
         for due_date in final_due_dates:
             if (
                 int(start_count) <= compliance_count and
@@ -1429,11 +1434,9 @@ def get_statutory_wise_compliances(
                 month = due_date_parts[1]
                 day = due_date_parts[2]
                 due_date = datetime.date(int(year), int(month), int(day))
-                print "statutories>>>>", statutories
-                print "statutories[0]>>>>", statutories[0]
-                print "statutories[0].strip()>>", statutories[0].strip()
+
                 statutories_strip = statutories[0].strip()
-                print "level_1>>", level_1
+
                 level_1_statutory_wise_compliances[level_1].append(
                     clienttransactions.UNIT_WISE_STATUTORIES_FOR_PAST_RECORDS(
                         compliance["compliance_id"], compliance_name,
@@ -1454,7 +1457,7 @@ def get_statutory_wise_compliances(
     for (
         level_1_statutory_name, compliances
     ) in level_1_statutory_wise_compliances.iteritems():
-        print "Line 1320>>>>>"
+
         if len(compliances) > 0:
             statutory_wise_compliances.append(
                 clienttransactions.STATUTORY_WISE_COMPLIANCES(

@@ -304,8 +304,9 @@ def process_assigneewise_yearwise_compliances(
     country_id = request.country_id
     unit_id = request.unit_id
     user_id = request.user_id
+    domain_ids = request.domain_ids
     chart_data = get_assigneewise_yearwise_compliances(
-        db, country_id, unit_id, user_id
+        db, country_id, unit_id, user_id, domain_ids
     )
     return dashboard.GetAssigneewiseYearwiseCompliancesSuccess(
         chart_data=chart_data
@@ -337,7 +338,7 @@ def process_assigneewise_compliances_drilldown(
 ):
     country_id = request.country_id
     assignee_id = request.assignee_id
-    domain_id = request.domain_id
+    domain_ids = request.domain_ids
     year = request.year
     unit_id = request.unit_id
     start_count = request.start_count
@@ -347,11 +348,11 @@ def process_assigneewise_compliances_drilldown(
     (
         complied, delayed, inprogress, not_complied
     ) = get_assigneewise_compliances_drilldown_data(
-            db, country_id, assignee_id, domain_id,
+            db, country_id, assignee_id, domain_ids,
             year, unit_id, start_count, to_count, session_user, session_category
     )
     total_count = get_assigneewise_compliances_drilldown_data_count(
-        db, country_id, assignee_id, domain_id,
+        db, country_id, assignee_id, domain_ids,
         year, unit_id, session_user, session_category
     )
 

@@ -57,13 +57,13 @@
                                 <div class="clearfix"></div>
                                 <div id="basicwizard">
                                     <ul class="nav nav-tabs navtab-wizard nav-justified bg-muted statutory_mapping_tab">
-                                        <li class="calendar-tab"><a href="#tab1" data-toggle="tab" aria-expanded="true">Calendar View</a></li>
-                                        <li class="current-tab active"><a href="#tab2" data-toggle="tab">Current Tasks</a></li>
+                                        <li class="calendar-tab active"><a href="#tab1" data-toggle="tab" aria-expanded="true">Calendar View</a></li>
+                                        <li class="current-tab"><a href="#tab2" data-toggle="tab">Current Tasks</a></li>
                                         <li class="upcoming-tab"><a href="#tab3" data-toggle="tab">Upcoming Compliance Tasks</a></li>
                                     </ul>
                                     <div class="tab-content b-0 m-b-0 no-padding">
                                         <!--Calendar Tab-->
-                                        <div class="tab-pane fade m-t-0 fade b-0 m-b-0" id="tab1">
+                                        <div class="tab-pane fade m-t-0 fade b-0 m-b-0 active in calendar-tab-content" id="tab1">
                                             <div class="col-md-12">
                                                 <div class="clearfix"></div>
                                                 <center>
@@ -93,7 +93,7 @@
                                             <div class="clear"></div>
                                         </div>
                                         <!--Current Compliance Tab-->
-                                        <div class="tab-pane active in" id="tab2">
+                                        <div class="tab-pane current-tab-content" id="tab2">
                                             <div class="table-responsive">
                                                 <table class="table_inprogress" width="100%">
                                                     <tr>
@@ -173,9 +173,9 @@
                                             <div class="clear"></div>
                                         </div>
                                         <!--Upcoming Compliance Tab-->
-                                        <div class="tab-pane m-t-0 fade b-0 m-b-0" id="tab3">
+                                        <div class="tab-pane m-t-0 fade b-0 m-b-0 upcoming-tab-content" id="tab3">
                                             <div class="table-responsive">
-                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight" cellspacing="0" width="100%">
+                                                <table id="datatable-responsive" class="table dt-responsive nowrap highlight js-filtertable-upcoming" cellspacing="0" width="100%">
                                                     <thead>
                                                         <tr>
                                                             <th width="3%"><span>#</span></th>
@@ -189,25 +189,25 @@
                                                             <td></td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm" placeholder="Compliance Task" />
+                                                                    <input type="text" class="form-control input-sm js-filter-upcoming" placeholder="Compliance Task" />
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm" placeholder="Domain" />
+                                                                    <input type="text" class="form-control input-sm js-filter-upcoming" placeholder="Domain" />
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm" placeholder="Start Date" />
+                                                                    <input type="text" class="form-control input-sm js-filter-upcoming" placeholder="Start Date" />
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group col-sm-12 no-padding m-b-10 m-t-10">
-                                                                    <input type="text" class="form-control input-sm" placeholder="Due Date" />
+                                                                    <input type="text" class="form-control input-sm js-filter-upcoming" placeholder="Due Date" />
                                                                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                                                                 </div>
                                                             </td>

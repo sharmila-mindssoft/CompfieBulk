@@ -761,26 +761,36 @@ class GetAuditTrailSuccess(Response):
         }
 
 class GetAuditTrailFilterSuccess(Response):
-    def __init__(self, user_categories, audit_trail_countries, forms_list, users, audit_trail_details):
+    def __init__(
+        self, user_categories, audit_trail_countries, forms_list, users,
+        audit_trail_details, audit_client_users, client_audit_details
+    ):
         self.user_categories = user_categories
         self.audit_trail_countries = audit_trail_countries
         self.forms_list = forms_list
         self.users = users
         self.audit_trail_details = audit_trail_details
+        self.audit_client_users = audit_client_users
+        self.client_audit_details = client_audit_details
 
     @staticmethod
     def parse_inner_structure(data):
         data = parse_dictionary(data, [
                 "user_categories", "audit_trail_countries", "forms_list", "users",
-                "audit_trail_details"
+                "audit_trail_details", "audit_client_users", "client_audit_details"
             ])
         user_categories = data.get("user_categories")
         audit_trail_countries = data.get("audit_trail_countries")
         forms_list = data.get("forms_list")
         users = data.get("users")
         audit_trail_details = data.get("audit_trail_details")
+        audit_client_users = data.get("audit_client_users")
+        client_audit_details = data.get("client_audit_details")
 
-        return GetAuditTrailFilterSuccess(user_categories, audit_trail_countries, forms_list, users, audit_trail_details)
+        return GetAuditTrailFilterSuccess(
+            user_categories, audit_trail_countries, forms_list, users, audit_trail_details,
+            audit_client_users, client_audit_details
+        )
 
     def to_inner_structure(self):
         data = {
@@ -789,6 +799,8 @@ class GetAuditTrailFilterSuccess(Response):
             "forms_list": self.forms_list,
             "users": self.users,
             "audit_trail_details": self.audit_trail_details,
+            "audit_client_users": self.audit_client_users,
+            "client_audit_details": self.client_audit_details
         }
         return data
 
@@ -966,6 +978,54 @@ class AuditTrail(object):
             "form_id": self.form_id,
             "action": self.action,
             "date": self.date
+        }
+
+#
+# Audit Trail - client
+#
+class ClientAuditTrail(object):
+    def __init__(
+        self, user_id, user_category_id, form_id, action, date, client_id,
+        legal_entity_id, unit_id
+    ):
+        self.user_id = user_id
+        self.user_category_id = user_category_id
+        self.form_id = form_id
+        self.action = action
+        self.date = date
+        self.client_id = client_id
+        self.legal_entity_id = legal_entity_id
+        self.unit_id = unit_id
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(data, [
+            "user_id", "user_category_id", "form_id", "action", "date",
+            "client_id", "legal_entity_id", "unit_id"
+        ])
+        user_id = data.get("user_id")
+        user_category_id = data.get("user_category_id")
+        form_id = data.get("form_id")
+        action = data.get("action")
+        date = data.get("date")
+        client_id = data.get("client_id")
+        legal_entity_id = data.get("legal_entity_id")
+        unit_id = data.get("unit_id")
+        return ClientAuditTrail(
+            user_id, user_category_id, form_id, action, date, client_id,
+            legal_entity_id, unit_id
+        )
+
+    def to_structure(self):
+        return {
+            "user_id": self.user_id,
+            "user_category_id": self.user_category_id,
+            "form_id": self.form_id,
+            "action": self.action,
+            "date": self.date,
+            "client_id": self.client_id,
+            "legal_entity_id": self.legal_entity_id,
+            "unit_id": self.unit_id
         }
 
 #

@@ -214,7 +214,6 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
         actula_data = toJSON(body);
         $.ajax({
             url: CLIENT_BASE_URL + callerName,
@@ -2732,7 +2731,7 @@ function initClientMirror() {
             sessionToken,
             requestFrame
         ];
-
+        actula_data = toJSON(body);
         var saveData = (function() {
             var a = document.createElement("a");
             document.body.appendChild(a);
@@ -2764,7 +2763,7 @@ function initClientMirror() {
             headers: { 'X-Xsrftoken': getCookie('_xsrf') },
             type: 'POST',
             crossDomain: true,
-            data: toJSON(body),
+            data: makekey() + btoa(actula_data),
             processData: false,
             contentType: false,
 
@@ -2877,7 +2876,7 @@ function initClientMirror() {
         getUserCountry: getUserCountry,
         getUserBusinessGroup: getUserBusinessGroup,
         getUserLegalEntity: getUserLegalEntity,
-        getUserCategoryID:getUserCategoryID,
+        getUserCategoryID: getUserCategoryID,
         getSelectedLegalEntity: getSelectedLegalEntity,
         getSessionToken: getSessionToken,
         getUserMenu: getUserMenu,
