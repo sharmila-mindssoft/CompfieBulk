@@ -1,9 +1,9 @@
-import datetime
+# import datetime
 import csv
 import os
 import io
 import zipfile
-import shutil
+# import shutil
 import uuid
 import traceback
 __all__ = [
@@ -65,7 +65,6 @@ class UnitClosureExport(ExportData):
         self.db = db
         self.closed_on = closed_on
         self.unitname = None
-        self.perform_export()
 
     def get_unit_name(self):
         q = "select unit_id, client_id, country_id, legal_entity_id, business_group_id, division_id, category_id, " + \
@@ -77,12 +76,6 @@ class UnitClosureExport(ExportData):
             unitname = "%s-%s-%s" % (row.get("unit_code"), row.get("unit_name"), row.get("address"))
         self.unitname = unitname
         return unitname, row
-
-    def get_users(self):
-        q = "select t1.user_id from tbl_users as t1 left join tbl_user_units t2 on t1.user_id = t2.user_id " + \
-            " and t2.unit_id = %s  where t1.user_category_id != 2 and t1.user_category_id <= 4 "
-        rows = self.db.select_all(q, [self.unit_id])
-        return rows
 
     def fetch_data_to_export(self):
         q = "select distinct t1.compliance_task, t1.document_name, t1.statutory_provision, t1.compliance_description, " + \
@@ -115,14 +108,12 @@ class UnitClosureExport(ExportData):
 
     def notify_to_admin(self, export_link):
         unitname, unit_data = self.get_unit_name()
-        extra_datail = ""
+        extra_datail = "/closure/%s" % (export_link)
         if unitname :
             bg_id = unit_data.get("business_group_id")
 
             div_id = unit_data.get("division_id")
             action = "%s has been closed " % (unitname)
-            extra_datail = ""
-
             column = [
                     "country_id",
                     "legal_entity_id", "unit_id",
@@ -145,10 +136,18 @@ class UnitClosureExport(ExportData):
             print notification_id
             if notification_id is False :
                 return False
-            users = self.get_users()
+            q = "select t1.user_id from tbl_users as t1 left join tbl_user_units t2 on t1.user_id = t2.user_id " + \
+                " and t2.unit_id = %s  where t1.user_category_id != 2 and t1.user_category_id <= 4 "
+            users = self.db.select_all(q, [self.unit_id])
+
             print users
             for u in users :
                 self.db.save_notification_users(notification_id, u["user_id"])
+
+    def save_download_session(self, _db, expiry_date, export_session):
+        q = "insert into tbl_email_verification (user_id, verification_code, verification_type_id, expiry_date) " + \
+            "values(%s, %s, %s, %s)"
+        _db.execute(q, [1, export_session, 3, expiry_date])
 
     def fetch_unit_path(self):
         nfo = self.get_unit_name()[1]
@@ -176,9 +175,10 @@ class UnitClosureExport(ExportData):
             zip_filename = "%s_%s" % (self.unitname, self.get_unique_id())
 
             zip_file_link = self.generate_to_zip(zip_filename, EXPORT_PATH, csv_filename, source_path)
-            print zip_file_link
             self.notify_to_admin(zip_file_link)
+            return zip_file_link
 
         except Exception, e :
             print e
             print(traceback.format_exc())
+            return None

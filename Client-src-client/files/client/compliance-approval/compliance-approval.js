@@ -83,14 +83,29 @@ var unitName = "";
 var lastAssignee = "";
 
 function loadComplianceApprovalDetails(data) {
-    $.each(data, function(key, val) {
-        if (unitName != val.unit_name) {
-            var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
-            $('.unit-name', cloneunit).html(val.unit_name);
-            $('.tbody-compliance-approval-list').append(cloneunit);
-            unitName = val.unit_name;
-            lastAssignee = "";
-        }
+// <<<<<<< HEAD
+//     $.each(data, function(key, val) {
+//         if (unitName != val.unit_name) {
+//             var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
+//             $('.unit-name', cloneunit).html(val.unit_name);
+//             $('.tbody-compliance-approval-list').append(cloneunit);
+//             unitName = val.unit_name;
+//             lastAssignee = "";
+//         }
+// =======
+//     var unitName = "";
+
+    $.each(data, function(key, value) {
+        complianceList = value.approval_compliances;
+        //Full Width list append ---------------------------------------------------------------
+        $.each(complianceList, function(k, val) {
+            if (unitName != val.unit_name) {
+                var cloneunit = $('#templates .table-compliance-approval-list .unitheadingRow').clone();
+                $('.unit-name', cloneunit).html(val.unit_name);
+                $('.tbody-compliance-approval-list').append(cloneunit);
+                unitName = val.unit_name;
+            }
+// >>>>>>> Usha/phase2
 
         if (lastAssignee != val.assignee_name) {
             var tableRowHeading = $('#templates .table-compliance-approval-list .headingRow');

@@ -1645,7 +1645,6 @@ CREATE TRIGGER `after_tbl_countries_insert` AFTER INSERT ON `tbl_countries`
                 );
 
     UPDATE tbl_client_replication_status set is_new_data = 1 where
-    client_id in (select distinct legal_entity_id from tbl_legal_entities where country_id = NEW.country_id) or
     client_id in (select distinct client_id from tbl_legal_entities where country_id = NEW.country_id);
 
 END

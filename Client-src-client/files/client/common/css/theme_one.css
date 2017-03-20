@@ -372,10 +372,14 @@ body.fixed-left .side-menu.left {
   padding-left: 20px;
 }
 .checkbox label {
-  display: inline-block;
+  /*display: inline-block;*/
+  display: table-cell;
   padding-left: 5px;
   position: relative;
   line-height: 18px;
+}
+.checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"], .radio input[type="radio"], .radio-inline input[type="radio"]{
+  margin-top: 0;
 }
 .checkbox label::before {
   -o-transition: 0.3s ease-in-out;

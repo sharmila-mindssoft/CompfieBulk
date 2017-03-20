@@ -1,5 +1,6 @@
 {% extends "files/client/common/html/container.html" %}
 {% block content %}
+<style type="text/css">.navbar-header{display: block;}</style>
 <link href="/files/client/common/css/dashboard.css" rel="stylesheet" type="text/css" />
 <link href="/files/client/common/css/multiselect/bootstrap-multiselect.css" rel="stylesheet" type="text/css" />
 <script type="text/javascript">
@@ -130,7 +131,7 @@ $(function() {
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: </label>
+                                <label class=" col-sm-offset-1 col-sm-3 control-label">Legal Entity: <span class="mandatory">*</span></label>
                                 <div class="col-sm-6 has-feedback">
                                     <input type="text" class="form-control input-sm" id="awc-legalentity" placeholder="Enter Legal Entity" >
                                     <i class="fa-1-2x form-control-feedback fa fa-search"></i>
@@ -272,7 +273,7 @@ $(function() {
         <input id="radioBusinessGroup" class="chart-filter btn-business-group" type="checkbox">
         <label for="radioBusinessGroup"> Business Group </label>
       </div>
-      <div class="selections business-group-selection">
+      <div class="selections business-group-selection default-display-none">
         <select class="form-control input-sm textboxbusiness bg-filter default-display-none" multiple id="filter-business-group" >
         </select>
       </div>
@@ -282,7 +283,7 @@ $(function() {
         <input id="radioLegalEntity" class="chart-filter btn-legal-entity" type="checkbox">
         <label for="radioLegalEntity"> Legal Entity </label>
       </div>
-      <div class="selections legal-entity-selection">
+      <div class="selections legal-entity-selection default-display-none">
         <select class="form-control input-sm textboxlegalentity default-display-none legal-entity-filter" multiple id="filter-legal-entity" >
         </select>
       </div>
@@ -339,7 +340,7 @@ $(function() {
                   <th width="10%">Business Group</th>
                   <th width="10%">Legal Entity</th>
                   <th width="10%">Division</th>
-                  <th width="10%">Type</th>
+                  <!-- <th width="10%">Type</th> -->
                   <th width="15%">Compliance</th>
                   <th width="8%">Assigned To</th>
                   <th width="11%" class="delayed-by-row" align="left">Delayed By</th>
@@ -366,12 +367,12 @@ $(function() {
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
                 </td>
-                <td>
+         <!--        <td>
                   <div class="form-group col-sm-12 no-padding">
                     <input type="text" class="form-control input-sm js-filter"  />
                     <i class="fa fa-filter form-control-feedback l-h-34"></i>
                   </div>
-                </td>
+                </td> -->
                 <td>
                   <div class="form-group col-sm-12 no-padding">
                     <input type="text" class="form-control input-sm js-filter" />
@@ -429,7 +430,7 @@ $(function() {
           <td width="15%" class="businessgroup-name"></td>
           <td width="10%" class="legalentity-name"></td>
           <td width="10%" class="division-name"></td>
-          <td width="10%" class="industry-type-name"></td>
+          <!-- <td width="10%" class="industry-type-name"></td> -->
           <td width="15%" class="compliance-name"></td>
           <td width="10%" class="assigned-to"></td>
           <td class="delayed-by-row delayed-by"></td>
@@ -864,7 +865,7 @@ $(function() {
           <td align="center" class="popup-delayed-count"></td>
           <td align="center" class="popup-inprogress-count"></td>
           <td align="center" class="popup-not-complied-count"></td>
-          <td class="popup-click-drilldown"><i class="fa fa-chevron-right pull-right"></i></td>
+          <td class="popup-click-drilldown c-pointer"><i class="fa fa-chevron-right pull-right"></i></td>
         </tr>
       </table>
     </div>

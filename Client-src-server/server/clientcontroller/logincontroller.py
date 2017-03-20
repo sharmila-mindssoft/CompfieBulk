@@ -273,7 +273,8 @@ def user_login_response(db, data, client_id, ip, short_name):
     return clientlogin.UserLoginSuccess(
         user_id, session_token, email_id, user_group_name,
         menu, employee_name, employee_code, contact_no, address,
-        client_id, username, mobile_no, le_info, c_info, theme
+        client_id, username, mobile_no, le_info, c_info, theme,
+        cat_id
     )
 
 

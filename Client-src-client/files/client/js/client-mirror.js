@@ -56,7 +56,7 @@ function initClientMirror() {
     function getUserInfo() {
         var info = window.sessionStorage.userInfo;
         user = parseJSON(info);
-        // alert(user.toSource());
+        alert(user.toSource());
         return user;
     }
 
@@ -137,7 +137,7 @@ function initClientMirror() {
         if (info != null) {
             return info.menu;
         } else {
-            window.location.href = login_url;
+            window.location.href = "/login";
         }
     }
 
@@ -462,10 +462,11 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getChartFilters(callback) {
+    function getChartFilters(le_ids, callback) {
         var request = [
-            'GetChartFilters',
-            {}
+            'GetChartFilters', {
+                'le_ids': le_ids
+            }
         ];
         var callerName = 'client_master_filters';
         clientApiRequest(callerName, request, callback);
@@ -811,7 +812,7 @@ function initClientMirror() {
             error: function(jqXHR, textStatus, errorThrown) {
                 rdata = parseJSON(jqXHR.responseText);
                 rdata = atob(rdata.substring(5));
-                callback(rdata, errorThrown); 
+                callback(rdata, errorThrown);
             }
         });
     }

@@ -463,10 +463,12 @@ class AutoStart(Database):
         return rows
 
     def update_unit_wise_task_status(self):
+        q_delete = "delete from tbl_compliance_status_chart_unitwise where chart_year = %s and domain_id = %s and country_id = %s "
         # unit_ids = ",".join([str(x) for x in self.started_unit_id])
         dat_conf = self.get_client_date_configuration()
         year = self.get_year_to_update_chart()
 
+        year.append(getCurrentYear() - 2)
         year.append(getCurrentYear() - 1)
         year.append(getCurrentYear())
 
@@ -485,7 +487,7 @@ class AutoStart(Database):
             " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
             " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
-            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
+            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id  " + \
             " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id  " + \
             " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id and ccf.domain_id = com.domain_id " + \
             " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \
@@ -497,7 +499,6 @@ class AutoStart(Database):
             " delayed_count = values(delayed_count), inprogress_count = values(inprogress_count), " + \
             " overdue_count = values(overdue_count) "
 
-        # self.execute(q_delete, [years])
         for y in year :
             for d in dat_conf :
                 c_id = d["country_id"]
@@ -508,6 +509,9 @@ class AutoStart(Database):
                     to_year = y
                 else :
                     to_year = y+1
+                print q % (y, from_year, to_year, c_id, d_id)
+                print "\n"
+                self.execute(q_delete, [y, d_id, c_id])
                 self.execute(q, [y, from_year, to_year, c_id, d_id])
                 # if c_id == y["country_id"] and d_id == y["domain_id"] :
                 #     self.execute(q, [y, from_year, to_year, c_id, d_id])
@@ -520,6 +524,7 @@ class AutoStart(Database):
         dat_conf = self.get_client_date_configuration()
         year = self.get_year_to_update_chart()
         year.append(getCurrentYear() - 1)
+        year.append(getCurrentYear() - 2)
         year.append(getCurrentYear())
 
         q = "insert into tbl_compliance_status_chart_userwise( " + \
@@ -537,7 +542,7 @@ class AutoStart(Database):
             " sum(IF(com.frequency_id = 5,IF(ch.due_date < now() and ifnull(ch.approve_status,0) <> 1 ,1,0), " + \
             " IF(date(ch.due_date) < curdate() and ifnull(ch.approve_status,0) <> 1 ,1,0))) as overdue_count " + \
             " from tbl_client_configuration as ccf " + \
-            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id and unt.is_closed = 0 " + \
+            " inner join tbl_units as unt on ccf.country_id = unt.country_id and ccf.client_id = unt.client_id " + \
             " inner join tbl_client_compliances as cc on unt.unit_id = cc.unit_id and ccf.domain_id = cc.domain_id " + \
             " inner join tbl_compliances as com on cc.compliance_id = com.compliance_id " + \
             " left join tbl_compliance_history as ch on ch.unit_id = cc.unit_id and ch.compliance_id = cc.compliance_id " + \

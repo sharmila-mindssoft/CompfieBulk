@@ -1109,12 +1109,15 @@ function editEntity(e, le_count, value, domain_details) {
             //     console.log("value.business_group.business_group_id--"+value.business_group.business_group_id);
             //     showEditable(le_table.find(".business-group"), value.business_group.business_group_id);
             // }
-
-            le_table.find(".input_business_group").show();
+                     
             le_table.find(".cancel-add-business-group").hide();
             le_table.find(".select_business_group").hide();
+            le_table.find(".input_business_group").hide();                
 
             if (value.business_group) {
+                if(value.business_group.business_group_name != ""){
+                    le_table.find(".input_business_group").show();    
+                }       
                 showEditable(le_table.find(".business-group-id"), value.business_group.business_group_id);
                 showEditable(le_table.find(".business-group-text"), value.business_group.business_group_name);
             }

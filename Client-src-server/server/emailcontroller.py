@@ -50,7 +50,7 @@ class Email(object):
             print msg
             msg['From'] = self.sender
             print msg['From']
-            if type(cc) is list:
+            if type(receiver) is list:
                 msg['To'] = ",".join(receiver)
             else:
                 msg['To'] = receiver
