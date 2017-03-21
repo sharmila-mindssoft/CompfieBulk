@@ -802,14 +802,6 @@ function loadEntityDetails() {
     if (LEGAL_ENTITIES.length > 1) {
         LegalEntityNameLabel.hide();
         LegalEntityNameAC.show();
-
-        // var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
-        // var noclone = norecordtableRow.clone();
-        // $('.no_records', noclone).text('No Compliance Available');
-        // $('.tbody-compliance-approval-list').append(noclone);
-        // $('#pagination').hide();
-        // $('.compliance_count').text('');
-
     } else {
         var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
         var LE_ID = LEGAL_ENTITIES[0]["le_id"];
@@ -823,33 +815,33 @@ function loadEntityDetails() {
 }
 
 function showCalendarTab() {
-    $(".calendar-tab").addClass("active in");
-    $(".current-tab").removeClass("active in");
-    $(".upcoming-tab").removeClass("active in");
+    $(".calendar-tab-content").addClass("active in");
+    $(".current-tab-content").removeClass("active in");
+    $(".upcoming-tab-content").removeClass("active in");
 
-    $(".calendar-tab-content").show()
-    $(".upcoming-tab-content").hide()
+    $(".calendar-tab-content").show();
+    $(".upcoming-tab-content").hide();
     $(".current-tab-content").hide();
 }
 
 function showCurrentTab() {
-    $(".current-tab").addClass("active in");
-    $(".upcoming-tab").removeClass("active in");
-    $(".calendar-tab").removeClass("active in");
+    $(".current-tab-content").addClass("active in");
+    $(".upcoming-tab-content").removeClass("active in");
+    $(".calendar-tab-content").removeClass("active in");
 
     $(".current-tab-content").show();
-    $(".upcoming-tab-content").hide()
-    $(".calendar-tab-content").hide()
+    $(".upcoming-tab-content").hide();
+    $(".calendar-tab-content").hide();
 }
 
 function showUpcomingTab() {
-    $(".upcoming-tab").addClass("active in");
-    $(".current-tab").removeClass("active in");
-    $(".calendar-tab").removeClass("active in");
+    $(".upcoming-tab-content").addClass("active in");
+    $(".current-tab-content").removeClass("active in");
+    $(".calendar-tab-content").removeClass("active in");
 
-    $(".upcoming-tab-content").show()
+    $(".upcoming-tab-content").show();
     $(".current-tab-content").hide();
-    $(".calendar-tab-content").hide()
+    $(".calendar-tab-content").hide();
 }
 
 $(function() {
