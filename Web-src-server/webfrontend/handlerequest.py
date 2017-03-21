@@ -59,18 +59,20 @@ class HandleRequest(object):
         assert self._connection_closed is False
         # print headers
         # print self._url
-        if "/api/files" in self._url:
+        print type(response_data)
+        print "begin response"
+        if type(response_data) is not str :
             for k, v in headers.items() :
                 self._http_response.set_default_header(k, v)
         else :
             self._http_response.set_default_header(
                 "Content-Type", "application/json"
             )
-            response_data = json.dumps(json.loads(response_data), indent=2)
-
-            key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
-            response_data = base64.b64encode(response_data)
-            response_data = json.dumps(key+response_data)
+        response_data = json.dumps(json.loads(response_data), indent=2)
+        print response_data
+        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+        response_data = base64.b64encode(response_data)
+        response_data = json.dumps(key+response_data)
 
         self._http_response.set_default_header(
             "Access-Control-Allow-Origin", "*"
@@ -78,6 +80,7 @@ class HandleRequest(object):
 
         self._http_response.send(response_data)
         self._connection_closed = True
+        print "response end"
 
     def _respond_error(self, code, response_data):
         self._http_response.set_status(code)
@@ -115,7 +118,7 @@ class HandleRequest(object):
         ip = None
         port = None
         if self._relative_url == "/api/files" :
-            legal_entity_id = self.__body["request"][1]["le_id"]
+            legal_entity_id = self._body["request"][1]["le_id"]
         else :
             legal_entity_id = None
 
@@ -140,6 +143,9 @@ class HandleRequest(object):
         assert port is not None
         url = self._url_template % (ip, port, self._relative_url)
         self._url = url
+        print "before request call"
+        print self._url
+        print "$" * 100
         self._api_request(
             url, self._body, self._forward_request_callback
         )

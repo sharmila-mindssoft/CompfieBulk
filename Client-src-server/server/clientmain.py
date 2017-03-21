@@ -100,8 +100,8 @@ class API(object):
             t.start()
 
         def on_session_timeout(c_db):
-            print "session called "
-            print datetime.datetime.now()
+            # print "session called "
+            # print datetime.datetime.now()
             c_db_con = self.client_connection_pool(c_db)
             _db_clr = Database(c_db_con)
             try :
@@ -128,8 +128,8 @@ class API(object):
             t.start()
 
         def on_session_timeout(c_db):
-            print "session called "
-            print datetime.datetime.now()
+            # print "session called "
+            # print datetime.datetime.now()
             c_db_con = self.client_connection_pool(c_db)
             _db_clr = Database(c_db_con)
             try :
