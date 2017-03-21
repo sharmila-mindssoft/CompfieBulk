@@ -1334,11 +1334,15 @@ h2.chart-title: hover {
 }
 
 .satcheck input[type="checkbox"]{
-      margin-left: -24px !important;  
+    margin-left: -24px !important;
+    height: 17px;
+    width: 25px;
 }
 
 .assigncheck input[type="checkbox"]{
-      margin-left: -27px !important;  
+    margin-left: -27px !important;  
+    height: 17px;
+    width: 25px;
 }
 
 .table > thead > tr > th{
