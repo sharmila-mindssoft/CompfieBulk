@@ -78,6 +78,7 @@ var user_status = null;
 var blocked_status = null
 var remarks = "";
 var empName = null;
+var legal_entity_id = null;
 
 var um_page = null;
 
@@ -117,7 +118,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
             listUsers = response.ul_users;
             t_this.renderList(listLegalEntity, listUsers, null, null, null);
         } else {
-            // t_this.possibleFailures(error);
+            t_this.possibleFailures(error);
         }
     });
 
@@ -146,7 +147,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
             loadBusinessGroup(businessGroupList);
 
         } else {
-            // t_this.possibleFailures(error);
+            t_this.possibleFailures(error);
         }
     });
 };
@@ -159,7 +160,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
         //No Records Found
     } else {
         $.each(ul_legal, function(k, v) {
-            if( ((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null)) )  {
+            if (((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null))) {
                 var cloneRow = $('#template .legal-entity-row').clone();
 
                 var total_licences = parseInt(v.total_licences);
@@ -278,6 +279,10 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
 
             if (user_name == null) {
                 $('.um-email-resend a', cloneUserRow).html("Resend");
+                $('.um-email-resend a', cloneUserRow).attr("data-original-title", "Click here to resend email");
+                $('.um-email-resend a', cloneUserRow).on('click', function(e) {
+                    t_this.resendemail(v1.user_id);
+                });
             }
 
             $('.edit i').attr('title', 'Click Here to Edit');
@@ -307,20 +312,8 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
                 $('.blocked i', cloneUserRow).attr('title', 'Click here to Block');
             }
 
-            $('.status i', cloneUserRow).attr("onClick", "showModalDialog("+v1.user_id+", '"+v1.emp_name+"', "+v1.is_active+", "+v1.unblock_days+", "+v1.is_disable+", 'STATUS')");
-            $('.blocked i', cloneUserRow).attr("onClick", "showModalDialog("+v1.user_id+", '"+v1.emp_name+"', "+v1.is_active+", "+v1.unblock_days+", "+v1.is_disable+", 'BLOCK')");
-            
-
-            // Status Event
-            // $('.status i', cloneUserRow).on('click', function(e) {
-            //     alert(v1.user_id)
-            //     showModalDialog(v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "STATUS");
-            // });
-
-            // Disable Event
-            // $('.blocked i', cloneRow).on('click', function(e) {
-            //     showModalDialog(v1.user_id, v1.emp_name, v1.is_active, v1.unblock_days, v1.is_disable, "BLOCK");
-            // });
+            $('.status i', cloneUserRow).attr("onClick", "showModalDialog(" + v1.user_id + ", '" + v1.emp_name + "', " + v1.is_active + ", " + v1.unblock_days + ", " + v1.is_disable + "," + v1.le_id + ", 'STATUS')");
+            $('.blocked i', cloneUserRow).attr("onClick", "showModalDialog(" + v1.user_id + ", '" + v1.emp_name + "', " + v1.is_active + ", " + v1.unblock_days + ", " + v1.is_disable + "," + v1.le_id + ", 'BLOCK')");
 
             $('.um-category i', cloneUserRow).addClass(cat_class);
             $('.user-row-body', cloneRow).append(cloneUserRow);
@@ -328,7 +321,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
             j = j + 1;
         }
 
-        
+
     });
     $('[data-toggle="tooltip"]').tooltip();
 };
@@ -343,7 +336,7 @@ showEdit = function(user_id) {
             t_this.showEditView(listUser_edit, listLegalEntity_edit, listDomains_edit, listUnits_edit);
 
         } else {
-            // t_this.possibleFailures(error);
+            t_this.possibleFailures(error);
         }
     });
 }
@@ -484,10 +477,20 @@ userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEnt
     }
 }
 
-function showDialog() {}
+function isComplianceAvailable(lega_entity_id, userID_compliances) {
+    client_mirror.haveCompliances(lega_entity_id, userID_compliances, function(error, response) {
+        if (error == null) {
+            return true;
+        } else {
+            t_this.possibleFailures(error);
+            return false;
+        }
+    });
+
+}
 
 //open password dialog
-showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked, mode) {
+showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked, le_id, mode) {
     var statusmsg = "";
     if (mode == "STATUS") {
         btnPasswordSubmit_Status.show();
@@ -524,6 +527,7 @@ showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked,
                     CurrentPassword.focus();
                     userId = user_id;
                     empName = emp_name;
+                    legal_entity_id = le_id;
                 },
             });
             return false;
@@ -628,27 +632,27 @@ userManagementPage.prototype.submitProcess = function() {
             }
         });
     }
-
-
 };
 
-userManagementPage.prototype.changeStatus = function(user_id, status) {
+userManagementPage.prototype.changeStatus = function(user_id, status, legal_entity_id) {
     t_this = this;
     if (isNotEmpty(CurrentPassword, message.password_required) == false) {
         return false;
     } else {
-        var password = CurrentPassword.val();
-        if (status == "false") { status = false; }
-        if (status == "true") { status = true; }
-        client_mirror.changeClientUserStatus(user_id, status, empName, password, function(error, response) {
-            if (error == null) {
-                Custombox.close();
-                displaySuccessMessage(message.status_success);
-                t_this.showList();
-            } else {
-                t_this.possibleFailures(error);
-            }
-        });
+        if (isComplianceAvailable(legal_entity_id, user_id)) {
+            var password = CurrentPassword.val();
+            if (status == "false") { status = false; }
+            if (status == "true") { status = true; }
+            client_mirror.changeClientUserStatus(user_id, status, empName, password, function(error, response) {
+                if (error == null) {
+                    Custombox.close();
+                    displaySuccessMessage(message.status_success);
+                    t_this.showList();
+                } else {
+                    t_this.possibleFailures(error);
+                }
+            });
+        }
     }
 };
 
@@ -1304,6 +1308,16 @@ userManagementPage.prototype.validateMandatory = function() {
     return true;
 }
 
+userManagementPage.prototype.resendemail = function(id) {
+    client_mirror.resendRegistrationEmail(parseInt(id), function(error, response) {
+        if (error == null) {
+            displayMessage(message.email_sent);
+        } else {
+            t_this.possibleFailures(error);
+        }
+    });
+}
+
 key_search = function(cloneRow, le_id, data) {
     key_one = $('.filter-users', cloneRow).val().toLowerCase();
     key_two = $('.filter-user-id', cloneRow).val().toLowerCase();
@@ -1380,7 +1394,7 @@ PageControls = function() {
             loadDomain();
         }
     });
-     
+
     //Next Button Click Event
     btnNext.click(function() {
         CURRENT_TAB += 1;
@@ -1411,7 +1425,7 @@ PageControls = function() {
     });
 
     btnPasswordSubmit_Status.click(function() {
-        um_page.changeStatus(userId, user_status);
+        um_page.changeStatus(userId, user_status, legal_entity_id);
     });
 
     btnPasswordSubmit_Block.click(function() {
@@ -1451,8 +1465,10 @@ PageControls = function() {
             displayMessage(message.legalentity_required);
         var condition_fields = ["c_id"];
         var condition_values = [countryId.val()];
-        if (businessGroupId.val() != '') { condition_fields.push("bg_id");
-            condition_values.push(businessGroupId.val()); }
+        if (businessGroupId.val() != '') {
+            condition_fields.push("bg_id");
+            condition_values.push(businessGroupId.val());
+        }
         commonAutoComplete(e, acLegalEntity, legalEntityId, text_val, legalEntityList, "le_name", "le_id", function(val) {
             onLegalEntityAutoCompleteSuccess(val);
         }, condition_fields, condition_values);

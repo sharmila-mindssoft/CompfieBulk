@@ -666,15 +666,28 @@ function loadCalendarData(data) {
     $.each(getdata, function(k, v) {
         if (v.inprogress > 0) {
             $(".dateid" + v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="' + v.inprogress + ' Inprogress Compliances"> ' + v.inprogress + ' </div>');
+            $('.dateid').on('click', function() {
+                showCurrentTab();
+            });
         }
         if (v.duedate > 0) {
             $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Due Date Compliances"> ' + v.duedate + '</div>');
+            $('.dateid').on('click', function() {
+                showCurrentTab();
+            });
         }
         if (v.upcoming > 0) {
             $(".dateid" + v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="' + v.upcoming + ' Upcoming Compliances">' + v.upcoming + '</div>');
+            $('.dateid').on('click', function() {
+                showUpcomingTab();
+            });
+
         }
         if (v.overdue > 0) {
             $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Not Complied">' + v.overdue + '</div>');
+            $('.dateid').on('click', function() {
+                showCurrentTab();
+            });
         }
     });
 }
@@ -789,14 +802,6 @@ function loadEntityDetails() {
     if (LEGAL_ENTITIES.length > 1) {
         LegalEntityNameLabel.hide();
         LegalEntityNameAC.show();
-
-        // var norecordtableRow = $('#no-record-templates .table-no-content .table-row-no-content');
-        // var noclone = norecordtableRow.clone();
-        // $('.no_records', noclone).text('No Compliance Available');
-        // $('.tbody-compliance-approval-list').append(noclone);
-        // $('#pagination').hide();
-        // $('.compliance_count').text('');
-
     } else {
         var LE_NAME = LEGAL_ENTITIES[0]["le_name"];
         var LE_ID = LEGAL_ENTITIES[0]["le_id"];
@@ -810,33 +815,33 @@ function loadEntityDetails() {
 }
 
 function showCalendarTab() {
-    $(".calendar-tab").addClass("active in");
-    $(".current-tab").removeClass("active in");
-    $(".upcoming-tab").removeClass("active in");
+    $(".calendar-tab-content").addClass("active in");
+    $(".current-tab-content").removeClass("active in");
+    $(".upcoming-tab-content").removeClass("active in");
 
-    $(".calendar-tab-content").show()
-    $(".upcoming-tab-content").hide()
+    $(".calendar-tab-content").show();
+    $(".upcoming-tab-content").hide();
     $(".current-tab-content").hide();
 }
 
 function showCurrentTab() {
-    $(".current-tab").addClass("active in");
-    $(".upcoming-tab").removeClass("active in");
-    $(".calendar-tab").removeClass("active in");
+    $(".current-tab-content").addClass("active in");
+    $(".upcoming-tab-content").removeClass("active in");
+    $(".calendar-tab-content").removeClass("active in");
 
     $(".current-tab-content").show();
-    $(".upcoming-tab-content").hide()
-    $(".calendar-tab-content").hide()
+    $(".upcoming-tab-content").hide();
+    $(".calendar-tab-content").hide();
 }
 
 function showUpcomingTab() {
-    $(".upcoming-tab").addClass("active in");
-    $(".current-tab").removeClass("active in");
-    $(".calendar-tab").removeClass("active in");
+    $(".upcoming-tab-content").addClass("active in");
+    $(".current-tab-content").removeClass("active in");
+    $(".calendar-tab-content").removeClass("active in");
 
-    $(".upcoming-tab-content").show()
+    $(".upcoming-tab-content").show();
     $(".current-tab-content").hide();
-    $(".calendar-tab-content").hide()
+    $(".calendar-tab-content").hide();
 }
 
 $(function() {
@@ -859,14 +864,8 @@ $(document).ready(function() {
     $(".current-tab").click(function() {
         showCurrentTab();
     });
-    // $(".upcoming-tab").click(function() {
-    //     showUpcomingTab();
-    // });
 
-    // $(".upcoming-tab").click(function() {
-    //     $(".upcoming-tab").addClass("active");
-    //     $(".current-tab").removeClass("active");
-    //     $(".main-tab-content").hide();
-    //     $(".upcoming-tab-content").show()
-    // });
+    $(".upcoming-tab").click(function() {
+        showUpcomingTab();
+    });
 });

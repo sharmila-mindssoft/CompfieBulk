@@ -25,27 +25,94 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group has-feedback bg-name">
+                                    <label class=" col-sm-offset-1 col-sm-3 control-label">Business Group:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="businessgroupsval" value=""  tabindex="3">
+                                        <input type="hidden" id="businessgroupid">
+                                        <div id="ac-businessgroup" class="ac-textbox default-display-none" >
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback division-name">
+                                    <label class="col-sm-4 control-label">Division:</label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="divisionid" value="">
+                                        <input type="text" class="form-control input-sm" id="divisionval" value="" tabindex="5">
+                                        <div id="ac-division" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback unit-name">
+                                    <label class="col-sm-4 control-label">Unit:</label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="unitval" value="" tabindex="7">
+                                        <input type="hidden" id="unitid">
+                                        <div id="ac-unit" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">From Date: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" readonly="readonly" id="from-date" tabindex="2">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" readonly="readonly" id="from-date" tabindex="8">
                                         <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">To Date: <span class="mandatory">*</span></label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="20/12/2016" readonly="readonly" id="to-date" tabindex="5">
+                                        <input type="text" class="form-control input-sm" placeholder="DD-MMM-YYYY" value="20/12/2016" readonly="readonly" id="to-date" tabindex="10">
                                         <i class="fa-1-5x form-control-feedback fa fa-calendar-check-o"></i>
                                     </div>
                                 </div>
 
                             </div>
                             <div class="col-sm-6">
+                                <div class="form-group has-feedback group-name">
+                                    <label class="col-sm-4 control-label">Group Name: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="groupsval" value="" tabindex="2">
+                                        <input type="hidden" id="group-id">
+                                        <div id="ac-group" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback le-name">
+                                    <label class="col-sm-4 control-label">Legal Entity: <span class="mandatory">*</span></label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control input-sm" id="legalentityval" value="" tabindex="4">
+                                        <input type="hidden" id="legalentityid">
+                                        <div id="ac-legalentity" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="fa-1-5x form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+                                <div class="form-group has-feedback category-name">
+                                    <label class="col-sm-4 control-label">Category:</label>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="categoryid" value="">
+                                        <input type="text" class="form-control input-sm" id="categoryval" value="" tabindex="6">
+                                        <div id="ac-category" class="ac-textbox default-display-none">
+                                          <ul style="width:85%;"></ul>
+                                        </div>
+                                        <i class="form-control-feedback fa fa-search"></i>
+                                    </div>
+                                </div>
+
                                 <div class="form-group has-feedback user-list">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">User:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="user" autofocus tabindex="4" placeholder="Type User">
+                                        <input type="text" class="form-control input-sm" id="user" autofocus tabindex="8" placeholder="Type User">
                                         <input type="hidden" id="userid">
                                         <div id="ac-user" class="ac-textbox default-display-none">
                                           <ul style="width:85%;"></ul>
@@ -67,7 +134,7 @@
                                 <div class="form-group has-feedback">
                                     <label class=" col-sm-offset-1 col-sm-3 control-label">Form Name:</label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control input-sm" id="formname" tabindex="6" placeholder="Type Form name">
+                                        <input type="text" class="form-control input-sm" id="formname" tabindex="10" placeholder="Type Form name">
                                         <input type="hidden" id="formid">
                                         <div id="ac-form" class="ac-textbox default-display-none">
                                           <ul style="width:85%;"></ul>
@@ -79,8 +146,8 @@
                             <div class="col-sm-12">
                                 <center>
                                     <div class="form-group  m-t-5 m-b-0">
-                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="7"> Show </button>
-                                        <button class="btn btn-info waves-effect waves-light" type="submit" id="export"> Export </button>
+                                        <button class="btn btn-primary waves-effect waves-light" type="submit" id="show" tabindex="11"> Show </button>
+                                        <button class="btn btn-info waves-effect waves-light" type="submit" id="export" tabindex="12"> Export </button>
                                     </div>
                                 </center>
                             </div>

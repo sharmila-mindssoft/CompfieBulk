@@ -539,6 +539,10 @@ function domainScoreCard(data, id){
     total_subtotal = parseInt(v.notopted) + parseInt(v.assigned) + parseInt(v.unassinged);
     $(".dsc-subtotal", dscclone_tr).html(total_subtotal);
     grandtotal = grandtotal+total_subtotal;
+    total_assigned += v.assigned;
+    total_unassigned += v.unassinged;
+    total_notopted += v.notopted;   
+
     $("#cardbox"+id+" .tbody-dsc").append(dscclone_tr);
   });
 
