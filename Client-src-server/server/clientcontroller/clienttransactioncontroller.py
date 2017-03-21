@@ -402,42 +402,48 @@ def process_approve_compliance(db, request, session_user):
 
     status = status[0]
 
-    if status == "Approve":
-        approve_status = 1
-        approve_compliance(
-            db, approve_status, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user
-        )
-
-    elif status == "Rectify Approval":
-        reject_compliance_approval(
-            db, compliance_history_id, remarks,  next_due_date, session_user
-        )
-
-    elif status == "Concur":
+    if status == "Concur":
         concurrence_status = 1
+        current_status = 2
         concur_compliance(
             db, concurrence_status, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user
+            next_due_date, validity_date, session_user, current_status
         )
-
+    # Concurrence Rectify Option
     elif status == "Rectify Concurrence":
+        concurrence_status = 2
+        current_status = 0
         reject_compliance_concurrence(
-            db, compliance_history_id, remarks, next_due_date, session_user
+            db, compliance_history_id, remarks, next_due_date, session_user, concurrence_status, current_status
         )
-
+     # Concurrence Reject Option
     elif status == "Reject Concurrence" :
         concurrence_status = 3
+        current_status = 2
         concur_compliance(
             db, concurrence_status, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user
+            next_due_date, validity_date, session_user, current_status
         )
 
-    elif status == "Reject Approval" :
-        approve_status = 3
+    elif status == "Approve":
+        approve_status = 1
+        current_status = 3
         approve_compliance(
             db, approve_status, compliance_history_id, remarks,
-            next_due_date, validity_date, session_user
+            next_due_date, validity_date, session_user, current_status
+        )
+    elif status == "Rectify Approval":
+        approve_status = 2
+        current_status = 0
+        reject_compliance_approval(
+            db, compliance_history_id, remarks,  next_due_date, session_user, approve_status, current_status
+        )
+    elif status == "Reject Approval" :
+        approve_status = 3
+        current_status = 3
+        approve_compliance(
+            db, approve_status, compliance_history_id, remarks,
+            next_due_date, validity_date, session_user, current_status
         )
 
     return clienttransactions.ApproveComplianceSuccess()

@@ -2551,14 +2551,15 @@ class USER_WISE_COMPLIANCE(object):
 class APPROVALCOMPLIANCE(object):
     def __init__(
         self, compliance_history_id, compliance_name, description,
-        domain_name, start_date, due_date, delayed_by, compliance_frequency,
+        domain_name, domain_id, start_date, due_date, delayed_by, compliance_frequency,
         documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-        remarks, action, statutory_dates, validity_date, unit_name, unit_address, assignee_id, assignee_name
+        remarks, action, statutory_dates, validity_date, unit_id, unit_name, unit_address, assignee_id, assignee_name
     ):
         self.compliance_history_id = compliance_history_id
         self.compliance_name = compliance_name
         self.description = description
         self.domain_name = domain_name
+        self.domain_id = domain_id
         self.start_date = start_date
         self.due_date = due_date
         self.delayed_by = delayed_by
@@ -2573,6 +2574,7 @@ class APPROVALCOMPLIANCE(object):
         self.action = action
         self.statutory_dates = statutory_dates
         self.validity_date = validity_date
+        self.unit_id = unit_id
         self.unit_name = unit_name
         self.unit_address = unit_address
         self.assignee_id = assignee_id
@@ -2583,16 +2585,17 @@ class APPROVALCOMPLIANCE(object):
         data = parse_dictionary(
             data, [
                 "compliance_history_id", "compliance_name",
-                "description", "domain_name", "file_names", "start_date", "due_date", "delayed_by",
+                "description", "domain_name", "domain_id", "file_names", "start_date", "due_date", "delayed_by",
                 "compliance_task_frequency", "uploaded_documents", "upload_date", "completion_date",
                 "next_due_date", "concurrenced_by", "remarks", "action",
-                "statutory_dates", "validity_date", "unit_name", "unit_address", "assignee_id", "assignee_name"
+                "statutory_dates", "validity_date", "unit_id", "unit_name", "unit_address", "assignee_id", "assignee_name"
             ]
         )
         compliance_history_id = data.get("compliance_history_id")
         compliance_name = data.get("compliance_name")
         description = data.get("description")
         domain_name = data.get("domain_name")
+        domain_id = data.get("domain_id")
         file_names = data.get("file_names")
         start_date = data.get("start_date")
         due_date = data.get("due_date")
@@ -2607,6 +2610,7 @@ class APPROVALCOMPLIANCE(object):
         action = data.get("action")
         statutory_dates = data.get("statutory_dates")
         validity_date = data.get("validity_date")
+        unit_id = data.get("unit_id")
         unit_name = data.get("unit_name")
         unit_address = data.get("unit_address")
         assignee_id = data.get("assignee_id")
@@ -2614,9 +2618,9 @@ class APPROVALCOMPLIANCE(object):
 
         return APPROVALCOMPLIANCE(
             compliance_history_id, compliance_name, description,
-            domain_name, start_date, due_date, delayed_by, compliance_frequency,
+            domain_name, domain_id, start_date, due_date, delayed_by, compliance_frequency,
             documents, file_names, upload_date, completion_date, next_due_date, concurrenced_by,
-            remarks, action, statutory_dates, validity_date, unit_name, unit_address, assignee_id, assignee_name
+            remarks, action, statutory_dates, validity_date, unit_id, unit_name, unit_address, assignee_id, assignee_name
         )
 
     def to_structure(self):
@@ -2625,6 +2629,7 @@ class APPROVALCOMPLIANCE(object):
             "compliance_name": self.compliance_name,
             "description": self.description,
             "domain_name": self.domain_name,
+            "domain_id": self.domain_id,
             "start_date": self.start_date,
             "due_date": self.due_date,
             "delayed_by": self.delayed_by,
@@ -2639,6 +2644,7 @@ class APPROVALCOMPLIANCE(object):
             "action": self.action,
             "statutory_dates" : self.statutory_dates,
             "validity_date": self.validity_date,
+            "unit_id": self.unit_id,
             "unit_name": self.unit_name,
             "unit_address": self.unit_address,
             "assignee_id": self.assignee_id,
