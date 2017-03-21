@@ -29,6 +29,8 @@ class HandleRequest(object):
         self._company_id = 0
         self._legal_entity_id = legal_entity_id
         self._url = None
+        print "In Handle request"
+        print relative_url
 
     def _api_request(self, url, body, callback):
         def client_callback(response):

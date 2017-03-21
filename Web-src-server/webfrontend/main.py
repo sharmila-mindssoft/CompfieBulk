@@ -82,6 +82,7 @@ class Controller(object):
         data = None
         actual_data = None
         try:
+            print request.uri()
 
             data = request.body()[5:]
 
@@ -118,56 +119,10 @@ class Controller(object):
             return
         # print actual_data
         # print token
-        handle_request = HandleRequest(
-            token, actual_data,
-            request.uri(), response, self._http_client,
-            request.remote_ip(), self._company_manager, None
-        )
-        # logger.logWebfront("forward_request")
-        handle_request.forward_request()
-        request.set_close_callback(
-            handle_request.connection_closed
-        )
-
-    def handle_file_post(self, request, response):
-        data = None
-        actual_data = None
-        try:
-
-            data = request.body()[5:]
-            data = data.decode('base64')
-            data = json.loads(data)
-            if type(data) is not list:
-                send_bad_request(
-                    response,
-                    expectation_error("a list", type(data))
-                )
-                return
-            if len(data) != 2:
-                send_invalid_json_format(response)
-                return
-            token = data[0]
-            # logger.logWebfront(str(token))
-            actual_data = data[1]
-            if type(token) is unicode:
-                token = token.encode("utf8")
-            elif type(token) is str:
-                pass
-            else:
-                send_bad_request(
-                    response,
-                    expectation_error("a string", type(token))
-                )
-                return
-        except Exception:
-            # logger.logWebfront(request.body())
-            print traceback.format_exc()
-            # logger.logWebfront(traceback.format_exc())
-            send_invalid_json_format(response)
-            return
-
-        # print actual_data
-        legal_entity_id = actual_data["request"][1]["le_id"]
+        if request.uri() == "/api/files" :
+            legal_entity_id = actual_data["request"][1]["le_id"]
+        else :
+            legal_entity_id = None
 
         handle_request = HandleRequest(
             token, actual_data,
@@ -227,53 +182,69 @@ class TemplateHandler(RequestHandler):
     def get(self, url=None, token=None):
         request_ip = self.request.remote_ip
         print request_ip
-        if url is not None and ("userregistration" not in self.request.uri and "reset_password" not in self.request.uri)  :
-            print "url not in"
-            request_url = self.request.uri.strip().split('/')[1]
-            short_name = url.decode('base64')
-            ips = self._company_manager.lookup_form_ips(short_name)
-            if ips is not None:
-                for i in ips :
-                    if request_url in i.form_name :
-                        if request_ip not in i.ip :
-                            path = "files/client/common/html/accessdenied.html"
-                            temp = template_env.get_template(path)
-                            self.set_status(403)
-                            self.write(temp.render())
-                            return
-                        else :
-                            break
 
-        if url is not None and ("userregistration" in self.request.uri and "reset_password" in self.request.uri):
-            print 'GOT URL %s' % (url,)
-            company = self._company_manager.locate_company(
-                url
+        def show_page():
+            path = self.__path_desktop
+            if self.__path_mobile is not None:
+                useragent = self.request.headers.get("User-Agent")
+                if useragent is None:
+                    useragent = ""
+                user_agent = parse(useragent)
+                if user_agent.is_mobile:
+                    path = self.__path_mobile
+            mime_type, encoding = mimetypes.guess_type(
+                path
             )
-            if company is None:
-                path = "files/client/common/html/notfound.html"
-                temp = template_env.get_template(path)
-                self.set_status(404)
-                self.write(temp.render())
-                return
+            self.set_header("Content-Type", mime_type)
+            template = template_env.get_template(path)
+            output = template.render(**self.__parameters)
+            output = self.update_static_urls(output)
+            self.xsrf_token
+            self.write(output)
+            self.finish()
 
-        path = self.__path_desktop
-        if self.__path_mobile is not None:
-            useragent = self.request.headers.get("User-Agent")
-            if useragent is None:
-                useragent = ""
-            user_agent = parse(useragent)
-            if user_agent.is_mobile:
-                path = self.__path_mobile
-        mime_type, encoding = mimetypes.guess_type(
-            path
-        )
-        self.set_header("Content-Type", mime_type)
-        template = template_env.get_template(path)
-        output = template.render(**self.__parameters)
-        output = self.update_static_urls(output)
-        self.xsrf_token
-        self.write(output)
-        self.finish()
+        if url is not None :
+            print "url is not None"
+            print url
+            print self.request.uri
+            if ("userregistration" not in self.request.uri and "reset_password" not in self.request.uri)  :
+                print "url not in"
+                request_url = self.request.uri.strip().split('/')[1]
+                short_name = url.decode('base64')
+                ips = self._company_manager.lookup_form_ips(short_name)
+                if ips is not None:
+                    is_valid = True
+                    for i in ips :
+                        if request_url in i.form_name :
+                            if request_ip not in i.ip :
+                                path = "files/client/common/html/accessdenied.html"
+                                temp = template_env.get_template(path)
+                                self.set_status(403)
+                                self.write(temp.render())
+                                self.finish()
+                                is_valid = False
+                                break
+                    if is_valid :
+                        show_page()
+
+                else :
+                    show_page()
+
+            elif ("userregistration" in self.request.uri or "reset_password" in self.request.uri):
+                print 'GOT URL %s' % (url,)
+                company = self._company_manager.locate_company(
+                    url
+                )
+                if company is None:
+                    path = "files/client/common/html/notfound.html"
+                    temp = template_env.get_template(path)
+                    self.set_status(404)
+                    self.write(temp.render())
+                    self.finish()
+                else :
+                    show_page()
+        else :
+            show_page()
 
     def options(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -281,6 +252,7 @@ class TemplateHandler(RequestHandler):
         self.set_header("Access-Control-Allow-Methods", "GET, POST")
         self.set_status(204)
         self.write("")
+        self.finish()
 
 
 def server_added(servers):
@@ -318,7 +290,6 @@ def run_web_front_end(port, knowledge_server_address):
             }
             web_server.low_level_url(url, TemplateHandler, args)
 
-        web_server.url("/api/files", POST=controller.handle_file_post, OPTIONS=cors_handler)
         web_server.url(
             "/api/(.*)",
             POST=controller.handle_post,

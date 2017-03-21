@@ -82,7 +82,6 @@ function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = REPORT._entities;
-        //alert(countryList.toSource());
         if (countryList.length == 0 && text_val != '')
             displayMessage(message.country_required);
         var condition_fields = [];
@@ -277,7 +276,6 @@ StatusReportConsolidated.prototype.loadSearch = function() {
 StatusReportConsolidated.prototype.fetchSearchList = function() {
     t_this = this;
     t_this._entities = client_mirror.getSelectedLegalEntity();
-    //alert(t_this._entities.toSource())
     t_this._userType = UserTypes; // common-functions.js
     t_this._complianceTaskStatus = TaskStatuses; // common-functions.js
     t_this.renderUserTypeList(t_this._userType);

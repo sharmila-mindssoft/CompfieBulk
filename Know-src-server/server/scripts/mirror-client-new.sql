@@ -254,7 +254,8 @@ CREATE TABLE `tbl_notifications_log` (
 CREATE TABLE tbl_notifications_user_log(
   `notification_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `read_status` tinyint(4) DEFAULT '0'
+  `read_status` tinyint(4) DEFAULT '0',
+  `updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE `tbl_service_providers` (
   `service_provider_id` int(11) NOT NULL AUTO_INCREMENT,

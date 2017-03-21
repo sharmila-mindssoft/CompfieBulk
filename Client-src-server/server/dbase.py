@@ -744,6 +744,7 @@ class Database(object):
         from server.clientdatabase.savetoknowledge import SaveClientActivity
 
         SaveClientActivity(values)
+        print "Save Activity success"
         return True
 
     def validate_session_token(self, session_token):
