@@ -156,9 +156,7 @@ userManagementPage.prototype.fetchUserManagement = function() {
 userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, bg_name, le_name) {
     t_this = this;
     listContainer.empty();
-    if (ul_legal.length == 0) {
-        //No Records Found
-    } else {
+    if (ul_legal.length != 0) {
         var le_list = client_mirror.getUserLegalEntity();
         var leids = [];
         $.each(ul_legal, function(k, v) {
