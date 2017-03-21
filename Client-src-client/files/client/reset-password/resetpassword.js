@@ -1,10 +1,29 @@
 var passwordStrength = 'Weak';
-function displayMessage(message) {
-  $('.error-message').html(message);
-  $('.error-message').show();
+
+
+function clearFPMessage() {
+  $('.forgot-password-error-message').hide();
+  $('.forgot-password-error-message span').text('');
 }
-$('#submit').click(function () {
-  $('.error-message').html('');
+function displayFPMessage(message) {
+  $('.forgot-password-error-message span').text(message);
+  $('.forgot-password-error-message').show();
+}
+
+function resetPasswordValidate() {
+  if ($('#newpassword').val().trim().length > 20) {
+    displayFPMessage('New Password Should not exceed 20 characters');
+    return false;
+  } else if ($('#confirmpassword').val().trim().length > 20) {
+    displayFPMessage('Confirm Password Should not exceed 20 characters');
+    return false;
+  } else {
+    displayFPMessage();
+    return true;
+  }
+}
+
+$('#btn_submit').click(function () {
   url = window.location.href;
   url_parameters = url.split('/');
   reset_token = url_parameters[url_parameters.length - 1];
@@ -14,60 +33,47 @@ $('#submit').click(function () {
   var checkLength = resetPasswordValidate();
   if (checkLength) {
     if (newpassword.length == 0) {
-      $('.error-message').html(message.npassword_required);
+      displayFPMessage("New Password Required");
     } else if (confirmpassword.length == 0) {
-      $('.error-message').html(message.conpassword_required);
+      displayFPMessage("Confirm Password Required");
     } else if (confirmpassword != newpassword) {
-      $('.error-message').html(message.password_notmatch);
+      displayFPMessage("New Password & Confirm Password should match");
     } else if (passwordStrength == 'Weak') {
-      $('.error-message').html(message.password_weak);
+      displayFPMessage("Password should not be Weak");
     } else {
       url = window.location.href;
       url_parameters = url.split('/');
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
         function onSuccess(data) {
-          displayMessage(message.password_reset_success);
+          displayFPMessage("Password Reset Successfully");
           $('#newpassword').val('');
           $('#confirmpassword').val('');
         }
         function onFailure(error) {
           if (error == 'InvalidResetToken') {
-            displayMessage(message.invalid_reset_token);
+            displayFPMessage('Invalid Reset Token');
           } else if (error == 'EnterDifferentPassword') {
-            displayMessage(message.password_already_used);
+            displayFPMessage('Password Already Used');
           } else {
-            displayMessage(error);
+            displayFPMessage(error);
           }
         }
-        client_mirror.resetPassword(resetToken, newpassword, url_parameters[url_parameters.length - 2], function (error, response) {
-          if (error == null) {
-            onSuccess(response);
-          } else {
-            onFailure(error);
+        var request = [
+          'ResetPassword',
+          {
+            'reset_token': resetToken,
+            'new_password': newpassword,
+            'short_name': url_parameters[url_parameters.length - 2]
           }
-        });
-      } else {
-        function onSuccess(data) {
-          displayMessage(message.password_reset_success);
-          $('#newpassword').val('');
-          $('#confirmpassword').val('');
-        }
-        function onFailure(error) {
-          if (error == 'InvalidResetToken') {
-            displayMessage(message.invalid_reset_token);
-          } else if (error == 'EnterDifferentPassword') {
-            displayMessage(message.password_already_used);
-          } else {
-            displayMessage(error);
-          }
-        }
-        mirror.resetPassword(resetToken, newpassword, function (error, response) {
-          if (error == null) {
-            onSuccess(response);
-          } else {
-            onFailure(error);
-          }
+        ];
+        call_api(request, url_parameters[url_parameters.length - 2], function(status, data) {
+            hideLoader();
+            if (status == null) {
+              onSuccess(data);
+            } else {
+              onFailure(status);
+            }
         });
       }
     }
@@ -88,9 +94,9 @@ function makekey()
         text += possible.charAt(Math.floor(Math.random() * possible.length));
     return text;
 }
-function call_api(request, callback) {
+function call_api(request, short_name, callback) {
     var requestFrame = [
-      'kitkat',
+      short_name,
       request
     ];
 
@@ -117,30 +123,6 @@ function call_api(request, callback) {
         rdata = atob(rdata.substring(5));
         callback(rdata, null);
       }
-
-        /*url: '/knowledge/api/login',
-        type: 'POST',
-        contentType: 'application/json',
-        headers: { 'X-CSRFToken': csrf_token },
-        data: makekey() + btoa(JSON.stringify(request, null, '')),
-        success: function(data, textStatus, jqXHR) {
-            data = atob(data.substring(5));
-            data = JSON.parse(data);
-            var status = data[0];
-            var response = data[1];
-            matchString = 'success';
-            if (status.toLowerCase().indexOf(matchString) != -1) {
-                callback(null, response);
-            }
-            else {
-                callback(status, response);
-            }
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            rdata = JSON.parse(jqXHR.responseText);
-            rdata = atob(rdata.substring(5));
-           callback(rdata, null);
-        }*/
     });
 }
 
@@ -158,14 +140,14 @@ validateToken = function() {
 
             }
         ];
-        call_api(request, function(status, data) {
+        call_api(request, short_name, function(status, data) {
             hideLoader();
             if (status == null) {
                 _rtoken = reset_token;
                 IS_VALID = true;
             }
             else {
-                displayMessage("Session expired");
+                displayFPMessage("Session expired");
                 IS_VALID = false;
             }
         });
@@ -175,10 +157,7 @@ validateToken = function() {
 $(document).ready(function () {
   $('#newpassword').keyup('input', function (event) {
     this.value = this.value.replace(/\s/g, '');
-    /*
-        assigning keyup event to password field
-        so everytime user type code will execute
-      */
+   
     passwordStrength = checkStrength($('#newpassword').val());
     if (passwordStrength == 'Strong') {
       $('#password-hint').css('display', 'none');
@@ -194,40 +173,12 @@ $(document).ready(function () {
   function onSuccess(data) {
   }
   function onFailure(error) {
-    displayMessage('Invalid Reset Token');
+    displayFPMessage('Invalid Reset Token');
   }
   url = window.location.href;
   url_parameters = url.split('/');
   reset_token = url_parameters[url_parameters.length - 1];
   validateToken();
-
-/*  function onSuccess(data) {
-  }
-  function onFailure(error) {
-    $('.error-message').html('Invalid Reset Token');
-    $('.error-message').show();
-  }
-  url = window.location.href;
-  url_parameters = url.split('/');
-  reset_token = url_parameters[url_parameters.length - 1];
-  if (url_parameters[url_parameters.length - 2] != 'reset-password') {
-    client_mirror.validateResetToken(reset_token, url_parameters[url_parameters.length - 2], function (error, response) {
-      alert(error)
-      if (error == null) {
-        onSuccess(response);
-      } else {
-        onFailure(error);
-      }
-    });
-  } else {
-    mirror.validateResetToken(reset_token, function (error, response) {
-      if (error == null) {
-        onSuccess(response);
-      } else {
-        onFailure(error);
-      }
-    });
-  }*/
 });
 $('#newpassword').focus(function () {
   $('#password-hint').css('display', 'inline-block');

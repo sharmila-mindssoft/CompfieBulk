@@ -84,9 +84,9 @@ class Controller(object):
         try:
 
             data = request.body()[5:]
-            print data
+
             data = data.decode('base64')
-            print data
+
             data = json.loads(data)
             if type(data) is not list:
                 send_bad_request(
@@ -273,6 +273,7 @@ class TemplateHandler(RequestHandler):
         output = self.update_static_urls(output)
         self.xsrf_token
         self.write(output)
+        self.finish()
 
     def options(self):
         self.set_header("Access-Control-Allow-Origin", "*")

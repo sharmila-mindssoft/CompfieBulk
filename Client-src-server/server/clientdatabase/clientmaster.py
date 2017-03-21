@@ -994,7 +994,7 @@ def return_service_providers(service_providers):
 # Return Type - int
 ############################################################################
 def get_no_of_remaining_licence_Viewonly(db):
-    q = " SELECT (total_view_licence - ifnull(licence_used,0)) As remaining_licence from tbl_Client_Groups "
+    q = " SELECT (total_view_licence - ifnull(licence_used,0)) As remaining_licence from tbl_client_groups "
     row = db.select_one(q, None)
     return row["remaining_licence"]
 
@@ -1303,7 +1303,7 @@ def update_user(db, user, session_user, client_id):
 #             - Returns RuntimeError if Updation fails
 ############################################################################
 def update_licence_viewonly(db):
-    q = " Update tbl_Client_Groups SET licence_used = (licence_used + %s)"
+    q = " Update tbl_client_groups SET licence_used = (licence_used + %s)"
     result1 = db.execute(q, [1])
 
     if result1 is False:

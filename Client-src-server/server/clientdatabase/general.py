@@ -1510,6 +1510,7 @@ def save_compliance_notification(
     ]
     history_condition = "compliance_history_id = %s"
     history_condition_val = [compliance_history_id]
+    print compliance_history_id
     history_rows = db.get_data(
         tblComplianceHistory, history_columns,
         history_condition, history_condition_val
