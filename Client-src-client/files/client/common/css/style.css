@@ -977,10 +977,10 @@ button.btn-success {
     color: #fff;
 }
 
-.table-striped td {
+/*.table-striped td {
     vertical-align: middle !important;
 }
-
+*/
 .box-width-800 {
     width: 800px !important;
 }
@@ -1330,4 +1330,13 @@ h2.chart-title: hover {
 }
 .resetpwd-page .cardbox{
     max-width: 600px !important;
+}
+
+.checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"], .radio input[type="radio"], .radio-inline input[type="radio"] {
+    position: absolute;
+    margin-top: 2px\9;
+    margin-left: -25px !important;
+}
+.table > thead > tr > th{
+    vertical-align: top !important;
 }
