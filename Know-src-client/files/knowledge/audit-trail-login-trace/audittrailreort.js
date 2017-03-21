@@ -253,9 +253,24 @@ Auditpage.prototype.getValue = function(field_name, f_id){
                     }
                 });
             }
-
-
             return category_name;
+        }
+    }
+    else if (field_name == "categoryid") {
+        if (f_id == 0) {
+            return 'Client Admin';
+        }
+        else {
+            category_id = null
+            if ($('#categoryName option:selected').text() == "Client"){
+                $.each(this._clientUsers, function(k, v) {
+                    if (v.user_id == f_id) {
+                        category_id = v.user_category_id;
+                        return category_id;
+                    }
+                });
+            }
+            return category_id;
         }
     }
     else if (field_name == "formname") {
@@ -372,8 +387,8 @@ Auditpage.prototype.exportData = function() {
         _user_id = this.getValue("user", null);
         _form_id = this.getValue("form", null);
         //_country_id = this.getValue("country", null);
-        _category_id =this.getValue("category", null);
         if ($('#categoryName option:selected').text() == "Client"){
+            _category_id = this.getValue("categoryid", _user_id);
             _client_id = this.getValue("group", null);
             _bg_id = this.getValue("bg", null);
             _le_id = this.getValue("legalentity", null);
@@ -382,6 +397,7 @@ Auditpage.prototype.exportData = function() {
             _unit_id = this.getValue("unit", null);
         }
         else{
+            _category_id =this.getValue("category", null);
             _client_id = null;
             _bg_id = null;
             _le_id = null;
@@ -417,8 +433,8 @@ Auditpage.prototype.fetchData = function() {
     _user_id = this.getValue("user", null);
     _form_id = this.getValue("form", null);
     //_country_id = this.getValue("country", null);
-    _category_id =this.getValue("category", null);
     if ($('#categoryName option:selected').text() == "Client"){
+        _category_id = this.getValue("categoryid", _user_id);
         _client_id = this.getValue("group", null);
         _bg_id = this.getValue("bg", null);
         _le_id = this.getValue("legalentity", null);
@@ -427,6 +443,7 @@ Auditpage.prototype.fetchData = function() {
         _unit_id = this.getValue("unit", null);
     }
     else{
+        _category_id =this.getValue("category", null);
         _client_id = null;
         _bg_id = null;
         _le_id = null;
