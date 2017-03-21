@@ -279,8 +279,10 @@ function loadUpcomingCompliancesDetails(data) {
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
         $('.uc-duedate', cloneval).html(data[k]['due_date']);
         if (data[k]['upcoming_format_file_name'] != null) {
-            // $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);
-            client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[k]['domain_id'], data[k]['unit_id'], data[k]['start_date'], data[k].format_file_name);
+             $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);            
+            // $(".uc-download", cloneval).on("click", function() {
+            //     client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[k]['domain_id'], data[k]['unit_id'], data[k]['start_date'], data[k].format_file_name);
+            // });            
         } else {
             $('.format-file', cloneval).hide();
         }
@@ -552,7 +554,8 @@ function showSideBar(idval, data) {
                 );
 
                 function saveUploadedFile() {
-                    if (uploaded_documents != '') {
+                    console.log("documents++"+documents);
+                    if (documents != null) {
                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], file_list,
                             function(error, response) {
                                 if (error == null) {
