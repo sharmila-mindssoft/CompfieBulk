@@ -720,9 +720,6 @@ class API(object):
     def handle_widget_request(self, request, db, session_user, session_category):
         return controller.process_client_widget_requests(request, db, session_user, session_category)
 
-    @api_request(clientuser.RequestFormat)
-    def handle_client_format_file():
-        pass
 
 def handle_isalive():
     return Response("Application is alive", status=200, mimetype="application/json")
@@ -753,7 +750,6 @@ def run_server(address, knowledge_server_address):
             ("/api/client_user", api.handle_client_user),
             ("/api/mobile", api.handle_mobile_request),
             ("/api/widgets", api.handle_widget_request),
-            ("/api/files", api.handle_client_format_file)
         ]
         for url, handler in api_urls_and_handlers:
             app.add_url_rule(url, view_func=handler, methods=['POST'])
@@ -762,6 +758,7 @@ def run_server(address, knowledge_server_address):
 
     delay_initialize()
     settings = {
-        "threaded": True
+        "threaded": True,
+        "debug": True
     }
     app.run(host="0.0.0.0", port=port, **settings)
