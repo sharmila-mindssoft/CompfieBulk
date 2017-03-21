@@ -1152,24 +1152,33 @@ def save_assigned_compliance(db, request, session_user):
                 ]
                 if concurrence is not None:
                     value.extend([concurrence, int(session_user), created_on])
-
-            value_list.append(tuple(value))
-            value_list_repeats.append(tuple(value_repeats))
+            
+            if len(value) > 0:
+                value_list.append(tuple(value))
+            if len(value_repeats) > 0:
+                value_list_repeats.append(tuple(value_repeats))
 
 
     # db.bulk_insert("tbl_assign_compliances", columns, value_list)
     # print columns
     # print value_list
     # print update_column
-    db.on_duplicate_key_update(
-        "tbl_assign_compliances", ",".join(columns),
-        value_list, update_column
-    )
 
-    db.on_duplicate_key_update(
-        "tbl_assign_compliances", ",".join(columns_repeats),
-        value_list_repeats, update_column_repeats
-    )
+    # print columns_repeats
+    # print value_list_repeats
+    # print update_column_repeats
+
+    if len(value_list) > 0:
+        db.on_duplicate_key_update(
+            "tbl_assign_compliances", ",".join(columns),
+            value_list, update_column
+        )
+
+    if len(value_list_repeats) > 0:
+        db.on_duplicate_key_update(
+            "tbl_assign_compliances", ",".join(columns_repeats),
+            value_list_repeats, update_column_repeats
+        )
 
     # if new_unit_settings is not None:
     #     update_user_settings(db, new_unit_settings)
