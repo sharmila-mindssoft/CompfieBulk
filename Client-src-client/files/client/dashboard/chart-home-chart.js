@@ -979,27 +979,27 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // $(".legal-entity-selection").show();
   }
 
-  
+
   business_groups = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
   chartInput.setBusinessGroupsAll(business_groups);
 
-  
+
   legal_entities = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
   chartInput.setLegalEntitiesAll(legal_entities);
-  
-  
+
+
   divisions = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
   chartInput.setDivisionsAll(divisions);
 
-  
+
   categories = get_ids(CHART_FILTERS_DATA.cat_info, 'cat_id');
   chartInput.setCategoryAll(categories);
 
-  
+
   units = get_ids(CHART_FILTERS_DATA.assign_units, 'unit_id');
   chartInput.setUnitsAll(units);
 
-  
+
   $('.bg-filter').multiselect({
     // filter: true,
     // selectAll: isSelectAll,
@@ -1010,7 +1010,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // },
     onChange: function(option, checked, select) {
       chartInput.setBusinessGroups(option.val(), checked, isSingleSelect);
-    }, 
+    },
     // onSelectAll: function () {
     //   business_groups = get_ids(CHART_FILTERS_DATA.bg_groups, 'bg_id');
     //   chartInput.setBusinessGroupsAll(business_groups);
@@ -1032,7 +1032,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // placeholder: 'Select Legal Entity',
     onChange: function(option, checked, select) {
       chartInput.setLegalEntities(option.val(), checked, isSingleSelect);
-    },    
+    },
     // onSelectAll: function () {
     //   legal_entities = get_ids(CHART_FILTERS_DATA.le_did_infos, 'le_id');
     //   chartInput.setLegalEntitiesAll(legal_entities);
@@ -1058,7 +1058,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // },
      onChange: function(option, checked, select) {
       chartInput.setDivisions(option.val(), checked, isSingleSelect);
-    }, 
+    },
     // onSelectAll: function () {
     //   divisions = get_ids(CHART_FILTERS_DATA.div_infos, 'div_id');
     //   chartInput.setDivisionsAll(divisions);
@@ -1083,7 +1083,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // },
         onChange: function(option, checked, select) {
       chartInput.setCategory(option.val(), checked, isSingleSelect);
-    }, 
+    },
     // onSelectAll: function () {
     //   categories = get_ids(CHART_FILTERS_DATA.cat_info, 'category_id');
     //   chartInput.setCategoryAll(categories);
@@ -1108,7 +1108,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
     // },
     onChange: function(option, checked, select) {
       chartInput.setUnits(option.val(), checked, isSingleSelect);
-    }, 
+    },
     // onSelectAll: function () {
     //   units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
     //   chartInput.setUnitsAll(units);
@@ -1125,12 +1125,12 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
   $(".unit-filter").multiselect('rebuild');
 }
 function initializeFilters() {
- 
+
   loadCountries();
 
   countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
   chartInput.setCountriesAll(countries);
-  console.log("countrie==s"+countries)  
+  console.log("countrie==s"+countries)
 
   $('.country-filter').multiselect({
     buttonWidth: '100%',
@@ -1369,7 +1369,7 @@ function initializeFilters() {
 //
 function parseComplianceStatusApiInput() {
   var countryIds = chartInput.getCountries();
-  var domainIds = chartInput.getDomains();  
+  var domainIds = chartInput.getDomains();
   if(countryIds == ""){
     displayMessage(message.country_required);
     return false;
@@ -1703,7 +1703,7 @@ function prepareTrendChartData(source_data) {
       final_data[filterTypeName] = t_info;
     }
   }
-  console.log("final_data--"+final_data.toSource());
+
   $.each(final_data, function(k, v) {
     chartDataSeries.push(v);
 
