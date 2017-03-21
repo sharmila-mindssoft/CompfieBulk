@@ -508,7 +508,7 @@ def userManagement_GetGroupCategory(db):
 # User Management Add - Legal Entity Domains Prerequisite
 ##############################################################################
 def userManagement_GetLegalEntity_Domain(db):
-    q = "SELECT  T01.legal_entity_id, T01.domain_id, T02.domain_name " + \
+    q = "SELECT  Distinct T01.domain_id, T01.legal_entity_id, T02.domain_name " + \
         " From tbl_legal_entity_domains AS T01 INNER JOIN tbl_domains as T02" + \
         " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 " + \
         " order by domain_name, legal_entity_id "
