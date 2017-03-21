@@ -542,7 +542,6 @@ function PageControls() {
 }
 
 d_page = new DomainPage();
-//alert(d_page.toSource());
 
 $(document).ready(function() {
     MultiSelect_Country.multiselect({
