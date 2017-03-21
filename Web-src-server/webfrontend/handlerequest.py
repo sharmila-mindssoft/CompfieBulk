@@ -59,25 +59,33 @@ class HandleRequest(object):
         assert self._connection_closed is False
         # print headers
         # print self._url
+        print self._connection_closed
+        print response_data
         print type(response_data)
         print "begin response"
-        if type(response_data) is not str :
+        print len(headers)
+        print headers
+        if len(headers) == 6 :
             for k, v in headers.items() :
                 self._http_response.set_default_header(k, v)
         else :
             self._http_response.set_default_header(
                 "Content-Type", "application/json"
             )
-        response_data = json.dumps(json.loads(response_data), indent=2)
-        print response_data
-        key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
-        response_data = base64.b64encode(response_data)
-        response_data = json.dumps(key+response_data)
+            response_data = json.dumps(json.loads(response_data), indent=2)
+            print response_data
+            key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
+            response_data = base64.b64encode(response_data)
+            response_data = json.dumps(key+response_data)
+            self._http_response.set_default_header(
+                "Content-Length", len(response_data)
+            )
 
         self._http_response.set_default_header(
             "Access-Control-Allow-Origin", "*"
         )
 
+        self._http_response.set_status(200)
         self._http_response.send(response_data)
         self._connection_closed = True
         print "response end"

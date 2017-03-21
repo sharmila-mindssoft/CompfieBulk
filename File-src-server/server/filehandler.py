@@ -7,6 +7,11 @@ from flask import make_response
 import fileprotocol
 from constants import (FILE_MAX_LIMIT, CLIENT_DOCS_BASE_PATH, LOCAL_TIMEZONE)
 
+file_type = [
+    "doc", "docx", "rtf", "pdf", "txt", "zip", "png", "jpeg", "gif", "csv", "xls", "xlsx",
+    "rar", "tar", "gz", "ppt", "pptx", "jpg", "bmp", "odt", "odf", "ods"
+]
+
 def localize(time_stamp):
     local_dt = LOCAL_TIMEZONE.localize(
         time_stamp
@@ -79,9 +84,10 @@ def upload_file(request, client_id) :
         file_content = f.file_content
         print len(file_content)
         file_name_info = file_name.split('.')
-        if len(file_name_info) == 1 or len(file_name_info) > 2 :
+        if len(file_name_info) == 1 :
             raise ValueError("Invalid File")
-
+        elif file_name_info[len(file_name_info)-1] not in file_type:
+            raise ValueError("Invalid File")
         elif len(file_content) == 0:
             raise ValueError("File cannot be empty")
 
@@ -130,27 +136,30 @@ def remove_file(request, client_id):
         return fileprotocol.FileRemoveFailed()
 
 def download_file(request, client_id):
+    print "download file"
     legal_entity_id = request.legal_entity_id
     country_id = request.country_id
     domain_id = request.domain_id
     unit_id = request.unit_id
     start_date = string_to_datetime(request.start_date).date()
     year = start_date.year
+    month = "%s%s" % (string_months.get(start_date.month), str(year))
     file_name = request.file_name
     file_path = "%s/%s/%s/%s/%s/%s/%s/%s" % (
         CLIENT_DOCS_BASE_PATH, client_id, country_id, legal_entity_id,
-        unit_id, domain_id, year, start_date
+        unit_id, domain_id, year, month
     )
+    print file_path+"/"+file_name
     with open(file_path+"/"+file_name) as f:
         content = f.read()
 
     content = base64.b64encode(content)
     response = make_response(content)
-    response.headers["Access-Control-Allow-Origin"] = '*'
     response.headers["Content-Disposition"] = "attachment; filename=%s" % (file_name)
     response.headers["filename"] = file_name
-    response.headers["Cache-Control"] = "must-revalidate"
-    response.headers["Pragma"] = "must-revalidate"
+    # response.headers["Cache-Control"] = "must-revalidate"
+    # response.headers["Pragma"] = "must-revalidate"
     response.headers["Content-Type"] = "application/octet-stream"
-    response.headers["Content-Transfer-Encoding"] = "binary"
+    # response.headers["Content-Transfer-Encoding"] = "binary"
+    print type(response)
     return response
