@@ -124,6 +124,9 @@ class Controller(object):
         else :
             legal_entity_id = None
 
+        print legal_entity_id
+        print request.uri()
+
         handle_request = HandleRequest(
             token, actual_data,
             request.uri(), response, self._http_client,
