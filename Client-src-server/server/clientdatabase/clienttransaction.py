@@ -1069,14 +1069,14 @@ def save_assigned_compliance(db, request, session_user):
         "statutory_dates", "assignee",
         "assigned_by", "assigned_on",
         "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every", 
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every",
     ]
     value_list_repeats = []
     update_column_repeats = [
         "statutory_dates", "assignee",
         "assigned_by", "assigned_on",
         "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every", 
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every",
     ]
 
     if concurrence is not None:
@@ -1153,7 +1153,7 @@ def save_assigned_compliance(db, request, session_user):
                 ]
                 if concurrence is not None:
                     value.extend([concurrence, int(session_user), created_on])
-            
+
             if len(value) > 0:
                 value_list.append(tuple(value))
             if len(value_repeats) > 0:
@@ -1734,9 +1734,9 @@ def get_compliance_approval_list(
         " FROM tbl_users tu " + \
         " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
         " (SELECT domain_name from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id, " + \        
+        " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id " + \
         " (SELECT domain_id from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) as domain_id
+        " WHERE td.domain_id = tc.domain_id ) as domain_id " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1825,6 +1825,8 @@ def get_compliance_approval_list(
                 db, concurred_by_id
             )
         remarks = row["remarks"]
+        unit_id = row["unit_id"]
+        domain_id = row["domain_id"]
         compliance_name = row["compliance_task"]
         if row["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % (
