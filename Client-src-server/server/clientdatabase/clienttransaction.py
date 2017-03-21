@@ -1734,9 +1734,9 @@ def get_compliance_approval_list(
         " FROM tbl_users tu " + \
         " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
         " (SELECT domain_name from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id, " + \        
+        " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id, " + \
         " (SELECT domain_id from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) as domain_id
+        " WHERE td.domain_id = tc.domain_id ) as domain_id " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tch.compliance_id = tc.compliance_id) " + \

@@ -2574,7 +2574,7 @@ class APPROVALCOMPLIANCE(object):
         self.action = action
         self.statutory_dates = statutory_dates
         self.validity_date = validity_date
-        self.unit_id = unit_id        
+        self.unit_id = unit_id
         self.unit_name = unit_name
         self.unit_address = unit_address
         self.assignee_id = assignee_id
@@ -2595,7 +2595,7 @@ class APPROVALCOMPLIANCE(object):
         compliance_name = data.get("compliance_name")
         description = data.get("description")
         domain_name = data.get("domain_name")
-        domain_id = data.get("domain_id)
+        domain_id = data.get("domain_id")
         file_names = data.get("file_names")
         start_date = data.get("start_date")
         due_date = data.get("due_date")
@@ -2644,7 +2644,7 @@ class APPROVALCOMPLIANCE(object):
             "action": self.action,
             "statutory_dates" : self.statutory_dates,
             "validity_date": self.validity_date,
-            "unit_id": self.unit_id,            
+            "unit_id": self.unit_id,
             "unit_name": self.unit_name,
             "unit_address": self.unit_address,
             "assignee_id": self.assignee_id,
