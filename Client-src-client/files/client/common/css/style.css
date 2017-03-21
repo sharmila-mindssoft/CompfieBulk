@@ -1147,7 +1147,8 @@ h2.chart-title: hover {
 .dsc-total-unassigned,
 .dsc-total-notopted,
 .dsc-grandtotal,
-.dsc-total-text {
+.dsc-total-text,
+.total-usc-role {
     font-weight: bold !important;
 }
 
