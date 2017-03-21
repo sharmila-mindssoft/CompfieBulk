@@ -6040,7 +6040,7 @@ BEGIN
     select t3.client_id, t3.group_name, count(t2.legal_entity_id ) as
         no_of_legal_entities, t3.group_admin_username as ug_name,
         (select email_id from tbl_client_groups where client_id = t3.client_id) as email_id,
-        (select user_id from tbl_client_users where client_id = t3.client_id) as user_id,
+        (select user_id from tbl_client_users where client_id = t3.client_id  and user_category_id = 1) as user_id,
         (select concat(employee_name,'-',(case when employee_code is null then
             '' else employee_code end)) from tbl_client_users where client_id = t3.client_id) as emp_code_name,
         (select date_format(registration_sent_on, '%d-%b-%y') from tbl_group_admin_email_notification where
@@ -6091,7 +6091,7 @@ SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id =
             and assign_statutory_informed=1)
         as statutory_assigned_informed,
         (select email_id from tbl_client_groups where client_id = t1.client_id) as email_id,
-        (select user_id from tbl_client_users where client_id = t1.client_id) as user_id,
+        (select user_id from tbl_client_users where client_id = t1.client_id  and user_category_id = 1) as user_id,
         'Group Admin' as emp_code_name,
         (select count(*) from tbl_client_statutories where client_id = t1.client_id and
             unit_id in (select unit_id from tbl_units where client_id = t1.client_id and
