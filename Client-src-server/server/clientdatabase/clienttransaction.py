@@ -1069,14 +1069,14 @@ def save_assigned_compliance(db, request, session_user):
         "statutory_dates", "assignee",
         "assigned_by", "assigned_on",
         "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every", 
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every",
     ]
     value_list_repeats = []
     update_column_repeats = [
         "statutory_dates", "assignee",
         "assigned_by", "assigned_on",
         "approval_person", "a_assigned_by", "a_assigned_on",
-        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every", 
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every",
     ]
 
     if concurrence is not None:
@@ -1153,7 +1153,7 @@ def save_assigned_compliance(db, request, session_user):
                 ]
                 if concurrence is not None:
                     value.extend([concurrence, int(session_user), created_on])
-            
+
             if len(value) > 0:
                 value_list.append(tuple(value))
             if len(value_repeats) > 0:
@@ -1711,7 +1711,7 @@ def get_compliance_approval_list(
 
     query = "SELECT " + \
         " compliance_history_id, tch.compliance_id, start_date, " + \
-        " tch.due_date as due_date, documents, completion_date, " + \
+        " tch.due_date as due_date, documents, completion_date, tch.unit_id, " + \
         " completed_on, next_due_date, " + \
         " ifnull(concurred_by, -1) as concurred_by, remarks, " + \
         " datediff(tch.due_date, completion_date ) as diff, " + \
@@ -1735,6 +1735,8 @@ def get_compliance_approval_list(
         " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
         " (SELECT domain_name from tbl_domains td " + \
         " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id " + \
+        " (SELECT domain_id from tbl_domains td " + \
+        " WHERE td.domain_id = tc.domain_id ) as domain_id " + \
         " FROM tbl_compliance_history tch " + \
         " INNER JOIN tbl_compliances tc " + \
         " ON (tch.compliance_id = tc.compliance_id) " + \
@@ -1823,6 +1825,8 @@ def get_compliance_approval_list(
                 db, concurred_by_id
             )
         remarks = row["remarks"]
+        unit_id = row["unit_id"]
+        domain_id = row["domain_id"]
         compliance_name = row["compliance_task"]
         if row["document_name"] not in (None, "None", ""):
             compliance_name = "%s - %s" % (
@@ -1887,11 +1891,11 @@ def get_compliance_approval_list(
         approval_compliances.append(
             clienttransactions.APPROVALCOMPLIANCE(
                 compliance_history_id, compliance_name,
-                description, domain_name,
+                description, domain_name, domain_id,
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, remarks, action, date_list,
-                validity_date, unit_name, unit_address,
+                validity_date, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )
         )
@@ -1951,12 +1955,12 @@ def save_compliance_activity(
 ############################################################
 def approve_compliance(
     db, approve_status, compliance_history_id, remarks, next_due_date,
-    validity_date, session_user
+    validity_date, session_user, current_status
 ):
     # Updating approval in compliance history
     columns = ["approve_status", "approved_on", "current_status"]
 
-    values = [approve_status, get_date_time(), "3"]
+    values = [approve_status, get_date_time(), current_status]
     if remarks is not None:
         columns.append("remarks")
         values.append(remarks)
@@ -2151,7 +2155,7 @@ def notify_compliance_approved(
 
 
 def reject_compliance_approval(
-    db, compliance_history_id, remarks, next_due_date, session_user
+    db, compliance_history_id, remarks, next_due_date, session_user, approve_status, current_status
 ):
     query = " SELECT unit_id, ch.compliance_id, due_date, " + \
         "completion_date, completed_by, concurred_by, approved_by, " + \
@@ -2186,10 +2190,10 @@ def reject_compliance_approval(
 
     update_columns = [
         "approve_status", "remarks", "completion_date", "completed_on",
-        "concurred_on", "concurrence_status"
+        "concurred_on", "concurrence_status", "current_status"
     ]
     update_condition = "compliance_history_id = %s "
-    values = [0, remarks, None, None, None, None, compliance_history_id]
+    values = [approve_status, remarks, None, None, None, None, current_status, compliance_history_id]
     db.update(
         tblComplianceHistory, update_columns, values, update_condition
     )
@@ -2268,11 +2272,11 @@ def notify_compliance_rejected(
 #####################################################
 def concur_compliance(
     db, concurrence_status, compliance_history_id, remarks,
-    next_due_date, validity_date, session_user
+    next_due_date, validity_date, session_user, current_status
 ):
     columns = ["concurrence_status", "concurred_on", "current_status"]
 
-    values = [concurrence_status, get_date_time(), "2"]
+    values = [concurrence_status, get_date_time(), current_status]
     if validity_date is not None:
         columns.append("validity_date")
         values.append(string_to_datetime(validity_date))
@@ -2353,7 +2357,7 @@ def concur_compliance(
 # Reject Compliances
 #####################################################
 def reject_compliance_concurrence(
-    db, compliance_history_id, remarks, next_due_date, session_user
+    db, compliance_history_id, remarks, next_due_date, session_user, concurrence_status, current_status
 ):
     compliance_name_column = " (SELECT concat( " + \
         " IFNULL(document_name,''), '-', compliance_task " + \
@@ -2399,10 +2403,10 @@ def reject_compliance_concurrence(
     save_compliance_activity(db, unit_id, compliance_id, compliance_history_id,
                              session_user, current_time_stamp, "Rejected", ageing_remarks)
     columns = [
-        "concurrence_status", "remarks", "completion_date", "completed_on"
+        "concurrence_status", "remarks", "completion_date", "completed_on", "current_status"
     ]
 
-    values = [0,  remarks, None, None]
+    values = [concurrence_status,  remarks, None, None, current_status]
     condition = "compliance_history_id = %s "
     values.append(compliance_history_id)
     db.update(tblComplianceHistory, columns, values, condition)
