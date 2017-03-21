@@ -2308,7 +2308,6 @@ def concur_compliance(
     notify_compliance_approved(db, compliance_history_id, sts)
 
     # Audit Log Entry
-
     db.save_activity(session_user, 9, action, legal_entity_id, unit_id)
     return True
 
