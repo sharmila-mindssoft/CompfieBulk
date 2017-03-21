@@ -273,6 +273,7 @@ class TemplateHandler(RequestHandler):
         output = self.update_static_urls(output)
         self.xsrf_token
         self.write(output)
+        self.finish()
 
     def options(self):
         self.set_header("Access-Control-Allow-Origin", "*")
