@@ -959,13 +959,13 @@ class HaveCompliances(Request):
         self.legal_entity_id = legal_entity_id
         self.user_id = user_id
 
-@staticmethod
-def parse_inner_structure(data):
-    data = parse_dictionary(data, ["le_id", "user_id"])
-    return HaveCompliances(
-        data.get("le_id"),
-        data.get("user_id")
-    )
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, ["le_id", "user_id"])
+        return HaveCompliances(
+            data.get("le_id"),
+            data.get("user_id")
+        )
 
     def to_inner_structure(self):
         return {
@@ -1852,18 +1852,6 @@ class HaveComplianceFailed(Response):
 
     def to_inner_structure(self):
         return {
-        }
-
-    def to_inner_structure(self):
-        return {
-            "countries": self.countries,
-            "business_groups": self.business_groups,
-            "legal_entities": self.legal_entities,
-            "client_divisions": self.divisions,
-            "client_categories": self.categories,
-            "units": self.units,
-            "users": self.users,
-            "d_info": self.domains
         }
 
 

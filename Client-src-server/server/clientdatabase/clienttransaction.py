@@ -67,6 +67,7 @@ __all__ = [
     "get_all_frequency",
     "get_units_to_reassig",
     "get_reassign_compliance_for_units",
+    "have_compliances"
 ]
 
 CLIENT_DOCS_DOWNLOAD_URL = "/client/client_documents"
