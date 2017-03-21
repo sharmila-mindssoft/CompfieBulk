@@ -159,11 +159,11 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
     if (ul_legal.length != 0) {
         var le_list = client_mirror.getUserLegalEntity();
         var leids = [];
-        $.each(ul_legal, function(k, v) {
+        $.each(le_list, function(k, v) {
             leids.push(v.le_id);
         });
         $.each(ul_legal, function(k, v) {
-            if($.inArray(v.le_id, leids) >= 0) {
+            if ($.inArray(v.le_id, leids) >= 0) {
                 if (((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null))) {
                     var cloneRow = $('#template .legal-entity-row').clone();
 
