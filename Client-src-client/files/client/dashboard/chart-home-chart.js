@@ -816,7 +816,7 @@ function getFilterIds(filter_type) {
     filterIds = chartInput.getLegalEntities();
   else if (filter_type == 'division')
     filterIds = chartInput.getDivisions();
-  else if (filter_type == 'unit')
+  else if (filter_type == 'unit')    
     filterIds = chartInput.getUnits();
   return filterIds;
 }
@@ -1702,7 +1702,8 @@ function prepareTrendChartData(source_data) {
       t_info['data'] = year_data;
       final_data[filterTypeName] = t_info;
     }
-  }
+  }  
+
 
   $.each(final_data, function(k, v) {
     chartDataSeries.push(v);

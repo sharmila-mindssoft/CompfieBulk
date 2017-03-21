@@ -551,7 +551,8 @@ function showSideBar(idval, data) {
                 );
 
                 function saveUploadedFile() {
-                    if (uploaded_documents != '') {
+                    console.log("documents++"+documents);
+                    if (documents != null) {
                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], file_list,
                             function(error, response) {
                                 if (error == null) {
