@@ -1333,11 +1333,14 @@ h2.chart-title: hover {
     max-width: 600px !important;
 }
 
-.checkbox input[type="checkbox"], .checkbox-inline input[type="checkbox"], .radio input[type="radio"], .radio-inline input[type="radio"] {
-    position: absolute;
-    margin-top: 2px\9;
-    margin-left: -25px !important;
+.satcheck input[type="checkbox"]{
+      margin-left: -24px !important;  
 }
+
+.assigncheck input[type="checkbox"]{
+      margin-left: -27px !important;  
+}
+
 .table > thead > tr > th{
     vertical-align: top !important;
 }
