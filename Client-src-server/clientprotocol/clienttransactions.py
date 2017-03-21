@@ -954,24 +954,24 @@ class GetReAssignComplianceForUnits(Request):
             "r_count": self.r_count
         }
 
-    # class HaveCompliances(Request):
-    #     def __init__(self, legal_entity_id, user_id):
-    #         self.legal_entity_id = legal_entity_id
-    #         self.user_id = user_id
+class HaveCompliances(Request):
+    def __init__(self, legal_entity_id, user_id):
+        self.legal_entity_id = legal_entity_id
+        self.user_id = user_id
 
-    # @staticmethod
-    # def parse_inner_structure(data):
-    #     data = parse_dictionary(data, ["le_id", "user_id"])
-    #     return HaveCompliances(
-    #         data.get("le_id"),
-    #         data.get("user_id")
-    #     )
+@staticmethod
+def parse_inner_structure(data):
+    data = parse_dictionary(data, ["le_id", "user_id"])
+    return HaveCompliances(
+        data.get("le_id"),
+        data.get("user_id")
+    )
 
-    # def to_inner_structure(self):
-    #     return {
-    #         "le_id": self.legal_entity_id,
-    #         "user_id": self.user_id
-    #     }
+    def to_inner_structure(self):
+        return {
+            "le_id": self.legal_entity_id,
+            "user_id": self.user_id
+        }
 
 class GetAssigneewiseComplianesFilters(Request):
     def __init__(self):
@@ -1090,7 +1090,7 @@ def _init_Request_class_map():
         GetAssigneewiseComplianesFilters,
         GetUserToAssignCompliance, GetChartFilters,
         GetReassignComplianceFilters, GetUserWidgetData, SaveWidgetData,
-        ChangeThemes
+        ChangeThemes, HaveCompliances
 
     ]
 
@@ -1826,22 +1826,33 @@ class GetAssigneewiseComplianesFiltersSuccess(Response):
             "users": self.users,
             "d_info": self.domains
         }
-# class HaveComplianceSuccess(Response):
-#     def __init__(
-#         self, is_available
-#     ):
-#         self.is_available = is_available
+class HaveComplianceSuccess(Response):
+    def __init__(
+        self, is_available
+    ):
+        self.is_available = is_available
 
-#     @staticmethod
-#     def parse_inner_structure(data):
-#         data = parse_dictionary(data, [
-#             "is_available"
-#         ])
-#         is_available = data.get("is_available")
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data, [
+            "is_available"
+        ])
+        is_available = data.get("is_available")
 
-#         return HaveComplianceSuccess(
-#             is_available
-#         )
+        return HaveComplianceSuccess(is_available)
+
+class HaveComplianceFailed(Response):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def parse_inner_structure(data):
+        data = parse_dictionary(data)
+        return HaveComplianceFailed()
+
+    def to_inner_structure(self):
+        return {
+        }
 
     def to_inner_structure(self):
         return {
@@ -1969,7 +1980,8 @@ def _init_Response_class_map():
         GetComplianceTotalToAssignSuccess, GetUserToAssignComplianceSuccess,
         GetChartFiltersSuccess, GetReassignComplianceFiltersSuccess, GetReAssignComplianceUnitsSuccess,
         GetReAssignComplianceUnitsSuccess, GetAssigneewiseComplianesFilters,
-        GetUserWidgetDataSuccess, SaveWidgetDataSuccess, SaveReviewSettingsComplianceSuccess,
+        GetUserWidgetDataSuccess, SaveWidgetDataSuccess, SaveReviewSettingsComplianceSuccess, HaveComplianceSuccess,
+        HaveComplianceFailed
     ]
     class_map = {}
     for c in classes:

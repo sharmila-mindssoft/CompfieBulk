@@ -406,16 +406,16 @@ function initClientMirror() {
         clientApiRequest('client_transaction', request, callback);
     }
 
-    // /* Have Compliances */
-    // function haveCompliances(le_id, user_id, callback) {
-    //     var request = [
-    //         'HaveCompliances', {
-    //             'le_id': le_id,
-    //             'user_id': user_id
-    //         }
-    //     ];
-    //     clientApiRequest('client_transaction', request, callback);
-    // }
+    /* Have Compliances */
+    function haveCompliances(le_id, user_id, callback) {
+        var request = [
+            'HaveCompliances', {
+                'le_id': le_id,
+                'user_id': user_id
+            }
+        ];
+        clientApiRequest('client_transaction', request, callback);
+    }
 
     function getClientReportFilters(callback) {
         var request = [
@@ -3085,7 +3085,8 @@ function initClientMirror() {
         uploadComplianceTaskFile: uploadComplianceTaskFile,
         userManagementEditView: userManagementEditView,
         blockUser: blockUser,
-        resendRegistrationEmail: resendRegistrationEmail
+        resendRegistrationEmail: resendRegistrationEmail,
+        haveCompliances: haveCompliances,
     };
 }
 

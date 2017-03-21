@@ -1308,7 +1308,7 @@ def get_statutory_wise_compliances(
     query = "SELECT ac.compliance_id, ac.statutory_dates, ac.due_date, " + \
         " assignee, employee_code, employee_name, statutory_mapping, " + \
         " document_name, compliance_task, compliance_description, " + \
-        " c.repeats_type_id, repeat_type, repeats_every, frequency, " + \
+        " c.repeats_type_id, c.repeat_type, c.repeats_every, frequency, " + \
         " c.frequency_id FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_users u ON (ac.assignee = u.user_id) " + \
         " INNER JOIN tbl_compliances c ON " + \
@@ -1495,6 +1495,18 @@ def validate_before_save(
     else:
         return True
 
+def have_compliances(db, user_id):
+        column = "count(compliance_id) as compliances"
+        condition = "assignee = %s and is_active = 1"
+        condition_val = [user_id]
+        rows = db.get_data(
+            tblAssignedCompliances, column, condition, condition_val
+        )
+        no_of_compliances = rows[0]["compliances"]
+        if no_of_compliances > 0:
+            return True
+        else:
+            return False
 
 def save_past_record(
         db, unit_id, compliance_id, due_date, completion_date, documents,

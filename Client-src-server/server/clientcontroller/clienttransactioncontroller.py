@@ -148,7 +148,11 @@ def process_client_transaction_requests(request, db, session_user, session_categ
         result = process_get_reassign_compliance_for_units(
             db, request, session_user
         )
-    
+    elif type(request) is clienttransactions.HaveCompliances:
+        result = process_have_compliances(
+            db, request, session_user
+        )
+
     return result
 
 def process_get_statutory_settings(db, request, session_user):
@@ -705,6 +709,21 @@ def process_get_reassign_compliance_for_units(db, request, session_user):
     return clienttransactions.GetReAssignComplianceForUnitsSuccess(
         reassign_compliances
     )
+
+#######################################################
+# To Check User have Compliances
+#######################################################
+def process_have_compliances(db, request, session_user):
+    user_id = request.user_id
+
+    print "request>>>", request
+
+    compliance_available = have_compliances(db, user_id)
+
+    if compliance_available:
+        return clienttransactions.HaveComplianceSuccess(is_available)
+    else:
+        return clienttransactions.HaveComplianceFailed()
 
 ########################################################
 # To change new theme and update theme
