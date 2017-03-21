@@ -843,13 +843,13 @@ function showCurrentTab() {
 }
 
 function showUpcomingTab() {
-    $(".upcoming-tab").addClass("active in");
-    $(".current-tab").removeClass("active in");
-    $(".calendar-tab").removeClass("active in");
+    $(".upcoming-tab-content").addClass("active in");
+    $(".current-tab-content").removeClass("active in");
+    $(".calendar-tab-content").removeClass("active in");
 
-    $(".upcoming-tab-content").show()
+    $(".upcoming-tab-content").show();
     $(".current-tab-content").hide();
-    $(".calendar-tab-content").hide()
+    $(".calendar-tab-content").hide();
 }
 
 $(function() {
