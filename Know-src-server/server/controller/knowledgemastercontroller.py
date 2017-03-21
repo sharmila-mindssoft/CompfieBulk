@@ -427,9 +427,10 @@ def process_save_statutory(db, request_frame, user_id):
         parent_names = ''
     statutory_id = None
     domain_id = request_frame.domain_id
+    country_id = request_frame.country_id
     saved_names = [
         row["statutory_name"].lower() for row in check_duplicate_statutory(
-            db, parent_ids, statutory_id, domain_id
+            db, parent_ids, statutory_id, domain_id, country_id
         )
     ]
     if saved_names.count(statutory_name.lower()) > 0:
@@ -452,9 +453,12 @@ def process_update_statutory(db, request_frame, user_id):
     else :
         parent_ids = ''
     # parent_names = " >> ".join(str(x) for x in request_frame.parent_names)
+    domain_id = request_frame.domain_id
+    country_id = request_frame.country_id
     saved_names = [
         row["statutory_name"].lower() for row in check_duplicate_statutory(
-            db, parent_ids, statutory_id)
+            db, parent_ids, statutory_id, domain_id, country_id
+        )
     ]
     if saved_names.count(statutory_name.lower()) > 0:
         return knowledgemaster.StatutoryNameAlreadyExists()

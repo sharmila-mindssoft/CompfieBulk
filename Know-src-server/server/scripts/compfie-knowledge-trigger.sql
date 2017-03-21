@@ -1744,7 +1744,7 @@ CREATE TRIGGER `after_tbl_statutories_update` AFTER UPDATE ON `tbl_statutories`
                                  tbl_name)
         SELECT @action, client_id, legal_entity_id,
             client_compliance_id,
-            'statutory_name', @name
+            'statutory_name', @name,
             'tbl_client_compliances'
             FROM tbl_client_compliances
             WHERE statutory_id=NEW.statutory_id;
