@@ -1,4 +1,4 @@
-
+import threading
 import base64
 import os
 import io
@@ -48,6 +48,7 @@ def save_file_in_path(file_path, content, file_name):
         print e
 
 def upload_file(request, client_id) :
+    print "upload_file called"
     legal_entity_id = request.legal_entity_id
     country_id = request.country_id
     domain_id = request.domain_id
@@ -68,13 +69,17 @@ def upload_file(request, client_id) :
 
     is_success = False
 
+    print "before begin process"
+    print len(file_info)
+
     for f in file_info :
 
         file_name = f.file_name
+        print file_name
         file_content = f.file_content
-
-        file_info = file_name.split('.')
-        if len(file_info) == 1 or len(file_info) > 2 :
+        print len(file_content)
+        file_name_info = file_name.split('.')
+        if len(file_name_info) == 1 or len(file_name_info) > 2 :
             raise ValueError("Invalid File")
 
         elif len(file_content) == 0:
@@ -83,9 +88,19 @@ def upload_file(request, client_id) :
         elif len(file_content) > FILE_MAX_LIMIT :
             raise ValueError("File max limit exceeded")
 
-        if save_file_in_path(file_path, file_content, file_name):
-            print os.path.exists("%s/%s" % (file_path, file_name))
-            is_success = True
+    for f in file_info :
+        file_name = f.file_name
+        file_content = f.file_content
+        file_name_info = file_name.split('.')
+
+        save_process = threading.Thread(
+            target=save_file_in_path,
+            args=[file_path, file_content, file_name]
+        )
+        save_process.start()
+        # if save_file_in_path(file_path, file_content, file_name):
+        #     print os.path.exists("%s/%s" % (file_path, file_name))
+        is_success = True
 
     if is_success :
         print is_success
