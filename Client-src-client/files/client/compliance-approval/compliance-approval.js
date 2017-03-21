@@ -17,6 +17,8 @@ var sno = 0;
 var totalRecord;
 var lastAssignee;
 
+var LE_ID = null;
+
 function displayLoader() {
     $('.loading-indicator-spin').show();
 }
@@ -29,7 +31,7 @@ function initialize() {
     sno = 0;
     lastAssignee = '';
     displayLoader();
-
+    LE_ID = parseInt(LegalEntityId.val());
     function onSuccess(data) {
         closeicon();
         $('.tbody-compliance-approval-list tr').remove();
@@ -146,7 +148,21 @@ function loadComplianceApprovalDetails(data) {
     }
 }
 
+function getCountryId(le_id) {
+    var c_id = null;
+    $.each(LEGAL_ENTITIES, function(k, v) {
+        if (v.le_id == parseInt(le_id)) {
+            console.log("parseInt--" + v.c_id);
+            c_id = v.c_id;
+        }
+    });
+    return c_id;
+}
+
+
+
 function showSideBar(idval, data) {
+    console.log("showSideBar--"+idval)
     var fileslist = [];
     var documentslist = [];
     $('.half-width-task-details').empty();
@@ -171,9 +187,13 @@ function showSideBar(idval, data) {
             if (fileslist[i] != '') {
                 $('.sidebar-uploaded-documents', cloneValSide).append('<span><abbr class=\'sidebardocview\'>' + fileslist[i] + '</abbr><a href=\'' + documentslist[i] + '\' download=\'' + documentslist[i] + '\' class=\'download-file\' ><i class=\'fa fa-search fa-1-2x c-pointer pull-right\' title=\'View\' ></i> </a><a href=\'' + documentslist[i] + '\' target=\'_new\' class=\'view-file\'> <i class=\'fa fa-download fa-1-2x c-pointer pull-right\' style=\'margin-right:10px;\' title=\'Download\'></i> </a></span>');
                 $('.tr-sidebar-uploaded-date', cloneValSide).show();
+                $(".sidebardocview", cloneValSide).on("click", function(){
+                   client_mirror.downloadTaskFile(LE_ID, getCountryId(LE_ID), data[k]['domain_id'], data[k]['unit_id'], data['start_date'], data.file_names);
+                });
             }
         }
     }
+    
     if (fileslist == null) {
         $('.sidebar-uploaded-documents', cloneValSide).val('-');
     }

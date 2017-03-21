@@ -325,8 +325,9 @@ function updateNotCompliedChart(data) {
 // Trend  chart
 //
 function updateTrendChart(data) {
-  data = prepareTrendChartData(data);
-  print_data = JSON.stringify(data, null, ' ');
+
+  data = prepareTrendChartData(data);  
+  print_data = JSON.stringify(data, null, ' ');  
   xAxis = data[0];
   chartTitle = data[1];
   chartDataSeries = data[2];
@@ -607,8 +608,7 @@ function ChartInput() {
       //   return [];
     }
   };
-  this.setLegalEntities = function (v, isAdd, isSingle) {
-    console.log(v+"--"+isAdd+"--"+isSingle);
+  this.setLegalEntities = function (v, isAdd, isSingle) {    
     v = parseInt(v);
     index = this.legal_entities.indexOf(v);
     if (index >= 0 && !isAdd) {
@@ -621,8 +621,7 @@ function ChartInput() {
       if (isAdd) {
         this.legal_entities.push(v);
       }
-    }
-    console.log(this.legal_entities);
+    }    
   };
   this.setLegalEntitiesAll = function (legal_entities) {
     this.legal_entities = copyArray(legal_entities);
@@ -631,11 +630,9 @@ function ChartInput() {
     var selectedLegalentity = client_mirror.getSelectedLegalEntity();
     return selectedLegalentity[0]['le_id'];
   };
-  this.getLegalEntities = function () {
-    console.log("getLegalEntities");
+  this.getLegalEntities = function () {    
     // leids = client_mirror.getSelectedLegalEntity();
-    // this.legal_entities = $.map(leids, function(element,index) {return element.le_id});
-    console.log("this.legal_entities.length--"+this.legal_entities.length)
+    // this.legal_entities = $.map(leids, function(element,index) {return element.le_id});    
     if (this.legal_entities.length > 0)
       return copyArray(this.legal_entities);
     else {
@@ -667,8 +664,7 @@ function ChartInput() {
   this.setDivisionsAll = function (divisions) {
     this.divisions = copyArray(divisions);
   };
-  this.getDivisions = function () {
-    console.log("getDivisions");
+  this.getDivisions = function () {    
     if (this.divisions.length > 0)
       return copyArray(this.divisions);
     else {
@@ -701,7 +697,6 @@ function ChartInput() {
     this.categories = copyArray(categories);
   };
   this.getCategories = function () {
-    console.log("getCategories");
     if (this.categories.length > 0)
       return copyArray(this.categories);
     else {
@@ -734,7 +729,7 @@ function ChartInput() {
     this.units = copyArray(units);
   };
   this.getUnits = function () {
-    console.log("getUnits");
+    
     if (this.units.length > 0)
       return copyArray(this.units);
     else {
@@ -900,7 +895,7 @@ function loadCountries() {
   for (var i = 0; i < countries.length; i++) {
     var country = countries[i];
     var option = getOptionElement(country.c_id, country.c_name, true);
-    console.log("option--"+option);
+    
     $('.country-filter').append(option).multiselect('rebuild');
   }
 }
@@ -1130,7 +1125,6 @@ function initializeFilters() {
 
   countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
   chartInput.setCountriesAll(countries);
-  console.log("countrie==s"+countries)
 
   $('.country-filter').multiselect({
     buttonWidth: '100%',
@@ -1593,8 +1587,7 @@ function prepareEscalationChartdata(source_data) {
   }
   chart_data = sortJSON(chart_data,'chart_year', '123');  //asc order by filter_type_id
 
-  console.log("###"+chart_data);
-
+  
   var chartDataSeries = [];
   delayed_data = [];
   not_complied_data = [];
@@ -1708,15 +1701,15 @@ function prepareTrendChartData(source_data) {
   $.each(final_data, function(k, v) {
     chartDataSeries.push(v);
 
-    $.each(v['data'], function(idx, v1) {
-      index = xAxis.indexOf(v1['years']);
+    $.each(v['data'], function(idx, v1) {      
+      index = xAxis.indexOf(v1['year']);
       if (index == -1) {
         xAxis.push(v1['year']);
       }
     });
 
   });
-
+  
   chartTitle = 'Complied (' + xAxis[0] + ' to ' + xAxis[xAxis.length - 1] + ')';
 
   return [
