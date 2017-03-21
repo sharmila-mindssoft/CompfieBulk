@@ -119,18 +119,13 @@ class Controller(object):
             return
         # print actual_data
         # print token
-        if request.uri() == "/api/files" :
-            legal_entity_id = actual_data["request"][1]["le_id"]
-        else :
-            legal_entity_id = None
 
-        print legal_entity_id
         print request.uri()
 
         handle_request = HandleRequest(
             token, actual_data,
             request.uri(), response, self._http_client,
-            request.remote_ip(), self._company_manager, legal_entity_id
+            request.remote_ip(), self._company_manager
         )
         # logger.logWebfront("forward_request")
         handle_request.forward_request()

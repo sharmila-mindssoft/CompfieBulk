@@ -15,7 +15,7 @@ class HandleRequest(object):
     def __init__(
         self,
         security_token, body, relative_url, response,
-        http_client, remote_ip, company_manager, legal_entity_id
+        http_client, remote_ip, company_manager
     ):
         self._security_token = security_token
         self._body = body
@@ -27,7 +27,6 @@ class HandleRequest(object):
         self._url_template = "http://%s:%s%s"
         self._connection_closed = False
         self._company_id = 0
-        self._legal_entity_id = legal_entity_id
         self._url = None
         print "In Handle request"
         print relative_url
@@ -115,9 +114,14 @@ class HandleRequest(object):
         file_server_ip = None
         ip = None
         port = None
-        if self._legal_entity_id is not None :
+        if self._relative_url == "/api/files" :
+            legal_entity_id = self.__body["request"][1]["le_id"]
+        else :
+            legal_entity_id = None
+
+        if legal_entity_id is not None :
             for f in company.file_server_info :
-                if f.legal_entity_id == self._legal_entity_id :
+                if f.legal_entity_id == legal_entity_id :
                     file_server_ip = f.file_server_ip
                     break
 
