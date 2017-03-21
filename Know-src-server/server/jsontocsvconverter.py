@@ -173,16 +173,27 @@ class ConvertJsonToCSV(object):
         user_id = request.user_id_search
         form_id = request.form_id_search
         category_id = request.category_id
+        unit_id = request.unit_id
+        client_id = request.client_id
+        legal_entity_id = request.legal_entity_id
         if user_id is None:
             user_id = '%'
         if form_id is None :
             form_id = '%'
         if category_id is None :
             category_id = '%'
+        if unit_id is None :
+            unit_id = '%'
         from_date = string_to_datetime(from_date).date()
         to_date = string_to_datetime(to_date).date()
-        args = [from_date, to_date, user_id, form_id, category_id]
-        result = db.call_proc('sp_export_audit_trails', args)
+
+        if client_id is None:
+            args = [from_date, to_date, user_id, form_id, category_id]
+            result = db.call_proc('sp_export_audit_trails', args)
+        else:
+            args = [from_date, to_date, user_id, form_id, category_id, client_id, legal_entity_id, unit_id]
+            result = db.call_proc('sp_export_client_audit_trails', args)
+
         is_header = False
         if not is_header:
             csv_headers = [
