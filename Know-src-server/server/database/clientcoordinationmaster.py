@@ -273,7 +273,7 @@ def approve_client_group(db, request, session_user):
 
     text = entity_name + " Legal entity has been approved " if(approval_status is True) else "Legal entity has been rejected"
 
-    # db.call_insert_proc("sp_client_group_approve_message", [1, "Approve Client Group", text, session_user])
+    db.call_insert_proc("sp_client_group_approve_message", [2, "Approve Client Group", text, session_user])
 
     #
     # sp_activity_log_save
