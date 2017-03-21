@@ -95,7 +95,6 @@ function PageControls() {
         var countryList = REPORT._countries;
         var condition_fields = ["is_active"];
         var condition_values = [true];
-        //alert(text_val +' - '+countryList.toSource() +' - '+)
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);
