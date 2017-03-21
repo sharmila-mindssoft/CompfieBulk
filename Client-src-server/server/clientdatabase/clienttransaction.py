@@ -1049,24 +1049,45 @@ def save_assigned_compliance(db, request, session_user):
     country_id = country.get("country_id")
 
     compliance_names = []
+    columns = [
+        "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
+        "statutory_dates", "assignee",
+        "assigned_by", "assigned_on",
+        "approval_person", "a_assigned_by", "a_assigned_on",
+        "trigger_before_days", "due_date", "validity_date",
+    ]
+    value_list = []
+    update_column = [
+        "statutory_dates", "assignee",
+        "assigned_by", "assigned_on",
+        "approval_person", "a_assigned_by", "a_assigned_on",
+        "trigger_before_days", "due_date", "validity_date",
+    ]
+
+    columns_repeats = [
+        "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
+        "statutory_dates", "assignee",
+        "assigned_by", "assigned_on",
+        "approval_person", "a_assigned_by", "a_assigned_on",
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every", 
+    ]
+    value_list_repeats = []
+    update_column_repeats = [
+        "statutory_dates", "assignee",
+        "assigned_by", "assigned_on",
+        "approval_person", "a_assigned_by", "a_assigned_on",
+        "trigger_before_days", "due_date", "validity_date", "repeats_type_id", "repeats_every", 
+    ]
+
+    if concurrence is not None:
+        columns.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
+        update_column.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
+        columns_repeats.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
+        update_column_repeats.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
 
     unit_ids = []
     value_list = []
     for c in compliances:
-        columns = [
-            "legal_entity_id", "country_id", "domain_id", "unit_id", "compliance_id",
-            "statutory_dates", "assignee",
-            "assigned_by", "assigned_on",
-            "approval_person", "a_assigned_by", "a_assigned_on",
-            "trigger_before_days", "due_date", "validity_date",
-        ]
-
-        update_column = [
-            "statutory_dates", "assignee",
-            "assigned_by", "assigned_on",
-            "approval_person", "a_assigned_by", "a_assigned_on",
-            "trigger_before_days", "due_date", "validity_date",
-        ]
 
         repeats_every = c.r_every
         repeats_type = c.repeat_by
@@ -1110,38 +1131,55 @@ def save_assigned_compliance(db, request, session_user):
             validity_date = "0000-00-00"
 
         for unit_id in unit_ids:
-            value = [
-                le_id, country_id, domain_id, unit_id, compliance_id,
-                str(date_list), assignee, int(session_user), created_on,
-                approval, int(session_user), created_on,
-                trigger_before, str(due_date), str(validity_date),
-            ]
-            if concurrence is not None:
-                columns.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
-                update_column.extend(["concurrence_person", "c_assigned_by", "c_assigned_on"])
-                value.extend([concurrence, int(session_user), created_on])
+            value_repeats = []
+            value = []
 
-            if repeats_type is not None:
-                columns.extend(["repeats_type_id"])
-                update_column.extend(["repeats_type_id"])
-                value.extend([repeats_type])
+            if repeats_type is not None and repeats_every is not None:
+                value_repeats = [
+                    le_id, country_id, domain_id, unit_id, compliance_id,
+                    str(date_list), assignee, int(session_user), created_on,
+                    approval, int(session_user), created_on,
+                    trigger_before, str(due_date), str(validity_date), repeats_type, repeats_every,
+                ]
+                if concurrence is not None:
+                    value_repeats.extend([concurrence, int(session_user), created_on])
 
-            if repeats_every is not None:
-                columns.extend(["repeats_every"])
-                update_column.extend(["repeats_every"])
-                value.extend([repeats_every])
+            else:
+                value = [
+                    le_id, country_id, domain_id, unit_id, compliance_id,
+                    str(date_list), assignee, int(session_user), created_on,
+                    approval, int(session_user), created_on,
+                    trigger_before, str(due_date), str(validity_date),
+                ]
+                if concurrence is not None:
+                    value.extend([concurrence, int(session_user), created_on])
+            
+            if len(value) > 0:
+                value_list.append(tuple(value))
+            if len(value_repeats) > 0:
+                value_list_repeats.append(tuple(value_repeats))
 
-            value_list.append(tuple(value))
 
     # db.bulk_insert("tbl_assign_compliances", columns, value_list)
-    print columns
-    print value_list
-    print update_column
-    db.on_duplicate_key_update(
-        "tbl_assign_compliances", ",".join(columns),
-        value_list, update_column
-    )
+    # print columns
+    # print value_list
+    # print update_column
 
+    # print columns_repeats
+    # print value_list_repeats
+    # print update_column_repeats
+
+    if len(value_list) > 0:
+        db.on_duplicate_key_update(
+            "tbl_assign_compliances", ",".join(columns),
+            value_list, update_column
+        )
+
+    if len(value_list_repeats) > 0:
+        db.on_duplicate_key_update(
+            "tbl_assign_compliances", ",".join(columns_repeats),
+            value_list_repeats, update_column_repeats
+        )
 
     # if new_unit_settings is not None:
     #     update_user_settings(db, new_unit_settings)
@@ -3016,14 +3054,15 @@ def get_review_settings_units(db, request, session_user):
     if cat_id > 3:
         where_qry += " AND t3.user_id = %s "
         condition_val.extend([session_user])
-    query = "SELECT t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.geography_name, " + \
-            "(SELECT division_name from tbl_divisions where division_id = t1.division_id) " + \
-            "as division_name " + \
-            "FROM tbl_units as t1 " + \
-            "INNER JOIN tbl_units_organizations t2 on t2.unit_id = t1.unit_id " + \
-            "LEFT JOIN tbl_user_domains t3 on t3.legal_entity_id = t1.legal_entity_id " + \
-            "LEFT JOIN tbl_user_units t4 on t4.unit_id = t1.unit_id %s " + \
-            "GROUP BY t1.unit_id"
+    query = " SELECT t1.unit_id, t1.unit_code, t1.unit_name, t1.address, t1.geography_name, " + \
+            " (SELECT division_name from tbl_divisions where division_id = t1.division_id) " + \
+            " as division_name " + \
+            " FROM tbl_units as t1 " + \
+            " INNER JOIN tbl_units_organizations t2 on t2.unit_id = t1.unit_id " + \
+            " INNER JOIN tbl_client_compliances t5 on t5.unit_id = t1.unit_id and t5.is_submitted = 1 " + \
+            " LEFT JOIN tbl_user_domains t3 on t3.legal_entity_id = t1.legal_entity_id " + \
+            " LEFT JOIN tbl_user_units t4 on t4.unit_id = t1.unit_id %s " + \
+            " GROUP BY t1.unit_id"
     query = query % (where_qry)
     if condition_val is None:
         rows = db.select_all(query)

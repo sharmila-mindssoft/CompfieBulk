@@ -60,14 +60,13 @@ class HandleRequest(object):
         # print self._url
         if "/api/files" in self._url:
             for k, v in headers.items() :
-                print k, v
                 self._http_response.set_default_header(k, v)
         else :
             self._http_response.set_default_header(
                 "Content-Type", "application/json"
             )
             response_data = json.dumps(json.loads(response_data), indent=2)
-            print response_data
+
             key = ''.join(random.SystemRandom().choice(string.ascii_letters) for _ in range(5))
             response_data = base64.b64encode(response_data)
             response_data = json.dumps(key+response_data)
