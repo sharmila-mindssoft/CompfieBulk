@@ -687,6 +687,9 @@ userManagementPage.prototype.possibleFailures = function(error) {
         displayMessage(message.units_already_assigned);
     } else if (error == 'UserLimitExceeds') {
         displayMessage(message.userlimitexceeds);
+    } else if (error == 'HaveComplianceFailed') {
+        displayMessage(message.reassign_compliance_before_user_deactivate);
+        // reassign_compliance_before_user_disable
     } else {
         displayMessage(error);
     }

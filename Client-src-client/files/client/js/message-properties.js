@@ -423,7 +423,8 @@ var message = {
     "onoccurrence_start": 'You want to start this compliance',
     "mobile_invalid": "Invalid Mobile Number",
     "contactno_invalid": "Invalid Contact Number",
-    "email_sent": "Email Sent Successfully"
+    "email_sent": "Email Sent Successfully",
+    'reassign_compliance_before_user_disable': 'User have compliances. Can\'t disable user. Reassign compliances before deactivate',
 };
 
 function clearMessage() {
