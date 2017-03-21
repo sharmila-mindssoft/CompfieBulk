@@ -60,7 +60,6 @@ var txtRemarks = $('#txtRemarks');
 
 var UnitRow = $("#template .unit-row li");
 var UnitList = $(".unit-list");
-var SelectAll = $('.select_all');
 var SelectedUnitCount = $(".selected_checkbox_count");
 var chkSelectAll = $('.select_all');
 
@@ -97,6 +96,9 @@ var legalEntityId = $("#legal-entity-id");
 var acLegalEntity = $("#ac-legal-entity");
 var filterLegalEntityName = $(".filter-legal-entity-name");
 var btnShow = $('#btnShow');
+
+var selected = {};
+var selected_domain = [];
 
 userManagementPage = function() {
         this._userCategory = [];
@@ -163,7 +165,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
             leids.push(v.le_id);
         });
         $.each(ul_legal, function(k, v) {
-            if($.inArray(v.le_id, leids) >= 0) {
+            if ($.inArray(v.le_id, leids) >= 0) {
                 if (((c_name == v.c_name) || (c_name == null)) && ((bg_name == v.b_g_name) || (bg_name == null)) && ((le_name == v.le_name) || (le_name == null))) {
                     var cloneRow = $('#template .legal-entity-row').clone();
 
@@ -819,7 +821,6 @@ function loadLegalEntity() {
                         if ($.inArray(value.bg_id, sBusinessGroup) >= 0 && v.bg_id == value.bg_id) {
                             if (bg_flag != v.bg_id)
                                 bg_str += '<optgroup label="' + value.bg_name + '">';
-                            // var dVal = value.bg_id + '-' + v.le_id;
                             bg_str += '<option value="' + v.le_id + '">' + v.le_name + '</option>';
                             bg_flag = v.bg_id;
                         }
@@ -1002,6 +1003,13 @@ userManagementPage.prototype.clearValues = function() {
     txtMobileNo1.val('');
     txtMobileNo2.val('');
 
+    country.val('');
+    countryId.val('');
+    businessGroup.val('');
+    businessGroupId.val('');
+    legalEntity.val('');
+    legalEntityId.val('');
+
     ddlBusinessGroup.empty();
     ddlBusinessGroup.multiselect('rebuild');
 
@@ -1111,12 +1119,21 @@ userManagementPage.prototype.selectAllUnits = function() {
     if (unitArray.length > 0) {
         $('.unit-list li').each(function(index, el) {
             if (chkSelectAll.prop('checked')) {
-                $(el).addClass('active');
-                $(el).find('i').addClass('fa fa-check pull-right');
-                var chkid = $(el).attr('id');
-                // ACTIVE_UNITS.push(parseInt(chkid));
-                ACTIVE_UNITS.push(chkid);
+                if($(el).hasClass('heading')) {
+                    $(el).find('i').addClass('fa fa-check pull-right');
+                } else {
+                    $(el).addClass('active');
+                    $(el).find('i').addClass('fa fa-check pull-right');
+                    var chkid = $(el).attr('id');
+                    ACTIVE_UNITS.push(chkid);
+                }
             } else {
+                if($(el).hasClass('heading')) {
+                    $(el).find('i').removeClass('fa fa-check pull-right');
+                } else {
+                    $(el).removeClass('active');
+                    $(el).find('i').removeClass('fa fa-check pull-right');
+                }
                 $(el).removeClass('active');
                 $(el).find('i').removeClass('fa fa-check pull-right');
             }
@@ -1126,7 +1143,7 @@ userManagementPage.prototype.selectAllUnits = function() {
 
 userManagementPage.prototype.loadUnits = function() {
     t_this = this;
-
+    // alert(selected_domain.toSource());
     UnitList.empty();
     if (unitArray.length == 0) {
         var clone = UnitRow.clone();
@@ -1136,44 +1153,86 @@ userManagementPage.prototype.loadUnits = function() {
 
         legalEntity_ids = getLegalEntityIds();
 
-        $.each(unitArray, function(key, value) {
-            if ($.inArray(value.le_id, legalEntity_ids) >= 0) {
-                unit_idval = value.u_unt_id + '-' + value.le_id;
-                unit_text = value.u_unt_code + " - " + value.u_unt_name + " - " + value.u_unt_address;
-                var clone = UnitRow.clone();
-                clone.html(unit_text + '<i></i>');
-                clone.attr('id', unit_idval);
-                UnitList.append(clone);
-                if (unit_ids_edit.length > 0) {
-                    if (jQuery.inArray(unit_idval, unit_ids_edit) !== -1)
-                        activateUnit(clone);
+        var le_name = "";
+        $.each(selected, function(k, v) {
+            $.each(unitArray, function(key, value) {
+                if (value.le_id == k) {
+                //     alert(value.le_id + '-' + value.d_id +' <=> '+ selected_domain);
+                // if (jQuery.inArray(value.u_unt_id + '-' + value.le_id, selected_domain) !== -1) {
+                    if (le_name != v) {
+                        var cloneLe = UnitRow.clone();
+                        cloneLe.html(v + '<i></i>');
+                        cloneLe.addClass('heading');
+                        cloneLe.attr('id', 'le' + k);
+                        UnitList.append(cloneLe);
+                        le_name = v;
+                        cloneLe.click(function() {
+                            activateUnit(this, k);
+                        });
+                    }
+                    unit_idval = value.u_unt_id + '-' + value.le_id;
+                    unit_text = value.u_unt_code + " - " + value.u_unt_name + " - " + value.u_unt_address;
+                    var clone = UnitRow.clone();
+                    clone.html(unit_text + '<i></i>');
+                    clone.attr('id', unit_idval);
+                    clone.addClass('le' + k);
+                    UnitList.append(clone);
+                    if (unit_ids_edit.length > 0) {
+                        if (jQuery.inArray(unit_idval, unit_ids_edit) !== -1)
+                            activateUnit(clone, k);
+                    }
+                    clone.click(function() {
+                        activateUnit(this, k);
+                    });
                 }
-                clone.click(function() {
-                    activateUnit(this);
-                });
-            }
+            });
         });
     }
 }
 
 
-function activateUnit(element) {
-
-    var chkstatus = $(element).attr('class');
+function activateUnit(element, id) {
     var chkid = $(element).attr('id');
-    if (chkstatus == 'active') {
+    if ($(element).hasClass('active')) {
         $(element).removeClass('active');
         $(element).find('i').removeClass('fa fa-check pull-right');
-        // index = ACTIVE_UNITS.indexOf(parseInt(chkid));
         index = ACTIVE_UNITS.indexOf(chkid);
         ACTIVE_UNITS.splice(index, 1);
+        if ($('.le' + id).length != $('.le' + id + '.active').length)
+            $('#le' + id).find('i').removeClass('fa fa-check pull-right');
+        else
+            $('#le' + id).find('i').addClass('fa fa-check pull-right');
     } else {
-        $(element).addClass('active');
-        $(element).find('i').addClass('fa fa-check pull-right');
-        // ACTIVE_UNITS.push(parseInt(chkid));
-        ACTIVE_UNITS.push(chkid);
+        if ($(element).hasClass('heading')) {
+            if ($(element).find('i').hasClass('fa')) {
+                $.each($('.le' + id), function(i) {
+                    $(this).removeClass('active');
+                    $(this).find('i').removeClass('fa fa-check pull-right');
+                    index = ACTIVE_UNITS.indexOf($(this).attr('id'));
+                    ACTIVE_UNITS.splice(index, 1);
+                });
+                $(element).find('i').removeClass('fa fa-check pull-right');
+            } else {
+                $.each($('.le' + id), function(i) {
+                    $(this).addClass('active');
+                    $(this).find('i').addClass('fa fa-check pull-right');
+                    ACTIVE_UNITS.push(chkid);
+                });
+                $(element).find('i').addClass('fa fa-check pull-right');
+            }
+        } else {
+            $(element).addClass('active');
+            $(element).find('i').addClass('fa fa-check pull-right');
+            ACTIVE_UNITS.push(chkid);
+            if ($('.le' + id).length == $('.le' + id + '.active').length)
+                $('#le' + id).find('i').addClass('fa fa-check pull-right');
+            else
+                $('#le' + id).find('i').removeClass('fa fa-check pull-right');
+        }
     }
 }
+
+
 
 function showTab() {
     hideall = function() {
@@ -1383,22 +1442,32 @@ PageControls = function() {
         loadLegalEntity();
     });
 
-    //Legal Entity onchange
-    ddlLegalEntity.change(function() {
-        loadDivision();
-        loadCategory();
-        loadDomain();
-    });
-
     ddlLegalEntity.multiselect({
         buttonWidth: '100%',
         enableClickableOptGroups: true,
-        onChange: function(option, checked) {
+        onChange: function(option, checked, select) {
             loadDivision();
             loadCategory();
             loadDomain();
+            selected = {};
+            $('#ddlLegalEntity option:selected').each(function(index, brand) {
+                selected[$(this).val()] = $(this).text();
+            });
         }
     });
+
+    if(ddlDomain) {
+        ddlDomain.multiselect({
+            buttonWidth: '100%',
+            enableClickableOptGroups: true,
+            onChange: function(option, checked, select) {
+                selected_domain = [];
+                $('#ddlDomain option:selected').each(function(index, brand) {
+                    selected_domain.push($(this).val());
+                });
+            }
+        });
+    }
 
     //Next Button Click Event
     btnNext.click(function() {
@@ -1444,7 +1513,6 @@ PageControls = function() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
         var countryList = client_mirror.getUserLegalEntity();
-        alert(countryList.toSource());
         if (countryList.length == 0 && text_val != '')
             displayMessage(message.country_required);
         var condition_fields = [];
