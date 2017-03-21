@@ -51,7 +51,7 @@ $(function() {
             <a href="javascript:void(0);" id="btn-export" class="btn btn-primary  m-r-5 m-l-5 btn-trans" title="Export">
               <i class="fa fa-upload"></i> <small>Export</small>
             </a>
-    			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info  m-r-5 m-l-5" title="Filter">
+    			  <a href="javascript:void(0);" class="right-bar-toggle dropdown-toggle card-drop btn btn-info  m-r-5 m-l-5 filter-button" title="Filter">
                 <i class="zmdi zmdi-sort"></i> <small>Filter</small>
             </a>
 
@@ -904,7 +904,7 @@ $(function() {
       <div class="panel-group col-lg-12" id="accordion" role="tablist" aria-multiselectable="true">
           <div class="panel panel-default bx-shadow-none">
               <div class="panel-heading p-0" role="tab" id="headingOne">
-                  <h4 class="panel-title">
+                  <h4 class="panel-title p-t-10 p-b-10 p-l-10">
 
                 <a role="button" data-toggle="collapse"
                     data-parent="#accordion"
@@ -918,11 +918,11 @@ $(function() {
                       <table class="table table-striped dt-responsive nowrap no-bgheader no-border" cellspacing="0" width="100%">
                         <thead>
                           <tr>
-                            <th width="1%">#</th>
-                            <th width="15%">Compliance Task</th>
-                            <th width="10%">Start Date</th>
-                            <th width="10%">Actual Due Date</th>
-                            <th width="10%">Date of Completion</th>
+                            <th width="5%">#</th>
+                            <th width="50%">Compliance Task</th>
+                            <th width="15%">Start Date</th>
+                            <th width="15%">Actual Due Date</th>
+                            <th width="20%">Date of Completion</th>
                           </tr>
                         </thead>
                         <tbody class="tbody-compliance-details">
@@ -983,11 +983,11 @@ $(function() {
         <th  colspan="5"> <span class="comp-list-level1-val"> </span> </th>
       </tr>
       <tr class="comp-list-tablerowlist">
-        <td align="center" class="comp-list-sno"></td>
-        <td class="comp-list-compliance"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i> </td>
-        <td class="comp-list-startdate"></td>
-        <td class="comp-list-duedate"></td>
-        <td class="comp-list-completiondate" colspan="2"></td>
+        <td align="center" class="comp-list-sno" width="5%"></td>
+        <td class="comp-list-compliance" width="45%"><i class="zmdi zmdi-info" data-toggle="tooltip" title=""></i> </td>
+        <td class="comp-list-startdate" width="15%"></td>
+        <td class="comp-list-duedate" width="15%"></td>
+        <td class="comp-list-completiondate" width="20%" colspan="2"></td>
         </tr>
         <tr class="comp-list-delayed-row-list" >
           <td align="center" class="comp-delayed-sno"></td>

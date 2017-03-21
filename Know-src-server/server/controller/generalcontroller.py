@@ -291,7 +291,8 @@ def process_get_audit_trails(db, request, session_user):
         db,
         session_user, from_count, to_count,
         from_date, to_date, user_id, form_id,
-        category_id
+        category_id, request.client_id, request.legal_entity_id,
+        request.unit_id
     )
     return audit_trails
 

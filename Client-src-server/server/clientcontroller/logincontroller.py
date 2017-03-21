@@ -309,14 +309,20 @@ def send_reset_link(db, user_id, username, short_name):
     reset_link = "%sreset_password/%s/%s" % (
         CLIENT_URL, short_name, reset_token)
 
-    condition = "user_id = %s "
-    db.delete(tblEmailVerification, condition, [user_id])
+    condition = "user_id = %s and verification_type_id = %s"
+    condition_val = [user_id, 2]
+    db.delete(tblEmailVerification, condition, condition_val)
 
-    columns = ["user_id", "verification_code"]
-    values_list = [user_id, str(reset_token)]
-    row_id = db.insert(tblEmailVerification, columns, values_list)
+    q = " INSERT INTO tbl_email_verification(user_id, verification_code, " + \
+        " verification_type_id) VALUES (%s, %s, %s)"
+    row = db.execute(q, [user_id, reset_token, 2])
+
+
+    # columns = ["user_id", "verification_code"]
+    # values_list = [user_id, str(reset_token)]
+    # row_id = db.insert(tblEmailVerification, columns, values_list)
     employee_name = get_user_name_by_id(db, user_id)
-    if(row_id >= 0):
+    if(row >= 0):
         if email().send_reset_link(
             db, user_id, username, reset_link, employee_name
         ):

@@ -2029,6 +2029,52 @@ class UnitCountries(object):
             "country_name": self.country_name
         }
 
+#
+# Audit UnitDetails
+#
+
+class AuditUnits(object):
+    def __init__(
+        self, client_id, business_group_id, legal_entity_id, division_id,
+        category_id, unit_id, unit_name
+    ):
+        self.client_id = client_id
+        self.business_group_id = business_group_id
+        self.legal_entity_id = legal_entity_id
+        self.division_id = division_id
+        self.category_id = category_id
+        self.unit_id = unit_id
+        self.unit_name = unit_name
+
+    @staticmethod
+    def parse_structure(data):
+        data = parse_dictionary(
+            data, [
+                "client_id", "business_group_id", "legal_entity_id", "division_id",
+                "category_id", "unit_id", "unit_name"
+            ])
+        client_id = data.get("client_id")
+        business_group_id = data.get("business_group_id")
+        legal_entity_id = data.get("legal_entity_id")
+        division_id = data.get("division_id")
+        category_id = data.get("category_id")
+        unit_id = data.get("unit_id")
+        unit_name = data.get("unit_name")
+        return AuditUnits(
+            client_id, business_group_id, legal_entity_id, division_id, category_id,
+            unit_id, unit_name
+        )
+
+    def to_structure(self):
+        return {
+            "client_id": self.client_id,
+            "business_group_id": self.business_group_id,
+            "legal_entity_id": self.legal_entity_id,
+            "division_id": self.division_id,
+            "category_id": self.category_id,
+            "unit_id": self.unit_id,
+            "unit_name": self.unit_name
+        }
 
 #
 #   Units - legal Entity details
@@ -2650,9 +2696,10 @@ class User(object):
 #
 
 class AuditTrailClientUser(object):
-    def __init__(self, user_id, user_category_id, employee_name, is_active, client_id, legal_entity_id, unit_id):
+    def __init__(self, user_id, user_category_id, user_category_name, employee_name, is_active, client_id, legal_entity_id, unit_id):
         self.user_id = user_id
         self.user_category_id = user_category_id
+        self.user_category_name = user_category_name
         self.employee_name = employee_name
         self.is_active = is_active
         self.client_id = client_id
@@ -2662,18 +2709,19 @@ class AuditTrailClientUser(object):
     @staticmethod
     def parse_structure(data):
         data = parse_dictionary(data, [
-            "user_id", "user_category_id", "employee_name", "is_active",
+            "user_id", "user_category_id", "user_category_name", "employee_name", "is_active",
             "client_id", "legal_entity_id", "unit_id"
         ])
         user_id = data.get("user_id")
         user_category_id = data.get("user_category_id")
+        user_category_name = data.get("user_category_name")
         employee_name = data.get("employee_name")
         is_active = data.get("is_active")
         client_id = data.get("client_id")
         legal_entity_id = data.get("legal_entity_id")
         unit_id = data.get("unit_id")
         return AuditTrailClientUser(
-            user_id, user_category_id, employee_name, is_active, client_id,
+            user_id, user_category_id, user_category_name, employee_name, is_active, client_id,
             legal_entity_id, unit_id
         )
 
@@ -2681,6 +2729,7 @@ class AuditTrailClientUser(object):
         return {
             "user_id": self.user_id,
             "user_category_id": self.user_category_id,
+            "user_category_name": self.user_category_name,
             "employee_name": self.employee_name,
             "is_active": self.is_active,
             "client_id": self.client_id,
