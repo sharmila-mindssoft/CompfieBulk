@@ -1,24 +1,14 @@
 var passwordStrength = 'Weak';
 
-
-function clearFPMessage() {
-  $('.forgot-password-error-message').hide();
-  $('.forgot-password-error-message span').text('');
-}
-function displayFPMessage(message) {
-  $('.forgot-password-error-message span').text(message);
-  $('.forgot-password-error-message').show();
-}
-
 function resetPasswordValidate() {
   if ($('#newpassword').val().trim().length > 20) {
-    displayFPMessage('New Password Should not exceed 20 characters');
+    displayMessage('New Password Should not exceed 20 characters');
     return false;
   } else if ($('#confirmpassword').val().trim().length > 20) {
-    displayFPMessage('Confirm Password Should not exceed 20 characters');
+    displayMessage('Confirm Password Should not exceed 20 characters');
     return false;
   } else {
-    displayFPMessage();
+    displayMessage();
     return true;
   }
 }
@@ -33,30 +23,30 @@ $('#btn_submit').click(function () {
   var checkLength = resetPasswordValidate();
   if (checkLength) {
     if (newpassword.length == 0) {
-      displayFPMessage("New Password Required");
+      displayMessage("New Password Required");
     } else if (confirmpassword.length == 0) {
-      displayFPMessage("Confirm Password Required");
+      displayMessage("Confirm Password Required");
     } else if (confirmpassword != newpassword) {
-      displayFPMessage("New Password & Confirm Password should match");
+      displayMessage("New Password & Confirm Password should match");
     } else if (passwordStrength == 'Weak') {
-      displayFPMessage("Password should not be Weak");
+      displayMessage("Password should not be Weak");
     } else {
       url = window.location.href;
       url_parameters = url.split('/');
       reset_token = url_parameters[url_parameters.length - 1];
       if (url_parameters[url_parameters.length - 2] != 'reset-password') {
         function onSuccess(data) {
-          displayFPMessage("Password Reset Successfully");
+          displaySuccessMessage("Password Reset Successfully");
           $('#newpassword').val('');
           $('#confirmpassword').val('');
         }
         function onFailure(error) {
           if (error == 'InvalidResetToken') {
-            displayFPMessage('Invalid Reset Token');
+            displayMessage('Invalid Reset Token');
           } else if (error == 'EnterDifferentPassword') {
-            displayFPMessage('Password Already Used');
+            displayMessage('Password Already Used');
           } else {
-            displayFPMessage(error);
+            displayMessage(error);
           }
         }
         var request = [
@@ -147,7 +137,7 @@ validateToken = function() {
                 IS_VALID = true;
             }
             else {
-                displayFPMessage("Session expired");
+                displayMessage("Session expired");
                 IS_VALID = false;
             }
         });
@@ -173,7 +163,7 @@ $(document).ready(function () {
   function onSuccess(data) {
   }
   function onFailure(error) {
-    displayFPMessage('Invalid Reset Token');
+    displayMessage('Invalid Reset Token');
   }
   url = window.location.href;
   url_parameters = url.split('/');
