@@ -1891,11 +1891,11 @@ def get_compliance_approval_list(
         approval_compliances.append(
             clienttransactions.APPROVALCOMPLIANCE(
                 compliance_history_id, compliance_name,
-                description, domain_name,
+                description, domain_name, domain_id,
                 start_date, due_date, ageing, frequency, documents,
                 file_names, completed_on, completion_date, next_due_date,
                 concurred_by, remarks, action, date_list,
-                validity_date, unit_name, unit_address,
+                validity_date, unit_id, unit_name, unit_address,
                 assignee_id_name_map[assignee], assignee
             )
         )
