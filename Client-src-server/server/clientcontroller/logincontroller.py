@@ -260,7 +260,7 @@ def user_login_response(db, data, client_id, ip, short_name):
     theme = get_themes(db, user_id)
 
     if len(le_info) == 0:
-        return clientlogin.LegalEntityNotAvailable()
+        return clientlogin.InvalidCredentials(None)
     if cat_id == 1 :
         forms = get_forms_by_category(db, cat_id)
     else :

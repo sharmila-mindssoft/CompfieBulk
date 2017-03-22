@@ -1154,13 +1154,14 @@ function initClientMirror() {
         clientApiRequest(callerName, request, callback);
     }
 
-    function getAssigneewiseReassignedComplianes(country_id, unit_id, user_id, domain_id, callback) {
+    function getAssigneewiseReassignedComplianes(country_id, unit_id, user_id, domain_id, legalEntityIds, callback) {
         var request = [
             'GetAssigneewiseReassignedComplianes', {
-                'country_id': country_id,
-                'unit_id': unit_id,
-                'user_id': user_id,
-                'domain_id': domain_id
+                'c_id': country_id,
+                'u_id': unit_id,
+                'usr_id': user_id,
+                'd_id': domain_id,
+                "le_ids": legalEntityIds,
             }
         ];
         callerName = 'client_dashboard';

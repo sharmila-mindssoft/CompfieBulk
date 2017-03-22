@@ -341,7 +341,7 @@ def handle_file_upload(
 
             if is_space_available(db, file_size):
                 for doc in documents:
-                    # file_name_parts = doc.file_name.split('.')
+                    # # file_name_parts = doc.file_name.split('.')
                     # name = None
                     # exten = None
                     # for index, file_name_part in enumerate(file_name_parts):
