@@ -341,19 +341,20 @@ def handle_file_upload(
 
             if is_space_available(db, file_size):
                 for doc in documents:
-                    file_name_parts = doc.file_name.split('.')
-                    name = None
-                    exten = None
-                    for index, file_name_part in enumerate(file_name_parts):
-                        if index == len(file_name_parts) - 1:
-                            exten = file_name_part
-                        else:
-                            if name is None:
-                                name = file_name_part
-                            else:
-                                name += file_name_part
-                    auto_code = new_uuid()
-                    file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    # file_name_parts = doc.file_name.split('.')
+                    # name = None
+                    # exten = None
+                    # for index, file_name_part in enumerate(file_name_parts):
+                    #     if index == len(file_name_parts) - 1:
+                    #         exten = file_name_part
+                    #     else:
+                    #         if name is None:
+                    #             name = file_name_part
+                    #         else:
+                    #             name += file_name_part
+                    # auto_code = new_uuid()
+                    # file_name = "%s-%s.%s" % (name, auto_code, exten)
+                    file_name = doc.file_name
                     document_names.append(file_name)
                     # convert_base64_to_file(
                     #     file_name, doc.file_content, client_id
