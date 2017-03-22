@@ -230,8 +230,8 @@ def process_change_service_provider_status(
         return clientmasters.CannotChangeStatusOfContractExpiredSP()
     if verify_password_user_privilege(db, session_user, password):
         return clientmasters.InvalidPassword()
-    if is_user_exists_under_service_provider(db, request.service_provider_id):
-        return clientmasters.CannotDeactivateUserExists()
+    # if is_user_exists_under_service_provider(db, request.service_provider_id):
+    #     return clientmasters.CannotDeactivateUserExists()
     if update_service_provider_status(
         db,
         request.service_provider_id,
