@@ -1659,46 +1659,71 @@ def save_past_record(
 
 
 def get_compliance_approval_count(db, session_user):
-    columns = "count(compliance_history_id) as count"
-    condition = "IFNULL(completed_on, 0) != 0 "
+    # columns = "count(compliance_history_id) as count"
+    # condition = "IFNULL(completed_on, 0) != 0 "
 
-    approval_condition = " %s AND IFNULL(approve_status, 0) != 1 "
-    approval_condition = approval_condition % condition
+    # approval_condition = " %s AND IFNULL(approve_status, 0) != 1 "
+    # approval_condition = approval_condition % condition
 
-    concur_count = 0
-    approval_count = 0
-    if (is_two_levels_of_approval(db)):
-        concur_condition = " %s AND IFNULL(concurrence_status, 0) != 1 "
-        concur_condition = concur_condition % approval_condition
-        concur_count_condition = concur_condition + "  AND concurred_by = %s "
-        # AND current_status = 1
-        concur_count_condition_val = [session_user]
-        concur_count = db.get_data(
-            tblComplianceHistory, columns,
-            concur_count_condition, concur_count_condition_val
-        )[0]["count"]
-        concurrence_condition = " AND  " + \
-            " IF(IFNULL(concurred_by, 0) = 0,  1, concurrence_status = 1)"
-        approval_condition = (
-            approval_condition + concurrence_condition
-        )
+    # concur_count = 0
+    # approval_count = 0
+    # if (is_two_levels_of_approval(db)):
+    #     concur_condition = " %s AND IFNULL(concurrence_status, 0) != 1 "
+    #     concur_condition = concur_condition % approval_condition
+    #     concur_count_condition = concur_condition + "  AND concurred_by = %s "
+    #     # AND current_status = 1
+    #     concur_count_condition_val = [session_user]
+    #     concur_count = db.get_data(
+    #         tblComplianceHistory, columns,
+    #         concur_count_condition, concur_count_condition_val
+    #     )[0]["count"]
+    #     concurrence_condition = " AND  " + \
+    #         " IF(IFNULL(concurred_by, 0) = 0,  1, concurrence_status = 1)"
+    #     approval_condition = (
+    #         approval_condition + concurrence_condition
+    #     )
 
-    approval_count_condition = approval_condition + " AND " + \
-        " approved_by = %s"
-    approval_count_condition_val = [session_user]
-    approval_count = db.get_data(
-        tblComplianceHistory, columns, approval_count_condition,
-        approval_count_condition_val
-    )[0]["count"]
+    # approval_count_condition = approval_condition + " AND " + \
+    #     " approved_by = %s"
+    # approval_count_condition_val = [session_user]
+    # approval_count = db.get_data(
+    #     tblComplianceHistory, columns, approval_count_condition,
+    #     approval_count_condition_val
+    # )[0]["count"]
+
+    query = " SELECT IFNULL(SUM(inprogress_count),0) as inprogress_count, " + \
+            " IFNULL(SUM(overdue_count),0) as overdue_count FROM ( " + \
+            " (select SUM(IF(tc.frequency_id = 5,IF(tch.due_date >= tch.completion_date,1,0), " + \
+            " IF(date(tch.due_date) >= date(tch.completion_date),1,0))) as inprogress_count, " + \
+            " SUM(IF(tc.frequency_id = 5,IF(tch.due_date < tch.completion_date,1,0), " + \
+            " IF(date(tch.due_date) < date(tch.completion_date),1,0))) as overdue_count " + \
+            " from tbl_compliance_history as tch " + \
+            " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
+            " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
+            " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
+            " WHERE concurred_by = %s AND current_status = 1 ) " + \
+            " UNION ALL " + \
+            " (select SUM(IF(tc.frequency_id = 5,IF(tch.due_date >= tch.completion_date,1,0), " + \
+            " IF(date(tch.due_date) >= date(tch.completion_date),1,0))) as inprogress_count, " + \
+            " SUM(IF(tc.frequency_id = 5,IF(tch.due_date < tch.completion_date,1,0), " + \
+            " IF(date(tch.due_date) < date(tch.completion_date),1,0))) as overdue_count " + \
+            " from tbl_compliance_history as tch " + \
+            " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
+            " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
+            " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
+            " WHERE approved_by = %s AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2))) as t1 "
+
+    param = []
+    param.append(int(session_user))
+    param.append(int(session_user))
+
+    rows = db.select_all(query, param)
+
+    for row in rows:
+        concur_count = int(row["inprogress_count"])
+        approval_count = int(row["overdue_count"])
+
     return concur_count + approval_count
-
-    # query = "SELECT count(compliance_history_id) as total_count FROM tbl_compliance_history tch  " + \
-    #         "INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id)  WHERE IFNULL(completion_date, 0) != 0   " + \
-    #         "AND IFNULL(completed_on, 0) != 0   AND ( IFNULL(approve_status, 0) = 0  OR (IFNULL(concurrence_status, 0) = 0 " + \
-    #         "AND  IFNULL(approve_status, 0) != 1)) AND  (concurred_by = %s OR approved_by = %s) ORDER BY completed_by, " + \
-    #         "due_date ASC"
-    # rows = db.select_one(query, [session_user, session_user])
-    # return int(rows["total_count"])
 
 ########################################################
 # To get the list of compliances to be approved by the
@@ -1709,61 +1734,104 @@ def get_compliance_approval_list(
 ):
     is_two_levels = is_two_levels_of_approval(db)
 
-    query = "SELECT " + \
-        " compliance_history_id, tch.compliance_id, start_date, " + \
-        " tch.due_date as due_date, documents, completion_date, tch.unit_id, " + \
-        " completed_on, next_due_date, " + \
-        " ifnull(concurred_by, -1) as concurred_by, remarks, " + \
-        " datediff(tch.due_date, completion_date ) as diff, " + \
-        " compliance_task, compliance_description, tc.frequency_id, " + \
-        " (SELECT frequency FROM tbl_compliance_frequency tcf " + \
-        " WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
-        " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
-        " (select statutory_dates from " + \
-        " tbl_assign_compliances tac " + \
-        " where tac.compliance_id = tch.compliance_id " + \
-        " limit 1) as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
-        " (SELECT concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) " + \
-        " FROM tbl_units tu " + \
-        " where tch.unit_id = tu.unit_id) as unit_name, " + \
-        " (SELECT concat(tu.address, '-', tu.postal_code) " + \
-        " FROM tbl_units tu " + \
-        " where tch.unit_id = tu.unit_id) as unit_address, " + \
-        " completed_by, " + \
-        " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) " + \
-        " FROM tbl_users tu " + \
-        " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
-        " (SELECT domain_name from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id, " + \
-        " (SELECT domain_id from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) as domain_id " + \
-        " FROM tbl_compliance_history tch " + \
-        " INNER JOIN tbl_compliances tc " + \
-        " ON (tch.compliance_id = tc.compliance_id) " + \
-        " WHERE IFNULL(completion_date, 0) != 0  " + \
-        " AND IFNULL(completed_on, 0) != 0  "
-    order = " ORDER BY unit_id, employee_name, completed_by, due_date ASC " + \
-        " LIMIT %s, %s "
+    # query = "SELECT " + \
+    #     " compliance_history_id, tch.compliance_id, start_date, " + \
+    #     " tch.due_date as due_date, documents, completion_date, tch.unit_id, " + \
+    #     " completed_on, next_due_date, " + \
+    #     " ifnull(concurred_by, -1) as concurred_by, remarks, " + \
+    #     " datediff(tch.due_date, completion_date ) as diff, " + \
+    #     " compliance_task, compliance_description, tc.frequency_id, " + \
+    #     " (SELECT frequency FROM tbl_compliance_frequency tcf " + \
+    #     " WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
+    #     " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
+    #     " (select statutory_dates from " + \
+    #     " tbl_assign_compliances tac " + \
+    #     " where tac.compliance_id = tch.compliance_id " + \
+    #     " limit 1) as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+    #     " (SELECT concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) " + \
+    #     " FROM tbl_units tu " + \
+    #     " where tch.unit_id = tu.unit_id) as unit_name, " + \
+    #     " (SELECT concat(tu.address, '-', tu.postal_code) " + \
+    #     " FROM tbl_units tu " + \
+    #     " where tch.unit_id = tu.unit_id) as unit_address, " + \
+    #     " completed_by, " + \
+    #     " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) " + \
+    #     " FROM tbl_users tu " + \
+    #     " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
+    #     " (SELECT domain_name from tbl_domains td " + \
+    #     " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id, " + \
+    #     " (SELECT domain_id from tbl_domains td " + \
+    #     " WHERE td.domain_id = tc.domain_id ) as domain_id " + \
+    #     " FROM tbl_compliance_history tch " + \
+    #     " INNER JOIN tbl_compliances tc " + \
+    #     " ON (tch.compliance_id = tc.compliance_id) " + \
+    #     " WHERE IFNULL(completion_date, 0) != 0  " + \
+    #     " AND IFNULL(completed_on, 0) != 0  "
+    # order = " ORDER BY unit_id, employee_name, completed_by, due_date ASC " + \
+    #     " LIMIT %s, %s "
 
     param = []
-    if is_two_levels:
-        condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
-            " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
-            " IFNULL(approve_status, 0) != 1)) AND " + \
-            " (concurred_by = %s OR approved_by = %s) "
-        # AND current_status = 1
-        param.append(int(session_user))
-        param.append(int(session_user))
-    else:
-        condition = " AND IFNULL(approve_status, 0) = 0 " + \
-            " AND approved_by = %s "
-        param.append(int(session_user))
+    param.append(int(session_user))
+    param.append(int(session_user))
     param.extend([start_count, to_count])
-    # print "query + condition", query + condition
-    # print "order>>",order
-    # print "param>>", param
+    # if is_two_levels:
+    #     condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
+    #         " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
+    #         " IFNULL(approve_status, 0) != 1)) AND " + \
+    #         " (concurred_by = %s OR approved_by = %s) "
+    #     # AND current_status = 1
+    #     param.append(int(session_user))
+    #     param.append(int(session_user))
+    # else:
+    #     condition = " AND IFNULL(approve_status, 0) = 0 " + \
+    #         " AND approved_by = %s "
+    #     param.append(int(session_user))
+    # param.extend([start_count, to_count])
 
-    rows = db.select_all(query + condition + order, param)
+    # rows = db.select_all(query + condition + order, param)
+
+    query = "select compliance_history_id, tch.compliance_id, start_date,  tch.due_date as due_date, " + \
+            " documents, completion_date,  completed_on, next_due_date,  ifnull(concurred_by, -1) as concurred_by, remarks, " + \
+            " datediff(tch.due_date, completion_date ) as diff,  compliance_task, compliance_description, tc.frequency_id, " + \
+            " (SELECT frequency FROM tbl_compliance_frequency tcf  WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
+            " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
+            " tac.statutory_dates as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', " + \
+            " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_name, " + \
+            " concat(tu.address, '-', tu.postal_code)  as unit_address,  completed_by, " + \
+            " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) FROM tbl_users tu " + \
+            " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
+            " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
+            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " from tbl_compliance_history as tch " + \
+            " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
+            " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
+            " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
+            " WHERE concurred_by = %s AND current_status = 1 " + \
+            " UNION ALL " + \
+            " select compliance_history_id, tch.compliance_id, start_date,  tch.due_date as due_date, " + \
+            " documents, completion_date,  completed_on, next_due_date,  ifnull(concurred_by, -1) as concurred_by, remarks, " + \
+            " datediff(tch.due_date, completion_date ) as diff,  compliance_task, compliance_description, tc.frequency_id, " + \
+            " (SELECT frequency FROM tbl_compliance_frequency tcf  WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
+            " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
+            " tac.statutory_dates as statutory_dates, " + \
+            " tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', " + \
+            " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_name, " + \
+            " concat(tu.address, '-', tu.postal_code)  as unit_address,  completed_by, " + \
+            " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) FROM tbl_users tu " + \
+            " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
+            " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
+            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " from tbl_compliance_history as tch " + \
+            " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
+            " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
+            " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
+            " WHERE approved_by = %s " + \
+            " AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2) " + \
+            " ORDER BY unit_id, employee_name, completed_by, due_date ASC  LIMIT %s, %s; "
+
+    rows = db.select_all(query, param)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
     approval_compliances = []
