@@ -396,19 +396,14 @@
     </div>
 </div>
 <script>
-$(document).ready(function() {
-    $('#basicwizard').bootstrapWizard({
-        'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+    $(document).ready(function() {
+        $('#basicwizard').bootstrapWizard({
+            'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
     });
-
-    // $(".due-date, .inprogress, .over-due, .cur_2 ").click(function() {
-    //     $('.nav-tabs li:eq(1) a').tab('show');
-    // });
-    // $(".upcomming, .cur_3 ").click(function() {
-    //     $('.nav-tabs li:eq(2) a').tab('show');
-    // });
-
-});
 </script>
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
 <script src="/script/compliance-task-details/compliance_task_details.js"></script>
