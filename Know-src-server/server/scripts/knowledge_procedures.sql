@@ -3031,7 +3031,7 @@ BEGIN
         SELECT deletion_period FROM tbl_auto_deletion tua
         WHERE tua.client_id=tu.client_id
         and tua.legal_entity_id = tu.legal_entity_id and tua.unit_id = tu.unit_id
-    ) as deletion_period, address FROM tbl_units tu where tu.is_approved = 1;
+    ) as deletion_period, concat(address,' - ',postal_code) as address FROM tbl_units tu where tu.is_approved = 1;
 END //
 
 DELIMITER ;
