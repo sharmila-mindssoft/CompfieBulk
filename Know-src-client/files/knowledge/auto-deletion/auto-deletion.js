@@ -223,11 +223,17 @@ function validate(){
     $.each(UNITS, function(key, value){
         if(value.legal_entity_id == parseInt(LegalEntity.val())){
             var unit_id = parseInt(value.unit_id);
-            if($("#dp_"+value.unit_id).val() == '' || $("#dp_"+value.unit_id).val() == '0'){
+            if($("#dp_"+value.unit_id).val() == ''){
                 displayMessage(message.deletion_period_required)
                 result = false;
                 return false;
-            }else{
+            }
+            else if($("#dp_"+value.unit_id).val() == '0'){
+                displayMessage(message.invalid_deletion_period)
+                result = false;
+                return false;
+            }
+            else{
                 var deletion_period = parseInt($("#dp_"+value.unit_id).val());
                 deletion_details.push(
                     mirror.getDeletionDetails(

@@ -231,7 +231,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "t1.user_id = t3.user_id and t5.legal_entity_id = t3.legal_entity_id " + \
         "left join tbl_service_providers as t4 " + \
         "on t1.service_provider_id = t4.service_provider_id " + \
-        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t5.legal_entity_id = %s; "
+        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t1.is_active = 1 and t1.is_disable = 0 and t5.legal_entity_id = %s; "
 
     print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
@@ -448,7 +448,7 @@ def return_compliance_for_statutory_settings(
 
 
 def return_statutory_settings(data, session_category):
-    unit_wise_statutories = {}
+    unit_wise_statutories = []
     for d in data:
         domain_name = d["domain_name"]
         unit_id = d["unit_id"]
@@ -464,36 +464,51 @@ def return_statutory_settings(data, session_category):
         else :
             allow_nlock = False
 
-        unit_statutories = unit_wise_statutories.get(unit_id)
-        if unit_statutories is None:
-            # statutory_dict = {}
-            # statutory_dict[domain_name] = statutory_val
-            unit_statutories = clienttransactions.UnitStatutoryCompliances(
-                unit_id,
-                unit_name,
-                address,
-                domain_name,
-                bool(d["is_new"]),
-                bool(d["is_locked"]),
-                allow_nlock,
-                d["updatedby"],
-                datetime_to_string(d["updated_on"]),
-                d["total"], d["domain_id"],
-                d["geography_name"]
-            )
-        else:
-            domain_list = unit_statutories.domain_names
-            domain_list.append(domain_name)
-            domain_list = list(set(domain_list))
-            unit_statutories.domain_names = domain_list
-            # unit_statutories.statutories = statutory_dict
-        unit_wise_statutories[unit_id] = unit_statutories
-    lst = []
-    for k in sorted(unit_wise_statutories):
-        lst.append(unit_wise_statutories.get(k))
+        unit_statutories = clienttransactions.UnitStatutoryCompliances(
+            unit_id,
+            unit_name,
+            address,
+            domain_name,
+            bool(d["is_new"]),
+            bool(d["is_locked"]),
+            allow_nlock,
+            d["updatedby"],
+            datetime_to_string(d["updated_on"]),
+            d["total"], d["domain_id"],
+            d["geography_name"]
+        )
+        unit_wise_statutories.append(unit_statutories)
+        
+        # unit_statutories = unit_wise_statutories.get(unit_id)
+        # if unit_statutories is None:
+        #     # statutory_dict = {}
+        #     # statutory_dict[domain_name] = statutory_val
+        #     unit_statutories = clienttransactions.UnitStatutoryCompliances(
+        #         unit_id,
+        #         unit_name,
+        #         address,
+        #         domain_name,
+        #         bool(d["is_new"]),
+        #         bool(d["is_locked"]),
+        #         allow_nlock,
+        #         d["updatedby"],
+        #         datetime_to_string(d["updated_on"]),
+        #         d["total"], d["domain_id"],
+        #         d["geography_name"]
+        #     )
+        # else:
+        #     domain_list = unit_statutories.domain_names
+        #     domain_list.append(domain_name)
+        #     domain_list = list(set(domain_list))
+        #     unit_statutories.domain_names = domain_list
+        #     # unit_statutories.statutories = statutory_dict
+        # unit_wise_statutories[unit_id] = unit_statutories
+    # lst = []
+    # for k in sorted(unit_wise_statutories):
+    #     lst.append(unit_wise_statutories.get(k))
 
     return clienttransactions.GetStatutorySettingsSuccess(
-        lst
+        unit_wise_statutories
     )
 
 
@@ -617,7 +632,7 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=Non
         qry = None
     query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, " + \
         " t1.division_id, t1.legal_entity_id, t1.business_group_id, " + \
-        " t1.address, t1.postal_code, t1.country_id " + \
+        " t1.address, t1.postal_code, t1.country_id, t1.is_closed " + \
         " FROM tbl_units t1 WHERE t1.is_closed like %s "
     condition_val = [is_close]
     if qry is not None:
@@ -636,7 +651,7 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=Non
 def get_units_to_assig(db, domain_id, session_user, session_category):
 
     if session_category <= 3 :
-        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, %s as domain_id " + \
+        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id " + \
             "from " + \
             "(SELECT  " + \
             "    t1.unit_id,  " + \
@@ -651,7 +666,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "WHERE t1.domain_id = %s " + \
             "group by t1.unit_id) as c_details " + \
             "INNER JOIN  " + \
-            "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id " + \
+            "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id and t3.is_closed = 0 " + \
             "where c_details.unassigned > 0 " + \
             "ORDER BY t3.unit_name"
         # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
@@ -666,7 +681,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
         #     " order by t1.unit_code, t1.unit_name"
         param = [domain_id, domain_id]
     else :
-        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, %s as domain_id " + \
+        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id " + \
             "from " + \
             "(SELECT  " + \
             "    t1.unit_id,  " + \
@@ -709,6 +724,8 @@ def return_units_for_assign_compliance(result):
     unit_list = []
     for r in result:
         name = "%s - %s" % (r["unit_code"], r["unit_name"])
+        if r["is_closed"] == 1 :
+            name = "%s(%s)" % (name, "closed")
         unit_list.append(
             clienttransactions.ASSIGN_COMPLIANCE_UNITS(
                 r["unit_id"], name,
@@ -1659,46 +1676,71 @@ def save_past_record(
 
 
 def get_compliance_approval_count(db, session_user):
-    columns = "count(compliance_history_id) as count"
-    condition = "IFNULL(completed_on, 0) != 0 "
+    # columns = "count(compliance_history_id) as count"
+    # condition = "IFNULL(completed_on, 0) != 0 "
 
-    approval_condition = " %s AND IFNULL(approve_status, 0) != 1 "
-    approval_condition = approval_condition % condition
+    # approval_condition = " %s AND IFNULL(approve_status, 0) != 1 "
+    # approval_condition = approval_condition % condition
 
-    concur_count = 0
-    approval_count = 0
-    if (is_two_levels_of_approval(db)):
-        concur_condition = " %s AND IFNULL(concurrence_status, 0) != 1 "
-        concur_condition = concur_condition % approval_condition
-        concur_count_condition = concur_condition + "  AND concurred_by = %s "
-        # AND current_status = 1
-        concur_count_condition_val = [session_user]
-        concur_count = db.get_data(
-            tblComplianceHistory, columns,
-            concur_count_condition, concur_count_condition_val
-        )[0]["count"]
-        concurrence_condition = " AND  " + \
-            " IF(IFNULL(concurred_by, 0) = 0,  1, concurrence_status = 1)"
-        approval_condition = (
-            approval_condition + concurrence_condition
-        )
+    # concur_count = 0
+    # approval_count = 0
+    # if (is_two_levels_of_approval(db)):
+    #     concur_condition = " %s AND IFNULL(concurrence_status, 0) != 1 "
+    #     concur_condition = concur_condition % approval_condition
+    #     concur_count_condition = concur_condition + "  AND concurred_by = %s "
+    #     # AND current_status = 1
+    #     concur_count_condition_val = [session_user]
+    #     concur_count = db.get_data(
+    #         tblComplianceHistory, columns,
+    #         concur_count_condition, concur_count_condition_val
+    #     )[0]["count"]
+    #     concurrence_condition = " AND  " + \
+    #         " IF(IFNULL(concurred_by, 0) = 0,  1, concurrence_status = 1)"
+    #     approval_condition = (
+    #         approval_condition + concurrence_condition
+    #     )
 
-    approval_count_condition = approval_condition + " AND " + \
-        " approved_by = %s"
-    approval_count_condition_val = [session_user]
-    approval_count = db.get_data(
-        tblComplianceHistory, columns, approval_count_condition,
-        approval_count_condition_val
-    )[0]["count"]
+    # approval_count_condition = approval_condition + " AND " + \
+    #     " approved_by = %s"
+    # approval_count_condition_val = [session_user]
+    # approval_count = db.get_data(
+    #     tblComplianceHistory, columns, approval_count_condition,
+    #     approval_count_condition_val
+    # )[0]["count"]
+
+    query = " SELECT IFNULL(SUM(inprogress_count),0) as inprogress_count, " + \
+            " IFNULL(SUM(overdue_count),0) as overdue_count FROM ( " + \
+            " (select SUM(IF(tc.frequency_id = 5,IF(tch.due_date >= tch.completion_date,1,0), " + \
+            " IF(date(tch.due_date) >= date(tch.completion_date),1,0))) as inprogress_count, " + \
+            " SUM(IF(tc.frequency_id = 5,IF(tch.due_date < tch.completion_date,1,0), " + \
+            " IF(date(tch.due_date) < date(tch.completion_date),1,0))) as overdue_count " + \
+            " from tbl_compliance_history as tch " + \
+            " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
+            " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
+            " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
+            " WHERE concurred_by = %s AND current_status = 1 ) " + \
+            " UNION ALL " + \
+            " (select SUM(IF(tc.frequency_id = 5,IF(tch.due_date >= tch.completion_date,1,0), " + \
+            " IF(date(tch.due_date) >= date(tch.completion_date),1,0))) as inprogress_count, " + \
+            " SUM(IF(tc.frequency_id = 5,IF(tch.due_date < tch.completion_date,1,0), " + \
+            " IF(date(tch.due_date) < date(tch.completion_date),1,0))) as overdue_count " + \
+            " from tbl_compliance_history as tch " + \
+            " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
+            " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
+            " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
+            " WHERE approved_by = %s AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2))) as t1 "
+
+    param = []
+    param.append(int(session_user))
+    param.append(int(session_user))
+
+    rows = db.select_all(query, param)
+
+    for row in rows:
+        concur_count = int(row["inprogress_count"])
+        approval_count = int(row["overdue_count"])
+
     return concur_count + approval_count
-
-    # query = "SELECT count(compliance_history_id) as total_count FROM tbl_compliance_history tch  " + \
-    #         "INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id)  WHERE IFNULL(completion_date, 0) != 0   " + \
-    #         "AND IFNULL(completed_on, 0) != 0   AND ( IFNULL(approve_status, 0) = 0  OR (IFNULL(concurrence_status, 0) = 0 " + \
-    #         "AND  IFNULL(approve_status, 0) != 1)) AND  (concurred_by = %s OR approved_by = %s) ORDER BY completed_by, " + \
-    #         "due_date ASC"
-    # rows = db.select_one(query, [session_user, session_user])
-    # return int(rows["total_count"])
 
 ########################################################
 # To get the list of compliances to be approved by the
@@ -1708,62 +1750,104 @@ def get_compliance_approval_list(
     db, start_count, to_count, session_user
 ):
     is_two_levels = is_two_levels_of_approval(db)
-
-    query = "SELECT " + \
-        " compliance_history_id, tch.compliance_id, start_date, " + \
-        " tch.due_date as due_date, documents, completion_date, tch.unit_id, " + \
-        " completed_on, next_due_date, " + \
-        " ifnull(concurred_by, -1) as concurred_by, remarks, " + \
-        " datediff(tch.due_date, completion_date ) as diff, " + \
-        " compliance_task, compliance_description, tc.frequency_id, " + \
-        " (SELECT frequency FROM tbl_compliance_frequency tcf " + \
-        " WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
-        " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
-        " (select statutory_dates from " + \
-        " tbl_assign_compliances tac " + \
-        " where tac.compliance_id = tch.compliance_id " + \
-        " limit 1) as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
-        " (SELECT concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) " + \
-        " FROM tbl_units tu " + \
-        " where tch.unit_id = tu.unit_id) as unit_name, " + \
-        " (SELECT concat(tu.address, '-', tu.postal_code) " + \
-        " FROM tbl_units tu " + \
-        " where tch.unit_id = tu.unit_id) as unit_address, " + \
-        " completed_by, " + \
-        " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) " + \
-        " FROM tbl_users tu " + \
-        " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
-        " (SELECT domain_name from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id, " + \
-        " (SELECT domain_id from tbl_domains td " + \
-        " WHERE td.domain_id = tc.domain_id ) as domain_id " + \
-        " FROM tbl_compliance_history tch " + \
-        " INNER JOIN tbl_compliances tc " + \
-        " ON (tch.compliance_id = tc.compliance_id) " + \
-        " WHERE IFNULL(completion_date, 0) != 0  " + \
-        " AND IFNULL(completed_on, 0) != 0  "
-    order = " ORDER BY unit_id, employee_name, completed_by, due_date ASC " + \
-        " LIMIT %s, %s "
+    # query = "SELECT " + \
+    #     " compliance_history_id, tch.compliance_id, start_date, " + \
+    #     " tch.due_date as due_date, documents, completion_date, tch.unit_id, " + \
+    #     " completed_on, next_due_date, " + \
+    #     " ifnull(concurred_by, -1) as concurred_by, remarks, " + \
+    #     " datediff(tch.due_date, completion_date ) as diff, " + \
+    #     " compliance_task, compliance_description, tc.frequency_id, " + \
+    #     " (SELECT frequency FROM tbl_compliance_frequency tcf " + \
+    #     " WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
+    #     " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
+    #     " (select statutory_dates from " + \
+    #     " tbl_assign_compliances tac " + \
+    #     " where tac.compliance_id = tch.compliance_id " + \
+    #     " limit 1) as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+    #     " (SELECT concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) " + \
+    #     " FROM tbl_units tu " + \
+    #     " where tch.unit_id = tu.unit_id) as unit_name, " + \
+    #     " (SELECT concat(tu.address, '-', tu.postal_code) " + \
+    #     " FROM tbl_units tu " + \
+    #     " where tch.unit_id = tu.unit_id) as unit_address, " + \
+    #     " completed_by, " + \
+    #     " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) " + \
+    #     " FROM tbl_users tu " + \
+    #     " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
+    #     " (SELECT domain_name from tbl_domains td " + \
+    #     " WHERE td.domain_id = tc.domain_id ) as domain_name, duration_type_id, " + \
+    #     " (SELECT domain_id from tbl_domains td " + \
+    #     " WHERE td.domain_id = tc.domain_id ) as domain_id " + \
+    #     " FROM tbl_compliance_history tch " + \
+    #     " INNER JOIN tbl_compliances tc " + \
+    #     " ON (tch.compliance_id = tc.compliance_id) " + \
+    #     " WHERE IFNULL(completion_date, 0) != 0  " + \
+    #     " AND IFNULL(completed_on, 0) != 0  "
+    # order = " ORDER BY unit_id, employee_name, completed_by, due_date ASC " + \
+    #     " LIMIT %s, %s "
 
     param = []
-    if is_two_levels:
-        condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
-            " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
-            " IFNULL(approve_status, 0) != 1)) AND " + \
-            " (concurred_by = %s OR approved_by = %s) "
-        # AND current_status = 1
-        param.append(int(session_user))
-        param.append(int(session_user))
-    else:
-        condition = " AND IFNULL(approve_status, 0) = 0 " + \
-            " AND approved_by = %s "
-        param.append(int(session_user))
+    param.append(int(session_user))
+    param.append(int(session_user))
     param.extend([start_count, to_count])
-    # print "query + condition", query + condition
-    # print "order>>",order
-    # print "param>>", param
+    # if is_two_levels:
+    #     condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
+    #         " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
+    #         " IFNULL(approve_status, 0) != 1)) AND " + \
+    #         " (concurred_by = %s OR approved_by = %s) "
+    #     # AND current_status = 1
+    #     param.append(int(session_user))
+    #     param.append(int(session_user))
+    # else:
+    #     condition = " AND IFNULL(approve_status, 0) = 0 " + \
+    #         " AND approved_by = %s "
+    #     param.append(int(session_user))
+    # param.extend([start_count, to_count])
 
-    rows = db.select_all(query + condition + order, param)
+    # rows = db.select_all(query + condition + order, param)
+
+    query = "select compliance_history_id, tch.compliance_id, start_date,  tch.due_date as due_date, " + \
+            " documents, completion_date,  completed_on, next_due_date,  ifnull(concurred_by, -1) as concurred_by, remarks, " + \
+            " datediff(tch.due_date, completion_date ) as diff,  compliance_task, compliance_description, tc.frequency_id, " + \
+            " (SELECT frequency FROM tbl_compliance_frequency tcf  WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
+            " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
+            " tac.statutory_dates as statutory_dates, tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', " + \
+            " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_name, " + \
+            " concat(tu.address, '-', tu.postal_code)  as unit_address,  completed_by, " + \
+            " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) FROM tbl_users tu " + \
+            " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
+            " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
+            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " from tbl_compliance_history as tch " + \
+            " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
+            " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
+            " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
+            " WHERE concurred_by = %s AND current_status = 1 " + \
+            " UNION ALL " + \
+            " select compliance_history_id, tch.compliance_id, start_date,  tch.due_date as due_date, " + \
+            " documents, completion_date,  completed_on, next_due_date,  ifnull(concurred_by, -1) as concurred_by, remarks, " + \
+            " datediff(tch.due_date, completion_date ) as diff,  compliance_task, compliance_description, tc.frequency_id, " + \
+            " (SELECT frequency FROM tbl_compliance_frequency tcf  WHERE tcf.frequency_id = tc.frequency_id ) as frequency, " + \
+            " document_name, ifnull(concurrence_status,false) as concurrence_status, " + \
+            " tac.statutory_dates as statutory_dates, " + \
+            " tch.validity_date, ifnull(approved_by, -1) as approved_by, " + \
+            " concat(unit_code, '-', tu.unit_name, ', ', tu.address, '-', " + \
+            " SUBSTRING_INDEX(tu.geography_name, '>>', -1), '-', tu.postal_code) as unit_name, " + \
+            " concat(tu.address, '-', tu.postal_code)  as unit_address,  completed_by, " + \
+            " (SELECT concat(IFNULL(employee_code, ''),'-',employee_name) FROM tbl_users tu " + \
+            " WHERE tu.user_id = tch.completed_by) as employee_name, " + \
+            " (SELECT domain_name from tbl_domains td  WHERE td.domain_id = tc.domain_id ) as domain_name, " + \
+            " duration_type_id, tch.current_status,tch.unit_id,tch.concurred_by " + \
+            " from tbl_compliance_history as tch " + \
+            " INNER JOIN tbl_compliances tc  ON (tch.compliance_id = tc.compliance_id) " + \
+            " INNER JOIN tbl_units tu ON tch.unit_id = tu.unit_id " + \
+            " INNER JOIN tbl_assign_compliances tac ON tac.compliance_id = tch.compliance_id and tch.unit_id = tac.unit_id " + \
+            " WHERE approved_by = %s " + \
+            " AND IF(tch.concurred_by IS NULL,tch.current_status IN (1,2), current_status = 2) " + \
+            " ORDER BY unit_id, employee_name, completed_by, due_date ASC  LIMIT %s, %s; "
+
+    rows = db.select_all(query, param)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
     approval_compliances = []
@@ -3252,6 +3336,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
+            "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) " + \
             "Where ac.assignee = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
             "Group by ac.unit_id) " + \
@@ -3263,6 +3348,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
+            "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) " + \
             "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id) " + \
@@ -3274,6 +3360,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
+            "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) " + \
             "Where ac.approval_person = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id)) as t1 " + \
@@ -3281,6 +3368,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "ORDER BY user_type,unit_id;"
         param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type]
 
+        print query % (user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type)
     else :
         # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
         #     "t2.ccount, t2.domain_id " + \

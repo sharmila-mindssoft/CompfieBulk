@@ -63,8 +63,7 @@ class HandleRequest(object):
         print response_data
         print type(response_data)
         print "begin response"
-        print len(headers)
-        print headers
+
         if len(headers) == 6 :
             for k, v in headers.items() :
                 self._http_response.set_default_header(k, v)

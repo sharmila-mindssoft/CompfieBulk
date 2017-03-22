@@ -1,12 +1,3 @@
-function clearFPMessage() {
-  $('.forgot-password-error-message').hide();
-  $('.forgot-password-error-message span').text('');
-}
-function displayFPMessage(message) {
-  $('.forgot-password-error-message span').text(message);
-  $('.forgot-password-error-message').show();
-}
-
 function getShortName() {
   var pathArray = window.location.pathname.split('/');
   short_name = null;
@@ -81,7 +72,7 @@ function processForgotpassword(username, shortName, callback) {
         //initSession(response, shortName);
         callback(null, response);
       } else {
-        callback(data, null);
+        callback(status, null);
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -98,22 +89,22 @@ $('#submit').click(function () {
   var username = $('#username').val().trim();
   var groupname = $('#shortname').val().trim();
   if (username.length == 0) {
-    displayFPMessage('User Id Required');
+    displayMessage('User Id Required');
   }else if (groupname.length == 0) {
-    displayFPMessage('Group Name Required');
+    displayMessage('Group Name Required');
   } else {
     displayLoader();
     function onSuccess(data) {
-      displayFPMessage('Password reset link has been sent to your email Id');
+      displaySuccessMessage('Password reset link has been sent to your email Id');
       $('#username').val('');
       $('#shortname').val('');
       hideLoader();
     }
     function onFailure(error) {
       if (error == 'InvalidUserName') {
-        displayFPMessage("No User Exists");
+        displayMessage("No User Exists");
       } else {
-        displayFPMessage(error);
+        displayMessage(error);
       }
       hideLoader();
     }

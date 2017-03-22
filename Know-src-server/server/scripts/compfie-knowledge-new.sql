@@ -748,6 +748,7 @@ CREATE TABLE `tbl_client_statutories` (
   `client_statutory_id` int(11) NOT NULL AUTO_INCREMENT,
   `client_id` int(11) NOT NULL,
   `unit_id` int(11) NOT NULL,
+  `domain_id` int(11) NOT NULL,
   `status` tinyint(4) DEFAULT '1',
   `reason` varchar(500) DEFAULT NULL,
   `approved_by` int(11) DEFAULT NULL,

@@ -274,8 +274,8 @@ def save_client_statutories(db, request, user_id):
     unit_ids = request.unit_ids
 
     comps = request.compliances_applicablity_status
-    q = "INSERT INTO tbl_client_statutories(client_id, unit_id, status)" + \
-        " values (%s, %s, %s)"
+    q = "INSERT INTO tbl_client_statutories(client_id, unit_id, domain_id, status)" + \
+        " values (%s, %s, %s, %s)"
 
     saved_unit = []
     for c in comps :
@@ -285,7 +285,7 @@ def save_client_statutories(db, request, user_id):
             continue
 
         if c.client_statutory_id is None :
-            csid = db.execute_insert(q, [client_id, c.unit_id, status])
+            csid = db.execute_insert(q, [client_id, c.unit_id, domain_id, status])
             if csid is False :
                 raise process_error("E088")
         else :
@@ -540,8 +540,8 @@ def save_approve_statutories(db, request, user_id):
         reason = ''
 
     q = "update tbl_client_statutories set reason = %s, status = %s where" + \
-    " unit_id = %s and client_statutory_id = %s"
-    params = [reason, s_s, unit_id, client_statutory_id]
+    " unit_id = %s and client_statutory_id = %s and domain_id = %s"
+    params = [reason, s_s, unit_id, client_statutory_id, domain_id]
     db.execute(q, params)
 
     if s_s == 4 :

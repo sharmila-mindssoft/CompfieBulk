@@ -341,7 +341,7 @@ def handle_file_upload(
 
             if is_space_available(db, file_size):
                 for doc in documents:
-                    # file_name_parts = doc.file_name.split('.')
+                    # # file_name_parts = doc.file_name.split('.')
                     # name = None
                     # exten = None
                     # for index, file_name_part in enumerate(file_name_parts):
@@ -443,8 +443,10 @@ def update_compliances(
 
     if type(document_names) is not list:
         return document_names
-    if row["frequency_id"] == 4 and row["duration_type_id"] == 2:
-        completion_date = string_to_datetime(completion_date)
+    #On Occurrence hourly compliances
+    if row["frequency_id"] == 5 and row["duration_type_id"] == 2:
+        # completion_date = string_to_datetime(completion_date)
+        completion_date = string_to_datetime_with_time(completion_date)
     else:
         completion_date = string_to_datetime(completion_date).date()
     ageing, remarks = calculate_ageing(
@@ -714,7 +716,8 @@ def start_on_occurrence_task(
     if concurrence_id is not None :
         users.append(concurrence_id)
 
-    update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
+    if due_date is not None:
+        update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
 
     # Audit Log Entry
     action = "Compliances started \"%s\"" % (compliance_name)
