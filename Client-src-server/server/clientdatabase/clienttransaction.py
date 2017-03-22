@@ -1915,7 +1915,6 @@ def get_compliance_approval_list(
         domain_name = row["domain_name"]
 
         action = None
-        print concurred_by_id, session_user, concurrence_status, approved_by_id
         if is_two_levels:
             if(concurred_by_id == session_user and concurrence_status in [False, None]):
                 action = "Concur"
@@ -1950,7 +1949,6 @@ def get_compliance_approval_list(
                 assignee_id_name_map[assignee], assignee
             )
         )
-    print count_new, count
     return approval_compliances, count
 
 def save_compliance_activity(
