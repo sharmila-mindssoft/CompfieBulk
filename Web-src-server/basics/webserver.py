@@ -202,6 +202,7 @@ class WebResponse(object) :
         if body is not None :
             self._inner.write(body)
         self._inner.finish()
+        return
 
     def redirect(self, url, permanent=False, status=None) :
         self._inner.redirect(url, permanent=permanent, status=status)

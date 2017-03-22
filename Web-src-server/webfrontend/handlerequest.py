@@ -59,8 +59,11 @@ class HandleRequest(object):
         assert self._connection_closed is False
         # print headers
         # print self._url
+        print self._connection_closed
+        print response_data
         print type(response_data)
         print "begin response"
+
         if len(headers) == 6 :
             for k, v in headers.items() :
                 self._http_response.set_default_header(k, v)
@@ -81,6 +84,7 @@ class HandleRequest(object):
             "Access-Control-Allow-Origin", "*"
         )
 
+        self._http_response.set_status(200)
         self._http_response.send(response_data)
         self._connection_closed = True
         print "response end"

@@ -105,6 +105,8 @@ class API(object):
                 print "send response"
                 return respond(response_data)
             else :
+                print type(response_data)
+                print response_data
                 return response_data
         except Exception, e:
             print(traceback.format_exc())
