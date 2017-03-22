@@ -859,7 +859,7 @@ def return_statutory_master(data):
 
 
 def check_duplicate_statutory(
-    db, parent_ids, statutory_id, domain_id=None
+    db, parent_ids, statutory_id, domain_id=None, country_id=None
 ):
     query = "SELECT T1.statutory_id, T1.statutory_name, " + \
         " T1.level_id, T2.domain_id " + \
@@ -876,6 +876,10 @@ def check_duplicate_statutory(
     if domain_id is not None:
         where_qry += " AND domain_id = %s"
         param.append(domain_id)
+
+    if country_id is not None :
+        where_qry += " AND country_id = %s"
+        param.append(country_id)
 
     rows = db.select_all(query + where_qry, param)
     return rows

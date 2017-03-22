@@ -122,6 +122,7 @@ function loadComplianceTaskDetails(data) {
             $(".tbody-compliances-task-list-inprogress").append(clone);
             countInprogress++
         }
+        // $("#templates .table-compliances-task-list").empty();
         var tableRowvalues = $("#templates .table-compliances-task-list .table-row-list");
         var cloneval = tableRowvalues.clone();
         $(".compliance-task span", cloneval).html(data[key].compliance_name);
@@ -279,8 +280,10 @@ function loadUpcomingCompliancesDetails(data) {
         $('.uc-startdate', cloneval).html(data[k]['start_date']);
         $('.uc-duedate', cloneval).html(data[k]['due_date']);
         if (data[k]['upcoming_format_file_name'] != null) {
-            // $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);
-            client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[k]['domain_id'], data[k]['unit_id'], data[k]['start_date'], data[k].format_file_name);
+             $('.format-file', cloneval).attr("href", data[k]['upcoming_format_file_name']);            
+            // $(".uc-download", cloneval).on("click", function() {
+            //     client_mirror.downloadTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[k]['domain_id'], data[k]['unit_id'], data[k]['start_date'], data[k].format_file_name);
+            // });            
         } else {
             $('.format-file', cloneval).hide();
         }
@@ -356,10 +359,10 @@ function showSideBar(idval, data) {
             var rejected_reason = data[key1]['remarks'];
 
             $(".sideview-compliance-unit span", cloneValSide).html(data[key1]['unit_name']);
-            $('.sideview-compliance-unit i', cloneValSide).attr('title', data[key1]['address']);
+            $('.sideview-compliance-unit i', cloneValSide).attr('data-original-title', data[key1]['address']);
 
             $(".sideview-compliance-task .ct", cloneValSide).html(data[key1]['compliance_name']);
-            $('.sideview-compliance-task i', cloneValSide).attr('title', data[key1]['compliance_description']);
+            $('.sideview-compliance-task i', cloneValSide).attr('data-original-title', data[key1]['compliance_description']);
             $(".sideview-compliance-frequency", cloneValSide).html(data[key1]['compliance_task_frequency']);
             $(".sideview-startdate", cloneValSide).val(data[key1]['start_date']);
             $(".sideview-completion-date-td", cloneValSide).html("<input  type='text' class='input-box datepick sideview-completion-date' id='completion-date' readonly='readonly'>");
@@ -406,7 +409,7 @@ function showSideBar(idval, data) {
                 }
             }
 
-            $('[data-toggle="tooltip"]').tooltip();
+            // $('[data-toggle="tooltip"]').tooltip();
 
             $(".btn-submit", cloneValSide).on("click", function(s) {
                 var completion_date;
@@ -552,7 +555,8 @@ function showSideBar(idval, data) {
                 );
 
                 function saveUploadedFile() {
-                    if (uploaded_documents != '') {
+                    console.log("documents++"+documents);
+                    if (documents != null) {
                         client_mirror.uploadComplianceTaskFile(parseInt(LegalEntityId.val()), getCountryId(LegalEntityId.val()), data[key1]['domain_id'], data[key1]['unit_id'], data[key1]['start_date'], file_list,
                             function(error, response) {
                                 if (error == null) {
@@ -566,13 +570,28 @@ function showSideBar(idval, data) {
                 //}
             });
             $(".half-width-task-details").append(cloneValSide);
-            $(".datepick").datepicker({
-                changeMonth: true,
-                changeYear: true,
-                numberOfMonths: 1,
-                dateFormat: "dd-M-yy",
-                monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-            });
+            if (data[key1].compliance_task_frequency == "On Occurrence") {
+                $('.datepick').datetimepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    numberOfMonths: 1,
+                    dateFormat: 'dd-M-yy',
+                    monthNames: [
+                        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                    ]
+                });
+
+            } else {
+                $(".datepick").datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    numberOfMonths: 1,
+                    dateFormat: "dd-M-yy",
+                    monthNames: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                });
+            }
+
+
             $(".validity1-textbox-input", cloneValSide).datepicker({
                 changeMonth: true,
                 changeYear: true,
@@ -610,6 +629,8 @@ function loadCalendar() {
 }
 
 function loadCalendarData(data) {
+    $(".comp-calendar").empty();
+
     var wid_data = data.widget_data;
     // var current_date = new Date("2017-03-01");
     var current_date = new Date(wid_data[0]['CurrentMonth']);
@@ -667,26 +688,26 @@ function loadCalendarData(data) {
     $.each(getdata, function(k, v) {
         if (v.inprogress > 0) {
             $(".dateid" + v.date).append('<div class="count-round inprogress" data-toggle="tooltip" data-original-title="' + v.inprogress + ' Inprogress Compliances"> ' + v.inprogress + ' </div>');
-            $('.dateid').on('click', function() {
+            $('.dateid' + v.date).on('click', function() {
                 showCurrentTab();
             });
         }
         if (v.duedate > 0) {
             $(".dateid" + v.date).append('<div class="count-round due-date" data-toggle="tooltip" data-original-title="' + v.duedate + ' Due Date Compliances"> ' + v.duedate + '</div>');
-            $('.dateid').on('click', function() {
+            $('.dateid' + v.date).on('click', function() {
                 showCurrentTab();
             });
         }
         if (v.upcoming > 0) {
             $(".dateid" + v.date).append('<div class="count-round upcomming" data-toggle="tooltip" data-original-title="' + v.upcoming + ' Upcoming Compliances">' + v.upcoming + '</div>');
-            $('.dateid').on('click', function() {
+            $('.dateid' + v.date).on('click', function() {
                 showUpcomingTab();
             });
 
         }
         if (v.overdue > 0) {
             $(".dateid" + v.date).append('<div class="count-round over-due" data-toggle="tooltip" data-original-title="' + v.overdue + ' Not Complied">' + v.overdue + '</div>');
-            $('.dateid').on('click', function() {
+            $('.dateid' + v.date).on('click', function() {
                 showCurrentTab();
             });
         }
@@ -817,8 +838,13 @@ function loadEntityDetails() {
 }
 
 function showCalendarTab() {
+    $(".calendar-tab").addClass("active");
     $(".calendar-tab-content").addClass("active in");
+
+    $(".current-tab").removeClass("active");
     $(".current-tab-content").removeClass("active in");
+
+    $(".upcoming-tab").removeClass("active");
     $(".upcoming-tab-content").removeClass("active in");
 
     $(".calendar-tab-content").show();
@@ -827,8 +853,13 @@ function showCalendarTab() {
 }
 
 function showCurrentTab() {
+    $(".current-tab").addClass("active");
     $(".current-tab-content").addClass("active in");
+
+    $(".upcoming-tab").removeClass("active");
     $(".upcoming-tab-content").removeClass("active in");
+
+    $(".calendar-tab").removeClass("active");
     $(".calendar-tab-content").removeClass("active in");
 
     $(".current-tab-content").show();
@@ -837,8 +868,13 @@ function showCurrentTab() {
 }
 
 function showUpcomingTab() {
+    $(".upcoming-tab").addClass("active");
     $(".upcoming-tab-content").addClass("active in");
+
+    $(".current-tab").removeClass("active");
     $(".current-tab-content").removeClass("active in");
+
+    $(".calendar-tab").removeClass("active");
     $(".calendar-tab-content").removeClass("active in");
 
     $(".upcoming-tab-content").show();

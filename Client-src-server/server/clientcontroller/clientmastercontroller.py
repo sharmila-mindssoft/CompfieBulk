@@ -158,12 +158,12 @@ def process_client_master_requests(request, db, session_user, client_id, session
 
     elif type(request) is clientmasters.SaveSettingsFormDetails:
         result = process_save_settings_form_data(db, request, session_user)
-    
+
     elif type(request) is clientmasters.BlockUser:
         result = process_block_user(db, request, session_user)
 
     elif type(request) is clientmasters.ResendRegistrationEmail:
-        result = process_resend_registration_email(db, request, session_user, client_id)       
+        result = process_resend_registration_email(db, request, session_user, client_id)
 
     return result
 
@@ -230,8 +230,8 @@ def process_change_service_provider_status(
         return clientmasters.CannotChangeStatusOfContractExpiredSP()
     if verify_password_user_privilege(db, session_user, password):
         return clientmasters.InvalidPassword()
-    if is_user_exists_under_service_provider(db, request.service_provider_id):
-        return clientmasters.CannotDeactivateUserExists()
+    # if is_user_exists_under_service_provider(db, request.service_provider_id):
+    #     return clientmasters.CannotDeactivateUserExists()
     if update_service_provider_status(
         db,
         request.service_provider_id,
@@ -256,7 +256,7 @@ def process_block_service_provider(
         is_blocked, session_user
     ):
         return clientmasters.BlockServiceProviderSuccess()
-    
+
 ########################################################
 # To Disable user
 ########################################################
@@ -267,6 +267,27 @@ def process_block_user(
     is_blocked = 0 if request.is_blocked is False else 1
     if verify_password_user_privilege(db, session_user, password):
         return clientmasters.InvalidPassword()
+
+    user_category_id = get_user_Category_by_user_id(db, request.user_id)
+
+    if user_category_id==2:
+        if (get_no_of_remaining_licence_Viewonly(db) <= 0):
+            return clientmasters.UserLimitExceeds()
+        else:
+            if request.is_blocked== True:
+                update_licence_viewonly(db, "LESS")
+            elif request.is_blocked== False:
+                update_licence_viewonly(db, "ADD")
+    else:
+        resultRows = get_user_legal_entity_by_user_id(db, request.user_id)
+
+        for row in resultRows:
+            legal_entity_id = int(row["legal_entity_id"])
+            if request.is_blocked== True:
+                update_licence(db, legal_entity_id, "LESS")
+            elif request.is_blocked== False:
+                update_licence(db, legal_entity_id, "ADD")
+
     if block_user(
         db,
         request.user_id,
@@ -764,21 +785,17 @@ def process_save_client_user(db, request, session_user, client_id):
         if (get_no_of_remaining_licence_Viewonly(db) <= 0):
             return clientmasters.UserLimitExceeds()
         else:
-            update_licence_viewonly(db)
+            update_licence_viewonly(db, "ADD")
     else:
         resultRows = get_no_of_remaining_licence(db, request.user_entity_ids)
-        print "resultRows>>>", resultRows
         for row in resultRows:
             legal_entity_id = int(row["legal_entity_id"])
-            print "legal_entity_id>>>", legal_entity_id
             remaining_licence = int(row["remaining_licence"])
-            print "remaining_licence>>", remaining_licence
             if remaining_licence <=0:
                 return clientmasters.UserLimitExceeds()
             else:
-                update_licence(db, legal_entity_id)
-                print "licence updated!!!"
-            
+                update_licence(db, legal_entity_id, "ADD")
+
     if is_duplicate_employee_code(db, request.employee_code.replace(" ", ""), user_id=None):
         return clientmasters.EmployeeCodeAlreadyExists()
     # Commented for functionality check

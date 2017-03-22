@@ -93,7 +93,9 @@ __all__ = [
     "update_licence_viewonly",
     "update_licence",
     "block_user",
-    "resend_registration_email"
+    "resend_registration_email",
+    "get_user_Category_by_user_id",
+    "get_user_legal_entity_by_user_id"
 ]
 
 ############################################################################
@@ -510,7 +512,7 @@ def userManagement_GetGroupCategory(db):
 # User Management Add - Legal Entity Domains Prerequisite
 ##############################################################################
 def userManagement_GetLegalEntity_Domain(db):
-    q = "SELECT T01.legal_entity_id, T01.domain_id, T02.domain_name " + \
+    q = "SELECT  Distinct T01.domain_id, T01.legal_entity_id, T02.domain_name " + \
         " From tbl_legal_entity_domains AS T01 INNER JOIN tbl_domains as T02" + \
         " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 " + \
         " order by domain_name, legal_entity_id "
@@ -553,7 +555,7 @@ def userManagement_legalentity_for_User(db, user_id):
 def userManagement_GetServiceProviders(db):
     q = "SELECT service_provider_id, service_provider_name, short_name " + \
         " From tbl_service_providers where is_active = '1' and is_blocked = '0' " + \
-        " and now() between DATE_ADD(contract_from, INTERVAL 1 DAY) " + \
+        " and now() between DATE_ADD(contract_from, INTERVAL 0 DAY) " + \
         " and DATE_ADD(contract_to, INTERVAL 1 DAY) "
     row = db.select_all(q, None)
     return row
@@ -1035,6 +1037,26 @@ def get_no_of_remaining_licence(db, legal_entity_ids):
     return row
 
 ############################################################################
+# Returns User Category ID
+# Parameter(s) - Object of database
+# Return Type - int
+############################################################################
+def get_user_Category_by_user_id(db, user_id):
+    q = " select user_category_id from tbl_users where user_id = %s "
+    row = db.select_one(q, [user_id])
+    return row["user_category_id"]
+
+############################################################################
+# Returns User Legal Entities
+# Parameter(s) - Object of database
+# Return Type - int
+############################################################################
+def get_user_legal_entity_by_user_id(db, user_id):
+    q = " select user_id, legal_entity_id From tbl_user_legal_entities where user_id = %s "
+    row = db.select_all(q, [user_id])
+    return row
+
+############################################################################
 # To check whether another user exists with the given email id
 # Parameter(s) - Object of database, email id, userid
 # Return Type - Boolean
@@ -1326,9 +1348,13 @@ def update_user(db, user, session_user, client_id):
 #             - Returns True on successfull updation
 #             - Returns RuntimeError if Updation fails
 ############################################################################
-def update_licence_viewonly(db):
+def update_licence_viewonly(db, mode):
     q = " Update tbl_client_groups SET licence_used = (licence_used + %s)"
-    result1 = db.execute(q, [1])
+
+    if mode== "ADD":
+        result1 = db.execute(q, [1])
+    elif mode== "LESS":
+        result1 = db.execute(q, [-1])
 
     if result1 is False:
         raise client_process_error("E011")
@@ -1341,9 +1367,17 @@ def update_licence_viewonly(db):
 #             - Returns True on successfull updation
 #             - Returns RuntimeError if Updation fails
 ############################################################################
-def update_licence(db, legal_entity_id):
+def update_licence(db, legal_entity_id, mode):
     q = " Update tbl_legal_entities SET used_licence = (used_licence + %s) Where legal_entity_id = %s"
-    result1 = db.execute(q, [1, legal_entity_id])
+
+    print "mode>>", mode
+
+    if mode== "ADD":
+        print "inside add"
+        result1 = db.execute(q, [1, legal_entity_id])
+    elif mode== "LESS":
+        print "inside less"
+        result1 = db.execute(q, [-1, legal_entity_id])
 
     if result1 is False:
         raise client_process_error("E011")

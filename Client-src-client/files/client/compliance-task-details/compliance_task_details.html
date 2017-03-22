@@ -276,7 +276,9 @@
                 <td class="sideview-compliance-frequency"></td>
             </tr>
             <tr>
-                <td><span>Upload Documents:</span></td>
+                <td><span>Upload Documents:</span>
+
+                </td>
                 <td>
                     <span style="float:right;"><span class="sideview-upload-date" ></span>
                     <br><span style="font-size:10px"> (Upload Date) </span></span>
@@ -366,7 +368,7 @@
             <td class="uc-domain"></td>
             <td class="uc-startdate"></td>
             <td class="uc-duedate"></td>
-            <td class="icon-3x text-center"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></td>
+            <td class="icon-3x text-center uc-download"><i class="fa fa-download text-primary c-pointer" data-toggle="tooltip" title="Download Format"></i></td>
         </tr>
     </table>
     <div class="calender-templates">
@@ -396,19 +398,14 @@
     </div>
 </div>
 <script>
-$(document).ready(function() {
-    $('#basicwizard').bootstrapWizard({
-        'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+    $(document).ready(function() {
+        $('#basicwizard').bootstrapWizard({
+            'tabClass': 'nav nav-tabs navtab-wizard nav-justified bg-muted'
+        });
+
+        $('[data-toggle="tooltip"]').tooltip();
+
     });
-
-    // $(".due-date, .inprogress, .over-due, .cur_2 ").click(function() {
-    //     $('.nav-tabs li:eq(1) a').tab('show');
-    // });
-    // $(".upcomming, .cur_3 ").click(function() {
-    //     $('.nav-tabs li:eq(2) a').tab('show');
-    // });
-
-});
 </script>
 <script src="/files/client/common/js/wizard/jquery.bootstrap.wizard.js"></script>
 <script src="/script/compliance-task-details/compliance_task_details.js"></script>

@@ -161,7 +161,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
     if (ul_legal.length != 0) {
         var le_list = client_mirror.getUserLegalEntity();
         var leids = [];
-        $.each(ul_legal, function(k, v) {
+        $.each(le_list, function(k, v) {
             leids.push(v.le_id);
         });
         $.each(ul_legal, function(k, v) {
@@ -248,7 +248,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
             }
         });
     }
-    $('[data-toggle="tooltip"]').tooltip();
+    // $('[data-toggle="tooltip"]').tooltip();
 };
 
 
@@ -330,7 +330,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
 
 
     });
-    $('[data-toggle="tooltip"]').tooltip();
+    // $('[data-toggle="tooltip"]').tooltip();
 };
 
 showEdit = function(user_id) {
@@ -522,10 +522,10 @@ showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked,
         divRemarks.show();
         if (isBlocked == true) {
             blocked_status = false;
-            statusmsg = message.disable_user_message;
+            statusmsg = message.enable_user_message;
         } else {
             blocked_status = true;
-            statusmsg = message.enable_user_message;
+            statusmsg = message.disable_user_message;
         }
     }
 
@@ -651,7 +651,7 @@ userManagementPage.prototype.changeStatus = function(user_id, status, legal_enti
     if (isNotEmpty(CurrentPassword, message.password_required) == false) {
         return false;
     } else {
-        if (isComplianceAvailable(legal_entity_id, user_id)) {
+        if (!isComplianceAvailable(legal_entity_id, user_id)) {
             var password = CurrentPassword.val();
             if (status == "false") { status = false; }
             if (status == "true") { status = true; }
@@ -681,6 +681,8 @@ userManagementPage.prototype.blockuser = function(user_id, block_status, remarks
                 Custombox.close();
                 if (block_status) {
                     displaySuccessMessage(message.disable_success);
+                    um_page.clearValues();
+                    t_this.showList();
                 } else {
                     displaySuccessMessage(message.enable_success);
                 }
@@ -699,6 +701,8 @@ userManagementPage.prototype.possibleFailures = function(error) {
         displayMessage(message.units_already_assigned);
     } else if (error == 'UserLimitExceeds') {
         displayMessage(message.userlimitexceeds);
+    } else if (error == 'HaveComplianceFailed') {
+        displayMessage(message.reassign_compliance_before_user_disable);
     } else {
         displayMessage(error);
     }

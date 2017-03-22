@@ -977,10 +977,10 @@ button.btn-success {
     color: #fff;
 }
 
-.table-striped td {
+/*.table-striped td {
     vertical-align: middle !important;
 }
-
+*/
 .box-width-800 {
     width: 800px !important;
 }
@@ -1147,7 +1147,8 @@ h2.chart-title: hover {
 .dsc-total-unassigned,
 .dsc-total-notopted,
 .dsc-grandtotal,
-.dsc-total-text {
+.dsc-total-text,
+.total-usc-role {
     font-weight: bold !important;
 }
 
@@ -1336,6 +1337,25 @@ h2.chart-title: hover {
 
 .resetpwd-page .cardbox {
     max-width: 600px !important;
+}
+
+.satcheck input[type="checkbox"]{
+    margin-left: -24px !important;
+    height: 17px;
+    width: 25px;
+}
+
+.assigncheck input[type="checkbox"]{
+    margin-left: -27px !important;  
+    height: 17px;
+    width: 25px;
+}
+
+.table > thead > tr > th{
+    vertical-align: top !important;
+}
+.reviewcheck input[type="checkbox"]{
+    margin-left: -21px !important;
 }
 
 .multi-um label.checkbox {

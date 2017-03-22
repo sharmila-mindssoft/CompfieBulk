@@ -600,7 +600,7 @@ function loadCompliances(){
 			    $('.frequency', clone2).text(frequency);
 
 			    if (summary != null) {
-			        if (statutorydate.trim() != '') {
+			        if (statutorydate.trim() != '' &&  frequency != 'One Time') {
 			          statutorydate = summary + ' ( ' + statutorydate + ' )';
 			        } else {
 			          statutorydate = summary;

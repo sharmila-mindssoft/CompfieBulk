@@ -161,7 +161,7 @@ var message = {
     'concurrence_required': 'Concurrence Required',
     'approval_required': 'Approval Required',
     'compliance_duedate_required': 'Due date Required in Select Compliance Task Wizard',
-    'compliance_triggerdate_required': 'Trigger date Required in Select Compliance Task Wizard',
+    'compliance_triggerdate_required': 'Trigger before days Required in Select Compliance Task Wizard',
     'nocompliance_selected_forassign': 'No compliance selected for assign',
     'reason_required': 'Reason Required',
     'startdate_greater_today': 'Start date is greater than today"s date',
@@ -423,7 +423,8 @@ var message = {
     "onoccurrence_start": 'You want to start this compliance',
     "mobile_invalid": "Invalid Mobile Number",
     "contactno_invalid": "Invalid Contact Number",
-    "email_sent": "Email Sent Successfully"
+    "email_sent": "Email Sent Successfully",
+    'reassign_compliance_before_user_disable': 'User have compliances. Reassign compliances',
 };
 
 function clearMessage() {
