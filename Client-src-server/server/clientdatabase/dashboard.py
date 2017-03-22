@@ -357,6 +357,7 @@ def get_trend_chart(
             d["filter_id"], d["chart_year"],
             int(d["total"]), int(d["comp_count"])
         ))
+
     return years, chart_data
 
 # Trend Chart End

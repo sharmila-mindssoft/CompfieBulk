@@ -617,7 +617,7 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=Non
         qry = None
     query = "SELECT distinct t1.unit_id, t1.unit_code, t1.unit_name, " + \
         " t1.division_id, t1.legal_entity_id, t1.business_group_id, " + \
-        " t1.address, t1.postal_code, t1.country_id " + \
+        " t1.address, t1.postal_code, t1.country_id, t1.is_closed " + \
         " FROM tbl_units t1 WHERE t1.is_closed like %s "
     condition_val = [is_close]
     if qry is not None:
@@ -636,7 +636,7 @@ def get_units_for_assign_compliance(db, session_user, is_closed=None, le_ids=Non
 def get_units_to_assig(db, domain_id, session_user, session_category):
 
     if session_category <= 3 :
-        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, %s as domain_id " + \
+        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id " + \
             "from " + \
             "(SELECT  " + \
             "    t1.unit_id,  " + \
@@ -666,7 +666,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
         #     " order by t1.unit_code, t1.unit_name"
         param = [domain_id, domain_id]
     else :
-        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, %s as domain_id " + \
+        query = "select c_details.unit_id, c_details.unassigned, t3.unit_name, t3.unit_code, t3.postal_code, t3.address, t3.is_closed, %s as domain_id " + \
             "from " + \
             "(SELECT  " + \
             "    t1.unit_id,  " + \
@@ -709,6 +709,8 @@ def return_units_for_assign_compliance(result):
     unit_list = []
     for r in result:
         name = "%s - %s" % (r["unit_code"], r["unit_name"])
+        if r["is_closed"] == 1 :
+            name = "%s(%s)" % (name, "closed")
         unit_list.append(
             clienttransactions.ASSIGN_COMPLIANCE_UNITS(
                 r["unit_id"], name,
