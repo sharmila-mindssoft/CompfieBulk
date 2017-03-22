@@ -1155,7 +1155,7 @@ def calculate_ageing(
 ):
     current_time_stamp = get_date_time_in_date()
     compliance_status = "-"
-    if frequency_type == "On Occurrence" or frequency_type in [4, "4"]:
+    if frequency_type == "On Occurrence" or frequency_type in [5, "5"]:
         if completion_date is not None:  # Completed compliances
             r = relativedelta.relativedelta(
                 convert_datetime_to_date(due_date),
@@ -1194,6 +1194,7 @@ def calculate_ageing(
                 #             r, diff, only_hours=True ext="left"
                 #         )
                 #     )
+
                 if r.days >= 0 and r.hours >= 0 and r.minutes >= 0:
                     compliance_status = " %s left" % (
                         create_datetime_summary_text(
@@ -1201,11 +1202,16 @@ def calculate_ageing(
                         )
                     )
                 else:
-                    compliance_status = " Overdue by %s" % (
-                        create_datetime_summary_text(
-                            r, diff, only_hours=True, ext="Overdue by"
-                        )
-                    )
+                    # if overdue is below 24 hours, then time is shown
+                    if r.days == 0:
+                        compliance_status = " Overdue by %s" % (
+                            create_datetime_summary_text(
+                                r, diff, only_hours=True, ext="Overdue by"))
+                    else:
+                        compliance_status = " Overdue by %s" % (
+                            create_datetime_summary_text(
+                                r, diff, only_hours=False, ext="Overdue by"))
+
             else:
                 r = relativedelta.relativedelta(
                     convert_datetime_to_date(due_date),
@@ -1228,6 +1234,7 @@ def calculate_ageing(
                             r, diff, only_hours=False, ext="Overdue by"
                         )
                     )
+                    print "else r hours>>",  r.hours
             return r.days, compliance_status
     else:
         if completion_date is not None:  # Completed compliances

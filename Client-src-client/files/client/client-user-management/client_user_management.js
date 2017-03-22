@@ -246,7 +246,7 @@ userManagementPage.prototype.renderList = function(ul_legal, ul_users, c_name, b
             }
         });
     }
-    $('[data-toggle="tooltip"]').tooltip();
+    // $('[data-toggle="tooltip"]').tooltip();
 };
 
 
@@ -328,7 +328,7 @@ userManagementPage.prototype.renderUserList = function(le_id, cloneRow, ul_users
 
 
     });
-    $('[data-toggle="tooltip"]').tooltip();
+    // $('[data-toggle="tooltip"]').tooltip();
 };
 
 showEdit = function(user_id) {
@@ -339,7 +339,6 @@ showEdit = function(user_id) {
             listDomains_edit = response.ul_user_domains;
             listUnits_edit = response.ul_user_units;
             t_this.showEditView(listUser_edit, listLegalEntity_edit, listDomains_edit, listUnits_edit);
-
         } else {
             t_this.possibleFailures(error);
         }
@@ -350,6 +349,7 @@ showEdit = function(user_id) {
 userManagementPage.prototype.showEditView = function(listUser_edit, listLegalEntity_edit, listDomains_edit, listUnits_edit) {
     t_this = this;
     t_this.showAddScreen();
+    CURRENT_TAB = 1;
     if (listUser_edit.length != 0) {
         $.each(listUser_edit, function(k1, v1) {
             hdnUserId.val(v1.user_id);
@@ -515,10 +515,10 @@ showModalDialog = function(user_id, emp_name, isActive, unblock_days, isBlocked,
         divRemarks.show();
         if (isBlocked == true) {
             blocked_status = false;
-            statusmsg = message.disable_user_message;
+            statusmsg = message.enable_user_message;
         } else {
             blocked_status = true;
-            statusmsg = message.enable_user_message;
+            statusmsg = message.disable_user_message;
         }
     }
 
@@ -674,6 +674,8 @@ userManagementPage.prototype.blockuser = function(user_id, block_status, remarks
                 Custombox.close();
                 if (block_status) {
                     displaySuccessMessage(message.disable_success);
+                    um_page.clearValues();
+                    t_this.showList();
                 } else {
                     displaySuccessMessage(message.enable_success);
                 }
