@@ -67,6 +67,8 @@ __all__ = [
     "userManagement_GetGroupCategory",
     "userManagement_GetLegalEntity_Domain",
     "userManagement_GetLegalEntity_Units",
+    "userManagement_domains_for_Units",
+    "userManagement_legalentity_for_User",
     "userManagement_GetServiceProviders",
     "userManagement_list_GetLegalEntities",
     "userManagement_list_GetUsers",
@@ -508,7 +510,7 @@ def userManagement_GetGroupCategory(db):
 # User Management Add - Legal Entity Domains Prerequisite
 ##############################################################################
 def userManagement_GetLegalEntity_Domain(db):
-    q = "SELECT  T01.legal_entity_id, T01.domain_id, T02.domain_name " + \
+    q = "SELECT T01.legal_entity_id, T01.domain_id, T02.domain_name " + \
         " From tbl_legal_entity_domains AS T01 INNER JOIN tbl_domains as T02" + \
         " ON T01.domain_id = T02.domain_id WHERE T02.is_active=1 " + \
         " order by domain_name, legal_entity_id "
@@ -523,6 +525,28 @@ def userManagement_GetLegalEntity_Units(db):
         " From tbl_units where is_closed = '0' "
     row = db.select_all(q, None)
     return row
+##############################################################################
+# User Management Add - Units
+##############################################################################
+def userManagement_domains_for_Units(db, unit_id):
+    q = "select distinct t1.domain_id from tbl_domains as t1 " + \
+        "inner join tbl_units_organizations as t2 on t2.domain_id = t1.domain_id " + \
+        "inner join tbl_units as t3 on t3.unit_id = t2.unit_id AND is_closed = 0 AND t3.unit_id = %s "
+    row = db.select_all(q, [unit_id])
+    results = []
+    for r in row:
+        results.append(r["domain_id"])
+    return results
+##############################################################################
+# User Management Add - Units
+##############################################################################
+def userManagement_legalentity_for_User(db, user_id):
+    q = "select distinct legal_entity_id from tbl_user_legal_entities where user_id = %s "
+    row = db.select_all(q, [user_id])
+    results = []
+    for r in row:
+        results.append(r["legal_entity_id"])
+    return results
 ##############################################################################
 # User Management Add - Service Providers
 ##############################################################################

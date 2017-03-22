@@ -508,12 +508,13 @@ def process_UserManagement_LegalUnits(db):
         category_id = row["category_id"]
         unit_code = row["unit_code"]
         unit_name = row["unit_name"]
-        address = row["address"]
+        address = row["address"] 
         postal_code = str(row["postal_code"])
+        domains = userManagement_domains_for_Units(db, unit_id)
         unitList.append(
             clientcore.ClientLegalUnits_UserManagement(unit_id, business_group_id, legal_entity_id,
                                                        division_id, category_id, unit_code,
-                                                       unit_name, address, postal_code)
+                                                       unit_name, address, postal_code, domains)
         )
     return unitList
 ########################################################
@@ -573,12 +574,14 @@ def process_UserManagement_list_users(db, request, session_user, session_categor
         is_disable = bool(row["is_disable"])
         unblock_days = row["unblock_days"]
         seating_unit = row["seating_unit"]
+        legal_entity_ids = userManagement_legalentity_for_User(db, user_id)
+        # le_ids
         userList.append(
             clientcore.ClientUsers_UserManagementList(user_id, user_category_id,
                                                       employee_code, employee_name,
                                                       username, email_id,
                                                       mobile_no, legal_entity_id, is_active,
-                                                      is_disable, unblock_days, seating_unit)
+                                                      is_disable, unblock_days, seating_unit, legal_entity_ids)
         )
     return userList
 

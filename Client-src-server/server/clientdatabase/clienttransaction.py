@@ -1670,7 +1670,7 @@ def get_compliance_approval_count(db, session_user):
     if (is_two_levels_of_approval(db)):
         concur_condition = " %s AND IFNULL(concurrence_status, 0) != 1 "
         concur_condition = concur_condition % approval_condition
-        concur_count_condition = concur_condition + "  AND concurred_by = %s "
+        concur_count_condition = concur_condition + "  AND concurred_by = %s AND current_status in (1,2)"
         # AND current_status = 1
         concur_count_condition_val = [session_user]
         concur_count = db.get_data(
@@ -1684,7 +1684,7 @@ def get_compliance_approval_count(db, session_user):
         )
 
     approval_count_condition = approval_condition + " AND " + \
-        " approved_by = %s"
+        " approved_by = %s AND current_status = 1"
     approval_count_condition_val = [session_user]
     approval_count = db.get_data(
         tblComplianceHistory, columns, approval_count_condition,
@@ -1748,25 +1748,29 @@ def get_compliance_approval_list(
         condition = " AND ( IFNULL(approve_status, 0) = 0 " + \
             " OR (IFNULL(concurrence_status, 0) = 0 AND " + \
             " IFNULL(approve_status, 0) != 1)) AND " + \
-            " (concurred_by = %s OR approved_by = %s) "
+            " (concurred_by = %s OR approved_by = %s) AND current_status in (1,2) "
         # AND current_status = 1
         param.append(int(session_user))
         param.append(int(session_user))
     else:
         condition = " AND IFNULL(approve_status, 0) = 0 " + \
-            " AND approved_by = %s "
+            " AND approved_by = %s AND current_status = 1"
         param.append(int(session_user))
     param.extend([start_count, to_count])
     # print "query + condition", query + condition
     # print "order>>",order
     # print "param>>", param
 
+    print query + condition + order, param
+
     rows = db.select_all(query + condition + order, param)
     assignee_wise_compliances = {}
     assignee_id_name_map = {}
     approval_compliances = []
     count = 0
+    count_new = 0
     for row in rows:
+        
         no_of_days, ageing = calculate_ageing (
             due_date=row["due_date"],
             frequency_type=row["frequency_id"],
@@ -1797,17 +1801,20 @@ def get_compliance_approval_list(
                         file_name.append(name)
                     else:
                         file_name.append(file_name_part)
+
         concurred_by_id = None if(
             int(row["concurred_by"]) == -1
         ) else int(row["concurred_by"])
         approved_by_id = None if(
             int(row["approved_by"]) == -1
         ) else int(row["approved_by"])
+
         compliance_history_id = row["compliance_history_id"]
         start_date = datetime_to_string(row["start_date"])
         due_date = datetime_to_string(row["due_date"])
         documents = download_urls if len(download_urls) > 0 else None
         file_names = file_name if len(file_name) > 0 else None
+
         completion_date = None if(
                 row["completion_date"] is None
             ) else datetime_to_string(row["completion_date"])
@@ -1819,18 +1826,19 @@ def get_compliance_approval_list(
         ) else datetime_to_string(row["next_due_date"])
         concurred_by = None if (
             concurred_by_id is None
-            ) else get_user_name_by_id(
+            ) else get_user_name_by_id (
                 db, concurred_by_id
             )
+
         remarks = row["remarks"]
         compliance_name = row["compliance_task"]
         if row["document_name"] not in (None, "None", ""):
-            compliance_name = "%s - %s" % (
-                row["document_name"], compliance_name
-            )
+            compliance_name = "%s - %s" % ( row["document_name"], compliance_name )
         frequency = clientcore.COMPLIANCE_FREQUENCY(row["frequency"])
         description = row["compliance_description"]
-        concurrence_status = None if (row["concurrence_status"] in [None, "None", ""]) else bool(int(row["concurrence_status"]))
+        # concurrence_status = None if (row["concurrence_status"] in [None, "None", ""]) else bool(int(row["concurrence_status"]))
+        concurrence_status = False
+
         statutory_dates = [] if (
             row["statutory_dates"] is [None, "None", ""]
         ) else json.loads(row["statutory_dates"])
@@ -1850,39 +1858,31 @@ def get_compliance_approval_list(
             date_list.append(s_date)
 
         domain_name = row["domain_name"]
+
         action = None
+        print concurred_by_id, session_user, concurrence_status, approved_by_id
         if is_two_levels:
-            if(
-                concurred_by_id == session_user and
-                concurrence_status in [False, None]
-            ):
+            if(concurred_by_id == session_user and concurrence_status in [False, None]):
                 action = "Concur"
-            elif(
-                concurrence_status is True and
-                int(session_user) == approved_by_id
-            ):
+            elif(concurrence_status is True and int(session_user) == approved_by_id):
                 action = "Approve"
             elif concurred_by_id is None and session_user == approved_by_id:
                 action = "Approve"
             else:
                 continue
-        elif(
-            concurred_by_id != session_user and
-            session_user == approved_by_id
-        ):
+        elif(concurred_by_id != session_user and session_user == approved_by_id):
             action = "Approve"
         else:
             continue
+
+        count_new += 1
         assignee = row["employee_name"]
-
-
 
         if assignee not in assignee_id_name_map:
             assignee_id_name_map[assignee] = row["completed_by"]
         if assignee not in assignee_wise_compliances:
             assignee_wise_compliances[assignee] = []
         count += 1
-        print "(", assignee, ")"
 
         approval_compliances.append(
             clienttransactions.APPROVALCOMPLIANCE(
@@ -1895,6 +1895,7 @@ def get_compliance_approval_list(
                 assignee_id_name_map[assignee], assignee
             )
         )
+    print count_new, count
     return approval_compliances, count
 
 def save_compliance_activity(
