@@ -4519,7 +4519,6 @@ CREATE PROCEDURE `sp_clientstatutories_list`(
 )
 
 BEGIN
-
     select distinct t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
     (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
@@ -4654,7 +4653,7 @@ select t4.unit_id, t4.unit_code, t4.unit_name, t4.address, geo.geography_name ,
             and t5.organisation_id = t2.organisation_id
             left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
             and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
-            left join tbl_client_statutories as cs on t4.unit_id = cs.unit_id
+            left join tbl_client_statutories as cs on t4.unit_id = cs.unit_id and cs.domain_id = domainid
              where t1.is_active = 1 and t1.is_approved in (2, 3)
              and t6.compliance_id is null
              and t3.geography_id IN
