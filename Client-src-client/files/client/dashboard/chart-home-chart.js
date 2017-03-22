@@ -27,7 +27,7 @@ function updateComplianceStatusStackBarChart(data) {
       labels: {
         style: {
           cursor: 'pointer',
-          color: 'blue',
+          color: '#337ab7',
           textDecoration: 'underline'
         },
         useHTML: true,
@@ -36,6 +36,12 @@ function updateComplianceStatusStackBarChart(data) {
         }
       },
       tooltip: { pointFormat: 'sfosdfksdfjds' }
+    },
+    legend: {
+      itemStyle: {
+         "fontWeight": "normal",
+         "fontSize": "11px",
+      }
     },
     yAxis: {
       min: 0,
@@ -241,14 +247,29 @@ function updateEscalationChart(data) {
       title: { text: 'Total Compliances' },
       allowDecimals: false
     },
+    legend: {
+      reversed: true,
+      itemStyle: {
+          fontWeight:'normal',
+          fontSize:'11px'
+      }
+    },
+    tooltip: {
+      headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+      pointFormat: '<tr><td style="padding:0">{series.name}: </td>' +
+          '<td style="padding:0"><b>{point.y:.0f}</b></td></tr>',
+      footerFormat: '</table>',
+      shared: true,
+      useHTML: true
+    },
     plotOptions: {
       series: {
         pointWidth: 40,
-        groupPadding: 0.4,
-        pointPadding: -0,
-        pointPlacement: -0
       },
       column: {
+        pointPadding: 0,
+        groupPadding: 0.26,
+        borderWidth: 0,        
         dataLabels: {
           enabled: true,
           textShadow: null,
@@ -283,7 +304,7 @@ function updateNotCompliedChart(data) {
       type: 'pie',
       options3d: {
         enabled: true,
-        alpha: 55
+        alpha: 30
       }
     },
     title: { text: chartTitle },
@@ -291,9 +312,15 @@ function updateNotCompliedChart(data) {
     credits: { enabled: false },
     tooltip: {
       headerFormat: '',
-      pointFormat: '<span>{point.name} days</span>: <b>{point.y:.0f}</b> out of ' + total
+      pointFormat: '<span>{point.name}</span>: <b>{point.y:.0f}</b> out of ' + total
     },
-    legend: { enabled: true },
+    legend: {
+      reversed: true,
+      itemStyle: {
+          fontWeight:'normal',
+          fontSize:'11px'
+      }
+    },
     plotOptions: {
       pie: {
         allowPointSelect: true,
@@ -325,6 +352,7 @@ function updateNotCompliedChart(data) {
 // Trend  chart
 //
 function updateTrendChart(data) {
+
   data = prepareTrendChartData(data);
   print_data = JSON.stringify(data, null, ' ');
   xAxis = data[0];
@@ -608,7 +636,6 @@ function ChartInput() {
     }
   };
   this.setLegalEntities = function (v, isAdd, isSingle) {
-    console.log(v+"--"+isAdd+"--"+isSingle);
     v = parseInt(v);
     index = this.legal_entities.indexOf(v);
     if (index >= 0 && !isAdd) {
@@ -622,7 +649,6 @@ function ChartInput() {
         this.legal_entities.push(v);
       }
     }
-    console.log(this.legal_entities);
   };
   this.setLegalEntitiesAll = function (legal_entities) {
     this.legal_entities = copyArray(legal_entities);
@@ -632,10 +658,8 @@ function ChartInput() {
     return selectedLegalentity[0]['le_id'];
   };
   this.getLegalEntities = function () {
-    console.log("getLegalEntities");
     // leids = client_mirror.getSelectedLegalEntity();
     // this.legal_entities = $.map(leids, function(element,index) {return element.le_id});
-    console.log("this.legal_entities.length--"+this.legal_entities.length)
     if (this.legal_entities.length > 0)
       return copyArray(this.legal_entities);
     else {
@@ -668,7 +692,6 @@ function ChartInput() {
     this.divisions = copyArray(divisions);
   };
   this.getDivisions = function () {
-    console.log("getDivisions");
     if (this.divisions.length > 0)
       return copyArray(this.divisions);
     else {
@@ -701,7 +724,6 @@ function ChartInput() {
     this.categories = copyArray(categories);
   };
   this.getCategories = function () {
-    console.log("getCategories");
     if (this.categories.length > 0)
       return copyArray(this.categories);
     else {
@@ -734,7 +756,7 @@ function ChartInput() {
     this.units = copyArray(units);
   };
   this.getUnits = function () {
-    console.log("getUnits");
+
     if (this.units.length > 0)
       return copyArray(this.units);
     else {
@@ -900,7 +922,7 @@ function loadCountries() {
   for (var i = 0; i < countries.length; i++) {
     var country = countries[i];
     var option = getOptionElement(country.c_id, country.c_name, true);
-    console.log("option--"+option);
+
     $('.country-filter').append(option).multiselect('rebuild');
   }
 }
@@ -1130,7 +1152,6 @@ function initializeFilters() {
 
   countries = get_ids(CHART_FILTERS_DATA.countries, 'c_id');
   chartInput.setCountriesAll(countries);
-  console.log("countrie==s"+countries)
 
   $('.country-filter').multiselect({
     buttonWidth: '100%',
@@ -1593,7 +1614,6 @@ function prepareEscalationChartdata(source_data) {
   }
   chart_data = sortJSON(chart_data,'chart_year', '123');  //asc order by filter_type_id
 
-  console.log("###"+chart_data);
 
   var chartDataSeries = [];
   delayed_data = [];
@@ -1660,10 +1680,10 @@ function prepareTrendChartData(source_data) {
   var chartDataSeries = [];
   var total_count = [];
 
-  xAxis = source_data.years;
   final_data = {}
   for (var i = 0; i < source_data.trend_data.length; i++) {
     chartData = source_data.trend_data[i];
+    chart_year.push(chartData.chart_year);
     var filter_type_id = chartData.filter_id;
     var filterTypeInput = getFilterTypeInput();
     if (filterTypeInput.indexOf(filter_type_id) == -1)
@@ -1704,11 +1724,12 @@ function prepareTrendChartData(source_data) {
     }
   }
 
+  xAxis = [];
   $.each(final_data, function(k, v) {
     chartDataSeries.push(v);
 
     $.each(v['data'], function(idx, v1) {
-      index = xAxis.indexOf(v1['years']);
+      index = xAxis.indexOf(v1['year']);
       if (index == -1) {
         xAxis.push(v1['year']);
       }
@@ -1734,30 +1755,30 @@ function prepareNotCompliedChart(source_data) {
       v_visible = false;
     else
       v_visible = true;
-    if (key == 'T_31_to_60_days_count') {
-      chartDataSeries.push({
-        name: 'Below 60',
-        y: item,
-        drilldown: 'Below 60',
-        visible: v_visible
-      });
-    } else if (key == 'T_0_to_30_days_count') {
-      chartDataSeries.push({
-        name: 'Below 30',
+    if (key == 'T_0_to_30_days_count') {
+      chartDataSeries.unshift({
+        name: '0-30 days',
         y: item,
         drilldown: 'Below 30',
         visible: v_visible
       });
+    } else if (key == 'T_31_to_60_days_count') {
+      chartDataSeries.push({
+        name: '31-60 days',
+        y: item,
+        drilldown: 'Below 60',
+        visible: v_visible
+      });
     } else if (key == 'T_61_to_90_days_count') {
       chartDataSeries.push({
-        name: 'Below 90',
+        name: '61-90 days',
         y: item,
         drilldown: 'Below 90',
         visible: v_visible
       });
     } else if (key == 'Above_90_days_count') {
       chartDataSeries.push({
-        name: 'Above 90',
+        name: 'Above 90 days',
         y: item,
         drilldown: 'Above 90',
         visible: v_visible

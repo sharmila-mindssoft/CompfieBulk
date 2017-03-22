@@ -986,30 +986,73 @@ class Database(object):
                 save_notification_users(notification_id, concurrence_person)
 
     def get_onoccurance_compliance_to_notify(self):
-        q = " select ch.compliance_history_id,ch.compliance_id,com.compliance_task, com.document_name, " + \
-            " ch.unit_id,ch.start_date,ch.due_date, " + \
-            "if (  " + \
-            " TIMESTAMPDIFF(HOUR, DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i'), due_date ) <= 24, " + \
-            "    concat(TIMESTAMPDIFF(HOUR, DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i'), due_date ), ' hours'), " + \
-            "    concat(TIMESTAMPDIFF(DAY, DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i'), due_date ), ' days') " + \
-            ")as hours_left, " + \
-            " usr.email_id, usr.employee_code, usr.employee_name, " + \
-            " u.country_id, com.domain_id, u.business_group_id, u.legal_entity_id, u.division_id, u.unit_code, u.unit_name,  " + \
-            " ch.completed_by, ch.concurred_by, ch.approved_by   " + \
-            " from tbl_compliance_history ch " + \
-            " inner join tbl_compliances as com on ch.compliance_id = com.compliance_id " + \
-            " inner join tbl_users as usr on ch.completed_by = usr.user_id " + \
-            " inner join tbl_units as u on ch.unit_id = u.unit_id " + \
-            " where com.frequency_id = 5 and ch.current_status < 3 " + \
-            " and DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i')  " + \
-            " >= DATE_FORMAT(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:15'),'%Y-%m-%d %H:%i') " + \
-            " and DATE_FORMAT((DATE_SUB(ch.due_date, INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i')  " + \
-            " <= DATE_FORMAT(CONVERT_TZ(UTC_TIMESTAMP,'+00:00','+05:30'),'%Y-%m-%d %H:%i') "
+        q = "SELECT ch.compliance_history_id,ch.compliance_id,com.compliance_task,com.document_name,ch.unit_id, " + \
+            " ch.start_date,ch.due_date, IF(TIMESTAMPDIFF(HOUR, " + \
+            "DATE_FORMAT((DATE_SUB(ch.due_date,INTERVAL (TIMESTAMPDIFF(SECOND,ch.start_date,ch.due_date) / 2) SECOND)),'%Y-%m-%d %H:%i'),due_date) <= 24, " + \
+            " IF(TIMESTAMPDIFF(SECOND, " + \
+            "     DATE_FORMAT((DATE_SUB(ch.due_date, " + \
+            "                 INTERVAL (TIMESTAMPDIFF(SECOND, " + \
+            "                     ch.start_date, " + \
+            "                     ch.due_date) / 2) SECOND)), " + \
+            "             '%Y-%m-%d %H:%i'), " + \
+            "     due_date) <= 60, " + \
+            " CONCAT(TIMESTAMPDIFF(SECOND, " + \
+            "             DATE_FORMAT((DATE_SUB(ch.due_date, " + \
+            "                         INTERVAL (TIMESTAMPDIFF(SECOND, " + \
+            "                             ch.start_date, " + \
+            "                             ch.due_date) / 2) SECOND)), " + \
+            "                     '%Y-%m-%d %H:%i'), " + \
+            "             due_date), " + \
+            "         ' seconds'), " + \
+            " CONCAT(TIMESTAMPDIFF(HOUR, " + \
+            "             DATE_FORMAT((DATE_SUB(ch.due_date, " + \
+            "                         INTERVAL (TIMESTAMPDIFF(SECOND, " + \
+            "                             ch.start_date, " + \
+            " ch.due_date) / 2) SECOND)), " + \
+            "                    '%Y-%m-%d %H:%i'), " + \
+            "             due_date), " + \
+            "         ' hours')), " + \
+            " CONCAT(TIMESTAMPDIFF(DAY, " + \
+            "             DATE_FORMAT((DATE_SUB(ch.due_date, " + \
+            "                         INTERVAL (TIMESTAMPDIFF(SECOND, " + \
+            "                             ch.start_date, " + \
+            "                             ch.due_date) / 2) SECOND)), " + \
+            "                     '%Y-%m-%d %H:%i'), " + \
+            "             due_date), " + \
+            "         ' days')) AS hours_left, " + \
+            "usr.email_id, usr.employee_code, usr.employee_name, u.country_id, " + \
+            " com.domain_id, u.business_group_id, u.legal_entity_id, u.division_id, u.unit_code, " + \
+            " u.unit_name,ch.completed_by,ch.concurred_by,ch.approved_by " + \
+            " FROM " + \
+            "     tbl_compliance_history ch " + \
+            "         INNER JOIN " + \
+            "     tbl_compliances AS com ON ch.compliance_id = com.compliance_id " + \
+            "         INNER JOIN " + \
+            "     tbl_users AS usr ON ch.completed_by = usr.user_id " + \
+            "         INNER JOIN " + \
+            "     tbl_units AS u ON ch.unit_id = u.unit_id " + \
+            " WHERE " + \
+            "     com.frequency_id = 5 " + \
+            "         AND ch.current_status < 3 " + \
+            "         AND DATE_FORMAT((DATE_SUB(ch.due_date, " + \
+            "                 INTERVAL (TIMESTAMPDIFF(SECOND, " + \
+            "                     ch.start_date, " + \
+            "                     ch.due_date) / 2) SECOND)), " + \
+            "             '%Y-%m-%d %H:%i') >= DATE_FORMAT(CONVERT_TZ(UTC_TIMESTAMP, '+00:00', '+05:15'), " + \
+            "             '%Y-%m-%d %H:%i') " + \
+            "         AND DATE_FORMAT((DATE_SUB(ch.due_date, " + \
+            "                 INTERVAL (TIMESTAMPDIFF(SECOND, " + \
+            "                     ch.start_date, " + \
+            "                     ch.due_date) / 2) SECOND)), " + \
+            "             '%Y-%m-%d %H:%i') <= DATE_FORMAT(CONVERT_TZ(UTC_TIMESTAMP, '+00:00', '+05:30'), " + \
+            "             '%Y-%m-%d %H:%i')"
 
         email = EmailHandler()
+
         rows = self.select_all(q)
+        print rows
         for r in rows :
-            print rows
+
             country_id = r["country_id"]
             domain_id = r["domain_id"]
             ch_id = r["compliance_history_id"]

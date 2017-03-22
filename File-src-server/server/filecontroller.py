@@ -10,7 +10,7 @@ def process_file_based_request(request):
     request = request.request
 
     client_id = session.split('-')[0]
-
+    print client_id
     if type(request) is fileprotocol.UploadComplianceTaskFile :
         result = upload_file(request, client_id)
 

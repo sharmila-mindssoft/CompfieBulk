@@ -3031,7 +3031,7 @@ BEGIN
         SELECT deletion_period FROM tbl_auto_deletion tua
         WHERE tua.client_id=tu.client_id
         and tua.legal_entity_id = tu.legal_entity_id and tua.unit_id = tu.unit_id
-    ) as deletion_period, address FROM tbl_units tu where tu.is_approved = 1;
+    ) as deletion_period, concat(address,' - ',postal_code) as address FROM tbl_units tu where tu.is_approved = 1;
 END //
 
 DELIMITER ;
@@ -4519,7 +4519,6 @@ CREATE PROCEDURE `sp_clientstatutories_list`(
 )
 
 BEGIN
-
     select distinct t.client_statutory_id, t.client_id, t2.legal_entity_id, t.unit_id, t1.domain_id, t2.unit_name, t2.unit_code,
     (select domain_name from tbl_domains where domain_id = t1.domain_id) as domain_name,
     (select country_name from tbl_countries where country_id = t2.country_id) as country_name,
@@ -4564,7 +4563,8 @@ BEGIN
     (select category_name from tbl_categories where category_id = t2.category_id) as category_name,
     (select geography_name from tbl_geographies where geography_id = t2.geography_id) as geography_name ,
     t.status, t.reason,
-    (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and client_statutory_id = t1.client_statutory_id) as rcount
+    (select count(compliance_id) from tbl_client_compliances where is_approved = 2 and 
+    client_statutory_id = t1.client_statutory_id and unit_id = t1.unit_id and domain_id = t1.domain_id) as rcount
     from tbl_client_statutories as t
     inner join tbl_client_compliances as t1 on t.client_statutory_id = t1.client_statutory_id
     inner join tbl_units as t2 on t1.unit_id = t2.unit_id
@@ -4653,7 +4653,7 @@ select t4.unit_id, t4.unit_code, t4.unit_name, t4.address, geo.geography_name ,
             and t5.organisation_id = t2.organisation_id
             left join tbl_client_compliances t6 on t6.compliance_id = t1.compliance_id
             and t4.unit_id = t6.unit_id and t.domain_id = t6.domain_id
-            left join tbl_client_statutories as cs on t4.unit_id = cs.unit_id
+            left join tbl_client_statutories as cs on t4.unit_id = cs.unit_id and cs.domain_id = domainid
              where t1.is_active = 1 and t1.is_approved in (2, 3)
              and t6.compliance_id is null
              and t3.geography_id IN
