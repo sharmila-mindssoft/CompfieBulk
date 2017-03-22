@@ -1361,3 +1361,27 @@ h2.chart-title: hover {
 .multi-um label.checkbox {
     padding-left: 40px !important;
 }
+
+.loading-indicator-spin{
+    display:none;
+    height:100%;
+    left:0;position:absolute;
+    text-align:center;
+    top:0;
+    vertical-align:middle;
+    width:100%;
+    background-color:#36404a;
+    opacity:.8;
+    transition-duration:.5s;
+    z-index:10001
+}
+
+.loading-indicator-spin span{
+    width:100%;
+    position:fixed;top:40%;
+    left:0;text-align:center
+}
+
+.loading-indicator-spin i{
+    width:auto;opacity:100%
+}
