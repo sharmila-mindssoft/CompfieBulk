@@ -1130,8 +1130,8 @@ userManagementPage.prototype.selectAllUnits = function() {
                 } else {
                     $(el).addClass('active');
                     $(el).find('i').addClass('fa fa-check pull-right');
-                    var chkid = $(el).attr('id');
-                    ACTIVE_UNITS.push(chkid);
+                    if (jQuery.inArray($(el).attr('id'), ACTIVE_UNITS) === -1)
+                        ACTIVE_UNITS.push($(el).attr('id'));
                 }
             } else {
                 if ($(el).hasClass('heading')) {
@@ -1158,7 +1158,6 @@ userManagementPage.prototype.loadUnits = function() {
         legalEntity_ids = getLegalEntityIds();
         var le_name = "";
         var u_ids = [];
-        // alert(selected_domain.toSource());
         $.each(selected_domain, function(le_domain_id, legalentity_name) {
             var arr = le_domain_id.split("-");
             var legalentity_id = arr[0];
