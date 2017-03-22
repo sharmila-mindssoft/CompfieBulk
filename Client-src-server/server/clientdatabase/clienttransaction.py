@@ -231,7 +231,7 @@ def get_clien_users_by_unit_and_domain(db, le_id, unit_ids, domain_id):
         "t1.user_id = t3.user_id and t5.legal_entity_id = t3.legal_entity_id " + \
         "left join tbl_service_providers as t4 " + \
         "on t1.service_provider_id = t4.service_provider_id " + \
-        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t5.legal_entity_id = %s; "
+        "where t1.user_category_id = 1 or t2.form_id in (9, 35) and t1.is_active = 1 and t1.is_disable = 0 and t5.legal_entity_id = %s; "
 
     print q1 % (le_id)
     row1 = db.select_all(q1, [le_id])
@@ -651,7 +651,7 @@ def get_units_to_assig(db, domain_id, session_user, session_category):
             "WHERE t1.domain_id = %s " + \
             "group by t1.unit_id) as c_details " + \
             "INNER JOIN  " + \
-            "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id " + \
+            "    tbl_units AS t3 ON t3.unit_id = c_details.unit_id and t3.is_closed = 0 " + \
             "where c_details.unassigned > 0 " + \
             "ORDER BY t3.unit_name"
         # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
@@ -3239,6 +3239,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.assignee = usr.user_id and usr.is_active = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
+            "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) " + \
             "Where ac.assignee = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s, 1) " + \
             "Group by ac.unit_id) " + \
@@ -3250,6 +3251,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.concurrence_person = usr.user_id and usr.is_active = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
+            "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) " + \
             "Where ac.concurrence_person =%s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id) " + \
@@ -3261,6 +3263,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "inner join tbl_units as unt on ac.unit_id = unt.unit_id and unt.is_closed = 0 " + \
             "inner join tbl_users as usr on ac.approval_person = usr.user_id and usr.is_active = 1 " + \
             "left join tbl_compliance_history as ch on ac.compliance_id = ch.compliance_id and ac.unit_id = ch.unit_id " + \
+            "AND (ac.assignee = ch.completed_by OR ac.concurrence_person = ch.concurred_by OR ac.approval_person = ch.approved_by) " + \
             "Where ac.approval_person = %s and ac.domain_id = %s " + \
             "and IF(%s IS NOT NULL, ac.unit_id = %s,1) " + \
             "Group by ac.unit_id)) as t1 " + \
@@ -3268,6 +3271,7 @@ def get_units_to_reassig(db, domain_id, user_id, user_type, unit_id, session_use
             "ORDER BY user_type,unit_id;"
         param = [user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type]
 
+        print query % (user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_id, domain_id, unit_id, unit_id, user_type, user_type)
     else :
         # query = "select t1.unit_id, t1.unit_name, t1.unit_code, t1.postal_code, t1.address," + \
         #     "t2.ccount, t2.domain_id " + \

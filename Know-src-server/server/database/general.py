@@ -626,10 +626,16 @@ def get_audit_trails(
 def get_user_cetegories_audit_trail(db):
     userCategoryList = []
     rows = db.call_proc("sp_audit_trail_usercategory_list", None)
+    j = 0
     for row in rows:
+        j = j + 1
         userCategoryList.append(core.UserCategory(
             row["user_category_id"], row["user_category_name"])
         )
+    j = j + 1
+    userCategoryList.append(core.UserCategory(
+        j, "Client"
+    ))
     return userCategoryList
 
 ###############################################################################

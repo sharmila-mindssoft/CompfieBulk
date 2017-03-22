@@ -714,7 +714,8 @@ def start_on_occurrence_task(
     if concurrence_id is not None :
         users.append(concurrence_id)
 
-    update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
+    if due_date is not None:
+        update_task_status_in_chart(db, country_id, domain_id, unit_id, due_date, users)
 
     # Audit Log Entry
     action = "Compliances started \"%s\"" % (compliance_name)
