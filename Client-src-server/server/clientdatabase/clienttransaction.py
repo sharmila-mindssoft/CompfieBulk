@@ -448,7 +448,7 @@ def return_compliance_for_statutory_settings(
 
 
 def return_statutory_settings(data, session_category):
-    unit_wise_statutories = {}
+    unit_wise_statutories = []
     for d in data:
         domain_name = d["domain_name"]
         unit_id = d["unit_id"]
@@ -464,36 +464,51 @@ def return_statutory_settings(data, session_category):
         else :
             allow_nlock = False
 
-        unit_statutories = unit_wise_statutories.get(unit_id)
-        if unit_statutories is None:
-            # statutory_dict = {}
-            # statutory_dict[domain_name] = statutory_val
-            unit_statutories = clienttransactions.UnitStatutoryCompliances(
-                unit_id,
-                unit_name,
-                address,
-                domain_name,
-                bool(d["is_new"]),
-                bool(d["is_locked"]),
-                allow_nlock,
-                d["updatedby"],
-                datetime_to_string(d["updated_on"]),
-                d["total"], d["domain_id"],
-                d["geography_name"]
-            )
-        else:
-            domain_list = unit_statutories.domain_names
-            domain_list.append(domain_name)
-            domain_list = list(set(domain_list))
-            unit_statutories.domain_names = domain_list
-            # unit_statutories.statutories = statutory_dict
-        unit_wise_statutories[unit_id] = unit_statutories
-    lst = []
-    for k in sorted(unit_wise_statutories):
-        lst.append(unit_wise_statutories.get(k))
+        unit_statutories = clienttransactions.UnitStatutoryCompliances(
+            unit_id,
+            unit_name,
+            address,
+            domain_name,
+            bool(d["is_new"]),
+            bool(d["is_locked"]),
+            allow_nlock,
+            d["updatedby"],
+            datetime_to_string(d["updated_on"]),
+            d["total"], d["domain_id"],
+            d["geography_name"]
+        )
+        unit_wise_statutories.append(unit_statutories)
+        
+        # unit_statutories = unit_wise_statutories.get(unit_id)
+        # if unit_statutories is None:
+        #     # statutory_dict = {}
+        #     # statutory_dict[domain_name] = statutory_val
+        #     unit_statutories = clienttransactions.UnitStatutoryCompliances(
+        #         unit_id,
+        #         unit_name,
+        #         address,
+        #         domain_name,
+        #         bool(d["is_new"]),
+        #         bool(d["is_locked"]),
+        #         allow_nlock,
+        #         d["updatedby"],
+        #         datetime_to_string(d["updated_on"]),
+        #         d["total"], d["domain_id"],
+        #         d["geography_name"]
+        #     )
+        # else:
+        #     domain_list = unit_statutories.domain_names
+        #     domain_list.append(domain_name)
+        #     domain_list = list(set(domain_list))
+        #     unit_statutories.domain_names = domain_list
+        #     # unit_statutories.statutories = statutory_dict
+        # unit_wise_statutories[unit_id] = unit_statutories
+    # lst = []
+    # for k in sorted(unit_wise_statutories):
+    #     lst.append(unit_wise_statutories.get(k))
 
     return clienttransactions.GetStatutorySettingsSuccess(
-        lst
+        unit_wise_statutories
     )
 
 
