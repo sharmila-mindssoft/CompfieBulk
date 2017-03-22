@@ -106,15 +106,15 @@ function load_compliances(compliancesList) {
 
             $('.btn-submit', clone1).attr('id', sno);
             $('.btn-submit', clone1).on('click', function() {
-                if ($('.startdate').val().trim() == "") {
+                if ($('.startdate', clone1).val().trim() == "") {
                     displayMessage(message.startdate_required);
                     return false;
-                } else if ($('.remarks').val().trim() == "") {
+                } else if ($('.remarks', clone1).val().trim() == "") {
                     displayMessage(message.remarks_required);
                     return false;
                 } else {
                     complianceId = value.compliance_id;
-                    thisval = $(this).closest('tr').find('.sno').html();
+                    thisval = $(this, clone1).closest('tr').find('.sno').html();
                     unitId = value.unit_id;
                     complete_within_days = value.complete_within_days;
                     Custombox.open({
@@ -126,15 +126,28 @@ function load_compliances(compliancesList) {
 
             $('.tbody-compliances-list').append(clone1);
 
-            $('#startdate' + sno).datetimepicker({
-                changeMonth: true,
-                changeYear: true,
-                numberOfMonths: 1,
-                dateFormat: 'dd-M-yy',
-                monthNames: [
-                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-                ]
-            });
+            if ((value.complete_within_days).indexOf("Hour(s)") > -1) {
+                $('#startdate' + sno).datetimepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    numberOfMonths: 1,
+                    dateFormat: 'dd-M-yy',
+                    monthNames: [
+                        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                    ]
+                });
+            } else {
+                $('#startdate' + sno).datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    numberOfMonths: 1,
+                    dateFormat: 'dd-M-yy',
+                    monthNames: [
+                        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                    ]
+                });
+            }
+
         });
     }
     if (totalRecord == 0) {
@@ -154,6 +167,7 @@ function load_compliances(compliancesList) {
 function convert_date(data) {
     var datetime = data.split(' ');
     var date = datetime[0].split('-');
+    var time = datetime[1].split(':');
     var months = [
         'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
@@ -165,7 +179,7 @@ function convert_date(data) {
     if (date[1] < 10) {
         date[1] = '0' + date[1];
     }
-    return new Date(date[2], date[1] - 1, date[0]);
+    return new Date(date[2], date[1] - 1, date[0], time[0], time[1]);
 }
 
 //start on occurrence compliance
@@ -177,9 +191,14 @@ function submitOnOccurence(complianceId, thisval, unitId, complete_within_days, 
     var d = new Date();
     var month = d.getMonth() + 1;
     var day = d.getDate();
-    var output = d.getFullYear() + '/' + month + '/' + day;
+    var hour = d.getHours();
+    var minutes = d.getMinutes();
+    var output = d.getFullYear() + '/' + month + '/' + day + ' ' + hour + ":" + minutes;
     var currentDate = new Date(output);
     if (startdate != '') {
+        if ((complete_within_days).indexOf("Hour(s)") == -1) {
+            startdate = startdate + " 00:00";
+        }
         var convertDueDate = convert_date(startdate);
         if (convertDueDate > currentDate) {
             displayMessage(message.startdate_greater_today);
