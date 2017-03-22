@@ -2794,6 +2794,7 @@ function initClientMirror() {
     }
 
     function downloadTaskFile(le_id, c_id, d_id, u_id, start_date, file_name) {
+        console.log(le_id+"--"+c_id+"--"+ d_id+"--"+ u_id+"--"+ start_date+"--"+ file_name);
         var request = [
             "DownloadFile", {
                 "le_id": le_id,

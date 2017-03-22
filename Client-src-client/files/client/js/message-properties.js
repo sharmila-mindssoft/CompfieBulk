@@ -161,7 +161,7 @@ var message = {
     'concurrence_required': 'Concurrence Required',
     'approval_required': 'Approval Required',
     'compliance_duedate_required': 'Due date Required in Select Compliance Task Wizard',
-    'compliance_triggerdate_required': 'Trigger date Required in Select Compliance Task Wizard',
+    'compliance_triggerdate_required': 'Trigger before days Required in Select Compliance Task Wizard',
     'nocompliance_selected_forassign': 'No compliance selected for assign',
     'reason_required': 'Reason Required',
     'startdate_greater_today': 'Start date is greater than today"s date',

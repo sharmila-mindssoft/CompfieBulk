@@ -1160,8 +1160,14 @@ function pageControls(){
 
 //validation on third wizard
 function validate_thirdtab() {
-    if ($('.assigneelist.active').text() == '' && $('.concurrencelist.active').text() == '' && $('.approvallist.active').text() == '' ) {
-        displayMessage(message.atleast_one_user_required_reassign);
+    if ($('.assigneelist.active').text() == '') {
+        displayMessage(message.assignee_required);
+        return false;
+    } else if ($('.concurrencelist.active').text() == '' && two_level_approve) {
+        displayMessage(message.concurrence_required);
+        return false;
+    } else if ($('.approvallist.active').text() == '') {
+        displayMessage(message.approval_required);
         return false;
     } else if (Reason.val() == '') {
         displayMessage(message.reason_required);
@@ -1169,6 +1175,15 @@ function validate_thirdtab() {
     } else {
         return true;
     }
+    /*if ($('.assigneelist.active').text() == '' && $('.concurrencelist.active').text() == '' && $('.approvallist.active').text() == '' ) {
+        displayMessage(message.atleast_one_user_required_reassign);
+        return false;
+    } else if (Reason.val() == '') {
+        displayMessage(message.reason_required);
+        return false;
+    } else {
+        return true;
+    }*/
 }
 
 function loadEntityDetails(){
