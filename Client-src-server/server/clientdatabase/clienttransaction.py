@@ -3144,17 +3144,30 @@ def return_review_settings_compliance(data):
             )
             date_list.append(s_date)
         unit_ids = [int(x) for x in d["unit_ids"].split(',')]
+
         s_maps = json.loads(d["statutory_mapping"])
-        statutories = s_maps[0].split(">>")
-        level_1_statutory_name = statutories[0].strip()
+        mappings = s_maps[0].split('>>')
+        statutory_name = mappings[0].strip()
+        statutory_name = statutory_name.strip()
+        if len(mappings) > 1:
+            statutory_provision = "%s - %s" % (
+                ','.join(mappings[1:]),
+                d["statutory_provision"]
+            )
+        else:
+            statutory_provision = d["statutory_provision"]
+
+        # s_maps = json.loads(d["statutory_mapping"])
+        # statutories = s_maps[0].split(">>")
+        # level_1_statutory_name = statutories[0].strip()
+
         results.append(
             clientcore.ReviewSettingsCompliance(
-                d["compliance_id"], d["compliance_task"], d["statutory_provision"],
+                d["compliance_id"], d["compliance_task"], statutory_provision,
                 d["repeats_every"], d['repeats_type_id'], date_list,
-                unit_ids, level_1_statutory_name
+                unit_ids, statutory_name
             )
         )
-        print  d["compliance_id"], d["compliance_task"], d["statutory_provision"], d["repeats_every"], d['repeats_type_id'], date_list, unit_ids, level_1_statutory_name
     return results
 
 

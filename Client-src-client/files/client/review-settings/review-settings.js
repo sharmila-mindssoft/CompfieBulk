@@ -488,7 +488,12 @@ loadCompliances = function(){
                             // $('.comp-checkbox', clone2);
                         });                        
                     }else{
-                        var tdchecklist = tableelement.find("input:checkbox.comp-checkbox").prop("checked", false);
+                        //var tdcheckbox = $(this).prop("checked", false).triggerHandler('click');
+                        $.each(tableelement.find('input:checkbox.comp-checkbox'), function(){
+
+                            var tdchecklist = tableelement.find("input:checkbox.comp-checkbox").prop("checked", false);
+                            $(this).prop("checked", false).triggerHandler('click');
+                        });
                     }
                 });
                 $('.accordion-div').append(clone);
@@ -510,8 +515,7 @@ loadCompliances = function(){
             $('#checkbox2', clone2).click(function(){
                 if($(this).prop("checked") == true){
                     $(".due-date-div", clone2).empty();
-                    $(".trigger-div", clone2).empty();
-                    selectedcompliance += 1;
+                    $(".trigger-div", clone2).empty();                    
                     var sdates = value.s_dates;
                     $(".repeat-every", clone2).show();
                     $(".review", clone2).show();
@@ -565,10 +569,11 @@ loadCompliances = function(){
                         dateFormat: 'dd-M-yy',
                         monthNames: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov','Dec']
                     });                  
+                    selectedcompliance += 1;
                     SelectedCount.html(selectedcompliance);
                 }
                 else{
-                    selectedcompliance -= 1;
+                    selectedcompliance = selectedcompliance - 1;
                     SelectedCount.html(selectedcompliance);
                     $(".repeat-every", clone2).hide();
                     $(".review", clone2).hide();
@@ -782,10 +787,13 @@ SubmitButton.on("click", function(){
             client_mirror.saveReviewSettingsCompliance(parseInt(le_id), selected_compliances_list, function(error, response) {
                 if (error == null) {
                     displaySuccessMessage(message.save_success);
+                    le_id = null;
                     BusinessGroupSelect.find("option").removeAttr("selected");
                     LegalEntitySelect.find("option").removeAttr("selected");
+                    FType.find("option:gt(0)").remove();
                     Domain.val('');
                     DomainId.val('');
+                    ACTIVE_UNITS = [];
                     UnitList.empty();
                     $(".step-1-unit-list").hide();
                     CURRENT_TAB = 1;
