@@ -10,7 +10,6 @@ INSERT INTO tbl_user_category VALUES(6, "Techno Executive");
 INSERT INTO tbl_user_category VALUES(7, "Domain Manager");
 INSERT INTO tbl_user_category VALUES(8, "Domain Executive");
 
-
 -- DELETE FROM tbl_form_type;
 INSERT INTO tbl_form_type VALUES(1, "Master");
 INSERT INTO tbl_form_type VALUES(2, "Transaction");

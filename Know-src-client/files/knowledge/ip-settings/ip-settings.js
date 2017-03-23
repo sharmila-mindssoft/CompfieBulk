@@ -169,7 +169,7 @@ function loadForms(){
         $(".ip-address", clone).val(form_map[value.form_id]);
 
         $(".ip-address", clone).on('input', function(e) {
-            this.value = isNumbers_Dot($(this));
+            this.value = isNumbers_Dot_Comma($(this));
         });
         $(".tbody-form-list").append(clone);  
         
@@ -191,11 +191,33 @@ function saveIPSettings(){
         var g_id = parseInt(Group.val());
 
         if(ip != '' && ip != '0'){
-            var split_ip = ip.split(".");
-            if(split_ip.length < 4 || split_ip.length > 4){
-                valid_ip = false;
-                return false;
-            }else{
+            var returnVal = true;
+            var ips = ip.split(",");
+            for(var i=0; i<ips.length; i++){
+                var split_ip = ips[i].split(".");
+                if(ips[i].indexOf(".") < 0){
+                    displayMessage(message.not_a_valid_ip);
+                    returnVal = false;
+                    valid_ip = false;
+                }
+                else if(split_ip.length < 4 || split_ip.length > 4){
+                    displayMessage(message.not_a_valid_ip);
+                    returnVal = false;
+                    valid_ip = false;
+                }
+                else
+                {   
+                    for(var j=0;j<split_ip.length;j++){
+                        if(parseInt(split_ip[j]) > 255){
+                            displayMessage(message.not_a_valid_ip);
+                            returnVal = false;
+                            valid_ip = false;
+                            break;
+                        }
+                    }
+                }
+            }
+            if(returnVal){
                 ip_details.push(
                     mirror.getIPSettingsDetails(
                         form_id, ip, g_id

@@ -118,7 +118,7 @@ class Controller(object):
             # logger.logWebfront(traceback.format_exc())
             send_invalid_json_format(response)
             return
-        # print actual_data
+        print actual_data
         # print token
 
         print request.uri()

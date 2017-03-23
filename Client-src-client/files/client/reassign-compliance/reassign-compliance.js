@@ -82,7 +82,9 @@ function callAPI(api_type) {
                     DOMAINS = data.domains;
                     UNITS = data.units;
                     FILTER_USERS = data.legal_entity_users;
+                    hideLoader();
                 } else {
+                    hideLoader();
                     displayMessage(error);
                 }
         });
@@ -618,7 +620,6 @@ function showTab() {
                             assignee_flag = value.is_assignee;
                             approver_flag = value.is_approver;
                             if (id != null && assignee_flag) ASSIGNEE_SU[id] = text;
-
                             if (id != null && approver_flag) APPROVER_SU[id] = text;
                         });
                         loadSeatingUnits();
@@ -631,6 +632,7 @@ function showTab() {
                         PreviousButton.show();
                         NextButton.hide();
                         SubmitButton.show();
+                        hideLoader();
                     } else {
                         displayMessage(error);
                         hideLoader();

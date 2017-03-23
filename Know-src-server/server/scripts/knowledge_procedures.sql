@@ -6092,10 +6092,8 @@ SELECT @u_cat_id := user_category_id from tbl_user_login_details where user_id =
             t2.client_id and legal_entity_id = t2.legal_entity_id and statu_sent_on is not null
             and assign_statutory_informed=1)
         as statutory_assigned_informed,
-
         (select distinct email_id from tbl_client_groups where client_id = t1.client_id) as email_id,
         (select distinct user_id from tbl_client_users where client_id = t1.client_id  and user_category_id = 1) as user_id,
-
         'Group Admin' as emp_code_name,
         (select count(*) from tbl_client_statutories where client_id = t1.client_id and
             unit_id in (select unit_id from tbl_units where client_id = t1.client_id and
@@ -9113,19 +9111,25 @@ CREATE PROCEDURE `sp_export_statutory_setting_report_recordset`(
 in _c_id int(11), _d_id varchar(11), _bg_id varchar(11), _le_id int(11), _u_id varchar(11),
 _cl_id int(11), _st_id varchar(11), _cp_id varchar(11))
 BEGIN
-    select t1.unit_id, (select concat(unit_code,'-',unit_name) from tbl_units where unit_id =
+    select t1.unit_id, (select concat(unit_code,'-',unit_name,',',address,',',postal_code) from tbl_units where unit_id =
     t1.unit_id) as unit_name, t1.statutory_id, (select statutory_name from tbl_statutories
     where statutory_id = t1.statutory_id) as statutory_name, (select country_name from tbl_countries
     where country_id=_c_id) as country_name, (select domain_name from tbl_domains where
-    domain_id = _d_id) as domain_name, (select legal_entity_name from tbl_legal_entities
+    domain_id = t1.domain_id) as domain_name, (select legal_entity_name from tbl_legal_entities
     where legal_entity_id = _le_id) as legal_entity_name, (select group_name from tbl_client_groups
-    where client_id=_cl_id) as group_name,
+    where client_id=_cl_id) as group_name, (select statutory_mapping from tbl_statutory_mappings
+    where statutory_mapping_id = t2.statutory_mapping_id) as s_m_name,
     t2.statutory_provision, t2.compliance_task as c_task,
     t2.document_name, t1.remarks, t1.statutory_applicable_status as statutory_applicability_status,
-    t1.statutory_opted_status, 'user@compfie.com'  as compfie_admin,
-    DATE_FORMAT(t1.updated_on, '%d/%m/%Y') as admin_update,
-    (select email_id from tbl_users where user_id = t1.client_opted_by) as client_admin,
-    DATE_FORMAT(t1.client_opted_on, '%d/%m/%Y') as client_update,
+    t1.compliance_opted_status as statutory_opted_status,
+    (case when t1.updated_by is not null then (select email_id from tbl_users where
+    user_id = t1.updated_by) else (select email_id from tbl_users where
+    user_id = t1.submitted_by) end) as compfie_admin,
+    (case when t1.updated_on is not null then DATE_FORMAT(t1.updated_on, '%d-%b-%Y')
+    else DATE_FORMAT(t1.submitted_on, '%d-%b-%Y') end) as admin_update,
+    (select email_id from tbl_client_users where user_id = t1.client_opted_by and
+    client_id = _cl_id) as client_admin,
+    DATE_FORMAT(t1.client_opted_on, '%d-%b-%Y') as client_update,
     (select tsn.statutory_nature_name from tbl_statutory_mappings as tsm, tbl_statutory_natures as tsn
     where tsn.statutory_nature_id = tsm.statutory_nature_id and
     tsm.statutory_mapping_id = t2.statutory_mapping_id) as statutory_nature_name
@@ -9161,17 +9165,18 @@ BEGIN
         select t2.client_id, (select group_name from tbl_client_groups where client_id =
         _cl_id) as client_name, t2.legal_entity_id, t2.legal_entity_name, count(t4.unit_id ) as
         unit_count, t2.country_id, (select country_name from tbl_countries where country_id =
-        t2.country_id) as country_name, (select date_format(unit_sent_on, '%d/%m/%y %h:%i')
+        t2.country_id) as country_name, (select date_format(unit_sent_on, '%d-%b-%y %h:%i')
         from tbl_group_admin_email_notification where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         legal_entity_id = t2.legal_entity_id and unit_creation_informed=1)) as unit_email_date,
-        (select date_format(statu_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
+        (select date_format(statu_sent_on, '%d-%b-%y %h:%i') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
         from tbl_group_admin_email_notification where client_id = t1.client_id and
         legal_entity_id = t2.legal_entity_id and assign_statutory_informed=1)) as statutory_email_date,
-        (select date_format(registration_sent_on, '%d/%m/%y %h:%i') from tbl_group_admin_email_notification
+        (select date_format(registration_sent_on, '%d-%b-%y %h:%i') from tbl_group_admin_email_notification
         where client_informed_id = (select max(client_informed_id)
-        from tbl_group_admin_email_notification where client_id = t1.client_id)) as registration_email_date
+        from tbl_group_admin_email_notification where client_id = t1.client_id and
+        registration_sent_by is not null)) as registration_email_date
         from
         tbl_user_clients as t1 inner join tbl_legal_entities as t2 on
         t2.client_id = t1.client_id left join tbl_units as t4 on
@@ -9308,3 +9313,4 @@ BEGIN
 END //
 
 DELIMITER ;
+

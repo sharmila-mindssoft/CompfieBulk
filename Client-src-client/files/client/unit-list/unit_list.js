@@ -68,9 +68,11 @@ var csv = false;
 function PageControls() {
     country.keyup(function(e) {
         var text_val = country.val().trim();
-        var countryList = REPORT._countries;
-        var condition_fields = ["is_active"];
-        var condition_values = [true];
+        var countryList = REPORT._entities;
+        if (countryList.length == 0 && text_val != '')
+            displayMessage(message.country_required);
+        var condition_fields = [];
+        var condition_values = [];
         commonAutoComplete(e, acCountry, countryId, text_val, countryList, "c_name", "c_id", function(val) {
             onCountryAutoCompleteSuccess(REPORT, val);
         }, condition_fields, condition_values);

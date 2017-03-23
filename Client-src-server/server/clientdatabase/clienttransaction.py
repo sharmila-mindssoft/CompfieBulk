@@ -21,7 +21,8 @@ from server.clientdatabase.general import (
     is_admin, calculate_due_date, filter_out_due_dates,
     get_user_email_name,  save_compliance_notification,
     get_user_countries, is_space_available, update_used_space,
-    get_user_category, is_primary_admin, update_task_status_in_chart
+    get_user_category, is_primary_admin, update_task_status_in_chart,
+    get_compliance_name_by_id
 
 )
 from server.exceptionmessage import client_process_error
@@ -512,6 +513,29 @@ def return_statutory_settings(data, session_category):
     )
 
 
+def save_in_notification(
+        db, domain_id, legal_entity_id, unit_id, notification_text, notification_type_id, user_ids
+    ):
+        def save_notification_users(db, notification_id, user_id):
+            if user_id is not "NULL" and user_id is not None :
+                q = "INSERT INTO tbl_notifications_user_log(notification_id, user_id)" + \
+                    "VALUES (%s, %s)" % (notification_id, user_id)
+                db.execute(q)
+
+        notification_id = db.get_new_id("notification_id", "tbl_notifications_log")
+        created_on = datetime.datetime.now()
+        column = [
+            "notification_id", "domain_id",
+            "legal_entity_id", "unit_id", "notification_type_id",
+            "notification_text", "created_on"
+        ]
+        values = [
+            notification_id, domain_id, legal_entity_id, unit_id, notification_type_id, notification_text, created_on
+        ]
+        db.insert("tbl_notifications_log", column, values)
+        # for user_id in user_ids:
+        save_notification_users(db, notification_id, user_ids)
+        
 def update_statutory_settings(db, data, session_user):
 
     domain_id = data.domain_id
@@ -521,6 +545,8 @@ def update_statutory_settings(db, data, session_user):
     unit_ids = data.unit_ids
     updated_on = get_date_time()
     value_list = []
+    user_ids = get_admin_id(db)
+
     for s in statutories:
         unit_id = s.unit_id
         unit_name = s.unit_name
@@ -532,8 +558,13 @@ def update_statutory_settings(db, data, session_user):
         compliance_id = s.compliance_id
         opted_status = int(s.compliance_opted_status)
         remarks = s.compliance_remarks
+        opted_text = 'Opted'
+        if opted_status == 0:
+            opted_text = 'Not Opted'
+
         if remarks is None:
             remarks = ""
+
         value = (
             client_compliance_id, le_id,
             unit_id, domain_id,
@@ -547,6 +578,15 @@ def update_statutory_settings(db, data, session_user):
 
         action = "Statutory settings updated for unit - %s " % (unit_name)
         db.save_activity(session_user, frmStatutorySettings, action, le_id, unit_id)
+
+        if submit_status == 2 and remarks is not None:
+            compliance_name = get_compliance_name_by_id(db, compliance_id)
+            usr_name = get_user_name_by_id(db, session_user)
+            text = compliance_name + ' has been ' + opted_text + ' for ' + unit_name + ' by ' + usr_name
+            save_in_notification(
+                db, domain_id, le_id, unit_id, 
+                text, 4, user_ids
+            )
 
         update_new_statutory_settings(db, unit_id, domain_id, session_user, submit_status)
 
@@ -2163,7 +2203,7 @@ def notify_compliance_approved(
     category = "Compliance Approved" if (
         approval_status == "Approved"
     ) else "Compliance Concurred"
-    notification_text = "Compliance %s has %s by %s" % (
+    notification_text  = "Compliance %s has %s by %s" % (
         compliance_name, approval_status, who_approved
     )
     save_compliance_notification(
@@ -2221,7 +2261,7 @@ def reject_compliance_approval(
     #     db, unit_id, compliance_id, "Rejected", status,
     #     ageing_remarks
     # )
-
+    print "Remarks2226>>>>>>>>>>", remarks
     update_columns = [
         "approve_status", "remarks", "completion_date", "completed_on",
         "concurred_on", "concurrence_status", "current_status"

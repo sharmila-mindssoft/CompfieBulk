@@ -166,17 +166,28 @@
                         </div>
                         <div class="clearfix"></div>
                         <table id="datatable-responsive" class="table dt-responsive nowrap" cellspacing="0" width="100%">
-                            <thead>
+                            <thead class="knowledge" style="display: none;">
                                 <th width="01%">#</th>
                                 <th width="10%">User Name</th>
                                 <th width="10%">User Type</th>
                                 <th width="10%">Form Name</th>
                                 <th width="10%">Action</th>
                                 <th width="10%">Date & Time</th>
-                        </thead>
+                            </thead>
+                            <thead class="client" style="display: none;">
+                                <th width="01%">#</th>
+                                <th width="12%">Group Name</th>
+                                <th width="12%">Legal Entity</th>
+                                <th width="10%">User Type</th>
+                                <th width="08%">User Name</th>
+                                <th width="10%">Form Name</th>
+                                <th width="10%">Action</th>
+                                <th width="10%">Date & Time</th>
+                            </thead>
                             <tbody class="tbody-audittrail-list">
                             </tbody>
                         </table>
+
                         <table class="pagination-view default-display-none" style="width: 100%;">
                         <tr>
                           <td>
@@ -203,14 +214,23 @@
 </div>
 <div id="templates">
 <table class="table-audittrail-list">
-<tr class="tableRow">
+<tr class="know-tableRow">
   <td class="snumber"></td>
   <td class="username"></td>
   <td class="usertype"></td>
   <td class="formname"></td>
   <td class="action"></td>
   <td class="datetime"></td>
-
+</tr>
+<tr class="client-tableRow">
+  <td class="snumber"></td>
+  <td class="group-name"></td>
+  <td class="le-name"></td>
+  <td class="username"></td>
+  <td class="usertype"></td>
+  <td class="formname"></td>
+  <td class="action"></td>
+  <td class="datetime"></td>
 </tr>
 </table>
 </div>

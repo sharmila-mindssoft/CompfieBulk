@@ -344,6 +344,11 @@ def process_legal_entity_wise_report(db, request):
         else:
             where_clause = where_clause + "and t1.approved_by = %s "
             condition_val.append(user_id)
+    elif user_type == "All":
+        if user_id != 0:
+            where_clause = where_clause + \
+                "and %s in (t1.completed_by, t1.concurred_by, t1.approved_by) "
+            condition_val.append(user_id)
     print task_status
     if task_status == "Complied":
         where_clause = where_clause + \
@@ -386,7 +391,7 @@ def process_legal_entity_wise_report(db, request):
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date, t2.compliance_activity_id desc limit %s, %s;"
+    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date,t1.compliance_history_id, t2.compliance_activity_id desc limit %s, %s;"
     condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
     print "qry"
@@ -690,7 +695,7 @@ def process_domain_wise_report(db, request):
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc, t2.compliance_activity_id limit %s, %s;"
+    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc,t1.compliance_history_id, t2.compliance_activity_id limit %s, %s;"
     condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
     print "qry"
@@ -988,7 +993,7 @@ def process_unit_wise_report(db, request):
         where_clause = where_clause + "and t1.compliance_id = %s "
         condition_val.append(compliance_id)
 
-    where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s order by t1.due_date, t2.compliance_activity_id desc limit %s, %s;"
+    where_clause = where_clause + "and t1.legal_entity_id = %s and t1.unit_id = %s order by t1.due_date,t1.compliance_history_id, t2.compliance_activity_id desc limit %s, %s;"
     condition_val.extend([legal_entity_id, request.unit_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
     print "qry"
@@ -1380,7 +1385,7 @@ def process_service_provider_wise_report(db, request):
         condition_val.append(user_id)
 
     where_clause = where_clause + "and t4.service_provider_id = %s and t1.legal_entity_id = %s " + \
-        "order by t1.due_date, t2.compliance_activity_id desc limit %s, %s;"
+        "order by t1.due_date,t1.compliance_history_id, t2.compliance_activity_id desc limit %s, %s;"
     condition_val.extend([sp_id, legal_entity_id, int(request.from_count), int(request.page_count)])
 
     query = select_qry + from_clause + where_clause
@@ -1760,7 +1765,7 @@ def process_user_wise_report(db, request):
     if int(unit_id) > 0:
         where_clause = where_clause + "and t1.unit_id = %s "
         condition_val.append(unit_id)
-    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc, t2.compliance_activity_id limit %s, %s;"
+    where_clause = where_clause + "and t1.legal_entity_id = %s order by t1.due_date desc,t1.compliance_history_id, t2.compliance_activity_id limit %s, %s;"
     condition_val.extend([legal_entity_id, int(request.from_count), int(request.page_count)])
     query = select_qry + from_clause + where_clause
     print "qry"

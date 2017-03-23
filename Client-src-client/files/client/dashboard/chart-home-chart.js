@@ -12,7 +12,7 @@ function updateComplianceStatusStackBarChart(data) {
     'Delayed Compliance',
     'Inprogress',
     'Not Complied'
-  ];
+  ];  
   var highchart;
   highchart = new Highcharts.Chart({
     chart: {
@@ -195,8 +195,6 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
   };
   $('.btn-back').show();
   if (chartType == 'pie') {
-    $('.btn-pie-chart').hide();
-    $('.btn-bar-chart').show();
     options.chart.type = 'pie';
     options.chart.options3d = {
       enabled: true,
@@ -204,9 +202,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
       beta: 0
     };
     var chart1 = new Highcharts.Chart(options);
+    $('.btn-pie-chart').hide();
+    $('.btn-bar-chart').show();
   } else {
-    $('.btn-pie-chart').show();
-    $('.btn-bar-chart').hide();
     options.chart.type = 'column';
     options.legend.enabled = false;
     options.colors = [
@@ -215,7 +213,9 @@ function updateComplianceStatusPieChart(data_list, chartTitle, chartType, filter
       '#fbca35',
       '#F32D2B'
     ];
-    var chart1 = new Highcharts.Chart(options);
+    var chart1 = new Highcharts.Chart(options);    
+    $('.btn-pie-chart').show();
+    $('.btn-bar-chart').hide();
   }
 }
 //
@@ -269,7 +269,7 @@ function updateEscalationChart(data) {
       column: {
         pointPadding: 0,
         groupPadding: 0.26,
-        borderWidth: 0,
+        borderWidth: 0,        
         dataLabels: {
           enabled: true,
           textShadow: null,
@@ -497,7 +497,7 @@ function ChartInput() {
   this.from_date = '';
   this.to_date = '';
   this.filter_type = 'group';
-  // Possibilities: "group", "business_group", "legal_entity", "division", "unit", "consolidated"
+  // Possibilities: "group", "business_group", "legal_entity", "division", "category",  "unit", "consolidated"
   this.business_groups = [];
   this.legal_entities = [];
   this.divisions = [];
@@ -1018,7 +1018,7 @@ function loadSubFilters(isSelectAll, isSingleSelect) {
   chartInput.setCategoryAll(categories);
 
 
-  units = get_ids(CHART_FILTERS_DATA.assign_units, 'unit_id');
+  units = get_ids(CHART_FILTERS_DATA.assign_units, 'u_id');
   chartInput.setUnitsAll(units);
 
 
@@ -1154,10 +1154,10 @@ function initializeFilters() {
   chartInput.setCountriesAll(countries);
 
   $('.country-filter').multiselect({
-    buttonWidth: '100%',
-    includeSelectAllOption: true,
-    enableFiltering: true,
-      onChange: function (country, checked) {
+    // buttonWidth: '100%',
+    // includeSelectAllOption: true,
+    // enableFiltering: true,
+    onChange: function (country, checked) {
       chartInput.setCountries(country.val(), checked);
     },
     // onSelectAll: function() {
@@ -1174,9 +1174,9 @@ function initializeFilters() {
   chartInput.setDomainsAll(domains);
 
   $('.domain-filter').multiselect({
-    enableFiltering: true,
+    // enableFiltering: true,
     // placeholder: 'Select Domain',
-      onchange: function (domain, checked) {
+    onChange: function (domain, checked) {
       chartInput.setDomains(domain.val(), checked);
     },
     // onSelectAll: function () {
@@ -1252,8 +1252,15 @@ function initializeFilters() {
       $('.' + filter_type_selection).hide();
     }
     var chart_type = chartInput.getChartType();
-    if (filter_type == 'group' || filter_type == 'consolidated') {
+    if (filter_type == 'group') {
       loadCharts();
+    }
+    else if(filter_type == 'consolidated'){
+      loadCharts(); 
+      $("#btn-export").hide();
+    }
+    else{
+      $("#btn-export").show();
     }
   });
   $('.btn-go .btn').on('click', function () {
@@ -1391,6 +1398,7 @@ function initializeFilters() {
 function parseComplianceStatusApiInput() {
   var countryIds = chartInput.getCountries();
   var domainIds = chartInput.getDomains();
+  console.log("countryIds--"+countryIds);
   if(countryIds == ""){
     displayMessage(message.country_required);
     return false;
@@ -1613,7 +1621,7 @@ function prepareEscalationChartdata(source_data) {
       });
   }
   chart_data = sortJSON(chart_data,'chart_year', '123');  //asc order by filter_type_id
-
+  
 
   var chartDataSeries = [];
   delayed_data = [];
@@ -1683,7 +1691,7 @@ function prepareTrendChartData(source_data) {
   final_data = {}
   for (var i = 0; i < source_data.trend_data.length; i++) {
     chartData = source_data.trend_data[i];
-
+    chart_year.push(chartData.chart_year);
     var filter_type_id = chartData.filter_id;
     var filterTypeInput = getFilterTypeInput();
     if (filterTypeInput.indexOf(filter_type_id) == -1)
