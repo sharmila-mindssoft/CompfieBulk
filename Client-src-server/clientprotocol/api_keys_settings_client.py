@@ -688,4 +688,5 @@ api_params = {
     "seating_unit": make_text_field(length=500, is_optional=True),
     "notification_count": make_vector_type_field(module="dashboard", klass_name="NotificationsCountSuccess", is_optional=True),
     "is_available": make_bool_field(),
+    "extra_details":make_text_field(is_optional=True),
 }

@@ -9,7 +9,9 @@ function loadMessages(data) {
         isEmpty = false;
         var tableRow = $('#templates .table-message .table-row');
         var rowClone = tableRow.clone();
-        if (v.notification_text.indexOf("#") < 0) {
+        var link = v.extra_details;
+        link = link.trim();
+        if (Number.isInteger(parseInt(link.substring(0,1)))) {
             rowClone.on('click', function(e) {
                 var row = $(this);
                 client_mirror.updateNotificationStatus(LEIDS, v.notification_id, true, function(error, response) {
@@ -38,19 +40,16 @@ function loadMessages(data) {
             });
             $('.message-content', rowClone).text(v.notification_text);
         } else {
-            $('.message-content', rowClone).html(v.notification_text.replace('#', '<a href="#">here</a>'));
+            $('.message-content', rowClone).html(v.notification_text+' you can download documents <a href="'+v.extra_details+'">here</a>');
         }
-
         $('.message-time', rowClone).text(v.created_on);
         $('.tbody-message-list').append(rowClone);
     });
-
     if (isEmpty) {
         var no_record_row = $("#templates .table-no-record tr");
         var clone = no_record_row.clone();
         $(".tbody-message-list").append(clone);
     }
-
 }
 
 function initialize() {

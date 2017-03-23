@@ -1003,6 +1003,7 @@ td a i.zmdi-chevron-right {
     color: #fff;
 }
 
+
 .navbar-header {
     display: none;
 }
@@ -1018,4 +1019,6 @@ td a i.zmdi-chevron-right {
     font-size: 11px;
 }
 
+.dashboard-menu {
+    display: none !important;
 }

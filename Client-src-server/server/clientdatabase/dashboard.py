@@ -1526,7 +1526,7 @@ def get_reminders(
     qry = "select count(distinct le.legal_entity_id) as expire_count " + \
             "from tbl_legal_entities as le " + \
             "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = le.legal_entity_id " + \
-            "where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s " + \
+            "where (%s = 1 OR %s = 2) AND %s = 2 AND ule.user_id = %s " + \
             "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now()) "
 
     row = db.select_one(qry, [session_category, session_category, notification_type, session_user])
@@ -1534,20 +1534,24 @@ def get_reminders(
     if row["expire_count"] > 0:
         query = "(Select Distinct lg.legal_entity_id, '0' as rank,'0' as notification_id, " + \
                 "concat('Your contract with Compfie for the legal entity ', legal_entity_name,' is about to expire. Kindly renew your contract to avail the services continuously.  " + \
-                "Before contract expiration you can download documents <a href=#>here</a>') as notification_text, " + \
+                "Before contract expiration') as notification_text, " + \
+                "nl.extra_details, " + \
                 "date(contract_to - INTERVAL 30 DAY) as created_on from tbl_legal_entities as lg " + \
                 "LEFT join tbl_user_legal_entities as ule on ule.legal_entity_id = lg.legal_entity_id " + \
-                "Where %s = 1 OR %s = 2 AND %s = 2 AND ule.user_id = %s " + \
-                "and contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now())) " + \
+                "INNER JOIN tbl_notifications_log as nl on nl.legal_entity_id = ule.legal_entity_id  " + \
+                "AND nl.notification_type_id = %s AND nl.extra_details LIKE %s " + \
+                "Where (%s = 1 OR %s = 2) AND %s = 2 AND ule.user_id = %s  " + \
+                "AND contract_to - INTERVAL 30 DAY <= date(NOW()) and contract_to > date(now())) " + \
                 "UNION ALL " + \
-                "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
+                "(Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text, nl.extra_details, date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \
                 "inner join tbl_notifications_user_log as nlu on nl.notification_id = nlu.notification_id and nl.notification_type_id = 2 " + \
                 "Where nlu.user_id = %s AND nl.notification_type_id = %s and nlu.read_status = 0 " + \
                 "order by nl.notification_id desc) as t1, (SELECT @rownum := 0) r) as t " + \
                 "where t.rank >= %s and t.rank <= %s) "
 
-        rows = db.select_all(query, [session_category, session_category, notification_type, session_user, session_user, notification_type, start_count, to_count])
+        rows = db.select_all(query, [notification_type, '%closure%', session_category, session_category, notification_type, session_user, session_user, 
+            notification_type, start_count, to_count])
     else:
         query = "Select * from (SELECT @rownum := @rownum + 1 AS rank,t1.* FROM (select nl.legal_entity_id, nl.notification_id, nl.notification_text,date(nl.created_on) as created_on " + \
                 "from tbl_notifications_log as nl " + \
@@ -1562,8 +1566,9 @@ def get_reminders(
         legal_entity_id = int(r["legal_entity_id"])
         notification_id = int(r["notification_id"])
         notification_text = r["notification_text"]
+        extra_details = r["extra_details"]
         created_on = datetime_to_string(r["created_on"])
-        notification = dashboard.RemindersSuccess(legal_entity_id, notification_id, notification_text, created_on)
+        notification = dashboard.RemindersSuccess(legal_entity_id, notification_id, notification_text, extra_details, created_on)
         notifications.append(notification)
     return notifications
 

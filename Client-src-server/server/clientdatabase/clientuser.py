@@ -105,7 +105,7 @@ def get_overdue_count(db, session_user):
 # Compliance Task Details - Get Current Compliances
 #################################################################
 def get_current_compliances_list(
-    db, current_start_count, to_count, session_user
+    db, unit_id, current_start_count, to_count, session_user
 ):
     columns = [
         "compliance_history_id", "start_date", "due_date", "documents",
@@ -113,7 +113,7 @@ def get_current_compliances_list(
         "document_name", "compliance_task", "compliance_description",
         "format_file", "unit", "domain_name", "frequency", "remarks",
         "compliance_id", "duration_type_id"
-    ]
+    ] 
     query = " SELECT * FROM " + \
         " (SELECT compliance_history_id, start_date, " + \
         " ch.due_date as due_date, documents, " + \
@@ -138,11 +138,12 @@ def get_current_compliances_list(
         " ON (ac.compliance_id = c.compliance_id) " + \
         " WHERE ch.completed_by = %s AND ch.current_status = 0 " + \
         " and ac.is_active = 1 and IFNULL(ch.completed_on, 0) = 0 " + \
-        " and IFNULL(ch.due_date, 0) != 0 LIMIT %s, %s ) a " + \
+        " and IFNULL(ch.due_date, 0) != 0 and IF(%s IS NOT NULL, ch.unit_id = %s,1) LIMIT %s, %s ) a " + \
         " ORDER BY due_date ASC "
 
-    # print session_user, current_start_count, to_count    
-    rows = db.select_all(query, [session_user, current_start_count, to_count])
+    # print session_user, current_start_count, to_count
+    # print query, [session_user, unit_id, unit_id, current_start_count, to_count]
+    rows = db.select_all(query, [session_user, unit_id, unit_id, current_start_count, to_count])
     # print "row count", rows
     current_compliances_list = []
     for compliance in rows:
@@ -244,7 +245,7 @@ def get_current_compliances_list(
 #############################################################
 # Get Upcoming Compliances List - Count
 #############################################################
-def get_upcoming_count(db, session_user):
+def get_upcoming_count(db, unit_id, session_user):
     all_compliance_query = " SELECT ac.compliance_id, ac.unit_id " + \
         " FROM tbl_assign_compliances ac " + \
         " INNER JOIN tbl_compliances c " + \
@@ -252,15 +253,17 @@ def get_upcoming_count(db, session_user):
         " WHERE " + \
         " assignee = %s AND frequency_id != 4 " + \
         " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
-        " AND ac.is_active = 1;"
-    all_compliace_rows = db.select_all(all_compliance_query, [session_user])
+        " AND ac.is_active = 1 "+ \
+        " AND IF(%s IS NOT NULL, ac.unit_id = %s,1) "
+    all_compliace_rows = db.select_all(all_compliance_query, [session_user, unit_id, unit_id])
     all_compliance_count = len(all_compliace_rows)
     onetime_query = " SELECT ch.compliance_id, ch.unit_id " + \
         " FROM tbl_compliance_history ch " + \
         " INNER JOIN tbl_compliances c " + \
         " on (ch.compliance_id =  c.compliance_id) " + \
-        " WHERE frequency_id = 1 and completed_by = %s ;"
-    onetime_rows = db.select_all(onetime_query, [session_user])
+        " WHERE frequency_id = 1 and completed_by = %s  " + \
+        " AND IF(%s IS NOT NULL, ch.unit_id = %s,1) "
+    onetime_rows = db.select_all(onetime_query, [session_user, unit_id, unit_id])
 
     combined_rows = []
     for combination in onetime_rows:
@@ -276,7 +279,7 @@ def get_upcoming_count(db, session_user):
 # Get Upcoming Compliances List
 #############################################################
 def get_upcoming_compliances_list(
-    db, upcoming_start_count, to_count, session_user
+    db, unit_id, upcoming_start_count, to_count, session_user
 ):
     query = "SELECT * FROM (SELECT ac.due_date, document_name, " + \
             " compliance_task, compliance_description, format_file, " + \
@@ -285,31 +288,35 @@ def get_upcoming_compliances_list(
             " FROM tbl_domains d " + \
             " where d.domain_id = c.domain_id) as domain_name, " + \
             " DATE_SUB(ac.due_date, INTERVAL ac.trigger_before_days DAY) " + \
-            " as start_date " + \
+            " as start_date, ac.assigned_on " + \
             " FROM tbl_assign_compliances  ac " + \
             " INNER JOIN tbl_compliances c " + \
             " ON ac.compliance_id = c.compliance_id " + \
             " INNER JOIN tbl_units tu ON tu.unit_id = ac.unit_id " + \
             " WHERE assignee = %s AND frequency_id != 5 " + \
             " AND ac.due_Date < DATE_ADD(now(), INTERVAL 6 MONTH) " + \
-            " AND ac.is_active = 1 AND IF ( (frequency_id = 1 AND ( " + \
+            " AND ac.is_active = 1 " + \
+            " AND IF(%s IS NOT NULL, tu.unit_id = %s,1) " + \
+            " AND IF ( (frequency_id = 1 AND ( " + \
             " select count(*) from tbl_compliance_history ch " + \
             " where ch.compliance_id = ac.compliance_id and " + \
             " ch.unit_id = ac.unit_id ) >0), 0,1) ) a " + \
             " ORDER BY start_date ASC LIMIT %s, %s  "
+
+    # print query, [session_user, int(upcoming_start_count), to_count]
     upcoming_compliances_rows = db.select_all(
-        query, [session_user, int(upcoming_start_count), to_count]
+        query, [session_user, unit_id, unit_id, int(upcoming_start_count), to_count]
     )
     columns = [
         "due_date", "document_name", "compliance_task",
         "description", "format_file", "unit_code", "unit_name", "address",
-        "domain_name", "start_date"
+        "domain_name", "start_date", "assigned_on"
     ]
     # upcoming_compliances_result = convert_to_dict(
     #     upcoming_compliances_rows, columns
     # )
     upcoming_compliances_list = []
-    print "upcoming_compliances_rows >>>", upcoming_compliances_rows
+    # print "upcoming_compliances_rows >>>", upcoming_compliances_rows
     for compliance in upcoming_compliances_rows:
         document_name = compliance["document_name"]
         compliance_task = compliance["compliance_task"]
@@ -320,8 +327,8 @@ def get_upcoming_compliances_list(
             compliance["unit_code"], compliance["unit_name"]
         )
         address = compliance["address"]
-
         start_date = compliance["start_date"]
+        assigned_on = compliance["assigned_on"]
         format_files = None
         if(
             compliance["format_file"] is not None and
@@ -339,6 +346,7 @@ def get_upcoming_compliances_list(
                 format_file_name=format_files,
                 unit_name=unit_name,
                 address=address,
+                assigned_on = datetime_to_string(assigned_on),
                 compliance_description=compliance["compliance_description"]
             ))
     return upcoming_compliances_list

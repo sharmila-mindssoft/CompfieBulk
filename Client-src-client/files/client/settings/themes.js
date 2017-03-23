@@ -6,8 +6,8 @@ $(function() {
     });
 
     var theme_name = "";
-    if (window.localStorage.theme_name)
-        theme_name = window.localStorage.theme_name;
+    if (window.sessionStorage.theme_name)
+        theme_name = window.sessionStorage.theme_name;
     else
         theme_name = "one";
 
@@ -23,7 +23,7 @@ function change_theme() {
     var theme_name = $('#theme_name').val();
     client_mirror.changeThemes(theme_name, function(error, response) {
         if (error == null) {
-            window.localStorage.theme_name = response.theme;
+            window.sessionStorage.theme_name = response.theme;
             location.reload();
         } else {
             displayMessage(error);
